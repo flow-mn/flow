@@ -1,4 +1,4 @@
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export.dart';
 import 'package:flow/sync/import.dart';

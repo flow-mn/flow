@@ -1,7 +1,7 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/routes/new_transaction/input_amount_sheet.dart';

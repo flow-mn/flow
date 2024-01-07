@@ -52,5 +52,7 @@
     "enum.CSVHeadersV1@subtype": "Гүйлгээний ангилал",
     "enum.CSVHeadersV1@createdDate": "Нэмсэн огноо ({})",
     "enum.CSVHeadersV1@transactionDate": "Гүйлгээ хийсэн ({})",
-    "enum.CSVHeadersV1@extra": "Нэмэлт(JSON)"
+    "enum.CSVHeadersV1@extra": "Нэмэлт(JSON)",
+    "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",
+    "error.input.duplicate.accountName": "Дансны нэр давхцаж байна"
 }

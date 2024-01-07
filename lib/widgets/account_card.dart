@@ -1,6 +1,6 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/surface.dart';
 import 'package:flutter/material.dart';

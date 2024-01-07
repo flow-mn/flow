@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flow/l10n.dart';
-import 'package:flow/l10n/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
+import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';

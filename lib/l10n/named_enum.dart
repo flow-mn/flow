@@ -1,4 +1,4 @@
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flutter/material.dart';
 
 abstract class LocalizedEnum {

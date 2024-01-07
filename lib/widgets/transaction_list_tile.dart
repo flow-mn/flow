@@ -1,5 +1,5 @@
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/plated_icon.dart';
 import 'package:flutter/material.dart';

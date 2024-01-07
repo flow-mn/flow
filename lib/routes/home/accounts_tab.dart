@@ -49,6 +49,7 @@ class _AccountsTabState extends State<AccountsTab> {
                       onTap: () => context.push("/account/new"),
                     ),
                     const SizedBox(height: 16.0),
+                    const SizedBox(height: 64.0),
                   ],
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'package:flow/entity/category.dart';
-import 'package:flow/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/bottom_sheet_frame.dart';
 import 'package:flow/widgets/plated_icon.dart';

@@ -53,5 +53,7 @@
     "enum.CSVHeadersV1@subtype": "Transaction class",
     "enum.CSVHeadersV1@createdDate": "Created date",
     "enum.CSVHeadersV1@transactionDate": "Transaction date",
-    "enum.CSVHeadersV1@extra": "Extra (JSON)"
+    "enum.CSVHeadersV1@extra": "Extra (JSON)",
+    "error.input.mustBeNotEmpty": "Please fill out this field",
+    "error.input.duplicate.accountName": "Name \"{}\" already in use. Try a different name."
 }

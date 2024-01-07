@@ -1,5 +1,5 @@
-import 'package:flow/l10n.dart';
-import 'package:flow/l10n/l10n.dart';
+import 'package:flow/l10n/extensions.dart';
+import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/widgets/home/prefs/action_tile.dart';
 import 'package:flutter/material.dart' hide Flow;

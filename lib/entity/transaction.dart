@@ -122,10 +122,10 @@ class Transaction implements EntityBase {
 extension TransactionOperations on List<Transaction> {
   double get incomeSum => where((transaction) => transaction.amount >= 0)
       .map((transaction) => transaction.amount)
-      .reduce((value, element) => value + element);
+      .fold(0, (value, element) => value + element);
   double get expenseSum => where((transaction) => transaction.amount < 0)
       .map((transaction) => transaction.amount)
-      .reduce((value, element) => value + element);
+      .fold(0, (value, element) => value + element);
   double get sum =>
       map((transaction) => transaction.amount).reduce((a, b) => a + b);
 

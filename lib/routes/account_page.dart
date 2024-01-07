@@ -1,10 +1,15 @@
 import 'package:flow/entity/account.dart';
-import 'package:flow/l10n.dart';
+import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/form_validators.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class AccountPage extends StatefulWidget {
   /// Account Object ID
@@ -22,6 +27,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey();
+
   late final TextEditingController _nameTextController;
 
   late String _currency;
@@ -29,6 +36,10 @@ class _AccountPageState extends State<AccountPage> {
   late bool _excludeFromTotalBalance;
 
   late final Account? _currentlyEditing;
+
+  String get iconCodeOrError => IconCode.fromMaterialSymbols(
+        _iconData ?? Symbols.error_circle_rounded_error_rounded,
+      );
 
   dynamic error;
 
@@ -58,45 +69,59 @@ class _AccountPageState extends State<AccountPage> {
     const contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () => save(),
+            icon: const Icon(
+              Symbols.check_rounded,
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 16.0),
-              CircleAvatar(
-                radius: 40.0,
-                child: Icon(
-                  _iconData,
-                  size: 56.0,
-                  color: context.colorScheme.secondary,
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: contentPadding,
-                child: TextField(
-                  controller: _nameTextController,
-                  decoration: InputDecoration(
-                    label: Text(
-                      "account.name".t(context),
-                    ),
-                    focusColor: context.colorScheme.secondary,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 16.0),
+                CircleAvatar(
+                  radius: 40.0,
+                  child: Icon(
+                    _iconData,
+                    size: 56.0,
+                    color: context.colorScheme.secondary,
                   ),
                 ),
-              ),
-              const SizedBox(height: 24.0),
-              ListTile(
-                title: Text("currency".t(context)),
-                trailing: Text(_currency),
-                onTap: () => selectCurrency(),
-              ),
-              CheckboxListTile.adaptive(
-                value: _excludeFromTotalBalance,
-                onChanged: updateBalanceExclusion,
-                title: Text("account.excludeFromTotalBalance".t(context)),
-              )
-            ],
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: contentPadding,
+                  child: TextFormField(
+                    controller: _nameTextController,
+                    decoration: InputDecoration(
+                      label: Text(
+                        "account.name".t(context),
+                      ),
+                      focusColor: context.colorScheme.secondary,
+                    ),
+                    validator: validateNameField,
+                  ),
+                ),
+                const SizedBox(height: 24.0),
+                ListTile(
+                  title: Text("currency".t(context)),
+                  trailing: Text(_currency),
+                  onTap:
+                      _currentlyEditing == null ? () => selectCurrency() : null,
+                ),
+                CheckboxListTile.adaptive(
+                  value: _excludeFromTotalBalance,
+                  onChanged: updateBalanceExclusion,
+                  title: Text("account.excludeFromTotalBalance".t(context)),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -123,7 +148,73 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
+  void updateAccount({required String formattedName}) async {
+    if (_currentlyEditing == null) return;
+
+    _currentlyEditing!.name = formattedName;
+    _currentlyEditing!.currency = _currency;
+
+    _currentlyEditing!.iconCode = iconCodeOrError;
+    _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
+
+    ObjectBox().box<Account>().put(
+          _currentlyEditing!,
+          mode: PutMode.update,
+        );
+
+    context.pop();
+  }
+
   void save() async {
-    //
+    // TODO add emoji/icon picker
+    // if (_iconData == null) return; // TODO show error
+
+    if (_formKey.currentState?.validate() != true) return;
+
+    final String trimmed = _nameTextController.text.trim();
+
+    if (_currentlyEditing != null) {
+      return updateAccount(formattedName: trimmed);
+    }
+
+    final account = Account(
+      name: trimmed,
+      iconCode: iconCodeOrError,
+      currency: _currency,
+      excludeFromTotalBalance: _excludeFromTotalBalance,
+    );
+
+    ObjectBox().box<Account>().putAsync(
+          account,
+          mode: PutMode.insert,
+        );
+
+    context.pop();
+  }
+
+  String? validateNameField(String? value) {
+    final requiredValidationError = validateRequiredField(value);
+    if (requiredValidationError != null) {
+      return requiredValidationError.t(context);
+    }
+
+    final String trimmed = value!.trim();
+
+    final isNameUnique = ObjectBox()
+            .box<Account>()
+            .query(
+              Account_.name
+                  .equals(trimmed)
+                  .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
+            )
+            .build()
+            .count() ==
+        0;
+
+    if (!isNameUnique) {
+      return "error.input.duplicate.accountName".t(context, trimmed);
+    }
+
+    return null;
   }
 }

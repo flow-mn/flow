@@ -44,7 +44,13 @@ class _HomeTabState extends State<HomeTab> {
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => const Center(child: Text("Empty")),
               (_, true) => Expanded(
-                  child: WeekTransactionList(transactions: transactions!),
+                  child: WeekTransactionList(
+                    transactions: transactions!,
+                    listPadding: const EdgeInsets.only(
+                      top: 16.0,
+                      bottom: 80.0,
+                    ),
+                  ),
                 ),
               (_, false) => const Center(
                   child: CircularProgressIndicator.adaptive(),

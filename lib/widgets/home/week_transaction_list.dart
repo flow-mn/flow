@@ -29,7 +29,7 @@ class WeekTransactionList extends StatelessWidget {
     ];
 
     return ListView.builder(
-      padding: listPadding.copyWith(bottom: listPadding.bottom + 96.0),
+      padding: listPadding.copyWith(bottom: listPadding.bottom),
       itemBuilder: (context, index) => switch (flattened[index]) {
         (DateTime date) => Padding(
             padding: itemPadding.copyWith(top: index == 0 ? 8.0 : 24.0),
