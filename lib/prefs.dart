@@ -2,6 +2,7 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:local_settings/local_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,9 +48,9 @@ class LocalPreferences {
   }
 
   String getPrimaryCurrency() {
-    String? primaryCurrency = LocalPreferences().primaryCurrency.value;
+    String? primaryCurrencyName = primaryCurrency.value;
 
-    if (primaryCurrency == null) {
+    if (primaryCurrencyName == null) {
       final String? firstAccountCurency = ObjectBox()
           .box<Account>()
           .query()
@@ -59,14 +60,21 @@ class LocalPreferences {
           ?.currency;
 
       if (firstAccountCurency == null) {
-        throw StateError(
-            "Failed to recover primary currency because user don't have any accounts");
+        // Generally, primary currency will be set up when the user first
+        // opens the app. When recovering from a backup, backup logic should
+        // handle setting this value.
+        primaryCurrencyName =
+            NumberFormat.currency(locale: Intl.defaultLocale ?? "en_US")
+                    .currencyName ??
+                "USD";
+      } else {
+        primaryCurrencyName = firstAccountCurency;
       }
 
-      primaryCurrency = firstAccountCurency;
+      primaryCurrency.set(primaryCurrencyName);
     }
 
-    return primaryCurrency;
+    return primaryCurrencyName;
   }
 
   factory LocalPreferences() {
