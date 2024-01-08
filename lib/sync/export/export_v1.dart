@@ -11,6 +11,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export/headers/header_v1.dart';
 import 'package:flow/sync/model/model_v1.dart';
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 Future<String> generateBackupContentV1() async {
@@ -64,12 +65,17 @@ Future<String> generateCSVContentV1() async {
     CSVHeadersV1.extra.localizedName,
   ];
 
+  final Map<String, int> numberOfDecimalsToKeep = {};
+
   final transformed = transaction
       .map(
         (e) => [
           e.uuid,
           e.title ?? "",
-          e.amount,
+          e.amount.toStringAsFixed(
+            numberOfDecimalsToKeep[e.currency] ??=
+                NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
+          ),
           e.currency,
           e.account.target?.name,
           e.account.target?.uuid,
