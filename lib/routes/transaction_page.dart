@@ -280,6 +280,8 @@ class _TransactionPageState extends State<TransactionPage> {
   void selectCategory() async {
     final categories = _categoriesQueryBuilder().build().find();
 
+    if (categories.isEmpty) return;
+
     final result = await showModalBottomSheet<Category>(
       context: context,
       builder: (context) => SelectCategorySheet(
