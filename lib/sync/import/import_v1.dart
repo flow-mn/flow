@@ -7,10 +7,10 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/sync/exception.dart';
-import 'package:flow/sync/import.dart';
 import 'package:flow/sync/import/base.dart';
 import 'package:flow/sync/model/model_v1.dart';
-import 'package:flow/utils.dart';
+import 'package:flow/sync/sync.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flutter/widgets.dart';
 
 /// We have to recover following models:
@@ -69,7 +69,29 @@ class ImportV1 extends Importer {
     this.mode = ImportMode.merge,
   });
 
-  Future<void> execute() async {
+  /// Before starting the import, it'll perform a safety backup, stored in
+  /// `automated_backups` subfolder. If safety backups fails, will immediately
+  /// halt, without making any changes to the state. You can alter this
+  /// behaviour by setting [ignoreSafetyBackupFail] to true.
+  ///
+  /// Returns the path of the safety backup file.
+  ///
+  /// [ignoreSafetyBackupFail] - Forces to proceed in the import if safety
+  /// backup fails
+  Future<String> execute({bool ignoreSafetyBackupFail = false}) async {
+    // Backup data before ruining everything
+    final safetyBackup = await export(
+      subfolder: "automated_backups",
+      showShareDialog: false,
+    ).catchError((_) => (success: false, filePath: null));
+
+    if (!safetyBackup.success && !ignoreSafetyBackupFail) {
+      throw const ImportException(
+        "Safety backup failed, aborting mission",
+        l10nKey: "error.sync.safetyBackupFailed",
+      );
+    }
+
     try {
       switch (mode) {
         case ImportMode.eraseAndWrite:
@@ -83,6 +105,8 @@ class ImportV1 extends Importer {
       progressNotifier.value = ImportV1Progress.error;
       rethrow;
     }
+
+    return safetyBackup.filePath!;
   }
 
   Future<void> _eraseAndWrite() async {
@@ -135,20 +159,37 @@ class ImportV1 extends Importer {
   }
 
   Future<void> _merge() async {
-    // 1. Resurrect [Category]s
-    progressNotifier.value = ImportV1Progress.loadingCategories;
-    await ObjectBox()
-        .box<Category>()
-        .putManyAsync(data.categories.where((element) => false).toList());
+    // Here, we might have an interactive selection screen for resolving
+    // conflicts. For now, we'll ignore this.
 
-    // 2. Resurrect [Account]s
-    progressNotifier.value = ImportV1Progress.loadingAccounts;
-    await ObjectBox().box<Account>().putManyAsync(data.accounts);
+    throw UnimplementedError();
+
+    // // 1. Resurrect [Category]s
+    // progressNotifier.value = ImportV1Progress.loadingCategories;
+    // final currentCategories = await ObjectBox().box<Category>().getAllAsync();
+    // await ObjectBox().box<Category>().putManyAsync(data.categories
+    //     .where((incomingCategory) => !currentCategories.any(
+    //         (currentCategory) => currentCategory.uuid == incomingCategory.uuid))
+    //     .toList());
+
+    // // 2. Resurrect [Account]s
+    // progressNotifier.value = ImportV1Progress.loadingAccounts;
+    // final currentAccounts = await ObjectBox().box<Account>().getAllAsync();
+    // await ObjectBox().box<Account>().putManyAsync(data.accounts
+    //     .where((incomingAccount) => !currentAccounts.any((currentAccount) =>
+    //         currentAccount.uuid == incomingAccount.uuid ||
+    //         currentAccount.name == incomingAccount.name))
+    //     .toList());
+
+    // // 3. Resurrect [Transaction]s
+    // progressNotifier.value = ImportV1Progress.loadingTransactions;
+    // final currentTransactions =
+    //     await ObjectBox().box<Transaction>().getAllAsync();
   }
 
   Transaction _resolveAccountForTransaction(Transaction transaction) {
     if (transaction.accountUuid == null) {
-      throw const ImportException("This transaction lacks `accountUuid`");
+      throw Exception("This transaction lacks `accountUuid`");
     }
 
     final String accountUuid = transaction.accountUuid!;
@@ -177,7 +218,7 @@ class ImportV1 extends Importer {
 
   Transaction _resolveCategoryForTransaction(Transaction transaction) {
     if (transaction.categoryUuid == null) {
-      throw const ImportException("This transaction lacks `categoryUuid`");
+      throw Exception("This transaction lacks `categoryUuid`");
     }
 
     final String categoryUuid = transaction.categoryUuid!;

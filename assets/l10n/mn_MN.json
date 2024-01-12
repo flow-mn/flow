@@ -35,6 +35,7 @@
     "tabs.profile.joinDiscord": "Discord-д нэгдэх",
     "tabs.profile.importAndExport": "Өгөгдөл сэргээх/нөөцлөх",
     "tabs.profile.withLoveFromTheCreator": "sadespresso хайр шингээж бүтээв 🤍",
+    "sync.import.successful": "Import successful!",
     "enum.TransactionSubtype": "Төрөл",
     "enum.TransactionSubtype#null": "Хэвийн",
     "enum.TransactionSubtype@transactionFee": "Гүйлгээний шимтгэл",
@@ -54,5 +55,9 @@
     "enum.CSVHeadersV1@transactionDate": "Гүйлгээ хийсэн ({})",
     "enum.CSVHeadersV1@extra": "Нэмэлт(JSON)",
     "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",
-    "error.input.duplicate.accountName": "Дансны нэр давхцаж байна"
+    "error.input.duplicate.accountName": "Дансны нэр давхцаж байна",
+    "error.sync.noFilePicked": "Та файл сонгоогүй байна",
+    "error.sync.wrongFile": "Зөвхөн JSON файл сонгох боломжтой",
+    "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
+    "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"
 }

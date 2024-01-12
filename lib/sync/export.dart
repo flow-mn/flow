@@ -3,30 +3,49 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flow/sync/export/export_v1.dart';
+import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/sync.dart';
-import 'package:flow/utils.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
-Future<bool> export([bool csv = false]) async {
+typedef ExportStatus = ({bool success, String? filePath});
+
+/// Exports all user data (except for profile for now) in the format specified.
+///
+///
+/// [mode] - defaults to `json`, see [ExportMode]
+/// [subfolder] - Will put the backup in a subfolder. May be useful for
+/// automated backups
+Future<ExportStatus> export({
+  ExportMode mode = ExportMode.json,
+  bool showShareDialog = true,
+  String? subfolder,
+}) async {
   // Sharing [XFile]s aren't supported yet on Linux and Windows.
   //
   // https://pub.dev/packages/share_plus#platform-support
   final bool isShareSupported =
       !(Platform.isLinux || Platform.isWindows || Platform.isFuchsia);
 
-  final backupContent = switch ((csv, latestSyncModelVersion)) {
-    (true, 1) => await generateCSVContentV1(),
-    (false, 1) => await generateBackupContentV1(),
+  final backupContent = switch ((mode, latestSyncModelVersion)) {
+    (ExportMode.csv, 1) => await generateCSVContentV1(),
+    (ExportMode.json, 1) => await generateBackupContentV1(),
     _ => throw UnimplementedError(),
   };
   final savedFilePath = await saveBackupFile(
     backupContent,
     isShareSupported,
-    fileExt: csv ? "csv" : "json",
+    fileExt: mode.fileExt,
+    subfolder: subfolder,
   );
+
+  if (!showShareDialog) {
+    return (success: false, filePath: savedFilePath);
+  }
+
   return await showFileSaveDialog(savedFilePath, isShareSupported);
 }
 
@@ -35,6 +54,7 @@ Future<String> saveBackupFile(
   String backupContent,
   bool isShareSupported, {
   required String fileExt,
+  String? subfolder,
 }) async {
   // Save to cache if it's possible to share later.
   // Otherwise, save to documents directory, and reveal the file on system.
@@ -48,7 +68,7 @@ Future<String> saveBackupFile(
 
   log("[Flow Sync] Writing to ${path.join(saveDir.path, filename)}");
 
-  final File f = File(path.join(saveDir.path, filename));
+  final File f = File(path.join(saveDir.path, subfolder ?? "", filename));
   f.createSync(recursive: true);
   f.writeAsStringSync(backupContent);
 
@@ -58,8 +78,12 @@ Future<String> saveBackupFile(
 }
 
 /// Returns whether the file was saved/revealed successfully
-Future<bool> showFileSaveDialog(
-    String savedFilePath, bool isShareSupported) async {
+Future<ExportStatus> showFileSaveDialog(
+  String savedFilePath,
+  bool isShareSupported,
+) async {
+  bool shareSuccess;
+
   if (isShareSupported) {
     final shareResult = await Share.shareXFiles(
       [XFile(savedFilePath)],
@@ -67,13 +91,15 @@ Future<bool> showFileSaveDialog(
       text: "Backup for Flow",
     );
 
-    return shareResult.status == ShareResultStatus.success;
+    shareSuccess = shareResult.status == ShareResultStatus.success;
   } else {
-    return await openUrl(
+    shareSuccess = await openUrl(
       Uri(
         scheme: "file",
         path: path.dirname(savedFilePath),
       ),
     );
   }
+
+  return (success: shareSuccess, filePath: savedFilePath);
 }

@@ -18,7 +18,7 @@ Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  /// TODO (sadespresso) use [Future.wait] if it's more performant
+  // TODO (sadespresso) use [Future.wait] if it's more performant
 
   final List<Transaction> transactions =
       await ObjectBox().box<Transaction>().getAllAsync();

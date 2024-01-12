@@ -8,7 +8,9 @@ import 'package:flow/sync/exception.dart';
 
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/sync/model/model_v1.dart';
-import 'package:flow/utils.dart';
+import 'package:flow/utils/utils.dart';
+
+import 'package:path/path.dart' as path;
 
 enum ImportMode {
   /// Erases current data, then writes the imported data
@@ -30,13 +32,24 @@ enum ImportMode {
 /// 1. [Category] (no dependency)
 /// 2. [Account] (no dependency)
 /// 3. [Transaction] (Account, Category)
-Future<ImportV1> importBackupV1(
-    [ImportMode mode = ImportMode.eraseAndWrite]) async {
+Future<ImportV1> importBackupV1({
+  ImportMode mode = ImportMode.eraseAndWrite,
+}) async {
   final file = await pickFile();
 
   if (file == null) {
     throw const ImportException(
       "No file was picked to proceed with the import",
+      l10nKey: "error.input.noFilePicked",
+    );
+  } else if (path.extension(file.path).toLowerCase() != ".json") {
+    // We also might want to recover data from ObjectBox file, but not sure
+    // how user friendly it'd be... Something to consider in the future.
+
+    throw const ImportException(
+      "No file was picked to proceed with the import",
+      l10nKey: "error.input.wrongFileType",
+      l10nArgs: "JSON",
     );
   }
 
@@ -45,7 +58,7 @@ Future<ImportV1> importBackupV1(
       );
 
   return switch (parsed["versionCode"]) {
-    1 => ImportV1(SyncModelV1.fromJson(parsed), mode: mode)..execute(),
+    1 => ImportV1(SyncModelV1.fromJson(parsed), mode: mode),
     _ => throw UnimplementedError()
   };
 }
