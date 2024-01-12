@@ -43,7 +43,6 @@ class LocalPreferences {
     localeOverride = LocaleSettingsEntry(
       key: "flow.localeOverride",
       preferences: _prefs,
-      initialValue: const Locale("en", "US"),
     );
   }
 
