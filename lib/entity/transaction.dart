@@ -98,6 +98,11 @@ class Transaction implements EntityBase {
   void setAccount(Account? newAccount) {
     // TODO (sadespresso): When changing currencies, we can either ask
     // the user to re-enter the amount, or do an automatic conversion
+
+    if (currency != newAccount?.currency) {
+      throw Exception("Cannot convert between currencies");
+    }
+
     account.target = newAccount;
     currency = newAccount?.currency ?? currency;
   }
