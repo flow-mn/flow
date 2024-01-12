@@ -28,9 +28,9 @@ class NavbarButton extends StatelessWidget {
         fill: (isActive && index != 0) ? 1 : 0,
         color: context.colorScheme.onSecondary,
       ),
-      child: Tooltip(
-        message: tooltip,
-        child: Expanded(
+      child: Expanded(
+        child: Tooltip(
+          message: tooltip,
           child: Material(
             type: MaterialType.transparency,
             color: context.colorScheme.onSecondary,
