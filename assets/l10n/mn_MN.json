@@ -7,6 +7,7 @@
     "account.excludeFromTotalBalance.description": "Энэ сонголтыг идэвхжүүлбэл энэ дансны үлдэгдэл нийт үлдэгдэлд бодогдохгүй. Хадгаламж, хувийн бус данс гэх мэт зүйлсд тохиромжтой.",
     "account.updateBalance": "Үлдэгдэл шинэчлэх",
     "account.updateBalance.transactionName": "Зөрүү арилгах",
+    "account.edit.selectCurrency": "Валют сонгох",
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",
     "transaction.edit": "Гүйлгээ",
@@ -56,8 +57,8 @@
     "enum.CSVHeadersV1@extra": "Нэмэлт(JSON)",
     "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",
     "error.input.duplicate.accountName": "Дансны нэр давхцаж байна",
-    "error.sync.noFilePicked": "Та файл сонгоогүй байна",
-    "error.sync.wrongFile": "Зөвхөн JSON файл сонгох боломжтой",
+    "error.input.noFilePicked": "Та файл сонгоогүй байна",
+    "error.input.wrongFileType": "Зөвхөн {} төрлийн файл сонгох боломжтой",
     "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"
 }

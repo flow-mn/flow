@@ -63,7 +63,7 @@ class FlowLocalizations {
     final Map<String, Map<String, String>> languages = {};
     for (Locale locale in supportedLanguages) {
       String value =
-          await rootBundle.loadString('assets/lang/${locale.code}.json');
+          await rootBundle.loadString('assets/l10n/${locale.code}.json');
 
       languages[locale.code] = (json.decode(value) as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, value.toString()));

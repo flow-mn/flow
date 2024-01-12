@@ -6,6 +6,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,10 @@ final int buildNumber = int.parse(appVersion.split("+").last);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (kDebugMode) {
+    FlowLocalizations.printMissingKeys();
+  }
 
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
