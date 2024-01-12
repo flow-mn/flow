@@ -8,6 +8,7 @@ import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
 import 'package:flow/routes/new_transaction/select_account_sheet.dart';
 import 'package:flow/routes/new_transaction/select_category_sheet.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -35,6 +36,7 @@ class _TransactionPageState extends State<TransactionPage> {
   late final Transaction? _currentlyEditing;
 
   final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _selectAccountFocusNode = FocusNode();
 
   dynamic error;
 
@@ -174,6 +176,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       trailing: _selectedAccount == null
                           ? const Icon(Symbols.chevron_right)
                           : null,
+                      focusNode: _selectAccountFocusNode,
                     ),
                     const SizedBox(height: 16.0),
                     Align(
@@ -330,7 +333,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void save() {
-    if (_selectedAccount == null) return; // TODO show error
+    if (_selectedAccount == null) {
+      context.showErrorToast(
+        error: "error.transaction.missingAccount".t(context),
+      );
+      _selectAccountFocusNode.requestFocus();
+      return;
+    }
 
     final String trimmed = _titleTextController.text.trim();
     final String formattedTitle = trimmed.isNotEmpty

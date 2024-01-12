@@ -5,6 +5,7 @@ import 'package:flow/widgets/plated_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class TransactionListTile extends StatelessWidget {
   final Transaction transaction;
@@ -42,11 +43,13 @@ class TransactionListTile extends StatelessWidget {
                         ? "transaction.untitledTransaction".t(context)
                         : transaction.title!,
                   ),
-                  if (transaction.category.hasValue)
-                    Text(
-                      transaction.category.target!.name,
-                      style: context.textTheme.labelSmall?.semi(context),
-                    ),
+                  Text(
+                    [
+                      transaction.account.target?.name,
+                      transaction.transactionDate.format(payload: "LT"),
+                    ].join(" • "),
+                    style: context.textTheme.labelSmall,
+                  ),
                 ],
               ),
             ),

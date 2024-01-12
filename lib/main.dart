@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
+import 'package:oktoast/oktoast.dart';
 
 const appVersion = "0.0.1+1";
 
@@ -59,21 +60,26 @@ class FlowState extends State<Flow> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      onGenerateTitle: (context) => "appName".t(context),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        if (Platform.isIOS) GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        FlowLocalizations.delegate,
-      ],
-      supportedLocales: FlowLocalizations.supportedLanguages,
-      locale: LocalPreferences().localeOverride.value,
-      routerConfig: router,
-      theme: lightTheme,
-      // darkTheme: , // TODO add darkTheme
-      themeMode: _themeMode,
-      debugShowCheckedModeBanner: false,
+    return OKToast(
+      backgroundColor: lightTheme.colorScheme.background,
+      textStyle: lightTheme.textTheme.bodyMedium,
+      child: MaterialApp.router(
+        onGenerateTitle: (context) => "appName".t(context),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          if (Platform.isIOS) GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          FlowLocalizations.delegate,
+        ],
+
+        supportedLocales: FlowLocalizations.supportedLanguages,
+        locale: LocalPreferences().localeOverride.value,
+        routerConfig: router,
+        theme: lightTheme,
+        // darkTheme: , // TODO add darkTheme
+        themeMode: _themeMode,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 

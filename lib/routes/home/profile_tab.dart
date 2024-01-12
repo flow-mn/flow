@@ -1,9 +1,11 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export.dart';
+import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/utils.dart';
+import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,12 +99,12 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
             ListTile(
               title: const Text("Export CSV"),
-              onTap: () => export(true),
+              onTap: () => export(mode: ExportMode.csv),
               leading: const Icon(Symbols.export_notes_rounded),
             ),
             ListTile(
               title: const Text("Import from backup"),
-              onTap: () => importBackupV1(),
+              onTap: () => import(),
               leading: const Icon(Symbols.import_export_rounded),
             ),
           ],
@@ -162,6 +164,22 @@ class _ProfileTabState extends State<ProfileTab> {
 
       if (mounted) {
         setState(() {});
+      }
+    }
+  }
+
+  void import() async {
+    try {
+      await importBackupV1();
+      if (context.mounted) {
+        context.showToast(
+          text: "sync.import.successful".t(context),
+          error: true,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        context.showToast(text: e.toString(), error: true);
       }
     }
   }

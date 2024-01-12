@@ -1,6 +1,7 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/account_card.dart';
 import 'package:flow/widgets/account_card_skeleton.dart';
 import 'package:flow/widgets/spinner.dart';
@@ -30,11 +31,23 @@ class _AccountsTabState extends State<AccountsTab> {
           final accounts = snapshot.data!.find();
 
           return switch (accounts.length) {
-            0 => const Center(
-                  child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text("No accounts huh"),
-              )),
+            0 => InkWell(
+                onTap: () => context.push("/account/new"),
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("No accounts huh"),
+                      Text(
+                        "Click anywhere to create an account",
+                        style: context.textTheme.bodySmall?.semi(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             _ => SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

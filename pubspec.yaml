@@ -29,6 +29,7 @@ dependencies:
   moment_dart: ^1.1.0
   objectbox: ^2.4.0
   objectbox_flutter_libs: ^2.3.1
+  oktoast: ^3.4.0
   path: ^1.8.3
   path_provider: ^2.1.1
   salomon_bottom_bar: ^3.3.2
