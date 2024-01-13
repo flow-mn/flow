@@ -8,7 +8,7 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 
-Future<void> populateDummyData() async {
+Future<void> populateDummyData([int entryCount = 100]) async {
   final firstAccount = ObjectBox()
       .box<Account>()
       .query(Account_.name.equals("Alpha"))
@@ -21,7 +21,7 @@ Future<void> populateDummyData() async {
   }
 
   await _createAndPutDebugData();
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < entryCount; i++) {
     await addDummyData();
   }
 }
