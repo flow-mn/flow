@@ -8,12 +8,15 @@ import 'package:flow/entity/icon/parser.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 
 class ObjectBox {
   static ObjectBox? _instance;
+
+  static late final String? subdirectory;
+  static late final String? customDirectory;
 
   /// The Store of this app.
   late final Store store;
@@ -33,12 +36,26 @@ class ObjectBox {
   ObjectBox._internal(this.store);
 
   static Future<String> _databaseDirectory() async {
+    if (customDirectory != null) {
+      return path.join(customDirectory!, subdirectory);
+    }
+
     final appDataDir = await getApplicationSupportDirectory();
 
-    return p.join(appDataDir.path, kDebugMode ? "__debug" : null);
+    return path.join(appDataDir.path, subdirectory);
   }
 
-  static Future<ObjectBox> initialize() async {
+  static Future<ObjectBox> initialize({
+    String? customDirectory,
+    String? subdirectory,
+  }) async {
+    if (subdirectory == null && kDebugMode) {
+      subdirectory = "__debug";
+    }
+
+    ObjectBox.subdirectory = subdirectory;
+    ObjectBox.customDirectory = customDirectory;
+
     final store = await openStore(directory: await _databaseDirectory());
 
     log("Admin.isAvailable(): ${Admin.isAvailable()}");
@@ -290,6 +307,5 @@ class ObjectBox {
     await Directory(dir).delete(recursive: true);
 
     _instance = null;
-    await ObjectBox.initialize();
   }
 }
