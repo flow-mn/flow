@@ -1,4 +1,5 @@
 import 'package:flow/theme/flow_colors.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 export "helpers.dart";
@@ -6,14 +7,20 @@ export "helpers.dart";
 part "text_theme.dart";
 part "color_scheme.dart";
 
+const _fontFamily = "Shantell Sans";
+
+// final _fontFamily = isAprilFools ? "Shantell Sans" : "Poppins";
+
+const _fontFamilyFallback = [
+  "Roboto",
+  "SF Pro Display",
+  "Arial",
+];
+
 final lightTheme = ThemeData(
   useMaterial3: true,
-  fontFamily: "Poppins",
-  fontFamilyFallback: const [
-    "Roboto",
-    "SF Pro Display",
-    "Arial",
-  ],
+  fontFamily: _fontFamily,
+  fontFamilyFallback: _fontFamilyFallback,
   visualDensity: VisualDensity.adaptivePlatformDensity,
   brightness: Brightness.light,
   colorScheme: _colorSchemeLight,
@@ -39,12 +46,8 @@ final lightTheme = ThemeData(
   ),
   textTheme: _textTheme
       .apply(
-        fontFamily: "Poppins",
-        fontFamilyFallback: const [
-          "Roboto",
-          "SF Pro Display",
-          "Arial",
-        ],
+        fontFamily: _fontFamily,
+        fontFamilyFallback: _fontFamilyFallback,
         bodyColor: _colorSchemeLight.onBackground,
         displayColor: _colorSchemeLight.onSurface,
         decorationColor: _colorSchemeLight.onBackground,
