@@ -18,8 +18,7 @@ void main() {
         subdirectory: "main",
       );
 
-      final [accMNT, accUSD, accMNT2] =
-          await ObjectBox().box<Account>().putAndGetManyAsync([
+      await ObjectBox().box<Account>().putManyAsync([
         Account(
           name: "Tugrik",
           currency: "MNT",
@@ -36,6 +35,12 @@ void main() {
           iconCode: '@@@@@irrelevant_here@@@@@',
         ),
       ]);
+
+      final Account accMNT = (await ObjectBox()
+          .box<Account>()
+          .query(Account_.name.equals("Tugrik"))
+          .build()
+          .findFirstAsync())!;
 
       accMNT.createTransaction(amount: 420.69, title: "t1");
     });
