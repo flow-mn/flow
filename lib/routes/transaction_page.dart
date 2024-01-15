@@ -314,6 +314,25 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {
       _transactionDate = result ?? _transactionDate;
     });
+
+    if (!mounted || result == null) return;
+
+    final timeResult = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_transactionDate),
+    );
+
+    if (timeResult == null) return;
+
+    setState(() {
+      _transactionDate = _transactionDate.copyWith(
+        hour: timeResult.hour,
+        minute: timeResult.minute,
+        second: 0,
+        microsecond: 0,
+        millisecond: 0,
+      );
+    });
   }
 
   void updateTransaction({required String formattedTitle}) async {

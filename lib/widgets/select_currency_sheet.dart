@@ -42,6 +42,14 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
     final queryResults = _fuzzy.search(_query, 15);
 
+    // Artificially deprioritize North Korean Won due to its unpopularity
+    final kpwIndex =
+        queryResults.indexWhere((element) => element.item.code == "KPW");
+    if (kpwIndex > -1) {
+      final kpw = queryResults.removeAt(kpwIndex);
+      queryResults.add(kpw);
+    }
+
     return BottomSheetFrame(
       child: Column(
         children: [

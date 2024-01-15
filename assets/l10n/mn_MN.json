@@ -1,5 +1,11 @@
 {
     "appName": "Flow",
+    "general.delete": "Устгах",
+    "general.delete.permanentWarning": "Энэ үйлдлийг буцаах боломжгүй",
+    "general.delete.confirmName": "{name}-г устгах уу?",
+    "general.areYouSure": "Итгэлтэй байна уу?",
+    "general.confirm": "Батлах",
+    "general.cancel": "Цуцлах",
     "account": "Данс",
     "account.name": "Дансны нэр",
     "account.balance": "Үлдэгдэл",

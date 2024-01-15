@@ -72,7 +72,8 @@ class FlowState extends State<Flow> {
         onGenerateTitle: (context) => "appName".t(context),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
-          if (Platform.isIOS) GlobalCupertinoLocalizations.delegate,
+          if (kDebugMode || Platform.isIOS)
+            GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           FlowLocalizations.delegate,
         ],

@@ -29,3 +29,8 @@ flutter run
 * Windows*
 
 \* UI support for desktop is not planned
+
+## Testing
+
+If you plan to run tests on your machine, ensure you've installed ObjectBox
+dynamic libraries. See more on <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
