@@ -7,6 +7,7 @@ import 'package:flow/routes/home/accounts_tab.dart';
 import 'package:flow/routes/home/home_tab.dart';
 import 'package:flow/routes/home/profile_tab.dart';
 import 'package:flow/routes/home/stats_tab.dart';
+import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/home/navbar.dart';
 import 'package:flow/widgets/home/navbar/new_transaction_button.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
+import 'package:pie_menu/pie_menu.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -56,38 +58,42 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyN, control: true):
-            _newTransactionPage,
+        const SingleActivator(LogicalKeyboardKey.keyN, control: true): () =>
+            _newTransactionPage(null),
       },
       child: Focus(
         autofocus: true,
-        child: BottomBar(
-          width: double.infinity,
-          offset: 16.0,
-          barColor: Colors.transparent,
-          borderRadius: BorderRadius.circular(32.0),
-          body: (context, scrollControler) => Scaffold(
-            body: SafeArea(
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  HomeTab(),
-                  StatsTab(),
-                  AccountsTab(),
-                  ProfileTab(),
-                ],
+        child: PieCanvas(
+          theme: pieTheme,
+          child: BottomBar(
+            width: double.infinity,
+            offset: 16.0,
+            barColor: const Color.fromARGB(0, 86, 75, 75),
+            borderRadius: BorderRadius.circular(32.0),
+            body: (context, scrollControler) => Scaffold(
+              body: SafeArea(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: const [
+                    HomeTab(),
+                    StatsTab(),
+                    AccountsTab(),
+                    ProfileTab(),
+                  ],
+                ),
               ),
             ),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Navbar(
-                onTap: (i) => _navigateTo(i),
-                activeIndex: _currentIndex,
-              ),
-              NewTransactionButton(onActionTap: () => _newTransactionPage())
-            ],
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Navbar(
+                  onTap: (i) => _navigateTo(i),
+                  activeIndex: _currentIndex,
+                ),
+                NewTransactionButton(
+                    onActionTap: (type) => _newTransactionPage(type))
+              ],
+            ),
           ),
         ),
       ),
@@ -120,12 +126,14 @@ class _HomePageState extends State<HomePage>
     _tabController.animateTo(index);
   }
 
-  void _newTransactionPage() {
+  void _newTransactionPage(TransactionType? type) {
     if (ObjectBox().box<Account>().count(limit: 1) == 0) {
       context.push("/account/new");
       return;
     }
 
-    context.push("/transaction/new");
+    type ??= TransactionType.expense;
+
+    context.push("/transaction/new?type=${type.name}");
   }
 }

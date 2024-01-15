@@ -149,6 +149,22 @@ extension TransactionOperations on List<Transaction> {
 }
 
 @JsonEnum(valueField: "value")
+enum TransactionType implements LocalizedEnum {
+  income("income"),
+  expense("expense"),
+  transfer("transfer");
+
+  final String value;
+
+  const TransactionType(this.value);
+
+  @override
+  String get localizationEnumValue => name;
+  @override
+  String get localizationEnumName => "TransactionType";
+}
+
+@JsonEnum(valueField: "value")
 enum TransactionSubtype implements LocalizedEnum {
   transactionFee("transactionFee"),
   givenLoan("loan.given"),
