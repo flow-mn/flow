@@ -4,7 +4,7 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/account_card.dart';
 import 'package:flow/widgets/account_card_skeleton.dart';
-import 'package:flow/widgets/spinner.dart';
+import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

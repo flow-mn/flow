@@ -4,7 +4,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/surface.dart';
+import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

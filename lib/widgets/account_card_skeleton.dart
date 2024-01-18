@@ -1,5 +1,5 @@
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/surface.dart';
+import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 

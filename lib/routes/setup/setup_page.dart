@@ -1,3 +1,4 @@
+import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
 
 class SetupPage extends StatefulWidget {
@@ -11,7 +12,15 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SafeArea(child: Placeholder()),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 16.0),
+            Spinner.center(),
+            SizedBox(height: 16.0),
+          ],
+        ),
+      ),
     );
   }
 }

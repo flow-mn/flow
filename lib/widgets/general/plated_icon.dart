@@ -1,5 +1,5 @@
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/surface.dart';
+import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/widgets.dart';
 
 class PlatedIcon extends StatelessWidget {

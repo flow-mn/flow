@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/bottom_sheet_frame.dart';
+import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flow/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,7 +1,7 @@
 import 'package:flow/data/currencies.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/bottom_sheet_frame.dart';
+import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:go_router/go_router.dart';
