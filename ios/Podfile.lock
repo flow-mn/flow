@@ -1,3 +1,111 @@
-PODFILE CHECKSUM: 4b9280fcf29c3b987688ad1e47d7a9efb02581c6
+PODS:
+  - DKImagePickerController/Core (4.3.4):
+    - DKImagePickerController/ImageDataManager
+    - DKImagePickerController/Resource
+  - DKImagePickerController/ImageDataManager (4.3.4)
+  - DKImagePickerController/PhotoGallery (4.3.4):
+    - DKImagePickerController/Core
+    - DKPhotoGallery
+  - DKImagePickerController/Resource (4.3.4)
+  - DKPhotoGallery (0.0.17):
+    - DKPhotoGallery/Core (= 0.0.17)
+    - DKPhotoGallery/Model (= 0.0.17)
+    - DKPhotoGallery/Preview (= 0.0.17)
+    - DKPhotoGallery/Resource (= 0.0.17)
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Preview
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Resource
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - file_picker (0.0.1):
+    - DKImagePickerController/PhotoGallery
+    - Flutter
+  - file_saver (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - ObjectBox (1.9.1)
+  - objectbox_flutter_libs (0.0.1):
+    - Flutter
+    - ObjectBox (= 1.9.1)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - SDWebImage (5.18.10):
+    - SDWebImage/Core (= 5.18.10)
+  - SDWebImage/Core (5.18.10)
+  - share_plus (0.0.1):
+    - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - SwiftyGif (5.4.4)
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
-COCOAPODS: 1.14.2
+DEPENDENCIES:
+  - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - file_saver (from `.symlinks/plugins/file_saver/ios`)
+  - Flutter (from `Flutter`)
+  - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+
+SPEC REPOS:
+  trunk:
+    - DKImagePickerController
+    - DKPhotoGallery
+    - ObjectBox
+    - SDWebImage
+    - SwiftyGif
+
+EXTERNAL SOURCES:
+  file_picker:
+    :path: ".symlinks/plugins/file_picker/ios"
+  file_saver:
+    :path: ".symlinks/plugins/file_saver/ios"
+  Flutter:
+    :path: Flutter
+  objectbox_flutter_libs:
+    :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
+
+SPEC CHECKSUMS:
+  DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
+  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
+  file_picker: 15fd9539e4eb735dc54bae8c0534a7a9511a03de
+  file_saver: 503e386464dbe118f630e17b4c2e1190fa0cf808
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  ObjectBox: 178bbc475aea8183870993c71e7341f3c95c7b8c
+  objectbox_flutter_libs: 612b49aaaef0974006a854d1abe3c687be1efefd
+  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  SDWebImage: fc8f2d48bbfd72ef39d70e981bd24a3f3be53fec
+  share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
+  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
+  SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
+  url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
+
+PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+
+COCOAPODS: 1.13.0
