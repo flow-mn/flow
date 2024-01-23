@@ -16,7 +16,7 @@ class ProfileCard extends StatelessWidget {
       children: [
         ClipOval(
           child: Container(
-            color: context.colorScheme.secondary,
+            color: context.colorScheme.primary,
             child: Image.network(
               "https://github.com/sadespresso.png",
               width: size,
