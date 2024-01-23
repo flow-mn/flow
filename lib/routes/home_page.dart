@@ -2,15 +2,16 @@ import 'dart:math';
 
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/main.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/routes/home/accounts_tab.dart';
 import 'package:flow/routes/home/home_tab.dart';
 import 'package:flow/routes/home/profile_tab.dart';
 import 'package:flow/routes/home/stats_tab.dart';
-import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/home/navbar.dart';
 import 'package:flow/widgets/home/navbar/new_transaction_button.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Flow;
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,6 +47,13 @@ class _HomePageState extends State<HomePage>
         _currentIndex = _tabController.index;
       });
     });
+
+    Future.delayed(const Duration(milliseconds: 200)).then((_) {
+      if (!LocalPreferences().completedInitialSetup.get()) {
+        // context.pushReplacement("/setup");
+        // LocalPreferences().completedInitialSetup.set(true);
+      }
+    });
   }
 
   @override
@@ -64,7 +72,7 @@ class _HomePageState extends State<HomePage>
       child: Focus(
         autofocus: true,
         child: PieCanvas(
-          theme: pieTheme,
+          theme: Flow.of(context).pieTheme,
           child: BottomBar(
             width: double.infinity,
             offset: 16.0,
@@ -91,7 +99,8 @@ class _HomePageState extends State<HomePage>
                   activeIndex: _currentIndex,
                 ),
                 NewTransactionButton(
-                    onActionTap: (type) => _newTransactionPage(type))
+                  onActionTap: (type) => _newTransactionPage(type),
+                )
               ],
             ),
           ),
