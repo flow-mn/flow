@@ -94,8 +94,8 @@ final darkTheme = ThemeData(
     ),
     NavbarTheme(
       backgroundColor: _dark.secondary,
-      activeIconColor: _dark.onSecondary,
-      inactiveIconOpacity: 0.4,
+      activeIconColor: _dark.primary,
+      inactiveIconOpacity: 0.5,
       transactionButtonBackgroundColor: _dark.primary,
       transactionButtonForegroundColor: _dark.onPrimary,
     ),

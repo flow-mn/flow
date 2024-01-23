@@ -17,7 +17,7 @@ class NewTransactionButton extends StatelessWidget {
     final NavbarTheme navbarTheme = Theme.of(context).extension<NavbarTheme>()!;
 
     return PieMenu(
-      theme: pieTheme.copyWith(
+      theme: pieThemeLight.copyWith(
         customAngle: 90.0,
         customAngleDiff: 48.0,
         radius: 96.0,

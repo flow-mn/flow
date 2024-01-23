@@ -1,15 +1,36 @@
 part of "theme.dart";
 
-PieTheme pieTheme = PieTheme(
+PieTheme pieThemeLight = PieTheme(
   buttonTheme: PieButtonTheme(
-    backgroundColor: _colorSchemeLight.secondary,
-    iconColor: _colorSchemeLight.onSurface,
+    backgroundColor: _light.secondary,
+    iconColor: _light.onSurface,
   ),
   buttonThemeHovered: PieButtonTheme(
-    backgroundColor: _colorSchemeLight.secondary,
-    iconColor: _colorSchemeLight.primary,
+    backgroundColor: _light.secondary,
+    iconColor: _light.primary,
   ),
-  overlayColor: _colorSchemeLight.secondary.withAlpha(0x80),
-  pointerColor: _colorSchemeLight.primary,
-  pointerSize: 16.0,
+  overlayColor: _light.secondary.withAlpha(0x80),
+  pointerColor: kTransparent,
+  angleOffset: 0.0,
+  pointerSize: 2.0,
+  tooltipTextStyle: lightTheme.textTheme.displaySmall,
+  rightClickShowsMenu: true,
+  leftClickShowsMenu: false,
+);
+PieTheme pieThemeDark = PieTheme(
+  buttonTheme: PieButtonTheme(
+    backgroundColor: _dark.secondary,
+    iconColor: _dark.onSurface,
+  ),
+  buttonThemeHovered: PieButtonTheme(
+    backgroundColor: _dark.secondary,
+    iconColor: _dark.primary,
+  ),
+  overlayColor: _dark.secondary.withAlpha(0x80),
+  pointerColor: kTransparent,
+  angleOffset: 0.0,
+  pointerSize: 2.0,
+  tooltipTextStyle: lightTheme.textTheme.displaySmall,
+  rightClickShowsMenu: true,
+  leftClickShowsMenu: false,
 );

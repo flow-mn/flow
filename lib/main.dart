@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:pie_menu/pie_menu.dart';
 
 const appVersion = "0.0.1+1";
 
@@ -45,6 +46,14 @@ class FlowState extends State<Flow> {
   Locale _locale = FlowLocalizations.supportedLanguages.first;
   ThemeMode _themeMode = ThemeMode.system;
 
+  PieTheme get pieTheme {
+    final bool isDark = (_themeMode == ThemeMode.system
+        ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
+        : (_themeMode == ThemeMode.dark));
+
+    return isDark ? pieThemeDark : pieThemeLight;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,12 +86,11 @@ class FlowState extends State<Flow> {
           GlobalWidgetsLocalizations.delegate,
           FlowLocalizations.delegate,
         ],
-
         supportedLocales: FlowLocalizations.supportedLanguages,
         locale: LocalPreferences().localeOverride.value,
         routerConfig: router,
         theme: lightTheme,
-        // darkTheme: , // TODO add darkTheme
+        darkTheme: darkTheme,
         themeMode: _themeMode,
         debugShowCheckedModeBanner: false,
       ),
