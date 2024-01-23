@@ -1,5 +1,8 @@
 import 'package:flow/routes/account_page.dart';
+import 'package:flow/routes/categories_page.dart';
+import 'package:flow/routes/category_page.dart';
 import 'package:flow/routes/home_page.dart';
+import 'package:flow/routes/setup/setup_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
 import 'package:go_router/go_router.dart';
@@ -31,8 +34,26 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/category/new',
+      builder: (context, state) => const CategoryPage.create(),
+    ),
+    GoRoute(
+      path: '/category/:id',
+      builder: (context, state) => CategoryPage.edit(
+        categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      ),
+    ),
+    GoRoute(
+      path: '/categories',
+      builder: (context, state) => const CategoriesPage(),
+    ),
+    GoRoute(
       path: '/preferences',
       builder: (context, state) => const PreferencesPage(),
+    ),
+    GoRoute(
+      path: '/setup',
+      builder: (context, state) => const SetupPage(),
     ),
   ],
 );
