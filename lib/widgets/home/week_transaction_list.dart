@@ -1,4 +1,5 @@
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/objectbox.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +42,9 @@ class WeekTransactionList extends StatelessWidget {
         (Transaction transaction) => TransactionListTile(
             transaction: transaction,
             padding: itemPadding,
+            dismissibleKey: ValueKey(transaction.id),
+            deleteFn: () =>
+                ObjectBox().box<Transaction>().remove(transaction.id),
           ),
         (_) => Container(),
       },

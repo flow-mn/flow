@@ -131,8 +131,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         controller: _titleTextController,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          hintText:
-                              "transaction.untitledTransaction".t(context),
+                          hintText: "transaction.fallbackTitle".t(context),
                         ),
                         textInputAction: TextInputAction.next,
                         focusNode: _titleFocusNode,
@@ -361,9 +360,8 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     final String trimmed = _titleTextController.text.trim();
-    final String formattedTitle = trimmed.isNotEmpty
-        ? trimmed
-        : "transaction.untitledTransaction".t(context);
+    final String formattedTitle =
+        trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
 
     if (_currentlyEditing != null) {
       return updateTransaction(formattedTitle: formattedTitle);

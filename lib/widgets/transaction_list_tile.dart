@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/plated_icon.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -11,17 +16,23 @@ class TransactionListTile extends StatelessWidget {
   final Transaction transaction;
   final EdgeInsets padding;
 
+  final VoidCallback deleteFn;
+
+  final Key? dismissibleKey;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
+    required this.deleteFn,
     this.padding = EdgeInsets.zero,
+    this.dismissibleKey,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool missingTitle = transaction.title == null;
 
-    return InkWell(
+    final listTile = InkWell(
       onTap: () => context.push("/transaction/${transaction.id}"),
       child: Padding(
         padding: padding,
@@ -40,7 +51,7 @@ class TransactionListTile extends StatelessWidget {
                 children: [
                   Text(
                     missingTitle
-                        ? "transaction.untitledTransaction".t(context)
+                        ? "transaction.fallbackTitle".t(context)
                         : transaction.title!,
                   ),
                   Text(
@@ -58,6 +69,22 @@ class TransactionListTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+
+    return Slidable(
+      key: dismissibleKey,
+      enabled: kDebugMode || Platform.isIOS,
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (context) => deleteFn(),
+            icon: CupertinoIcons.delete,
+            backgroundColor: CupertinoColors.destructiveRed,
+          )
+        ],
+      ),
+      child: listTile,
     );
   }
 
