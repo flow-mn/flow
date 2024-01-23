@@ -1,5 +1,6 @@
-import 'package:flow/theme/theme.dart';
+import 'package:flow/theme/navbar_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class NavbarButton extends StatelessWidget {
   final String tooltip;
@@ -23,35 +24,32 @@ class NavbarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconTheme.merge(
-      data: IconThemeData(
-        fill: (isActive && index != 0) ? 1 : 0,
-        color: context.colorScheme.onSecondary,
-      ),
-      child: Expanded(
-        child: Tooltip(
-          message: tooltip,
-          child: Material(
-            type: MaterialType.transparency,
-            color: context.colorScheme.onSecondary,
-            shape: const StadiumBorder(),
-            child: InkWell(
-              customBorder: const StadiumBorder(),
-              onTap: () => onTap(index),
-              // splashColor: Colors.red,
-              // splashColor: Theme.of(context).splashColor,
-              // focusColor: Colors.blue,
-              focusColor: Theme.of(context).focusColor,
-              hoverColor: Theme.of(context).hoverColor,
-              // highlightColor: Colors.blue,
-              // highlightColor: Theme.of(context).highlightColor,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: AnimatedOpacity(
-                  opacity: isActive ? 1 : 0.5,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  child: Icon(icon),
+    final NavbarTheme navbarTheme = Theme.of(context).extension<NavbarTheme>()!;
+
+    return Expanded(
+      child: Tooltip(
+        message: tooltip,
+        child: Material(
+          type: MaterialType.transparency,
+          color: navbarTheme.backgroundColor,
+          shape: const StadiumBorder(),
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: () => onTap(index),
+            focusColor: Theme.of(context).focusColor,
+            hoverColor: Theme.of(context).hoverColor,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: AnimatedOpacity(
+                opacity: isActive ? 1 : navbarTheme.inactiveIconOpacity,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: Icon(
+                  icon,
+                  color: navbarTheme.activeIconColor,
+                  fill:
+                      (isActive && icon != Symbols.circle_rounded) ? 1.0 : 0.0,
+                  weight: isActive ? 600.0 : 400.0,
                 ),
               ),
             ),

@@ -1,5 +1,5 @@
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/theme.dart';
+import 'package:flow/theme/navbar_theme.dart';
 import 'package:flow/widgets/home/navbar/navbar_button.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -17,11 +17,13 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NavbarTheme navbarTheme = Theme.of(context).extension<NavbarTheme>()!;
+
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(999.9),
-        color: context.colorScheme.secondary,
+        color: navbarTheme.backgroundColor,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,

@@ -1,5 +1,5 @@
 import 'package:flow/theme/flow_colors.dart';
-import 'package:flow/utils/utils.dart';
+import 'package:flow/theme/navbar_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_menu/pie_menu.dart';
 
@@ -11,7 +11,9 @@ part "color_scheme.dart";
 
 // const _fontFamily = "Shantell Sans";
 
-final _fontFamily = isAprilFools ? "Shantell Sans" : "Poppins";
+const _fontFamily = "Poppins";
+
+const kTransparent = Color(0x00000000);
 
 const _fontFamilyFallback = [
   "Roboto",
@@ -25,45 +27,107 @@ final lightTheme = ThemeData(
   fontFamilyFallback: _fontFamilyFallback,
   visualDensity: VisualDensity.adaptivePlatformDensity,
   brightness: Brightness.light,
-  colorScheme: _colorSchemeLight,
+  colorScheme: _light,
   cardTheme: CardTheme(
-    color: _colorSchemeLight.surface,
+    color: _light.surface,
   ),
   extensions: [
     FlowColors(
       income: const Color(0xFF32CC70),
-      expense: _colorSchemeLight.error,
+      expense: _light.error,
       semi: const Color(0xFF6A666D),
+    ),
+    NavbarTheme(
+      backgroundColor: _light.secondary,
+      activeIconColor: _light.onSecondary,
+      inactiveIconOpacity: 0.5,
+      transactionButtonBackgroundColor: _light.primary,
+      transactionButtonForegroundColor: _light.onPrimary,
     ),
   ],
   iconTheme: IconThemeData(
-    color: _colorSchemeLight.onBackground,
+    color: _light.onBackground,
     size: 24.0,
     fill: 1.0,
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    selectedItemColor: _colorSchemeLight.onSurface,
-    unselectedItemColor: _colorSchemeLight.onSurface.withAlpha(0x80),
-    backgroundColor: _colorSchemeLight.secondary,
+    selectedItemColor: _light.onSurface,
+    unselectedItemColor: _light.onSurface.withAlpha(0x80),
+    backgroundColor: _light.secondary,
   ),
   textTheme: _textTheme
       .apply(
         fontFamily: _fontFamily,
         fontFamilyFallback: _fontFamilyFallback,
-        bodyColor: _colorSchemeLight.onBackground,
-        displayColor: _colorSchemeLight.onSurface,
-        decorationColor: _colorSchemeLight.onBackground,
+        bodyColor: _light.onBackground,
+        displayColor: _light.onSurface,
+        decorationColor: _light.onBackground,
       )
       .copyWith(),
-  highlightColor: _colorSchemeLight.onBackground.withAlpha(0x16),
-  splashColor: _colorSchemeLight.onBackground.withAlpha(0x12),
+  highlightColor: _light.onBackground.withAlpha(0x16),
+  splashColor: _light.onBackground.withAlpha(0x12),
   listTileTheme: ListTileThemeData(
-    iconColor: _colorSchemeLight.primary,
-    selectedTileColor: _colorSchemeLight.secondary,
+    iconColor: _light.primary,
+    selectedTileColor: _light.secondary,
   ),
   textSelectionTheme: TextSelectionThemeData(
-    selectionColor: _colorSchemeLight.secondary,
-    cursorColor: _colorSchemeLight.primary,
-    selectionHandleColor: _colorSchemeLight.primary,
+    selectionColor: _light.secondary,
+    cursorColor: _light.primary,
+    selectionHandleColor: _light.primary,
+  ),
+);
+final darkTheme = ThemeData(
+  useMaterial3: true,
+  fontFamily: _fontFamily,
+  fontFamilyFallback: _fontFamilyFallback,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+  brightness: Brightness.dark,
+  colorScheme: _dark,
+  cardTheme: CardTheme(
+    color: _dark.surface,
+  ),
+  extensions: [
+    FlowColors(
+      income: const Color(0xFF32CC70),
+      expense: _dark.error,
+      semi: const Color(0xFF6A666D),
+    ),
+    NavbarTheme(
+      backgroundColor: _dark.secondary,
+      activeIconColor: _dark.onSecondary,
+      inactiveIconOpacity: 0.4,
+      transactionButtonBackgroundColor: _dark.primary,
+      transactionButtonForegroundColor: _dark.onPrimary,
+    ),
+  ],
+  iconTheme: IconThemeData(
+    color: _dark.onBackground,
+    size: 24.0,
+    fill: 1.0,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    selectedItemColor: _dark.onSurface,
+    unselectedItemColor: _dark.onSurface.withAlpha(0x80),
+    backgroundColor: _dark.secondary,
+  ),
+  textTheme: _textTheme
+      .apply(
+        fontFamily: _fontFamily,
+        fontFamilyFallback: _fontFamilyFallback,
+        bodyColor: _dark.onBackground,
+        displayColor: _dark.onSurface,
+        decorationColor: _dark.onBackground,
+      )
+      .copyWith(),
+  highlightColor: _dark.onBackground.withAlpha(0x16),
+  splashColor: _dark.onBackground.withAlpha(0x12),
+  listTileTheme: ListTileThemeData(
+    iconColor: _dark.primary,
+    selectedTileColor: _dark.secondary,
+  ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: _dark.secondary,
+    cursorColor: _dark.primary,
+    selectionHandleColor: _dark.primary,
   ),
 );
