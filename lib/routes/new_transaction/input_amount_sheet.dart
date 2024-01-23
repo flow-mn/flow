@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/toast.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flow/widgets/numpad.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ class InputAmountSheet extends StatefulWidget {
 
 class _InputAmountSheetState extends State<InputAmountSheet>
     with SingleTickerProviderStateMixin {
+  final FocusNode _amountSelectionAreaFocusNode = FocusNode();
+
   late AnimationController _amountTextAnimationController;
 
   late Animation<double> _amountTextScaleAnimation;
@@ -89,12 +92,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     final initialAmount = (widget.initialAmount ?? 0).abs();
     _resetOnNextInput = initialAmount != 0;
 
-    _wholePart = initialAmount.truncate();
-    _decimalPart = ((initialAmount - initialAmount.truncate()) *
-            math.pow(10, _numberOfDecimals))
-        .round();
-    _inputtingDecimal = _decimalPart.abs() != 0;
-    _negate(widget.initialAmount?.isNegative);
+    _updateAmountFromNumber(widget.initialAmount ?? 0.0);
   }
 
   @override
@@ -138,6 +136,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
             () => _reset(),
         const SingleActivator(LogicalKeyboardKey.keyC, control: true): () =>
             _copy(),
+        const SingleActivator(LogicalKeyboardKey.keyV, control: true): () =>
+            _paste(),
       },
       child: Focus(
         autofocus: true,
@@ -150,6 +150,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
               children: [
                 const SizedBox(height: 16.0),
                 SelectionArea(
+                  focusNode: _amountSelectionAreaFocusNode,
                   child: Transform.scale(
                     scale: _amountTextScaleAnimation.value,
                     child: AutoSizeText(
@@ -314,9 +315,49 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     setState(() {});
   }
 
-  void _copy() {
-    Clipboard.setData(ClipboardData(text: currentAmount.toString()));
+  void _paste() async {
+    final clipboardData = await Clipboard.getData("text/plain");
 
-    /// TODO (sadespresso) show a toast here
+    if (clipboardData == null ||
+        clipboardData.text == null ||
+        clipboardData.text!.trim().isEmpty) return;
+
+    final parsed =
+        num.tryParse(clipboardData.text!.replaceAll(RegExp(r"[^\d.]"), ""));
+
+    if (parsed == null) return;
+
+    _updateAmountFromNumber(parsed);
+    _resetOnNextInput = true;
+    setState(() {});
+  }
+
+  void _copy() {
+    // Unselect text to avoid confusion
+    _amountSelectionAreaFocusNode.unfocus();
+
+    Clipboard.setData(
+      ClipboardData(
+        text: currentAmount.toStringAsFixed(_decimalLength),
+      ),
+    );
+
+    context.showToast(
+      text: "general.copy.success".t(context),
+      icon: Icon(
+        Symbols.check_rounded,
+        color: context.flowColors.income,
+      ),
+    );
+  }
+
+  void _updateAmountFromNumber(num initialAmount) {
+    initialAmount = initialAmount.toDouble();
+    _wholePart = initialAmount.truncate();
+    _decimalPart = ((initialAmount - initialAmount.truncate()) *
+            math.pow(10, _numberOfDecimals))
+        .round();
+    _inputtingDecimal = _decimalPart.abs() != 0;
+    _negate(widget.initialAmount?.isNegative);
   }
 }
