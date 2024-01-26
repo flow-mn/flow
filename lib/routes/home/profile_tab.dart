@@ -34,6 +34,11 @@ class _ProfileTabState extends State<ProfileTab> {
           const ProfileCard(),
           const SizedBox(height: 24.0),
           ListTile(
+            title: Text("categories".t(context)),
+            leading: const Icon(Symbols.category_rounded),
+            onTap: () => context.push("/categories"),
+          ),
+          ListTile(
             title: Text("tabs.profile.preferences".t(context)),
             leading: const Icon(Symbols.settings_rounded),
             onTap: () => context.push("/preferences"),

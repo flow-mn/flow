@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/prefs.dart';
@@ -46,12 +45,14 @@ class FlowState extends State<Flow> {
   Locale _locale = FlowLocalizations.supportedLanguages.first;
   ThemeMode _themeMode = ThemeMode.system;
 
-  PieTheme get pieTheme {
-    final bool isDark = (_themeMode == ThemeMode.system
-        ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
-        : (_themeMode == ThemeMode.dark));
+  ThemeMode get themeMode => _themeMode;
 
-    return isDark ? pieThemeDark : pieThemeLight;
+  bool get useDarkTheme => (_themeMode == ThemeMode.system
+      ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
+      : (_themeMode == ThemeMode.dark));
+
+  PieTheme get pieTheme {
+    return useDarkTheme ? pieThemeDark : pieThemeLight;
   }
 
   @override

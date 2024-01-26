@@ -4,6 +4,9 @@ import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'extensions.dart';
+export 'extensions.dart';
+
 class FlowLocalizations {
   final Locale locale;
   static Map<String, String> _localizedValues = {};
@@ -114,13 +117,4 @@ class _FlowLocalizationDelegate
 
   @override
   bool shouldReload(LocalizationsDelegate<FlowLocalizations> old) => false;
-}
-
-extension Underscore on Locale {
-  /// Example outcome:
-  /// * en_US
-  /// * mn_Mong_MN
-  String get code => [languageCode, scriptCode, countryCode]
-      .where((element) => element != null)
-      .join("_");
 }

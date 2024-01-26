@@ -1,6 +1,7 @@
-import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/flow_localizations.dart';
+import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/widgets/home/prefs/action_tile.dart';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:material_symbols_icons/symbols.dart';
@@ -18,8 +19,11 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    const IconData themeIcon = Symbols.dark_mode_rounded;
-    // final IconData themeIcon = Flow.of(context).
+    final bool currentlyUsingDarkTheme = Flow.of(context).useDarkTheme;
+
+    final IconData themeIcon = currentlyUsingDarkTheme
+        ? Symbols.dark_mode_rounded
+        : Symbols.light_mode_rounded;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,19 +58,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
     _themeBusy = true;
 
     try {
-      ThemeMode current = LocalPreferences().themeMode.get();
-
-      if (current == ThemeMode.system) {
-        current = switch (MediaQuery.of(context).platformBrightness) {
-          Brightness.dark => ThemeMode.dark,
-          Brightness.light => ThemeMode.light,
-        };
-      }
-
-      final ThemeMode newThemeMode = switch (current) {
-        ThemeMode.light => ThemeMode.dark,
-        _ => ThemeMode.light,
-      };
+      final ThemeMode newThemeMode =
+          Flow.of(context).useDarkTheme ? ThemeMode.light : ThemeMode.dark;
 
       await LocalPreferences().themeMode.set(newThemeMode);
     } finally {
@@ -83,11 +76,16 @@ class _PreferencesPageState extends State<PreferencesPage> {
       Locale current = LocalPreferences().localeOverride.get() ??
           FlowLocalizations.supportedLanguages.first;
 
-      // TODO show bottom sheet or dialog or dropdown menu
+      final selected = await showModalBottomSheet<Locale>(
+        context: context,
+        builder: (context) => LanguageSelectionSheet(
+          currentLocale: current,
+        ),
+      );
 
-      await LocalPreferences().localeOverride.set(current.languageCode == "mn"
-          ? const Locale("en", "US")
-          : const Locale("mn", "MN"));
+      if (selected != null) {
+        await LocalPreferences().localeOverride.set(selected);
+      }
     } finally {
       _languageBusy = false;
     }
