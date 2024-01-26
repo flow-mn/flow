@@ -53,6 +53,8 @@ class TransactionListTile extends StatelessWidget {
                     missingTitle
                         ? "transaction.fallbackTitle".t(context)
                         : transaction.title!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     [
@@ -60,6 +62,8 @@ class TransactionListTile extends StatelessWidget {
                       transaction.transactionDate.format(payload: "LT"),
                     ].join(" • "),
                     style: context.textTheme.labelSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -99,6 +103,8 @@ class TransactionListTile extends StatelessWidget {
         color: color,
         fontWeight: FontWeight.bold,
       ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
