@@ -23,7 +23,7 @@ class _HomeTabState extends State<HomeTab> {
               .subtract(const Duration(days: 6))
               .startOfDay()
               .millisecondsSinceEpoch,
-          Moment.now().endOfDay().millisecondsSinceEpoch,
+          Moment.now().millisecondsSinceEpoch,
         ),
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
