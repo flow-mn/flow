@@ -132,7 +132,7 @@ extension TransactionOperations on List<Transaction> {
       .map((transaction) => transaction.amount)
       .fold(0, (value, element) => value + element);
   double get sum =>
-      map((transaction) => transaction.amount).reduce((a, b) => a + b);
+      map((transaction) => transaction.amount).fold(0, (a, b) => a + b);
 
   Map<DateTime, List<Transaction>> groupByDate() {
     final Map<DateTime, List<Transaction>> value = {};
