@@ -16,6 +16,8 @@ class LocalPreferences {
   late final BoolSettingsEntry usePhoneNumpadLayout;
   late final BoolSettingsEntry enableNumpadHapticFeedback;
 
+  late final BoolSettingsEntry completedInitialSetup;
+
   late final ThemeModeSettingsEntry themeMode;
   late final LocaleSettingsEntry localeOverride;
 
@@ -33,6 +35,12 @@ class LocalPreferences {
       key: "flow.enableNumpadHapticFeedback",
       preferences: _prefs,
       initialValue: true,
+    );
+
+    completedInitialSetup = BoolSettingsEntry(
+      key: "flow.completedInitialSetup",
+      preferences: _prefs,
+      initialValue: false,
     );
 
     themeMode = ThemeModeSettingsEntry(
