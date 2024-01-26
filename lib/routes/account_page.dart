@@ -7,7 +7,6 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -81,51 +80,47 @@ class _AccountPageState extends State<AccountPage> {
         ],
       ),
       body: SafeArea(
-        child: CupertinoUserInterfaceLevel(
-          data: CupertinoUserInterfaceLevelData.base,
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 16.0),
-                  CircleAvatar(
-                    radius: 40.0,
-                    child: Icon(
-                      _iconData,
-                      size: 56.0,
-                      color: context.colorScheme.secondary,
-                    ),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 16.0),
+                CircleAvatar(
+                  radius: 40.0,
+                  child: Icon(
+                    _iconData,
+                    size: 56.0,
+                    color: context.colorScheme.secondary,
                   ),
-                  const SizedBox(height: 16.0),
-                  Padding(
-                    padding: contentPadding,
-                    child: TextFormField(
-                      controller: _nameTextController,
-                      decoration: InputDecoration(
-                        label: Text(
-                          "account.name".t(context),
-                        ),
-                        focusColor: context.colorScheme.secondary,
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: contentPadding,
+                  child: TextFormField(
+                    controller: _nameTextController,
+                    decoration: InputDecoration(
+                      label: Text(
+                        "account.name".t(context),
                       ),
-                      validator: validateNameField,
+                      focusColor: context.colorScheme.secondary,
                     ),
+                    validator: validateNameField,
                   ),
-                  const SizedBox(height: 24.0),
-                  ListTile(
-                    title: Text("currency".t(context)),
-                    trailing: Text(_currency),
-                    onTap: _currentlyEditing == null
-                        ? () => selectCurrency()
-                        : null,
-                  ),
-                  CheckboxListTile.adaptive(
-                    value: _excludeFromTotalBalance,
-                    onChanged: updateBalanceExclusion,
-                    title: Text("account.excludeFromTotalBalance".t(context)),
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(height: 24.0),
+                ListTile(
+                  title: Text("currency".t(context)),
+                  trailing: Text(_currency),
+                  onTap:
+                      _currentlyEditing == null ? () => selectCurrency() : null,
+                ),
+                CheckboxListTile.adaptive(
+                  value: _excludeFromTotalBalance,
+                  onChanged: updateBalanceExclusion,
+                  title: Text("account.excludeFromTotalBalance".t(context)),
+                )
+              ],
             ),
           ),
         ),
