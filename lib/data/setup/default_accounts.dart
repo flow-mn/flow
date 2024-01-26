@@ -1,5 +1,5 @@
 import 'package:flow/entity/account.dart';
-import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flutter/widgets.dart';
 import 'package:material_symbols_icons/symbols.dart';

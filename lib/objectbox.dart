@@ -4,7 +4,7 @@ import 'dart:math' hide log;
 
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';

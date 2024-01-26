@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:material_symbols_icons/symbols.dart';

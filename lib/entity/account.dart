@@ -1,6 +1,6 @@
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flutter/widgets.dart';

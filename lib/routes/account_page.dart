@@ -1,5 +1,5 @@
 import 'package:flow/entity/account.dart';
-import 'package:flow/entity/icon/parser.dart';
+import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
