@@ -138,7 +138,6 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ),
                     const SizedBox(height: 24.0),
-
                     Center(
                       child: InkWell(
                         onTap: inputAmount,
@@ -152,6 +151,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 24.0),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
