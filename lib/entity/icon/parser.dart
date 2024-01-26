@@ -12,6 +12,9 @@ class IconCode {
         _identifierMaterialSymbolsFontFamily,
       );
 
+  /// Will throw [ArgumentError] if [code] doesn't match `Font Family:0xFF` format (Font family and codePoint seperated by colon)
+  ///
+  /// Will throw [StateError] if codePoint is not a valid hex integer prefixed with `0x` (zero, english letter x)
   static IconData getIcon(String code) {
     final segments = code.split(":");
 
@@ -21,7 +24,8 @@ class IconCode {
       );
     }
 
-    final int? codePoint = int.tryParse(segments[1].substring(2), radix: 16);
+    final int? codePoint =
+        int.tryParse(segments[1].substring(2).toLowerCase(), radix: 16);
 
     if (codePoint == null) {
       throw StateError(
