@@ -126,7 +126,7 @@ final darkTheme = ThemeData(
     selectedTileColor: _dark.secondary,
   ),
   textSelectionTheme: TextSelectionThemeData(
-    selectionColor: _dark.secondary,
+    selectionColor: _dark.primary,
     cursorColor: _dark.primary,
     selectionHandleColor: _dark.primary,
   ),
