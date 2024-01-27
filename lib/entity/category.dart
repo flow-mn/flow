@@ -1,11 +1,9 @@
+import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/icon/parser.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 part "category.g.dart";
 
@@ -32,11 +30,11 @@ class Category implements EntityBase {
   String iconCode;
 
   @Transient()
-  IconData get icon {
+  FlowIconData get icon {
     try {
-      return IconCode.getIcon(iconCode);
+      return FlowIconData.parse(iconCode);
     } catch (e) {
-      return Symbols.error_rounded;
+      return FlowIconData.emoji("🤷");
     }
   }
 

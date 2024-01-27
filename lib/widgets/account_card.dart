@@ -4,6 +4,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class AccountCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        FlowIcon(
                           account.icon,
                           size: 60.0,
                         ),

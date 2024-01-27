@@ -1,9 +1,10 @@
 import 'dart:io';
 
+import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/plated_icon.dart';
+import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,9 +40,12 @@ class TransactionListTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PlatedIcon(
+            FlowIcon(
               transaction.category.target?.icon ??
-                  Symbols.error_outline_rounded,
+                  FlowIconData.icon(
+                    Symbols.error_outline_rounded,
+                  ),
+              plated: true,
             ),
             const SizedBox(width: 8.0),
             Expanded(

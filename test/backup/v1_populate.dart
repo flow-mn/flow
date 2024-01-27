@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/entity/icon/icon_code.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -28,27 +28,27 @@ Future<void> populateDummyData([int entryCount = 100]) async {
 
 Future<void> _createAndPutDebugData() async {
   Category categoryServices = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.electrical_services),
+    iconCode: const IconFlowIcon(Symbols.electrical_services).toString(),
     name: "Online subscriptions",
   );
   Category categoryPaychecks = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.payments_rounded),
+    iconCode: const IconFlowIcon(Symbols.payments_rounded).toString(),
     name: "Paycheck",
   );
   Category categoryEducation = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.school_rounded),
+    iconCode: const IconFlowIcon(Symbols.school_rounded).toString(),
     name: "Education",
   );
   Category categoryShopping = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.shopping_bag_rounded),
+    iconCode: const IconFlowIcon(Symbols.shopping_bag_rounded).toString(),
     name: "Shopping",
   );
   Category categoryEatOut = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.restaurant_rounded),
+    iconCode: const IconFlowIcon(Symbols.restaurant_rounded).toString(),
     name: "Eating out",
   );
   Category categoryBeverages = Category(
-    iconCode: IconCode.fromMaterialSymbols(Symbols.coffee_rounded),
+    iconCode: const IconFlowIcon(Symbols.coffee_rounded).toString(),
     name: "Coffee & tea",
   );
 
@@ -64,7 +64,7 @@ Future<void> _createAndPutDebugData() async {
   Account accountAlpha = Account(
     name: "Alpha",
     currency: "MNT",
-    iconCode: IconCode.fromMaterialSymbols(Symbols.variables_rounded),
+    iconCode: const IconFlowIcon(Symbols.variables_rounded).toString(),
   )
     ..updateBalance(
       384500,
@@ -92,7 +92,7 @@ Future<void> _createAndPutDebugData() async {
   Account accountBeta = Account(
     name: "Beta",
     currency: "MNT",
-    iconCode: IconCode.fromMaterialSymbols(Symbols.bento_rounded),
+    iconCode: const IconFlowIcon(Symbols.bento_rounded).toString(),
   )
     ..updateBalance(36850000, title: "Savings starting balance")
     ..createTransaction(

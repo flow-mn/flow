@@ -9,6 +9,7 @@ import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<bool> openUrl(
@@ -99,5 +100,18 @@ extension CustomDialogs on BuildContext {
   }
 }
 
-final bool isAprilFools =
-    DateTime.now().month == DateTime.april && DateTime.now().day == 1;
+Future<XFile?> pickImage({
+  ImageSource source = ImageSource.gallery,
+  double? maxWidth,
+  double? maxHeight,
+}) async {
+  final xfile = ImagePicker().pickImage(
+    source: source,
+    maxHeight: maxHeight,
+    maxWidth: maxWidth,
+    requestFullMetadata: false,
+    imageQuality: 100,
+  );
+
+  return xfile;
+}

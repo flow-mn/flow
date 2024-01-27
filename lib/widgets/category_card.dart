@@ -2,7 +2,7 @@ import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/plated_icon.dart';
+import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,9 +26,10 @@ class CategoryCard extends StatelessWidget {
         onTap: () => context.push("/category/${category.id}"),
         child: Row(
           children: [
-            PlatedIcon(
+            FlowIcon(
               category.icon,
-              iconSize: 32.0,
+              size: 32.0,
+              plated: true,
             ),
             const SizedBox(width: 12.0),
             Column(

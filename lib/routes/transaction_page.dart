@@ -9,6 +9,7 @@ import 'package:flow/routes/new_transaction/select_account_sheet.dart';
 import 'package:flow/routes/new_transaction/select_category_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -165,7 +166,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     ListTile(
                       leading: _selectedAccount == null
                           ? null
-                          : Icon(_selectedAccount!.icon),
+                          : FlowIcon(_selectedAccount!.icon),
                       title: Text(_selectedAccount?.name ??
                           "transaction.edit.selectAccount".t(context)),
                       subtitle: _selectedAccount == null
@@ -191,7 +192,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     ListTile(
                       leading: _selectedCategory == null
                           ? null
-                          : Icon(_selectedCategory!.icon),
+                          : FlowIcon(_selectedCategory!.icon),
                       title: Text(_selectedCategory?.name ??
                           "transaction.edit.selectCategory".t(context)),
                       // subtitle: _selectedAccount == null
@@ -334,7 +335,7 @@ class _TransactionPageState extends State<TransactionPage> {
     });
   }
 
-  void updateTransaction({required String formattedTitle}) async {
+  void update({required String formattedTitle}) async {
     if (_currentlyEditing == null) return;
 
     _currentlyEditing!.setCategory(_selectedCategory);
@@ -364,7 +365,7 @@ class _TransactionPageState extends State<TransactionPage> {
         trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
 
     if (_currentlyEditing != null) {
-      return updateTransaction(formattedTitle: formattedTitle);
+      return update(formattedTitle: formattedTitle);
     }
 
     _selectedAccount!.createTransaction(

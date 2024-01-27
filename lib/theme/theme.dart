@@ -39,7 +39,7 @@ final lightTheme = ThemeData(
     ),
     NavbarTheme(
       backgroundColor: _light.secondary,
-      activeIconColor: _light.onSecondary,
+      activeIconColor: _light.primary,
       inactiveIconOpacity: 0.5,
       transactionButtonBackgroundColor: _light.primary,
       transactionButtonForegroundColor: _light.onPrimary,
@@ -51,8 +51,8 @@ final lightTheme = ThemeData(
     fill: 1.0,
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    selectedItemColor: _light.onSurface,
-    unselectedItemColor: _light.onSurface.withAlpha(0x80),
+    selectedItemColor: _light.primary,
+    unselectedItemColor: _light.primary.withAlpha(0x80),
     backgroundColor: _light.secondary,
   ),
   textTheme: _textTheme

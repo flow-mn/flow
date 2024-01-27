@@ -1,46 +1,42 @@
 import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/account.dart';
+import 'package:flow/entity/category.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/select_currency_sheet.dart';
+import 'package:flow/widgets/select_icon_sheet.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class AccountPage extends StatefulWidget {
-  /// Account Object ID
-  final int accountId;
+class CategoryPage extends StatefulWidget {
+  final int categoryId;
 
-  bool get isNewAccount => accountId == 0;
+  bool get isNewCategory => categoryId == 0;
 
-  const AccountPage.create({
+  const CategoryPage.create({
     super.key,
-  }) : accountId = 0;
-  const AccountPage.edit({super.key, required this.accountId});
+  }) : categoryId = 0;
+  const CategoryPage.edit({super.key, required this.categoryId});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  State<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _CategoryPageState extends State<CategoryPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   late final TextEditingController _nameTextController;
 
-  late String _currency;
   late FlowIconData? _iconData;
-  late bool _excludeFromTotalBalance;
 
-  late final Account? _currentlyEditing;
+  late final Category? _currentlyEditing;
 
   String get iconCodeOrError =>
-      _iconData?.toString() ??
-      FlowIconData.icon(Symbols.error_rounded).toString();
+      _iconData?.toString() ?? FlowIconData.emoji("T").toString();
 
   dynamic error;
 
@@ -48,20 +44,16 @@ class _AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewAccount
+    _currentlyEditing = widget.isNewCategory
         ? null
-        : ObjectBox().box<Account>().get(widget.accountId);
+        : ObjectBox().box<Category>().get(widget.categoryId);
 
-    if (!widget.isNewAccount && _currentlyEditing == null) {
-      error = "Account with id ${widget.accountId} was not found";
+    if (!widget.isNewCategory && _currentlyEditing == null) {
+      error = "Category with id ${widget.categoryId} was not found";
     } else {
       _nameTextController =
           TextEditingController(text: _currentlyEditing?.name);
-      _currency = _currentlyEditing?.currency ??
-          LocalPreferences().getPrimaryCurrency();
       _iconData = _currentlyEditing?.icon;
-      _excludeFromTotalBalance =
-          _currentlyEditing?.excludeFromTotalBalance ?? false;
     }
   }
 
@@ -85,12 +77,14 @@ class _AccountPageState extends State<AccountPage> {
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 16.0),
                 FlowIcon(
                   _iconData ?? CharacterFlowIcon("T"),
                   size: 80.0,
                   plated: true,
+                  onTap: selectIcon,
                 ),
                 const SizedBox(height: 16.0),
                 Padding(
@@ -99,25 +93,14 @@ class _AccountPageState extends State<AccountPage> {
                     controller: _nameTextController,
                     decoration: InputDecoration(
                       label: Text(
-                        "account.name".t(context),
+                        "category.name".t(context),
                       ),
                       focusColor: context.colorScheme.secondary,
                     ),
                     validator: validateNameField,
                   ),
                 ),
-                const SizedBox(height: 24.0),
-                ListTile(
-                  title: Text("currency".t(context)),
-                  trailing: Text(_currency),
-                  onTap:
-                      _currentlyEditing == null ? () => selectCurrency() : null,
-                ),
-                CheckboxListTile.adaptive(
-                  value: _excludeFromTotalBalance,
-                  onChanged: updateBalanceExclusion,
-                  title: Text("account.excludeFromTotalBalance".t(context)),
-                )
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
@@ -126,36 +109,13 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  void updateBalanceExclusion(bool? value) {
-    if (value != null) {
-      setState(() {
-        _excludeFromTotalBalance = value;
-      });
-    }
-  }
-
-  void selectCurrency() async {
-    final result = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => const SelectCurrencySheet(),
-      // isScrollControlled: true,
-    );
-
-    setState(() {
-      _currency = result ?? _currency;
-    });
-  }
-
-  void update({required String formattedName}) async {
+  Future<void> update({required String formattedName}) async {
     if (_currentlyEditing == null) return;
 
     _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.currency = _currency;
-
     _currentlyEditing!.iconCode = iconCodeOrError;
-    _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
 
-    ObjectBox().box<Account>().put(
+    ObjectBox().box<Category>().put(
           _currentlyEditing!,
           mode: PutMode.update,
         );
@@ -163,10 +123,7 @@ class _AccountPageState extends State<AccountPage> {
     context.pop();
   }
 
-  void save() async {
-    // TODO add emoji/icon picker
-    // if (_iconData == null) return; // TODO show error
-
+  Future<void> save() async {
     if (_formKey.currentState?.validate() != true) return;
 
     final String trimmed = _nameTextController.text.trim();
@@ -175,15 +132,13 @@ class _AccountPageState extends State<AccountPage> {
       return update(formattedName: trimmed);
     }
 
-    final account = Account(
+    final Category category = Category(
       name: trimmed,
       iconCode: iconCodeOrError,
-      currency: _currency,
-      excludeFromTotalBalance: _excludeFromTotalBalance,
     );
 
-    ObjectBox().box<Account>().putAsync(
-          account,
+    ObjectBox().box<Category>().putAsync(
+          category,
           mode: PutMode.insert,
         );
 
@@ -199,11 +154,11 @@ class _AccountPageState extends State<AccountPage> {
     final String trimmed = value!.trim();
 
     final isNameUnique = ObjectBox()
-            .box<Account>()
+            .box<Category>()
             .query(
-              Account_.name
+              Category_.name
                   .equals(trimmed)
-                  .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
+                  .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
             )
             .build()
             .count() ==
@@ -214,5 +169,28 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     return null;
+  }
+
+  void _updateIcon(FlowIconData? data) {
+    _iconData = data;
+  }
+
+  Future<void> selectIcon() async {
+    // TODO Figure out ideal UI for emoji/icon selector
+    if (!kDebugMode) throw UnimplementedError();
+
+    final result = await showModalBottomSheet<FlowIconData>(
+      context: context,
+      builder: (context) => SelectIconSheet(
+        current: _iconData,
+        onChange: (value) => _updateIcon(value),
+      ),
+    );
+
+    if (result != null) {
+      _updateIcon(result);
+    }
+
+    if (mounted) setState(() {});
   }
 }

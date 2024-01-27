@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 
-class SetupIntro extends StatefulWidget {
-  const SetupIntro({super.key});
+class SetupCreateAccountPage extends StatefulWidget {
+  const SetupCreateAccountPage({super.key});
 
   @override
-  State<SetupIntro> createState() => _SetupIntroState();
+  State<SetupCreateAccountPage> createState() => _SetupCreateAccountPageState();
 }
 
-class _SetupIntroState extends State<SetupIntro> {
+class _SetupCreateAccountPageState extends State<SetupCreateAccountPage> {
+  //
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(),
+      body: const SafeArea(
+        child: Column(),
+      ),
+    );
   }
 }
