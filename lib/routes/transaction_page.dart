@@ -4,11 +4,13 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
 import 'package:flow/routes/new_transaction/select_account_sheet.dart';
 import 'package:flow/routes/new_transaction/select_category_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -75,7 +77,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-        inputAmount();
+        selectAccount();
       });
     }
   }
@@ -166,12 +168,17 @@ class _TransactionPageState extends State<TransactionPage> {
                     ListTile(
                       leading: _selectedAccount == null
                           ? null
-                          : FlowIcon(_selectedAccount!.icon),
+                          : FlowIcon(
+                              _selectedAccount!.icon,
+                              plated: true,
+                            ),
                       title: Text(_selectedAccount?.name ??
                           "transaction.edit.selectAccount".t(context)),
                       subtitle: _selectedAccount == null
                           ? null
-                          : Text(_selectedAccount!.balance.money),
+                          : Text(_selectedAccount!.balance.formatMoney(
+                              currency: _selectedAccount!.currency,
+                            )),
                       onTap: () => selectAccount(),
                       trailing: _selectedAccount == null
                           ? const Icon(Symbols.chevron_right)
@@ -192,7 +199,10 @@ class _TransactionPageState extends State<TransactionPage> {
                     ListTile(
                       leading: _selectedCategory == null
                           ? null
-                          : FlowIcon(_selectedCategory!.icon),
+                          : FlowIcon(
+                              _selectedCategory!.icon,
+                              plated: true,
+                            ),
                       title: Text(_selectedCategory?.name ??
                           "transaction.edit.selectCategory".t(context)),
                       // subtitle: _selectedAccount == null
@@ -246,10 +256,18 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void inputAmount() async {
+    await LocalPreferences().updateTransitiveProperties();
+    final hideCurrencySymbol =
+        !LocalPreferences().transitiveUsesSingleCurrency.get();
+
+    if (!mounted) return;
+
     final result = await showModalBottomSheet<double>(
       context: context,
       builder: (context) => InputAmountSheet(
         initialAmount: _amount,
+        currency: _selectedAccount?.currency,
+        hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
       ),
       isScrollControlled: true,
     );
@@ -258,7 +276,9 @@ class _TransactionPageState extends State<TransactionPage> {
       _amount = result ?? _amount;
     });
 
-    if (widget.isNewTransaction && result != null) selectAccount();
+    if (mounted && widget.isNewTransaction && result != null) {
+      FocusScope.of(context).requestFocus(_titleFocusNode);
+    }
   }
 
   void selectAccount() async {
@@ -285,7 +305,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (categories.isEmpty) return;
 
-    final result = await showModalBottomSheet<Category>(
+    final result = await showModalBottomSheet<ValueOr<Category>>(
       context: context,
       builder: (context) => SelectCategorySheet(
         categories: categories,
@@ -294,13 +314,13 @@ class _TransactionPageState extends State<TransactionPage> {
       isScrollControlled: true,
     );
 
-    setState(() {
-      _selectedCategory = result ?? _selectedCategory;
-    });
-
-    if (mounted && widget.isNewTransaction && result != null) {
-      FocusScope.of(context).requestFocus(_titleFocusNode);
+    if (result != null) {
+      setState(() {
+        _selectedCategory = result.value;
+      });
     }
+
+    if (widget.isNewTransaction && result != null) inputAmount();
   }
 
   void selectTransactionDate() async {
