@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+/// Pops with [Account]
 class SelectAccountSheet extends StatelessWidget {
   final List<Account> accounts;
   final int? currentlySelectedAccountId;
