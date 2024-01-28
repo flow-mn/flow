@@ -1,6 +1,5 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/flat_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -39,10 +38,14 @@ class _SetupPageState extends State<SetupPage> {
               const SizedBox(height: 16.0),
               Align(
                 alignment: Alignment.topRight,
-                child: FlatButton(
+                child: TextButton.icon(
                   onPressed: () => next(),
-                  trailing: const Icon(Symbols.chevron_right),
-                  child: Text("setup.getStarted".t(context)),
+                  icon: const Icon(Symbols.chevron_right),
+                  label: Text("setup.getStarted".t(context)),
+                  style: TextButton.styleFrom(
+                    backgroundColor: context.colorScheme.primary,
+                    foregroundColor: context.colorScheme.onPrimary,
+                  ),
                 ),
               ),
             ],
