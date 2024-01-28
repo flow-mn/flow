@@ -1,12 +1,14 @@
 import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+/// Pops with [ValueOr<Category>]
 class SelectCategorySheet extends StatelessWidget {
   final List<Category> categories;
   final int? currentlySelectedCategoryId;
@@ -35,9 +37,19 @@ class SelectCategorySheet extends StatelessWidget {
               title: Text(category.name),
               leading: FlowIcon(category.icon),
               trailing: const Icon(Symbols.chevron_right_rounded),
-              onTap: () => context.pop(category),
+              onTap: () => context.pop(ValueOr(category)),
               selected: currentlySelectedCategoryId == category.id,
             ),
+          ),
+          const SizedBox(height: 8.0),
+          ButtonBar(
+            children: [
+              TextButton.icon(
+                onPressed: () => context.pop(const ValueOr<Category>(null)),
+                icon: const Icon(Symbols.close_rounded),
+                label: const Text("Skip"),
+              ),
+            ],
           ),
         ],
       ),
