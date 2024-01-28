@@ -25,6 +25,8 @@ void main() async {
     FlowLocalizations.printMissingKeys();
   }
 
+  /// [ObjectBox] MUST initialize before [LocalPreferences] because prefs
+  /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
 

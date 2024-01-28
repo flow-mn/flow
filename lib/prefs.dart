@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flow/entity/account.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
@@ -20,6 +22,9 @@ class LocalPreferences {
 
   late final ThemeModeSettingsEntry themeMode;
   late final LocaleSettingsEntry localeOverride;
+
+  /// Whether the user uses only one currency across accounts
+  late final BoolSettingsEntry transitiveUsesSingleCurrency;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -52,6 +57,25 @@ class LocalPreferences {
       key: "flow.localeOverride",
       preferences: _prefs,
     );
+
+    transitiveUsesSingleCurrency = BoolSettingsEntry(
+      key: "flow.transitive.usesSingleCurrency",
+      preferences: _prefs,
+      initialValue: true,
+    );
+
+    initializeTransitiveProperties().catchError((e) {
+      log("[LocalPreferences] cannot set `transitiveUsesSingleCurrency` upon initialization due to: $e");
+    });
+  }
+
+  Future<void> initializeTransitiveProperties() async {
+    final accounts = await ObjectBox().box<Account>().getAllAsync();
+
+    final usesSingleCurrency =
+        accounts.map((e) => e.currency).toSet().length == 1;
+
+    await transitiveUsesSingleCurrency.set(usesSingleCurrency);
   }
 
   String getPrimaryCurrency() {
