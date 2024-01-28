@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +29,7 @@ Future<bool> openUrl(
 }
 
 void numpadHaptic() {
-  if (LocalPreferences().enableNumpadHapticFeedback.get()) {
-    HapticFeedback.mediumImpact();
-  }
+  HapticFeedback.mediumImpact();
 }
 
 Future<File?> pickFile() async {

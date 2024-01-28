@@ -1,4 +1,6 @@
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -44,7 +46,7 @@ class NumpadButton extends StatelessWidget {
         borderRadius: borderRadius,
         child: InkWell(
           borderRadius: borderRadius,
-          onTap: onTap,
+          onTap: onTapHandler,
           onDoubleTap: onDoubleTap,
           onLongPress: onLongPress,
           child: Center(
@@ -53,5 +55,15 @@ class NumpadButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void onTapHandler() {
+    if (LocalPreferences().enableNumpadHapticFeedback.get()) {
+      numpadHaptic();
+    }
+
+    if (onTap != null) {
+      onTap!();
+    }
   }
 }
