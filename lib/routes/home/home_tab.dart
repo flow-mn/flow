@@ -13,7 +13,7 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   // Query for today's transaction, newest to oldest
   QueryBuilder<Transaction> qb() => ObjectBox()
       .box<Transaction>()
@@ -23,17 +23,28 @@ class _HomeTabState extends State<HomeTab> {
               .subtract(const Duration(days: 6))
               .startOfDay()
               .millisecondsSinceEpoch,
-          Moment.now().millisecondsSinceEpoch,
+          // Since we cannot make `Moment.now` dynamic without feeding new
+          // query to the builder, setting the date range 12 hours ahead.
+          //
+          // We'll filter the values in the build function. All of the
+          // transactions came past NOW would be planned/recurring payments,
+          // and shouldn't be that many.
+          Moment.now().add(const Duration(hours: 12)).millisecondsSinceEpoch,
         ),
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return StreamBuilder<Query<Transaction>>(
       stream: qb().watch(triggerImmediately: true),
       builder: (context, snapshot) {
-        final transactions = snapshot.data?.find();
+        final transactions = snapshot.data
+            ?.find()
+            .where((element) => element.transactionDate <= Moment.now())
+            .toList();
 
         return Column(
           children: [
@@ -61,4 +72,7 @@ class _HomeTabState extends State<HomeTab> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
