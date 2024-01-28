@@ -6,6 +6,7 @@ import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/general/list_header.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +29,12 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       // padding: const EdgeInsets.all(16.0),
+
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 24.0),
-          const ProfileCard(),
+          const Center(child: ProfileCard()),
           const SizedBox(height: 24.0),
           ListTile(
             title: Text("categories".t(context)),
@@ -49,16 +52,7 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => {},
           ),
           const SizedBox(height: 32.0),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "tabs.profile.community".t(context),
-                style: context.textTheme.titleSmall,
-              ),
-            ),
-          ),
+          ListHeader("tabs.profile.community".t(context)),
           ListTile(
             title: Text("tabs.profile.joinDiscord".t(context)),
             leading: const Icon(SimpleIcons.discord),
@@ -76,16 +70,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           if (kDebugMode) ...[
             const SizedBox(height: 32.0),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  "Debug options",
-                  style: context.textTheme.titleSmall,
-                ),
-              ),
-            ),
+            const ListHeader("Debug options"),
             ListTile(
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
@@ -114,18 +99,22 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
           ],
           const SizedBox(height: 64.0),
-          Text(
-            "version indev-1, ${Moment.fromMillisecondsSinceEpoch(1700982217689).calendar()}",
-            style: context.textTheme.labelSmall,
+          Center(
+            child: Text(
+              "version indev-1, ${Moment.fromMillisecondsSinceEpoch(1700982217689).calendar()}",
+              style: context.textTheme.labelSmall,
+            ),
           ),
-          InkWell(
-            borderRadius: BorderRadius.circular(8.0),
-            onTap: () => openUrl(Uri.parse("https://github.com/sadespresso")),
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                "tabs.profile.withLoveFromTheCreator".t(context),
-                style: context.textTheme.labelSmall,
+          Center(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8.0),
+              onTap: () => openUrl(Uri.parse("https://github.com/sadespresso")),
+              child: Opacity(
+                opacity: 0.5,
+                child: Text(
+                  "tabs.profile.withLoveFromTheCreator".t(context),
+                  style: context.textTheme.labelSmall,
+                ),
               ),
             ),
           ),
