@@ -23,11 +23,16 @@ class InputAmountSheet extends StatefulWidget {
   /// Whether user input should erase the former value
   final bool overrideInitialAmount;
 
+  /// If user have multiple accounts with different currencies, we can't be
+  /// sure which currency transaction the user is making.
+  final bool hideCurrencySymbol;
+
   const InputAmountSheet({
     super.key,
     this.initialAmount,
     this.currency,
     this.overrideInitialAmount = true,
+    this.hideCurrencySymbol = false,
   });
 
   @override
@@ -149,18 +154,30 @@ class _InputAmountSheetState extends State<InputAmountSheet>
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 16.0),
-                SelectionArea(
-                  focusNode: _amountSelectionAreaFocusNode,
-                  child: Transform.scale(
-                    scale: _amountTextScaleAnimation.value,
-                    child: AutoSizeText(
-                      currentAmount.formatMoney(
-                            decimalDigits: _decimalPart == 0
-                                ? 0
-                                : _decimalPart.abs().toString().length,
-                          ) +
-                          (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
-                      style: context.textTheme.displayMedium,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SelectionArea(
+                    focusNode: _amountSelectionAreaFocusNode,
+                    child: Transform.scale(
+                      scale: _amountTextScaleAnimation.value,
+                      // TODO
+                      // The widget becomes shorter as the font size gets
+                      // smaller. It'd be nice if we could keep the height
+                      // same, to prevent BottomSheet from getting shorter
+                      // with it
+                      child: AutoSizeText(
+                        currentAmount.formatMoney(
+                              decimalDigits: _decimalPart == 0
+                                  ? 0
+                                  : _decimalPart.abs().toString().length,
+                              includeCurrency: !widget.hideCurrencySymbol,
+                              currency: widget.currency,
+                            ) +
+                            (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
+                        style: context.textTheme.displayMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.visible,
+                      ),
                     ),
                   ),
                 ),
