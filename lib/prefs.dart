@@ -64,18 +64,20 @@ class LocalPreferences {
       initialValue: true,
     );
 
-    initializeTransitiveProperties().catchError((e) {
-      log("[LocalPreferences] cannot set `transitiveUsesSingleCurrency` upon initialization due to: $e");
-    });
+    updateTransitiveProperties();
   }
 
-  Future<void> initializeTransitiveProperties() async {
-    final accounts = await ObjectBox().box<Account>().getAllAsync();
+  Future<void> updateTransitiveProperties() async {
+    try {
+      final accounts = await ObjectBox().box<Account>().getAllAsync();
 
-    final usesSingleCurrency =
-        accounts.map((e) => e.currency).toSet().length == 1;
+      final usesSingleCurrency =
+          accounts.map((e) => e.currency).toSet().length == 1;
 
-    await transitiveUsesSingleCurrency.set(usesSingleCurrency);
+      await transitiveUsesSingleCurrency.set(usesSingleCurrency);
+    } catch (e) {
+      log("[LocalPreferences] cannot update transitive properties due to: $e");
+    }
   }
 
   String getPrimaryCurrency() {

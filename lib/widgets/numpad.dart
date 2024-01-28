@@ -17,9 +17,13 @@ class Numpad extends StatelessWidget {
   final double mainAxisSpacing;
   final double crossAxisSpacing;
 
+  /// If not specified, uses [MediaQuery.of(context).size.width]
+  final double? width;
+
   const Numpad({
     super.key,
     required this.children,
+    this.width,
     this.mainAxisSpacing = 8.0,
     this.crossAxisSpacing = 8.0,
     this.crossAxisCount = 4,
@@ -30,13 +34,13 @@ class Numpad extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO (sadespresso) on phones with wider display, or wider phones, or tablets, come up with a different solution to make a numpad.
 
+    final width = this.width ?? MediaQuery.of(context).size.width;
+
     final double totalHorizontalPadding = padding.left +
         padding.right +
         (crossAxisCount * (crossAxisSpacing - 1));
 
-    final double itemSize =
-        (MediaQuery.of(context).size.width - totalHorizontalPadding) /
-            crossAxisCount;
+    final double itemSize = (width - totalHorizontalPadding) / crossAxisCount;
     final double itemContentSize = itemSize * _contentSizeFactor;
 
     return IconTheme.merge(

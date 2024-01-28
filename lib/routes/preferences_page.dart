@@ -2,8 +2,9 @@ import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
-import 'package:flow/widgets/home/prefs/action_tile.dart';
+import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart' hide Flow;
+import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class PreferencesPage extends StatefulWidget {
@@ -19,49 +20,80 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool currentlyUsingDarkTheme = Flow.of(context).useDarkTheme;
-
-    final IconData themeIcon = currentlyUsingDarkTheme
-        ? Symbols.dark_mode_rounded
-        : Symbols.light_mode_rounded;
+    final ThemeMode currentThemeMode = Flow.of(context).themeMode;
 
     return Scaffold(
       appBar: AppBar(
         title: Text("preferences".t(context)),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              ActionTile(
-                title: "preferences.themeMode".t(context),
-                icon: themeIcon,
+        child: ListView(
+          children: ListTile.divideTiles(
+            tiles: [
+              ListTile(
+                title: Text("preferences.themeMode".t(context)),
+                leading: switch (currentThemeMode) {
+                  ThemeMode.system => const Icon(Symbols.routine_rounded),
+                  ThemeMode.dark => const Icon(Symbols.light_mode_rounded),
+                  ThemeMode.light => const Icon(Symbols.dark_mode_rounded),
+                },
+                subtitle: Text(switch (currentThemeMode) {
+                  ThemeMode.system => "preferences.themeMode.system".t(context),
+                  ThemeMode.dark => "preferences.themeMode.dark".t(context),
+                  ThemeMode.light => "preferences.themeMode.light".t(context),
+                }),
                 onTap: () => updateTheme(),
+                onLongPress: () => updateTheme(ThemeMode.system),
+                trailing: const Icon(Symbols.chevron_right_rounded),
               ),
-              const SizedBox(height: 16.0),
-              ActionTile(
-                title: "preferences.language".t(context),
-                icon: Symbols.language_rounded,
+              ListTile(
+                title: Text("preferences.language".t(context)),
+                leading: const Icon(Symbols.language_rounded),
                 onTap: () => updateLanguage(),
+                subtitle: Text(FlowLocalizations.of(context).locale.name),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
+              ListTile(
+                title: Text("preferences.numpad".t(context)),
+                leading: const Icon(Symbols.dialpad_rounded),
+                onTap: openNumpadPrefs,
+                subtitle: Text(
+                  LocalPreferences().usePhoneNumpadLayout.get()
+                      ? "preferences.numpad.layout.modern".t(context)
+                      : "preferences.numpad.layout.classic".t(context),
+                ),
+                trailing: const Icon(Symbols.chevron_right_rounded),
               ),
             ],
-          ),
+            color: context.colorScheme.onBackground.withAlpha(0x20),
+          ).toList(),
         ),
       ),
     );
   }
 
-  void updateTheme() async {
+  void updateTheme([ThemeMode? force]) async {
     if (_themeBusy) return;
 
     _themeBusy = true;
 
     try {
-      final ThemeMode newThemeMode =
-          Flow.of(context).useDarkTheme ? ThemeMode.light : ThemeMode.dark;
+      final ThemeMode newThemeMode = force ??
+          switch ((Flow.of(context).themeMode, Flow.of(context).useDarkTheme)) {
+            (ThemeMode.light, _) => ThemeMode.dark,
+            (ThemeMode.dark, _) => ThemeMode.light,
+            (ThemeMode.system, true) => ThemeMode.light,
+            (ThemeMode.system, false) => ThemeMode.dark,
+          };
 
       await LocalPreferences().themeMode.set(newThemeMode);
+
+      if (mounted) {
+        // Even tho the whole app state refreshes, it doesn't get refreshed
+        // if we switch from same ThemeMode as system from ThemeMode.system.
+        // So this call is necessary
+        setState(() {});
+      }
     } finally {
       _themeBusy = false;
     }
@@ -89,5 +121,11 @@ class _PreferencesPageState extends State<PreferencesPage> {
     } finally {
       _languageBusy = false;
     }
+  }
+
+  void openNumpadPrefs() async {
+    await context.push("/preferences/numpad");
+
+    if (mounted) setState(() {});
   }
 }
