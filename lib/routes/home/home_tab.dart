@@ -1,6 +1,7 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/routes/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/home/week_transaction_list.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
 
+  late final bool noTransactionsAtAll;
+
+  @override
+  void initState() {
+    super.initState();
+    noTransactionsAtAll = ObjectBox().box<Transaction>().count(limit: 1) == 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -53,7 +62,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               child: GreetingsBar(),
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
-              (0, true) => const Center(child: Text("Empty")),
+              (0, true) => Expanded(
+                  child: NoTransactions(
+                    allTime: noTransactionsAtAll,
+                  ),
+                ),
               (_, true) => Expanded(
                   child: WeekTransactionList(
                     transactions: transactions!,
@@ -63,8 +76,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                 ),
-              (_, false) => const Center(
-                  child: CircularProgressIndicator.adaptive(),
+              (_, false) => const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
                 ),
             }
           ],
