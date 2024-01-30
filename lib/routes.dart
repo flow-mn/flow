@@ -6,6 +6,8 @@ import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
+import 'package:flow/routes/utils/crop_square_image_page.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
@@ -55,6 +57,13 @@ final router = GoRouter(
     GoRoute(
       path: '/preferences/numpad',
       builder: (context, state) => const NumpadPreferencesPage(),
+    ),
+    GoRoute(
+      path: '/utils/cropsquare',
+      builder: (context, state) =>
+          (state.extra == null || state.extra is! Image)
+              ? throw "Invalid state. Pass [Image] object to `extra` prop"
+              : CropSquareImagePage(image: state.extra as Image),
     ),
     GoRoute(
       path: '/setup',

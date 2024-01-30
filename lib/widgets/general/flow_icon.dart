@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flow/data/flow_icon.dart';
+import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path/path.dart';
 
 class FlowIcon extends StatelessWidget {
   final FlowIconData data;
@@ -77,10 +80,14 @@ class FlowIcon extends StatelessWidget {
           color: color,
           fill: fill,
         ),
-      ImageFlowIcon image => Image.file(
-          File(image.imagePath),
-          width: size,
-          height: size,
+      ImageFlowIcon image => ClipRRect(
+          borderRadius:
+              borderRadius.subtract(BorderRadius.circular(platePadding.top)),
+          child: Image.file(
+            File(join(ObjectBox.appDataDirectory, image.imagePath)),
+            width: size,
+            height: size,
+          ),
         ),
       CharacterFlowIcon character => SizedBox.square(
           dimension: size,
@@ -88,6 +95,7 @@ class FlowIcon extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 text: character.character,
+                spellOut: false,
                 style: TextStyle(
                   overflow: TextOverflow.visible,
                   fontWeight: FontWeight.w500,

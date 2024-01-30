@@ -101,6 +101,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   @override
+  void dispose() {
+    _amountTextAnimationController.dispose();
+    _amountSelectionAreaFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{

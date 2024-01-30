@@ -83,6 +83,14 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   @override
+  void dispose() {
+    _titleTextController.dispose();
+    _titleFocusNode.dispose();
+    _selectAccountFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     const contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
 

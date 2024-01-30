@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/form_validators.dart';
@@ -7,7 +9,6 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/select_icon_sheet.dart';
-import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -36,7 +37,7 @@ class _CategoryPageState extends State<CategoryPage> {
   late final Category? _currentlyEditing;
 
   String get iconCodeOrError =>
-      _iconData?.toString() ?? FlowIconData.emoji("T").toString();
+      _iconData?.toString() ?? FlowIconData.emoji("❌").toString();
 
   dynamic error;
 
@@ -55,6 +56,12 @@ class _CategoryPageState extends State<CategoryPage> {
           TextEditingController(text: _currentlyEditing?.name);
       _iconData = _currentlyEditing?.icon;
     }
+  }
+
+  @override
+  void dispose() {
+    _nameTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -172,18 +179,19 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   void _updateIcon(FlowIconData? data) {
+    log("_updateIcon_updateIcon_updateIcon_updateIcon");
     _iconData = data;
+    setState(() {});
   }
 
   Future<void> selectIcon() async {
-    // TODO Figure out ideal UI for emoji/icon selector
-    if (!kDebugMode) throw UnimplementedError();
+    onChange(FlowIconData? data) => _updateIcon(data);
 
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
       builder: (context) => SelectIconSheet(
         current: _iconData,
-        onChange: (value) => _updateIcon(value),
+        onChange: onChange,
       ),
     );
 

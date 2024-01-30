@@ -37,6 +37,12 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
       ]));
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // ISO4217Currencies.currencies.length
 

@@ -15,7 +15,17 @@ import 'package:flow/objectbox/objectbox.g.dart';
 class ObjectBox {
   static ObjectBox? _instance;
 
+  /// A subdirectory to store app data.
+  ///
+  /// This is useful if you want to separate multiple user data or just
+  /// differentiate between debug data and production data.
+  ///
+  /// In debug mode, this is set to "__debug" if unspecified
   static late final String? subdirectory;
+
+  /// A custom directory to store app data.
+  ///
+  /// By default, it uses [getApplicationSupportDirectory] (from path_provider)
   static late final String? customDirectory;
 
   /// The Store of this app.
@@ -35,7 +45,7 @@ class ObjectBox {
 
   ObjectBox._internal(this.store);
 
-  static Future<String> _databaseDirectory() async {
+  static Future<String> _appDataDirectory() async {
     if (customDirectory != null) {
       return path.join(customDirectory!, subdirectory);
     }
@@ -44,6 +54,8 @@ class ObjectBox {
 
     return path.join(appDataDir.path, subdirectory);
   }
+
+  static late String appDataDirectory;
 
   static Future<ObjectBox> initialize({
     String? customDirectory,
@@ -56,7 +68,9 @@ class ObjectBox {
     ObjectBox.subdirectory = subdirectory;
     ObjectBox.customDirectory = customDirectory;
 
-    final store = await openStore(directory: await _databaseDirectory());
+    ObjectBox.appDataDirectory = await _appDataDirectory();
+
+    final store = await openStore(directory: appDataDirectory);
 
     log("Admin.isAvailable(): ${Admin.isAvailable()}");
 
@@ -303,8 +317,7 @@ class ObjectBox {
 
   Future<void> wipeDatabase() async {
     store.close();
-    final dir = await _databaseDirectory();
-    await Directory(dir).delete(recursive: true);
+    await Directory(appDataDirectory).delete(recursive: true);
 
     _instance = null;
   }

@@ -8,6 +8,7 @@ import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
+import 'package:flow/widgets/select_icon_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -39,8 +40,7 @@ class _AccountPageState extends State<AccountPage> {
   late final Account? _currentlyEditing;
 
   String get iconCodeOrError =>
-      _iconData?.toString() ??
-      FlowIconData.icon(Symbols.error_rounded).toString();
+      _iconData?.toString() ?? FlowIconData.emoji("❌").toString();
 
   dynamic error;
 
@@ -63,6 +63,13 @@ class _AccountPageState extends State<AccountPage> {
       _excludeFromTotalBalance =
           _currentlyEditing?.excludeFromTotalBalance ?? false;
     }
+  }
+
+  @override
+  void dispose() {
+    _nameTextController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -91,6 +98,7 @@ class _AccountPageState extends State<AccountPage> {
                   _iconData ?? CharacterFlowIcon("T"),
                   size: 80.0,
                   plated: true,
+                  onTap: selectIcon,
                 ),
                 const SizedBox(height: 16.0),
                 Padding(
@@ -164,9 +172,6 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void save() async {
-    // TODO add emoji/icon picker
-    // if (_iconData == null) return; // TODO show error
-
     if (_formKey.currentState?.validate() != true) return;
 
     final String trimmed = _nameTextController.text.trim();
@@ -214,5 +219,25 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     return null;
+  }
+
+  void _updateIcon(FlowIconData? data) {
+    _iconData = data;
+  }
+
+  Future<void> selectIcon() async {
+    final result = await showModalBottomSheet<FlowIconData>(
+      context: context,
+      builder: (context) => SelectIconSheet(
+        current: _iconData,
+        onChange: (value) => _updateIcon(value),
+      ),
+    );
+
+    if (result != null) {
+      _updateIcon(result);
+    }
+
+    if (mounted) setState(() {});
   }
 }

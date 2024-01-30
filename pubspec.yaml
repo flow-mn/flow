@@ -10,6 +10,7 @@ environment:
 
 dependencies:
   auto_size_text: ^3.0.0
+  crop_image: ^1.0.11
   csv: ^5.1.1
   cupertino_icons: ^1.0.6
   file_picker: ^6.1.1
