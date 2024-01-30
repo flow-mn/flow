@@ -48,6 +48,8 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
   bool busy = false;
 
+  late final VoidCallback? cleanUpImage;
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +76,29 @@ class _SelectIconSheetState extends State<SelectIconSheet>
     _textFieldFocusNode.addListener(() {
       setState(() {});
     });
+
+    if (selected is ImageFlowIcon) {
+      final initialImagePath = (selected as ImageFlowIcon).imagePath;
+      cleanUpImage = () {
+        // If the image hasn't changed, no need to delete it.
+        if (selected case ImageFlowIcon selectedImageIcon) {
+          log("selectedImageIcon.imagePath:${selectedImageIcon.imagePath}");
+          log("initialImagePath:$initialImagePath");
+          if (selectedImageIcon.imagePath == initialImagePath) {
+            return;
+          }
+        }
+
+        File(
+          p.join(
+            ObjectBox.appDataDirectory,
+            initialImagePath,
+          ),
+        ).deleteSync();
+      };
+    } else {
+      cleanUpImage = null;
+    }
   }
 
   @override
@@ -81,6 +106,11 @@ class _SelectIconSheetState extends State<SelectIconSheet>
     _controller.dispose();
     _characterTextController.dispose();
     _textFieldFocusNode.dispose();
+
+    if (cleanUpImage != null) {
+      cleanUpImage!();
+    }
+
     super.dispose();
   }
 
