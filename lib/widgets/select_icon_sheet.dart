@@ -14,7 +14,7 @@ import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:simple_icons/simple_icons.dart';
 import 'package:uuid/uuid.dart';
 
@@ -90,7 +90,7 @@ class _SelectIconSheetState extends State<SelectIconSheet>
         }
 
         File(
-          p.join(
+          path.join(
             ObjectBox.appDataDirectory,
             initialImagePath,
           ),
@@ -312,7 +312,7 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
       final dataDirectory = ObjectBox.appDataDirectory;
       final fileName = "${const Uuid().v4()}.png";
-      final file = File(p.join(
+      final file = File(path.join(
         dataDirectory,
         "images",
         fileName,
