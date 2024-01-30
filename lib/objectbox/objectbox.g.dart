@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import '../entity/account.dart';
 import '../entity/category.dart';
+import '../entity/profile.dart';
 import '../entity/transaction.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -194,6 +195,41 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(5, 3298987588431022631),
+      name: 'Profile',
+      lastPropertyId: const IdUid(5, 3781626172731013526),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 7051631551441750621),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 731255396614738413),
+            name: 'uuid',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(11, 6445110811655945444)),
+        ModelProperty(
+            id: const IdUid(3, 6455801293952865246),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 5771346759499657768),
+            name: 'createdDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 3781626172731013526),
+            name: 'imagePath',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -224,8 +260,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(4, 2857566645668229410),
-      lastIndexId: const IdUid(10, 3325852605879892422),
+      lastEntityId: const IdUid(5, 3298987588431022631),
+      lastIndexId: const IdUid(11, 6445110811655945444),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [3796819593314794683],
@@ -441,6 +477,47 @@ ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
           object.account.attach(store);
           return object;
+        }),
+    Profile: EntityDefinition<Profile>(
+        model: _entities[3],
+        toOneRelations: (Profile object) => [],
+        toManyRelations: (Profile object) => {},
+        getId: (Profile object) => object.id,
+        setId: (Profile object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Profile object, fb.Builder fbb) {
+          final uuidOffset = fbb.writeString(object.uuid);
+          final nameOffset = fbb.writeString(object.name);
+          final imagePathOffset = object.imagePath == null
+              ? null
+              : fbb.writeString(object.imagePath!);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, uuidOffset);
+          fbb.addOffset(2, nameOffset);
+          fbb.addInt64(3, object.createdDate.millisecondsSinceEpoch);
+          fbb.addOffset(4, imagePathOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final object = Profile(
+              id: idParam, createdDate: createdDateParam, name: nameParam)
+            ..uuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '')
+            ..imagePath = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 12);
+
+          return object;
         })
   };
 
@@ -552,4 +629,24 @@ class Transaction_ {
   /// see [Transaction.accountUuid]
   static final accountUuid =
       QueryStringProperty<Transaction>(_entities[2].properties[12]);
+}
+
+/// [Profile] entity fields to define ObjectBox queries.
+class Profile_ {
+  /// see [Profile.id]
+  static final id = QueryIntegerProperty<Profile>(_entities[3].properties[0]);
+
+  /// see [Profile.uuid]
+  static final uuid = QueryStringProperty<Profile>(_entities[3].properties[1]);
+
+  /// see [Profile.name]
+  static final name = QueryStringProperty<Profile>(_entities[3].properties[2]);
+
+  /// see [Profile.createdDate]
+  static final createdDate =
+      QueryIntegerProperty<Profile>(_entities[3].properties[3]);
+
+  /// see [Profile.imagePath]
+  static final imagePath =
+      QueryStringProperty<Profile>(_entities[3].properties[4]);
 }

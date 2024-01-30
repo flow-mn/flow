@@ -3,6 +3,7 @@ import 'package:flow/routes/categories_page.dart';
 import 'package:flow/routes/category_page.dart';
 import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
+import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
@@ -57,6 +58,15 @@ final router = GoRouter(
     GoRoute(
       path: '/preferences/numpad',
       builder: (context, state) => const NumpadPreferencesPage(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      path: '/profile/:id',
+      builder: (context, state) => ProfilePage(
+          profileId: int.tryParse(state.pathParameters['id']!) ?? -1),
     ),
     GoRoute(
       path: '/utils/cropsquare',
