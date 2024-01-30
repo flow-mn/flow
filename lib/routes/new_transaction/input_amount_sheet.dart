@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -27,12 +28,15 @@ class InputAmountSheet extends StatefulWidget {
   /// sure which currency transaction the user is making.
   final bool hideCurrencySymbol;
 
+  final bool allowNegative;
+
   const InputAmountSheet({
     super.key,
     this.initialAmount,
     this.currency,
     this.overrideInitialAmount = true,
     this.hideCurrencySymbol = false,
+    this.allowNegative = true,
   });
 
   @override
@@ -199,7 +203,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                     ),
                     ...getNumberRows(1),
                     NumpadButton(
-                      child: const Icon(Symbols.remove_rounded),
+                      child: widget.allowNegative
+                          ? const Icon(Symbols.remove_rounded)
+                          : const Icon(Symbols.add_rounded),
                       onTap: () => _negate(),
                     ),
                     ...getNumberRows(2),
@@ -315,7 +321,11 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _negate([bool? forceNegative]) {
-    _negative = forceNegative ?? !_negative;
+    if (widget.allowNegative) {
+      _negative = forceNegative ?? !_negative;
+    } else {
+      _negative = false;
+    }
 
     setState(() {});
   }
@@ -377,11 +387,11 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
   void _updateAmountFromNumber(num initialAmount) {
     initialAmount = initialAmount.toDouble();
-    _wholePart = initialAmount.truncate();
-    _decimalPart = ((initialAmount - initialAmount.truncate()) *
+    _wholePart = initialAmount.abs().truncate();
+    _decimalPart = ((initialAmount - initialAmount.truncate()).abs() *
             math.pow(10, _numberOfDecimals))
         .round();
     _inputtingDecimal = _decimalPart.abs() != 0;
-    _negate(widget.initialAmount?.isNegative);
+    _negate(widget.allowNegative ? widget.initialAmount?.isNegative : false);
   }
 }
