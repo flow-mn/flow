@@ -22,8 +22,10 @@ class NewTransactionButton extends StatelessWidget {
         customAngleDiff: 48.0,
         radius: 96.0,
         customAngleAnchor: PieAnchor.center,
+        leftClickShowsMenu: true,
+        rightClickShowsMenu: true,
+        delayDuration: Duration.zero,
       ),
-      onPressed: () => onActionTap(TransactionType.expense),
       actions: [
         PieAction(
           tooltip: Text(TransactionType.transfer.localizedNameContext(context)),
