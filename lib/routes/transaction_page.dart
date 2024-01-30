@@ -144,7 +144,8 @@ class _TransactionPageState extends State<TransactionPage> {
                         decoration: InputDecoration(
                           hintText: "transaction.fallbackTitle".t(context),
                         ),
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => save(),
                         focusNode: _titleFocusNode,
                       ),
                     ),
