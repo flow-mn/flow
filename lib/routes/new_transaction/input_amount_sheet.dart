@@ -208,7 +208,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                       onTap: () => {},
                     ),
                     NumpadButton(
-                      onTap: () => {},
+                      onTap: () => insertDigit(0),
                       crossAxisCellCount: 2,
                       child: const Text("0"),
                     ),
