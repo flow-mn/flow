@@ -1,7 +1,7 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/routes/home/home/no_transactions.dart';
+import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/home/week_transaction_list.dart';
 import 'package:flutter/material.dart';
