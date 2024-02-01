@@ -46,7 +46,7 @@ class NumpadButton extends StatelessWidget {
         borderRadius: borderRadius,
         child: InkWell(
           borderRadius: borderRadius,
-          onTap: onTapHandler,
+          onTap: onTap == null ? null : onTapHandler,
           onDoubleTap: onDoubleTap,
           onLongPress: onLongPress,
           child: Center(
