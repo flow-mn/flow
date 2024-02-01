@@ -75,9 +75,6 @@ flutter:
           weight: 600
         - asset: assets/fonts/Poppins-Bold.ttf
           weight: 700
-    - family: Shantell Sans
-      fonts:
-        - asset: assets/fonts/ShantellSans/ShantellSans-Var.ttf
 
 objectbox:
   output_dir: objectbox
