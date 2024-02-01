@@ -222,11 +222,6 @@ final _entities = <ModelEntity>[
             id: const IdUid(4, 5771346759499657768),
             name: 'createdDate',
             type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 3781626172731013526),
-            name: 'imagePath',
-            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -276,7 +271,8 @@ ModelDefinition getObjectBoxModel() {
         7280484442250674290,
         7528954808630752939,
         2052151351995260526,
-        2763207879596101849
+        2763207879596101849,
+        3781626172731013526
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -489,15 +485,11 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Profile object, fb.Builder fbb) {
           final uuidOffset = fbb.writeString(object.uuid);
           final nameOffset = fbb.writeString(object.name);
-          final imagePathOffset = object.imagePath == null
-              ? null
-              : fbb.writeString(object.imagePath!);
           fbb.startTable(6);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, uuidOffset);
           fbb.addOffset(2, nameOffset);
           fbb.addInt64(3, object.createdDate.millisecondsSinceEpoch);
-          fbb.addOffset(4, imagePathOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -510,13 +502,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 8, '');
-          final imagePathParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 12);
           final object = Profile(
-              id: idParam,
-              createdDate: createdDateParam,
-              name: nameParam,
-              imagePath: imagePathParam)
+              id: idParam, createdDate: createdDateParam, name: nameParam)
             ..uuid = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 6, '');
 
@@ -648,8 +635,4 @@ class Profile_ {
   /// see [Profile.createdDate]
   static final createdDate =
       QueryIntegerProperty<Profile>(_entities[3].properties[3]);
-
-  /// see [Profile.imagePath]
-  static final imagePath =
-      QueryStringProperty<Profile>(_entities[3].properties[4]);
 }

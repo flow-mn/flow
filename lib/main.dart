@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flow/entity/profile.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/prefs.dart';
@@ -66,6 +67,10 @@ class FlowState extends State<Flow> {
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
+
+    if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
+      Profile.createDefaultProfile();
+    }
   }
 
   @override

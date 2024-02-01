@@ -9,15 +9,15 @@ part "pie_menu_theme.dart";
 part "text_theme.dart";
 part "color_scheme.dart";
 
-// const _fontFamily = "Shantell Sans";
-
 const _fontFamily = "Poppins";
 
 const kTransparent = Color(0x00000000);
 
 const _fontFamilyFallback = [
-  "Roboto",
   "SF Pro Display",
+  "SF UI Text",
+  "Helvetica",
+  "Roboto",
   "Arial",
 ];
 

@@ -1,11 +1,15 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:ui' as ui;
+
+import 'package:path/path.dart' as path;
 
 import 'package:flow/entity/profile.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/profile_picture.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
 
 class ProfilePage extends StatefulWidget {
   final int? profileId;
@@ -17,11 +21,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  // Evicting cache doesn't rebuild the image
+  // and setState(() {}) hasn't been useful.
+  //
+  // Makes me do these kind of weird stuff :)))
+  int _profilePictureUpdateCounter = 0;
+
   late final Profile? _profile;
 
   late final TextEditingController _nameController;
-
-  bool busy=false;
 
   @override
   void initState() {
@@ -42,51 +50,80 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _profile == null
-            ? const Center(
-                child: Text("Impossible state"),
-              )
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    foregroundImage: switch (_profile!.imagePath) {
-                      null => const AssetImage("assets/images/missing.svg"),
-                      String imgPath => FileImage(
-                          File(path.join(ObjectBox.appDataDirectory, imgPath)),
+    return PopScope(
+      onPopInvoked: (_) => save(),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: SafeArea(
+          child: _profile == null
+              ? const Center(
+                  child: Text("Impossible state"),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Hero(
+                        tag: "pfp",
+                        child: ProfilePicture(
+                          key: ValueKey(_profilePictureUpdateCounter),
+                          filePath: _profile!.imagePath,
+                          onTap: changeProfilePicture,
+                          showOverlayUponHover: true,
                         ),
-                    } as ImageProvider,
+                      ),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: _nameController,
+                      ),
+                    ],
                   ),
-                  TextField(
-                    controller: _nameController,
-                  ),
-                ],
-              ),
+                ),
+        ),
       ),
     );
   }
 
-  Future<void> save() async {
-    if (busy) return;
-
-    setState(() {
-      busy = true;
-    });
-
-    if (_profile == null) {
-      throw "This is an impossible state. App setup hasn't been finished correctly";
+  Future<void> changeProfilePicture() async {
+    final cropped = await pickAndCropSquareImage(context, maxDimension: 512);
+    if (cropped == null) {
+      // Error toast is handled in `pickAndCropSquareImage`
+      return;
     }
 
+    final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
+    final bytes = byteData?.buffer.asUint8List();
+
+    if (bytes == null) throw "";
+
+    final dataDirectory = ObjectBox.appDataDirectory;
+
+    final file = File(path.join(
+      dataDirectory,
+      _profile!.imagePath,
+    ));
+
+    try {
+      await FileImage(file).evict();
+      _profilePictureUpdateCounter++;
+    } catch (e) {
+      log("[Flow] Profile Page > Failed to evict profile FileImage cache due to:\n$e");
+    }
+
+    await file.create(recursive: true);
+    await file.writeAsBytes(bytes, flush: true);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> save() async {
     try {
       await ObjectBox().box<Profile>().putAsync(_profile!);
     } catch (e) {
       log("[Profile Page] failed to put $_profile due to $e");
-    } finally {
-      busy = false;
-
-      if (mounted) setState(() {});
     }
   }
 }

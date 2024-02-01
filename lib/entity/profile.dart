@@ -21,13 +21,13 @@ class Profile implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
-  String? imagePath;
+  @Transient()
+  String get imagePath => "$uuid.png";
 
   Profile({
     this.id = 0,
     DateTime? createdDate,
     required this.name,
-    this.imagePath,
   })  : createdDate = createdDate ?? DateTime.now(),
         uuid = const Uuid().v4();
 
@@ -35,10 +35,10 @@ class Profile implements EntityBase {
       _$ProfileFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
-  static createDummyProfile() async {
+  static createDefaultProfile() {
     ObjectBox().box<Profile>().put(
           Profile(
-            name: "Crispy Bacon (debug)",
+            name: "Default Profile",
           ),
         );
   }

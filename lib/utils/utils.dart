@@ -1,9 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/toast.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,4 +112,38 @@ Future<XFile?> pickImage({
   );
 
   return xfile;
+}
+
+Future<ui.Image?> pickAndCropSquareImage(
+  BuildContext context, {
+  double? maxDimension,
+}) async {
+  final xfile = await pickImage(
+    maxWidth: 512,
+    maxHeight: 512,
+  );
+
+  if (xfile == null) {
+    if (context.mounted) {
+      context.showErrorToast(error: "error.input.noImagePicked".t(context));
+    }
+    return null;
+  }
+  if (!context.mounted) return null;
+
+  final image = Image.file(File(xfile.path));
+
+  final cropped = await context.push<ui.Image>(
+    "/utils/cropsquare",
+    extra: CropSquareImagePageProps(image: image),
+  );
+
+  if (cropped == null) {
+    if (context.mounted) {
+      context.showErrorToast(error: "error.input.cropFailed".t(context));
+    }
+    return null;
+  }
+
+  return cropped;
 }
