@@ -1,13 +1,17 @@
 import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
 import 'package:flow/routes/category_page.dart';
+import 'package:flow/routes/export_options_page.dart';
+import 'package:flow/routes/export_page.dart';
 import 'package:flow/routes/home_page.dart';
+import 'package:flow/routes/import_page.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
+import 'package:flow/sync/export/mode.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,6 +78,22 @@ final router = GoRouter(
           (state.extra == null || state.extra is! Image)
               ? throw "Invalid state. Pass [Image] object to `extra` prop"
               : CropSquareImagePage(image: state.extra as Image),
+    ),
+    GoRoute(
+      path: '/exportOptions',
+      builder: (context, state) => const ExportOptionsPage(),
+    ),
+    GoRoute(
+      path: '/export/:type',
+      builder: (context, state) => ExportPage(
+        state.pathParameters["type"] == "csv"
+            ? ExportMode.csv
+            : ExportMode.json,
+      ),
+    ),
+    GoRoute(
+      path: '/import',
+      builder: (context, state) => const ImportPage(),
     ),
     GoRoute(
       path: '/setup',

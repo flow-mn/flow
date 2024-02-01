@@ -47,9 +47,14 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => context.push("/preferences"),
           ),
           ListTile(
-            title: Text("tabs.profile.importAndExport".t(context)),
-            leading: const Icon(Symbols.sync_rounded),
-            onTap: () => {},
+            title: Text("tabs.profile.backup".t(context)),
+            leading: const Icon(Symbols.hard_drive_rounded),
+            onTap: () => context.push("/exportOptions"),
+          ),
+          ListTile(
+            title: Text("tabs.profile.import".t(context)),
+            leading: const Icon(Symbols.settings_backup_restore_rounded),
+            onTap: () => context.push("/import"),
           ),
           const SizedBox(height: 32.0),
           ListHeader("tabs.profile.community".t(context)),
