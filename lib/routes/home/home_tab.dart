@@ -19,18 +19,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   QueryBuilder<Transaction> qb() => ObjectBox()
       .box<Transaction>()
       .query(
-        Transaction_.transactionDate.between(
+        Transaction_.transactionDate.greaterOrEqual(
           Moment.now()
               .subtract(const Duration(days: 6))
               .startOfDay()
               .millisecondsSinceEpoch,
-          // Since we cannot make `Moment.now` dynamic without feeding new
-          // query to the builder, setting the date range 12 hours ahead.
-          //
-          // We'll filter the values in the build function. All of the
-          // transactions came past NOW would be planned/recurring payments,
-          // and shouldn't be that many.
-          Moment.now().add(const Duration(hours: 12)).millisecondsSinceEpoch,
         ),
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
