@@ -19,13 +19,11 @@ Future<bool> openUrl(
   if (!canOpen) return false;
 
   try {
-    launchUrl(uri);
+    return await launchUrl(uri);
   } catch (e) {
     log("[Flow] Failed to launch uri ($uri) due to $e");
     return false;
   }
-
-  return true;
 }
 
 void numpadHaptic() {
