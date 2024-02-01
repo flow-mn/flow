@@ -63,7 +63,7 @@ Future<String> saveBackupFile(
       : await getApplicationDocumentsDirectory();
 
   final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
-  final String randomValue = math.Random().nextInt(2 ^ 29).toRadixString(36);
+  final String randomValue = math.Random().nextInt(536870912).toRadixString(36);
   final String filename = "flow_backup_${dateTime}_$randomValue.$fileExt";
 
   log("[Flow Sync] Writing to ${path.join(saveDir.path, filename)}");
@@ -100,6 +100,13 @@ Future<ExportStatus> showFileSaveDialog(
       ),
     );
   }
+
+  final uri = Uri(
+    scheme: "file",
+    path: path.dirname(savedFilePath),
+  );
+
+  log("[Flow Sync] shareSuccess $shareSuccess $uri");
 
   return (success: shareSuccess, filePath: savedFilePath);
 }
