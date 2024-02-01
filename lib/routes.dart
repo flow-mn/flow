@@ -12,7 +12,6 @@ import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
@@ -74,10 +73,17 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/utils/cropsquare',
-      builder: (context, state) =>
-          (state.extra == null || state.extra is! Image)
-              ? throw "Invalid state. Pass [Image] object to `extra` prop"
-              : CropSquareImagePage(image: state.extra as Image),
+      builder: (context, state) {
+        return switch (state.extra) {
+          CropSquareImagePageProps props => CropSquareImagePage(
+              image: props.image,
+              maxDimension: props.maxDimension,
+              returnBitmap: props.returnBitmap,
+            ),
+          _ =>
+            throw "Invalid state. Pass [CropSquareImagePageProps] object to `extra` prop",
+        };
+      },
     ),
     GoRoute(
       path: '/exportOptions',

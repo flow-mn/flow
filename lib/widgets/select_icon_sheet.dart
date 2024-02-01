@@ -6,7 +6,6 @@ import 'package:flow/data/flow_icon.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
@@ -287,21 +286,9 @@ class _SelectIconSheetState extends State<SelectIconSheet>
     });
 
     try {
-      final xfile = await pickImage(
-        maxWidth: 512,
-        maxHeight: 512,
-      );
-      if (!mounted || xfile == null) return;
-
-      final image = Image.file(File(xfile.path));
-
-      final cropped =
-          await context.push<ui.Image>("/utils/cropsquare", extra: image);
-
+      final cropped = await pickAndCropSquareImage(context, maxDimension: 256);
       if (cropped == null) {
-        if (mounted) {
-          context.showErrorToast(error: "error.input.cropFailed".t(context));
-        }
+        // Error toast is handled in `pickAndCropSquareImage`
         return;
       }
 
