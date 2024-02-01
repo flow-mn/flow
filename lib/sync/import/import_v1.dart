@@ -78,18 +78,22 @@ class ImportV1 extends Importer {
   ///
   /// [ignoreSafetyBackupFail] - Forces to proceed in the import if safety
   /// backup fails
-  Future<String> execute({bool ignoreSafetyBackupFail = false}) async {
-    // Backup data before ruining everything
-    final safetyBackup = await export(
-      subfolder: "automated_backups",
-      showShareDialog: false,
-    ).catchError((_) => (success: false, filePath: null));
+  Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
+    String? safetyBackupFilePath;
 
-    if (!safetyBackup.success && !ignoreSafetyBackupFail) {
-      throw const ImportException(
-        "Safety backup failed, aborting mission",
-        l10nKey: "error.sync.safetyBackupFailed",
-      );
+    try {
+      // Backup data before ruining everything
+      await export(
+        subfolder: "automated_backups",
+        showShareDialog: false,
+      ).then((value) => safetyBackupFilePath = value.filePath);
+    } catch (e) {
+      if (!ignoreSafetyBackupFail) {
+        throw const ImportException(
+          "Safety backup failed, aborting mission",
+          l10nKey: "error.sync.safetyBackupFailed",
+        );
+      }
     }
 
     try {
@@ -106,7 +110,7 @@ class ImportV1 extends Importer {
       rethrow;
     }
 
-    return safetyBackup.filePath!;
+    return safetyBackupFilePath;
   }
 
   Future<void> _eraseAndWrite() async {

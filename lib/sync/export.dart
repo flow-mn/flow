@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
-typedef ExportStatus = ({bool success, String? filePath});
+typedef ExportStatus = ({bool shareDialogSucceeded, String filePath});
 
 /// Exports all user data (except for profile for now) in the format specified.
 ///
@@ -24,11 +24,10 @@ Future<ExportStatus> export({
   bool showShareDialog = true,
   String? subfolder,
 }) async {
-  // Sharing [XFile]s aren't supported yet on Linux and Windows.
+  // Sharing [XFile]s aren't supported yet on Linux.
   //
   // https://pub.dev/packages/share_plus#platform-support
-  final bool isShareSupported =
-      !(Platform.isLinux || Platform.isWindows || Platform.isFuchsia);
+  final bool isShareSupported = !(Platform.isLinux || Platform.isFuchsia);
 
   final backupContent = switch ((mode, latestSyncModelVersion)) {
     (ExportMode.csv, 1) => await generateCSVContentV1(),
@@ -43,7 +42,7 @@ Future<ExportStatus> export({
   );
 
   if (!showShareDialog) {
-    return (success: false, filePath: savedFilePath);
+    return (shareDialogSucceeded: false, filePath: savedFilePath);
   }
 
   return await showFileSaveDialog(savedFilePath, isShareSupported);
@@ -108,5 +107,5 @@ Future<ExportStatus> showFileSaveDialog(
 
   log("[Flow Sync] shareSuccess $shareSuccess $uri");
 
-  return (success: shareSuccess, filePath: savedFilePath);
+  return (shareDialogSucceeded: shareSuccess, filePath: savedFilePath);
 }
