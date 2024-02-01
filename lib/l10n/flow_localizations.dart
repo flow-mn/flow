@@ -41,9 +41,10 @@ class FlowLocalizations {
 
     return switch (replace) {
       null => translatedText,
-      String singleValue => translatedText.replaceAll("{}", singleValue),
+      String singleValue =>
+        translatedText.replaceAll(RegExp(r"{[^}]*}"), singleValue),
       num singleValue =>
-        translatedText.replaceAll("{}", singleValue.toString()),
+        translatedText.replaceAll(RegExp(r"{[^}]*}"), singleValue.toString()),
       Map lookupTable => _fillFromTable(lookupTable, translatedText),
       _ => translatedText,
     };
