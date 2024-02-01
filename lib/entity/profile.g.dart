@@ -11,9 +11,8 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
           ? null
           : DateTime.parse(json['createdDate'] as String),
       name: json['name'] as String,
-    )
-      ..uuid = json['uuid'] as String
-      ..imagePath = json['imagePath'] as String?;
+      imagePath: json['imagePath'] as String?,
+    )..uuid = json['uuid'] as String;
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'uuid': instance.uuid,

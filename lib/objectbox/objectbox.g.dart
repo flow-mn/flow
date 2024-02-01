@@ -510,12 +510,15 @@ ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 8, '');
+          final imagePathParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 12);
           final object = Profile(
-              id: idParam, createdDate: createdDateParam, name: nameParam)
+              id: idParam,
+              createdDate: createdDateParam,
+              name: nameParam,
+              imagePath: imagePathParam)
             ..uuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 6, '')
-            ..imagePath = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 12);
+                .vTableGet(buffer, rootOffset, 6, '');
 
           return object;
         })
