@@ -1,11 +1,15 @@
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/sync/export.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flow/widgets/select_icon_sheet.dart';
@@ -125,7 +129,15 @@ class _AccountPageState extends State<AccountPage> {
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
-                )
+                ),
+                const SizedBox(height: 16.0),
+                if (_currentlyEditing != null) ...[
+                  const SizedBox(height: 96.0),
+                  DeleteButton(
+                    onTap: _deleteAccount,
+                  ),
+                  const SizedBox(height: 16.0),
+                ],
               ],
             ),
           ),
@@ -239,5 +251,32 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     if (mounted) setState(() {});
+  }
+
+  void _deleteAccount() async {
+    if (_currentlyEditing == null) return;
+
+    final associatedTransactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.account.equals(_currentlyEditing!.id));
+
+    final txnCount = associatedTransactionsQuery.build().count();
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+      child: Text("account.delete.warning".t(context, txnCount)),
+    );
+
+    if (confirmation == true) {
+      await export(showShareDialog: false, subfolder: "anti-blunder");
+
+      await associatedTransactionsQuery.build().removeAsync();
+      await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
+
+      if (mounted) {
+        context.pop();
+      }
+    }
   }
 }

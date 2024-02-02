@@ -7,6 +7,8 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/select_icon_sheet.dart';
 import 'package:flutter/material.dart';
@@ -108,6 +110,13 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
+                if (_currentlyEditing != null) ...[
+                  const SizedBox(height: 96.0),
+                  DeleteButton(
+                    onTap: _deleteCategory,
+                  ),
+                  const SizedBox(height: 16.0),
+                ],
               ],
             ),
           ),
@@ -200,5 +209,22 @@ class _CategoryPageState extends State<CategoryPage> {
     }
 
     if (mounted) setState(() {});
+  }
+
+  Future<void> _deleteCategory() async {
+    if (_currentlyEditing == null) return;
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+    );
+
+    if (confirmation == true) {
+      ObjectBox().box<Category>().remove(_currentlyEditing!.id);
+
+      if (mounted) {
+        context.pop();
+      }
+    }
   }
 }

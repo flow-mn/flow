@@ -4,6 +4,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/category_card.dart';
+import 'package:flow/widgets/category_card_add.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -57,6 +58,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: CategoryCardAdd(
+                          onTap: () => context.push("/category/new"),
+                        ),
+                      ),
                       ...categories.map(
                         (category) => Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),

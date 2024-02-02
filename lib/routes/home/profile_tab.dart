@@ -1,7 +1,5 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
-import 'package:flow/sync/export.dart';
-import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
@@ -86,16 +84,6 @@ class _ProfileTabState extends State<ProfileTab> {
                   Text(_debugDbBusy ? "Clearing database" : "Clear objectbox"),
               onTap: () => resetDatabase(),
               leading: const Icon(Symbols.adb_rounded),
-            ),
-            ListTile(
-              title: const Text("Backup current data"),
-              onTap: () => export(),
-              leading: const Icon(Symbols.export_notes_rounded),
-            ),
-            ListTile(
-              title: const Text("Export CSV"),
-              onTap: () => export(mode: ExportMode.csv),
-              leading: const Icon(Symbols.export_notes_rounded),
             ),
             ListTile(
               title: const Text("Import from backup"),
