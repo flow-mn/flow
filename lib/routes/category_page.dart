@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
@@ -214,9 +215,18 @@ class _CategoryPageState extends State<CategoryPage> {
   Future<void> _deleteCategory() async {
     if (_currentlyEditing == null) return;
 
+    final associatedTransactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.category.equals(_currentlyEditing!.id));
+
+    final txnCount = associatedTransactionsQuery.build().count();
+
     final confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+      child: Text(
+        "category.delete.warning".t(context, txnCount),
+      ),
     );
 
     if (confirmation == true) {

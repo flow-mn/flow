@@ -68,20 +68,20 @@ extension CustomDialogs on BuildContext {
             ),
             if (child != null || isDeletionConfirmation) ...[
               const SizedBox(height: 8.0),
-              child ??
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 16.0,
-                    ),
-                    child: Text(
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: child ??
+                    Text(
                       "general.delete.permanentWarning".t(context),
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: context.flowColors.expense,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
+              ),
             ],
             const SizedBox(height: 16.0),
             ButtonBar(
@@ -93,7 +93,7 @@ extension CustomDialogs on BuildContext {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => context.pop(false),
+                  onPressed: () => context.pop(true),
                   child: Text(
                     isDeletionConfirmation
                         ? "general.delete".t(context)
@@ -113,7 +113,8 @@ extension CustomDialogs on BuildContext {
     if (callback != null) {
       callback(result);
     }
-    return null;
+
+    return result;
   }
 }
 

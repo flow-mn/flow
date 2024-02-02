@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
@@ -267,6 +269,8 @@ class _AccountPageState extends State<AccountPage> {
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
       child: Text("account.delete.warning".t(context, txnCount)),
     );
+
+    log("confirmation: $confirmation");
 
     if (confirmation == true) {
       await export(showShareDialog: false, subfolder: "anti-blunder");
