@@ -1,5 +1,4 @@
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -62,7 +61,6 @@ class _ExportPageState extends State<ExportPage> {
     try {
       final result = await export(
         mode: widget.mode,
-        subfolder: ObjectBox.subdirectory,
         showShareDialog: false,
       );
 
