@@ -4,13 +4,13 @@ import 'dart:developer';
 import 'package:csv/csv.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/profile.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/main.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export/headers/header_v1.dart';
 import 'package:flow/sync/model/model_v1.dart';
-import 'package:flutter/foundation.dart' hide Category;
 import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -32,7 +32,9 @@ Future<String> generateBackupContentV1() async {
   log("[Flow Sync] Finished fetching categories");
 
   final DateTime exportDate = DateTime.now().toUtc();
-  const String username = "sadespresso${kDebugMode ? "-dev" : ""}";
+  final String username =
+      ObjectBox().box<Profile>().query().build().findFirst()?.name ??
+          "Default Profile";
 
   final SyncModelV1 obj = SyncModelV1(
     versionCode: versionCode,
