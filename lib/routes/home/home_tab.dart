@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+  final ScrollController? scrollController;
+
+  const HomeTab({super.key, this.scrollController});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -62,6 +64,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 ),
               (_, true) => Expanded(
                   child: WeekTransactionList(
+                    controller: widget.scrollController,
                     transactions: transactions!,
                     listPadding: const EdgeInsets.only(
                       top: 16.0,

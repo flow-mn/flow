@@ -9,6 +9,8 @@ class WeekTransactionList extends StatelessWidget {
   final EdgeInsets itemPadding;
   final List<Transaction> transactions;
 
+  final ScrollController? controller;
+
   const WeekTransactionList({
     super.key,
     required this.transactions,
@@ -17,6 +19,7 @@ class WeekTransactionList extends StatelessWidget {
       horizontal: 16.0,
       vertical: 4.0,
     ),
+    this.controller,
   });
 
   @override
@@ -30,6 +33,7 @@ class WeekTransactionList extends StatelessWidget {
     ];
 
     return ListView.builder(
+      controller: controller,
       padding: listPadding.copyWith(bottom: listPadding.bottom),
       itemBuilder: (context, index) => switch (flattened[index]) {
         (DateTime date) => Padding(

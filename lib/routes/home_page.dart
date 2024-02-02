@@ -29,6 +29,8 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
+  final ScrollController _homeTabScrollController = ScrollController();
+
   late int _currentIndex;
 
   @override
@@ -82,11 +84,13 @@ class _HomePageState extends State<HomePage>
               body: SafeArea(
                 child: TabBarView(
                   controller: _tabController,
-                  children: const [
-                    HomeTab(),
-                    StatsTab(),
-                    AccountsTab(),
-                    ProfileTab(),
+                  children: [
+                    HomeTab(
+                      scrollController: _homeTabScrollController,
+                    ),
+                    const StatsTab(),
+                    const AccountsTab(),
+                    const ProfileTab(),
                   ],
                 ),
               ),
@@ -132,6 +136,17 @@ class _HomePageState extends State<HomePage>
   }
 
   void _navigateTo(int index) {
+    if (index == _tabController.index) {
+      if (index == 0 && _homeTabScrollController.hasClients) {
+        _homeTabScrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+      return;
+    }
+
     _tabController.animateTo(index);
   }
 
