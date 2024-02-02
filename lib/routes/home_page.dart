@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/main.dart';
@@ -111,28 +109,6 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     );
-  }
-
-  void createAcc() {
-    final int cnt = ObjectBox().box<Account>().count();
-
-    final account = Account(
-      name: "Test account #$cnt",
-      currency: "MNT",
-      iconCode: "Material Symbols:0xe0aa",
-    );
-
-    final double initialBalance =
-        cnt == 0 ? 420.69 : Random().nextDouble() * 10000 - 5000;
-
-    account.transactions.add(
-      Transaction(
-        amount: initialBalance,
-        currency: account.currency,
-      ),
-    );
-
-    ObjectBox().box<Account>().put(account);
   }
 
   void _navigateTo(int index) {
