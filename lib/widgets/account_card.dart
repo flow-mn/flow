@@ -1,9 +1,7 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,26 +105,19 @@ class AccountCard extends StatelessWidget {
         );
       },
       actions: [
+        // TODO Why is it still open? Do I really have to pop, then push?
         CupertinoContextMenuAction(
           onPressed: () => context.push("/account/${account.id}"),
           isDefaultAction: true,
           trailingIcon: CupertinoIcons.pencil,
-          child: const Text("Edit"),
+          child: Text("account.edit".t(context)),
         ),
         CupertinoContextMenuAction(
-          // TODO add confirmation
-          onPressed: () => context
-              .showConfirmDialog(
-                title: "general.delete.confirmName".t(context, account.name),
-              )
-              .then(
-                (value) => value == true
-                    ? ObjectBox().box<Account>().remove(account.id)
-                    : null,
-              ),
-          isDestructiveAction: true,
-          trailingIcon: CupertinoIcons.delete,
-          child: const Text("Delete"),
+          onPressed: () => context.push(
+              "/account/${account.id}/transactions?title=${account.name}"),
+          isDefaultAction: true,
+          trailingIcon: CupertinoIcons.square_list,
+          child: Text("account.transactions".t(context)),
         ),
       ],
     );

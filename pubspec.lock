@@ -712,10 +712,11 @@ packages:
   pie_menu:
     dependency: "direct main"
     description:
-      name: pie_menu
-      sha256: "46b40fcb4e9df81754ff66db574f31d08fb158849bd24ebbda0c4bcbcb17b940"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: main
+      resolved-ref: e4affcc0a72707b8a03c6bf687273a16702ed115
+      url: "git@github.com:sadespresso/flutter-pie-menu.git"
+    source: git
     version: "3.1.3"
   platform:
     dependency: transitive

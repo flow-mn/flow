@@ -10,6 +10,7 @@ import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
+import 'package:flow/routes/transactions_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:go_router/go_router.dart';
@@ -38,6 +39,13 @@ final router = GoRouter(
       path: '/account/:id',
       builder: (context, state) => AccountPage.edit(
         accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      ),
+    ),
+    GoRoute(
+      path: '/account/:id/transactions',
+      builder: (context, state) => TransactionsPage.account(
+        accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+        title: state.uri.queryParameters["title"],
       ),
     ),
     GoRoute(
