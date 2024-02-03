@@ -4,14 +4,14 @@ import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
 import 'package:flutter/widgets.dart';
 
-class WeekTransactionList extends StatelessWidget {
+class GroupedTransactionList extends StatelessWidget {
   final EdgeInsets listPadding;
   final EdgeInsets itemPadding;
   final List<Transaction> transactions;
 
   final ScrollController? controller;
 
-  const WeekTransactionList({
+  const GroupedTransactionList({
     super.key,
     required this.transactions,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),

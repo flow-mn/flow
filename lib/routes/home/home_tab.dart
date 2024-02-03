@@ -3,7 +3,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
-import 'package:flow/widgets/home/week_transaction_list.dart';
+import 'package:flow/widgets/grouped_transaction_list.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -63,7 +63,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                   ),
                 ),
               (_, true) => Expanded(
-                  child: WeekTransactionList(
+                  child: GroupedTransactionList(
                     controller: widget.scrollController,
                     transactions: transactions!,
                     listPadding: const EdgeInsets.only(
