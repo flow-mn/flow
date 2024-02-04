@@ -4,11 +4,11 @@ import 'dart:developer';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/sync/exception.dart';
 import 'package:flow/sync/import/base.dart';
-import 'package:flow/sync/model/model_v1.dart';
 import 'package:flow/sync/sync.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flutter/widgets.dart';
@@ -37,15 +37,20 @@ Future<ImportV1> importBackupV1([ImportMode mode = ImportMode.merge]) async {
 }
 
 /// Used to report current status to user
-enum ImportV1Progress {
-  preparing,
+enum ImportV1Progress implements LocalizedEnum {
+  waitingConfirmation,
   erasing,
-  loadingCategories,
-  loadingAccounts,
+  writingCategories,
+  writingAccounts,
   resolvingTransactions,
-  loadingTransactions,
+  writingTransactions,
   success,
-  error,
+  error;
+
+  @override
+  String get localizationEnumValue => name;
+  @override
+  String get localizationEnumName => "ImportV1Progress";
 }
 
 class ImportV1 extends Importer {
@@ -62,22 +67,14 @@ class ImportV1 extends Importer {
 
   @override
   final ValueNotifier<ImportV1Progress> progressNotifier =
-      ValueNotifier(ImportV1Progress.preparing);
+      ValueNotifier(ImportV1Progress.waitingConfirmation);
 
   ImportV1(
     this.data, {
     this.mode = ImportMode.merge,
   });
 
-  /// Before starting the import, it'll perform a safety backup, stored in
-  /// `automated_backups` subfolder. If safety backups fails, will immediately
-  /// halt, without making any changes to the state. You can alter this
-  /// behaviour by setting [ignoreSafetyBackupFail] to true.
-  ///
-  /// Returns the path of the safety backup file.
-  ///
-  /// [ignoreSafetyBackupFail] - Forces to proceed in the import if safety
-  /// backup fails
+  @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
     String? safetyBackupFilePath;
 
@@ -116,14 +113,14 @@ class ImportV1 extends Importer {
   Future<void> _eraseAndWrite() async {
     // 0. Erase current data
     progressNotifier.value = ImportV1Progress.erasing;
-    await ObjectBox().wipeDatabase();
+    await ObjectBox().eraseAllData();
 
     // 1. Resurrect [Category]s
-    progressNotifier.value = ImportV1Progress.loadingCategories;
+    progressNotifier.value = ImportV1Progress.writingCategories;
     await ObjectBox().box<Category>().putManyAsync(data.categories);
 
     // 2. Resurrect [Account]s
-    progressNotifier.value = ImportV1Progress.loadingAccounts;
+    progressNotifier.value = ImportV1Progress.writingAccounts;
     await ObjectBox().box<Account>().putManyAsync(data.accounts);
 
     // 3. Resurrect [Transaction]s
@@ -156,7 +153,7 @@ class ImportV1 extends Importer {
         .cast<Transaction>()
         .toList();
 
-    progressNotifier.value = ImportV1Progress.loadingTransactions;
+    progressNotifier.value = ImportV1Progress.writingTransactions;
     await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
 
     progressNotifier.value = ImportV1Progress.success;
