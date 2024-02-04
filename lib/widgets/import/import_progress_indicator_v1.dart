@@ -21,7 +21,7 @@ class ImportProgressIndicatorV1 extends StatelessWidget {
       valueListenable: importV1.progressNotifier,
       builder: (context, value, child) => switch (value) {
         ImportV1Progress.waitingConfirmation =>
-          BackupFileInfoV1(onTap: startFn, importer: importV1),
+          BackupFileInfoV1(onTap: () => importV1.execute(), importer: importV1),
         ImportV1Progress.error => const Text("error"),
         ImportV1Progress.success => const Text("Yeyyyyy, success"),
         _ => Center(

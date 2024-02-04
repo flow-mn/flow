@@ -1,6 +1,7 @@
 {
     "appName": "Flow",
     "appShortDesc": "Таны хувийн санхүүч",
+    "general.back": "Буцах",
     "general.delete": "Устгах",
     "general.delete.permanentWarning": "Энэ үйлдлийг буцаах боломжгүй",
     "general.delete.confirmName": "{name}-г устгах уу?",
@@ -163,12 +164,15 @@
     "enum.ImportV1Progress@success": "Амжилттай",
     "enum.ImportV1Progress@error": "Алдаа гарлаа ({error})",
 
+    "error.route.404": "Хуудас олдсонгүй",
+    "error.route.400": "Хуудас ачаалахад алдаа гарлаа",
     "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",
     "error.input.duplicate.accountName": "Дансны нэр давхцаж байна",
     "error.input.noFilePicked": "Та файл сонгоогүй байна",
     "error.input.noImagePicked": "Та зураг сонгоогүй байна",
     "error.input.cropFailed": "Зураг хайчлах үед алдаа гарлаа",
     "error.input.wrongFileType": "Зөвхөн {} төрлийн файл сонгох боломжтой",
+    "error.sync.invalidBackupFile": "Нөөц файл алдаатай байна",
     "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
     "error.sync.exportFailed": "Нөөцлөх явцад алдаа гарлаа, хөгжүүлэгчид хандана уу.",
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"

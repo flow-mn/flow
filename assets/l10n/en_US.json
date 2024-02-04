@@ -1,6 +1,7 @@
 {
     "appName": "Flow",
     "appShortDesc": "Your personal finance tracker",
+    "general.back": "Back",
     "general.delete": "Delete",
     "general.delete.permanentWarning": "This action is irreversible",
     "general.delete.confirmName": "Confirm deleting {name}?",
@@ -83,6 +84,7 @@
     "tabs.home.noTransactions.allTime": "You don't have any transactions",
     "tabs.home.noTransactions.last7Days": "No transactions for the last 7 days",
     "tabs.home.noTransactions.addSome": "Click on (+) button below to add a new transaction",
+
     "tabs.stats": "Stats",
     "tabs.accounts": "Accounts",
     "tabs.profile": "Profile",
@@ -138,6 +140,7 @@
     "enum.TransactionType@income": "Income",
     "enum.TransactionType@expense": "Expense",
     "enum.TransactionType@transfer": "Transfer",
+
     "enum.CSVHeadersV1": "CSV Headers",
     "enum.CSVHeadersV1@uuid": "ID",
     "enum.CSVHeadersV1@title": "Title",
@@ -161,12 +164,15 @@
     "enum.ImportV1Progress@success": "Success",
     "enum.ImportV1Progress@error": "Something went wrong ({error})",
 
+    "error.route.404": "Page not found",
+    "error.route.400": "Failed to load the page",
     "error.input.mustBeNotEmpty": "Please fill out this field",
     "error.input.duplicate.accountName": "Name \"{}\" already in use. Try a different name.",
     "error.input.noFilePicked": "No file was selected",
     "error.input.noImagePicked": "No image was selected",
     "error.input.cropFailed": "An error occured during cropping the picture",
     "error.input.wrongFileType": "Please choose a {type} file",
+    "error.sync.invalidBackupFile": "Invalid backup file",
     "error.sync.safetyBackupFailed": "Unable to start import",
     "error.sync.exportFailed": "Unable to export, please contact developer.",
     "error.transaction.missingAccount": "Please select an account"

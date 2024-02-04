@@ -1,10 +1,13 @@
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
 import 'package:flow/routes/category_page.dart';
+import 'package:flow/routes/error_page.dart';
 import 'package:flow/routes/export_options_page.dart';
 import 'package:flow/routes/export_page.dart';
 import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/import_page.dart';
+import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
@@ -13,6 +16,7 @@ import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/transactions_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
+import 'package:flow/sync/import/import_v1.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
@@ -88,14 +92,32 @@ final router = GoRouter(
               maxDimension: props.maxDimension,
               returnBitmap: props.returnBitmap,
             ),
-          _ =>
-            throw "Invalid state. Pass [CropSquareImagePageProps] object to `extra` prop",
+          _ => throw const ErrorPage(
+              error:
+                  "Invalid state. Pass [CropSquareImagePageProps] object to `extra` prop",
+            )
         };
       },
     ),
     GoRoute(
       path: '/exportOptions',
       builder: (context, state) => const ExportOptionsPage(),
+    ),
+    GoRoute(
+      path: '/import',
+      builder: (context, state) => const ImportPage(),
+    ),
+    GoRoute(
+      path: '/import/wizard/v1',
+      builder: (context, state) {
+        if (state.extra case ImportV1 importV1) {
+          return ImportWizardV1Page(importer: importV1);
+        }
+
+        return ErrorPage(
+          error: "error.sync.invalidBackupFile".t(context),
+        );
+      },
     ),
     GoRoute(
       path: '/export/:type',
