@@ -86,7 +86,7 @@ void main() {
     });
 
     tearDownAll(() async {
-      await ObjectBox().wipeDatabase();
+      await ObjectBox().eraseAllData();
       // ignore: avoid_print
       print(
         "[Flow] Deleting directory used for testing: ${ObjectBox.customDirectory}",

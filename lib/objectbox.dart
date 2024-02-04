@@ -1,10 +1,9 @@
-import 'dart:developer';
-import 'dart:io';
 import 'dart:math' hide log;
 
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -71,13 +70,6 @@ class ObjectBox {
     ObjectBox.appDataDirectory = await _appDataDirectory();
 
     final store = await openStore(directory: appDataDirectory);
-
-    log("Admin.isAvailable(): ${Admin.isAvailable()}");
-
-    if (kDebugMode && Admin.isAvailable()) {
-      log("[Flow] Admin.isAvailable(): ${Admin.isAvailable()}");
-      Admin(store);
-    }
 
     return _instance = ObjectBox._internal(store);
   }
@@ -315,10 +307,11 @@ class ObjectBox {
     );
   }
 
-  Future<void> wipeDatabase() async {
-    store.close();
-    await Directory(appDataDirectory).delete(recursive: true);
-
-    _instance = null;
+  Future<void> eraseAllData() async {
+    await Future.wait([
+      box<Transaction>().query().build().removeAsync(),
+      box<Category>().query().build().removeAsync(),
+      box<Account>().query().build().removeAsync(),
+    ]);
   }
 }

@@ -7,17 +7,20 @@ import 'package:flow/sync/export/export_v1.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
+import '../objectbox_erase.dart';
 import 'v1_populate.dart';
 
 void main() async {
   group("Sync V1: Full backup and recover cycle", () async {
     const int dummyTransactionCount = 100;
 
+    final String customDirectory =
+        path.join(Directory.current.path, "objectbox_test", "v1");
+
     // Populate fake data
     setUpAll(() async {
       ObjectBox.initialize(
-        customDirectory:
-            path.join(Directory.current.path, "objectbox_test", "v1"),
+        customDirectory: customDirectory,
         subdirectory: "populate",
       );
 
@@ -43,7 +46,10 @@ void main() async {
     );
 
     tearDownAll(() async {
-      await ObjectBox().wipeDatabase();
+      await testCleanupObject(
+        instance: ObjectBox(),
+        directory: customDirectory,
+      );
     });
   });
 }
