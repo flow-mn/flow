@@ -144,8 +144,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     try {
       if (confirm == true) {
-        await ObjectBox().wipeDatabase();
-        await ObjectBox.initialize();
+        await ObjectBox().eraseAllData();
       }
     } finally {
       _debugDbBusy = false;
