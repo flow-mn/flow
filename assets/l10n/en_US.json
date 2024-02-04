@@ -12,6 +12,7 @@
     "general.select.all": "Select all",
     "general.delete.all": "Delete all",
     "general.copy.success": "Copied to clipboard",
+
     "setup.getStarted": "Get started",
     "setup.account.setup": "Setup accounts",
     "setup.account.preset.main": "Main",
@@ -32,6 +33,7 @@
     "setup.category.preset.taxes": "Taxes",
     "setup.category.preset.paychecks": "Paycheck",
     "setup.category.preset.misc": "Misc",
+
     "account": "Account",
     "account.name": "Account name",
     "account.balance": "Balance",
@@ -43,6 +45,7 @@
     "account.edit.selectCurrency": "Select a currency",
     "account.transactions": "Transactions",
     "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible!",
+
     "transaction": "Transaction",
     "transaction.new": "New transaction",
     "transaction.edit": "Edit transaction",
@@ -51,13 +54,16 @@
     "transaction.date": "Transaction date",
     "transaction.createdDate": "Created at",
     "transaction.fallbackTitle": "Untitled transaction",
+
     "category": "Category",
     "category.name": "Category name",
     "category.new": "Add a category",
     "category.delete.warning": "Deleting this category will leave {transactionCount} transactions with no category. This action is irreversible!",
     "categories": "Categories",
+
     "currency": "Currency",
     "currency.searchHint": "Search... (country, currency, code)",
+
     "preferences": "Preferences",
     "preferences.language": "Language",
     "preferences.language.choose": "Choose language",
@@ -71,6 +77,7 @@
     "preferences.numpad.layout.modern": "Modern",
     "preferences.numpad.haptics": "Button feedback",
     "preferences.numpad.haptics.description": "Sound/haptic feedback upon click",
+
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",
     "tabs.home.noTransactions.allTime": "You don't have any transactions",
@@ -87,14 +94,28 @@
     "tabs.profile.backup": "Backup",
     "tabs.profile.import": "Import",
     "tabs.profile.withLoveFromTheCreator": "with 🤍 from sadespresso",
+
     "flowIcon.type.icon": "Icon",
     "flowIcon.type.image": "Image",
     "flowIcon.type.image.pick": "Choose an image",
     "flowIcon.type.image.description": "Choose an image to use as an icon",
     "flowIcon.type.character": "Character",
     "flowIcon.type.character.description": "Enter an emoji or a letter to use as an icon",
+
     "sync.import": "Import",
+    "sync.import.pickFile": "Pick a backup file",
+    "sync.import.pickFile.dropzone.active": "Drop here",
+    "sync.import.pickFile.description": "Pick a Flow backup file to restore. Must be a JSON file",
+    "sync.import.syncData.olderBackupWarning": "Since this back up was made in an older version of the app, something might go wrong!",
+    "sync.import.syncData.createdDate": "Back up date",
+    "sync.import.syncData.parsedEstimate": "Estimated data to recover",
+    "sync.import.syncData.parsedEstimate.accountCount": "{count} account(s)",
+    "sync.import.syncData.parsedEstimate.transactionCount": "{count} transaction(s)",
+    "sync.import.syncData.parsedEstimate.categoryCount": "{count} category(s)",
+    "sync.import.eraseWarning": "Continuing will erase all existing data",
+    "sync.import.start": "Start importing",
     "sync.import.successful": "Import successful!",
+
     "sync.export": "Export",
     "sync.export.type": "Export ({type})",
     "sync.export.asCSV": "As CSV",
@@ -107,6 +128,7 @@
     "sync.export.success": "Export successful!",
     "sync.export.success.description": "We highly recommended to move the backup file to an external/cloud storage",
     "sync.export.share": "Send exported file ({type})",
+
     "enum.TransactionSubtype": "Type",
     "enum.TransactionSubtype#null": "Default",
     "enum.TransactionSubtype@transactionFee": "Transaction fee",
@@ -129,6 +151,16 @@
     "enum.CSVHeadersV1@createdDate": "Created date",
     "enum.CSVHeadersV1@transactionDate": "Transaction date",
     "enum.CSVHeadersV1@extra": "Extra (JSON)",
+
+    "enum.ImportV1Progress@waitingConfirmation": "Waiting for confirmation",
+    "enum.ImportV1Progress@erasing": "Erasing current data",
+    "enum.ImportV1Progress@writingCategories": "Writing categories",
+    "enum.ImportV1Progress@writingAccounts": "Writing accounts",
+    "enum.ImportV1Progress@resolvingTransactions": "Soring out transactions",
+    "enum.ImportV1Progress@writingTransactions": "Writing transactions",
+    "enum.ImportV1Progress@success": "Success",
+    "enum.ImportV1Progress@error": "Something went wrong ({error})",
+
     "error.input.mustBeNotEmpty": "Please fill out this field",
     "error.input.duplicate.accountName": "Name \"{}\" already in use. Try a different name.",
     "error.input.noFilePicked": "No file was selected",

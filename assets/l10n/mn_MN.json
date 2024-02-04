@@ -12,6 +12,7 @@
     "general.select.all": "Бүгдийг сонгох",
     "general.delete.all": "Бүгдийг устгах",
     "general.copy.success": "Амжилттай хууллаа",
+
     "setup.getStarted": "Эхэлцгээе",
     "setup.account.setup": "Данснууд тохируулах",
     "setup.account.preset.main": "Үндсэн",
@@ -32,6 +33,7 @@
     "setup.category.preset.taxes": "Татвар",
     "setup.category.preset.paychecks": "Цалин",
     "setup.category.preset.misc": "Бусад",
+
     "account": "Данс",
     "account.name": "Дансны нэр",
     "account.balance": "Үлдэгдэл",
@@ -43,6 +45,7 @@
     "account.edit.selectCurrency": "Валют сонгох",
     "account.transactions": "Гүйлгээнүүд",
     "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
+
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",
     "transaction.edit": "Гүйлгээ засварлах",
@@ -51,13 +54,16 @@
     "transaction.date": "Гүйлгээний огноо",
     "transaction.createdDate": "Үүсгэсэн огноо",
     "transaction.fallbackTitle": "Гарчиггүй гүйлгээ",
+
     "category": "Ангилал",
     "category.name": "Нэр",
     "category.new": "Ангилал үүсгэх",
     "category.delete.warning": "Энэ ангиллыг устгавал холбоотой {transactionCount} гүйлгээг ангилалгүй болохыг анхаарна уу. Энэ үйлдлийг буцаах боломжгүй юм!",
     "categories": "Ангиллууд",
+
     "currency": "Мөнгөн тэмдэгт",
     "currency.searchHint": "Хайх... (улс, тэмдэгт, код)",
+
     "preferences": "Тохиргоо",
     "preferences.language": "Хэл",
     "preferences.language.choose": "Хэл сонгох",
@@ -71,11 +77,13 @@
     "preferences.numpad.layout.modern": "Орчин үеийн",
     "preferences.numpad.haptics": "Товчны хариу",
     "preferences.numpad.haptics.description": "Дарах үед дуу/чичиргээ тоглуулна",
+
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",
     "tabs.home.noTransactions.allTime": "Танд одоогоор гүйлгээ алга байна",
     "tabs.home.noTransactions.last7Days": "Сүүлийн долоо хоногт хийгдсэн гүйлгээ алга байна",
     "tabs.home.noTransactions.addSome": "Доор байрлах (+) товч дээр дарж гүйлгээ нэмээрэй",
+
     "tabs.stats": "Тоо",
     "tabs.accounts": "Данснууд",
     "tabs.profile": "Бүртгэл",
@@ -87,14 +95,28 @@
     "tabs.profile.backup": "Нөөцлөх",
     "tabs.profile.import": "Сэргээх",
     "tabs.profile.withLoveFromTheCreator": "sadespresso хайр шингээж бүтээв 🤍",
+
     "flowIcon.type.icon": "Дүрс",
     "flowIcon.type.image": "Зураг",
     "flowIcon.type.image.pick": "Зураг сонгох",
     "flowIcon.type.image.description": "Зураг сонгож дүрс болгон ашиглаарай",
     "flowIcon.type.character": "Тэмдэгт",
     "flowIcon.type.character.description": "Эможи эсвэл үсэг оруулж дүрс болгож ашиглаарай",
+
     "sync.import": "Сэргээх",
+    "sync.import.pickFile": "Сэргээх файл сонгох",
+    "sync.import.pickFile.dropzone.active": "Надруу чир",
+    "sync.import.pickFile.description": "Өмнө нь Flow аппаас нөөцөлж авсан файлаа сонгоно уу. Зөвхөн JSON форматтай файл байх шаардлагатай",
+    "sync.import.syncData.olderBackupWarning": "Энэхүү нөөц файл аппын хуучин хувилбарт үүссэн тул асуудлууд гарч болзошгүй юм!",
+    "sync.import.syncData.createdDate": "Нөөцөлсөн огноо",
+    "sync.import.syncData.parsedEstimate": "Сэргээгдэх өгөгдлүүд урьдчилсан байдлаар",
+    "sync.import.syncData.parsedEstimate.accountCount": "{count} данс",
+    "sync.import.syncData.parsedEstimate.transactionCount": "{count} гүйлгээ",
+    "sync.import.syncData.parsedEstimate.categoryCount": "{count} ангилал",
+    "sync.import.eraseWarning": "Үргэлжлүүлбэл одоо байгаа бүх өгөгдөл устах болно",
+    "sync.import.start": "Эхлүүлэх",
     "sync.import.successful": "Өгөгдлийг амжилттай сэргээлээ!",
+
     "sync.export": "Нөөцлөх",
     "sync.export.type": "Нөөцлөх ({type})",
     "sync.export.asCSV": "CSV хүснэгтээр",
@@ -107,6 +129,7 @@
     "sync.export.success": "Амжилттай өгөгдлийг нөөцөллөө!",
     "sync.export.success.description": "Үүссэн файлыг өөр газар хадгалахыг зөвлөж байна",
     "sync.export.share": "Нөөцөлсөн файл илгээх ({type})",
+
     "enum.TransactionSubtype": "Төрөл",
     "enum.TransactionSubtype#null": "Хэвийн",
     "enum.TransactionSubtype@transactionFee": "Гүйлгээний шимтгэл",
@@ -116,6 +139,7 @@
     "enum.TransactionType@income": "Орлого",
     "enum.TransactionType@expense": "Зарлага",
     "enum.TransactionType@transfer": "Шилжүүлэг",
+
     "enum.CSVHeadersV1": "CSV Толгой",
     "enum.CSVHeadersV1@uuid": "Код",
     "enum.CSVHeadersV1@title": "Гарчиг",
@@ -129,6 +153,16 @@
     "enum.CSVHeadersV1@createdDate": "Нэмсэн огноо ({})",
     "enum.CSVHeadersV1@transactionDate": "Гүйлгээ хийсэн ({})",
     "enum.CSVHeadersV1@extra": "Нэмэлт(JSON)",
+
+    "enum.ImportV1Progress@waitingConfirmation": "Баталгаажуулалт хүлээж байна",
+    "enum.ImportV1Progress@erasing": "Хуучин өгөгдлийг цэвэрлэж байна",
+    "enum.ImportV1Progress@writingCategories": "Ангиллуудыг бичиж байна",
+    "enum.ImportV1Progress@writingAccounts": "Данснуудыг бичиж байна",
+    "enum.ImportV1Progress@resolvingTransactions": "Гүйлгээнүүдийг хуваарилж байна",
+    "enum.ImportV1Progress@writingTransactions": "Гүйлгээнүүдийг бичиж байна",
+    "enum.ImportV1Progress@success": "Амжилттай",
+    "enum.ImportV1Progress@error": "Алдаа гарлаа ({error})",
+
     "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",
     "error.input.duplicate.accountName": "Дансны нэр давхцаж байна",
     "error.input.noFilePicked": "Та файл сонгоогүй байна",
