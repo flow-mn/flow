@@ -112,48 +112,12 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
   @override
   Widget build(BuildContext context) {
+    final amountFieldMaxHeight = MediaQuery.of(context).textScaler.scale(
+        context.textTheme.displayMedium!.fontSize! *
+            context.textTheme.displayMedium!.height!);
+
     return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
-        const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
-        const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
-        const SingleActivator(LogicalKeyboardKey.numpad2): () => insertDigit(2),
-        const SingleActivator(LogicalKeyboardKey.digit3): () => insertDigit(3),
-        const SingleActivator(LogicalKeyboardKey.numpad3): () => insertDigit(3),
-        const SingleActivator(LogicalKeyboardKey.digit4): () => insertDigit(4),
-        const SingleActivator(LogicalKeyboardKey.numpad4): () => insertDigit(4),
-        const SingleActivator(LogicalKeyboardKey.digit5): () => insertDigit(5),
-        const SingleActivator(LogicalKeyboardKey.numpad5): () => insertDigit(5),
-        const SingleActivator(LogicalKeyboardKey.digit6): () => insertDigit(6),
-        const SingleActivator(LogicalKeyboardKey.numpad6): () => insertDigit(6),
-        const SingleActivator(LogicalKeyboardKey.digit7): () => insertDigit(7),
-        const SingleActivator(LogicalKeyboardKey.numpad7): () => insertDigit(7),
-        const SingleActivator(LogicalKeyboardKey.digit8): () => insertDigit(8),
-        const SingleActivator(LogicalKeyboardKey.numpad8): () => insertDigit(8),
-        const SingleActivator(LogicalKeyboardKey.digit9): () => insertDigit(9),
-        const SingleActivator(LogicalKeyboardKey.numpad9): () => insertDigit(9),
-        const SingleActivator(LogicalKeyboardKey.digit0): () => insertDigit(0),
-        const SingleActivator(LogicalKeyboardKey.numpad0): () => insertDigit(0),
-        const SingleActivator(LogicalKeyboardKey.minus): () => _negate(),
-        const SingleActivator(LogicalKeyboardKey.numpadSubtract): () =>
-            _negate(),
-        const SingleActivator(LogicalKeyboardKey.equal): () => _negate(false),
-        const SingleActivator(LogicalKeyboardKey.numpadAdd): () =>
-            _negate(false),
-        const SingleActivator(LogicalKeyboardKey.period): () => decimalMode(),
-        const SingleActivator(LogicalKeyboardKey.numpadDecimal): () =>
-            decimalMode(),
-        const SingleActivator(LogicalKeyboardKey.enter): () => _pop(),
-        const SingleActivator(LogicalKeyboardKey.numpadEnter): () => _pop(),
-        const SingleActivator(LogicalKeyboardKey.backspace): () =>
-            removeDigit(),
-        const SingleActivator(LogicalKeyboardKey.backspace, control: true):
-            () => _reset(),
-        const SingleActivator(LogicalKeyboardKey.keyC, control: true): () =>
-            _copy(),
-        const SingleActivator(LogicalKeyboardKey.keyV, control: true): () =>
-            _paste(),
-      },
+      bindings: bindings,
       child: Focus(
         autofocus: true,
         child: Actions(
@@ -170,23 +134,23 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                     focusNode: _amountSelectionAreaFocusNode,
                     child: Transform.scale(
                       scale: _amountTextScaleAnimation.value,
-                      // TODO
-                      // The widget becomes shorter as the font size gets
-                      // smaller. It'd be nice if we could keep the height
-                      // same, to prevent BottomSheet from getting shorter
-                      // with it
-                      child: AutoSizeText(
-                        currentAmount.formatMoney(
-                              decimalDigits: _decimalPart == 0
-                                  ? 0
-                                  : _decimalPart.abs().toString().length,
-                              includeCurrency: !widget.hideCurrencySymbol,
-                              currency: widget.currency,
-                            ) +
-                            (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
-                        style: context.textTheme.displayMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.visible,
+                      child: SizedBox(
+                        height: amountFieldMaxHeight,
+                        child: AutoSizeText(
+                          currentAmount.formatMoney(
+                                decimalDigits: _decimalPart == 0
+                                    ? 0
+                                    : _decimalPart.abs().toString().length,
+                                includeCurrency: !widget.hideCurrencySymbol,
+                                currency: widget.currency,
+                              ) +
+                              (_inputtingDecimal && _decimalPart == 0
+                                  ? "."
+                                  : ""),
+                          style: context.textTheme.displayMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.visible,
+                        ),
                       ),
                     ),
                   ),
@@ -393,4 +357,46 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     _inputtingDecimal = _decimalPart.abs() != 0;
     _negate(widget.allowNegative ? widget.initialAmount?.isNegative : false);
   }
+
+  Map<ShortcutActivator, VoidCallback> get bindings => {
+        const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
+        const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
+        const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
+        const SingleActivator(LogicalKeyboardKey.numpad2): () => insertDigit(2),
+        const SingleActivator(LogicalKeyboardKey.digit3): () => insertDigit(3),
+        const SingleActivator(LogicalKeyboardKey.numpad3): () => insertDigit(3),
+        const SingleActivator(LogicalKeyboardKey.digit4): () => insertDigit(4),
+        const SingleActivator(LogicalKeyboardKey.numpad4): () => insertDigit(4),
+        const SingleActivator(LogicalKeyboardKey.digit5): () => insertDigit(5),
+        const SingleActivator(LogicalKeyboardKey.numpad5): () => insertDigit(5),
+        const SingleActivator(LogicalKeyboardKey.digit6): () => insertDigit(6),
+        const SingleActivator(LogicalKeyboardKey.numpad6): () => insertDigit(6),
+        const SingleActivator(LogicalKeyboardKey.digit7): () => insertDigit(7),
+        const SingleActivator(LogicalKeyboardKey.numpad7): () => insertDigit(7),
+        const SingleActivator(LogicalKeyboardKey.digit8): () => insertDigit(8),
+        const SingleActivator(LogicalKeyboardKey.numpad8): () => insertDigit(8),
+        const SingleActivator(LogicalKeyboardKey.digit9): () => insertDigit(9),
+        const SingleActivator(LogicalKeyboardKey.numpad9): () => insertDigit(9),
+        const SingleActivator(LogicalKeyboardKey.digit0): () => insertDigit(0),
+        const SingleActivator(LogicalKeyboardKey.numpad0): () => insertDigit(0),
+        const SingleActivator(LogicalKeyboardKey.minus): () => _negate(),
+        const SingleActivator(LogicalKeyboardKey.numpadSubtract): () =>
+            _negate(),
+        const SingleActivator(LogicalKeyboardKey.equal): () => _negate(false),
+        const SingleActivator(LogicalKeyboardKey.numpadAdd): () =>
+            _negate(false),
+        const SingleActivator(LogicalKeyboardKey.period): () => decimalMode(),
+        const SingleActivator(LogicalKeyboardKey.numpadDecimal): () =>
+            decimalMode(),
+        const SingleActivator(LogicalKeyboardKey.enter): () => _pop(),
+        const SingleActivator(LogicalKeyboardKey.numpadEnter): () => _pop(),
+        const SingleActivator(LogicalKeyboardKey.backspace): () =>
+            removeDigit(),
+        const SingleActivator(LogicalKeyboardKey.backspace, control: true):
+            () => _reset(),
+        const SingleActivator(LogicalKeyboardKey.keyC, control: true): () =>
+            _copy(),
+        const SingleActivator(LogicalKeyboardKey.keyV, control: true): () =>
+            _paste(),
+      };
 }
