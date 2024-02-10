@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' hide log;
 
 import 'package:flow/data/flow_icon.dart';
@@ -68,6 +69,11 @@ class ObjectBox {
     ObjectBox.customDirectory = customDirectory;
 
     ObjectBox.appDataDirectory = await _appDataDirectory();
+
+    final dir = Directory(ObjectBox.appDataDirectory);
+    if (!(await dir.exists())) {
+      await dir.create(recursive: true);
+    }
 
     final store = await openStore(directory: appDataDirectory);
 
