@@ -7,14 +7,17 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:path/path.dart' as path;
+
+import 'objectbox_erase.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   group("ObjectBox data insertion", () {
     setUpAll(() async {
       await ObjectBox.initialize(
-        customDirectory:
-            await objectboxTestRootDir().then((value) => value.path),
+        customDirectory: objectboxTestRootDir().path,
         subdirectory: "main",
       );
 
@@ -86,16 +89,15 @@ void main() {
     });
 
     tearDownAll(() async {
-      await ObjectBox().eraseAllData();
-      // ignore: avoid_print
-      print(
-        "[Flow] Deleting directory used for testing: ${ObjectBox.customDirectory}",
+      await testCleanupObject(
+        instance: ObjectBox(),
+        directory: ObjectBox.appDataDirectory,
+        cleanUp: true,
       );
-      await Directory(ObjectBox.customDirectory!).delete();
     });
   });
 }
 
-Future<Directory> objectboxTestRootDir() async {
-  return await Directory.systemTemp.createTemp("__objectbox_test__");
+Directory objectboxTestRootDir() {
+  return Directory(path.join(Directory.current.path, ".objectbox_test"));
 }

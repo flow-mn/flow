@@ -5,7 +5,11 @@ import 'package:flow/objectbox.dart';
 Future<void> testCleanupObject({
   required ObjectBox instance,
   required String directory,
+  bool cleanUp = true,
 }) async {
   instance.store.close();
-  await Directory(directory).delete(recursive: true);
+
+  if (cleanUp) {
+    await Directory(directory).delete(recursive: true);
+  }
 }
