@@ -38,7 +38,10 @@ dependencies:
   oktoast: ^3.4.0
   path: ^1.8.3
   path_provider: ^2.1.1
-  pie_menu: ^3.1.3
+  # pie_menu: ^3.1.3
+  pie_menu:
+    git:
+      url: https://github.com/sadespresso/flutter-pie-menu.git
   salomon_bottom_bar: ^3.3.2
   share_plus: ^7.2.2
   shared_preferences: ^2.2.2
