@@ -31,7 +31,7 @@ import 'package:moment_dart/moment_dart.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:pie_menu/pie_menu.dart';
 
-const appVersion = "0.1.0+2";
+const appVersion = "0.1.1+3";
 
 final String namedVersion = appVersion.split("+").first;
 final int buildNumber = int.parse(appVersion.split("+").last);
