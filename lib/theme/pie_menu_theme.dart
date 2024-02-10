@@ -9,7 +9,7 @@ PieTheme pieThemeLight = PieTheme(
     backgroundColor: _light.secondary,
     iconColor: _light.primary,
   ),
-  overlayColor: _light.secondary.withAlpha(0x80),
+  overlayColor: _light.background.withAlpha(0xe0),
   pointerColor: kTransparent,
   angleOffset: 0.0,
   pointerSize: 2.0,
@@ -26,6 +26,6 @@ PieTheme pieThemeDark = pieThemeLight.copyWith(
     backgroundColor: _dark.secondary,
     iconColor: _dark.primary,
   ),
-  overlayColor: _dark.secondary.withAlpha(0x80),
+  overlayColor: _dark.background.withAlpha(0xe0),
   tooltipTextStyle: darkTheme.textTheme.displaySmall,
 );
