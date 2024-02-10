@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   auto_size_text: ^3.0.0
-  crop_image: ^1.0.11
+  crop_image: ^1.0.12
   cross_file: ^0.3.3+8
   csv: ^5.1.1
   cupertino_icons: ^1.0.6
@@ -25,14 +25,14 @@ dependencies:
   flutter_slidable: ^3.0.1
   flutter_staggered_grid_view: ^0.7.0
   fuzzy: ^0.5.1
-  go_router: ^13.1.0
+  go_router: ^13.2.0
   image_picker: ^1.0.7
   intl: ^0.18.1
   json_annotation: ^4.8.1
   local_settings: ^0.3.1
   mask_text_input_formatter: ^2.8.0
-  material_symbols_icons: ^4.2671.0
-  moment_dart: ^1.1.0
+  material_symbols_icons: ^4.2719.1
+  moment_dart: ^1.1.1
   objectbox: ^2.4.0
   objectbox_flutter_libs: ^2.4.0
   oktoast: ^3.4.0
