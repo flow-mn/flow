@@ -1,2 +1,4 @@
 #include "../../Flutter/Flutter-Debug.xcconfig"
 #include "Warnings.xcconfig"
+
+PRODUCT_NAME = Flow (dev)
