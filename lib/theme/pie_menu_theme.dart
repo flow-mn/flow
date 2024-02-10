@@ -15,9 +15,9 @@ PieTheme pieThemeLight = PieTheme(
   pointerSize: 2.0,
   tooltipTextStyle: lightTheme.textTheme.displaySmall,
   rightClickShowsMenu: true,
-  leftClickShowsMenu: false,
+  alwaysPlaceActionsFromCenter: true,
 );
-PieTheme pieThemeDark = PieTheme(
+PieTheme pieThemeDark = pieThemeLight.copyWith(
   buttonTheme: PieButtonTheme(
     backgroundColor: _dark.secondary,
     iconColor: _dark.onSurface,
@@ -27,10 +27,5 @@ PieTheme pieThemeDark = PieTheme(
     iconColor: _dark.primary,
   ),
   overlayColor: _dark.secondary.withAlpha(0x80),
-  pointerColor: kTransparent,
-  angleOffset: 0.0,
-  pointerSize: 2.0,
-  tooltipTextStyle: lightTheme.textTheme.displaySmall,
-  rightClickShowsMenu: true,
-  leftClickShowsMenu: false,
+  tooltipTextStyle: darkTheme.textTheme.displaySmall,
 );
