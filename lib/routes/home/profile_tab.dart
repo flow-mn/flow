@@ -59,7 +59,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ListTile(
             title: Text("tabs.profile.joinDiscord".t(context)),
             leading: const Icon(SimpleIcons.discord),
-            onTap: () => {},
+            onTap: () => openUrl(Uri.parse("https://discord.gg/Ndh9VDeZa4")),
           ),
           ListTile(
             title: Text("tabs.profile.supportOnKofi".t(context)),
