@@ -44,6 +44,7 @@ class ExportSuccess extends StatelessWidget {
           Text(
             "sync.export.success".t(context),
             style: context.textTheme.headlineMedium,
+            textAlign: TextAlign.center,
           ),
           if (showFilePath)
             Tooltip(

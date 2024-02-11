@@ -52,7 +52,10 @@ Future<ExportStatus> export({
         type: type.value,
         fileExt: mode.fileExt,
       ))
-      .catchError((_) => -1);
+      .catchError((error) {
+    log("[Export] Failed to add BackupEntry due to: $error");
+    return -1;
+  });
 
   if (!showShareDialog) {
     return (shareDialogSucceeded: false, filePath: savedFilePath);

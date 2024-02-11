@@ -3,6 +3,7 @@ import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
 import 'package:flow/routes/category_page.dart';
 import 'package:flow/routes/error_page.dart';
+import 'package:flow/routes/export/export_history_page.dart';
 import 'package:flow/routes/export_options_page.dart';
 import 'package:flow/routes/export_page.dart';
 import 'package:flow/routes/home_page.dart';
@@ -119,6 +120,10 @@ final router = GoRouter(
           error: "error.sync.invalidBackupFile".t(context),
         );
       },
+    ),
+    GoRoute(
+      path: '/export/history',
+      builder: (context, state) => const ExportHistoryPage(),
     ),
     GoRoute(
       path: '/export/:type',

@@ -96,7 +96,7 @@ class ImportV1 extends Importer {
   Future<void> _eraseAndWrite() async {
     // 0. Erase current data
     progressNotifier.value = ImportV1Progress.erasing;
-    await ObjectBox().eraseAllData();
+    await ObjectBox().eraseMainData();
 
     // 1. Resurrect [Category]s
     progressNotifier.value = ImportV1Progress.writingCategories;
