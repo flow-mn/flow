@@ -32,7 +32,7 @@ Future<ImportV1> importBackupV1({
   ImportMode mode = ImportMode.eraseAndWrite,
   File? backupFile,
 }) async {
-  final file = backupFile ?? await pickFile();
+  final file = backupFile ?? await pickJsonFile();
 
   if (file == null) {
     throw const ImportException(
