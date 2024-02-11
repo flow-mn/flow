@@ -30,7 +30,7 @@ import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:pie_menu/pie_menu.dart';
 
-const appVersion = "0.1.2+4";
+const appVersion = "0.1.3+5";
 
 final String namedVersion = appVersion.split("+").first;
 final int buildNumber = int.parse(appVersion.split("+").last);
