@@ -47,6 +47,8 @@
 		<true />
 		<key>LSSupportsOpeningDocumentsInPlace</key>
 		<true />
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false />
 		<key>UIFileSharingEnabled</key>
 		<true />
 		<key>NSPhotoLibraryUsageDescription</key>
