@@ -67,7 +67,6 @@ class Button extends StatelessWidget {
         onLongPress: onLongPress,
         borderRadius: borderRadius,
         child: Padding(
-          // TODO reduce left padding if `leading` is not null and same for `trailing`
           padding: padding,
           child: DefaultTextStyle.merge(
             style: context.textTheme.labelLarge?.copyWith(

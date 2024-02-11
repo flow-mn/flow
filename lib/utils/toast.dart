@@ -23,10 +23,19 @@ extension ToastHelper on BuildContext {
     ToastificationType type = ToastificationType.success,
     Widget? icon,
   }) {
-    icon ??= Icon(
-      Symbols.error_circle_rounded_error_rounded,
-      color: colorScheme.error,
-    );
+    if (icon == null) {
+      if (type == ToastificationType.success) {
+        icon = Icon(
+          Symbols.check_rounded,
+          color: flowColors.income,
+        );
+      } else {
+        icon = Icon(
+          Symbols.error_circle_rounded_error_rounded,
+          color: colorScheme.error,
+        );
+      }
+    }
 
     if (type == ToastificationType.error) {
       HapticFeedback.heavyImpact();

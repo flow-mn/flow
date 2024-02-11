@@ -339,13 +339,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       ),
     );
 
-    context.showToast(
-      text: "general.copy.success".t(context),
-      icon: Icon(
-        Symbols.check_rounded,
-        color: context.flowColors.income,
-      ),
-    );
+    context.showToast(text: "general.copy.success".t(context));
   }
 
   void _updateAmountFromNumber(num initialAmount) {
