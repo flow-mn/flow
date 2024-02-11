@@ -8,6 +8,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/sync/exception.dart';
 
 import 'package:flow/sync/import/import_v1.dart';
+import 'package:flow/sync/import/mode.dart';
 export 'package:flow/sync/import/import_v1.dart';
 
 import 'package:flow/sync/model/model_v1.dart';
@@ -16,16 +17,6 @@ export 'package:flow/sync/model/model_v1.dart';
 import 'package:flow/utils/utils.dart';
 
 import 'package:path/path.dart' as path;
-
-enum ImportMode {
-  /// Erases current data, then writes the imported data
-  eraseAndWrite,
-
-  /// Merges items with matching `uuid` or `name`, adds everything else
-  ///
-  /// If `uuid` matches, it uses `name` from the newest object (`createdDate`)
-  merge,
-}
 
 /// We have to recover following models:
 /// * Account
