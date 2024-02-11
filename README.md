@@ -1,14 +1,32 @@
 # Flow
 
 [![Flow's GitHub repo](https://img.shields.io/badge/GitHub-flow--mn/flow-f5ccff?logo=github&logoColor=white&style=for-the-badge)](https://github.com/flow-mn/flow)&nbsp;
+[![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
 [![Support on Ko-fi](https://img.shields.io/badge/kofi-sadespresso-f5ccff?logo=ko-fi&logoColor=white&style=for-the-badge&label=Ko-fi)](https://ko-fi.com/sadespresso)
-
-[![Join Flow Discord](https://dcbadge.vercel.app/api/server/Ndh9VDeZa4)](https://discord.gg/Ndh9VDeZa4)&nbsp;
-[![Discord Chat](https://img.shields.io/discord/1205746340756332554?style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
+[![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
 
 ## Preface
 
 Flow is a free, open-source, cross-platform personal finance tracking app.
+
+[**Will be**](#release-date) available on Android, iOS, and more[^1]
+
+[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
+to enhance the UI for desktop experience for now.
+
+### Features
+
+* Multiple accounts
+* Multiple currencies
+* Fully-offline
+* Full export/backup
+  * JSON for backup
+  * CSV for external software use (i.e., Google Sheets)
+
+## Release date
+
+Flow is currently in development, and is planned to release beta builds in
+early March.
 
 ## Run
 
@@ -25,6 +43,10 @@ Run:
 ```sh
 flutter run
 ```
+
+## Stack
+
+* [ObjectBox](https://objectbox.io/) for database
 
 ## Supported platforms
 
