@@ -168,3 +168,7 @@ Future<ui.Image?> pickAndCropSquareImage(
 
   return cropped;
 }
+
+bool isDesktop() {
+  return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+}
