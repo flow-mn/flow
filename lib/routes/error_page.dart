@@ -1,6 +1,7 @@
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -37,10 +38,10 @@ class ErrorPage extends StatelessWidget {
                 ),
                 if (context.canPop()) ...[
                   const SizedBox(height: 16.0),
-                  ElevatedButton.icon(
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Symbols.chevron_left_rounded),
-                    label: Text("general.back".t(context)),
+                  Button(
+                    onTap: () => context.pop(),
+                    leading: const Icon(Symbols.chevron_left_rounded),
+                    child: Text("general.back".t(context)),
                   ),
                 ],
               ],

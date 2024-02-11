@@ -4,6 +4,7 @@ import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
 import 'package:flutter/foundation.dart';
@@ -85,11 +86,6 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => resetDatabase(),
               leading: const Icon(Symbols.adb_rounded),
             ),
-            ListTile(
-              title: const Text("Import from backup"),
-              onTap: () => import(),
-              leading: const Icon(Symbols.import_export_rounded),
-            ),
           ],
           const SizedBox(height: 64.0),
           Center(
@@ -126,12 +122,12 @@ class _ProfileTabState extends State<ProfileTab> {
       builder: (context) => AlertDialog.adaptive(
         title: const Text("[dev] Reset database?"),
         actions: [
-          ElevatedButton(
-            onPressed: () => context.pop(true),
+          Button(
+            onTap: () => context.pop(true),
             child: const Text("Confirm delete"),
           ),
-          ElevatedButton(
-            onPressed: () => context.pop(false),
+          Button(
+            onTap: () => context.pop(false),
             child: const Text("Cancel"),
           ),
         ],

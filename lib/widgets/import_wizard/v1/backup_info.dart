@@ -1,6 +1,7 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flutter/material.dart';
 
@@ -49,8 +50,8 @@ class BackupInfo extends StatelessWidget {
           style: context.textTheme.bodyMedium
               ?.copyWith(color: context.flowColors.expense),
         ),
-        ElevatedButton(
-          onPressed: onTap,
+        Button(
+          onTap: onTap,
           child: Text(
             "sync.import.start".t(context),
           ),

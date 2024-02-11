@@ -13,6 +13,7 @@
     "general.select.all": "Бүгдийг сонгох",
     "general.delete.all": "Бүгдийг устгах",
     "general.copy.success": "Амжилттай хууллаа",
+    "general.copy.clickToCopy": "Дарвал бичвэр хуулна",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.account.setup": "Данснууд тохируулах",
@@ -128,8 +129,9 @@
     "sync.export.autoBackup.iCloudAlreadySyncs": "Хэрэв та iOS эсвэл macOS систем дээр Flow-г ашиглаж байгаа бол таны iCloud-д автоматаар хадгалагдах болно",
     "sync.export.onDeviceWarning": "Таны нөөцөлсөн өгөгдөл аппыг устгах болон утасны өгөгдлийг шинэчлэх үед хамт устахыг анхаарна уу!",
     "sync.export.success": "Амжилттай өгөгдлийг нөөцөллөө!",
-    "sync.export.success.description": "Үүссэн файлыг өөр газар хадгалахыг зөвлөж байна",
-    "sync.export.share": "Нөөцөлсөн файл илгээх ({type})",
+    "sync.export.success.filePath[0]": "Файлыг ",
+    "sync.export.success.filePath[1]": "-т хадгаллаа",
+    "sync.export.share": "Файл хадгалах ({type})",
 
     "enum.TransactionSubtype": "Төрөл",
     "enum.TransactionSubtype#null": "Хэвийн",

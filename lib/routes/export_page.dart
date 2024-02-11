@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/sync/export.dart';
 import 'package:flow/sync/export/mode.dart';
+import 'package:flow/widgets/export/export_success.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -41,12 +44,10 @@ class _ExportPageState extends State<ExportPage> {
 
   Widget buildChild(BuildContext context) {
     return switch ((done, filePath)) {
-      (true, String()) => Column(
-          children: [
-            Text(
-              "sync.export.onDeviceWarning".t(context),
-            ),
-          ],
+      (true, String()) => ExportSuccess(
+          mode: widget.mode,
+          shareFn: () => showShareSheet(),
+          filePath: filePath!,
         ),
       (false, _) => const Spinner.center(),
       (true, null) => Center(
@@ -76,7 +77,13 @@ class _ExportPageState extends State<ExportPage> {
     }
   }
 
-  Future<void> showShareSheet(BuildContext context) async {
+  Future<void> showShareSheet() async {
+    if (Platform.isLinux) {
+      // openUrl(Uri.parse("file://$filePath"));
+      Process.runSync("xdg-open", [File(filePath!).parent.path]);
+      return;
+    }
+
     final box = context.findRenderObject() as RenderBox?;
 
     final origin =

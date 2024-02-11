@@ -20,6 +20,7 @@ import 'package:flow/sync/import/import_v1.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
+  errorBuilder: (context, state) => ErrorPage(error: state.error?.toString()),
   routes: [
     GoRoute(
       path: '/',
