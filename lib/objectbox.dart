@@ -313,7 +313,11 @@ class ObjectBox {
     );
   }
 
-  Future<void> eraseAllData() async {
+  /// Deletes everything except for
+  ///
+  /// * Profile
+  /// * BackupEntry
+  Future<void> eraseMainData() async {
     await Future.wait([
       box<Transaction>().query().build().removeAsync(),
       box<Category>().query().build().removeAsync(),

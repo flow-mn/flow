@@ -10,12 +10,13 @@ import 'package:go_router/go_router.dart';
 class CategoryCard extends StatelessWidget {
   final Category category;
 
+  final BorderRadius borderRadius;
+
   const CategoryCard({
     super.key,
     required this.category,
+    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
-
-  static BorderRadius borderRadius = BorderRadius.circular(16.0);
 
   @override
   Widget build(BuildContext context) {

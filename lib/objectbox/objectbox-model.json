@@ -206,9 +206,48 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "6:5991227438386928245",
+      "lastPropertyId": "6:85022155315718452",
+      "name": "BackupEntry",
+      "properties": [
+        {
+          "id": "1:5752762434527855344",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8774895379662319967",
+          "name": "syncModelVersion",
+          "type": 6
+        },
+        {
+          "id": "3:5145480293665316701",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:6125452647375382801",
+          "name": "filePath",
+          "type": 9
+        },
+        {
+          "id": "5:5398904418479897232",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "6:85022155315718452",
+          "name": "fileExt",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "5:3298987588431022631",
+  "lastEntityId": "6:5991227438386928245",
   "lastIndexId": "11:6445110811655945444",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

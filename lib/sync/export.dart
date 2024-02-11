@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flow/entity/backup_entry.dart';
+import 'package:flow/objectbox.dart';
 import 'package:flow/sync/export/export_v1.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/sync.dart';
@@ -20,6 +22,7 @@ typedef ExportStatus = ({bool shareDialogSucceeded, String filePath});
 /// [subfolder] - Will put the backup in a subfolder. May be useful for
 /// automated backups
 Future<ExportStatus> export({
+  required BackupEntryType type,
   ExportMode mode = ExportMode.json,
   bool showShareDialog = true,
   String? subfolder,
@@ -40,6 +43,19 @@ Future<ExportStatus> export({
     fileExt: mode.fileExt,
     subfolder: subfolder,
   );
+
+  // Try to add backup record
+  ObjectBox()
+      .box<BackupEntry>()
+      .putAsync(BackupEntry(
+        filePath: savedFilePath,
+        type: type.value,
+        fileExt: mode.fileExt,
+      ))
+      .catchError((error) {
+    log("[Export] Failed to add BackupEntry due to: $error");
+    return -1;
+  });
 
   if (!showShareDialog) {
     return (shareDialogSucceeded: false, filePath: savedFilePath);

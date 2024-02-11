@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/sync/export.dart';
 import 'package:flow/sync/export/mode.dart';
@@ -63,6 +64,7 @@ class _ExportPageState extends State<ExportPage> {
       final result = await export(
         mode: widget.mode,
         showShareDialog: false,
+        type: BackupEntryType.manual,
       );
 
       filePath = result.filePath;
@@ -89,8 +91,10 @@ class _ExportPageState extends State<ExportPage> {
     final origin =
         box == null ? Rect.zero : box.localToGlobal(Offset.zero) & box.size;
 
-    await Share.shareXFiles([XFile(filePath!)],
-        sharePositionOrigin: origin,
-        subject: "sync.export.share".t(context, widget.mode.name));
+    await Share.shareXFiles(
+      [XFile(filePath!)],
+      sharePositionOrigin: origin,
+      subject: "sync.export.share".t(context, widget.mode.name),
+    );
   }
 }

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<bool> openUrl(
@@ -34,8 +35,16 @@ void numpadHaptic() {
   HapticFeedback.mediumImpact();
 }
 
-Future<File?> pickFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+Future<File?> pickJsonFile({String? dialogTitle}) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    dialogTitle: dialogTitle ?? "Select a backup file",
+    initialDirectory: await getApplicationDocumentsDirectory()
+        .then<String?>((value) => value.path)
+        .catchError((_) => null),
+    allowedExtensions: ["json"],
+    type: FileType.custom,
+    allowMultiple: false,
+  );
 
   if (result == null) {
     return null;
@@ -48,6 +57,7 @@ extension CustomDialogs on BuildContext {
   Future<bool?> showConfirmDialog({
     Function(bool?)? callback,
     String? title,
+    String? mainActionLabelOverride,
     bool isDeletionConfirmation = false,
     Widget? child,
   }) async {
@@ -96,9 +106,10 @@ extension CustomDialogs on BuildContext {
                 Button(
                   onTap: () => context.pop(true),
                   child: Text(
-                    isDeletionConfirmation
-                        ? "general.delete".t(context)
-                        : "general.confirm".t(context),
+                    mainActionLabelOverride ??
+                        (isDeletionConfirmation
+                            ? "general.delete".t(context)
+                            : "general.confirm".t(context)),
                     style: isDeletionConfirmation
                         ? TextStyle(color: context.flowColors.expense)
                         : null,
@@ -167,4 +178,8 @@ Future<ui.Image?> pickAndCropSquareImage(
   }
 
   return cropped;
+}
+
+bool isDesktop() {
+  return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 }

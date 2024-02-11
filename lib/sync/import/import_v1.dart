@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/named_enum.dart';
@@ -9,32 +9,9 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/sync/exception.dart';
 import 'package:flow/sync/import/base.dart';
+import 'package:flow/sync/import/mode.dart';
 import 'package:flow/sync/sync.dart';
-import 'package:flow/utils/utils.dart';
 import 'package:flutter/widgets.dart';
-
-/// We have to recover following models:
-/// * Account
-/// * Category
-/// * Transactions
-///
-/// Because we need to resolve dependencies thru `UUID`s, we'll populate
-/// [ObjectBox] in following order:
-/// 1. [Category] (no dependency)
-/// 2. [Account] (no dependency)
-/// 3. [Transaction] (Account, Category)
-Future<ImportV1> importBackupV1([ImportMode mode = ImportMode.merge]) async {
-  final file = await pickFile();
-
-  if (file == null) {
-    throw StateError("No file was picked to proceed with the import");
-  }
-
-  final Map<String, dynamic> parsed =
-      await file.readAsString().then((raw) => jsonDecode(raw));
-
-  return ImportV1(SyncModelV1.fromJson(parsed), mode: mode);
-}
 
 /// Used to report current status to user
 enum ImportV1Progress implements LocalizedEnum {
@@ -83,6 +60,7 @@ class ImportV1 extends Importer {
       await export(
         subfolder: "automated_backups",
         showShareDialog: false,
+        type: BackupEntryType.preImport,
       ).then((value) => safetyBackupFilePath = value.filePath);
     } catch (e) {
       if (!ignoreSafetyBackupFail) {
@@ -110,10 +88,15 @@ class ImportV1 extends Importer {
     return safetyBackupFilePath;
   }
 
+  /// Because we need to resolve dependencies thru `UUID`s, we'll populate
+  /// [ObjectBox] in following order:
+  /// 1. [Category] (no dependency)
+  /// 2. [Account] (no dependency)
+  /// 3. [Transaction] (Account, Category)
   Future<void> _eraseAndWrite() async {
     // 0. Erase current data
     progressNotifier.value = ImportV1Progress.erasing;
-    await ObjectBox().eraseAllData();
+    await ObjectBox().eraseMainData();
 
     // 1. Resurrect [Category]s
     progressNotifier.value = ImportV1Progress.writingCategories;

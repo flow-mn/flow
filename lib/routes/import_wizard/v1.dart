@@ -1,12 +1,11 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/sync/import/import_v1.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/spinner.dart';
+import 'package:flow/widgets/import_wizard/import_success.dart';
 import 'package:flow/widgets/import_wizard/v1/backup_info.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 class ImportWizardV1Page extends StatefulWidget {
   final ImportV1 importer;
@@ -37,18 +36,7 @@ class _ImportWizardV1PageState extends State<ImportWizardV1Page> {
                 onTap: _start,
               ),
             ImportV1Progress.error => Text(error.toString()),
-            ImportV1Progress.success => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Yeyy"),
-                  const SizedBox(height: 16.0),
-                  Button(
-                    onTap: () => context.pop(),
-                    leading: const Icon(Symbols.chevron_left_rounded),
-                    child: Text("general.back".t(context)),
-                  ),
-                ],
-              ),
+            ImportV1Progress.success => const ImportSuccess(),
             _ => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -70,6 +58,14 @@ class _ImportWizardV1PageState extends State<ImportWizardV1Page> {
   }
 
   void _start() async {
+    final bool? confirm = await context.showConfirmDialog(
+      title: "sync.import.eraseWarning".t(context),
+      isDeletionConfirmation: true,
+      mainActionLabelOverride: "general.confirm".t(context),
+    );
+
+    if (confirm != true) return;
+
     try {
       await importer.execute();
     } catch (e) {

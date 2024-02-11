@@ -40,7 +40,7 @@ class _ExportOptionsPageState extends State<ExportOptionsPage> {
                         size: 80.0,
                         plated: true,
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 8.0),
                       Text(
                         "sync.export.asCSV".t(context),
                         style: context.textTheme.headlineSmall,
@@ -71,7 +71,7 @@ class _ExportOptionsPageState extends State<ExportOptionsPage> {
                         size: 80.0,
                         plated: true,
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 8.0),
                       Text(
                         "sync.export.asJSON".t(context),
                         style: context.textTheme.headlineSmall,
@@ -79,6 +79,37 @@ class _ExportOptionsPageState extends State<ExportOptionsPage> {
                       const SizedBox(height: 8.0),
                       Text(
                         "sync.export.asJSON.description".t(context),
+                        style: context.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              ActionCard(
+                onTap: () => context.push("/export/history"),
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 16.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FlowIcon(
+                        FlowIconData.icon(Symbols.history_rounded),
+                        size: 80.0,
+                        plated: true,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "sync.export.history".t(context),
+                        style: context.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "sync.export.history.description".t(context),
                         style: context.textTheme.bodySmall,
                       ),
                     ],

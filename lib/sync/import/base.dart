@@ -1,4 +1,4 @@
-import 'package:flow/sync/import.dart';
+import 'package:flow/sync/import/mode.dart';
 import 'package:flow/sync/model/base.dart';
 import 'package:flutter/material.dart';
 
