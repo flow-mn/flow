@@ -1,6 +1,7 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/sync/import/import_v1.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/import_wizard/v1/backup_info.dart';
 import 'package:flutter/material.dart';
@@ -41,10 +42,10 @@ class _ImportWizardV1PageState extends State<ImportWizardV1Page> {
                 children: [
                   const Text("Yeyy"),
                   const SizedBox(height: 16.0),
-                  ElevatedButton.icon(
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Symbols.chevron_left_rounded),
-                    label: Text("general.back".t(context)),
+                  Button(
+                    onTap: () => context.pop(),
+                    leading: const Icon(Symbols.chevron_left_rounded),
+                    child: Text("general.back".t(context)),
                   ),
                 ],
               ),

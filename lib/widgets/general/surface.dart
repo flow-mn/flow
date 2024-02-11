@@ -10,7 +10,7 @@ class Surface extends StatelessWidget {
   final Clip? clipBehavior;
   final EdgeInsetsGeometry? margin;
   final bool semanticContainer;
-  final Widget Function(BuildContext context) builder;
+  final WidgetBuilder builder;
 
   const Surface({
     super.key,
@@ -56,6 +56,8 @@ class Surface extends StatelessWidget {
         clipBehavior: clipBehavior,
         margin: margin,
         semanticContainer: semanticContainer,
+        // Not really sure if using builder for [Surface] is good idea
+        // since this widget is used quite often...
         child: Builder(builder: builder),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,14 +87,14 @@ extension CustomDialogs on BuildContext {
             const SizedBox(height: 16.0),
             ButtonBar(
               children: [
-                ElevatedButton(
-                  onPressed: () => context.pop(false),
+                Button(
+                  onTap: () => context.pop(false),
                   child: Text(
                     "general.cancel".t(context),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => context.pop(true),
+                Button(
+                  onTap: () => context.pop(true),
                   child: Text(
                     isDeletionConfirmation
                         ? "general.delete".t(context)
