@@ -14,5 +14,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+      - run: bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
       - run: flutter pub get
       - run: flutter test
