@@ -13,6 +13,7 @@
     "general.select.all": "Select all",
     "general.delete.all": "Delete all",
     "general.copy.success": "Copied to clipboard",
+    "general.copy.clickToCopy": "Click to copy",
 
     "setup.getStarted": "Get started",
     "setup.account.setup": "Setup accounts",
@@ -128,8 +129,9 @@
     "sync.export.autoBackup.iCloudAlreadySyncs": "If you're using Flow on iOS or macOS, your data will be synced to your iCloud",
     "sync.export.onDeviceWarning": "All backups are stored on-device, meaning when you uninstall Flow or reset your device, all the backups will be gone!",
     "sync.export.success": "Export successful!",
-    "sync.export.success.description": "We highly recommended to move the backup file to an external/cloud storage",
-    "sync.export.share": "Send exported file ({type})",
+    "sync.export.success.filePath[0]": "Saved to ",
+    "sync.export.success.filePath[1]": "",
+    "sync.export.share": "Save file ({type})",
 
     "enum.TransactionSubtype": "Type",
     "enum.TransactionSubtype#null": "Default",
