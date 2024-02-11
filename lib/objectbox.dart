@@ -3,7 +3,9 @@ import 'dart:math' hide log;
 
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/profile.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:material_symbols_icons/symbols.dart';
@@ -318,6 +320,8 @@ class ObjectBox {
       box<Transaction>().query().build().removeAsync(),
       box<Category>().query().build().removeAsync(),
       box<Account>().query().build().removeAsync(),
+      box<BackupEntry>().query().build().removeAsync(),
+      box<Profile>().query().build().removeAsync(),
     ]);
   }
 }
