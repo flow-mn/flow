@@ -7,8 +7,10 @@ abstract class LocalizedEnum {
 }
 
 extension LocalizedNameEnums on LocalizedEnum {
-  String get localizedName =>
-      "enum.$localizationEnumName@$localizationEnumValue".tr();
+  String get localizedTextKey =>
+      "enum.$localizationEnumName@$localizationEnumValue";
+
+  String get localizedName => localizedTextKey.tr();
   String localizedNameContext(BuildContext context, [dynamic replace]) =>
-      "enum.$localizationEnumName@$localizationEnumValue".t(context, replace);
+      localizedTextKey.t(context, replace);
 }

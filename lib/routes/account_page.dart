@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
@@ -270,10 +269,12 @@ class _AccountPageState extends State<AccountPage> {
       child: Text("account.delete.warning".t(context, txnCount)),
     );
 
-    log("confirmation: $confirmation");
-
     if (confirmation == true) {
-      await export(showShareDialog: false, subfolder: "anti-blunder");
+      await export(
+        showShareDialog: false,
+        subfolder: "anti-blunder",
+        type: BackupEntryType.preAccountDeletion,
+      );
 
       await associatedTransactionsQuery.build().removeAsync();
       await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);

@@ -1,12 +1,12 @@
-import 'dart:io';
-
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/info_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +28,7 @@ class ExportSuccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showFilePath = kDebugMode ||
-        Platform.isLinux ||
-        Platform.isWindows ||
-        Platform.isMacOS;
+    final bool showFilePath = kDebugMode || isDesktop();
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -47,6 +44,7 @@ class ExportSuccess extends StatelessWidget {
           Text(
             "sync.export.success".t(context),
             style: context.textTheme.headlineMedium,
+            textAlign: TextAlign.center,
           ),
           if (showFilePath)
             Tooltip(
@@ -75,23 +73,8 @@ class ExportSuccess extends StatelessWidget {
             ),
           const Spacer(),
           const SizedBox(height: 16.0),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Symbols.info_rounded,
-                fill: 0,
-                color: context.flowColors.semi,
-                size: 16.0,
-              ),
-              const SizedBox(width: 8.0),
-              Flexible(
-                child: Text(
-                  "sync.export.onDeviceWarning".t(context),
-                  style: context.textTheme.bodySmall?.semi(context),
-                ),
-              ),
-            ],
+          InfoText(
+            child: Text("sync.export.onDeviceWarning".t(context)),
           ),
           const SizedBox(height: 24.0),
           Button(

@@ -140,7 +140,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     try {
       if (confirm == true) {
-        await ObjectBox().eraseAllData();
+        await ObjectBox().eraseMainData();
       }
     } finally {
       _debugDbBusy = false;

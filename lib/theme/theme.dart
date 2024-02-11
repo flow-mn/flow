@@ -90,7 +90,7 @@ final darkTheme = ThemeData(
     FlowColors(
       income: const Color(0xFF32CC70),
       expense: _dark.error,
-      semi: const Color(0xFF6A666D),
+      semi: const Color(0xFF97919B),
     ),
     NavbarTheme(
       backgroundColor: _dark.secondary,
