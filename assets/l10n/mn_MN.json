@@ -166,6 +166,17 @@
     "enum.ImportV1Progress@success": "Амжилттай",
     "enum.ImportV1Progress@error": "Алдаа гарлаа ({error})",
 
+    "enum.BackupEntryType@manual": "Хэрэглэгч үүсгэсэн",
+    "enum.BackupEntryType@manual.description": "Хэрэглэгч өөрөө үүсгэсэн нөөц",
+    "enum.BackupEntryType@automated": "Автомат",
+    "enum.BackupEntryType@automated.description": "Автоматаар үүссэн нөөц (жишээ нь: товлосон ажил)",
+    "enum.BackupEntryType@preAccountDeletion": "Сэргийлэх (данс устгасан)",
+    "enum.BackupEntryType@preAccountDeletion.description": "Данс устгахаас өмнө сэргийлж автоматаар нөөц үүсгэв",
+    "enum.BackupEntryType@preImport": "Precaution (өгөгдөл сэргээсэн)",
+    "enum.BackupEntryType@preImport.description": "Файлаас өгөгдөл сэргээхээс өмнө сэргийлж автоматаар нөөц үүсгэв",
+    "enum.BackupEntryType@other": "Бусад нөөц",
+    "enum.BackupEntryType@other.description": "Бусад нөөц",
+
     "error.route.404": "Хуудас олдсонгүй",
     "error.route.400": "Хуудас ачаалахад алдаа гарлаа",
     "error.input.mustBeNotEmpty": "Энэ талбарыг бөглөнө үү",

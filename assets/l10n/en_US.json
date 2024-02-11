@@ -166,6 +166,17 @@
     "enum.ImportV1Progress@success": "Success",
     "enum.ImportV1Progress@error": "Something went wrong ({error})",
 
+    "enum.BackupEntryType@manual": "Manual",
+    "enum.BackupEntryType@manual.description": "Backup created by user",
+    "enum.BackupEntryType@automated": "Auto-backup",
+    "enum.BackupEntryType@automated.description": "Backup created automatically (i.e., scheduled)",
+    "enum.BackupEntryType@preAccountDeletion": "Precaution (account deleted)",
+    "enum.BackupEntryType@preAccountDeletion.description": "Backup created as precaution before user deleted an account",
+    "enum.BackupEntryType@preImport": "Precaution (pre-import)",
+    "enum.BackupEntryType@preImport.description": "Backup created as precaution before importing from previous backup",
+    "enum.BackupEntryType@other": "Other backup",
+    "enum.BackupEntryType@other.description": "Other backup",
+
     "error.route.404": "Page not found",
     "error.route.400": "Failed to load the page",
     "error.input.mustBeNotEmpty": "Please fill out this field",

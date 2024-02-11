@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/named_enum.dart';
@@ -59,6 +60,7 @@ class ImportV1 extends Importer {
       await export(
         subfolder: "automated_backups",
         showShareDialog: false,
+        type: BackupEntryType.preImport,
       ).then((value) => safetyBackupFilePath = value.filePath);
     } catch (e) {
       if (!ignoreSafetyBackupFail) {

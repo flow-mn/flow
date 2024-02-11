@@ -15,6 +15,7 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import '../entity/account.dart';
+import '../entity/backup_entry.dart';
 import '../entity/category.dart';
 import '../entity/profile.dart';
 import '../entity/transaction.dart';
@@ -225,6 +226,45 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(6, 5991227438386928245),
+      name: 'BackupEntry',
+      lastPropertyId: const IdUid(6, 85022155315718452),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 5752762434527855344),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 8774895379662319967),
+            name: 'syncModelVersion',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 5145480293665316701),
+            name: 'createdDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 6125452647375382801),
+            name: 'filePath',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 5398904418479897232),
+            name: 'type',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 85022155315718452),
+            name: 'fileExt',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -255,7 +295,7 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(5, 3298987588431022631),
+      lastEntityId: const IdUid(6, 5991227438386928245),
       lastIndexId: const IdUid(11, 6445110811655945444),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
@@ -508,6 +548,53 @@ ModelDefinition getObjectBoxModel() {
                 .vTableGet(buffer, rootOffset, 6, '');
 
           return object;
+        }),
+    BackupEntry: EntityDefinition<BackupEntry>(
+        model: _entities[4],
+        toOneRelations: (BackupEntry object) => [],
+        toManyRelations: (BackupEntry object) => {},
+        getId: (BackupEntry object) => object.id,
+        setId: (BackupEntry object, int id) {
+          object.id = id;
+        },
+        objectToFB: (BackupEntry object, fb.Builder fbb) {
+          final filePathOffset = fbb.writeString(object.filePath);
+          final typeOffset = fbb.writeString(object.type);
+          final fileExtOffset = fbb.writeString(object.fileExt);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.syncModelVersion);
+          fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+          fbb.addOffset(3, filePathOffset);
+          fbb.addOffset(4, typeOffset);
+          fbb.addOffset(5, fileExtOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final filePathParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+          final syncModelVersionParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final typeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final fileExtParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final object = BackupEntry(
+              id: idParam,
+              filePath: filePathParam,
+              createdDate: createdDateParam,
+              syncModelVersion: syncModelVersionParam,
+              type: typeParam,
+              fileExt: fileExtParam);
+
+          return object;
         })
   };
 
@@ -635,4 +722,31 @@ class Profile_ {
   /// see [Profile.createdDate]
   static final createdDate =
       QueryIntegerProperty<Profile>(_entities[3].properties[3]);
+}
+
+/// [BackupEntry] entity fields to define ObjectBox queries.
+class BackupEntry_ {
+  /// see [BackupEntry.id]
+  static final id =
+      QueryIntegerProperty<BackupEntry>(_entities[4].properties[0]);
+
+  /// see [BackupEntry.syncModelVersion]
+  static final syncModelVersion =
+      QueryIntegerProperty<BackupEntry>(_entities[4].properties[1]);
+
+  /// see [BackupEntry.createdDate]
+  static final createdDate =
+      QueryIntegerProperty<BackupEntry>(_entities[4].properties[2]);
+
+  /// see [BackupEntry.filePath]
+  static final filePath =
+      QueryStringProperty<BackupEntry>(_entities[4].properties[3]);
+
+  /// see [BackupEntry.type]
+  static final type =
+      QueryStringProperty<BackupEntry>(_entities[4].properties[4]);
+
+  /// see [BackupEntry.fileExt]
+  static final fileExt =
+      QueryStringProperty<BackupEntry>(_entities[4].properties[5]);
 }
