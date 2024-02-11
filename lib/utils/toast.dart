@@ -44,6 +44,14 @@ extension ToastHelper on BuildContext {
       foregroundColor: colorScheme.onBackground,
       showProgressBar: false,
       style: ToastificationStyle.flat,
+      boxShadow: [
+        BoxShadow(
+          color: colorScheme.onBackground.withAlpha(0x40),
+          offset: const Offset(0.0, 1.0),
+          blurRadius: 4.0,
+          spreadRadius: -1.5,
+        )
+      ],
     );
   }
 }
