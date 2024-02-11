@@ -161,12 +161,11 @@ class _ProfileTabState extends State<ProfileTab> {
       if (context.mounted) {
         context.showToast(
           text: "sync.import.successful".t(context),
-          error: true,
         );
       }
     } catch (e) {
       if (context.mounted) {
-        context.showToast(text: e.toString(), error: true);
+        context.showErrorToast(error: e);
       }
     }
   }

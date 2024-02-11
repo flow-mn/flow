@@ -3,10 +3,10 @@ import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:oktoast/oktoast.dart';
+import 'package:toastification/toastification.dart';
 
 extension ToastHelper on BuildContext {
-  ToastFuture showErrorToast({required dynamic error, Widget? icon}) =>
+  ToastificationItem showErrorToast({required dynamic error, Widget? icon}) =>
       showToast(
         text: switch (error) {
           LocalizedException localizedException =>
@@ -15,12 +15,12 @@ extension ToastHelper on BuildContext {
           _ => error.toString(),
         },
         icon: icon,
-        error: true,
+        type: ToastificationType.error,
       );
 
-  ToastFuture showToast({
+  ToastificationItem showToast({
     required String text,
-    bool error = false,
+    ToastificationType type = ToastificationType.success,
     Widget? icon,
   }) {
     icon ??= Icon(
@@ -28,32 +28,30 @@ extension ToastHelper on BuildContext {
       color: colorScheme.error,
     );
 
-    final Widget contents = Material(
-      elevation: 2.0,
-      borderRadius: BorderRadius.circular(16.0),
-      type: MaterialType.card,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-        child: Row(
-          children: [
-            icon,
-            const SizedBox(width: 12.0),
-            Flexible(child: Text(text)),
-          ],
-        ),
-      ),
-    );
-
-    if (error) {
+    if (type == ToastificationType.error) {
       HapticFeedback.heavyImpact();
     }
 
-    return showToastWidget(
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: contents,
-      ),
-      position: const ToastPosition(align: Alignment.topCenter),
+    return toastification.show(
+      context: this,
+      title: Text(text),
+      type: type,
+      icon: icon,
+      autoCloseDuration: const Duration(seconds: 5),
+      alignment: Alignment.topCenter,
+      primaryColor: colorScheme.primary,
+      backgroundColor: colorScheme.background,
+      foregroundColor: colorScheme.onBackground,
+      showProgressBar: false,
+      style: ToastificationStyle.flat,
+      boxShadow: [
+        BoxShadow(
+          color: colorScheme.onBackground.withAlpha(0x40),
+          offset: const Offset(0.0, 1.0),
+          blurRadius: 4.0,
+          spreadRadius: -1.5,
+        )
+      ],
     );
   }
 }
