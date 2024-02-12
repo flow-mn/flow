@@ -62,6 +62,7 @@ class FlowIcon extends StatelessWidget {
         ),
       ),
       color: plateColor,
+      iconColor: context.colorScheme.primary,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),

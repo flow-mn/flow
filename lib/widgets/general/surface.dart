@@ -12,12 +12,15 @@ class Surface extends StatelessWidget {
   final bool semanticContainer;
   final WidgetBuilder builder;
 
+  final Color? iconColor;
+
   const Surface({
     super.key,
     this.color,
     this.shadowColor,
     this.surfaceTintColor,
     this.elevation,
+    this.iconColor,
     this.shape = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16.0)),
     ),
@@ -43,7 +46,7 @@ class Surface extends StatelessWidget {
           decorationColor: parentTheme.colorScheme.onSecondary,
         ),
         iconTheme: parentTheme.iconTheme.copyWith(
-          color: parentTheme.colorScheme.primary,
+          color: iconColor ?? parentTheme.colorScheme.onSecondary,
         ),
       ),
       child: Card(
