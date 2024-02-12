@@ -71,5 +71,5 @@ configurations {
 }
 
 dependencies {
-    debugImplementation("io.objectbox:objectbox-android-objectbrowser:3.7.0")
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:3.7.1")
 }
