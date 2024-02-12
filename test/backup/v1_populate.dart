@@ -9,11 +9,12 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 Future<void> populateDummyData([int entryCount = 100]) async {
-  final firstAccount = ObjectBox()
-      .box<Account>()
-      .query(Account_.name.equals("Alpha"))
-      .build()
-      .findFirst();
+  final Query<Account> firstAccountQuery =
+      ObjectBox().box<Account>().query(Account_.name.equals("Alpha")).build();
+
+  final firstAccount = firstAccountQuery.findFirst();
+
+  firstAccountQuery.close();
 
   if (firstAccount != null) {
     await addDummyData();

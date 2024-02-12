@@ -175,16 +175,18 @@ class _CategoryPageState extends State<CategoryPage> {
 
     final String trimmed = value!.trim();
 
-    final isNameUnique = ObjectBox()
-            .box<Category>()
-            .query(
-              Category_.name
-                  .equals(trimmed)
-                  .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
-            )
-            .build()
-            .count() ==
-        0;
+    final Query<Category> otherCategoriesWithSameNameQuery = ObjectBox()
+        .box<Category>()
+        .query(
+          Category_.name
+              .equals(trimmed)
+              .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
+        )
+        .build();
+
+    final bool isNameUnique = otherCategoriesWithSameNameQuery.count() == 0;
+
+    otherCategoriesWithSameNameQuery.close();
 
     if (!isNameUnique) {
       return "error.input.duplicate.accountName".t(context, trimmed);
@@ -220,13 +222,16 @@ class _CategoryPageState extends State<CategoryPage> {
   Future<void> _deleteCategory() async {
     if (_currentlyEditing == null) return;
 
-    final associatedTransactionsQuery = ObjectBox()
+    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.category.equals(_currentlyEditing!.id));
+        .query(Transaction_.category.equals(_currentlyEditing!.id))
+        .build();
 
-    final txnCount = associatedTransactionsQuery.build().count();
+    final int txnCount = associatedTransactionsQuery.count();
 
-    final confirmation = await context.showConfirmDialog(
+    associatedTransactionsQuery.close();
+
+    final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
       child: Text(

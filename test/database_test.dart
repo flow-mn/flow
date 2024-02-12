@@ -39,19 +39,30 @@ void main() {
         ),
       ]);
 
-      final Account accMNT = (await ObjectBox()
+      final Query<Account> tugrikAccountQuery = ObjectBox()
           .box<Account>()
           .query(Account_.name.equals("Tugrik"))
-          .build()
-          .findFirstAsync())!;
+          .build();
 
-      accMNT.createTransaction(amount: 420.69, title: "t1");
+      try {
+        final Account accMNT = (await tugrikAccountQuery.findFirstAsync())!;
+        accMNT.createTransaction(amount: 420.69, title: "t1");
+      } finally {
+        tugrikAccountQuery.close();
+      }
     });
 
     test("Adding account with duplicate name should fail", () async {
-      final firstAccountName =
-          (await ObjectBox().box<Account>().query().build().findFirstAsync())!
-              .name;
+      final Query<Account> accountQuery =
+          ObjectBox().box<Account>().query().build();
+
+      late final String firstAccountName;
+
+      try {
+        firstAccountName = (await accountQuery.findFirstAsync())!.name;
+      } finally {
+        accountQuery.close();
+      }
 
       expect(
         () async => await ObjectBox().box<Account>().putAsync(
@@ -67,16 +78,20 @@ void main() {
 
     test("Changing transaction account to different currency should fail",
         () async {
-      final mntAccount = await ObjectBox()
+      final Query<Account> mntAccountQuery = ObjectBox()
           .box<Account>()
           .query(Account_.currency.equals("MNT"))
-          .build()
-          .findFirstAsync();
-      final usdAccount = await ObjectBox()
+          .build();
+      final Query<Account> usdAccountQuery = ObjectBox()
           .box<Account>()
           .query(Account_.currency.equals("USD"))
-          .build()
-          .findFirstAsync();
+          .build();
+
+      final Account? mntAccount = await mntAccountQuery.findFirstAsync();
+      final Account? usdAccount = await usdAccountQuery.findFirstAsync();
+
+      mntAccountQuery.close();
+      usdAccountQuery.close();
 
       final txnId = mntAccount!.createTransaction(
         amount: 216363.53,

@@ -223,16 +223,18 @@ class _AccountPageState extends State<AccountPage> {
 
     final String trimmed = value!.trim();
 
-    final isNameUnique = ObjectBox()
-            .box<Account>()
-            .query(
-              Account_.name
-                  .equals(trimmed)
-                  .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
-            )
-            .build()
-            .count() ==
-        0;
+    final Query<Account> sameNameQuery = ObjectBox()
+        .box<Account>()
+        .query(
+          Account_.name
+              .equals(trimmed)
+              .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
+        )
+        .build();
+
+    final bool isNameUnique = sameNameQuery.count() == 0;
+
+    sameNameQuery.close();
 
     if (!isNameUnique) {
       return "error.input.duplicate.accountName".t(context, trimmed);
@@ -264,14 +266,14 @@ class _AccountPageState extends State<AccountPage> {
   void _deleteAccount() async {
     if (_currentlyEditing == null) return;
 
-    final associatedTransactionsQuery = ObjectBox()
+    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
         .query(Transaction_.account.equals(_currentlyEditing!.id))
         .build();
 
-    final txnCount = associatedTransactionsQuery.count();
+    final int txnCount = associatedTransactionsQuery.count();
 
-    final confirmation = await context.showConfirmDialog(
+    final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
       child: Text("account.delete.warning".t(context, txnCount)),

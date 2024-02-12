@@ -180,13 +180,14 @@ class ImportV1 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeAccounts[accountUuid] != 0) {
-      memoizeAccounts[accountUuid] ??= ObjectBox()
-              .box<Account>()
-              .query(Account_.uuid.equals(accountUuid))
-              .build()
-              .findFirst()
-              ?.id ??
-          0;
+      final Query<Account> accountQuery = ObjectBox()
+          .box<Account>()
+          .query(Account_.uuid.equals(accountUuid))
+          .build();
+
+      memoizeAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
+
+      accountQuery.close();
     }
 
     if (memoizeAccounts[accountUuid] == 0) {
@@ -209,13 +210,14 @@ class ImportV1 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeCategories[categoryUuid] != 0) {
-      memoizeCategories[categoryUuid] ??= ObjectBox()
-              .box<Category>()
-              .query(Category_.uuid.equals(categoryUuid))
-              .build()
-              .findFirst()
-              ?.id ??
-          0;
+      final Query<Category> categoryQuery = ObjectBox()
+          .box<Category>()
+          .query(Category_.uuid.equals(categoryUuid))
+          .build();
+
+      memoizeCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
+
+      categoryQuery.close();
     }
 
     if (memoizeCategories[categoryUuid] == 0) {

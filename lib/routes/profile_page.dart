@@ -35,15 +35,18 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
 
-    _profile = ObjectBox()
+    final Query<Profile> profileQuery = ObjectBox()
         .box<Profile>()
         .query(
           widget.profileId != null
               ? Profile_.id.equals(widget.profileId!)
               : null,
         )
-        .build()
-        .findFirst();
+        .build();
+
+    _profile = profileQuery.findFirst();
+
+    profileQuery.close();
 
     _nameController = TextEditingController(text: _profile?.name);
   }
