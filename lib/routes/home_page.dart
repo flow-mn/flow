@@ -47,14 +47,14 @@ class _HomePageState extends State<HomePage>
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 200)).then((_) {
-      // if (!LocalPreferences().completedInitialSetup.get()) {
-      context.pushReplacement("/setup");
-      // LocalPreferences()
-      // .completedInitialSetup
-      // .set(!LocalPreferences().completedInitialSetup.get());
-      // }
-    });
+    // Future.delayed(const Duration(milliseconds: 200)).then((_) {
+    // if (!LocalPreferences().completedInitialSetup.get()) {
+    // context.pushReplacement("/setup");
+    // LocalPreferences()
+    // .completedInitialSetup
+    // .set(!LocalPreferences().completedInitialSetup.get());
+    // }
+    // });
   }
 
   @override

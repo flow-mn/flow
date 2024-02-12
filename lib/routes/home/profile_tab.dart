@@ -86,6 +86,11 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => resetDatabase(),
               leading: const Icon(Symbols.adb_rounded),
             ),
+            ListTile(
+              title: const Text("Jump to setup page"),
+              onTap: () => context.push("/setup"),
+              leading: const Icon(Symbols.settings_rounded),
+            ),
           ],
           const SizedBox(height: 64.0),
           Center(
