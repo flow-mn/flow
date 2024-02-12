@@ -46,6 +46,7 @@
     "account.edit": "Данс засварлах",
     "account.edit.selectCurrency": "Валют сонгох",
     "account.transactions": "Гүйлгээнүүд",
+    "account.delete": "Дансыг устгах",
     "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
 
     "transaction": "Гүйлгээ",

@@ -10,7 +10,9 @@ import 'package:flow/routes/new_transaction/select_account_sheet.dart';
 import 'package:flow/routes/new_transaction/select_category_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/utils/value_or.dart';
+import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -250,8 +252,13 @@ class _TransactionPageState extends State<TransactionPage> {
                       const SizedBox(height: 24.0),
                       Text(
                         "${"transaction.createdDate".t(context)} ${_currentlyEditing!.createdDate.format(payload: "LLL", forceLocal: true)}",
-                        style: context.textTheme.bodySmall?.semi(context),
-                      )
+                        style: context.textTheme.bodyMedium?.semi(context),
+                      ),
+                      const SizedBox(height: 36.0),
+                      DeleteButton(
+                        onTap: _deleteTransaction,
+                        label: Text("transaction.delete".t(context)),
+                      ),
                     ],
                     const SizedBox(height: 16.0),
                   ],
@@ -413,6 +420,26 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return _amount != 0 || _titleTextController.text.isNotEmpty;
+  }
+
+  void _deleteTransaction() async {
+    if (_currentlyEditing == null) return;
+
+    final String txnTitle =
+        _currentlyEditing!.title ?? "transaction.fallbackTitle".t(context);
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, txnTitle),
+    );
+
+    if (confirmation == true) {
+      await ObjectBox().box<Transaction>().removeAsync(_currentlyEditing!.id);
+
+      if (mounted) {
+        pop();
+      }
+    }
   }
 
   void pop() {
