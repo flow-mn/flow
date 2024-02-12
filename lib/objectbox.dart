@@ -81,15 +81,18 @@ class ObjectBox {
   }
 
   Future<void> populateDummyData() async {
-    final firstAccount =
-        box<Account>().query(Account_.name.equals("Alpha")).build().findFirst();
+    final Query<Account> firstAccountQuery =
+        box<Account>().query(Account_.name.equals("Alpha")).build();
+
+    final Account? firstAccount = firstAccountQuery.findFirst();
+
+    firstAccountQuery.close();
 
     if (firstAccount != null) {
       await addDummyData();
-      return;
+    } else {
+      await _createAndPutDebugData();
     }
-
-    await _createAndPutDebugData();
   }
 
   Future<void> _createAndPutDebugData() async {
@@ -318,10 +321,21 @@ class ObjectBox {
   /// * Profile
   /// * BackupEntry
   Future<void> eraseMainData() async {
-    await Future.wait([
-      box<Transaction>().query().build().removeAsync(),
-      box<Category>().query().build().removeAsync(),
-      box<Account>().query().build().removeAsync(),
-    ]);
+    final Query<Transaction> allTransactionsQuery =
+        box<Transaction>().query().build();
+    final Query<Category> allCategorysQuery = box<Category>().query().build();
+    final Query<Account> allAccountsQuery = box<Account>().query().build();
+
+    try {
+      await Future.wait([
+        allTransactionsQuery.removeAsync(),
+        allCategorysQuery.removeAsync(),
+        allAccountsQuery.removeAsync(),
+      ]);
+    } finally {
+      allTransactionsQuery.close();
+      allCategorysQuery.close();
+      allAccountsQuery.close();
+    }
   }
 }

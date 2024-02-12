@@ -298,9 +298,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectAccount() async {
-    final accounts = _accountsQueryBuilder().build().find();
+    final Query<Account> accountsQuery = _accountsQueryBuilder().build();
 
-    final result = await showModalBottomSheet<Account>(
+    final List<Account> accounts = accountsQuery.find();
+
+    accountsQuery.close();
+
+    final Account? result = await showModalBottomSheet<Account>(
       context: context,
       builder: (context) => SelectAccountSheet(
         accounts: accounts,
@@ -317,11 +321,16 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectCategory() async {
-    final categories = _categoriesQueryBuilder().build().find();
+    final Query<Category> categoriesQuery = _categoriesQueryBuilder().build();
+
+    final List<Category> categories = categoriesQuery.find();
+
+    categoriesQuery.close();
 
     if (categories.isEmpty) return;
 
-    final result = await showModalBottomSheet<ValueOr<Category>>(
+    final ValueOr<Category>? result =
+        await showModalBottomSheet<ValueOr<Category>>(
       context: context,
       builder: (context) => SelectCategorySheet(
         categories: categories,
