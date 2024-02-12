@@ -210,6 +210,7 @@ class _CategoryPageState extends State<CategoryPage> {
         current: _iconData,
         onChange: onChange,
       ),
+      isScrollControlled: true,
     );
 
     if (result != null) {

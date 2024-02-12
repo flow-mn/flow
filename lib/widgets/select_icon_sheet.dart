@@ -127,7 +127,7 @@ class _SelectIconSheetState extends State<SelectIconSheet>
       child: Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
             children: [
               TabBar(

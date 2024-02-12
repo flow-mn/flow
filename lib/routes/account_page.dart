@@ -254,6 +254,7 @@ class _AccountPageState extends State<AccountPage> {
         current: _iconData,
         onChange: (value) => _updateIcon(value),
       ),
+      isScrollControlled: true,
     );
 
     if (result != null) {
