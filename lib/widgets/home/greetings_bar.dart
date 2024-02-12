@@ -23,6 +23,8 @@ class GreetingsBar extends StatelessWidget {
               Text(
                 "tabs.home.greetings".t(context, profile?.name ?? "..."),
                 style: Theme.of(context).textTheme.titleMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               const Spacer(),
               const SizedBox(width: 12.0),
