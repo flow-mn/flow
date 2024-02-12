@@ -46,6 +46,7 @@
     "account.edit": "Edit account",
     "account.edit.selectCurrency": "Select a currency",
     "account.transactions": "Transactions",
+    "account.delete": "Delete account",
     "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible!",
 
     "transaction": "Transaction",

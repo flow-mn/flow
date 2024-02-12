@@ -119,6 +119,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   const SizedBox(height: 36.0),
                   DeleteButton(
                     onTap: _deleteCategory,
+                    label: Text("category.delete".t(context)),
                   ),
                   const SizedBox(height: 16.0),
                 ],

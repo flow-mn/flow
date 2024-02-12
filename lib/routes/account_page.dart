@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/backup_entry.dart';
@@ -140,6 +142,7 @@ class _AccountPageState extends State<AccountPage> {
                   const SizedBox(height: 36.0),
                   DeleteButton(
                     onTap: _deleteAccount,
+                    label: Text("account.delete".t(context)),
                   ),
                   const SizedBox(height: 16.0),
                 ],
@@ -263,9 +266,10 @@ class _AccountPageState extends State<AccountPage> {
 
     final associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing!.id));
+        .query(Transaction_.account.equals(_currentlyEditing!.id))
+        .build();
 
-    final txnCount = associatedTransactionsQuery.build().count();
+    final txnCount = associatedTransactionsQuery.count();
 
     final confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
@@ -280,11 +284,22 @@ class _AccountPageState extends State<AccountPage> {
         type: BackupEntryType.preAccountDeletion,
       );
 
-      await associatedTransactionsQuery.build().removeAsync();
-      await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
+      try {
+        await associatedTransactionsQuery.removeAsync();
+      } catch (e) {
+        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
+      } finally {
+        associatedTransactionsQuery.close();
+      }
 
-      if (mounted) {
-        context.pop();
+      try {
+        await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
+      } catch (e) {
+        log("[Account Page] Failed to delete account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
+      } finally {
+        if (mounted) {
+          context.pop();
+        }
       }
     }
   }
