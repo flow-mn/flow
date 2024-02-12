@@ -96,7 +96,12 @@ class _CategoryPageState extends State<CategoryPage> {
                   plated: true,
                   onTap: selectIcon,
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 8.0),
+                TextButton(
+                  onPressed: selectIcon,
+                  child: Text("flowIcon.change".t(context)),
+                ),
+                const SizedBox(height: 24.0),
                 Padding(
                   padding: contentPadding,
                   child: TextFormField(
@@ -110,9 +115,8 @@ class _CategoryPageState extends State<CategoryPage> {
                     validator: validateNameField,
                   ),
                 ),
-                const SizedBox(height: 16.0),
                 if (_currentlyEditing != null) ...[
-                  const SizedBox(height: 96.0),
+                  const SizedBox(height: 36.0),
                   DeleteButton(
                     onTap: _deleteCategory,
                   ),

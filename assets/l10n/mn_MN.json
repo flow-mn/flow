@@ -56,12 +56,15 @@
     "transaction.date": "Гүйлгээний огноо",
     "transaction.createdDate": "Үүсгэсэн огноо",
     "transaction.fallbackTitle": "Гарчиггүй гүйлгээ",
+    "transaction.delete": "Гүйлгээг устгах",
 
     "category": "Ангилал",
     "category.name": "Нэр",
     "category.new": "Ангилал үүсгэх",
+    "category.delete": "Ангилалыг устгах",
     "category.delete.warning": "Энэ ангиллыг устгавал холбоотой {transactionCount} гүйлгээг ангилалгүй болохыг анхаарна уу. Энэ үйлдлийг буцаах боломжгүй юм!",
     "categories": "Ангиллууд",
+    "categories.noCategories": "Танд үүсгэсэн ангилал алга байна",
 
     "currency": "Мөнгөн тэмдэгт",
     "currency.searchHint": "Хайх... (улс, тэмдэгт, код)",
@@ -98,6 +101,7 @@
     "tabs.profile.import": "Сэргээх",
     "tabs.profile.withLoveFromTheCreator": "sadespresso хайр шингээж бүтээв 🤍",
 
+    "flowIcon.change": "Дүрс солих",
     "flowIcon.type.icon": "Дүрс",
     "flowIcon.type.image": "Зураг",
     "flowIcon.type.image.pick": "Зураг сонгох",

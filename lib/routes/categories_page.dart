@@ -2,7 +2,7 @@ import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/categories/no_categories.dart';
 import 'package:flow/widgets/category_card.dart';
 import 'package:flow/widgets/category_card_add.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -37,23 +37,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             final categories = snapshot.data!.find();
 
             return switch (categories.length) {
-              0 => InkWell(
-                  onTap: () => context.push("/category/new"),
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("No categories huh"),
-                        Text(
-                          "Click anywhere to add a category",
-                          style: context.textTheme.bodySmall?.semi(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              0 => const NoCategories(),
               _ => SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
