@@ -72,6 +72,14 @@ class _SelectIconSheetState extends State<SelectIconSheet>
       initialIndex: initialIndex,
     );
 
+    _controller.addListener(() {
+      if (!_controller.indexIsChanging) {
+        if (_textFieldFocusNode.hasFocus && _controller.index != 1) {
+          _textFieldFocusNode.unfocus();
+        }
+      }
+    });
+
     _textFieldFocusNode.addListener(() {
       setState(() {});
     });
