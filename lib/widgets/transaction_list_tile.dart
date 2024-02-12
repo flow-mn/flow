@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -81,7 +81,7 @@ class TransactionListTile extends StatelessWidget {
 
     return Slidable(
       key: dismissibleKey,
-      enabled: kDebugMode || Platform.isIOS,
+      enabled: flowDebugMode || Platform.isIOS,
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [

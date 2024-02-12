@@ -8,7 +8,6 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -72,7 +71,7 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(SimpleIcons.github),
             onTap: () => openUrl(Uri.parse("https://github.com/flow-mn/flow")),
           ),
-          if (kDebugMode) ...[
+          if (flowDebugMode) ...[
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(

@@ -1,3 +1,4 @@
+import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/sync/export/mode.dart';
@@ -7,7 +8,6 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/info_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,7 +28,7 @@ class ExportSuccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showFilePath = kDebugMode || isDesktop();
+    final bool showFilePath = flowDebugMode || isDesktop();
 
     return Padding(
       padding: const EdgeInsets.all(24.0),

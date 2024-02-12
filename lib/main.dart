@@ -17,13 +17,13 @@
 
 import 'dart:io';
 
+import 'package:flow/constants.dart';
 import 'package:flow/entity/profile.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +33,7 @@ import 'package:pie_menu/pie_menu.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (kDebugMode) {
+  if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
   }
 
@@ -97,7 +97,8 @@ class FlowState extends State<Flow> {
       onGenerateTitle: (context) => "appName".t(context),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
-        if (kDebugMode || Platform.isIOS) GlobalCupertinoLocalizations.delegate,
+        if (flowDebugMode || Platform.isIOS)
+          GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         FlowLocalizations.delegate,
       ],

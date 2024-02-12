@@ -1,4 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 const appVersion = "0.1.5+7";
+const debugBuild = true;
+
+bool get flowDebugMode => kDebugMode || debugBuild;
 
 final Uri discordInviteLink = Uri.parse("https://discord.gg/Ndh9VDeZa4");
 final Uri maintainerKoFiLink = Uri.parse("https://ko-fi.com/sadespresso");
