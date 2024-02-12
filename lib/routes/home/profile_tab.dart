@@ -1,3 +1,4 @@
+import 'package:flow/constants.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/sync/import.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -90,7 +90,7 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 64.0),
           Center(
             child: Text(
-              "version indev-1, ${Moment.fromMillisecondsSinceEpoch(1700982217689).calendar()}",
+              "v$appVersion",
               style: context.textTheme.labelSmall,
             ),
           ),

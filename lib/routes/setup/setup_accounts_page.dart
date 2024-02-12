@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SetupCreateAccountPage extends StatefulWidget {
-  const SetupCreateAccountPage({super.key});
+class SetupAccountsPage extends StatefulWidget {
+  const SetupAccountsPage({super.key});
 
   @override
-  State<SetupCreateAccountPage> createState() => _SetupCreateAccountPageState();
+  State<SetupAccountsPage> createState() => _SetupAccountsPageState();
 }
 
-class _SetupCreateAccountPageState extends State<SetupCreateAccountPage> {
-  //
-
+class _SetupAccountsPageState extends State<SetupAccountsPage> {
   @override
   void initState() {
     super.initState();

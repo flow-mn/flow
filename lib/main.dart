@@ -30,11 +30,6 @@ import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:pie_menu/pie_menu.dart';
 
-const appVersion = "0.1.5+7";
-
-final String namedVersion = appVersion.split("+").first;
-final int buildNumber = int.parse(appVersion.split("+").last);
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
