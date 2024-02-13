@@ -3,6 +3,7 @@ import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
+import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -36,10 +37,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                "setup.primaryCurrency.setup".t(context),
-                style: context.textTheme.headlineSmall,
-              ),
+              SetupHeader("setup.primaryCurrency.setup".t(context)),
               // SelectCurrencySheet
               const SizedBox(height: 16.0),
               Text(

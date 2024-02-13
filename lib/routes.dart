@@ -12,6 +12,7 @@ import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_accounts_page.dart';
+import 'package:flow/routes/setup/setup_categories_page.dart';
 import 'package:flow/routes/setup/setup_currency_page.dart';
 import 'package:flow/routes/setup/setup_profile_page.dart';
 import 'package:flow/routes/setup/setup_profile_picture_page.dart';
@@ -144,28 +145,30 @@ final router = GoRouter(
     GoRoute(
       path: '/setup',
       builder: (context, state) => const SetupPage(),
-    ),
-    GoRoute(
-      path: '/setup/profile',
-      builder: (context, state) => const SetupProfilePage(),
-    ),
-    GoRoute(
-      path: '/setup/profile/photo',
-      builder: (context, state) => SetupProfilePhotoPage(
-        profileImagePath: state.extra as String,
-      ),
-    ),
-    GoRoute(
-      path: '/setup/currency',
-      builder: (context, state) => const SetupCurrencyPage(),
-    ),
-    GoRoute(
-      path: '/setup/accounts',
-      builder: (context, state) => const SetupAccountsPage(),
-    ),
-    GoRoute(
-      path: '/setup/categories',
-      builder: (context, state) => const SetupAccountsPage(),
+      routes: [
+        GoRoute(
+          path: 'profile',
+          builder: (context, state) => const SetupProfilePage(),
+        ),
+        GoRoute(
+          path: 'profile/photo',
+          builder: (context, state) => SetupProfilePhotoPage(
+            profileImagePath: state.extra as String,
+          ),
+        ),
+        GoRoute(
+          path: 'currency',
+          builder: (context, state) => const SetupCurrencyPage(),
+        ),
+        GoRoute(
+          path: 'accounts',
+          builder: (context, state) => const SetupAccountsPage(),
+        ),
+        GoRoute(
+          path: 'categories',
+          builder: (context, state) => const SetupCategoriesPage(),
+        ),
+      ],
     ),
   ],
 );

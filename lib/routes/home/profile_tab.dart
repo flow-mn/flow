@@ -87,7 +87,7 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
             ListTile(
               title: const Text("Jump to setup page"),
-              onTap: () => context.push("/setup"),
+              onTap: () => context.pushReplacement("/setup"),
               leading: const Icon(Symbols.settings_rounded),
             ),
           ],

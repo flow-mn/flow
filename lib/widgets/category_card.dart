@@ -12,8 +12,11 @@ class CategoryCard extends StatelessWidget {
 
   final BorderRadius borderRadius;
 
+  final VoidCallback? onTapOverride;
+
   const CategoryCard({
     super.key,
+    this.onTapOverride,
     required this.category,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
@@ -24,7 +27,8 @@ class CategoryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         borderRadius: borderRadius,
-        onTap: () => context.push("/category/${category.id}"),
+        onTap:
+            onTapOverride ?? (() => context.push("/category/${category.id}")),
         child: Row(
           children: [
             FlowIcon(

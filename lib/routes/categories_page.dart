@@ -4,10 +4,9 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/widgets/categories/no_categories.dart';
 import 'package:flow/widgets/category_card.dart';
-import 'package:flow/widgets/category_card_add.dart';
+import 'package:flow/widgets/add_category_card.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -42,11 +41,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: CategoryCardAdd(
-                          onTap: () => context.push("/category/new"),
-                        ),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                        child: AddCategoryCard(),
                       ),
                       ...categories.map(
                         (category) => Padding(

@@ -1,30 +1,32 @@
-import 'package:flow/data/setup/default_accounts.dart';
-import 'package:flow/entity/account.dart';
+import 'package:flow/data/setup/default_categories.dart';
+import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/add_category_card.dart';
 import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/category_card.dart';
 import 'package:flow/widgets/info_text.dart';
-import 'package:flow/widgets/setup/accounts/account_preset_card.dart';
-import 'package:flow/widgets/setup/accounts/add_account_card.dart';
+
+import 'package:flow/widgets/setup/categories/category_preset_card.dart';
 import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class SetupAccountsPage extends StatefulWidget {
-  const SetupAccountsPage({super.key});
+class SetupCategoriesPage extends StatefulWidget {
+  const SetupCategoriesPage({super.key});
 
   @override
-  State<SetupAccountsPage> createState() => _SetupAccountsPageState();
+  State<SetupCategoriesPage> createState() => _SetupCategoriesPageState();
 }
 
-class _SetupAccountsPageState extends State<SetupAccountsPage> {
-  QueryBuilder<Account> qb() =>
-      ObjectBox().box<Account>().query().order(Account_.createdDate);
+class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
+  QueryBuilder<Category> qb() =>
+      ObjectBox().box<Category>().query().order(Category_.createdDate);
 
-  late final List<Account> presetAccounts;
+  late final List<Category> presetCategories;
 
   bool busy = false;
 
@@ -32,17 +34,15 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   void initState() {
     super.initState();
 
-    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+    final Query<Category> existingCategoriesQuery = qb().build();
 
-    final Query<Account> existingAccountsQuery = qb().build();
+    final List<Category> existingCategories = existingCategoriesQuery.find();
 
-    final List<Account> existingAccounts = existingAccountsQuery.find();
+    existingCategoriesQuery.close();
 
-    existingAccountsQuery.close();
-
-    presetAccounts = getAccountPresets(primaryCurrency)
-        .where((account) => !existingAccounts
-            .any((existingAccount) => existingAccount.name == account.name))
+    presetCategories = getCategoryPresets()
+        .where((category) => !existingCategories
+            .any((existingCategory) => existingCategory.name == category.name))
         .toList();
   }
 
@@ -54,29 +54,29 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
         child: StreamBuilder(
             stream: qb().watch(triggerImmediately: true),
             builder: (context, snapshot) {
-              final List<Account> currentAccounts = snapshot.data?.find() ?? [];
+              final List<Category> currentCategories =
+                  snapshot.data?.find() ?? [];
 
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SetupHeader("setup.accounts.setup".t(context)),
+                    SetupHeader("setup.categories.setup".t(context)),
                     const SizedBox(height: 16.0),
-                    const AddAccountCard(),
+                    const AddCategoryCard(),
                     const SizedBox(height: 16.0),
-                    ...currentAccounts.map(
+                    ...currentCategories.map(
                       (e) => Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: AccountPresetCard(
-                          account: e,
-                          onSelect: (_) {},
-                          selected: true,
+                        child: CategoryCard(
+                          category: e,
+                          onTapOverride: () => {},
                         ),
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    if (presetAccounts.isNotEmpty) ...[
+                    if (presetCategories.isNotEmpty) ...[
                       InfoText(
                         child: Text(
                           "setup.accounts.preset.description".t(context),
@@ -84,11 +84,11 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
                       ),
                       const SizedBox(height: 8.0),
                     ],
-                    ...presetAccounts.indexed.map(
+                    ...presetCategories.indexed.map(
                       (e) => Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: AccountPresetCard(
-                          account: e.$2,
+                        child: CategoryPresetCard(
+                          category: e.$2,
                           onSelect: (selected) => select(e.$1, selected),
                           selected: e.$2.id == 0,
                         ),
@@ -116,7 +116,7 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   }
 
   void select(int index, bool selected) {
-    presetAccounts[index].id = selected ? 0 : -1;
+    presetCategories[index].id = selected ? 0 : -1;
     setState(() {});
   }
 
@@ -124,13 +124,15 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
     if (busy) return;
 
     try {
-      final List<Account> selectedAccounts =
-          presetAccounts.where((element) => element.id == 0).toList();
+      final List<Category> selectedCategories =
+          presetCategories.where((element) => element.id == 0).toList();
 
-      await ObjectBox().box<Account>().putManyAsync(selectedAccounts);
+      await ObjectBox().box<Category>().putManyAsync(selectedCategories);
 
       if (mounted) {
-        context.push("/setup/categories");
+        GoRouter.of(context).popUntil((route) => route.path == "/setup");
+
+        context.pushReplacement("/");
       }
     } finally {
       busy = false;
