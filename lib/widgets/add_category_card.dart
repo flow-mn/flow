@@ -3,14 +3,15 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class CategoryCardAdd extends StatelessWidget {
-  final VoidCallback? onTap;
+class AddCategoryCard extends StatelessWidget {
+  final VoidCallback? onTapOverride;
 
-  const CategoryCardAdd({
+  const AddCategoryCard({
     super.key,
-    this.onTap,
+    this.onTapOverride,
   });
 
   static BorderRadius borderRadius = BorderRadius.circular(16.0);
@@ -21,7 +22,7 @@ class CategoryCardAdd extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         borderRadius: borderRadius,
-        onTap: onTap,
+        onTap: onTapOverride ?? (() => context.push("/category/new")),
         child: Row(
           children: [
             FlowIcon(

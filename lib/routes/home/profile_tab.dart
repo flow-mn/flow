@@ -1,3 +1,4 @@
+import 'package:flow/constants.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/sync/import.dart';
@@ -7,11 +8,9 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
 import 'package:simple_icons/simple_icons.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -72,7 +71,7 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(SimpleIcons.github),
             onTap: () => openUrl(Uri.parse("https://github.com/flow-mn/flow")),
           ),
-          if (kDebugMode) ...[
+          if (flowDebugMode) ...[
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(
@@ -86,11 +85,16 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => resetDatabase(),
               leading: const Icon(Symbols.adb_rounded),
             ),
+            ListTile(
+              title: const Text("Jump to setup page"),
+              onTap: () => context.pushReplacement("/setup"),
+              leading: const Icon(Symbols.settings_rounded),
+            ),
           ],
           const SizedBox(height: 64.0),
           Center(
             child: Text(
-              "version indev-1, ${Moment.fromMillisecondsSinceEpoch(1700982217689).calendar()}",
+              "v$appVersion",
               style: context.textTheme.labelSmall,
             ),
           ),

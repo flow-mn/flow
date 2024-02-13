@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math' hide log;
 
+import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flutter/foundation.dart' hide Category;
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:path/path.dart' as path;
@@ -61,7 +61,7 @@ class ObjectBox {
     String? customDirectory,
     String? subdirectory,
   }) async {
-    if (subdirectory == null && kDebugMode) {
+    if (subdirectory == null && flowDebugMode) {
       subdirectory = "__debug";
     }
 

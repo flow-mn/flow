@@ -1,69 +1,82 @@
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flutter/widgets.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-List<Category> getCategoryPresets(BuildContext context) {
+List<Category> getCategoryPresets() {
   return [
     Category(
-      name: "setup.category.preset.eatingOut".t(context),
+      id: -1,
+      name: "setup.categories.preset.eatingOut".tr(),
       iconCode: const IconFlowIcon(Symbols.restaurant_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.groceries".t(context),
+      id: -1,
+      name: "setup.categories.preset.groceries".tr(),
       iconCode: const IconFlowIcon(Symbols.grocery_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.drinks".t(context),
+      id: -1,
+      name: "setup.categories.preset.drinks".tr(),
       iconCode: const IconFlowIcon(Symbols.local_cafe_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.education".t(context),
+      id: -1,
+      name: "setup.categories.preset.education".tr(),
       iconCode: const IconFlowIcon(Symbols.school_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.health".t(context),
+      id: -1,
+      name: "setup.categories.preset.health".tr(),
       iconCode:
           const IconFlowIcon(Symbols.health_and_safety_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.transport".t(context),
+      id: -1,
+      name: "setup.categories.preset.transport".tr(),
       iconCode: const IconFlowIcon(Symbols.train_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.petrol".t(context),
+      id: -1,
+      name: "setup.categories.preset.petrol".tr(),
       iconCode:
           const IconFlowIcon(Symbols.local_gas_station_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.shopping".t(context),
+      id: -1,
+      name: "setup.categories.preset.shopping".tr(),
       iconCode: const IconFlowIcon(Symbols.shopping_cart_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.entertainment".t(context),
+      id: -1,
+      name: "setup.categories.preset.entertainment".tr(),
       iconCode:
           const IconFlowIcon(Symbols.sports_basketball_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.rent",
+      id: -1,
+      name: "setup.categories.preset.rent".tr(),
       iconCode: const IconFlowIcon(Symbols.request_quote_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.utils",
+      id: -1,
+      name: "setup.categories.preset.utils".tr(),
       iconCode: const IconFlowIcon(Symbols.valve_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.taxes",
+      id: -1,
+      name: "setup.categories.preset.taxes".tr(),
       iconCode: const IconFlowIcon(Symbols.account_balance_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.paychecks",
+      id: -1,
+      name: "setup.categories.preset.paychecks".tr(),
       iconCode:
           const IconFlowIcon(Symbols.sports_basketball_rounded).toString(),
     ),
     Category(
-      name: "setup.category.preset.misc".t(context),
+      id: -1,
+      name: "setup.categories.preset.misc".tr(),
       iconCode: const IconFlowIcon(Symbols.paid_rounded).toString(),
     ),
   ];

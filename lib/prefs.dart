@@ -84,16 +84,21 @@ class LocalPreferences {
     String? primaryCurrencyName = primaryCurrency.value;
 
     if (primaryCurrencyName == null) {
-      final Query<Account> firstAccountQuery = ObjectBox()
-          .box<Account>()
-          .query()
-          .order(Account_.createdDate)
-          .build();
+      late final String? firstAccountCurency;
 
-      final String? firstAccountCurency =
-          firstAccountQuery.findFirst()?.currency;
+      try {
+        final Query<Account> firstAccountQuery = ObjectBox()
+            .box<Account>()
+            .query()
+            .order(Account_.createdDate)
+            .build();
 
-      firstAccountQuery.close();
+        firstAccountCurency = firstAccountQuery.findFirst()?.currency;
+
+        firstAccountQuery.close();
+      } catch (e) {
+        firstAccountCurency = null;
+      }
 
       if (firstAccountCurency == null) {
         // Generally, primary currency will be set up when the user first
