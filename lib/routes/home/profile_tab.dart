@@ -62,12 +62,12 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => openUrl(discordInviteLink),
           ),
           ListTile(
-            title: Text("tabs.profile.supportOnKofi".t(context)),
-            leading: const Icon(SimpleIcons.kofi),
-            onTap: () => openUrl(maintainerKoFiLink),
+            title: Text("tabs.profile.support".t(context)),
+            leading: const Icon(Symbols.favorite_rounded),
+            onTap: () => context.push("/support"),
           ),
           ListTile(
-            title: Text("tabs.profile.viewProjectOnGitHub".t(context)),
+            title: Text("visitGitHubRepo".t(context)),
             leading: const Icon(SimpleIcons.github),
             onTap: () => openUrl(flowGitHubRepoLink),
           ),

@@ -1,6 +1,9 @@
 {
     "appName": "Flow",
     "appShortDesc": "Your personal finance tracker",
+
+    "visitGitHubRepo": "Visit repo on GitHub",
+
     "general.back": "Back",
     "general.delete": "Delete",
     "general.delete.permanentWarning": "This action is irreversible",
@@ -112,12 +115,20 @@
     "tabs.profile": "Profile",
     "tabs.profile.preferences": "Preferences",
     "tabs.profile.community": "Community",
-    "tabs.profile.supportOnKofi": "Buy sadespresso a ko-fi",
-    "tabs.profile.viewProjectOnGitHub": "View project on GitHub",
+    "tabs.profile.support": "Support Flow",
     "tabs.profile.joinDiscord": "Join Flow Discord",
     "tabs.profile.backup": "Backup",
     "tabs.profile.import": "Import",
     "tabs.profile.withLoveFromTheCreator": "with 🤍 from sadespresso",
+
+    "support": "Support",
+    "support.description": "If you find Flow valuable, consider supporting us! Here are some ways to do so:",
+    "support.requestFeatures": "Give us ideas",
+    "support.requestFeatures.description": "You can also support us by giving feedback, and suggestion ideas to make Flow better.",
+    "support.contribute": "Contribute code",
+    "support.contribute.description": "If you're a developer, you can get involved in the development of Flow. The contributors list awaits your name to be added.",
+    "support.donateDeveloper": "Support the maintainer",
+    "support.donateDeveloper.description": "Flow is a labor of love, built free, and open for all. Consider supporting the developer who makes it possible.",
 
     "flowIcon.change": "Change icon",
     "flowIcon.type.icon": "Icon",
