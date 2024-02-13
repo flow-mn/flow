@@ -113,6 +113,6 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
   }
 
   void save() {
-    context.push('/setup/accounts');
+    context.push('/setup/currency');
   }
 }

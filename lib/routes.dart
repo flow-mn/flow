@@ -12,6 +12,7 @@ import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_accounts_page.dart';
+import 'package:flow/routes/setup/setup_currency_page.dart';
 import 'package:flow/routes/setup/setup_profile_page.dart';
 import 'package:flow/routes/setup/setup_profile_picture_page.dart';
 import 'package:flow/routes/setup_page.dart';
@@ -153,6 +154,10 @@ final router = GoRouter(
       builder: (context, state) => SetupProfilePhotoPage(
         profileImagePath: state.extra as String,
       ),
+    ),
+    GoRoute(
+      path: '/setup/currency',
+      builder: (context, state) => const SetupCurrencyPage(),
     ),
     GoRoute(
       path: '/setup/accounts',

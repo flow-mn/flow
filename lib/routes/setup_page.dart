@@ -21,10 +21,24 @@ class _SetupPageState extends State<SetupPage> {
 
   static const int slideCount = 3;
 
+  bool lastSlide = false;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+
+    _pageController.addListener(() {
+      lastSlide =
+          _pageController.hasClients && _pageController.page == slideCount - 1;
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +79,9 @@ class _SetupPageState extends State<SetupPage> {
             Button(
               onTap: next,
               trailing: const Icon(Symbols.chevron_right_rounded),
-              child: Text("setup.next".t(context)),
+              child: Text(lastSlide
+                  ? "setup.getStarted".t(context)
+                  : "setup.next".t(context)),
             )
           ],
         ),

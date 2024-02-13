@@ -25,6 +25,8 @@
     "setup.profile.setup": "What's your name?",
     "setup.profile.addPhoto": "Add a profile photo",
     "setup.profile.addPhoto.skip": "Skip",
+    "setup.primaryCurrency.setup": "What currency do you primarily use?",
+    "setup.primaryCurrency.choose": "Choose primary currency",
     "setup.account.setup": "Setup accounts",
     "setup.account.preset.main": "Main",
     "setup.account.preset.cash": "Cash",

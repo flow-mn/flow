@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flow/data/currencies.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
@@ -83,7 +85,12 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
               itemBuilder: (context, i) => ListTile(
                 title: Text(queryResults[i].item.name),
                 subtitle: Text(queryResults[i].item.country),
-                trailing: Text(queryResults[i].item.code),
+                trailing: Text(
+                  queryResults[i].item.code,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontFeatures: [const FontFeature.tabularFigures()],
+                  ),
+                ),
                 onTap: () => select(queryResults[i].item.code),
               ),
               itemCount: queryResults.length,
