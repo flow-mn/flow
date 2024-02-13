@@ -12,6 +12,7 @@ import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_page.dart';
+import 'package:flow/routes/support_page.dart';
 import 'package:flow/routes/transaction_page.dart';
 import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/transactions_page.dart';
@@ -140,6 +141,10 @@ final router = GoRouter(
     GoRoute(
       path: '/setup',
       builder: (context, state) => const SetupPage(),
+    ),
+    GoRoute(
+      path: '/support',
+      builder: (context, state) => const SupportPage(),
     ),
   ],
 );

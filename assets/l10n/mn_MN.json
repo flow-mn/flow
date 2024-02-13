@@ -1,6 +1,9 @@
 {
     "appName": "Flow",
     "appShortDesc": "Таны хувийн санхүүч",
+
+    "visitGitHubRepo": "GitHub repo-р зочлох",
+
     "general.back": "Буцах",
     "general.delete": "Устгах",
     "general.delete.permanentWarning": "Энэ үйлдлийг буцаах боломжгүй",
@@ -95,12 +98,20 @@
     "tabs.profile": "Бүртгэл",
     "tabs.profile.preferences": "Тохиргоо",
     "tabs.profile.community": "Холбоо",
-    "tabs.profile.supportOnKofi": "sadespresso-д кофе авч өгөх",
-    "tabs.profile.viewProjectOnGitHub": "GitHub-аар зочлох",
+    "tabs.profile.support": "Flow-г дэмжих",
     "tabs.profile.joinDiscord": "Discord-д нэгдэх",
     "tabs.profile.backup": "Нөөцлөх",
     "tabs.profile.import": "Сэргээх",
     "tabs.profile.withLoveFromTheCreator": "sadespresso хайр шингээж бүтээв 🤍",
+
+    "support": "Дэмжих",
+    "support.description": "Хэрэв Flow таны амьдралыг хөнгөвчилж байвал Flow-г дэмжих талаар бодоод үзээхэй. Дэмжих аргуудаас дурдвал:",
+    "support.requestFeatures": "Санаагаа хуваалц",
+    "support.requestFeatures.description": "Та өөрийн санал хүсэлтээ бидэнд хэлснээр Flow-г сайжруулахад туслах боломжтой.",
+    "support.contribute": "Хөгжүүлэлтэд оролцох",
+    "support.contribute.description": "Хэрэв та хөгжүүлэгч бол Flow-н хөгжүүлэлтэд оролцож, contributors-н жагсаалтад нэрээ нэмээрэй",
+    "support.donateDeveloper": "Хөгжүүлэгчийг дэмжих",
+    "support.donateDeveloper.description": "Flow бол үнэгүй, хүн бүрд нээлттэй, хайр шингээж бүтээсэн төсөл юм. Flow-г бодит болгосон хөгжүүлэгчийг дэмжиж болно шүү",
 
     "flowIcon.change": "Дүрс солих",
     "flowIcon.type.icon": "Дүрс",
