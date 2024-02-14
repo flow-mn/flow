@@ -79,23 +79,25 @@ class ModalSheet extends StatelessWidget {
 
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: topSpacing),
-          if (title != null) title,
-          if (title != null && (leading != null || content != null))
-            SizedBox(height: titleSpacing),
-          if (leading != null) ...[
-            leading!,
-            SizedBox(height: leadingSpacing),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: topSpacing),
+            if (title != null) title,
+            if (title != null && (leading != null || content != null))
+              SizedBox(height: titleSpacing),
+            if (leading != null) ...[
+              leading!,
+              SizedBox(height: leadingSpacing),
+            ],
+            if (content != null) content,
+            if (trailing != null) ...[
+              SizedBox(height: trailingSpacing),
+              trailing!,
+            ],
           ],
-          if (content != null) content,
-          if (trailing != null) ...[
-            SizedBox(height: trailingSpacing),
-            trailing!,
-          ],
-        ],
+        ),
       ),
     );
   }
