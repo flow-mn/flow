@@ -5,7 +5,6 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
-import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flow/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -120,89 +119,77 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       bindings: bindings,
       child: Focus(
         autofocus: true,
-        child: Actions(
-          actions: const {},
-          child: BottomSheetFrame(
-            scrollable: true,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SelectionArea(
-                    focusNode: _amountSelectionAreaFocusNode,
-                    child: Transform.scale(
-                      scale: _amountTextScaleAnimation.value,
-                      child: SizedBox(
-                        height: amountFieldMaxHeight,
-                        child: AutoSizeText(
-                          currentAmount.formatMoney(
-                                decimalDigits: _decimalPart == 0
-                                    ? 0
-                                    : _decimalPart.abs().toString().length,
-                                includeCurrency: !widget.hideCurrencySymbol,
-                                currency: widget.currency,
-                              ) +
-                              (_inputtingDecimal && _decimalPart == 0
-                                  ? "."
-                                  : ""),
-                          style: context.textTheme.displayMedium,
-                          maxLines: 1,
-                          overflow: TextOverflow.visible,
-                        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 16.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SelectionArea(
+                  focusNode: _amountSelectionAreaFocusNode,
+                  child: Transform.scale(
+                    scale: _amountTextScaleAnimation.value,
+                    child: SizedBox(
+                      height: amountFieldMaxHeight,
+                      child: AutoSizeText(
+                        currentAmount.formatMoney(
+                              decimalDigits: _decimalPart == 0
+                                  ? 0
+                                  : _decimalPart.abs().toString().length,
+                              includeCurrency: !widget.hideCurrencySymbol,
+                              currency: widget.currency,
+                            ) +
+                            (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
+                        style: context.textTheme.displayMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                // Numpad
-                Numpad(
-                  children: [
-                    ...getNumberRows(0),
-                    NumpadButton(
-                      child: const Icon(Symbols.backspace_rounded),
-                      onTap: () => removeDigit(),
+              ),
+              const SizedBox(height: 16.0),
+              // Numpad
+              Numpad(
+                children: [
+                  ...getNumberRows(0),
+                  NumpadButton(
+                    child: const Icon(Symbols.backspace_rounded),
+                    onTap: () => removeDigit(),
+                  ),
+                  ...getNumberRows(1),
+                  NumpadButton(
+                    child: widget.allowNegative
+                        ? const Icon(Symbols.remove_rounded)
+                        : const Icon(Symbols.add_rounded),
+                    onTap: () => _negate(),
+                  ),
+                  ...getNumberRows(2),
+                  NumpadButton(
+                    child: const Icon(Symbols.settings_rounded),
+                    onTap: () => {},
+                  ),
+                  NumpadButton(
+                    onTap: () => insertDigit(0),
+                    crossAxisCellCount: 2,
+                    child: const Text("0"),
+                  ),
+                  NumpadButton(
+                    child: const Text("."),
+                    onTap: () => decimalMode(),
+                  ),
+                  NumpadButton(
+                    backgroundColor: context.flowColors.income,
+                    child: Icon(
+                      Symbols.check,
+                      color: context.colorScheme.background,
                     ),
-                    ...getNumberRows(1),
-                    NumpadButton(
-                      child: widget.allowNegative
-                          ? const Icon(Symbols.remove_rounded)
-                          : const Icon(Symbols.add_rounded),
-                      onTap: () => _negate(),
-                    ),
-                    ...getNumberRows(2),
-                    NumpadButton(
-                      child: const Icon(Symbols.settings_rounded),
-                      onTap: () => {},
-                    ),
-                    NumpadButton(
-                      onTap: () => insertDigit(0),
-                      crossAxisCellCount: 2,
-                      child: const Text("0"),
-                    ),
-                    NumpadButton(
-                      child: const Text("."),
-                      onTap: () => decimalMode(),
-                    ),
-
-                    // NumpadButton(
-                    //   child: const Text("0"),
-                    //   onTap: () => {},
-                    // ),
-                    NumpadButton(
-                      backgroundColor: context.flowColors.income,
-                      child: Icon(
-                        Symbols.check,
-                        color: context.colorScheme.background,
-                      ),
-                      onTap: () => _pop(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
+                    onTap: () => _pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16.0),
+            ],
           ),
         ),
       ),

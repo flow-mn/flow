@@ -80,6 +80,7 @@
     "category.new": "Ангилал үүсгэх",
     "category.delete": "Ангилалыг устгах",
     "category.delete.warning": "Энэ ангиллыг устгавал холбоотой {transactionCount} гүйлгээг ангилалгүй болохыг анхаарна уу. Энэ үйлдлийг буцаах боломжгүй юм!",
+    "category.skip": "Ангилалгүй",
     "categories": "Ангиллууд",
     "categories.noCategories": "Танд үүсгэсэн ангилал алга байна",
 

@@ -80,6 +80,7 @@
     "category.new": "Add a category",
     "category.delete": "Delete category",
     "category.delete.warning": "Deleting this category will leave {transactionCount} transactions with no category. This action is irreversible!",
+    "category.skip": "No category",
     "categories": "Categories",
     "categories.noCategories": "You don't have any categories",
 

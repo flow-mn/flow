@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flow/data/currencies.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/bottom_sheet_frame.dart';
+import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:go_router/go_router.dart';
@@ -58,54 +58,35 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
       queryResults.add(kpw);
     }
 
-    final double maxHeight = MediaQuery.of(context).size.height * 0.9 -
-        MediaQuery.of(context).viewInsets.vertical;
-
-    return BottomSheetFrame(
-      child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: SizedBox(
-          height: maxHeight,
-          child: Column(
-            children: [
-              const SizedBox(height: 16.0),
-              Text(
-                "account.edit.selectCurrency".t(context),
-                style: context.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  onChanged: _updateQuery,
-                  onSubmitted: _updateQuery,
-                  decoration: InputDecoration(
-                    hintText: "currency.searchHint".t(context),
-                    prefixIcon: const Icon(Symbols.search_rounded),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemBuilder: (context, i) => ListTile(
-                    title: Text(queryResults[i].item.name),
-                    subtitle: Text(queryResults[i].item.country),
-                    trailing: Text(
-                      queryResults[i].item.code,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontFeatures: [const FontFeature.tabularFigures()],
-                      ),
-                    ),
-                    onTap: () => select(queryResults[i].item.code),
-                  ),
-                  itemCount: queryResults.length,
-                ),
-              ),
-            ],
+    return ModalSheet.scrollable(
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: TextField(
+          onChanged: _updateQuery,
+          onSubmitted: _updateQuery,
+          decoration: InputDecoration(
+            hintText: "currency.searchHint".t(context),
+            prefixIcon: const Icon(Symbols.search_rounded),
           ),
         ),
+      ),
+      title: Text("account.edit.selectCurrency".t(context)),
+      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.4 -
+          MediaQuery.of(context).viewInsets.vertical,
+      child: ListView.builder(
+        controller: _scrollController,
+        itemBuilder: (context, i) => ListTile(
+          title: Text(queryResults[i].item.name),
+          subtitle: Text(queryResults[i].item.country),
+          trailing: Text(
+            queryResults[i].item.code,
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontFeatures: [const FontFeature.tabularFigures()],
+            ),
+          ),
+          onTap: () => select(queryResults[i].item.code),
+        ),
+        itemCount: queryResults.length,
       ),
     );
   }
