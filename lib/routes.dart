@@ -175,5 +175,9 @@ final router = GoRouter(
       path: '/support',
       builder: (context, state) => const SupportPage(),
     ),
+    GoRoute(
+      path: '/support',
+      builder: (context, state) => const SupportPage(),
+    ),
   ],
 );
