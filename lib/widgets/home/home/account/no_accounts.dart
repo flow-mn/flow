@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class NoCategories extends StatelessWidget {
-  const NoCategories({super.key});
+class NoAccounts extends StatelessWidget {
+  const NoAccounts({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +19,13 @@ class NoCategories extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "categories.noCategories".t(context),
+              "account.noAccounts".t(context),
               textAlign: TextAlign.center,
               style: context.textTheme.headlineMedium,
             ),
             const SizedBox(height: 8.0),
             FlowIcon(
-              FlowIconData.icon(Symbols.category_rounded),
+              FlowIconData.icon(Symbols.wallet_rounded),
               size: 128.0,
               color: context.colorScheme.primary,
             ),
@@ -35,8 +35,8 @@ class NoCategories extends StatelessWidget {
                 Symbols.add_rounded,
                 weight: 600.0,
               ),
-              child: Text("category.new".t(context)),
-              onTap: () => context.push("/category/new"),
+              child: Text("account.new".t(context)),
+              onTap: () => context.push("/account/new"),
             ),
           ],
         ),
