@@ -166,7 +166,7 @@ class _AccountPageState extends State<AccountPage> {
     final result = await showModalBottomSheet<String>(
       context: context,
       builder: (context) => const SelectCurrencySheet(),
-      // isScrollControlled: true,
+      isScrollControlled: true,
     );
 
     setState(() {

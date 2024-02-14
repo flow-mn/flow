@@ -73,7 +73,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
     final result = await showModalBottomSheet<String>(
       context: context,
       builder: (context) => const SelectCurrencySheet(),
-      // isScrollControlled: true,
+      isScrollControlled: true,
     );
 
     setState(() {

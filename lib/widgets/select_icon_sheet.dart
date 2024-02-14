@@ -123,11 +123,14 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
   @override
   Widget build(BuildContext context) {
+    final double maxHeight = MediaQuery.of(context).size.height * 0.9 -
+        MediaQuery.of(context).viewInsets.vertical;
+
     return BottomSheetFrame(
       child: Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
+          height: maxHeight,
           child: Column(
             children: [
               TabBar(

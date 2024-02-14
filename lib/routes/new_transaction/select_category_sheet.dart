@@ -21,37 +21,46 @@ class SelectCategorySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double maxHeight = MediaQuery.of(context).size.height * 0.9 -
+        MediaQuery.of(context).viewInsets.vertical;
+
     return BottomSheetFrame(
       scrollable: true,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 16.0),
-          Text(
-            "transaction.edit.selectCategory".t(context),
-            style: context.textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16.0),
-          ...categories.map(
-            (category) => ListTile(
-              title: Text(category.name),
-              leading: FlowIcon(category.icon),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-              onTap: () => context.pop(ValueOr(category)),
-              selected: currentlySelectedCategoryId == category.id,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          ButtonBar(
+      child: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: SizedBox(
+          height: maxHeight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextButton.icon(
-                onPressed: () => context.pop(const ValueOr<Category>(null)),
-                icon: const Icon(Symbols.close_rounded),
-                label: const Text("Skip"),
+              const SizedBox(height: 16.0),
+              Text(
+                "transaction.edit.selectCategory".t(context),
+                style: context.textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 16.0),
+              ...categories.map(
+                (category) => ListTile(
+                  title: Text(category.name),
+                  leading: FlowIcon(category.icon),
+                  trailing: const Icon(Symbols.chevron_right_rounded),
+                  onTap: () => context.pop(ValueOr(category)),
+                  selected: currentlySelectedCategoryId == category.id,
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              ButtonBar(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => context.pop(const ValueOr<Category>(null)),
+                    icon: const Icon(Symbols.close_rounded),
+                    label: const Text("Skip"),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
