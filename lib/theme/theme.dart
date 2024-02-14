@@ -30,6 +30,7 @@ final lightTheme = ThemeData(
   colorScheme: _light,
   cardTheme: CardTheme(
     color: _light.surface,
+    surfaceTintColor: _light.primary,
   ),
   extensions: [
     FlowColors(
@@ -85,6 +86,7 @@ final darkTheme = ThemeData(
   colorScheme: _dark,
   cardTheme: CardTheme(
     color: _dark.surface,
+    surfaceTintColor: _dark.primary,
   ),
   extensions: [
     FlowColors(

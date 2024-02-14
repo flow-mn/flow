@@ -14,6 +14,9 @@ class SupportPage extends StatelessWidget {
     vertical: 24.0,
   );
 
+  static const ShapeBorder cardShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16.0)));
+
   const SupportPage({super.key});
 
   @override
@@ -33,6 +36,7 @@ class SupportPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Card(
+                shape: cardShape,
                 child: Padding(
                   padding: cardPadding,
                   child: Column(
@@ -70,6 +74,7 @@ class SupportPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Card(
+                shape: cardShape,
                 child: Padding(
                   padding: cardPadding,
                   child: Column(
@@ -107,6 +112,7 @@ class SupportPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Card(
+                shape: cardShape,
                 child: Padding(
                   padding: cardPadding,
                   child: Column(
