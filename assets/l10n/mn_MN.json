@@ -125,10 +125,12 @@
     "support.description": "Flow бол үнэгүй, хүн бүрд нээлттэй, хайр шингээж бүтээсэн төсөл юм. Хэрэв Flow танд тус болж байвал та төсөлд өөрийн хувь нэмрээ оруулах боломжтой шүү. Жишээлбэл:",
     "support.requestFeatures": "Санаагаа хуваалц",
     "support.requestFeatures.description": "Та өөрийн санал хүсэлтээ бидэнд хэлснээр Flow-г сайжруулахад туслах боломжтой.",
+    "support.requestFeatures.action": "Төлөвлөгөө/асуудлууд харах",
     "support.contribute": "Хөгжүүлэлтэд оролцох",
     "support.contribute.description": "Хэрэв та хөгжүүлэгч бол Flow-н хөгжүүлэлтэд оролцож, contributors-н жагсаалтад нэрээ нэмээрэй",
     "support.donateDeveloper": "Хөгжүүлэгчид хандив өгөх",
     "support.donateDeveloper.description": "Flow-н бүх үйлдлүүдийг үнэгүй ашиглах боломжтой бөгөөд хөгжүүлэгчид хандив өгснөөр аливаа шинэ боломж нээгдэхгүй болно",
+    "support.donateDeveloper.action": "Хөгжүүлэгчийн Ko-fi-р зочлох",
 
     "flowIcon.change": "Дүрс солих",
     "flowIcon.type.icon": "Дүрс",
