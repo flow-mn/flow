@@ -122,13 +122,13 @@
     "tabs.profile.withLoveFromTheCreator": "with 🤍 from sadespresso",
 
     "support": "Support",
-    "support.description": "If you find Flow valuable, consider supporting us! Here are some ways to do so:",
+    "support.description": "Flow is a labor of love, built free, and open for all. If you find Flow valuable, consider helping the project grow! Here are some ways to do so:",
     "support.requestFeatures": "Give us ideas",
     "support.requestFeatures.description": "You can also support us by giving feedback, and suggestion ideas to make Flow better.",
     "support.contribute": "Contribute code",
     "support.contribute.description": "If you're a developer, you can get involved in the development of Flow. The contributors list awaits your name to be added.",
-    "support.donateDeveloper": "Support the maintainer",
-    "support.donateDeveloper.description": "Flow is a labor of love, built free, and open for all. Consider supporting the developer who makes it possible.",
+    "support.donateDeveloper": "Tip the creator",
+    "support.donateDeveloper.description": "All of Flow's functionality is offered free, and tipping the developer will not unlock any additional features",
 
     "flowIcon.change": "Change icon",
     "flowIcon.type.icon": "Icon",
