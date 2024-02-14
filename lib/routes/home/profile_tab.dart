@@ -59,17 +59,17 @@ class _ProfileTabState extends State<ProfileTab> {
           ListTile(
             title: Text("tabs.profile.joinDiscord".t(context)),
             leading: const Icon(SimpleIcons.discord),
-            onTap: () => openUrl(Uri.parse("https://discord.gg/Ndh9VDeZa4")),
+            onTap: () => openUrl(discordInviteLink),
           ),
           ListTile(
             title: Text("tabs.profile.supportOnKofi".t(context)),
             leading: const Icon(SimpleIcons.kofi),
-            onTap: () => openUrl(Uri.parse("https://ko-fi.com/sadespresso")),
+            onTap: () => openUrl(maintainerKoFiLink),
           ),
           ListTile(
             title: Text("tabs.profile.viewProjectOnGitHub".t(context)),
             leading: const Icon(SimpleIcons.github),
-            onTap: () => openUrl(Uri.parse("https://github.com/flow-mn/flow")),
+            onTap: () => openUrl(flowGitHubRepoLink),
           ),
           if (flowDebugMode) ...[
             const SizedBox(height: 32.0),
@@ -101,7 +101,7 @@ class _ProfileTabState extends State<ProfileTab> {
           Center(
             child: InkWell(
               borderRadius: BorderRadius.circular(8.0),
-              onTap: () => openUrl(Uri.parse("https://github.com/sadespresso")),
+              onTap: () => openUrl(maintainerGitHubLink),
               child: Opacity(
                 opacity: 0.5,
                 child: Text(
