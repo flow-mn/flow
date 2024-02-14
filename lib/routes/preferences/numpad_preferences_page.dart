@@ -1,6 +1,7 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/numpad_preferences/numpad_selector.dart';
+import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flutter/material.dart';
 
@@ -56,6 +57,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
                 onChanged: updateHapticUsage,
                 subtitle:
                     Text("preferences.numpad.haptics.description".t(context)),
+                activeColor: context.colorScheme.primary,
               ),
               const SizedBox(height: 16.0),
             ],
