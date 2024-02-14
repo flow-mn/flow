@@ -48,7 +48,7 @@ class NumpadSelectorRadio extends StatelessWidget {
                       value: isPhoneLayout,
                       groupValue: currentlyUsingPhoneLayout,
                       onChanged: (_) {},
-                      activeColor: context.colorScheme.secondary,
+                      activeColor: context.colorScheme.primary,
                     ),
                   ],
                 ),

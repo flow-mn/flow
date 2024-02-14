@@ -57,7 +57,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
                 onChanged: updateHapticUsage,
                 subtitle:
                     Text("preferences.numpad.haptics.description".t(context)),
-                activeColor: context.colorScheme.secondary,
+                activeColor: context.colorScheme.primary,
               ),
               const SizedBox(height: 16.0),
             ],
