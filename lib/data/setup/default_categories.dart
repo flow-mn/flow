@@ -73,10 +73,5 @@ List<Category> getCategoryPresets() {
       name: "setup.categories.preset.paychecks".tr(),
       iconCode: const IconFlowIcon(Symbols.wallet_rounded).toString(),
     ),
-    Category(
-      id: -1,
-      name: "setup.categories.preset.misc".tr(),
-      iconCode: const IconFlowIcon(Symbols.paid_rounded).toString(),
-    ),
   ];
 }
