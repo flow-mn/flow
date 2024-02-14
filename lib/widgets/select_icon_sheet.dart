@@ -7,8 +7,8 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/bottom_sheet_frame.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -123,157 +123,144 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
   @override
   Widget build(BuildContext context) {
-    final double maxHeight = MediaQuery.of(context).size.height * 0.9 -
-        MediaQuery.of(context).viewInsets.vertical;
-
-    return BottomSheetFrame(
-      child: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: SizedBox(
-          height: maxHeight,
-          child: Column(
+    return ModalSheet(
+      scrollable: true,
+      contentHeightExtent: 0.65,
+      leadingSpacing: 0.0,
+      topSpacing: 0.0,
+      leading: TabBar(
+        tabs: [
+          Tab(
+            text: "flowIcon.type.icon".t(context),
+            icon: const Icon(Symbols.category_rounded),
+          ),
+          Tab(
+            text: "flowIcon.type.character".t(context),
+            icon: const Icon(Symbols.glyphs_rounded),
+          ),
+          Tab(
+            text: "flowIcon.type.image".t(context),
+            icon: const Icon(Symbols.image_rounded),
+          ),
+        ],
+        controller: _controller,
+      ),
+      trailing: ButtonBar(
+        children: [
+          TextButton.icon(
+            onPressed: () => context.pop(),
+            icon: const Icon(Symbols.check_rounded),
+            label: Text(
+              "general.done".t(context),
+            ),
+          ),
+        ],
+      ),
+      child: TabBarView(
+        controller: _controller,
+        children: [
+          GridView.builder(
+            itemBuilder: (context, index) => IconButton(
+              onPressed: () => updateIcon(simpleIcons[index]),
+              icon: Icon(simpleIcons[index]),
+              color: (selected is IconFlowIcon &&
+                      simpleIcons[index] == (selected as IconFlowIcon).iconData)
+                  ? context.colorScheme.primary
+                  : null,
+              iconSize: 48.0,
+            ),
+            itemCount: SimpleIcons.values.length,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 72.0,
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TabBar(
-                tabs: [
-                  Tab(
-                    text: "flowIcon.type.icon".t(context),
-                    icon: const Icon(Symbols.category_rounded),
-                  ),
-                  Tab(
-                    text: "flowIcon.type.character".t(context),
-                    icon: const Icon(Symbols.glyphs_rounded),
-                  ),
-                  Tab(
-                    text: "flowIcon.type.image".t(context),
-                    icon: const Icon(Symbols.image_rounded),
-                  ),
-                ],
-                controller: _controller,
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _controller,
-                  children: [
-                    GridView.builder(
-                      itemBuilder: (context, index) => IconButton(
-                        onPressed: () => updateIcon(simpleIcons[index]),
-                        icon: Icon(simpleIcons[index]),
-                        color: (selected is IconFlowIcon &&
-                                simpleIcons[index] ==
-                                    (selected as IconFlowIcon).iconData)
-                            ? context.colorScheme.primary
-                            : null,
-                        iconSize: 48.0,
-                      ),
-                      itemCount: SimpleIcons.values.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 72.0,
-                      ),
+              const SizedBox(height: 24.0),
+              // TODO center the text/emoji, see https://github.com/flutter/flutter/issues/119623 for details
+              Center(
+                child: Surface(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(16.0),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 24.0),
-                        // TODO center the text/emoji, see https://github.com/flutter/flutter/issues/119623 for details
-                        Center(
-                          child: Surface(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(16.0),
-                              ),
-                              side: BorderSide(
-                                color: (_textFieldFocusNode.hasPrimaryFocus ||
-                                        _textFieldFocusNode.hasFocus)
-                                    ? context.colorScheme.primary
-                                    : kTransparent,
-                                width: 2.0,
-                              ),
-                            ),
-                            builder: (context) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox.square(
-                                dimension: widget.iconSize,
-                                child: Center(
-                                  child: TextField(
-                                    autofocus: true,
-                                    focusNode: _textFieldFocusNode,
-                                    showCursor: false,
-                                    cursorWidth: 0.0,
-                                    controller: _characterTextController,
-                                    onChanged: (_) => updateCharacter(),
-                                    style: TextStyle(
-                                      fontSize: widget.iconSize * 0.5,
-                                      height: 1.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: context.colorScheme.onSecondary,
-                                      decoration: null,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    decoration: const InputDecoration(
-                                      hintText: "?",
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                    side: BorderSide(
+                      color: (_textFieldFocusNode.hasPrimaryFocus ||
+                              _textFieldFocusNode.hasFocus)
+                          ? context.colorScheme.primary
+                          : kTransparent,
+                      width: 2.0,
+                    ),
+                  ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox.square(
+                      dimension: widget.iconSize,
+                      child: Center(
+                        child: TextField(
+                          autofocus: true,
+                          focusNode: _textFieldFocusNode,
+                          showCursor: false,
+                          cursorWidth: 0.0,
+                          controller: _characterTextController,
+                          onChanged: (_) => updateCharacter(),
+                          style: TextStyle(
+                            fontSize: widget.iconSize * 0.5,
+                            height: 1.0,
+                            fontWeight: FontWeight.w500,
+                            color: context.colorScheme.onSecondary,
+                            decoration: null,
+                          ),
+                          textAlign: TextAlign.center,
+                          decoration: const InputDecoration(
+                            hintText: "?",
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
                           ),
                         ),
-                        const SizedBox(height: 16.0),
-                        Text(
-                          "flowIcon.type.character.description".t(context),
-                          style: context.textTheme.bodySmall?.semi(context),
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
+                      ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 24.0),
-                        FlowIcon(
-                          selected is ImageFlowIcon
-                              ? selected!
-                              : FlowIconData.icon(Symbols.image_rounded),
-                          size: widget.iconSize,
-                          plated: true,
-                          onTap: updatePicture,
-                        ),
-                        const SizedBox(height: 8.0),
-                        TextButton.icon(
-                          onPressed: updatePicture,
-                          icon: const Icon(Symbols.add_photo_alternate_rounded),
-                          label: Text(
-                            "flowIcon.type.image.pick".t(context),
-                          ),
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                    ),
-                    // InkWell(
-                    //   onTap: updatePicture,
-                    //   child: const Text("Select picture"),
-                    // ),
-                  ],
+                  ),
                 ),
               ),
-              ButtonBar(
-                children: [
-                  TextButton.icon(
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Symbols.check_rounded),
-                    label: Text(
-                      "general.done".t(context),
-                    ),
-                  ),
-                ],
-              )
+              const SizedBox(height: 16.0),
+              Text(
+                "flowIcon.type.character.description".t(context),
+                style: context.textTheme.bodySmall?.semi(context),
+              ),
+              const SizedBox(height: 24.0),
             ],
           ),
-        ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 24.0),
+              FlowIcon(
+                selected is ImageFlowIcon
+                    ? selected!
+                    : FlowIconData.icon(Symbols.image_rounded),
+                size: widget.iconSize,
+                plated: true,
+                onTap: updatePicture,
+              ),
+              const SizedBox(height: 8.0),
+              TextButton.icon(
+                onPressed: updatePicture,
+                icon: const Icon(Symbols.add_photo_alternate_rounded),
+                label: Text(
+                  "flowIcon.type.image.pick".t(context),
+                ),
+              ),
+              const SizedBox(height: 24.0),
+            ],
+          ),
+          // InkWell(
+          //   onTap: updatePicture,
+          //   child: const Text("Select picture"),
+          // ),
+        ],
       ),
     );
   }
