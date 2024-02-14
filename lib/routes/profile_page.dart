@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:flow/entity/profile.dart';
@@ -56,7 +58,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return PopScope(
       onPopInvoked: (_) => save(),
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              onPressed: () => save(),
+              icon: const Icon(Symbols.check_rounded),
+            )
+          ],
+          leadingWidth: 40.0,
+        ),
         body: SafeArea(
           child: _profile == null
               ? const Center(
@@ -79,6 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 16.0),
                       TextField(
                         controller: _nameController,
+                        onSubmitted: (_) => save(),
                       ),
                     ],
                   ),
@@ -123,8 +134,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> save() async {
+    if (_profile == null) return;
+
     try {
+      _profile!.name = _nameController.text;
+
       await ObjectBox().box<Profile>().putAsync(_profile!);
+
+      if (mounted) {
+        context.pop();
+      }
     } catch (e) {
       log("[Profile Page] failed to put $_profile due to $e");
     }

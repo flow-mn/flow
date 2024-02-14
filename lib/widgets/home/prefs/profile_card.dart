@@ -11,9 +11,12 @@ class ProfileCard extends StatelessWidget {
 
   final double size;
 
+  final BorderRadius borderRadius;
+
   const ProfileCard({
     super.key,
     this.size = 100.0,
+    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
 
   @override
@@ -24,7 +27,7 @@ class ProfileCard extends StatelessWidget {
           final profile = snapshot.data?.findFirst();
 
           return InkWell(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: borderRadius,
             onTap: () => context.push("/profile/${profile?.id}"),
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -36,7 +39,7 @@ class ProfileCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: "pfp",
-                    child: ProfilePicture(filePath: profile?.imagePath ?? "aa"),
+                    child: ProfilePicture(filePath: profile?.imagePath),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
