@@ -20,8 +20,7 @@ class SelectCategorySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ModalSheet(
-      scrollable: true,
+    return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory".t(context)),
       trailing: ButtonBar(
         children: [
@@ -32,6 +31,7 @@ class SelectCategorySheet extends StatelessWidget {
           ),
         ],
       ),
+      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.5,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

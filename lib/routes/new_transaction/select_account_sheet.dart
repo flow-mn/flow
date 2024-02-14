@@ -19,9 +19,9 @@ class SelectAccountSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ModalSheet(
-      scrollable: false,
+    return ModalSheet.scrollable(
       title: Text("transaction.edit.selectAccount".t(context)),
+      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

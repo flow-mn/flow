@@ -16,8 +16,8 @@ class LanguageSelectionSheet extends StatefulWidget {
 class _LanguageSelectionSheetState extends State<LanguageSelectionSheet> {
   @override
   Widget build(BuildContext context) {
-    return ModalSheet(
-      scrollable: true,
+    return ModalSheet.scrollable(
+      scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.language.choose".t(context)),
       trailing: ButtonBar(
         children: [

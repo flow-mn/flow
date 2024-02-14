@@ -49,6 +49,8 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
   late final VoidCallback? cleanUpImage;
 
+  late int currentTabIndex;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +62,8 @@ class _SelectIconSheetState extends State<SelectIconSheet>
       CharacterFlowIcon() => 1,
       _ => 0
     };
+
+    currentTabIndex = initialIndex;
 
     _characterTextController = TextEditingController(
         text: selected is CharacterFlowIcon
@@ -78,6 +82,10 @@ class _SelectIconSheetState extends State<SelectIconSheet>
           _textFieldFocusNode.unfocus();
         }
       }
+
+      setState(() {
+        currentTabIndex = _controller.index;
+      });
     });
 
     _textFieldFocusNode.addListener(() {
@@ -123,9 +131,13 @@ class _SelectIconSheetState extends State<SelectIconSheet>
 
   @override
   Widget build(BuildContext context) {
-    return ModalSheet(
-      scrollable: true,
-      contentHeightExtent: 0.65,
+    final double scrollableContentMaxHeight = currentTabIndex == 0
+        ? (MediaQuery.of(context).size.height * 0.65 -
+            MediaQuery.of(context).viewInsets.vertical)
+        : MediaQuery.of(context).size.height * 0.3;
+
+    return ModalSheet.scrollable(
+      scrollableContentMaxHeight: scrollableContentMaxHeight,
       leadingSpacing: 0.0,
       topSpacing: 0.0,
       leading: TabBar(

@@ -58,8 +58,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
       queryResults.add(kpw);
     }
 
-    return ModalSheet(
-      scrollable: true,
+    return ModalSheet.scrollable(
       leading: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: TextField(
@@ -72,6 +71,8 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         ),
       ),
       title: Text("account.edit.selectCurrency".t(context)),
+      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.4 -
+          MediaQuery.of(context).viewInsets.vertical,
       child: ListView.builder(
         controller: _scrollController,
         itemBuilder: (context, i) => ListTile(
