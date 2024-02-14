@@ -2,6 +2,7 @@ import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +13,15 @@ class CategoryCard extends StatelessWidget {
 
   final BorderRadius borderRadius;
 
-  final VoidCallback? onTapOverride;
+  final bool showAmount;
+
+  final ValueOr<VoidCallback>? onTapOverride;
 
   const CategoryCard({
     super.key,
-    this.onTapOverride,
     required this.category,
+    this.onTapOverride,
+    this.showAmount = true,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
 
@@ -27,8 +31,8 @@ class CategoryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         borderRadius: borderRadius,
-        onTap:
-            onTapOverride ?? (() => context.push("/category/${category.id}")),
+        onTap: onTapOverride?.value ??
+            (() => context.push("/category/${category.id}")),
         child: Row(
           children: [
             FlowIcon(
@@ -41,11 +45,15 @@ class CategoryCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(category.name),
                 Text(
-                  category.transactions.sum.money,
-                  style: context.textTheme.bodyMedium?.semi(context),
+                  category.name,
+                  style: context.textTheme.titleSmall,
                 ),
+                if (showAmount)
+                  Text(
+                    category.transactions.sum.money,
+                    style: context.textTheme.bodyMedium?.semi(context),
+                  ),
               ],
             ),
             const Spacer(),

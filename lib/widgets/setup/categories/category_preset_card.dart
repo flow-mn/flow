@@ -1,4 +1,5 @@
 import 'package:flow/entity/category.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class CategoryPresetCard extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       child: CategoryCard(
         category: category,
-        onTapOverride: () => onSelect(!selected),
+        onTapOverride: ValueOr(() => onSelect(!selected)),
       ),
     );
   }

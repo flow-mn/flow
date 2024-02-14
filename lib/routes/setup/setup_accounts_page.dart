@@ -70,7 +70,7 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: AccountPresetCard(
                           account: e,
-                          onSelect: (_) {},
+                          onSelect: null,
                           selected: true,
                         ),
                       ),

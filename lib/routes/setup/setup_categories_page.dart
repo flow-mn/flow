@@ -4,6 +4,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/add_category_card.dart';
 import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/category_card.dart';
@@ -71,7 +72,8 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: CategoryCard(
                           category: e,
-                          onTapOverride: () => {},
+                          onTapOverride: const ValueOr(null),
+                          showAmount: false,
                         ),
                       ),
                     ),

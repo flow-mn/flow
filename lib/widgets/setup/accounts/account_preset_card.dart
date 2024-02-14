@@ -6,7 +6,7 @@ import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
 
 class AccountPresetCard extends StatelessWidget {
-  final Function(bool) onSelect;
+  final Function(bool)? onSelect;
   final bool selected;
 
   final Account account;
@@ -29,7 +29,7 @@ class AccountPresetCard extends StatelessWidget {
       child: Surface(
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
         builder: (context) => InkWell(
-          onTap: () => onSelect(!selected),
+          onTap: onSelect == null ? null : () => onSelect!(!selected),
           borderRadius: borderRadius,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
