@@ -57,11 +57,13 @@
     "account.excludeFromTotalBalance.description": "Энэ сонголтыг идэвхжүүлбэл энэ дансны үлдэгдэл нийт үлдэгдэлд бодогдохгүй. Хадгаламж, хувийн бус данс гэх мэт зүйлсд тохиромжтой.",
     "account.updateBalance": "Үлдэгдэл шинэчлэх",
     "account.updateBalance.transactionTitle": "Зөрүү арилгах",
+    "account.new": "Шинэ данс нэмэх",
     "account.edit": "Данс засварлах",
     "account.edit.selectCurrency": "Валют сонгох",
     "account.transactions": "Гүйлгээнүүд",
     "account.delete": "Дансыг устгах",
     "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
+    "account.noAccounts": "Танд үүсгэсэн данс алга байна!",
 
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",
