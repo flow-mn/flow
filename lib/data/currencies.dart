@@ -1,5 +1,7 @@
 library iso4217_currencies;
 
+import 'package:flow/utils/utils.dart';
+
 class CurrencyData {
   /// Three letter [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code
   final String code;
@@ -1375,3 +1377,25 @@ final List<CurrencyData> iso4217Currencies = [
     code: "ZWL",
   ),
 ];
+
+final Map<String, String> _multinationCurrencyCountryNameOverride = {
+  "USD": "US AND OTHERS",
+  "EUR": "EUROPEAN UNION",
+  "XCD": "CARIBBEAN ISLAND",
+  "AUD": "AUSTRALIA AND OTHERS",
+};
+
+final Map<String, CurrencyData> iso4217CurrenciesGrouped =
+    iso4217Currencies.groupBy((currencyData) => currencyData.code).map(
+  (key, value) {
+    return MapEntry(
+      key,
+      CurrencyData(
+        code: value.first.code,
+        country: _multinationCurrencyCountryNameOverride[value.first.code] ??
+            value.map((e) => e.country).join(", "),
+        name: value.first.code,
+      ),
+    );
+  },
+);

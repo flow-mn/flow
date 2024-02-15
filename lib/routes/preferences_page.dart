@@ -3,6 +3,7 @@ import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -16,6 +17,7 @@ class PreferencesPage extends StatefulWidget {
 
 class _PreferencesPageState extends State<PreferencesPage> {
   bool _themeBusy = false;
+  bool _currencyBusy = false;
   bool _languageBusy = false;
 
   @override
@@ -64,6 +66,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 ),
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
+              ListTile(
+                title: Text("preferences.primaryCurrency".t(context)),
+                leading: const Icon(Symbols.universal_currency_alt_rounded),
+                onTap: () => updatePrimaryCurrency(),
+                subtitle: Text(LocalPreferences().getPrimaryCurrency()),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
             ],
             color: context.colorScheme.onBackground.withAlpha(0x20),
           ).toList(),
@@ -75,7 +84,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
   void updateTheme([ThemeMode? force]) async {
     if (_themeBusy) return;
 
-    _themeBusy = true;
+    setState(() {
+      _themeBusy = true;
+    });
 
     try {
       final ThemeMode newThemeMode = force ??
@@ -102,7 +113,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
   void updateLanguage() async {
     if (_languageBusy) return;
 
-    _languageBusy = true;
+    setState(() {
+      _languageBusy = true;
+    });
 
     try {
       Locale current = LocalPreferences().localeOverride.get() ??
@@ -120,6 +133,29 @@ class _PreferencesPageState extends State<PreferencesPage> {
       }
     } finally {
       _languageBusy = false;
+    }
+  }
+
+  void updatePrimaryCurrency() async {
+    if (_currencyBusy) return;
+
+    setState(() {
+      _currencyBusy = true;
+    });
+
+    try {
+      String current = LocalPreferences().getPrimaryCurrency();
+
+      final selected = await showModalBottomSheet<String>(
+        context: context,
+        builder: (context) => SelectCurrencySheet(currentlySelected: current),
+      );
+
+      if (selected != null) {
+        await LocalPreferences().primaryCurrency.set(selected);
+      }
+    } finally {
+      _currencyBusy = false;
     }
   }
 
