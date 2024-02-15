@@ -2,6 +2,9 @@ import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/entity/transaction/extensions/base.dart';
+import 'package:flow/entity/transaction/extensions/default/transfer.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -92,6 +95,39 @@ class Account implements EntityBase {
     ObjectBox().box<Account>().put(this);
   }
 
+  /// Returns object ids from `box.put`
+  ///
+  /// First transaction represents money going out of [this] account
+  ///
+  /// Second transaction represents money incoming to the target account
+  (int from, int to) transferTo({
+    required Account targetAccount,
+    required double amount,
+  }) {
+    if (amount <= 0) {
+      throw ArgumentError.value(
+          amount, "amount", "Must be positive, and more than zero");
+    }
+
+    final Transfer transferData = Transfer(
+      fromAccountUuid: uuid,
+      toAccountUuid: targetAccount.uuid,
+    );
+
+    final int fromTransaction = createTransaction(
+      amount: -amount,
+      title: "transaction.transfer.to".tr(targetAccount.name),
+      extensions: [transferData],
+    );
+    final int toTransaction = createTransaction(
+      amount: amount,
+      title: "transaction.transfer.from".tr(name),
+      extensions: [transferData],
+    );
+
+    return (fromTransaction, toTransaction);
+  }
+
   /// Returns object id
   ///
   /// (From box.put())
@@ -100,6 +136,7 @@ class Account implements EntityBase {
     DateTime? transactionDate,
     String? title,
     Category? category,
+    List<TransactionExtension>? extensions,
   }) {
     Transaction value = Transaction(
       amount: amount,
@@ -107,6 +144,10 @@ class Account implements EntityBase {
       title: title,
       transactionDate: transactionDate,
     )..setCategory(category);
+
+    if (extensions != null && extensions.isNotEmpty) {
+      value.setExtra(extensions);
+    }
 
     transactions.add(value);
     return ObjectBox().box<Account>().put(this);

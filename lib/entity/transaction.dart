@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction/extensions/base.dart';
+import 'package:flow/entity/transaction/extensions/default/transfer.dart';
+import 'package:flow/entity/transaction/serializer.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -62,8 +65,38 @@ class Transaction implements EntityBase {
   /// in this field. (ensuring no collision between extensions)
   String? extra;
 
-  Map<String, dynamic>? getExtra() => extra == null ? null : jsonDecode(extra!);
-  void setExtra(Map<String, dynamic> value) => extra = jsonEncode(value);
+  @Transient()
+  List<TransactionExtension>? getExtra() {
+    if (extra == null) return null;
+
+    return (jsonDecode(extra!) as List<Map<String, dynamic>>)
+        .map(deserialize)
+        .where((element) => element != null)
+        .cast<TransactionExtension>()
+        .toList();
+  }
+
+  /// Any `null` entries will be removed in-place
+  @Transient()
+  void setExtra(List<TransactionExtension> value, [bool merge = false]) {
+    final List<TransactionExtension> updatedList = [
+      if (merge) ...?getExtra(),
+      ...value,
+    ];
+
+    extra = jsonEncode(updatedList.map((ext) => ext.toJson()));
+  }
+
+  @Transient()
+  bool get isTransfer =>
+      getExtra()?.any((element) => element is Transfer) == true;
+
+  @Transient()
+  TransactionType get type {
+    if (isTransfer) return TransactionType.transfer;
+
+    return amount.isNegative ? TransactionType.expense : TransactionType.income;
+  }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   final category = ToOne<Category>();

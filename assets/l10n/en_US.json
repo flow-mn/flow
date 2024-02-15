@@ -77,6 +77,9 @@
     "transaction.createdDate": "Created at",
     "transaction.fallbackTitle": "Untitled transaction",
     "transaction.delete": "Delete transaction",
+    "transaction.transfer.to": "To {account}",
+    "transaction.transfer.from": "From {account}",
+    "transaction.transfer.fromTo": "From {from} to {to}",
 
     "category": "Category",
     "category.name": "Category name",

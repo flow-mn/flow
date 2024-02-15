@@ -2,6 +2,7 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
@@ -25,16 +26,26 @@ class TransactionPage extends StatefulWidget {
   /// Transaction Object ID
   final int transactionId;
 
+  final TransactionType? initialTransactionType;
+
   bool get isNewTransaction => transactionId == 0;
 
-  const TransactionPage.create({super.key}) : transactionId = 0;
-  const TransactionPage.edit({super.key, required this.transactionId});
+  const TransactionPage.create({
+    super.key,
+    this.initialTransactionType = TransactionType.expense,
+  }) : transactionId = 0;
+  const TransactionPage.edit({
+    super.key,
+    required this.transactionId,
+  }) : initialTransactionType = null;
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
 }
 
 class _TransactionPageState extends State<TransactionPage> {
+  late TransactionType _transactionType;
+
   late final TextEditingController _titleTextController;
   late double _amount;
 
@@ -75,6 +86,9 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
+      _transactionType = _currentlyEditing?.type ??
+          widget.initialTransactionType ??
+          TransactionType.expense;
     }
 
     if (widget.isNewTransaction) {
@@ -119,10 +133,7 @@ class _TransactionPageState extends State<TransactionPage> {
               )
             ],
             leadingWidth: 40.0,
-            title: Text((widget.isNewTransaction
-                    ? "transaction.new"
-                    : "transaction.edit")
-                .t(context)),
+            title: Text(_transactionType.localizedNameContext(context)),
             titleTextStyle: context.textTheme.bodyLarge,
             centerTitle: true,
             backgroundColor: context.colorScheme.background,
