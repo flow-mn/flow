@@ -1,5 +1,7 @@
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
 import 'package:flutter/widgets.dart';
@@ -47,12 +49,26 @@ class GroupedTransactionList extends StatelessWidget {
             transaction: transaction,
             padding: itemPadding,
             dismissibleKey: ValueKey(transaction.id),
-            deleteFn: () =>
-                ObjectBox().box<Transaction>().remove(transaction.id),
+            deleteFn: () => deleteTransaction(context, transaction),
           ),
         (_) => Container(),
       },
       itemCount: flattened.length,
     );
+  }
+
+  Future<void> deleteTransaction(
+      BuildContext context, Transaction transaction) async {
+    final String txnTitle =
+        transaction.title ?? "transaction.fallbackTitle".t(context);
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, txnTitle),
+    );
+
+    if (confirmation == true) {
+      ObjectBox().box<Transaction>().remove(transaction.id);
+    }
   }
 }
