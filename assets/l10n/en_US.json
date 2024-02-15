@@ -91,6 +91,7 @@
     "currency.searchHint": "Search... (country, currency, code)",
 
     "preferences": "Preferences",
+    "preferences.primaryCurrency": "Primary currency",
     "preferences.language": "Language",
     "preferences.language.choose": "Choose language",
     "preferences.themeMode": "Theme",

@@ -91,6 +91,7 @@
     "currency.searchHint": "Хайх... (улс, тэмдэгт, код)",
 
     "preferences": "Тохиргоо",
+    "preferences.primaryCurrency": "Үндсэн валют",
     "preferences.language": "Хэл",
     "preferences.language.choose": "Хэл сонгох",
     "preferences.themeMode": "Үзэмж",
