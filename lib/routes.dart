@@ -1,3 +1,4 @@
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
@@ -24,6 +25,7 @@ import 'package:flow/routes/transactions_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
@@ -35,7 +37,13 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/transaction/new',
-      builder: (context, state) => const TransactionPage.create(),
+      builder: (context, state) {
+        final TransactionType? type = TransactionType.values.firstWhereOrNull(
+          (element) => element.value == state.uri.queryParameters["type"],
+        );
+
+        return TransactionPage.create(initialTransactionType: type);
+      },
     ),
     GoRoute(
       path: '/transaction/:id',

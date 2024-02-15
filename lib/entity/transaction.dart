@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction/extensions/base.dart';
-import 'package:flow/entity/transaction/extensions/default/transfer.dart';
-import 'package:flow/entity/transaction/serializer.dart';
+import 'package:flow/entity/transaction/wrapper.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moment_dart/moment_dart.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
@@ -47,6 +43,7 @@ class Transaction implements EntityBase {
   String? subtype;
 
   @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   TransactionSubtype? get transactionSubtype => subtype == null
       ? null
       : TransactionSubtype.values
@@ -66,32 +63,24 @@ class Transaction implements EntityBase {
   String? extra;
 
   @Transient()
-  List<TransactionExtension>? getExtra() {
-    if (extra == null) return null;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ExtensionsWrapper get extensions => ExtensionsWrapper.parse(extra);
 
-    return (jsonDecode(extra!) as List<Map<String, dynamic>>)
-        .map(deserialize)
-        .where((element) => element != null)
-        .cast<TransactionExtension>()
-        .toList();
+  @Transient()
+  set extensions(ExtensionsWrapper newValue) {
+    extra = newValue.serialize();
   }
 
-  /// Any `null` entries will be removed in-place
-  @Transient()
-  void setExtra(List<TransactionExtension> value, [bool merge = false]) {
-    final List<TransactionExtension> updatedList = [
-      if (merge) ...?getExtra(),
-      ...value,
-    ];
-
-    extra = jsonEncode(updatedList.map((ext) => ext.toJson()));
+  void addExtensions(Iterable<TransactionExtension> newExtensions) {
+    extensions = extensions.merge(newExtensions.toList());
   }
 
   @Transient()
-  bool get isTransfer =>
-      getExtra()?.any((element) => element is Transfer) == true;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isTransfer => extensions.transfer != null;
 
   @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   TransactionType get type {
     if (isTransfer) return TransactionType.transfer;
 
@@ -148,37 +137,14 @@ class Transaction implements EntityBase {
     required this.currency,
     DateTime? transactionDate,
     DateTime? createdDate,
+    String? uuidOverride,
   })  : createdDate = createdDate ?? DateTime.now(),
         transactionDate = transactionDate ?? createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+        uuid = uuidOverride ?? const Uuid().v4();
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
   Map<String, dynamic> toJson() => _$TransactionToJson(this);
-}
-
-extension TransactionOperations on List<Transaction> {
-  double get incomeSum => where((transaction) => transaction.amount >= 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get expenseSum => where((transaction) => transaction.amount < 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get sum =>
-      map((transaction) => transaction.amount).fold(0, (a, b) => a + b);
-
-  Map<DateTime, List<Transaction>> groupByDate() {
-    final Map<DateTime, List<Transaction>> value = {};
-
-    for (final transaction in this) {
-      final date = transaction.transactionDate.toLocal().startOfDay();
-
-      value[date] ??= [];
-      value[date]!.add(transaction);
-    }
-
-    return value;
-  }
 }
 
 @JsonEnum(valueField: "value")

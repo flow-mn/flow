@@ -19,8 +19,6 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
           : DateTime.parse(json['createdDate'] as String),
     )
       ..uuid = json['uuid'] as String
-      ..transactionSubtype = $enumDecodeNullable(
-          _$TransactionSubtypeEnumMap, json['transactionSubtype'])
       ..extra = json['extra'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
       ..accountUuid = json['accountUuid'] as String?;
@@ -34,15 +32,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'amount': instance.amount,
       'currency': instance.currency,
       'subtype': instance.subtype,
-      'transactionSubtype':
-          _$TransactionSubtypeEnumMap[instance.transactionSubtype],
       'extra': instance.extra,
       'categoryUuid': instance.categoryUuid,
       'accountUuid': instance.accountUuid,
     };
-
-const _$TransactionSubtypeEnumMap = {
-  TransactionSubtype.transactionFee: 'transactionFee',
-  TransactionSubtype.givenLoan: 'loan.given',
-  TransactionSubtype.receivedLoan: 'loan.received',
-};

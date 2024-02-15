@@ -4,6 +4,7 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
@@ -46,6 +47,8 @@ class TransactionPage extends StatefulWidget {
 class _TransactionPageState extends State<TransactionPage> {
   late TransactionType _transactionType;
 
+  bool get isTransfer => _transactionType == TransactionType.transfer;
+
   late final TextEditingController _titleTextController;
   late double _amount;
 
@@ -53,11 +56,17 @@ class _TransactionPageState extends State<TransactionPage> {
 
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _selectAccountFocusNode = FocusNode();
+  final FocusNode _selectAccountTransferToFocusNode = FocusNode();
+
+  late final List<Account> accounts;
 
   dynamic error;
 
   Account? _selectedAccount;
   Category? _selectedCategory;
+
+  Account? _selectedAccountTransferTo;
+
   late DateTime _transactionDate;
 
   QueryBuilder<Account> _accountsQueryBuilder() => ObjectBox()
@@ -71,6 +80,10 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
+
+    final Query<Account> accountsQuery = _accountsQueryBuilder().build();
+    accounts = accountsQuery.find();
+    accountsQuery.close();
 
     /// Transaction we're editing.
     _currentlyEditing = widget.isNewTransaction
@@ -89,6 +102,9 @@ class _TransactionPageState extends State<TransactionPage> {
       _transactionType = _currentlyEditing?.type ??
           widget.initialTransactionType ??
           TransactionType.expense;
+      _selectedAccountTransferTo = accounts.firstWhereOrNull((account) =>
+          account.uuid ==
+          _currentlyEditing?.extensions.transfer?.toAccountUuid);
     }
 
     if (widget.isNewTransaction) {
@@ -182,7 +198,9 @@ class _TransactionPageState extends State<TransactionPage> {
                       child: Padding(
                         padding: contentPadding,
                         child: Text(
-                          "account".t(context),
+                          isTransfer
+                              ? "transaction.transfer.from".t(context)
+                              : "account".t(context),
                           style: context.textTheme.titleSmall,
                         ),
                       ),
@@ -213,28 +231,53 @@ class _TransactionPageState extends State<TransactionPage> {
                       child: Padding(
                         padding: contentPadding,
                         child: Text(
-                          "category".t(context),
+                          isTransfer
+                              ? "transaction.transfer.to".t(context)
+                              : "category".t(context),
                           style: context.textTheme.titleSmall,
                         ),
                       ),
                     ),
-                    ListTile(
-                      leading: _selectedCategory == null
-                          ? null
-                          : FlowIcon(
-                              _selectedCategory!.icon,
-                              plated: true,
-                            ),
-                      title: Text(_selectedCategory?.name ??
-                          "transaction.edit.selectCategory".t(context)),
-                      // subtitle: _selectedAccount == null
-                      //     ? null
-                      //     : Text(_selectedAccount!.balance.money),
-                      onTap: () => selectCategory(),
-                      trailing: _selectedCategory == null
-                          ? const Icon(Symbols.chevron_right)
-                          : null,
-                    ),
+                    isTransfer
+                        ? ListTile(
+                            leading: _selectedAccountTransferTo == null
+                                ? null
+                                : FlowIcon(
+                                    _selectedAccountTransferTo!.icon,
+                                    plated: true,
+                                  ),
+                            title: Text(_selectedAccountTransferTo?.name ??
+                                "transaction.edit.selectAccount".t(context)),
+                            subtitle: _selectedAccountTransferTo == null
+                                ? null
+                                : Text(_selectedAccountTransferTo!.balance
+                                    .formatMoney(
+                                    currency:
+                                        _selectedAccountTransferTo!.currency,
+                                  )),
+                            onTap: () => selectAccountTransferTo(),
+                            trailing: _selectedAccountTransferTo == null
+                                ? const Icon(Symbols.chevron_right)
+                                : null,
+                            focusNode: _selectAccountTransferToFocusNode,
+                          )
+                        : ListTile(
+                            leading: _selectedCategory == null
+                                ? null
+                                : FlowIcon(
+                                    _selectedCategory!.icon,
+                                    plated: true,
+                                  ),
+                            title: Text(_selectedCategory?.name ??
+                                "transaction.edit.selectCategory".t(context)),
+                            // subtitle: _selectedAccount == null
+                            //     ? null
+                            //     : Text(_selectedAccount!.balance.money),
+                            onTap: () => selectCategory(),
+                            trailing: _selectedCategory == null
+                                ? const Icon(Symbols.chevron_right)
+                                : null,
+                          ),
                     const SizedBox(height: 16.0),
                     Align(
                       alignment: Alignment.topLeft,
@@ -309,17 +352,19 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectAccount() async {
-    final Query<Account> accountsQuery = _accountsQueryBuilder().build();
-
-    final List<Account> accounts = accountsQuery.find();
-
-    accountsQuery.close();
+    final List<Account> fromAccounts = isTransfer
+        ? accounts
+            .where((element) => element.id != _selectedAccountTransferTo?.id)
+            .toList()
+        : accounts;
 
     final Account? result = await showModalBottomSheet<Account>(
       context: context,
       builder: (context) => SelectAccountSheet(
-        accounts: accounts,
+        accounts: fromAccounts,
         currentlySelectedAccountId: _selectedAccount?.id,
+        titleOverride:
+            isTransfer ? "transaction.transfer.from.select".t(context) : null,
       ),
       isScrollControlled: true,
     );
@@ -328,7 +373,35 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedAccount = result ?? _selectedAccount;
     });
 
-    if (widget.isNewTransaction && result != null) selectCategory();
+    if (widget.isNewTransaction && result != null) {
+      if (isTransfer) {
+        selectAccountTransferTo();
+      } else {
+        selectCategory();
+      }
+    }
+  }
+
+  void selectAccountTransferTo() async {
+    final List<Account> toAccounts = accounts
+        .where((element) => element.id != _selectedAccount?.id)
+        .toList();
+
+    final Account? result = await showModalBottomSheet<Account>(
+      context: context,
+      builder: (context) => SelectAccountSheet(
+        accounts: toAccounts,
+        currentlySelectedAccountId: _selectedAccountTransferTo?.id,
+        titleOverride: "transaction.transfer.to.select".t(context),
+      ),
+      isScrollControlled: true,
+    );
+
+    setState(() {
+      _selectedAccountTransferTo = result ?? _selectedAccountTransferTo;
+    });
+
+    if (widget.isNewTransaction && result != null) inputAmount();
   }
 
   void selectCategory() async {
@@ -338,7 +411,10 @@ class _TransactionPageState extends State<TransactionPage> {
 
     categoriesQuery.close();
 
-    if (categories.isEmpty) return;
+    if (categories.isEmpty) {
+      inputAmount();
+      return;
+    }
 
     final ValueOr<Category>? result =
         await showModalBottomSheet<ValueOr<Category>>(
@@ -391,6 +467,26 @@ class _TransactionPageState extends State<TransactionPage> {
     });
   }
 
+  bool _ensureAccountsSelected() {
+    if (_selectedAccount == null) {
+      context.showErrorToast(
+        error: "error.transaction.missingAccount".t(context),
+      );
+      _selectAccountFocusNode.requestFocus();
+      return false;
+    }
+
+    if (isTransfer && _selectedAccountTransferTo == null) {
+      context.showErrorToast(
+        error: "error.transaction.missingAccount".t(context),
+      );
+      _selectAccountTransferToFocusNode.requestFocus();
+      return false;
+    }
+
+    return true;
+  }
+
   void update({required String formattedTitle}) async {
     if (_currentlyEditing == null) return;
 
@@ -408,13 +504,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void save() {
-    if (_selectedAccount == null) {
-      context.showErrorToast(
-        error: "error.transaction.missingAccount".t(context),
-      );
-      _selectAccountFocusNode.requestFocus();
-      return;
-    }
+    if (!_ensureAccountsSelected()) return;
 
     final String trimmed = _titleTextController.text.trim();
     final String formattedTitle =
@@ -424,11 +514,18 @@ class _TransactionPageState extends State<TransactionPage> {
       return update(formattedTitle: formattedTitle);
     }
 
-    _selectedAccount!.createTransaction(
-      amount: _amount,
-      title: formattedTitle,
-      category: _selectedCategory,
-    );
+    if (isTransfer) {
+      _selectedAccount!.transferTo(
+        targetAccount: _selectedAccountTransferTo!,
+        amount: _amount.abs(),
+      );
+    } else {
+      _selectedAccount!.createTransaction(
+        amount: _amount,
+        title: formattedTitle,
+        category: _selectedCategory,
+      );
+    }
 
     context.pop();
   }
@@ -454,7 +551,7 @@ class _TransactionPageState extends State<TransactionPage> {
     );
 
     if (confirmation == true) {
-      await ObjectBox().box<Transaction>().removeAsync(_currentlyEditing!.id);
+      _currentlyEditing!.delete();
 
       if (mounted) {
         pop();

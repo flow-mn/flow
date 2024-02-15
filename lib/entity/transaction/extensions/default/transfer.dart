@@ -8,16 +8,40 @@ part "transfer.g.dart";
 class Transfer extends TransactionExtension implements Jasonable {
   static const String keyName = "@flow/default-transfer";
 
+  @override
+  @JsonKey(includeToJson: true)
+  final String key = Transfer.keyName;
+
   final String fromAccountUuid;
   final String toAccountUuid;
 
+  final String relatedTransactionUuid;
+
+  final String uuid;
+
   const Transfer({
+    required this.uuid,
     required this.fromAccountUuid,
     required this.toAccountUuid,
-  }) : super(Transfer.keyName);
+    required this.relatedTransactionUuid,
+  }) : super();
+
+  Transfer copyWith({
+    String? uuid,
+    String? fromAccountUuid,
+    String? toAccountUuid,
+    String? relatedTransactionUuid,
+  }) =>
+      Transfer(
+        uuid: uuid ?? this.uuid,
+        fromAccountUuid: fromAccountUuid ?? this.fromAccountUuid,
+        toAccountUuid: toAccountUuid ?? this.toAccountUuid,
+        relatedTransactionUuid:
+            relatedTransactionUuid ?? this.relatedTransactionUuid,
+      );
 
   factory Transfer.fromJson(Map<String, dynamic> json) =>
-      _$TransferTxnFromJson(json);
+      _$TransferFromJson(json);
   @override
-  Map<String, dynamic> toJson() => _$TransferTxnToJson(this);
+  Map<String, dynamic> toJson() => _$TransferToJson(this);
 }

@@ -17,6 +17,7 @@ class LocalPreferences {
   late final PrimitiveSettingsEntry<String> primaryCurrency;
   late final BoolSettingsEntry usePhoneNumpadLayout;
   late final BoolSettingsEntry enableNumpadHapticFeedback;
+  late final BoolSettingsEntry combineTransferTransactions;
 
   late final BoolSettingsEntry completedInitialSetup;
 
@@ -38,6 +39,11 @@ class LocalPreferences {
     );
     enableNumpadHapticFeedback = BoolSettingsEntry(
       key: "flow.enableNumpadHapticFeedback",
+      preferences: _prefs,
+      initialValue: true,
+    );
+    combineTransferTransactions = BoolSettingsEntry(
+      key: "flow.combineTransferTransactions",
       preferences: _prefs,
       initialValue: true,
     );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

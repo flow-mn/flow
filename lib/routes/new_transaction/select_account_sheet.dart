@@ -11,16 +11,19 @@ class SelectAccountSheet extends StatelessWidget {
   final List<Account> accounts;
   final int? currentlySelectedAccountId;
 
+  final String? titleOverride;
+
   const SelectAccountSheet({
     super.key,
     required this.accounts,
     this.currentlySelectedAccountId,
+    this.titleOverride,
   });
 
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      title: Text("transaction.edit.selectAccount".t(context)),
+      title: Text(titleOverride ?? "transaction.edit.selectAccount".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       child: SingleChildScrollView(
         child: Column(

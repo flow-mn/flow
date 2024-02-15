@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/entity/transaction/extensions/default/transfer.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +35,9 @@ class TransactionListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool missingTitle = transaction.title == null;
 
+    final Transfer? transfer =
+        transaction.isTransfer ? transaction.extensions.transfer : null;
+
     final listTile = InkWell(
       onTap: () => context.push("/transaction/${transaction.id}"),
       child: Padding(
@@ -41,11 +46,12 @@ class TransactionListTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FlowIcon(
-              transaction.category.target?.icon ??
-                  FlowIconData.icon(
-                    Symbols.error_outline_rounded,
-                  ),
+              transaction.isTransfer
+                  ? FlowIconData.icon(Symbols.sync_alt_rounded)
+                  : transaction.category.target?.icon ??
+                      FlowIconData.icon(Symbols.circle_rounded),
               plated: true,
+              fill: transaction.category.target != null ? 1.0 : 0.0,
             ),
             const SizedBox(width: 8.0),
             Expanded(
@@ -54,15 +60,17 @@ class TransactionListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    missingTitle
+                    (missingTitle
                         ? "transaction.fallbackTitle".t(context)
-                        : transaction.title!,
+                        : transaction.title!),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     [
-                      transaction.account.target?.name,
+                      transaction.isTransfer
+                          ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
+                          : transaction.account.target?.name,
                       transaction.transactionDate.format(payload: "LT"),
                     ].join(" • "),
                     style: context.textTheme.labelSmall,
@@ -97,9 +105,11 @@ class TransactionListTile extends StatelessWidget {
   }
 
   Widget _buildAmountText(BuildContext context) {
-    final Color color = transaction.amount > 0
-        ? context.flowColors.income
-        : context.flowColors.expense;
+    final Color color = switch ((transaction.amount, transaction.isTransfer)) {
+      (_, true) => context.colorScheme.onBackground,
+      (<= 0, _) => context.flowColors.expense,
+      (_, _) => context.flowColors.income,
+    };
 
     return Text(
       transaction.amount.formatMoney(currency: transaction.currency),

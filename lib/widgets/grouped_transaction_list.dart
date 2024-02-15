@@ -1,6 +1,6 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
@@ -58,7 +58,9 @@ class GroupedTransactionList extends StatelessWidget {
   }
 
   Future<void> deleteTransaction(
-      BuildContext context, Transaction transaction) async {
+    BuildContext context,
+    Transaction transaction,
+  ) async {
     final String txnTitle =
         transaction.title ?? "transaction.fallbackTitle".t(context);
 
@@ -68,7 +70,7 @@ class GroupedTransactionList extends StatelessWidget {
     );
 
     if (confirmation == true) {
-      ObjectBox().box<Transaction>().remove(transaction.id);
+      transaction.delete();
     }
   }
 }
