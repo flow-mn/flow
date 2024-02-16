@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flow/data/prefs/frecency.dart';
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +30,8 @@ class LocalPreferences {
 
   /// Whether the user uses only one currency across accounts
   late final BoolSettingsEntry transitiveUsesSingleCurrency;
+
+  late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -70,6 +76,11 @@ class LocalPreferences {
       initialValue: true,
     );
 
+    transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
+      key: "flow.transitive.lastTimeFrecencyUpdated",
+      preferences: _prefs,
+    );
+
     updateTransitiveProperties();
   }
 
@@ -83,6 +94,133 @@ class LocalPreferences {
       await transitiveUsesSingleCurrency.set(usesSingleCurrency);
     } catch (e) {
       log("[LocalPreferences] cannot update transitive properties due to: $e");
+    }
+
+    if (transitiveLastTimeFrecencyUpdated.get() == null) {
+      _reevaluateCategoryFrecency();
+      _reevaluateAccountFrecency();
+    }
+  }
+
+  Future<FrecencyData?> setFrecencyData(
+    String type,
+    String uuid,
+    FrecencyData? value,
+  ) async {
+    final String prefixedKey = "flow.transitive.frecency.$type.$uuid";
+
+    if (value == null) {
+      await _prefs.remove(prefixedKey);
+      return null;
+    } else {
+      await _prefs.setString(prefixedKey, jsonEncode(value.toJson()));
+      return value;
+    }
+  }
+
+  Future<FrecencyData?> updateFrecencyData(
+    String type,
+    String uuid,
+  ) async {
+    final FrecencyData current = getFrecencyData(type, uuid) ??
+        FrecencyData(lastUsed: DateTime.now(), useCount: 0, uuid: uuid);
+
+    return await setFrecencyData(type, uuid, current.incremented());
+  }
+
+  FrecencyData? getFrecencyData(String type, String uuid) {
+    final String prefixedKey = "flow.transitive.frecency.$type.$uuid";
+
+    final raw = _prefs.getString(prefixedKey);
+
+    if (raw == null) return null;
+
+    try {
+      return FrecencyData.fromJson(jsonDecode(raw));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> _reevaluateCategoryFrecency() async {
+    final List<Category> categories =
+        await ObjectBox().box<Category>().getAllAsync();
+
+    if (categories.isEmpty) {
+      return;
+    }
+
+    for (final category in categories) {
+      try {
+        final Query<Transaction> categoryTransactionsQuery = ObjectBox()
+            .box<Transaction>()
+            .query(Transaction_.categoryUuid.equals(category.uuid).and(
+                Transaction_.transactionDate
+                    .lessThan(DateTime.now().millisecondsSinceEpoch)))
+            .order(Transaction_.transactionDate, flags: Order.descending)
+            .build();
+
+        final int useCount = categoryTransactionsQuery.count();
+        final DateTime lastUsed =
+            categoryTransactionsQuery.findFirst()?.transactionDate ??
+                DateTime.fromMillisecondsSinceEpoch(0);
+
+        categoryTransactionsQuery.close();
+
+        // TODO do I have to use `await` here?
+        // doesn't seem necessary...
+        setFrecencyData(
+            "category",
+            category.uuid,
+            FrecencyData(
+              uuid: category.uuid,
+              lastUsed: lastUsed,
+              useCount: useCount,
+            ));
+      } catch (e) {
+        log("Failed to build category FrecencyData for $category due to: $e");
+      }
+    }
+  }
+
+  Future<void> _reevaluateAccountFrecency() async {
+    final List<Account> accounts =
+        await ObjectBox().box<Account>().getAllAsync();
+
+    if (accounts.isEmpty) {
+      return;
+    }
+
+    for (final account in accounts) {
+      try {
+        final Query<Transaction> accountTransactionsQuery = ObjectBox()
+            .box<Transaction>()
+            .query(Transaction_.accountUuid.equals(account.uuid).and(
+                Transaction_.transactionDate
+                    .lessThan(DateTime.now().millisecondsSinceEpoch)))
+            .order(Transaction_.transactionDate, flags: Order.descending)
+            .build();
+
+        final int useCount = accountTransactionsQuery.count();
+        final DateTime lastUsed =
+            accountTransactionsQuery.findFirst()?.transactionDate ??
+                DateTime.fromMillisecondsSinceEpoch(0);
+
+        accountTransactionsQuery.close();
+
+        // TODO do I have to use `await` here?
+        // doesn't seem necessary...
+        setFrecencyData(
+            "account",
+            account.uuid,
+            FrecencyData(
+              uuid: account.uuid,
+              lastUsed: lastUsed,
+              useCount: useCount,
+            ));
+      } catch (e) {
+        log("Failed to build account FrecencyData for $account due to: $e");
+      }
     }
   }
 

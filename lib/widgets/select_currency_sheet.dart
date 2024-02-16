@@ -62,8 +62,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         .groupBy((resultItem) => resultItem.item.code)
         .values
         .map((e) => e.firstOrNull)
-        .where((e) => e != null)
-        .cast<Result<CurrencyData>>()
+        .nonNulls
         .toList();
 
     // Artificially deprioritize North Korean Won due to its unpopularity

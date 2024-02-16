@@ -17,9 +17,7 @@ extension Underscore on Locale {
   /// Example outcome:
   /// * en_US
   /// * mn_Mong_MN
-  String get code => [languageCode, scriptCode, countryCode]
-      .where((element) => element != null)
-      .join("_");
+  String get code => [languageCode, scriptCode, countryCode].nonNulls.join("_");
 
   String get name => _localeNames[code] ?? "Unknown";
 }

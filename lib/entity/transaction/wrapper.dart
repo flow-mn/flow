@@ -29,8 +29,7 @@ class ExtensionsWrapper {
     try {
       return ExtensionsWrapper((jsonDecode(extra) as List<dynamic>)
           .map((item) => deserialize(item as Map<String, dynamic>))
-          .where((element) => element != null)
-          .cast<TransactionExtension>()
+          .nonNulls
           .toList());
     } catch (e) {
       log("[ExtensionsWrapper] An error occured during deserializing: $e");

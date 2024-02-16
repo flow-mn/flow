@@ -22,9 +22,6 @@ class Account implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
-  @Property(type: PropertyType.date)
-  DateTime lastUsedDate;
-
   @Unique()
   String name;
 
@@ -70,7 +67,6 @@ class Account implements EntityBase {
     this.excludeFromTotalBalance = false,
     DateTime? createdDate,
   })  : createdDate = createdDate ?? DateTime.now(),
-        lastUsedDate = createdDate ?? DateTime.now(),
         uuid = const Uuid().v4();
 
   factory Account.fromJson(Map<String, dynamic> json) =>

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
@@ -11,6 +12,44 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
+
+extension MainActions on ObjectBox {
+  List<Account> getAccounts([bool sortByFrecency = true]) {
+    final List<Account> accounts = box<Account>().getAll();
+
+    if (sortByFrecency) {
+      final FrecencyGroup frecencyGroup = FrecencyGroup(accounts
+          .map((account) =>
+              LocalPreferences().getFrecencyData("account", account.uuid))
+          .nonNulls
+          .toList());
+
+      accounts.sort((a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)));
+    }
+
+    return accounts;
+  }
+
+  List<Category> getCategories([bool sortByFrecency = true]) {
+    final List<Category> categories = box<Category>().getAll();
+
+    if (sortByFrecency) {
+      final FrecencyGroup frecencyGroup = FrecencyGroup(categories
+          .map((category) =>
+              LocalPreferences().getFrecencyData("category", category.uuid))
+          .nonNulls
+          .toList());
+
+      categories.sort((a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)));
+    }
+
+    return categories;
+  }
+}
 
 extension TransactionActions on Transaction {
   Transaction? findTransferOriginalOrThis() {
@@ -232,6 +271,11 @@ extension AccountActions on Account {
       createdDate: createdDate,
       uuidOverride: uuidOverride,
     )..setCategory(category);
+
+    LocalPreferences().updateFrecencyData("account", uuid);
+    if (category != null) {
+      LocalPreferences().updateFrecencyData("category", category.uuid);
+    }
 
     if (extensions != null && extensions.isNotEmpty) {
       value.addExtensions(extensions);

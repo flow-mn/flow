@@ -15,14 +15,11 @@ Account _$AccountFromJson(Map<String, dynamic> json) => Account(
       createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),
-    )
-      ..uuid = json['uuid'] as String
-      ..lastUsedDate = DateTime.parse(json['lastUsedDate'] as String);
+    )..uuid = json['uuid'] as String;
 
 Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'uuid': instance.uuid,
       'createdDate': instance.createdDate.toIso8601String(),
-      'lastUsedDate': instance.lastUsedDate.toIso8601String(),
       'name': instance.name,
       'currency': instance.currency,
       'iconCode': instance.iconCode,
