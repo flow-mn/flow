@@ -15,7 +15,7 @@ PieTheme pieThemeLight = PieTheme(
   pointerSize: 2.0,
   tooltipTextStyle: lightTheme.textTheme.displaySmall,
   rightClickShowsMenu: true,
-  alwaysPlaceActionsFromCenter: true,
+  alwaysPlaceActionFromCenter: true,
 );
 PieTheme pieThemeDark = pieThemeLight.copyWith(
   buttonTheme: PieButtonTheme(
