@@ -8,6 +8,7 @@ import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -62,59 +63,40 @@ extension CustomDialogs on BuildContext {
   }) async {
     final bool? result = await showModalBottomSheet(
       context: this,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              title ?? "general.areYouSure".t(context),
-              style: context.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          if (child != null || isDeletionConfirmation) ...[
-            const SizedBox(height: 8.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
+      builder: (context) => ModalSheet(
+        title: Text(title ?? "general.areYouSure".t(context)),
+        trailing: ButtonBar(
+          children: [
+            Button(
+              onTap: () => context.pop(false),
+              child: Text(
+                "general.cancel".t(context),
               ),
-              child: child ??
-                  Text(
+            ),
+            Button(
+              onTap: () => context.pop(true),
+              child: Text(
+                mainActionLabelOverride ??
+                    (isDeletionConfirmation
+                        ? "general.delete".t(context)
+                        : "general.confirm".t(context)),
+                style: isDeletionConfirmation
+                    ? TextStyle(color: context.flowColors.expense)
+                    : null,
+              ),
+            ),
+          ],
+        ),
+        child: child ??
+            (isDeletionConfirmation
+                ? Text(
                     "general.delete.permanentWarning".t(context),
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.flowColors.expense,
                     ),
                     textAlign: TextAlign.center,
-                  ),
-            ),
-          ],
-          const SizedBox(height: 16.0),
-          ButtonBar(
-            children: [
-              Button(
-                onTap: () => context.pop(false),
-                child: Text(
-                  "general.cancel".t(context),
-                ),
-              ),
-              Button(
-                onTap: () => context.pop(true),
-                child: Text(
-                  mainActionLabelOverride ??
-                      (isDeletionConfirmation
-                          ? "general.delete".t(context)
-                          : "general.confirm".t(context)),
-                  style: isDeletionConfirmation
-                      ? TextStyle(color: context.flowColors.expense)
-                      : null,
-                ),
-              ),
-            ],
-          ),
-        ],
+                  )
+                : null),
       ),
     );
 

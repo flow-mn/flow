@@ -59,12 +59,19 @@ class ModalSheet extends StatelessWidget {
         ? null
         : DefaultTextStyle(
             style: context.textTheme.headlineSmall!,
-            child: this.title!,
+            textAlign: TextAlign.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: this.title!,
+            ),
           );
 
     final Widget? content = switch ((child, scrollable)) {
       (null, _) => null,
-      (Widget child, false) => child,
+      (Widget child, false) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: child,
+        ),
       (Widget scrollableChild, true) => AnimatedContainer(
           constraints: BoxConstraints.loose(
             Size(
