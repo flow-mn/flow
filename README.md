@@ -4,6 +4,7 @@
 [![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
 [![Support on Ko-fi](https://img.shields.io/badge/kofi-sadespresso-f5ccff?logo=ko-fi&logoColor=white&style=for-the-badge&label=Ko-fi)](https://ko-fi.com/sadespresso)
 [![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
+[![Join TestFlight group](https://img.shields.io/badge/TestFlight-join_test_group-f5ccff?logo=appstore&logoColor=white&style=for-the-badge)](https://testflight.apple.com/join/NH4ifijS)
 
 ## Preface
 
