@@ -17,6 +17,8 @@ void main() async {
 
     // Populate fake data
     setUpAll(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+
       await ObjectBox.initialize(
         customDirectory: customDirectory,
         subdirectory: "sync/v1",

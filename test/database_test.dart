@@ -5,7 +5,6 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:path/path.dart' as path;
@@ -13,10 +12,10 @@ import 'package:path/path.dart' as path;
 import 'objectbox_erase.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
   group("ObjectBox data insertion", () {
     setUpAll(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+
       await ObjectBox.initialize(
         customDirectory: objectboxTestRootDir().path,
         subdirectory: "main",

@@ -272,16 +272,23 @@ extension AccountActions on Account {
       uuidOverride: uuidOverride,
     )..setCategory(category);
 
-    LocalPreferences().updateFrecencyData("account", uuid);
-    if (category != null) {
-      LocalPreferences().updateFrecencyData("category", category.uuid);
-    }
-
     if (extensions != null && extensions.isNotEmpty) {
       value.addExtensions(extensions);
     }
 
     transactions.add(value);
-    return ObjectBox().box<Account>().put(this);
+
+    final int id = ObjectBox().box<Account>().put(this);
+
+    try {
+      LocalPreferences().updateFrecencyData("account", uuid);
+      if (category != null) {
+        LocalPreferences().updateFrecencyData("category", category.uuid);
+      }
+    } catch (e) {
+      log("Failed to update frecency data for transaction ($id)");
+    }
+
+    return id;
   }
 }
