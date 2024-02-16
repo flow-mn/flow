@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction/extensions/base.dart';
+import 'package:flow/entity/transaction/wrapper.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moment_dart/moment_dart.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,6 +43,7 @@ class Transaction implements EntityBase {
   String? subtype;
 
   @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   TransactionSubtype? get transactionSubtype => subtype == null
       ? null
       : TransactionSubtype.values
@@ -62,8 +62,30 @@ class Transaction implements EntityBase {
   /// in this field. (ensuring no collision between extensions)
   String? extra;
 
-  Map<String, dynamic>? getExtra() => extra == null ? null : jsonDecode(extra!);
-  void setExtra(Map<String, dynamic> value) => extra = jsonEncode(value);
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ExtensionsWrapper get extensions => ExtensionsWrapper.parse(extra);
+
+  @Transient()
+  set extensions(ExtensionsWrapper newValue) {
+    extra = newValue.serialize();
+  }
+
+  void addExtensions(Iterable<TransactionExtension> newExtensions) {
+    extensions = extensions.merge(newExtensions.toList());
+  }
+
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isTransfer => extensions.transfer != null;
+
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  TransactionType get type {
+    if (isTransfer) return TransactionType.transfer;
+
+    return amount.isNegative ? TransactionType.expense : TransactionType.income;
+  }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   final category = ToOne<Category>();
@@ -75,6 +97,12 @@ class Transaction implements EntityBase {
 
   set categoryUuid(String? value) {
     _categoryUuid = value;
+  }
+
+  /// This won't be saved until you call `Box.put()`
+  void setCategory(Category? newCategory) {
+    category.target = newCategory;
+    categoryUuid = newCategory?.uuid;
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -90,11 +118,6 @@ class Transaction implements EntityBase {
   }
 
   /// This won't be saved until you call `Box.put()`
-  void setCategory(Category? newCategory) {
-    category.target = newCategory;
-  }
-
-  /// This won't be saved until you call `Box.put()`
   void setAccount(Account? newAccount) {
     // TODO (sadespresso): When changing currencies, we can either ask
     // the user to re-enter the amount, or do an automatic conversion
@@ -104,6 +127,7 @@ class Transaction implements EntityBase {
     }
 
     account.target = newAccount;
+    accountUuid = newAccount?.uuid;
     currency = newAccount?.currency ?? currency;
   }
 
@@ -115,37 +139,14 @@ class Transaction implements EntityBase {
     required this.currency,
     DateTime? transactionDate,
     DateTime? createdDate,
+    String? uuidOverride,
   })  : createdDate = createdDate ?? DateTime.now(),
         transactionDate = transactionDate ?? createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+        uuid = uuidOverride ?? const Uuid().v4();
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
   Map<String, dynamic> toJson() => _$TransactionToJson(this);
-}
-
-extension TransactionOperations on List<Transaction> {
-  double get incomeSum => where((transaction) => transaction.amount >= 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get expenseSum => where((transaction) => transaction.amount < 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get sum =>
-      map((transaction) => transaction.amount).fold(0, (a, b) => a + b);
-
-  Map<DateTime, List<Transaction>> groupByDate() {
-    final Map<DateTime, List<Transaction>> value = {};
-
-    for (final transaction in this) {
-      final date = transaction.transactionDate.toLocal().startOfDay();
-
-      value[date] ??= [];
-      value[date]!.add(transaction);
-    }
-
-    return value;
-  }
 }
 
 @JsonEnum(valueField: "value")

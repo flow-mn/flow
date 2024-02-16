@@ -77,6 +77,13 @@
     "transaction.createdDate": "Created at",
     "transaction.fallbackTitle": "Untitled transaction",
     "transaction.delete": "Delete transaction",
+    "transaction.transfer.from": "From account",
+    "transaction.transfer.from.select": "Select from account",
+    "transaction.transfer.from.title": "From {account}",
+    "transaction.transfer.to": "To account",
+    "transaction.transfer.to.select": "Select to account",
+    "transaction.transfer.to.title": "To {account}",
+    "transaction.transfer.fromToTitle": "From {from} to {to}",
 
     "category": "Category",
     "category.name": "Category name",
@@ -104,6 +111,8 @@
     "preferences.numpad.layout.modern": "Modern",
     "preferences.numpad.haptics": "Button feedback",
     "preferences.numpad.haptics.description": "Sound/haptic feedback upon click",
+    "preferences.combineTransferTransaction": "Combine transfers",
+    "preferences.combineTransferTransaction.description": "Show as single transaction",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",

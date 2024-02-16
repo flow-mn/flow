@@ -26,7 +26,11 @@ class InputAmountSheet extends StatefulWidget {
   /// sure which currency transaction the user is making.
   final bool hideCurrencySymbol;
 
+  /// Will be ignored if [lockSign] is set to `true`
   final bool allowNegative;
+
+  /// Disable changing between + and -
+  final bool lockSign;
 
   const InputAmountSheet({
     super.key,
@@ -35,6 +39,7 @@ class InputAmountSheet extends StatefulWidget {
     this.overrideInitialAmount = true,
     this.hideCurrencySymbol = false,
     this.allowNegative = true,
+    this.lockSign = false,
   });
 
   @override
@@ -154,20 +159,23 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                 children: [
                   ...getNumberRows(0),
                   NumpadButton(
-                    child: const Icon(Symbols.backspace_rounded),
                     onTap: () => removeDigit(),
+                    onLongPress: () => _reset(),
+                    mainAxisCellCount: widget.lockSign ? 2 : 1,
+                    child: const Icon(Symbols.backspace_rounded),
                   ),
                   ...getNumberRows(1),
-                  NumpadButton(
-                    child: widget.allowNegative
-                        ? const Icon(Symbols.remove_rounded)
-                        : const Icon(Symbols.add_rounded),
-                    onTap: () => _negate(),
-                  ),
+                  if (!widget.lockSign)
+                    NumpadButton(
+                      child: widget.allowNegative
+                          ? const Icon(Symbols.remove_rounded)
+                          : const Icon(Symbols.add_rounded),
+                      onTap: () => _negate(),
+                    ),
                   ...getNumberRows(2),
                   NumpadButton(
-                    child: const Icon(Symbols.settings_rounded),
                     onTap: () => {},
+                    child: const Icon(Symbols.settings_rounded),
                   ),
                   NumpadButton(
                     onTap: () => insertDigit(0),
@@ -271,6 +279,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _negate([bool? forceNegative]) {
+    if (widget.lockSign) return;
+
     if (widget.allowNegative) {
       _negative = forceNegative ?? !_negative;
     } else {
@@ -336,7 +346,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
             math.pow(10, _numberOfDecimals))
         .round();
     _inputtingDecimal = _decimalPart.abs() != 0;
-    _negate(widget.allowNegative ? widget.initialAmount?.isNegative : false);
+    _negative =
+        widget.allowNegative ? (widget.initialAmount ?? 1.0).isNegative : false;
   }
 
   Map<ShortcutActivator, VoidCallback> get bindings => {

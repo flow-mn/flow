@@ -77,6 +77,13 @@
     "transaction.createdDate": "Үүсгэсэн огноо",
     "transaction.fallbackTitle": "Гарчиггүй гүйлгээ",
     "transaction.delete": "Гүйлгээг устгах",
+    "transaction.transfer.from": "Хүлээн авах данс",
+    "transaction.transfer.from.select": "Хүлээн авах данс сонгох",
+    "transaction.transfer.from.title": "{account}-с",
+    "transaction.transfer.to": "Илгээх данс",
+    "transaction.transfer.to.select": "Илгээх данс сонгох",
+    "transaction.transfer.to.title": "{account}-руу",
+    "transaction.transfer.fromToTitle": "{from}-с {to} руу",
 
     "category": "Ангилал",
     "category.name": "Нэр",
@@ -104,6 +111,8 @@
     "preferences.numpad.layout.modern": "Орчин үеийн",
     "preferences.numpad.haptics": "Товчны хариу",
     "preferences.numpad.haptics.description": "Дарах үед дуу/чичиргээ тоглуулна",
+    "preferences.combineTransferTransaction": "Шилжүүлгийг нэгтгэх",
+    "preferences.combineTransferTransaction.description": "Гүйлгээг нэгтгэж харах",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

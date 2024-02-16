@@ -119,85 +119,6 @@ final _entities = <ModelEntity>[
             srcField: 'category')
       ]),
   ModelEntity(
-      id: const IdUid(4, 2857566645668229410),
-      name: 'Transaction',
-      lastPropertyId: const IdUid(13, 5446772239174299489),
-      flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 4631816643044519644),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 2582035562365559834),
-            name: 'uuid',
-            type: 9,
-            flags: 2080,
-            indexId: const IdUid(8, 983672474278989293)),
-        ModelProperty(
-            id: const IdUid(3, 1199002594005420779),
-            name: 'createdDate',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 7985125654311551623),
-            name: 'title',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 7846957356397143011),
-            name: 'amount',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 8386618621719093135),
-            name: 'currency',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 3858309169442527296),
-            name: 'categoryId',
-            type: 11,
-            flags: 520,
-            indexId: const IdUid(9, 8456785135365860511),
-            relationTarget: 'Category'),
-        ModelProperty(
-            id: const IdUid(8, 6772806689343886062),
-            name: 'accountId',
-            type: 11,
-            flags: 520,
-            indexId: const IdUid(10, 3325852605879892422),
-            relationTarget: 'Account'),
-        ModelProperty(
-            id: const IdUid(9, 8465977223650476366),
-            name: 'extra',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 3806574754524012859),
-            name: 'transactionDate',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 8163231449257835161),
-            name: 'subtype',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 8413544260372569748),
-            name: 'categoryUuid',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 5446772239174299489),
-            name: 'accountUuid',
-            type: 9,
-            flags: 0)
-      ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
       id: const IdUid(5, 3298987588431022631),
       name: 'Profile',
       lastPropertyId: const IdUid(5, 3781626172731013526),
@@ -265,6 +186,85 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(7, 5357777579468740615),
+      name: 'Transaction',
+      lastPropertyId: const IdUid(13, 8197332672689416676),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 9110098830115993878),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 5969985101281949207),
+            name: 'uuid',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(12, 1386471796517044894)),
+        ModelProperty(
+            id: const IdUid(3, 614756132375370358),
+            name: 'createdDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 7728114574705964455),
+            name: 'transactionDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 784468101854697419),
+            name: 'title',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 7213343959758309797),
+            name: 'amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 5879078778613651092),
+            name: 'currency',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 7268940743609048799),
+            name: 'subtype',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 4527254666523321017),
+            name: 'extra',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 3862476953254710135),
+            name: 'categoryId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(13, 6668612341220351989),
+            relationTarget: 'Category'),
+        ModelProperty(
+            id: const IdUid(11, 2468817122549060742),
+            name: 'accountId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(14, 1594637005857043935),
+            relationTarget: 'Account'),
+        ModelProperty(
+            id: const IdUid(12, 2414941424956693997),
+            name: 'categoryUuid',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 8197332672689416676),
+            name: 'accountUuid',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -295,11 +295,11 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(6, 5991227438386928245),
-      lastIndexId: const IdUid(11, 6445110811655945444),
+      lastEntityId: const IdUid(7, 5357777579468740615),
+      lastIndexId: const IdUid(14, 1594637005857043935),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
-      retiredEntityUids: const [3796819593314794683],
+      retiredEntityUids: const [3796819593314794683, 2857566645668229410],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
         620570223027064518,
@@ -312,7 +312,20 @@ ModelDefinition getObjectBoxModel() {
         7528954808630752939,
         2052151351995260526,
         2763207879596101849,
-        3781626172731013526
+        3781626172731013526,
+        4631816643044519644,
+        2582035562365559834,
+        1199002594005420779,
+        7985125654311551623,
+        7846957356397143011,
+        8386618621719093135,
+        3858309169442527296,
+        6772806689343886062,
+        8465977223650476366,
+        3806574754524012859,
+        8163231449257835161,
+        8413544260372569748,
+        5446772239174299489
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -324,7 +337,7 @@ ModelDefinition getObjectBoxModel() {
         model: _entities[0],
         toOneRelations: (Account object) => [],
         toManyRelations: (Account object) => {
-              RelInfo<Transaction>.toOneBacklink(8, object.id,
+              RelInfo<Transaction>.toOneBacklink(11, object.id,
                       (Transaction srcObject) => srcObject.account):
                   object.transactions
             },
@@ -379,14 +392,14 @@ ModelDefinition getObjectBoxModel() {
               object.transactions,
               store,
               RelInfo<Transaction>.toOneBacklink(
-                  8, object.id, (Transaction srcObject) => srcObject.account));
+                  11, object.id, (Transaction srcObject) => srcObject.account));
           return object;
         }),
     Category: EntityDefinition<Category>(
         model: _entities[1],
         toOneRelations: (Category object) => [],
         toManyRelations: (Category object) => {
-              RelInfo<Transaction>.toOneBacklink(7, object.id,
+              RelInfo<Transaction>.toOneBacklink(10, object.id,
                       (Transaction srcObject) => srcObject.category):
                   object.transactions
             },
@@ -428,94 +441,12 @@ ModelDefinition getObjectBoxModel() {
           InternalToManyAccess.setRelInfo<Category>(
               object.transactions,
               store,
-              RelInfo<Transaction>.toOneBacklink(
-                  7, object.id, (Transaction srcObject) => srcObject.category));
-          return object;
-        }),
-    Transaction: EntityDefinition<Transaction>(
-        model: _entities[2],
-        toOneRelations: (Transaction object) =>
-            [object.category, object.account],
-        toManyRelations: (Transaction object) => {},
-        getId: (Transaction object) => object.id,
-        setId: (Transaction object, int id) {
-          object.id = id;
-        },
-        objectToFB: (Transaction object, fb.Builder fbb) {
-          final uuidOffset = fbb.writeString(object.uuid);
-          final titleOffset =
-              object.title == null ? null : fbb.writeString(object.title!);
-          final currencyOffset = fbb.writeString(object.currency);
-          final extraOffset =
-              object.extra == null ? null : fbb.writeString(object.extra!);
-          final subtypeOffset =
-              object.subtype == null ? null : fbb.writeString(object.subtype!);
-          final categoryUuidOffset = object.categoryUuid == null
-              ? null
-              : fbb.writeString(object.categoryUuid!);
-          final accountUuidOffset = object.accountUuid == null
-              ? null
-              : fbb.writeString(object.accountUuid!);
-          fbb.startTable(14);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, uuidOffset);
-          fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
-          fbb.addOffset(3, titleOffset);
-          fbb.addFloat64(4, object.amount);
-          fbb.addOffset(5, currencyOffset);
-          fbb.addInt64(6, object.category.targetId);
-          fbb.addInt64(7, object.account.targetId);
-          fbb.addOffset(8, extraOffset);
-          fbb.addInt64(9, object.transactionDate.millisecondsSinceEpoch);
-          fbb.addOffset(10, subtypeOffset);
-          fbb.addOffset(11, categoryUuidOffset);
-          fbb.addOffset(12, accountUuidOffset);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-          final idParam =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          final titleParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 10);
-          final subtypeParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 24);
-          final amountParam =
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0);
-          final currencyParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 14, '');
-          final transactionDateParam = DateTime.fromMillisecondsSinceEpoch(
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0));
-          final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
-          final object = Transaction(
-              id: idParam,
-              title: titleParam,
-              subtype: subtypeParam,
-              amount: amountParam,
-              currency: currencyParam,
-              transactionDate: transactionDateParam,
-              createdDate: createdDateParam)
-            ..uuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 6, '')
-            ..extra = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 20)
-            ..categoryUuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 26)
-            ..accountUuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 28);
-          object.category.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0);
-          object.category.attach(store);
-          object.account.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
-          object.account.attach(store);
+              RelInfo<Transaction>.toOneBacklink(10, object.id,
+                  (Transaction srcObject) => srcObject.category));
           return object;
         }),
     Profile: EntityDefinition<Profile>(
-        model: _entities[3],
+        model: _entities[2],
         toOneRelations: (Profile object) => [],
         toManyRelations: (Profile object) => {},
         getId: (Profile object) => object.id,
@@ -550,7 +481,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     BackupEntry: EntityDefinition<BackupEntry>(
-        model: _entities[4],
+        model: _entities[3],
         toOneRelations: (BackupEntry object) => [],
         toManyRelations: (BackupEntry object) => {},
         getId: (BackupEntry object) => object.id,
@@ -594,6 +525,88 @@ ModelDefinition getObjectBoxModel() {
               type: typeParam,
               fileExt: fileExtParam);
 
+          return object;
+        }),
+    Transaction: EntityDefinition<Transaction>(
+        model: _entities[4],
+        toOneRelations: (Transaction object) =>
+            [object.category, object.account],
+        toManyRelations: (Transaction object) => {},
+        getId: (Transaction object) => object.id,
+        setId: (Transaction object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Transaction object, fb.Builder fbb) {
+          final uuidOffset = fbb.writeString(object.uuid);
+          final titleOffset =
+              object.title == null ? null : fbb.writeString(object.title!);
+          final currencyOffset = fbb.writeString(object.currency);
+          final subtypeOffset =
+              object.subtype == null ? null : fbb.writeString(object.subtype!);
+          final extraOffset =
+              object.extra == null ? null : fbb.writeString(object.extra!);
+          final categoryUuidOffset = object.categoryUuid == null
+              ? null
+              : fbb.writeString(object.categoryUuid!);
+          final accountUuidOffset = object.accountUuid == null
+              ? null
+              : fbb.writeString(object.accountUuid!);
+          fbb.startTable(14);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, uuidOffset);
+          fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.transactionDate.millisecondsSinceEpoch);
+          fbb.addOffset(4, titleOffset);
+          fbb.addFloat64(5, object.amount);
+          fbb.addOffset(6, currencyOffset);
+          fbb.addOffset(7, subtypeOffset);
+          fbb.addOffset(8, extraOffset);
+          fbb.addInt64(9, object.category.targetId);
+          fbb.addInt64(10, object.account.targetId);
+          fbb.addOffset(11, categoryUuidOffset);
+          fbb.addOffset(12, accountUuidOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final titleParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 12);
+          final subtypeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 18);
+          final amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final currencyParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final transactionDateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+          final object = Transaction(
+              id: idParam,
+              title: titleParam,
+              subtype: subtypeParam,
+              amount: amountParam,
+              currency: currencyParam,
+              transactionDate: transactionDateParam,
+              createdDate: createdDateParam)
+            ..uuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '')
+            ..extra = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 20)
+            ..categoryUuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 26)
+            ..accountUuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 28);
+          object.category.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          object.category.attach(store);
+          object.account.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
+          object.account.attach(store);
           return object;
         })
   };
@@ -653,100 +666,100 @@ class Category_ {
       QueryStringProperty<Category>(_entities[1].properties[4]);
 }
 
-/// [Transaction] entity fields to define ObjectBox queries.
-class Transaction_ {
-  /// see [Transaction.id]
-  static final id =
-      QueryIntegerProperty<Transaction>(_entities[2].properties[0]);
-
-  /// see [Transaction.uuid]
-  static final uuid =
-      QueryStringProperty<Transaction>(_entities[2].properties[1]);
-
-  /// see [Transaction.createdDate]
-  static final createdDate =
-      QueryIntegerProperty<Transaction>(_entities[2].properties[2]);
-
-  /// see [Transaction.title]
-  static final title =
-      QueryStringProperty<Transaction>(_entities[2].properties[3]);
-
-  /// see [Transaction.amount]
-  static final amount =
-      QueryDoubleProperty<Transaction>(_entities[2].properties[4]);
-
-  /// see [Transaction.currency]
-  static final currency =
-      QueryStringProperty<Transaction>(_entities[2].properties[5]);
-
-  /// see [Transaction.category]
-  static final category =
-      QueryRelationToOne<Transaction, Category>(_entities[2].properties[6]);
-
-  /// see [Transaction.account]
-  static final account =
-      QueryRelationToOne<Transaction, Account>(_entities[2].properties[7]);
-
-  /// see [Transaction.extra]
-  static final extra =
-      QueryStringProperty<Transaction>(_entities[2].properties[8]);
-
-  /// see [Transaction.transactionDate]
-  static final transactionDate =
-      QueryIntegerProperty<Transaction>(_entities[2].properties[9]);
-
-  /// see [Transaction.subtype]
-  static final subtype =
-      QueryStringProperty<Transaction>(_entities[2].properties[10]);
-
-  /// see [Transaction.categoryUuid]
-  static final categoryUuid =
-      QueryStringProperty<Transaction>(_entities[2].properties[11]);
-
-  /// see [Transaction.accountUuid]
-  static final accountUuid =
-      QueryStringProperty<Transaction>(_entities[2].properties[12]);
-}
-
 /// [Profile] entity fields to define ObjectBox queries.
 class Profile_ {
   /// see [Profile.id]
-  static final id = QueryIntegerProperty<Profile>(_entities[3].properties[0]);
+  static final id = QueryIntegerProperty<Profile>(_entities[2].properties[0]);
 
   /// see [Profile.uuid]
-  static final uuid = QueryStringProperty<Profile>(_entities[3].properties[1]);
+  static final uuid = QueryStringProperty<Profile>(_entities[2].properties[1]);
 
   /// see [Profile.name]
-  static final name = QueryStringProperty<Profile>(_entities[3].properties[2]);
+  static final name = QueryStringProperty<Profile>(_entities[2].properties[2]);
 
   /// see [Profile.createdDate]
   static final createdDate =
-      QueryIntegerProperty<Profile>(_entities[3].properties[3]);
+      QueryIntegerProperty<Profile>(_entities[2].properties[3]);
 }
 
 /// [BackupEntry] entity fields to define ObjectBox queries.
 class BackupEntry_ {
   /// see [BackupEntry.id]
   static final id =
-      QueryIntegerProperty<BackupEntry>(_entities[4].properties[0]);
+      QueryIntegerProperty<BackupEntry>(_entities[3].properties[0]);
 
   /// see [BackupEntry.syncModelVersion]
   static final syncModelVersion =
-      QueryIntegerProperty<BackupEntry>(_entities[4].properties[1]);
+      QueryIntegerProperty<BackupEntry>(_entities[3].properties[1]);
 
   /// see [BackupEntry.createdDate]
   static final createdDate =
-      QueryIntegerProperty<BackupEntry>(_entities[4].properties[2]);
+      QueryIntegerProperty<BackupEntry>(_entities[3].properties[2]);
 
   /// see [BackupEntry.filePath]
   static final filePath =
-      QueryStringProperty<BackupEntry>(_entities[4].properties[3]);
+      QueryStringProperty<BackupEntry>(_entities[3].properties[3]);
 
   /// see [BackupEntry.type]
   static final type =
-      QueryStringProperty<BackupEntry>(_entities[4].properties[4]);
+      QueryStringProperty<BackupEntry>(_entities[3].properties[4]);
 
   /// see [BackupEntry.fileExt]
   static final fileExt =
-      QueryStringProperty<BackupEntry>(_entities[4].properties[5]);
+      QueryStringProperty<BackupEntry>(_entities[3].properties[5]);
+}
+
+/// [Transaction] entity fields to define ObjectBox queries.
+class Transaction_ {
+  /// see [Transaction.id]
+  static final id =
+      QueryIntegerProperty<Transaction>(_entities[4].properties[0]);
+
+  /// see [Transaction.uuid]
+  static final uuid =
+      QueryStringProperty<Transaction>(_entities[4].properties[1]);
+
+  /// see [Transaction.createdDate]
+  static final createdDate =
+      QueryIntegerProperty<Transaction>(_entities[4].properties[2]);
+
+  /// see [Transaction.transactionDate]
+  static final transactionDate =
+      QueryIntegerProperty<Transaction>(_entities[4].properties[3]);
+
+  /// see [Transaction.title]
+  static final title =
+      QueryStringProperty<Transaction>(_entities[4].properties[4]);
+
+  /// see [Transaction.amount]
+  static final amount =
+      QueryDoubleProperty<Transaction>(_entities[4].properties[5]);
+
+  /// see [Transaction.currency]
+  static final currency =
+      QueryStringProperty<Transaction>(_entities[4].properties[6]);
+
+  /// see [Transaction.subtype]
+  static final subtype =
+      QueryStringProperty<Transaction>(_entities[4].properties[7]);
+
+  /// see [Transaction.extra]
+  static final extra =
+      QueryStringProperty<Transaction>(_entities[4].properties[8]);
+
+  /// see [Transaction.category]
+  static final category =
+      QueryRelationToOne<Transaction, Category>(_entities[4].properties[9]);
+
+  /// see [Transaction.account]
+  static final account =
+      QueryRelationToOne<Transaction, Account>(_entities[4].properties[10]);
+
+  /// see [Transaction.categoryUuid]
+  static final categoryUuid =
+      QueryStringProperty<Transaction>(_entities[4].properties[11]);
+
+  /// see [Transaction.accountUuid]
+  static final accountUuid =
+      QueryStringProperty<Transaction>(_entities[4].properties[12]);
 }

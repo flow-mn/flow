@@ -128,6 +128,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _newTransactionPage(TransactionType? type) {
+    // Generally, this wouldn't happen in production environment
     if (ObjectBox().box<Account>().count(limit: 1) == 0) {
       context.push("/account/new");
       return;
@@ -135,6 +136,6 @@ class _HomePageState extends State<HomePage>
 
     type ??= TransactionType.expense;
 
-    context.push("/transaction/new?type=${type.name}");
+    context.push("/transaction/new?type=${type.value}");
   }
 }

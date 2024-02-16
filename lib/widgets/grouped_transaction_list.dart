@@ -1,5 +1,8 @@
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
+import 'package:flow/l10n/extensions.dart';
+import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
 import 'package:flutter/widgets.dart';
@@ -24,8 +27,11 @@ class GroupedTransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final grouped = transactions.groupByDate();
-    final flattened = [
+    final bool combineTransfers =
+        LocalPreferences().combineTransferTransactions.get();
+
+    final Map<DateTime, List<Transaction>> grouped = transactions.groupByDate();
+    final List<Object> flattened = [
       for (final date in grouped.keys) ...[
         date,
         ...grouped[date]!,
@@ -44,15 +50,32 @@ class GroupedTransactionList extends StatelessWidget {
             ),
           ),
         (Transaction transaction) => TransactionListTile(
+            combineTransfers: combineTransfers,
             transaction: transaction,
             padding: itemPadding,
             dismissibleKey: ValueKey(transaction.id),
-            deleteFn: () =>
-                ObjectBox().box<Transaction>().remove(transaction.id),
+            deleteFn: () => deleteTransaction(context, transaction),
           ),
         (_) => Container(),
       },
       itemCount: flattened.length,
     );
+  }
+
+  Future<void> deleteTransaction(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    final String txnTitle =
+        transaction.title ?? "transaction.fallbackTitle".t(context);
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, txnTitle),
+    );
+
+    if (confirmation == true) {
+      transaction.delete();
+    }
   }
 }

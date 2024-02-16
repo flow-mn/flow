@@ -4,15 +4,13 @@
 [![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
 [![Support on Ko-fi](https://img.shields.io/badge/kofi-sadespresso-f5ccff?logo=ko-fi&logoColor=white&style=for-the-badge&label=Ko-fi)](https://ko-fi.com/sadespresso)
 [![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
+[![Join TestFlight group](https://img.shields.io/badge/TestFlight-join_test_group-f5ccff?logo=appstore&logoColor=white&style=for-the-badge)](https://testflight.apple.com/join/NH4ifijS)
 
 ## Preface
 
 Flow is a free, open-source, cross-platform personal finance tracking app.
 
 [**Will be**](#release-date) available on Android, iOS, and more[^1]
-
-[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
-to enhance the UI for desktop experience for now.
 
 ### Features
 
@@ -62,3 +60,12 @@ flutter run
 
 If you plan to run tests on your machine, ensure you've installed ObjectBox
 dynamic libraries. See more on <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
+
+Updates script[^2]:
+
+`bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
+
+[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
+to enhance the UI for desktop experience for now.
+
+[^2]: Please double-check from the official website, may be outdated

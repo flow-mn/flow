@@ -42,18 +42,21 @@ extension MoneyFormatters on num {
   String formatMoney({
     String? currency,
     bool includeCurrency = true,
-    bool useSymbol = true,
+    bool useCurrencySymbol = true,
     bool compact = false,
+    bool takeAbsoluteValue = false,
     int? decimalDigits,
   }) {
+    final num amount = takeAbsoluteValue ? abs() : this;
+
     if (!includeCurrency) {
       currency = "";
-      useSymbol = false;
+      useCurrencySymbol = false;
     } else {
       currency ??= LocalPreferences().getPrimaryCurrency();
     }
 
-    final String? symbol = useSymbol
+    final String? symbol = useCurrencySymbol
         ? NumberFormat.simpleCurrency(
             locale: Intl.defaultLocale,
             name: currency,
@@ -66,7 +69,7 @@ extension MoneyFormatters on num {
         name: currency,
         symbol: symbol,
         decimalDigits: decimalDigits,
-      ).format(this);
+      ).format(amount);
     }
 
     return NumberFormat.currency(
@@ -74,7 +77,7 @@ extension MoneyFormatters on num {
       name: currency,
       symbol: symbol,
       decimalDigits: decimalDigits,
-    ).format(this);
+    ).format(amount);
   }
 
   /// Returns money-formatted string in the primary currency

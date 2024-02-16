@@ -1,8 +1,6 @@
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -44,8 +42,8 @@ class Account implements EntityBase {
   /// Returns [IconData] from [iconCode]
   ///
   /// Falls back to [Symbols.error_rounded]
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   FlowIconData get icon {
     try {
       return FlowIconData.parse(iconCode);
@@ -56,6 +54,7 @@ class Account implements EntityBase {
 
   /// Returns current balance. This is calculated by summing up every single transaction
   @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   double get balance {
     return transactions.fold<double>(
       0,
@@ -77,38 +76,4 @@ class Account implements EntityBase {
   factory Account.fromJson(Map<String, dynamic> json) =>
       _$AccountFromJson(json);
   Map<String, dynamic> toJson() => _$AccountToJson(this);
-
-  void updateBalance(double targetBalance, {String? title}) {
-    final double delta = targetBalance - balance;
-
-    transactions.add(
-      Transaction(
-        amount: delta,
-        title: title,
-        currency: currency,
-      ),
-    );
-
-    ObjectBox().box<Account>().put(this);
-  }
-
-  /// Returns object id
-  ///
-  /// (From box.put())
-  int createTransaction({
-    required double amount,
-    DateTime? transactionDate,
-    String? title,
-    Category? category,
-  }) {
-    Transaction value = Transaction(
-      amount: amount,
-      currency: currency,
-      title: title,
-      transactionDate: transactionDate,
-    )..setCategory(category);
-
-    transactions.add(value);
-    return ObjectBox().box<Account>().put(this);
-  }
 }
