@@ -111,6 +111,8 @@
     "preferences.numpad.layout.modern": "Modern",
     "preferences.numpad.haptics": "Button feedback",
     "preferences.numpad.haptics.description": "Sound/haptic feedback upon click",
+    "preferences.combineTransferTransaction": "Combine transfers",
+    "preferences.combineTransferTransaction.description": "Show as single transaction",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",

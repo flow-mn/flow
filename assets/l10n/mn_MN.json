@@ -111,6 +111,8 @@
     "preferences.numpad.layout.modern": "Орчин үеийн",
     "preferences.numpad.haptics": "Товчны хариу",
     "preferences.numpad.haptics.description": "Дарах үед дуу/чичиргээ тоглуулна",
+    "preferences.combineTransferTransaction": "Шилжүүлгийг нэгтгэх",
+    "preferences.combineTransferTransaction.description": "Гүйлгээг нэгтгэж харах",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

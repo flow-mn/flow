@@ -19,6 +19,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   bool _themeBusy = false;
   bool _currencyBusy = false;
   bool _languageBusy = false;
+  bool _combineTransferBusy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +73,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 onTap: () => updatePrimaryCurrency(),
                 subtitle: Text(LocalPreferences().getPrimaryCurrency()),
                 trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
+              CheckboxListTile.adaptive(
+                controlAffinity: ListTileControlAffinity.trailing,
+                secondary: const Icon(Symbols.join_rounded),
+                value: LocalPreferences().combineTransferTransactions.get(),
+                onChanged: updateCombineTransferTransactions,
+                activeColor: context.colorScheme.primary,
+                title:
+                    Text("preferences.combineTransferTransaction".t(context)),
+                subtitle: Text(
+                  "preferences.combineTransferTransaction.description"
+                      .t(context),
+                ),
               ),
             ],
             color: context.colorScheme.onBackground.withAlpha(0x20),
@@ -156,6 +170,23 @@ class _PreferencesPageState extends State<PreferencesPage> {
       }
     } finally {
       _currencyBusy = false;
+    }
+  }
+
+  void updateCombineTransferTransactions(bool? value) async {
+    if (_combineTransferBusy || value == null) return;
+
+    setState(() {
+      _combineTransferBusy = true;
+    });
+
+    try {
+      await LocalPreferences().combineTransferTransactions.set(value);
+    } finally {
+      _combineTransferBusy = false;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

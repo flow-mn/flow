@@ -8,6 +8,7 @@ import 'package:flow/entity/transaction/extensions/default/transfer.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/prefs.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -66,7 +67,8 @@ extension TransactionListActions on List<Transaction> {
     for (final (index, transaction) in indexed) {
       final date = transaction.transactionDate.toLocal().startOfDay();
 
-      if (transaction.isTransfer) {
+      if (LocalPreferences().combineTransferTransactions.get() &&
+          transaction.isTransfer) {
         if (lastTransferIndex == null) {
           lastTransferIndex = index;
           lastTransferFrom = transaction;
