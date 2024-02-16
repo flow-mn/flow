@@ -13,6 +13,27 @@ import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
 extension TransactionActions on Transaction {
+  Transaction? findTransferOriginalTransaction() {
+    if (!isTransfer) return null;
+
+    final Transfer transfer = extensions.transfer!;
+
+    if (amount.isNegative) return this;
+
+    final Query<Transaction> query = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.uuid.equals(transfer.relatedTransactionUuid))
+        .build();
+
+    try {
+      return query.findFirst();
+    } catch (e) {
+      return null;
+    } finally {
+      query.close();
+    }
+  }
+
   bool delete() {
     if (isTransfer) {
       final Transfer? transfer = extensions.transfer;
@@ -142,10 +163,17 @@ extension AccountActions on Account {
     String? title,
     required Account targetAccount,
     required double amount,
+    DateTime? createdDate,
+    DateTime? transactionDate,
   }) {
     if (amount <= 0) {
-      throw ArgumentError.value(
-          amount, "amount", "Must be positive, and more than zero");
+      return targetAccount.transferTo(
+        targetAccount: this,
+        amount: amount.abs(),
+        title: title,
+        createdDate: createdDate,
+        transactionDate: transactionDate,
+      );
     }
 
     final String fromTransactionUuid = const Uuid().v4();
@@ -167,6 +195,8 @@ extension AccountActions on Account {
       title: resolvedTitle,
       extensions: [transferData],
       uuidOverride: fromTransactionUuid,
+      createdDate: createdDate,
+      transactionDate: transactionDate,
     );
     final int toTransaction = targetAccount.createTransaction(
       amount: amount,
@@ -175,6 +205,8 @@ extension AccountActions on Account {
         transferData.copyWith(relatedTransactionUuid: fromTransactionUuid)
       ],
       uuidOverride: toTransactionUuid,
+      createdDate: createdDate,
+      transactionDate: transactionDate,
     );
 
     return (fromTransaction, toTransaction);
@@ -186,6 +218,7 @@ extension AccountActions on Account {
   int createTransaction({
     required double amount,
     DateTime? transactionDate,
+    DateTime? createdDate,
     String? title,
     Category? category,
     List<TransactionExtension>? extensions,
@@ -196,6 +229,7 @@ extension AccountActions on Account {
       currency: currency,
       title: title,
       transactionDate: transactionDate,
+      createdDate: createdDate,
       uuidOverride: uuidOverride,
     )..setCategory(category);
 
