@@ -5,9 +5,7 @@ import 'dart:ui' as ui;
 import 'package:file_picker/file_picker.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
-import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
-import 'package:flow/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -41,77 +39,6 @@ Future<File?> pickFile() async {
   }
 
   return File(result.files.single.path!);
-}
-
-extension CustomDialogs on BuildContext {
-  Future<bool?> showConfirmDialog({
-    Function(bool?)? callback,
-    String? title,
-    bool isDeletionConfirmation = false,
-    Widget? child,
-  }) async {
-    final bool? result = await showModalBottomSheet(
-      context: this,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              title ?? "general.areYouSure".t(context),
-              style: context.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          if (child != null || isDeletionConfirmation) ...[
-            const SizedBox(height: 8.0),
-            child ??
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 16.0,
-                  ),
-                  child: Text(
-                    "general.delete.permanentWarning".t(context),
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: context.flowColors.expense,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-          ],
-          const SizedBox(height: 16.0),
-          ButtonBar(
-            children: [
-              Button(
-                onTap: () => context.pop(false),
-                child: Text(
-                  "general.cancel".t(context),
-                ),
-              ),
-              Button(
-                onTap: () => context.pop(false),
-                child: Text(
-                  isDeletionConfirmation
-                      ? "general.delete".t(context)
-                      : "general.confirm".t(context),
-                  style: isDeletionConfirmation
-                      ? TextStyle(color: context.flowColors.expense)
-                      : null,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-
-    if (callback != null) {
-      callback(result);
-    }
-    return null;
-  }
 }
 
 Future<XFile?> pickImage({
