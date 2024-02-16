@@ -5,7 +5,7 @@
 
     <application
         android:label="Flow"
-        android:name="${applicationName}"
+        android:name="Flow"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
