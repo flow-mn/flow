@@ -99,6 +99,12 @@ class Transaction implements EntityBase {
     _categoryUuid = value;
   }
 
+  /// This won't be saved until you call `Box.put()`
+  void setCategory(Category? newCategory) {
+    category.target = newCategory;
+    categoryUuid = newCategory?.uuid;
+  }
+
   @JsonKey(includeFromJson: false, includeToJson: false)
   final account = ToOne<Account>();
 
@@ -112,11 +118,6 @@ class Transaction implements EntityBase {
   }
 
   /// This won't be saved until you call `Box.put()`
-  void setCategory(Category? newCategory) {
-    category.target = newCategory;
-  }
-
-  /// This won't be saved until you call `Box.put()`
   void setAccount(Account? newAccount) {
     // TODO (sadespresso): When changing currencies, we can either ask
     // the user to re-enter the amount, or do an automatic conversion
@@ -126,6 +127,7 @@ class Transaction implements EntityBase {
     }
 
     account.target = newAccount;
+    accountUuid = newAccount?.uuid;
     currency = newAccount?.currency ?? currency;
   }
 
