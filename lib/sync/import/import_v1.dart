@@ -132,8 +132,7 @@ class ImportV1 extends Importer {
 
           return transaction;
         })
-        .where((transaction) => transaction != null)
-        .cast<Transaction>()
+        .nonNulls
         .toList();
 
     progressNotifier.value = ImportV1Progress.writingTransactions;

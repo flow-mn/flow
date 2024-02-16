@@ -802,7 +802,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2e1fcc6f4309d49227f15be96522078a5f4ce449"
+      resolved-ref: d4cc9f92105d13b7df403f2ca91530f5a9912b6c
       url: "https://github.com/sadespresso/flutter-pie-menu.git"
     source: git
     version: "3.1.3"

@@ -61,6 +61,7 @@ class _TransactionPageState extends State<TransactionPage> {
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
   late final List<Account> accounts;
+  late final List<Category> categories;
 
   dynamic error;
 
@@ -71,21 +72,12 @@ class _TransactionPageState extends State<TransactionPage> {
 
   late DateTime _transactionDate;
 
-  QueryBuilder<Account> _accountsQueryBuilder() => ObjectBox()
-      .box<Account>()
-      .query()
-      .order(Account_.lastUsedDate, flags: Order.descending);
-
-  QueryBuilder<Category> _categoriesQueryBuilder() =>
-      ObjectBox().box<Category>().query().order(Category_.name);
-
   @override
   void initState() {
     super.initState();
 
-    final Query<Account> accountsQuery = _accountsQueryBuilder().build();
-    accounts = accountsQuery.find();
-    accountsQuery.close();
+    accounts = ObjectBox().getAccounts();
+    categories = ObjectBox().getCategories();
 
     /// Transaction we're editing.
     _currentlyEditing = widget.isNewTransaction
@@ -100,15 +92,16 @@ class _TransactionPageState extends State<TransactionPage> {
     } else {
       _titleTextController =
           TextEditingController(text: _currentlyEditing?.title);
-      _amount = _currentlyEditing?.isTransfer == true
-          ? _currentlyEditing!.amount.abs()
-          : _currentlyEditing?.amount ?? 0;
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
       _transactionType = _currentlyEditing?.type ??
           widget.initialTransactionType ??
           TransactionType.expense;
+      _amount = _currentlyEditing?.isTransfer == true
+          ? _currentlyEditing!.amount.abs()
+          : _currentlyEditing?.amount ??
+              (_transactionType == TransactionType.expense ? -0 : 0);
       _selectedAccountTransferTo = accounts.firstWhereOrNull((account) =>
           account.uuid ==
           _currentlyEditing?.extensions.transfer?.toAccountUuid);
@@ -438,12 +431,6 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectCategory() async {
-    final Query<Category> categoriesQuery = _categoriesQueryBuilder().build();
-
-    final List<Category> categories = categoriesQuery.find();
-
-    categoriesQuery.close();
-
     if (categories.isEmpty) {
       inputAmount();
       return;
