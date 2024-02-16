@@ -158,13 +158,13 @@ class _ProfileTabState extends State<ProfileTab> {
   void import() async {
     try {
       await importBackupV1();
-      if (context.mounted) {
+      if (mounted) {
         context.showToast(
           text: "sync.import.successful".t(context),
         );
       }
     } catch (e) {
-      if (context.mounted) {
+      if (mounted) {
         context.showErrorToast(error: e);
       }
     }

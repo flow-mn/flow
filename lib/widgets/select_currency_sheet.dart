@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flow/data/currencies.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/theme/theme.dart';

@@ -11,9 +11,6 @@ Flow is a free, open-source, cross-platform personal finance tracking app.
 
 [**Will be**](#release-date) available on Android, iOS, and more[^1]
 
-[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
-to enhance the UI for desktop experience for now.
-
 ### Features
 
 * Multiple accounts
@@ -62,3 +59,12 @@ flutter run
 
 If you plan to run tests on your machine, ensure you've installed ObjectBox
 dynamic libraries. See more on <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
+
+Updates script[^2]:
+
+`bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
+
+[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
+to enhance the UI for desktop experience for now.
+
+[^2]: Please double-check from the official website, may be outdated
