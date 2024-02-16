@@ -6,6 +6,7 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/entity/transaction/extensions/default/transfer.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -68,7 +69,10 @@ class TransactionListTile extends StatelessWidget {
                   ),
                   Text(
                     [
-                      transaction.isTransfer
+                      (transaction.isTransfer &&
+                              LocalPreferences()
+                                  .combineTransferTransactions
+                                  .get())
                           ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
                           : transaction.account.target?.name,
                       transaction.transactionDate.format(payload: "LT"),
