@@ -95,9 +95,6 @@ class _TransactionPageState extends State<TransactionPage> {
             .get(widget.transactionId)
             ?.findTransferOriginalOrThis();
 
-    print("widget.isNewTransaction: ${widget.isNewTransaction}");
-    print("_currentlyEditing: $_currentlyEditing");
-
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
@@ -116,8 +113,6 @@ class _TransactionPageState extends State<TransactionPage> {
           account.uuid ==
           _currentlyEditing?.extensions.transfer?.toAccountUuid);
     }
-
-    print("_transactionType: $_transactionType bbb");
 
     if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
