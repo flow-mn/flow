@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
@@ -16,6 +17,7 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/transaction/type_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -88,14 +90,22 @@ class _TransactionPageState extends State<TransactionPage> {
     /// Transaction we're editing.
     _currentlyEditing = widget.isNewTransaction
         ? null
-        : ObjectBox().box<Transaction>().get(widget.transactionId);
+        : ObjectBox()
+            .box<Transaction>()
+            .get(widget.transactionId)
+            ?.findTransferOriginalOrThis();
+
+    print("widget.isNewTransaction: ${widget.isNewTransaction}");
+    print("_currentlyEditing: $_currentlyEditing");
 
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
       _titleTextController =
           TextEditingController(text: _currentlyEditing?.title);
-      _amount = _currentlyEditing?.amount ?? 0;
+      _amount = _currentlyEditing?.isTransfer == true
+          ? _currentlyEditing!.amount.abs()
+          : _currentlyEditing?.amount ?? 0;
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
@@ -106,6 +116,8 @@ class _TransactionPageState extends State<TransactionPage> {
           account.uuid ==
           _currentlyEditing?.extensions.transfer?.toAccountUuid);
     }
+
+    print("_transactionType: $_transactionType bbb");
 
     if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
@@ -149,7 +161,12 @@ class _TransactionPageState extends State<TransactionPage> {
               )
             ],
             leadingWidth: 40.0,
-            title: Text(_transactionType.localizedNameContext(context)),
+            title: TypeSelector(
+              current: _transactionType,
+              onChange: updateTransactionType,
+              canEdit: _currentlyEditing == null ||
+                  _currentlyEditing!.isTransfer == false,
+            ),
             titleTextStyle: context.textTheme.bodyLarge,
             centerTitle: true,
             backgroundColor: context.colorScheme.background,
@@ -325,6 +342,22 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
+  void updateTransactionType(TransactionType type) {
+    if (type == _transactionType ||
+        (_currentlyEditing != null && _currentlyEditing!.isTransfer)) return;
+
+    _transactionType = type;
+
+    final double amountSign = switch (type) {
+      TransactionType.expense => -1.0,
+      _ => 1.0,
+    };
+
+    _amount = _amount.abs() * amountSign;
+
+    setState(() {});
+  }
+
   void inputAmount() async {
     await LocalPreferences().updateTransitiveProperties();
     final hideCurrencySymbol =
@@ -338,6 +371,7 @@ class _TransactionPageState extends State<TransactionPage> {
         initialAmount: _amount,
         currency: _selectedAccount?.currency,
         hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
+        lockSign: true,
       ),
       isScrollControlled: true,
     );
@@ -352,24 +386,24 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectAccount() async {
-    final List<Account> fromAccounts = isTransfer
-        ? accounts
-            .where((element) => element.id != _selectedAccountTransferTo?.id)
-            .toList()
-        : accounts;
-
-    final Account? result = await showModalBottomSheet<Account>(
-      context: context,
-      builder: (context) => SelectAccountSheet(
-        accounts: fromAccounts,
-        currentlySelectedAccountId: _selectedAccount?.id,
-        titleOverride:
-            isTransfer ? "transaction.transfer.from.select".t(context) : null,
-      ),
-      isScrollControlled: true,
-    );
+    final Account? result = accounts.length == 1
+        ? accounts.single
+        : await showModalBottomSheet<Account>(
+            context: context,
+            builder: (context) => SelectAccountSheet(
+              accounts: accounts,
+              currentlySelectedAccountId: _selectedAccount?.id,
+              titleOverride: isTransfer
+                  ? "transaction.transfer.from.select".t(context)
+                  : null,
+            ),
+            isScrollControlled: true,
+          );
 
     setState(() {
+      if (result?.id == _selectedAccountTransferTo?.id) {
+        _selectedAccountTransferTo = null;
+      }
       _selectedAccount = result ?? _selectedAccount;
     });
 
@@ -384,18 +418,22 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void selectAccountTransferTo() async {
     final List<Account> toAccounts = accounts
-        .where((element) => element.id != _selectedAccount?.id)
+        .where((element) =>
+            element.currency == _selectedAccount?.currency &&
+            element.id != _selectedAccount?.id)
         .toList();
 
-    final Account? result = await showModalBottomSheet<Account>(
-      context: context,
-      builder: (context) => SelectAccountSheet(
-        accounts: toAccounts,
-        currentlySelectedAccountId: _selectedAccountTransferTo?.id,
-        titleOverride: "transaction.transfer.to.select".t(context),
-      ),
-      isScrollControlled: true,
-    );
+    final Account? result = toAccounts.length == 1
+        ? toAccounts.single
+        : await showModalBottomSheet<Account>(
+            context: context,
+            builder: (context) => SelectAccountSheet(
+              accounts: toAccounts,
+              currentlySelectedAccountId: _selectedAccountTransferTo?.id,
+              titleOverride: "transaction.transfer.to.select".t(context),
+            ),
+            isScrollControlled: true,
+          );
 
     setState(() {
       _selectedAccountTransferTo = result ?? _selectedAccountTransferTo;
@@ -489,6 +527,24 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void update({required String formattedTitle}) async {
     if (_currentlyEditing == null) return;
+
+    if (_transactionType == TransactionType.transfer) {
+      try {
+        _selectedAccount!.transferTo(
+          amount: _amount,
+          title: formattedTitle,
+          targetAccount: _selectedAccountTransferTo!,
+          createdDate: _currentlyEditing!.createdDate,
+          transactionDate: _currentlyEditing!.transactionDate,
+        );
+
+        _currentlyEditing!.delete();
+        context.pop();
+      } catch (e) {
+        log("[Transaction Page] Failed to update transfer transaction due to: $e");
+      }
+      return;
+    }
 
     _currentlyEditing!.setCategory(_selectedCategory);
     _currentlyEditing!.setAccount(_selectedAccount);

@@ -1,6 +1,7 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
@@ -26,8 +27,11 @@ class GroupedTransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final grouped = transactions.groupByDate();
-    final flattened = [
+    final bool combineTransfers =
+        LocalPreferences().combineTransferTransactions.get();
+
+    final Map<DateTime, List<Transaction>> grouped = transactions.groupByDate();
+    final List<Object> flattened = [
       for (final date in grouped.keys) ...[
         date,
         ...grouped[date]!,
@@ -46,6 +50,7 @@ class GroupedTransactionList extends StatelessWidget {
             ),
           ),
         (Transaction transaction) => TransactionListTile(
+            combineTransfers: combineTransfers,
             transaction: transaction,
             padding: itemPadding,
             dismissibleKey: ValueKey(transaction.id),

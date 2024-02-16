@@ -13,8 +13,8 @@ import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
 extension TransactionActions on Transaction {
-  Transaction? findTransferOriginalTransaction() {
-    if (!isTransfer) return null;
+  Transaction? findTransferOriginalOrThis() {
+    if (!isTransfer) return this;
 
     final Transfer transfer = extensions.transfer!;
 
@@ -28,7 +28,7 @@ extension TransactionActions on Transaction {
     try {
       return query.findFirst();
     } catch (e) {
-      return null;
+      return this;
     } finally {
       query.close();
     }
