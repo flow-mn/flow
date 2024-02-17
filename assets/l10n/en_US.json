@@ -74,6 +74,7 @@
     "transaction.new": "New transaction",
     "transaction.edit": "Edit transaction",
     "transaction.edit.selectAccount": "Select an account",
+    "transaction.edit.selectAccount.noPossibleChoice": "No accounts to select",
     "transaction.edit.selectCategory": "Select a category",
     "transaction.date": "Transaction date",
     "transaction.createdDate": "Created at",
