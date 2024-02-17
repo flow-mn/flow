@@ -31,8 +31,9 @@ class CategoryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         borderRadius: borderRadius,
-        onTap: onTapOverride?.value ??
-            (() => context.push("/category/${category.id}")),
+        onTap: onTapOverride == null
+            ? () => context.push("/category/${category.id}")
+            : onTapOverride!.value,
         child: Row(
           children: [
             FlowIcon(

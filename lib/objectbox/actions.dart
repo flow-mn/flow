@@ -49,6 +49,24 @@ extension MainActions on ObjectBox {
 
     return categories;
   }
+
+  Future<List<Account>> updateAccountOrderList({
+    List<Account>? accounts,
+    bool ignoreIfNoUnsetValue = false,
+  }) async {
+    accounts ??= await ObjectBox().box<Account>().getAllAsync();
+
+    if (ignoreIfNoUnsetValue &&
+        !accounts.any((element) => element.sortOrder < 0)) {
+      return accounts;
+    }
+
+    for (final e in accounts.indexed) {
+      accounts[e.$1].sortOrder = e.$1;
+    }
+
+    return await ObjectBox().box<Account>().putAndGetManyAsync(accounts);
+  }
 }
 
 extension TransactionActions on Transaction {

@@ -124,6 +124,8 @@
 
     "tabs.stats": "Тоо",
     "tabs.accounts": "Данснууд",
+    "tabs.accounts.reorder": "Дараалал өөрчлөх",
+    "tabs.accounts.reorder.guide": "Удаан дарж чирнэ үү",
     "tabs.profile": "Бүртгэл",
     "tabs.profile.preferences": "Тохиргоо",
     "tabs.profile.community": "Холбоо",
