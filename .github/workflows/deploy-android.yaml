@@ -35,5 +35,5 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: mn.flow.flow
-          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          releaseFile: ./build/app/outputs/bundle/release/app-release.aab
           track: beta
