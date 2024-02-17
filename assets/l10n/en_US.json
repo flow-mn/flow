@@ -48,6 +48,8 @@
     "setup.categories.preset.petrol": "Gas",
     "setup.categories.preset.shopping": "Shopping",
     "setup.categories.preset.entertainment": "Entertainment",
+    "setup.categories.preset.onlineServices": "Online subscriptions",
+    "setup.categories.preset.gifts": "Gifts",
     "setup.categories.preset.rent": "Rent",
     "setup.categories.preset.utils": "Utils",
     "setup.categories.preset.taxes": "Taxes",

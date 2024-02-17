@@ -55,6 +55,17 @@ List<Category> getCategoryPresets() {
     ),
     Category(
       id: -1,
+      name: "setup.categories.preset.onlineServices".tr(),
+      iconCode: const IconFlowIcon(Symbols.cloud_circle_rounded).toString(),
+    ),
+    Category(
+      id: -1,
+      name: "setup.categories.preset.gifts".tr(),
+      iconCode: const IconFlowIcon(Symbols.featured_seasonal_and_gifts_rounded)
+          .toString(),
+    ),
+    Category(
+      id: -1,
       name: "setup.categories.preset.rent".tr(),
       iconCode: const IconFlowIcon(Symbols.request_quote_rounded).toString(),
     ),
