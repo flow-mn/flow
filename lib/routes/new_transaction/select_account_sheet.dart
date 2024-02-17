@@ -1,5 +1,6 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/widgets/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +26,31 @@ class SelectAccountSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       title: Text(titleOverride ?? "transaction.edit.selectAccount".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
+      trailing: accounts.isEmpty
+          ? ButtonBar(
+              children: [
+                Button(
+                  onTap: () => context.pop(false),
+                  child: Text(
+                    "general.cancel".t(context),
+                  ),
+                ),
+              ],
+            )
+          : null,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (accounts.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  "transaction.edit.selectAccount.noPossibleChoice".t(context),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ...accounts.map(
               (account) => ListTile(
                 title: Text(account.name),

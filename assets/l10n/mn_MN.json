@@ -74,6 +74,7 @@
     "transaction.new": "Гүйлгээ нэмэх",
     "transaction.edit": "Гүйлгээ засварлах",
     "transaction.edit.selectAccount": "Данс сонгох",
+    "transaction.edit.selectAccount.noPossibleChoice": "Сонгох боломжтой данс алга байна",
     "transaction.edit.selectCategory": "Ангилал сонгох",
     "transaction.date": "Гүйлгээний огноо",
     "transaction.createdDate": "Үүсгэсэн огноо",
