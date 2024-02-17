@@ -9,6 +9,7 @@ jobs:
     needs:
       - "test"
     runs-on: "ubuntu-latest"
+    environment: Android release
     steps:
       - uses: actions/checkout@v4
       - name: Setup JDK 17
