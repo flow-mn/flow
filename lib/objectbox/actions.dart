@@ -126,7 +126,10 @@ extension TransactionActions on Transaction {
   }
 }
 
-extension TransactionListActions on List<Transaction> {
+extension TransactionListActions on Iterable<Transaction> {
+  Iterable<Transaction> get nonTransactions =>
+      where((transaction) => !transaction.isTransfer);
+
   double get incomeSum => where((transaction) => transaction.amount >= 0)
       .map((transaction) => transaction.amount)
       .fold(0, (value, element) => value + element);

@@ -19,7 +19,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
   bool _themeBusy = false;
   bool _currencyBusy = false;
   bool _languageBusy = false;
-  bool _combineTransferBusy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +56,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
+                title: Text("preferences.primaryCurrency".t(context)),
+                leading: const Icon(Symbols.universal_currency_alt_rounded),
+                onTap: () => updatePrimaryCurrency(),
+                subtitle: Text(LocalPreferences().getPrimaryCurrency()),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
+              ListTile(
                 title: Text("preferences.numpad".t(context)),
                 leading: const Icon(Symbols.dialpad_rounded),
                 onTap: openNumpadPrefs,
@@ -68,24 +74,15 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
-                title: Text("preferences.primaryCurrency".t(context)),
-                leading: const Icon(Symbols.universal_currency_alt_rounded),
-                onTap: () => updatePrimaryCurrency(),
-                subtitle: Text(LocalPreferences().getPrimaryCurrency()),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              CheckboxListTile.adaptive(
-                controlAffinity: ListTileControlAffinity.trailing,
-                secondary: const Icon(Symbols.join_rounded),
-                value: LocalPreferences().combineTransferTransactions.get(),
-                onChanged: updateCombineTransferTransactions,
-                activeColor: context.colorScheme.primary,
-                title:
-                    Text("preferences.combineTransferTransaction".t(context)),
+                title: Text("preferences.transfer".t(context)),
+                leading: const Icon(Symbols.sync_alt_rounded),
+                onTap: openTransferPrefs,
                 subtitle: Text(
-                  "preferences.combineTransferTransaction.description"
-                      .t(context),
+                  "preferences.transfer.description".t(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
+                trailing: const Icon(Symbols.chevron_right_rounded),
               ),
             ],
             color: context.colorScheme.onBackground.withAlpha(0x20),
@@ -173,26 +170,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
-  void updateCombineTransferTransactions(bool? value) async {
-    if (_combineTransferBusy || value == null) return;
-
-    setState(() {
-      _combineTransferBusy = true;
-    });
-
-    try {
-      await LocalPreferences().combineTransferTransactions.set(value);
-    } finally {
-      _combineTransferBusy = false;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
   void openNumpadPrefs() async {
     await context.push("/preferences/numpad");
 
+    // Rebuild to update description text
     if (mounted) setState(() {});
+  }
+
+  void openTransferPrefs() async {
+    await context.push("/preferences/transfer");
   }
 }

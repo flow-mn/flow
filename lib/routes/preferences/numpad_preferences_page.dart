@@ -36,17 +36,15 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: NumpadSelectorRadio(
+                      child: NumpadSelectorRadio.classic(
                         onTap: () => updateLayoutPreference(false),
-                        isPhoneLayout: false,
                         currentlyUsingPhoneLayout: usePhoneNumpadLayout,
                       ),
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
-                      child: NumpadSelectorRadio(
+                      child: NumpadSelectorRadio.phone(
                         onTap: () => updateLayoutPreference(true),
-                        isPhoneLayout: true,
                         currentlyUsingPhoneLayout: usePhoneNumpadLayout,
                       ),
                     ),

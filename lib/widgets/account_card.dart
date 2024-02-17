@@ -1,6 +1,7 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
@@ -16,16 +17,27 @@ class AccountCard extends StatelessWidget {
 
   final bool useCupertinoContextMenu;
 
+  final BorderRadius borderRadius;
+
   const AccountCard({
     super.key,
     required this.account,
     required this.useCupertinoContextMenu,
     this.onTapOverride,
+    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(24.0);
+    final bool excludeTransferFromFlow =
+        LocalPreferences().excludeTransferFromFlow.get();
+
+    final double incomeSum = excludeTransferFromFlow
+        ? account.transactions.nonTransactions.incomeSum
+        : account.transactions.incomeSum;
+    final double expenseSum = excludeTransferFromFlow
+        ? account.transactions.nonTransactions.expenseSum
+        : account.transactions.expenseSum;
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -85,7 +97,7 @@ class AccountCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      account.transactions.incomeSum.formatMoney(
+                      incomeSum.formatMoney(
                         currency: account.currency,
                       ),
                       style: context.textTheme.bodyLarge,
@@ -93,7 +105,7 @@ class AccountCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      account.transactions.expenseSum.formatMoney(
+                      expenseSum.formatMoney(
                         currency: account.currency,
                       ),
                       style: context.textTheme.bodyLarge,

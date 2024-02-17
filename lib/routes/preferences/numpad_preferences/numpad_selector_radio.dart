@@ -9,12 +9,16 @@ class NumpadSelectorRadio extends StatelessWidget {
   final bool isPhoneLayout;
   final bool currentlyUsingPhoneLayout;
 
-  const NumpadSelectorRadio({
+  const NumpadSelectorRadio.classic({
     super.key,
     required this.onTap,
-    required this.isPhoneLayout,
     required this.currentlyUsingPhoneLayout,
-  });
+  }) : isPhoneLayout = false;
+  const NumpadSelectorRadio.phone({
+    super.key,
+    required this.onTap,
+    required this.currentlyUsingPhoneLayout,
+  }) : isPhoneLayout = true;
 
   @override
   Widget build(BuildContext context) {
