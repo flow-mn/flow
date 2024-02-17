@@ -3,6 +3,8 @@ import 'dart:math' hide log;
 
 import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
+import 'package:flow/data/setup/default_accounts.dart';
+import 'package:flow/data/setup/default_categories.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
@@ -97,94 +99,102 @@ class ObjectBox {
   }
 
   Future<void> _createAndPutDebugData() async {
-    Category categoryServices = Category(
-      iconCode: const IconFlowIcon(Symbols.electrical_services).toString(),
-      name: "Online subscriptions",
-    );
-    Category categoryPaychecks = Category(
-      iconCode: const IconFlowIcon(Symbols.payments_rounded).toString(),
-      name: "Paycheck",
-    );
-    Category categoryEducation = Category(
-      iconCode: const IconFlowIcon(Symbols.school_rounded).toString(),
-      name: "Education",
-    );
-    Category categoryShopping = Category(
-      iconCode: const IconFlowIcon(Symbols.shopping_bag_rounded).toString(),
-      name: "Shopping",
-    );
-    Category categoryEatOut = Category(
-      iconCode: const IconFlowIcon(Symbols.restaurant_rounded).toString(),
-      name: "Eating out",
-    );
-    Category categoryBeverages = Category(
-      iconCode: const IconFlowIcon(Symbols.coffee_rounded).toString(),
-      name: "Coffee & tea",
-    );
+    final categories =
+        await box<Category>().putAndGetManyAsync(getCategoryPresets().map((e) {
+      e.id = 0;
+      return e;
+    }).toList());
 
-    box<Category>().putMany([
-      categoryServices,
-      categoryPaychecks,
-      categoryEducation,
-      categoryShopping,
-      categoryEatOut,
-      categoryBeverages,
-    ]);
+    final services = categories.firstWhere((element) =>
+        element.iconCode ==
+        const IconFlowIcon(Symbols.cloud_circle_rounded).toString());
+    final coffee = categories.firstWhere((element) =>
+        element.iconCode ==
+        const IconFlowIcon(Symbols.local_cafe_rounded).toString());
+    final gift = categories.firstWhere((element) =>
+        element.iconCode ==
+        const IconFlowIcon(Symbols.featured_seasonal_and_gifts_rounded)
+            .toString());
+    final paycheck = categories.firstWhere((element) =>
+        element.iconCode ==
+        const IconFlowIcon(Symbols.wallet_rounded).toString());
+    final rent = categories.firstWhere((element) =>
+        element.iconCode ==
+        const IconFlowIcon(Symbols.request_quote_rounded).toString());
 
-    Account accountAlpha = Account(
-      name: "Alpha",
-      currency: "MNT",
-      iconCode: const IconFlowIcon(Symbols.variables_rounded).toString(),
-    )
+    final [main, cash, savings] = getAccountPresets('USD').map((e) {
+      e.id = 0;
+      return e;
+    }).toList();
+
+    main
       ..updateBalance(
-        384500,
-        title: "Balance Nov 2023",
+        420.69,
+        title: "Initial balance",
+        transactionDate: DateTime.now() - const Duration(days: 5),
       )
       ..createTransaction(
-        amount: -5241,
-        title: "iCould",
-        category: categoryServices,
-        transactionDate: DateTime.now() - const Duration(days: 7),
+        amount: -1.99,
+        title: "iCloud",
+        category: services,
+        transactionDate: DateTime.now() - const Duration(days: 4),
       )
       ..createTransaction(
-        amount: -27500,
+        amount: -15.49,
         title: "Netflix",
-        category: categoryServices,
+        category: services,
         transactionDate: DateTime.now() - const Duration(days: 4),
       )
       ..createTransaction(
-        amount: 20000,
-        title: "Translation work pay",
-        category: categoryPaychecks,
+        amount: -6.50,
+        title: "Iced Mocha",
+        category: coffee,
         transactionDate: DateTime.now() - const Duration(days: 4),
-      );
-
-    Account accountBeta = Account(
-      name: "Beta",
-      currency: "MNT",
-      iconCode: const IconFlowIcon(Symbols.bento_rounded).toString(),
-    )
-      ..updateBalance(36850000, title: "Savings starting balance")
-      ..createTransaction(
-        amount: -3875000,
-        title: "Tuition for Fall",
-        category: categoryEducation,
-        transactionDate: DateTime.now() - const Duration(days: 21),
       )
       ..createTransaction(
-        amount: -12690000,
-        title: "Macbook pro",
-        category: categoryShopping,
-        transactionDate: DateTime.now() - const Duration(days: 21),
+        amount: -6.50,
+        title: "Iced Mocha",
+        category: coffee,
+        transactionDate: DateTime.now() - const Duration(days: 3),
       )
       ..createTransaction(
-        amount: 512000,
-        title: "Salary portion",
-        category: categoryPaychecks,
-        transactionDate: DateTime.now() - const Duration(days: 21),
+        amount: -6.50,
+        title: "Iced Mocha",
+        category: coffee,
+        transactionDate: DateTime.now() - const Duration(days: 2),
+      )
+      ..createTransaction(
+        amount: 680.98,
+        title: "Paycheck (last month)",
+        category: paycheck,
+        transactionDate: DateTime.now() - const Duration(days: 1),
+      )
+      ..createTransaction(
+        amount: -99.01,
+        title: "Gift for Stella",
+        category: gift,
+        transactionDate: DateTime.now() - const Duration(days: 1),
       );
 
-    await box<Account>().putManyAsync([accountAlpha, accountBeta]);
+    savings
+      ..updateBalance(69420,
+          title: "Savings initial balance",
+          transactionDate: DateTime.now() - const Duration(days: 6))
+      ..createTransaction(
+        amount: -1960,
+        title: "Rent",
+        category: rent,
+        transactionDate: DateTime.now() - const Duration(days: 6),
+      );
+
+    final [main2, ..., savings2] =
+        await box<Account>().putAndGetManyAsync([main, cash, savings]);
+
+    main2.transferTo(
+      amount: 250,
+      targetAccount: savings2,
+      transactionDate: DateTime.now() - const Duration(days: 1),
+    );
   }
 
   Future<void> addDummyData() async {

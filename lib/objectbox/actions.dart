@@ -179,7 +179,11 @@ extension AccountActions on Account {
     }
   }
 
-  void updateBalance(double targetBalance, {String? title}) {
+  void updateBalance(
+    double targetBalance, {
+    String? title,
+    DateTime? transactionDate,
+  }) {
     final double delta = targetBalance - balance;
 
     transactions.add(
@@ -187,6 +191,7 @@ extension AccountActions on Account {
         amount: delta,
         title: title,
         currency: currency,
+        transactionDate: transactionDate,
       ),
     );
 
