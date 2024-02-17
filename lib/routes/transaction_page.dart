@@ -411,8 +411,6 @@ class _TransactionPageState extends State<TransactionPage> {
             element.id != _selectedAccount?.id)
         .toList();
 
-    // TODO what if they have no compatible account
-
     final Account? result = toAccounts.length == 1
         ? toAccounts.single
         : await showModalBottomSheet<Account>(
