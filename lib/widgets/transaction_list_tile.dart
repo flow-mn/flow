@@ -108,19 +108,13 @@ class TransactionListTile extends StatelessWidget {
   }
 
   Widget _buildAmountText(BuildContext context) {
-    final Color color = switch ((transaction.amount, transaction.isTransfer)) {
-      (_, true) => context.colorScheme.onBackground,
-      (<= 0, _) => context.flowColors.expense,
-      (_, _) => context.flowColors.income,
-    };
-
     return Text(
       transaction.amount.formatMoney(
         currency: transaction.currency,
         takeAbsoluteValue: transaction.isTransfer && combineTransfers,
       ),
       style: context.textTheme.bodyLarge?.copyWith(
-        color: color,
+        color: transaction.type.color(context),
         fontWeight: FontWeight.bold,
       ),
       maxLines: 1,

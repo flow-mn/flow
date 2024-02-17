@@ -1,3 +1,4 @@
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/theme/flow_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -11,4 +12,12 @@ extension TextStyleHelper on TextStyle {
   TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
   TextStyle semi(BuildContext context) =>
       copyWith(color: context.flowColors.semi);
+}
+
+extension TransactionTypeColor on TransactionType {
+  Color color(BuildContext context) => switch (this) {
+        TransactionType.income => context.flowColors.income,
+        TransactionType.expense => context.flowColors.expense,
+        TransactionType.transfer => context.colorScheme.onBackground,
+      };
 }

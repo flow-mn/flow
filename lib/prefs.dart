@@ -22,6 +22,7 @@ class LocalPreferences {
   late final BoolSettingsEntry usePhoneNumpadLayout;
   late final BoolSettingsEntry enableNumpadHapticFeedback;
   late final BoolSettingsEntry combineTransferTransactions;
+  late final BoolSettingsEntry excludeTransferFromFlow;
 
   late final BoolSettingsEntry completedInitialSetup;
 
@@ -52,6 +53,11 @@ class LocalPreferences {
       key: "flow.combineTransferTransactions",
       preferences: _prefs,
       initialValue: true,
+    );
+    excludeTransferFromFlow = BoolSettingsEntry(
+      key: "flow.excludeTransferFromFlow",
+      preferences: _prefs,
+      initialValue: false,
     );
 
     completedInitialSetup = BoolSettingsEntry(

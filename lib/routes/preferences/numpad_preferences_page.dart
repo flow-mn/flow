@@ -1,6 +1,6 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
-import 'package:flow/routes/preferences/numpad_preferences/numpad_selector.dart';
+import 'package:flow/routes/preferences/numpad_preferences/numpad_selector_radio.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,10 @@ class NumpadPreferencesPage extends StatefulWidget {
 class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
   @override
   Widget build(BuildContext context) {
-    final usePhoneNumpadLayout = LocalPreferences().usePhoneNumpadLayout.get();
+    final bool usePhoneNumpadLayout =
+        LocalPreferences().usePhoneNumpadLayout.get();
+    final bool enableNumpadHapticFeedback =
+        LocalPreferences().enableNumpadHapticFeedback.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -33,17 +36,15 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: NumpadSelectorRadio(
+                      child: NumpadSelectorRadio.classic(
                         onTap: () => updateLayoutPreference(false),
-                        isPhoneLayout: false,
                         currentlyUsingPhoneLayout: usePhoneNumpadLayout,
                       ),
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
-                      child: NumpadSelectorRadio(
+                      child: NumpadSelectorRadio.phone(
                         onTap: () => updateLayoutPreference(true),
-                        isPhoneLayout: true,
                         currentlyUsingPhoneLayout: usePhoneNumpadLayout,
                       ),
                     ),
@@ -53,7 +54,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
               const SizedBox(height: 32.0),
               CheckboxListTile.adaptive(
                 title: Text("preferences.numpad.haptics".t(context)),
-                value: LocalPreferences().enableNumpadHapticFeedback.get(),
+                value: enableNumpadHapticFeedback,
                 onChanged: updateHapticUsage,
                 subtitle:
                     Text("preferences.numpad.haptics.description".t(context)),
@@ -76,7 +77,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
   void updateHapticUsage(bool? enableHaptics) async {
     if (enableHaptics == null) return;
 
-    LocalPreferences().enableNumpadHapticFeedback.set(enableHaptics);
+    await LocalPreferences().enableNumpadHapticFeedback.set(enableHaptics);
     if (mounted) setState(() {});
   }
 }

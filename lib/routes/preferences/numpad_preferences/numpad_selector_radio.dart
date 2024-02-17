@@ -9,12 +9,16 @@ class NumpadSelectorRadio extends StatelessWidget {
   final bool isPhoneLayout;
   final bool currentlyUsingPhoneLayout;
 
-  const NumpadSelectorRadio({
+  const NumpadSelectorRadio.classic({
     super.key,
     required this.onTap,
-    required this.isPhoneLayout,
     required this.currentlyUsingPhoneLayout,
-  });
+  }) : isPhoneLayout = false;
+  const NumpadSelectorRadio.phone({
+    super.key,
+    required this.onTap,
+    required this.currentlyUsingPhoneLayout,
+  }) : isPhoneLayout = true;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +48,13 @@ class NumpadSelectorRadio extends StatelessWidget {
                         ? "preferences.numpad.layout.modern".t(context)
                         : "preferences.numpad.layout.classic".t(context)),
                     const SizedBox(height: 8.0),
-                    Radio.adaptive(
-                      value: isPhoneLayout,
-                      groupValue: currentlyUsingPhoneLayout,
-                      onChanged: (_) {},
-                      activeColor: context.colorScheme.primary,
+                    IgnorePointer(
+                      child: Radio.adaptive(
+                        value: isPhoneLayout,
+                        groupValue: currentlyUsingPhoneLayout,
+                        onChanged: (_) {},
+                        activeColor: context.colorScheme.primary,
+                      ),
                     ),
                   ],
                 ),

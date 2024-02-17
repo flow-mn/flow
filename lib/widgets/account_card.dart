@@ -16,16 +16,27 @@ class AccountCard extends StatelessWidget {
 
   final bool useCupertinoContextMenu;
 
+  final bool excludeTransfersInTotal;
+
+  final BorderRadius borderRadius;
+
   const AccountCard({
     super.key,
     required this.account,
     required this.useCupertinoContextMenu,
     this.onTapOverride,
+    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    required this.excludeTransfersInTotal,
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(24.0);
+    final double incomeSum = excludeTransfersInTotal
+        ? account.transactions.nonTransactions.incomeSum
+        : account.transactions.incomeSum;
+    final double expenseSum = excludeTransfersInTotal
+        ? account.transactions.nonTransactions.expenseSum
+        : account.transactions.expenseSum;
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -85,7 +96,7 @@ class AccountCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      account.transactions.incomeSum.formatMoney(
+                      incomeSum.formatMoney(
                         currency: account.currency,
                       ),
                       style: context.textTheme.bodyLarge,
@@ -93,7 +104,7 @@ class AccountCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      account.transactions.expenseSum.formatMoney(
+                      expenseSum.formatMoney(
                         currency: account.currency,
                       ),
                       style: context.textTheme.bodyLarge,
