@@ -23,7 +23,9 @@ jobs:
           channel: stable
       - run: flutter pub get
       - name: Run tests
-        run: flutter test
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
+          flutter test
       - name: Setup secrets
         run: |
           echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" | base64 --decode > ./android/key.properties
