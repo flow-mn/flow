@@ -2,6 +2,7 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/main.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/routes/home/accounts_tab.dart';
 import 'package:flow/routes/home/home_tab.dart';
 import 'package:flow/routes/home/profile_tab.dart';
@@ -47,14 +48,12 @@ class _HomePageState extends State<HomePage>
       });
     });
 
-    // Future.delayed(const Duration(milliseconds: 200)).then((_) {
-    // if (!LocalPreferences().completedInitialSetup.get()) {
-    // context.pushReplacement("/setup");
-    // LocalPreferences()
-    // .completedInitialSetup
-    // .set(!LocalPreferences().completedInitialSetup.get());
-    // }
-    // });
+    Future.delayed(const Duration(milliseconds: 200)).then((_) {
+      if (!LocalPreferences().completedInitialSetup.get()) {
+        context.pushReplacement("/setup");
+        LocalPreferences().completedInitialSetup.set(true);
+      }
+    });
   }
 
   @override
