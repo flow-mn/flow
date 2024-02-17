@@ -27,7 +27,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 1185109045851542775),
       name: 'Account',
-      lastPropertyId: const obx_int.IdUid(10, 1464855086006613388),
+      lastPropertyId: const obx_int.IdUid(11, 4051834862557712608),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -66,6 +66,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(10, 1464855086006613388),
             name: 'excludeFromTotalBalance',
             type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 4051834862557712608),
+            name: 'sortOrder',
+            type: 6,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -355,7 +360,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final nameOffset = fbb.writeString(object.name);
           final currencyOffset = fbb.writeString(object.currency);
           final iconCodeOffset = fbb.writeString(object.iconCode);
-          fbb.startTable(11);
+          fbb.startTable(12);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, uuidOffset);
           fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -363,6 +368,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(4, currencyOffset);
           fbb.addOffset(6, iconCodeOffset);
           fbb.addBool(9, object.excludeFromTotalBalance);
+          fbb.addInt64(10, object.sortOrder);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -379,6 +385,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 16, '');
           final excludeFromTotalBalanceParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+          final sortOrderParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
           final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
           final object = Account(
@@ -387,6 +395,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               currency: currencyParam,
               iconCode: iconCodeParam,
               excludeFromTotalBalance: excludeFromTotalBalanceParam,
+              sortOrder: sortOrderParam,
               createdDate: createdDateParam)
             ..uuid = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 6, '');
@@ -645,6 +654,10 @@ class Account_ {
   /// see [Account.excludeFromTotalBalance]
   static final excludeFromTotalBalance =
       obx.QueryBooleanProperty<Account>(_entities[0].properties[6]);
+
+  /// see [Account.sortOrder]
+  static final sortOrder =
+      obx.QueryIntegerProperty<Account>(_entities[0].properties[7]);
 
   /// see [Account.transactions]
   static final transactions =

@@ -28,6 +28,8 @@ class Account implements EntityBase {
   /// Currency code complying with [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
   String currency;
 
+  int sortOrder;
+
   @Backlink('account')
   @JsonKey(includeFromJson: false, includeToJson: false)
   final transactions = ToMany<Transaction>();
@@ -65,6 +67,7 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     this.excludeFromTotalBalance = false,
+    this.sortOrder = -1,
     DateTime? createdDate,
   })  : createdDate = createdDate ?? DateTime.now(),
         uuid = const Uuid().v4();

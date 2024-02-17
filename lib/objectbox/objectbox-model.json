@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1185109045851542775",
-      "lastPropertyId": "10:1464855086006613388",
+      "lastPropertyId": "11:4051834862557712608",
       "name": "Account",
       "properties": [
         {
@@ -47,6 +47,11 @@
           "id": "10:1464855086006613388",
           "name": "excludeFromTotalBalance",
           "type": 1
+        },
+        {
+          "id": "11:4051834862557712608",
+          "name": "sortOrder",
+          "type": 6
         }
       ],
       "relations": []

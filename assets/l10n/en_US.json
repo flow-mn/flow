@@ -124,6 +124,8 @@
 
     "tabs.stats": "Stats",
     "tabs.accounts": "Accounts",
+    "tabs.accounts.reorder": "Reorder accounts",
+    "tabs.accounts.reorder.guide": "Long press and drag",
     "tabs.profile": "Profile",
     "tabs.profile.preferences": "Preferences",
     "tabs.profile.community": "Community",
