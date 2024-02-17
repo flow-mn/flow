@@ -1,0 +1,39 @@
+name: Deploy Android
+on:
+  push:
+    branches:
+      - "release"
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: "zulu"
+          java-version: "17"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - name: Build appbundle
+        run: flutter build appbundle --no-tree-shake-icons
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGNING_FILE }}
+          alias: ${{ secrets.SIGNING_ALIAS }}
+          keyStorePassword: ${{ secrets.SIGNING_PASSWORD }}
+          keyPassword: ${{ secrets.SIGNING_KEY }}
+      - name: Create service_account.json
+        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT }}' > service_account.json
+      - name: Deploy to Open Testing
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service_account.json
+          packageName: mn.flow.flow
+          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          track: beta
