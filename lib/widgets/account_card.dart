@@ -1,7 +1,6 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
-import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
@@ -17,6 +16,8 @@ class AccountCard extends StatelessWidget {
 
   final bool useCupertinoContextMenu;
 
+  final bool excludeTransfersInTotal;
+
   final BorderRadius borderRadius;
 
   const AccountCard({
@@ -25,17 +26,15 @@ class AccountCard extends StatelessWidget {
     required this.useCupertinoContextMenu,
     this.onTapOverride,
     this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    required this.excludeTransfersInTotal,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool excludeTransferFromFlow =
-        LocalPreferences().excludeTransferFromFlow.get();
-
-    final double incomeSum = excludeTransferFromFlow
+    final double incomeSum = excludeTransfersInTotal
         ? account.transactions.nonTransactions.incomeSum
         : account.transactions.incomeSum;
-    final double expenseSum = excludeTransferFromFlow
+    final double expenseSum = excludeTransfersInTotal
         ? account.transactions.nonTransactions.expenseSum
         : account.transactions.expenseSum;
 

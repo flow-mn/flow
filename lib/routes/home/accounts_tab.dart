@@ -5,6 +5,7 @@ import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/account_card.dart';
@@ -65,44 +66,57 @@ class _AccountsTabState extends State<AccountsTab>
                     padding: const EdgeInsets.all(16.0).copyWith(bottom: 0.0),
                     child: buildHeader(context),
                   ),
-                  Expanded(
-                    child: _reordering
-                        ? ReorderableListView.builder(
-                            padding: const EdgeInsets.all(16.0)
-                                .copyWith(bottom: 96.0),
-                            itemBuilder: (context, index) => Padding(
-                              key: ValueKey(accounts[index].uuid),
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: AccountCard(
-                                account: accounts[index],
-                                useCupertinoContextMenu: false,
-                              ),
-                            ),
-                            proxyDecorator: proxyDecorator,
-                            itemCount: accounts.length,
-                            onReorder: (oldIndex, newIndex) =>
-                                onReorder(accounts, oldIndex, newIndex),
-                          )
-                        : ListView(
-                            padding: const EdgeInsets.all(16.0),
-                            children: [
-                              ...accounts.map(
-                                (account) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 16.0),
-                                  child: AccountCard(
-                                    account: account,
-                                    useCupertinoContextMenu: Platform.isIOS,
+                  ValueListenableBuilder(
+                      valueListenable: LocalPreferences()
+                          .excludeTransferFromFlow
+                          .valueNotifier,
+                      builder: (context, excludeTransfersInTotal, child) {
+                        return Expanded(
+                          child: _reordering
+                              ? ReorderableListView.builder(
+                                  padding: const EdgeInsets.all(16.0)
+                                      .copyWith(bottom: 96.0),
+                                  itemBuilder: (context, index) => Padding(
+                                    key: ValueKey(accounts[index].uuid),
+                                    padding:
+                                        const EdgeInsets.only(bottom: 16.0),
+                                    child: AccountCard(
+                                      account: accounts[index],
+                                      useCupertinoContextMenu: false,
+                                      excludeTransfersInTotal:
+                                          excludeTransfersInTotal == true,
+                                    ),
                                   ),
+                                  proxyDecorator: proxyDecorator,
+                                  itemCount: accounts.length,
+                                  onReorder: (oldIndex, newIndex) =>
+                                      onReorder(accounts, oldIndex, newIndex),
+                                )
+                              : ListView(
+                                  padding: const EdgeInsets.all(16.0),
+                                  children: [
+                                    ...accounts.map(
+                                      (account) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16.0),
+                                        child: AccountCard(
+                                          account: account,
+                                          useCupertinoContextMenu:
+                                              Platform.isIOS,
+                                          excludeTransfersInTotal:
+                                              excludeTransfersInTotal == true,
+                                        ),
+                                      ),
+                                    ),
+                                    AccountCardSkeleton(
+                                      onTap: () => context.push("/account/new"),
+                                    ),
+                                    const SizedBox(height: 16.0),
+                                    const SizedBox(height: 64.0),
+                                  ],
                                 ),
-                              ),
-                              AccountCardSkeleton(
-                                onTap: () => context.push("/account/new"),
-                              ),
-                              const SizedBox(height: 16.0),
-                              const SizedBox(height: 64.0),
-                            ],
-                          ),
-                  ),
+                        );
+                      }),
                 ],
               ),
           };
