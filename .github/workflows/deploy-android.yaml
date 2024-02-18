@@ -27,13 +27,12 @@ jobs:
         run: |
           echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
           echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
-          echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > service_account.json
       - name: Build appbundle
         run: flutter build appbundle --no-tree-shake-icons
       - name: Deploy to Open Testing
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJson: service_account.json
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
           packageName: mn.flow.flow
-          releaseFile: ./build/app/outputs/bundle/release/app-release.aab
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: beta
