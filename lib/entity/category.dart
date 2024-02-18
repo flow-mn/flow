@@ -2,6 +2,7 @@ import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
@@ -34,7 +35,7 @@ class Category implements EntityBase {
     try {
       return FlowIconData.parse(iconCode);
     } catch (e) {
-      return FlowIconData.emoji("🤷");
+      return FlowIconData.icon(Symbols.category_rounded);
     }
   }
 
