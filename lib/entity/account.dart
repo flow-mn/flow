@@ -1,7 +1,6 @@
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:objectbox/objectbox.dart';
@@ -38,16 +37,13 @@ class Account implements EntityBase {
 
   bool excludeFromTotalBalance;
 
-  /// Returns [IconData] from [iconCode]
-  ///
-  /// Falls back to [Symbols.error_rounded]
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   FlowIconData get icon {
     try {
       return FlowIconData.parse(iconCode);
     } catch (e) {
-      return FlowIconData.emoji("🤷");
+      return FlowIconData.icon(Symbols.wallet_rounded);
     }
   }
 

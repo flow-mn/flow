@@ -47,7 +47,8 @@ class _AccountPageState extends State<AccountPage> {
   late final Account? _currentlyEditing;
 
   String get iconCodeOrError =>
-      _iconData?.toString() ?? FlowIconData.emoji("❌").toString();
+      _iconData?.toString() ??
+      FlowIconData.icon(Symbols.wallet_rounded).toString();
 
   dynamic error;
 

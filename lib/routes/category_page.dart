@@ -40,7 +40,8 @@ class _CategoryPageState extends State<CategoryPage> {
   late final Category? _currentlyEditing;
 
   String get iconCodeOrError =>
-      _iconData?.toString() ?? FlowIconData.emoji("❌").toString();
+      _iconData?.toString() ??
+      FlowIconData.icon(Symbols.category_rounded).toString();
 
   dynamic error;
 
