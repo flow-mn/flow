@@ -99,6 +99,11 @@ class ObjectBox {
   }
 
   Future<void> _createAndPutDebugData() async {
+    if (box<Transaction>().count(limit: 1) > 0) {
+      addDummyData();
+      return;
+    }
+
     final categories =
         await box<Category>().putAndGetManyAsync(getCategoryPresets().map((e) {
       e.id = 0;
@@ -128,48 +133,48 @@ class ObjectBox {
     }).toList();
 
     main
-      ..updateBalance(
+      ..updateBalanceAndSave(
         420.69,
         title: "Initial balance",
         transactionDate: DateTime.now() - const Duration(days: 5),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -1.99,
         title: "iCloud",
         category: services,
         transactionDate: DateTime.now() - const Duration(days: 4),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -15.49,
         title: "Netflix",
         category: services,
         transactionDate: DateTime.now() - const Duration(days: 4),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -6.50,
         title: "Iced Mocha",
         category: coffee,
         transactionDate: DateTime.now() - const Duration(days: 4),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -6.50,
         title: "Iced Mocha",
         category: coffee,
         transactionDate: DateTime.now() - const Duration(days: 3),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -6.50,
         title: "Iced Mocha",
         category: coffee,
         transactionDate: DateTime.now() - const Duration(days: 2),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: 680.98,
         title: "Paycheck (last month)",
         category: paycheck,
         transactionDate: DateTime.now() - const Duration(days: 1),
       )
-      ..createTransaction(
+      ..createAndSaveTransaction(
         amount: -99.01,
         title: "Gift for Stella",
         category: gift,
@@ -177,10 +182,12 @@ class ObjectBox {
       );
 
     savings
-      ..updateBalance(69420,
-          title: "Savings initial balance",
-          transactionDate: DateTime.now() - const Duration(days: 6))
-      ..createTransaction(
+      ..updateBalanceAndSave(
+        69420,
+        title: "Savings initial balance",
+        transactionDate: DateTime.now() - const Duration(days: 6),
+      )
+      ..createAndSaveTransaction(
         amount: -1960,
         title: "Rent",
         category: rent,
@@ -208,16 +215,16 @@ class ObjectBox {
 
     final ({double min, double max, double multiplier}) randomVal =
         switch (category.name) {
-      "Online subscriptions" => (min: 4.0, max: 12.0, multiplier: -3500.0),
-      "Paycheck" => (min: 30.0, max: 1500.0, multiplier: 3500.0),
-      "Education" => (min: 25.0, max: 75.0, multiplier: -3500.0),
-      "Shopping" => (min: 8.0, max: 100.0, multiplier: -3500.0),
-      "Eating out" => (min: 8.0, max: 128.0, multiplier: -3500.0),
-      "Coffee & tea" => (min: 6.0, max: 20.0, multiplier: -3500.0),
-      _ => (min: 4.0, max: 100.0, multiplier: -3500.0),
+      "Online subscriptions" => (min: 4.0, max: 12.0, multiplier: -1.0),
+      "Paycheck" => (min: 30.0, max: 1500.0, multiplier: 1.0),
+      "Education" => (min: 25.0, max: 75.0, multiplier: -1.0),
+      "Shopping" => (min: 8.0, max: 100.0, multiplier: -1.0),
+      "Eating out" => (min: 8.0, max: 128.0, multiplier: -1.0),
+      "Coffee & tea" => (min: 6.0, max: 20.0, multiplier: -1.0),
+      _ => (min: 4.0, max: 100.0, multiplier: -1.0),
     };
 
-    account.createTransaction(
+    account.createAndSaveTransaction(
       amount: (Random().nextDouble() * (randomVal.max - randomVal.min) +
               randomVal.min) *
           randomVal.multiplier,

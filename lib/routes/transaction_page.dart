@@ -558,7 +558,7 @@ class _TransactionPageState extends State<TransactionPage> {
         amount: _amount.abs(),
       );
     } else {
-      _selectedAccount!.createTransaction(
+      _selectedAccount!.createAndSaveTransaction(
         amount: _amount,
         title: formattedTitle,
         category: _selectedCategory,
