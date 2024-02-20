@@ -7,8 +7,10 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
 import 'package:flow/sync/export.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
@@ -40,11 +42,17 @@ class _AccountPageState extends State<AccountPage> {
 
   late final TextEditingController _nameTextController;
 
+  final FocusNode _editNameFocusNode = FocusNode();
+
   late String _currency;
   late FlowIconData? _iconData;
   late bool _excludeFromTotalBalance;
 
+  late double _balance;
+
   late final Account? _currentlyEditing;
+
+  bool _editingName = false;
 
   String get iconCodeOrError =>
       _iconData?.toString() ??
@@ -65,16 +73,24 @@ class _AccountPageState extends State<AccountPage> {
     } else {
       _nameTextController =
           TextEditingController(text: _currentlyEditing?.name);
+      _balance = _currentlyEditing?.balance ?? 0.0;
       _currency = _currentlyEditing?.currency ??
           LocalPreferences().getPrimaryCurrency();
       _iconData = _currentlyEditing?.icon;
       _excludeFromTotalBalance =
           _currentlyEditing?.excludeFromTotalBalance ?? false;
     }
+
+    _editNameFocusNode.addListener(() {
+      if (!_editNameFocusNode.hasFocus) {
+        toggleEditName(false);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _editNameFocusNode.dispose();
     _nameTextController.dispose();
 
     super.dispose();
@@ -89,6 +105,7 @@ class _AccountPageState extends State<AccountPage> {
         actions: [
           IconButton(
             onPressed: () => save(),
+            icon: const Icon(Symbols.check_rounded),
             icon: const Icon(
               Symbols.check_rounded,
             ),
@@ -102,45 +119,116 @@ class _AccountPageState extends State<AccountPage> {
             child: Column(
               children: [
                 const SizedBox(height: 16.0),
-                FlowIcon(
-                  _iconData ?? CharacterFlowIcon("T"),
-                  size: 80.0,
-                  plated: true,
-                  onTap: selectIcon,
-                ),
-                const SizedBox(height: 8.0),
-                TextButton(
-                  onPressed: selectIcon,
-                  child: Text("flowIcon.change".t(context)),
-                ),
-                const SizedBox(height: 24.0),
                 Padding(
                   padding: contentPadding,
-                  child: TextFormField(
-                    controller: _nameTextController,
-                    decoration: InputDecoration(
-                      label: Text(
-                        "account.name".t(context),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FlowIcon(
+                            _iconData ??
+                                FlowIconData.icon(Symbols.wallet_rounded),
+                            size: 64.0,
+                            plated: true,
+                            onTap: selectIcon,
+                          ),
+                          TextButton(
+                            onPressed: selectIcon,
+                            child: Text(
+                              "flowIcon.change".t(context),
+                              style: context.textTheme.labelSmall?.copyWith(
+                                color: context.colorScheme.primary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      focusColor: context.colorScheme.secondary,
-                    ),
-                    validator: validateNameField,
+                      const SizedBox(width: 16.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _nameTextController,
+                                    focusNode: _editNameFocusNode,
+                                    decoration: InputDecoration(
+                                      hintText: "account.name".t(context),
+                                      focusColor: context.colorScheme.secondary,
+                                      isDense: true,
+                                      border: _editingName
+                                          ? null
+                                          : InputBorder.none,
+                                    ),
+                                    onTap: () => toggleEditName(true),
+                                    onFieldSubmitted: (_) =>
+                                        toggleEditName(false),
+                                    readOnly: !_editingName,
+                                    validator: validateNameField,
+                                  ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                IconButton(
+                                  icon: _editingName
+                                      ? const Icon(Symbols.done_rounded)
+                                      : const Icon(Symbols.edit_rounded),
+                                  onPressed: toggleEditName,
+                                )
+                              ],
+                            ),
+                            Text(
+                              _currency,
+                              style:
+                                  context.textTheme.labelLarge?.semi(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 24.0),
-                ListTile(
-                  title: Text("currency".t(context)),
-                  trailing: Text(_currency),
-                  onTap:
-                      _currentlyEditing == null ? () => selectCurrency() : null,
+                InkWell(
+                  borderRadius: BorderRadius.circular(16.0),
+                  onTap: updateBalance,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: contentPadding,
+                          child: Text(
+                            _balance.formatMoney(currency: _currency),
+                            style: context.textTheme.displayMedium,
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          "account.updateBalance".t(context),
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: context.colorScheme.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 24.0),
                 CheckboxListTile.adaptive(
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
                 ),
                 if (_currentlyEditing != null) ...[
-                  const SizedBox(height: 36.0),
+                  const SizedBox(height: 80.0),
                   DeleteButton(
                     onTap: _deleteAccount,
                     label: Text("account.delete".t(context)),
@@ -153,6 +241,21 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
     );
+  }
+
+  void updateBalance() async {
+    final result = await showModalBottomSheet<double>(
+      context: context,
+      builder: (context) => InputAmountSheet(
+        initialAmount: _balance,
+        currency: _currency,
+      ),
+      isScrollControlled: true,
+    );
+
+    setState(() {
+      _balance = result ?? _balance;
+    });
   }
 
   void updateBalanceExclusion(bool? value) {
@@ -184,12 +287,21 @@ class _AccountPageState extends State<AccountPage> {
     _currentlyEditing!.iconCode = iconCodeOrError;
     _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
 
+    if (_balance != _currentlyEditing!.balance) {
+      _currentlyEditing!.updateBalanceAndSave(
+        _balance,
+        title: "account.updateBalance.transactionTitle".tr(),
+      );
+    }
+
     ObjectBox().box<Account>().put(
           _currentlyEditing!,
           mode: PutMode.update,
         );
 
-    context.pop();
+    if (mounted) {
+      context.pop();
+    }
   }
 
   void save() async {
@@ -201,19 +313,48 @@ class _AccountPageState extends State<AccountPage> {
       return update(formattedName: trimmed);
     }
 
+    final int sortOrder = ObjectBox().box<Account>().count();
+
     final account = Account(
       name: trimmed,
       iconCode: iconCodeOrError,
       currency: _currency,
       excludeFromTotalBalance: _excludeFromTotalBalance,
+      sortOrder: sortOrder,
     );
 
-    ObjectBox().box<Account>().putAsync(
-          account,
-          mode: PutMode.insert,
+    if (_balance.abs() != 0) {
+      ObjectBox()
+          .box<Account>()
+          .putAndGetAsync(
+            account,
+            mode: PutMode.insert,
+          )
+          .then((value) {
+        value.updateBalanceAndSave(
+          _balance,
+          title: "account.updateBalance.transactionTitle".tr(),
         );
+        ObjectBox().box<Account>().putAsync(value);
+      });
+    } else {
+      ObjectBox().box<Account>().putAsync(
+            account,
+            mode: PutMode.insert,
+          );
+    }
 
     context.pop();
+  }
+
+  void toggleEditName([bool? force]) {
+    setState(() {
+      _editingName = force ?? !_editingName;
+    });
+
+    if (_editingName) {
+      _editNameFocusNode.requestFocus();
+    }
   }
 
   String? validateNameField(String? value) {
