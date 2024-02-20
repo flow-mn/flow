@@ -194,7 +194,7 @@
     "sync.export.success": "Export successful!",
     "sync.export.success.filePath[0]": "Saved to ",
     "sync.export.success.filePath[1]": "",
-    "sync.export.share": "Save file ({type})",
+    "sync.export.share": "Flow backup ({type}, {date})",
 
     "enum.TransactionSubtype": "Type",
     "enum.TransactionSubtype#null": "Default",

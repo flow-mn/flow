@@ -7,6 +7,7 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/widgets/export/export_success.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
+import 'package:moment_dart/moment_dart.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ExportPage extends StatefulWidget {
@@ -94,7 +95,10 @@ class _ExportPageState extends State<ExportPage> {
     await Share.shareXFiles(
       [XFile(filePath!)],
       sharePositionOrigin: origin,
-      subject: "sync.export.share".t(context, widget.mode.name),
+      subject: "sync.export.share".t(context, {
+        "type": widget.mode.name,
+        "date": Moment.now().lll,
+      }),
     );
   }
 }
