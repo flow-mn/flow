@@ -9,6 +9,7 @@
     "general.delete.permanentWarning": "Энэ үйлдлийг буцаах боломжгүй",
     "general.delete.confirmName": "{name}-г устгах уу?",
     "general.areYouSure": "Итгэлтэй байна уу?",
+    "general.save": "Хадгалах",
     "general.done": "Болсон",
     "general.confirm": "Батлах",
     "general.cancel": "Цуцлах",
