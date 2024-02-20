@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math' hide log;
 
 import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
@@ -83,24 +82,9 @@ class ObjectBox {
     return _instance = ObjectBox._internal(store);
   }
 
-  Future<void> populateDummyData() async {
-    final Query<Account> firstAccountQuery =
-        box<Account>().query(Account_.name.equals("Alpha")).build();
-
-    final Account? firstAccount = firstAccountQuery.findFirst();
-
-    firstAccountQuery.close();
-
-    if (firstAccount != null) {
-      await addDummyData();
-    } else {
-      await _createAndPutDebugData();
-    }
-  }
-
-  Future<void> _createAndPutDebugData() async {
-    if (box<Transaction>().count(limit: 1) > 0) {
-      addDummyData();
+  Future<void> createAndPutDebugData() async {
+    if (box<Account>().count(limit: 1) > 0 ||
+        box<Category>().count(limit: 1) > 0) {
       return;
     }
 
@@ -201,136 +185,6 @@ class ObjectBox {
       amount: 250,
       targetAccount: savings2,
       transactionDate: DateTime.now() - const Duration(days: 1),
-    );
-  }
-
-  Future<void> addDummyData() async {
-    Account account = await box<Account>()
-        .getAllAsync()
-        .then((value) => value[Random().nextInt(value.length)]);
-
-    Category category = await box<Category>()
-        .getAllAsync()
-        .then((value) => value[Random().nextInt(value.length)]);
-
-    final ({double min, double max, double multiplier}) randomVal =
-        switch (category.name) {
-      "Online subscriptions" => (min: 4.0, max: 12.0, multiplier: -1.0),
-      "Paycheck" => (min: 30.0, max: 1500.0, multiplier: 1.0),
-      "Education" => (min: 25.0, max: 75.0, multiplier: -1.0),
-      "Shopping" => (min: 8.0, max: 100.0, multiplier: -1.0),
-      "Eating out" => (min: 8.0, max: 128.0, multiplier: -1.0),
-      "Coffee & tea" => (min: 6.0, max: 20.0, multiplier: -1.0),
-      _ => (min: 4.0, max: 100.0, multiplier: -1.0),
-    };
-
-    account.createAndSaveTransaction(
-      amount: (Random().nextDouble() * (randomVal.max - randomVal.min) +
-              randomVal.min) *
-          randomVal.multiplier,
-      category: category,
-      title: "R_${[
-        "turkey",
-        "rock",
-        "end",
-        "hydrant",
-        "stove",
-        "act",
-        "laugh",
-        "team",
-        "zebra",
-        "rose",
-        "nose",
-        "friends",
-        "channel",
-        "tree",
-        "root",
-        "increase",
-        "trousers",
-        "school",
-        "tin",
-        "egg",
-        "fact",
-        "cherry",
-        "laborer",
-        "hall",
-        "chance",
-        "addition",
-        "request",
-        "wrist",
-        "pipe",
-        "war",
-        "size",
-        "rice",
-        "stem",
-        "toad",
-        "twig",
-        "event",
-        "silver",
-        "rings",
-        "grass",
-        "development",
-        "hill",
-        "pickle",
-        "carpenter",
-        "view",
-        "cave",
-        "test",
-        "hose",
-        "education",
-        "worm",
-        "trouble",
-        "cap",
-        "quilt",
-        "lumber",
-        "baby",
-        "hour",
-        "sack",
-        "quiet",
-        "chin",
-        "thread",
-        "servant",
-        "animal",
-        "song",
-        "babies",
-        "walk",
-        "woman",
-        "gold",
-        "soap",
-        "lake",
-        "spot",
-        "example",
-        "rest",
-        "glass",
-        "minute",
-        "hand",
-        "thrill",
-        "reason",
-        "pocket",
-        "thumb",
-        "road",
-        "ticket",
-        "lock",
-        "magic",
-        "collar",
-        "middle",
-        "grandmother",
-        "nerve",
-        "passenger",
-        "basketball",
-        "bridge",
-        "veil",
-        "bikes",
-        "friend",
-        "hope",
-        "coal",
-        "duck",
-        "edge",
-        "flame",
-        "page",
-        "grape",
-        "smoke"
-      ][Random().nextInt(100)]}",
     );
   }
 
