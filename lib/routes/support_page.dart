@@ -56,7 +56,7 @@ class SupportPage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       Text(
                         "support.requestFeatures.description".t(context),
-                        style: context.textTheme.bodySmall,
+                        style: context.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 8.0),
                       Button(
@@ -94,7 +94,7 @@ class SupportPage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       Text(
                         "support.contribute.description".t(context),
-                        style: context.textTheme.bodySmall,
+                        style: context.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 8.0),
                       Button(
@@ -132,7 +132,7 @@ class SupportPage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       Text(
                         "support.donateDeveloper.description".t(context),
-                        style: context.textTheme.bodySmall,
+                        style: context.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 8.0),
                       Button(
