@@ -1,0 +1,17 @@
+name: Feature Request
+description: Suggest an idea or improvement to AppFlowy Editor
+title: "[FEAT] "
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: Description
+      description: Describe your suggested feature and the main use cases
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any additonal context about the feature here
