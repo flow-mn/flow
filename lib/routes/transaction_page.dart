@@ -146,6 +146,7 @@ class _TransactionPageState extends State<TransactionPage> {
               IconButton(
                 onPressed: () => save(),
                 icon: const Icon(Symbols.check_rounded),
+                tooltip: "general.save".t(context),
               )
             ],
             leadingWidth: 40.0,
@@ -558,7 +559,7 @@ class _TransactionPageState extends State<TransactionPage> {
         amount: _amount.abs(),
       );
     } else {
-      _selectedAccount!.createTransaction(
+      _selectedAccount!.createAndSaveTransaction(
         amount: _amount,
         title: formattedTitle,
         category: _selectedCategory,

@@ -46,7 +46,7 @@ void main() {
 
       try {
         final Account accMNT = (await tugrikAccountQuery.findFirstAsync())!;
-        accMNT.createTransaction(amount: 420.69, title: "t1");
+        accMNT.createAndSaveTransaction(amount: 420.69, title: "t1");
       } finally {
         tugrikAccountQuery.close();
       }
@@ -93,7 +93,7 @@ void main() {
       mntAccountQuery.close();
       usdAccountQuery.close();
 
-      final txnId = mntAccount!.createTransaction(
+      final txnId = mntAccount!.createAndSaveTransaction(
         amount: 216363.53,
         title: "Impossible intercurrency transaction",
       );

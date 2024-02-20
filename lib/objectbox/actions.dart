@@ -50,7 +50,7 @@ extension MainActions on ObjectBox {
     return categories;
   }
 
-  Future<List<Account>> updateAccountOrderList({
+  Future<void> updateAccountOrderList({
     List<Account>? accounts,
     bool ignoreIfNoUnsetValue = false,
   }) async {
@@ -58,14 +58,14 @@ extension MainActions on ObjectBox {
 
     if (ignoreIfNoUnsetValue &&
         !accounts.any((element) => element.sortOrder < 0)) {
-      return accounts;
+      return;
     }
 
     for (final e in accounts.indexed) {
       accounts[e.$1].sortOrder = e.$1;
     }
 
-    return await ObjectBox().box<Account>().putAndGetManyAsync(accounts);
+    await ObjectBox().box<Account>().putManyAsync(accounts);
   }
 }
 
@@ -200,23 +200,21 @@ extension AccountActions on Account {
     }
   }
 
-  void updateBalance(
+  /// Creates a new transaction, and saves it
+  ///
+  /// Returns transaction id from [Box.put]
+  int updateBalanceAndSave(
     double targetBalance, {
     String? title,
     DateTime? transactionDate,
   }) {
     final double delta = targetBalance - balance;
 
-    transactions.add(
-      Transaction(
-        amount: delta,
-        title: title,
-        currency: currency,
-        transactionDate: transactionDate,
-      ),
+    return createAndSaveTransaction(
+      amount: delta,
+      title: title,
+      transactionDate: transactionDate,
     );
-
-    ObjectBox().box<Account>().put(this);
   }
 
   /// Returns object ids from `box.put`
@@ -255,7 +253,7 @@ extension AccountActions on Account {
         "transaction.transfer.fromToTitle"
             .tr({"from": name, "to": targetAccount.name});
 
-    final int fromTransaction = createTransaction(
+    final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
       extensions: [transferData],
@@ -263,7 +261,7 @@ extension AccountActions on Account {
       createdDate: createdDate,
       transactionDate: transactionDate,
     );
-    final int toTransaction = targetAccount.createTransaction(
+    final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
       title: resolvedTitle,
       extensions: [
@@ -277,10 +275,8 @@ extension AccountActions on Account {
     return (fromTransaction, toTransaction);
   }
 
-  /// Returns object id
-  ///
-  /// (From box.put())
-  int createTransaction({
+  /// Returns transaction id from [Box.put]
+  int createAndSaveTransaction({
     required double amount,
     DateTime? transactionDate,
     DateTime? createdDate,
@@ -296,15 +292,15 @@ extension AccountActions on Account {
       transactionDate: transactionDate,
       createdDate: createdDate,
       uuidOverride: uuidOverride,
-    )..setCategory(category);
+    )
+      ..setCategory(category)
+      ..setAccount(this);
 
     if (extensions != null && extensions.isNotEmpty) {
       value.addExtensions(extensions);
     }
 
-    transactions.add(value);
-
-    final int id = ObjectBox().box<Account>().put(this);
+    final int id = ObjectBox().box<Transaction>().put(value);
 
     try {
       LocalPreferences().updateFrecencyData("account", uuid);

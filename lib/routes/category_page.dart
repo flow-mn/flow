@@ -77,9 +77,8 @@ class _CategoryPageState extends State<CategoryPage> {
         actions: [
           IconButton(
             onPressed: () => save(),
-            icon: const Icon(
-              Symbols.check_rounded,
-            ),
+            icon: const Icon(Symbols.check_rounded),
+            tooltip: "general.save".t(context),
           ),
         ],
       ),

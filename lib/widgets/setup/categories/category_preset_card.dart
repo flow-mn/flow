@@ -24,6 +24,7 @@ class CategoryPresetCard extends StatelessWidget {
       child: CategoryCard(
         category: category,
         onTapOverride: ValueOr(() => onSelect(!selected)),
+        showAmount: false,
       ),
     );
   }

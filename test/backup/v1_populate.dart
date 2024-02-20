@@ -68,23 +68,23 @@ Future<void> _createAndPutDebugData() async {
     currency: "MNT",
     iconCode: const IconFlowIcon(Symbols.variables_rounded).toString(),
   )
-    ..updateBalance(
+    ..updateBalanceAndSave(
       384500,
       title: "Balance Nov 2023",
     )
-    ..createTransaction(
+    ..createAndSaveTransaction(
       amount: -5241,
       title: "iCould",
       category: categoryServices,
       transactionDate: DateTime.now() - const Duration(days: 7),
     )
-    ..createTransaction(
+    ..createAndSaveTransaction(
       amount: -27500,
       title: "Netflix",
       category: categoryServices,
       transactionDate: DateTime.now() - const Duration(days: 4),
     )
-    ..createTransaction(
+    ..createAndSaveTransaction(
       amount: 20000,
       title: "Translation work pay",
       category: categoryPaychecks,
@@ -96,20 +96,20 @@ Future<void> _createAndPutDebugData() async {
     currency: "MNT",
     iconCode: const IconFlowIcon(Symbols.bento_rounded).toString(),
   )
-    ..updateBalance(36850000, title: "Savings starting balance")
-    ..createTransaction(
+    ..updateBalanceAndSave(36850000, title: "Savings starting balance")
+    ..createAndSaveTransaction(
       amount: -3875000,
       title: "Tuition for Fall",
       category: categoryEducation,
       transactionDate: DateTime.now() - const Duration(days: 21),
     )
-    ..createTransaction(
+    ..createAndSaveTransaction(
       amount: -12690000,
       title: "Macbook pro",
       category: categoryShopping,
       transactionDate: DateTime.now() - const Duration(days: 21),
     )
-    ..createTransaction(
+    ..createAndSaveTransaction(
       amount: 512000,
       title: "Salary portion",
       category: categoryPaychecks,
@@ -141,7 +141,7 @@ Future<void> addDummyData() async {
     _ => (min: 4.0, max: 100.0, multiplier: -3500.0),
   };
 
-  account.createTransaction(
+  account.createAndSaveTransaction(
     amount: (Random().nextDouble() * (randomVal.max - randomVal.min) +
             randomVal.min) *
         randomVal.multiplier,

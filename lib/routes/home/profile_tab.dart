@@ -77,7 +77,7 @@ class _ProfileTabState extends State<ProfileTab> {
             ListTile(
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
-              onTap: () => ObjectBox().populateDummyData(),
+              onTap: () => ObjectBox().createAndPutDebugData(),
             ),
             ListTile(
               title:
