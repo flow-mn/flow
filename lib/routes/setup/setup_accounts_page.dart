@@ -127,6 +127,10 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
       final List<Account> selectedAccounts =
           presetAccounts.where((element) => element.id == 0).toList();
 
+      for (final e in selectedAccounts.indexed) {
+        e.$2.sortOrder = e.$1;
+      }
+
       await ObjectBox().box<Account>().putManyAsync(selectedAccounts);
 
       if (mounted) {

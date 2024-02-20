@@ -21,6 +21,7 @@ import 'package:flow/constants.dart';
 import 'package:flow/entity/profile.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
 import 'package:flow/theme/theme.dart';
@@ -41,6 +42,9 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
+
+  /// Set `sortOrder` values if there are any unset (-1) values
+  await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
   runApp(const Flow());
 }

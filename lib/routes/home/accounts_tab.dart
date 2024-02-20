@@ -8,6 +8,7 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/account_card.dart';
 import 'package:flow/widgets/account_card_skeleton.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -23,32 +24,14 @@ class AccountsTab extends StatefulWidget {
   State<AccountsTab> createState() => _AccountsTabState();
 }
 
-class _AccountsTabState extends State<AccountsTab>
-    with AutomaticKeepAliveClientMixin {
-  bool _canReorder = false;
+class _AccountsTabState extends State<AccountsTab> {
   bool _reordering = false;
 
   QueryBuilder<Account> qb() =>
       ObjectBox().box<Account>().query().order(Account_.sortOrder);
 
   @override
-  void initState() {
-    super.initState();
-
-    ObjectBox()
-        .updateAccountOrderList(ignoreIfNoUnsetValue: true)
-        .then((value) {
-      _canReorder = true;
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return StreamBuilder<Query<Account>>(
         stream: qb().watch(triggerImmediately: true),
         builder: (context, snapshot) {
@@ -105,6 +88,11 @@ class _AccountsTabState extends State<AccountsTab>
                                               Platform.isIOS,
                                           excludeTransfersInTotal:
                                               excludeTransfersInTotal == true,
+                                          onTapOverride: ValueOr(() async {
+                                            await context
+                                                .push("/account/${account.id}");
+                                            setState(() {});
+                                          }),
                                         ),
                                       ),
                                     ),
@@ -133,16 +121,15 @@ class _AccountsTabState extends State<AccountsTab>
           style: context.textTheme.titleSmall,
         ),
         const Spacer(),
-        if (_canReorder)
-          IconButton(
-            onPressed: toggleReorderMode,
-            tooltip: _reordering
-                ? "general.done".t(context)
-                : "tabs.accounts.reorder".t(context),
-            icon: _reordering
-                ? const Icon(Symbols.check_rounded)
-                : const Icon(Symbols.reorder_rounded),
-          ),
+        IconButton(
+          onPressed: toggleReorderMode,
+          tooltip: _reordering
+              ? "general.done".t(context)
+              : "tabs.accounts.reorder".t(context),
+          icon: _reordering
+              ? const Icon(Symbols.check_rounded)
+              : const Icon(Symbols.reorder_rounded),
+        ),
       ],
     );
   }
@@ -163,7 +150,7 @@ class _AccountsTabState extends State<AccountsTab>
 
   void toggleReorderMode() {
     setState(() {
-      _reordering = _canReorder ? (!_reordering) : false;
+      _reordering = !_reordering;
     });
   }
 
@@ -176,7 +163,4 @@ class _AccountsTabState extends State<AccountsTab>
 
     ObjectBox().updateAccountOrderList(accounts: currentAccounts);
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
