@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:flow/constants.dart';
 import 'package:flow/entity/profile.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
@@ -82,6 +83,10 @@ class FlowState extends State<Flow> {
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
+
+    ObjectBox().box<Transaction>().query().watch().listen((event) {
+      ObjectBox().invalidateAccountsTab();
+    });
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
