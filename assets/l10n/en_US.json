@@ -4,7 +4,7 @@
 
     "visitGitHubRepo": "Visit repo on GitHub",
 
-    "general.back": "Back",
+    "general.back": "Go back",
     "general.delete": "Delete",
     "general.delete.permanentWarning": "This action is irreversible",
     "general.delete.confirmName": "Confirm deleting {name}?",
