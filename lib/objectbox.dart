@@ -8,6 +8,7 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:path/path.dart' as path;
@@ -29,6 +30,9 @@ class ObjectBox {
   ///
   /// By default, it uses [getApplicationSupportDirectory] (from path_provider)
   static late final String? customDirectory;
+
+  /// Update this count to invalidate accounts tab
+  final ValueNotifier<int> invalidateAccounts = ValueNotifier(0);
 
   /// The Store of this app.
   late final Store store;
@@ -186,6 +190,10 @@ class ObjectBox {
       targetAccount: savings2,
       transactionDate: DateTime.now() - const Duration(days: 1),
     );
+  }
+
+  void invalidateAccountsTab() {
+    invalidateAccounts.value++;
   }
 
   /// Deletes everything except for

@@ -24,7 +24,8 @@ class AccountsTab extends StatefulWidget {
   State<AccountsTab> createState() => _AccountsTabState();
 }
 
-class _AccountsTabState extends State<AccountsTab> {
+class _AccountsTabState extends State<AccountsTab>
+    with AutomaticKeepAliveClientMixin {
   bool _reordering = false;
 
   QueryBuilder<Account> qb() =>
@@ -32,82 +33,94 @@ class _AccountsTabState extends State<AccountsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Query<Account>>(
-        stream: qb().watch(triggerImmediately: true),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Spinner.center();
-          }
+    super.build(context);
 
-          final accounts = snapshot.data!.find();
+    return ValueListenableBuilder(
+        valueListenable: ObjectBox().invalidateAccounts,
+        builder: (context, snapshot, child) {
+          return StreamBuilder<Query<Account>>(
+              stream: qb().watch(triggerImmediately: true),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Spinner.center();
+                }
 
-          return switch (accounts.length) {
-            0 => const NoAccounts(),
-            _ => Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0).copyWith(bottom: 0.0),
-                    child: buildHeader(context),
-                  ),
-                  ValueListenableBuilder(
-                      valueListenable: LocalPreferences()
-                          .excludeTransferFromFlow
-                          .valueNotifier,
-                      builder: (context, excludeTransfersInTotal, child) {
-                        return Expanded(
-                          child: _reordering
-                              ? ReorderableListView.builder(
-                                  padding: const EdgeInsets.all(16.0)
-                                      .copyWith(bottom: 96.0),
-                                  itemBuilder: (context, index) => Padding(
-                                    key: ValueKey(accounts[index].uuid),
-                                    padding:
-                                        const EdgeInsets.only(bottom: 16.0),
-                                    child: AccountCard(
-                                      account: accounts[index],
-                                      useCupertinoContextMenu: false,
-                                      excludeTransfersInTotal:
-                                          excludeTransfersInTotal == true,
-                                    ),
-                                  ),
-                                  proxyDecorator: proxyDecorator,
-                                  itemCount: accounts.length,
-                                  onReorder: (oldIndex, newIndex) =>
-                                      onReorder(accounts, oldIndex, newIndex),
-                                )
-                              : ListView(
-                                  padding: const EdgeInsets.all(16.0),
-                                  children: [
-                                    ...accounts.map(
-                                      (account) => Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 16.0),
-                                        child: AccountCard(
-                                          account: account,
-                                          useCupertinoContextMenu:
-                                              Platform.isIOS,
-                                          excludeTransfersInTotal:
-                                              excludeTransfersInTotal == true,
-                                          onTapOverride: ValueOr(() async {
-                                            await context
-                                                .push("/account/${account.id}");
-                                            setState(() {});
-                                          }),
+                final accounts = snapshot.data!.find();
+
+                return switch (accounts.length) {
+                  0 => const NoAccounts(),
+                  _ => Column(
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.all(16.0).copyWith(bottom: 0.0),
+                          child: buildHeader(context),
+                        ),
+                        ValueListenableBuilder(
+                            valueListenable: LocalPreferences()
+                                .excludeTransferFromFlow
+                                .valueNotifier,
+                            builder: (context, excludeTransfersInTotal, child) {
+                              return Expanded(
+                                child: _reordering
+                                    ? ReorderableListView.builder(
+                                        padding: const EdgeInsets.all(16.0)
+                                            .copyWith(bottom: 96.0),
+                                        itemBuilder: (context, index) =>
+                                            Padding(
+                                          key: ValueKey(accounts[index].uuid),
+                                          padding: const EdgeInsets.only(
+                                              bottom: 16.0),
+                                          child: AccountCard(
+                                            account: accounts[index],
+                                            useCupertinoContextMenu: false,
+                                            excludeTransfersInTotal:
+                                                excludeTransfersInTotal == true,
+                                          ),
                                         ),
+                                        proxyDecorator: proxyDecorator,
+                                        itemCount: accounts.length,
+                                        onReorder: (oldIndex, newIndex) =>
+                                            onReorder(
+                                                accounts, oldIndex, newIndex),
+                                      )
+                                    : ListView(
+                                        padding: const EdgeInsets.all(16.0),
+                                        children: [
+                                          ...accounts.map(
+                                            (account) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 16.0),
+                                              child: AccountCard(
+                                                account: account,
+                                                useCupertinoContextMenu:
+                                                    Platform.isIOS,
+                                                excludeTransfersInTotal:
+                                                    excludeTransfersInTotal ==
+                                                        true,
+                                                onTapOverride:
+                                                    ValueOr(() async {
+                                                  await context.push(
+                                                      "/account/${account.id}");
+                                                  setState(() {});
+                                                }),
+                                              ),
+                                            ),
+                                          ),
+                                          AccountCardSkeleton(
+                                            onTap: () =>
+                                                context.push("/account/new"),
+                                          ),
+                                          const SizedBox(height: 16.0),
+                                          const SizedBox(height: 64.0),
+                                        ],
                                       ),
-                                    ),
-                                    AccountCardSkeleton(
-                                      onTap: () => context.push("/account/new"),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    const SizedBox(height: 64.0),
-                                  ],
-                                ),
-                        );
-                      }),
-                ],
-              ),
-          };
+                              );
+                            }),
+                      ],
+                    ),
+                };
+              });
         });
   }
 
@@ -163,4 +176,7 @@ class _AccountsTabState extends State<AccountsTab> {
 
     ObjectBox().updateAccountOrderList(accounts: currentAccounts);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
