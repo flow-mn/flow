@@ -30,10 +30,7 @@ class SupportPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                "support.description".t(context),
-                style: context.textTheme.bodyLarge,
-              ),
+              Text("support.description".t(context)),
               const SizedBox(height: 16.0),
               Card(
                 shape: cardShape,
