@@ -156,6 +156,7 @@ class _AccountPageState extends State<AccountPage> {
                                   child: TextFormField(
                                     controller: _nameTextController,
                                     focusNode: _editNameFocusNode,
+                                    maxLength: Account.maxNameLength,
                                     decoration: InputDecoration(
                                       hintText: "account.name".t(context),
                                       focusColor: context.colorScheme.secondary,
@@ -163,6 +164,7 @@ class _AccountPageState extends State<AccountPage> {
                                       border: _editingName
                                           ? null
                                           : InputBorder.none,
+                                      counter: const SizedBox.shrink(),
                                     ),
                                     onTap: () => toggleEditName(true),
                                     onFieldSubmitted: (_) =>
