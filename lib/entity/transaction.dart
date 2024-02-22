@@ -26,6 +26,8 @@ class Transaction implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime transactionDate;
 
+  static const int maxTitleLength = 256;
+
   String? title;
 
   double amount;

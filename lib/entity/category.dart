@@ -21,6 +21,8 @@ class Category implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  static const int maxNameLength = 48;
+
   @Unique()
   String name;
 

@@ -178,7 +178,9 @@ class _TransactionPageState extends State<TransactionPage> {
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           hintText: "transaction.fallbackTitle".t(context),
+                          counter: const SizedBox.shrink(),
                         ),
+                        maxLength: Transaction.maxTitleLength,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) => save(),
                         focusNode: _titleFocusNode,

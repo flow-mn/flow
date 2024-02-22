@@ -90,6 +90,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       TextField(
                         controller: _nameController,
                         onSubmitted: (_) => save(),
+                        maxLength: Profile.maxNameLength,
+                        decoration: const InputDecoration(
+                          counter: SizedBox.shrink(),
+                        ),
                       ),
                     ],
                   ),

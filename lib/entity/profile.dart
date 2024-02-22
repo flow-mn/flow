@@ -16,6 +16,8 @@ class Profile implements EntityBase {
   @Unique()
   String uuid;
 
+  static const int maxNameLength = 96;
+
   String name;
 
   @Property(type: PropertyType.date)

@@ -106,11 +106,13 @@ class _CategoryPageState extends State<CategoryPage> {
                   padding: contentPadding,
                   child: TextFormField(
                     controller: _nameTextController,
+                    maxLength: Category.maxNameLength,
                     decoration: InputDecoration(
                       label: Text(
                         "category.name".t(context),
                       ),
                       focusColor: context.colorScheme.secondary,
+                      counter: const SizedBox.shrink(),
                     ),
                     validator: validateNameField,
                   ),
