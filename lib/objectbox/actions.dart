@@ -127,7 +127,7 @@ extension TransactionActions on Transaction {
 }
 
 extension TransactionListActions on Iterable<Transaction> {
-  Iterable<Transaction> get nonTransactions =>
+  Iterable<Transaction> get nonTransfers =>
       where((transaction) => !transaction.isTransfer);
 
   double get incomeSum => where((transaction) => transaction.amount >= 0)

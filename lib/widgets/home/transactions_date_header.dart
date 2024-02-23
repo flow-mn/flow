@@ -17,7 +17,7 @@ class TransactionListDateHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double flow = transactions.sum;
+    final double flow = transactions.nonTransfers.sum;
     final int count = transactions.length;
 
     return Column(
