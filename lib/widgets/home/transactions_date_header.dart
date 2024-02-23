@@ -1,6 +1,7 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -17,8 +18,11 @@ class TransactionListDateHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double flow = transactions.nonTransfers.sum;
-    final int count = transactions.length;
+    final double flow = transactions.sum;
+    final int count = transactions.length -
+        (LocalPreferences().combineTransferTransactions.get()
+            ? transactions.transfers.length ~/ 2
+            : 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

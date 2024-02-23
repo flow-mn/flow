@@ -6,6 +6,7 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/entity/transaction/extensions/default/transfer.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +37,12 @@ class TransactionListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (LocalPreferences().combineTransferTransactions.get() &&
+        transaction.isTransfer &&
+        transaction.amount.isNegative) {
+      return Container();
+    }
+
     final bool missingTitle = transaction.title == null;
 
     final Transfer? transfer =
