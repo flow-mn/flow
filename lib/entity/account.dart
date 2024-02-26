@@ -50,6 +50,8 @@ class Account implements EntityBase {
   }
 
   /// Returns current balance. This is calculated by summing up every single transaction
+  ///
+  /// TODO should this be cached?
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   double get balance {

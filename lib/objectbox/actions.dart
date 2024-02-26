@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
@@ -14,6 +15,18 @@ import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
 extension MainActions on ObjectBox {
+  double getTotalBalance() {
+    final Query<Account> accountsQuery = box<Account>()
+        .query(Account_.excludeFromTotalBalance.equals(false))
+        .build();
+
+    final List<Account> accounts = accountsQuery.find();
+
+    return accounts
+        .map((e) => e.balance)
+        .fold(0, (previousValue, element) => previousValue + element);
+  }
+
   List<Account> getAccounts([bool sortByFrecency = true]) {
     final List<Account> accounts = box<Account>().getAll();
 
@@ -66,6 +79,63 @@ extension MainActions on ObjectBox {
     }
 
     await ObjectBox().box<Account>().putManyAsync(accounts);
+  }
+
+  /// Returns a map of category uuid -> [MoneyFlow]
+  Future<Map<String, MoneyFlow>> flowByCategories({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.transactionDate.betweenDate(from, to))
+        .build();
+
+    final List<Transaction> transactions = await transactionsQuery.findAsync();
+
+    transactionsQuery.close();
+
+    final Map<String, MoneyFlow> flow = {};
+
+    for (final transaction in transactions) {
+      final String categoryUuid =
+          transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
+
+      flow[categoryUuid] ??= MoneyFlow();
+      flow[categoryUuid]!.add(transaction.amount);
+    }
+
+    return flow;
+  }
+
+  /// Returns a map of category uuid -> [MoneyFlow]
+  Future<Map<String, MoneyFlow>> flowByAccounts({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.transactionDate.betweenDate(from, to))
+        .build();
+
+    final List<Transaction> transactions = await transactionsQuery.findAsync();
+
+    transactionsQuery.close();
+
+    final Map<String, MoneyFlow> flow = {};
+
+    for (final transaction in transactions) {
+      final String accountUuid =
+          transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
+
+      flow[accountUuid] ??= MoneyFlow();
+      flow[accountUuid]!.add(transaction.amount);
+    }
+
+    assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
+        "There is no way you've managed to make a transaction without an account");
+
+    return flow;
   }
 }
 
@@ -129,48 +199,24 @@ extension TransactionActions on Transaction {
 extension TransactionListActions on Iterable<Transaction> {
   Iterable<Transaction> get nonTransfers =>
       where((transaction) => !transaction.isTransfer);
+  Iterable<Transaction> get transfers =>
+      where((transaction) => transaction.isTransfer);
+  Iterable<Transaction> get expenses =>
+      where((transaction) => transaction.amount.isNegative);
+  Iterable<Transaction> get incomes =>
+      where((transaction) => transaction.amount > 0);
 
-  double get incomeSum => where((transaction) => transaction.amount >= 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get expenseSum => where((transaction) => transaction.amount < 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get sum =>
-      map((transaction) => transaction.amount).fold(0, (a, b) => a + b);
+  double get incomeSum =>
+      incomes.fold(0, (value, element) => value + element.amount);
+  double get expenseSum =>
+      expenses.fold(0, (value, element) => value + element.amount);
+  double get sum => fold(0, (value, element) => value + element.amount);
 
   Map<DateTime, List<Transaction>> groupByDate() {
     final Map<DateTime, List<Transaction>> value = {};
 
-    int? lastTransferIndex;
-    Transaction? lastTransferFrom;
-
-    for (final (index, transaction) in indexed) {
+    for (final transaction in this) {
       final date = transaction.transactionDate.toLocal().startOfDay();
-
-      if (LocalPreferences().combineTransferTransactions.get() &&
-          transaction.isTransfer) {
-        if (lastTransferIndex == null) {
-          lastTransferIndex = index;
-          lastTransferFrom = transaction;
-          continue;
-        }
-
-        value[date] ??= [];
-        value[date]!.add(
-          lastTransferFrom!
-            ..title ??= "transaction.transfer.fromToTitle".tr(
-              {
-                "from": lastTransferFrom.account.target!.name,
-                "to": transaction.account.target!.name
-              },
-            ),
-        );
-
-        lastTransferIndex = null;
-        lastTransferFrom = null;
-        continue;
-      }
 
       value[date] ??= [];
       value[date]!.add(transaction);

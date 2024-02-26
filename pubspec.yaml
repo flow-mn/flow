@@ -17,6 +17,7 @@ dependencies:
   desktop_drop: ^0.4.4
   file_picker: ^6.1.1
   file_saver: ^0.2.9
+  fl_chart: ^0.66.2
   flutter:
     sdk: flutter
   flutter_floating_bottom_bar: ^1.2.0

@@ -1,10 +1,16 @@
 import 'package:flow/entity/transaction.dart';
+import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/home/home/analytics_card.dart';
+import 'package:flow/widgets/home/home/flow_separate_line_chart.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class HomeTab extends StatefulWidget {
@@ -17,15 +23,15 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
-  // Query for today's transaction, newest to oldest
+  final DateTime startDate =
+      Moment.now().subtract(const Duration(days: 6)).startOfDay();
+
+  // Last 7 days, and planned payments, newest to oldest
   QueryBuilder<Transaction> qb() => ObjectBox()
       .box<Transaction>()
       .query(
         Transaction_.transactionDate.greaterOrEqual(
-          Moment.now()
-              .subtract(const Duration(days: 6))
-              .startOfDay()
-              .millisecondsSinceEpoch,
+          startDate.millisecondsSinceEpoch,
         ),
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
@@ -50,12 +56,112 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             .where((element) => element.transactionDate <= Moment.now())
             .toList();
 
+        final bool showAnalytics =
+            !noTransactionsAtAll && transactions?.isNotEmpty == true;
+
         return Column(
           children: [
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: GreetingsBar(),
             ),
+            if (showAnalytics) ...[
+              Container(
+                height: 200.0,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Column(
+                      children: [
+                        Expanded(
+                          child: AnalyticsCard(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 12.0,
+                              ),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "tabs.home.totalBalance".t(context),
+                                    style: context.textTheme.bodyLarge,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      ObjectBox()
+                                          .getTotalBalance()
+                                          .moneyCompact,
+                                      style: context.textTheme.displaySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        Expanded(
+                          child: AnalyticsCard(
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 12.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "tabs.home.flowToday".t(context),
+                                    style: context.textTheme.bodyLarge,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      (transactions ?? [])
+                                          .where((element) =>
+                                              element.transactionDate >=
+                                                  DateTime.now().startOfDay() &&
+                                              element.transactionDate <=
+                                                  DateTime.now())
+                                          .sum
+                                          .moneyCompact,
+                                      style: context.textTheme.displaySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: AnalyticsCard(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FlowSeparateLineChart(
+                            transactions: transactions ?? [],
+                            startDate: startDate,
+                            endDate: DateTime.now(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16.0),
+            ],
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
                   child: NoTransactions(
