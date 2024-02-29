@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
@@ -82,20 +83,22 @@ extension MainActions on ObjectBox {
   }
 
   /// Returns a map of category uuid -> [MoneyFlow]
-  Future<Map<String, MoneyFlow>> flowByCategories({
+  Future<FlowAnalytics<Category>> flowByCategories({
     required DateTime from,
     required DateTime to,
   }) async {
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.transactionDate.betweenDate(from, to))
-        .build();
+    final Condition<Transaction> dateFilter =
+        Transaction_.transactionDate.betweenDate(from, to);
+
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
     transactionsQuery.close();
 
     final Map<String, MoneyFlow> flow = {};
+    final Map<String, Category?> categories = {};
 
     for (final transaction in transactions) {
       final String categoryUuid =
@@ -103,26 +106,30 @@ extension MainActions on ObjectBox {
 
       flow[categoryUuid] ??= MoneyFlow();
       flow[categoryUuid]!.add(transaction.amount);
+
+      categories[categoryUuid] ??= transaction.category.target;
     }
 
-    return flow;
+    return FlowAnalytics(flow: flow, groupData: categories, from: from, to: to);
   }
 
   /// Returns a map of category uuid -> [MoneyFlow]
-  Future<Map<String, MoneyFlow>> flowByAccounts({
+  Future<FlowAnalytics<Account>> flowByAccounts({
     required DateTime from,
     required DateTime to,
   }) async {
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.transactionDate.betweenDate(from, to))
-        .build();
+    final Condition<Transaction> dateFilter =
+        Transaction_.transactionDate.betweenDate(from, to);
+
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
     transactionsQuery.close();
 
     final Map<String, MoneyFlow> flow = {};
+    final Map<String, Account?> accounts = {};
 
     for (final transaction in transactions) {
       final String accountUuid =
@@ -130,12 +137,14 @@ extension MainActions on ObjectBox {
 
       flow[accountUuid] ??= MoneyFlow();
       flow[accountUuid]!.add(transaction.amount);
+
+      accounts[accountUuid] ??= transaction.account.target;
     }
 
     assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
         "There is no way you've managed to make a transaction without an account");
 
-    return flow;
+    return FlowAnalytics(from: from, to: to, flow: flow, groupData: accounts);
   }
 }
 
