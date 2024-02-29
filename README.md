@@ -30,46 +30,54 @@ Flow is a free, open-source, cross-platform personal finance tracking app.
 Flow is currently in development, and is planned to release beta builds in
 early March.
 
-## Run
-
-Setup:
-
-```sh
-flutter pub get
-flutter pub upgrade
-dart pub run build_runner build
-```
-
-Run:
-
-```sh
-flutter run
-```
-
-## Stack
-
-* [ObjectBox](https://objectbox.io/) for database
+You can try alpha builds right now from the badges at the top of the page.
+JSON backups are guaranteed to be supported by the stable release.
 
 ## Supported platforms
 
 * Android
 * iOS
-* Linux*
-* macOS*
-* Windows*
+* and more[^1]
 
-\* UI support for desktop is not planned
+## Development
 
-## Testing
+Please read [Contribuition guide](./CONTRIBUTING.md) before contributing.
 
-If you plan to run tests on your machine, ensure you've installed ObjectBox
-dynamic libraries. See more on <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
+### Prerequisites
 
-Updates script[^2]:
+* [Flutter](https://flutter.dev/) (stable)
+
+Other:
+
+* JDK 17 if you're gonna build for Android
+* [XCode](https://developer.apple.com/xcode/) if you're gonna build for iOS/macOS
+* To run tests on your machine, see [Testing](#testing)
+
+Building for Windows, Linux-based requires the same dependencies as Flutter.
+Read more on <https://docs.flutter.dev/platform-integration>
+
+### Running
+
+`flutter run`
+
+See more on <https://flutter.dev/>
+
+### Testing
+
+Generally, tests will be run by GitHub actions. But if you plan to run tests on
+your machine, ensure you've installed ObjectBox dynamic libraries.
+
+Install ObjectBox dynamic libraries[^2]:
 
 `bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
+
+Testing:
+
+`flutter test`
 
 [^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
 to enhance the UI for desktop experience for now.
 
-[^2]: Please double-check from the official website, may be outdated
+[^2]: Please double-check from the official website, may be outdated. Visit
+<https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
+(make sure to choose Flutter to see the script).
