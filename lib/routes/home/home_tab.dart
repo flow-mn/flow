@@ -1,16 +1,10 @@
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/home/home/analytics_card.dart';
-import 'package:flow/widgets/home/home/flow_separate_line_chart.dart';
-import 'package:flow/widgets/home/home/flow_today_card.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
-import 'package:flow/widgets/home/home/total_balance_card.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -26,7 +20,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   final DateTime startDate =
-      Moment.now().subtract(const Duration(days: 6)).startOfDay();
+      Moment.now().subtract(const Duration(days: 29)).startOfDay();
 
   // Last 7 days, and planned payments, newest to oldest
   QueryBuilder<Transaction> qb() => ObjectBox()
@@ -95,50 +89,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
     return GroupedTransactionList(
       controller: widget.scrollController,
-      header: SizedBox(
-        height: 200.0,
-        width: double.infinity,
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              children: [
-                const Expanded(
-                  child: TotalBalanceCard(),
-                ),
-                const SizedBox(height: 16.0),
-                Expanded(
-                  child: FlowTodayCard(transactions: transactions),
-                ),
-              ],
-            )),
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: AnalyticsCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0).copyWith(top: 12.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        "tabs.home.last7days".t(context),
-                        style: context.textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Expanded(
-                        child: FlowSeparateLineChart(
-                          transactions: transactions,
-                          startDate: startDate,
-                          endDate: DateTime.now(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       transactions: grouped.values.toList(),
       headers: headers,
       listPadding: const EdgeInsets.only(
