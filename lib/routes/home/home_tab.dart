@@ -6,11 +6,13 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/home/home/analytics_card.dart';
 import 'package:flow/widgets/home/home/flow_separate_line_chart.dart';
+import 'package:flow/widgets/home/home/flow_today_card.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/home/total_balance_card.dart';
+import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class HomeTab extends StatefulWidget {
@@ -56,112 +58,12 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             .where((element) => element.transactionDate <= Moment.now())
             .toList();
 
-        final bool showAnalytics =
-            !noTransactionsAtAll && transactions?.isNotEmpty == true;
-
         return Column(
           children: [
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: GreetingsBar(),
             ),
-            if (showAnalytics) ...[
-              Container(
-                height: 200.0,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Column(
-                      children: [
-                        Expanded(
-                          child: AnalyticsCard(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 12.0,
-                              ),
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "tabs.home.totalBalance".t(context),
-                                    style: context.textTheme.bodyLarge,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      ObjectBox()
-                                          .getTotalBalance()
-                                          .moneyCompact,
-                                      style: context.textTheme.displaySmall,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Expanded(
-                          child: AnalyticsCard(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 12.0,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "tabs.home.flowToday".t(context),
-                                    style: context.textTheme.bodyLarge,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      (transactions ?? [])
-                                          .where((element) =>
-                                              element.transactionDate >=
-                                                  DateTime.now().startOfDay() &&
-                                              element.transactionDate <=
-                                                  DateTime.now())
-                                          .sum
-                                          .moneyCompact,
-                                      style: context.textTheme.displaySmall,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: AnalyticsCard(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FlowSeparateLineChart(
-                            transactions: transactions ?? [],
-                            startDate: startDate,
-                            endDate: DateTime.now(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-            ],
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
                   child: NoTransactions(
@@ -169,14 +71,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                   ),
                 ),
               (_, true) => Expanded(
-                  child: GroupedTransactionList(
-                    controller: widget.scrollController,
-                    transactions: transactions!,
-                    listPadding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 80.0,
-                    ),
-                  ),
+                  child: buildGroupedList(context, transactions ?? []),
                 ),
               (_, false) => const Expanded(
                   child: Center(
@@ -187,6 +82,69 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           ],
         );
       },
+    );
+  }
+
+  Widget buildGroupedList(
+      BuildContext context, List<Transaction> transactions) {
+    final Map<DateTime, List<Transaction>> grouped = transactions.groupByDate();
+    final List<Widget> headers = grouped.keys
+        .map((date) =>
+            TransactionListDateHeader(transactions: grouped[date]!, date: date))
+        .toList();
+
+    return GroupedTransactionList(
+      controller: widget.scrollController,
+      header: SizedBox(
+        height: 200.0,
+        width: double.infinity,
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              children: [
+                const Expanded(
+                  child: TotalBalanceCard(),
+                ),
+                const SizedBox(height: 16.0),
+                Expanded(
+                  child: FlowTodayCard(transactions: transactions),
+                ),
+              ],
+            )),
+            const SizedBox(width: 16.0),
+            Expanded(
+              child: AnalyticsCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0).copyWith(top: 12.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        "tabs.home.last7days".t(context),
+                        style: context.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Expanded(
+                        child: FlowSeparateLineChart(
+                          transactions: transactions,
+                          startDate: startDate,
+                          endDate: DateTime.now(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      transactions: grouped.values.toList(),
+      headers: headers,
+      listPadding: const EdgeInsets.only(
+        top: 0,
+        bottom: 80.0,
+      ),
     );
   }
 

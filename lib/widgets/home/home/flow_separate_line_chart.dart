@@ -54,14 +54,51 @@ class _FlowSeparateLineChartState extends State<FlowSeparateLineChart> {
     return LineChart(
       data,
       curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 250),
     );
   }
 
   void updateData() {
+    final List<FlSpot> incomeSpots = transactions.incomes
+        .map(
+          (e) => FlSpot(
+            e.transactionDate.microsecondsSinceEpoch.toDouble(),
+            e.amount,
+          ),
+        )
+        .toList();
+
+    final List<FlSpot> expenseSpots = transactions.expenses
+        .map(
+          (e) => FlSpot(
+            e.transactionDate.microsecondsSinceEpoch.toDouble(),
+            e.amount.abs(),
+          ),
+        )
+        .toList();
+
     data = LineChartData(
-      titlesData: const FlTitlesData(show: false),
+      titlesData: FlTitlesData(
+        leftTitles: const AxisTitles(),
+        rightTitles: const AxisTitles(),
+        topTitles: const AxisTitles(),
+        bottomTitles: AxisTitles(
+          drawBelowEverything: false,
+          sideTitles: SideTitles(
+            reservedSize: 18.0,
+            showTitles: true,
+            interval: const Duration(days: 1).inMicroseconds.toDouble(),
+            getTitlesWidget: (value, meta) => Text(
+              value % const Duration(days: 1).inMicroseconds == 0
+                  ? Moment.fromMicrosecondsSinceEpoch(value.toInt()).format('D')
+                  : '',
+              style: context.textTheme.labelSmall?.semi(context),
+            ),
+          ),
+        ),
+      ),
       borderData: FlBorderData(show: false),
-      clipData: const FlClipData.all(),
+      clipData: const FlClipData.none(),
       gridData: FlGridData(
         verticalInterval: const Duration(days: 1).inMicroseconds.toDouble(),
       ),
@@ -77,28 +114,24 @@ class _FlowSeparateLineChartState extends State<FlowSeparateLineChart> {
       maxX: widget.endDate.endOfDay().microsecondsSinceEpoch.toDouble() + 1,
       lineBarsData: [
         LineChartBarData(
+          isCurved: true,
+          preventCurveOverShooting: true,
+          curveSmoothness: 0.25,
+          barWidth: 4.0,
+          dotData: const FlDotData(show: false),
           color: context.flowColors.expense,
-          spots: transactions.expenses
-              .map(
-                (e) => FlSpot(
-                  e.transactionDate.microsecondsSinceEpoch.toDouble(),
-                  e.amount.abs(),
-                ),
-              )
-              .toList(),
+          spots: expenseSpots,
           isStrokeCapRound: true,
           isStrokeJoinRound: true,
         ),
         LineChartBarData(
+          isCurved: true,
+          preventCurveOverShooting: true,
+          curveSmoothness: 0.25,
+          barWidth: 4.0,
+          dotData: const FlDotData(show: false),
           color: context.flowColors.income,
-          spots: transactions.incomes
-              .map(
-                (e) => FlSpot(
-                  e.transactionDate.microsecondsSinceEpoch.toDouble(),
-                  e.amount,
-                ),
-              )
-              .toList(),
+          spots: incomeSpots,
           isStrokeCapRound: true,
           isStrokeJoinRound: true,
         ),
