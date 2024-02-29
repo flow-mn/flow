@@ -81,7 +81,7 @@ class ExportSuccess extends StatelessWidget {
             onTap: shareFn,
             leading: const Icon(Symbols.save_alt_rounded),
             child: Text(
-              "sync.export.share".t(context, mode.name),
+              "sync.export.save".t(context, mode.name),
             ),
           )
         ],

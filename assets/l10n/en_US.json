@@ -180,7 +180,6 @@
     "sync.import.emergencyBackup.successful": "Previous data was backed up. You can save the backup file from Backup > Backup history",
     "sync.import.start": "Start importing",
     "sync.import.success": "Import successful!",
-    "sync.export.fileDeleted": "File not found",
 
     "sync.export": "Export",
     "sync.export.type": "Export ({type})",
@@ -197,7 +196,9 @@
     "sync.export.success": "Export successful!",
     "sync.export.success.filePath[0]": "Saved to ",
     "sync.export.success.filePath[1]": "",
-    "sync.export.share": "Flow backup ({type}, {date})",
+    "sync.export.save": "Save backup",
+    "sync.export.save.shareTitle": "Flow backup ({type}, {date})",
+    "sync.export.fileDeleted": "File not found",
 
     "enum.TransactionSubtype": "Type",
     "enum.TransactionSubtype#null": "Default",

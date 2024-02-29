@@ -196,7 +196,8 @@
     "sync.export.success": "Амжилттай өгөгдлийг нөөцөллөө!",
     "sync.export.success.filePath[0]": "Файлыг ",
     "sync.export.success.filePath[1]": "-т хадгаллаа",
-    "sync.export.share": "Flow нөөц ({type}, {date})",
+    "sync.export.save": "Нөөц хадгалах",
+    "sync.export.save.shareTitle": "Flow нөөц ({type}, {date})",
     "sync.export.fileDeleted": "Файл олдсонгүй",
 
     "enum.TransactionSubtype": "Төрөл",
