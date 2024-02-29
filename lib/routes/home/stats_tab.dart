@@ -1,9 +1,9 @@
-import 'dart:convert';
-
-import 'package:flow/data/money_flow.dart';
+import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
+import 'package:flow/widgets/home/stats/group_pie_chart.dart';
+import 'package:flow/widgets/month_selector_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -16,52 +16,70 @@ class StatsTab extends StatefulWidget {
 
 class _StatsTabState extends State<StatsTab>
     with AutomaticKeepAliveClientMixin {
-  final DateTime from = DateTime.fromMillisecondsSinceEpoch(0);
-  final DateTime to =
-      DateTime.now().add(const Duration(days: 7)).startOfLocalWeek();
-  // final DateTime from = DateTime.now().startOfLocalWeek();
-  // final DateTime to =
-  //     DateTime.now().add(const Duration(days: 7)).startOfLocalWeek();
+  DateTime from = DateTime.now().startOfMonth();
+  DateTime to = DateTime.now().endOfMonth();
 
-  late final Future<Map<String, MoneyFlow>> categoriesFlow =
-      ObjectBox().flowByCategories(from: from, to: to);
-  late final Future<Map<String, MoneyFlow>> accountsFlow =
-      ObjectBox().flowByAccounts(from: from, to: to);
+  FlowAnalytics? analytics;
+
+  bool busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetch(true);
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          FutureBuilder(
-            future: categoriesFlow,
-            builder: (context, snapshot) => snapshot.data == null
-                ? const Spinner()
-                : Text(
-                    jsonEncode(
-                      snapshot.data!.map(
-                        (key, value) => MapEntry(key, value.flow),
-                      ),
-                    ),
-                  ),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          width: double.infinity,
+          child: MonthSelectorBar(
+            year: from.year,
+            month: from.month,
+            onUpdate: (year, month) => setState(() {
+              from = DateTime(year, month).startOfMonth();
+              to = DateTime(year, month).endOfMonth();
+              fetch(true);
+            }),
           ),
-          FutureBuilder(
-            future: accountsFlow,
-            builder: (context, snapshot) => snapshot.data == null
-                ? const Spinner()
-                : Text(
-                    jsonEncode(
-                      snapshot.data!.map(
-                        (key, value) => MapEntry(key, value.flow),
-                      ),
-                    ),
-                  ),
-          ),
-        ],
-      ),
+        ),
+        busy
+            ? const Spinner()
+            : AspectRatio(
+                aspectRatio: 1.0,
+                child: GroupPieChart(
+                  data: analytics!.groupData,
+                  flow: analytics!.flow,
+                ),
+              ),
+      ],
     );
+  }
+
+  Future<void> fetch(bool byCategory) async {
+    if (busy) return;
+
+    setState(() {
+      busy = true;
+    });
+
+    try {
+      analytics = byCategory
+          ? await ObjectBox().flowByCategories(from: from, to: to)
+          : await ObjectBox().flowByAccounts(from: from, to: to);
+    } finally {
+      busy = false;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
