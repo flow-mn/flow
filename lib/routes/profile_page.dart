@@ -10,7 +10,7 @@ import 'package:flow/entity/profile.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/profile_picture.dart';
+import 'package:flow/widgets/general/profile_picture.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {

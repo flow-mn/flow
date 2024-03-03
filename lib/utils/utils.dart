@@ -7,7 +7,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,7 +1,7 @@
 import 'package:flow/entity/profile.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/profile_picture.dart';
+import 'package:flow/widgets/general/profile_picture.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:objectbox/objectbox.dart';
