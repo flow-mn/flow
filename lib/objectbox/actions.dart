@@ -86,6 +86,8 @@ extension MainActions on ObjectBox {
   Future<FlowAnalytics<Category>> flowByCategories({
     required DateTime from,
     required DateTime to,
+    bool ignoreTransfers = true,
+    bool omitZeroes = true,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -97,26 +99,32 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow> flow = {};
-    final Map<String, Category?> categories = {};
+    final Map<String, MoneyFlow<Category>> flow = {};
 
     for (final transaction in transactions) {
+      if (ignoreTransfers && transaction.isTransfer) continue;
+
       final String categoryUuid =
           transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[categoryUuid] ??= MoneyFlow();
+      flow[categoryUuid] ??=
+          MoneyFlow(associatedData: transaction.category.target);
       flow[categoryUuid]!.add(transaction.amount);
-
-      categories[categoryUuid] ??= transaction.category.target;
     }
 
-    return FlowAnalytics(flow: flow, groupData: categories, from: from, to: to);
+    if (omitZeroes) {
+      flow.removeWhere((key, value) => value.isEmpty);
+    }
+
+    return FlowAnalytics(flow: flow, from: from, to: to);
   }
 
   /// Returns a map of category uuid -> [MoneyFlow]
   Future<FlowAnalytics<Account>> flowByAccounts({
     required DateTime from,
     required DateTime to,
+    bool ignoreTransfers = true,
+    bool omitZeroes = true,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -128,23 +136,27 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow> flow = {};
-    final Map<String, Account?> accounts = {};
+    final Map<String, MoneyFlow<Account>> flow = {};
 
     for (final transaction in transactions) {
+      if (ignoreTransfers && transaction.isTransfer) continue;
+
       final String accountUuid =
           transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[accountUuid] ??= MoneyFlow();
+      flow[accountUuid] ??=
+          MoneyFlow(associatedData: transaction.account.target);
       flow[accountUuid]!.add(transaction.amount);
-
-      accounts[accountUuid] ??= transaction.account.target;
     }
 
     assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
         "There is no way you've managed to make a transaction without an account");
 
-    return FlowAnalytics(from: from, to: to, flow: flow, groupData: accounts);
+    if (omitZeroes) {
+      flow.removeWhere((key, value) => value.isEmpty);
+    }
+
+    return FlowAnalytics(from: from, to: to, flow: flow);
   }
 }
 

@@ -1,10 +1,15 @@
-class MoneyFlow implements Comparable<MoneyFlow> {
+class MoneyFlow<T> implements Comparable<MoneyFlow> {
+  final T? associatedData;
+
   double totalExpense;
   double totalIncome;
 
   double get flow => totalExpense + totalIncome;
 
+  bool get isEmpty => totalExpense.abs() == 0.0 && totalIncome.abs() == 0.0;
+
   MoneyFlow({
+    this.associatedData,
     this.totalExpense = 0.0,
     this.totalIncome = 0.0,
   });

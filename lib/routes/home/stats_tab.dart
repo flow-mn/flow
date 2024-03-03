@@ -1,4 +1,5 @@
 import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/money_flow.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -33,6 +34,13 @@ class _StatsTabState extends State<StatsTab>
   Widget build(BuildContext context) {
     super.build(context);
 
+    final Map<String, MoneyFlow> data = analytics == null
+        ? {}
+        : Map.fromEntries(
+            analytics!.flow.entries
+                .where((element) => element.value.totalExpense < 0),
+          );
+
     return Column(
       children: [
         Container(
@@ -45,13 +53,16 @@ class _StatsTabState extends State<StatsTab>
         ),
         busy
             ? const Spinner()
-            : AspectRatio(
-                aspectRatio: 1.0,
-                child: GroupPieChart(
-                  data: analytics!.groupData,
-                  flow: analytics!.flow,
-                ),
-              ),
+            : (data.isEmpty
+                ? const Text("mty")
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GroupPieChart(
+                        data: data,
+                      ),
+                    ],
+                  )),
       ],
     );
   }
