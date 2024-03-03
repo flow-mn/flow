@@ -3,7 +3,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/home/stats/group_pie_chart.dart';
-import 'package:flow/widgets/month_selector_bar.dart';
+import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -16,8 +16,7 @@ class StatsTab extends StatefulWidget {
 
 class _StatsTabState extends State<StatsTab>
     with AutomaticKeepAliveClientMixin {
-  DateTime from = DateTime.now().startOfMonth();
-  DateTime to = DateTime.now().endOfMonth();
+  TimeRange range = TimeRange.thisMonth();
 
   FlowAnalytics? analytics;
 
@@ -39,14 +38,9 @@ class _StatsTabState extends State<StatsTab>
         Container(
           padding: const EdgeInsets.all(16.0),
           width: double.infinity,
-          child: MonthSelectorBar(
-            year: from.year,
-            month: from.month,
-            onUpdate: (year, month) => setState(() {
-              from = DateTime(year, month).startOfMonth();
-              to = DateTime(year, month).endOfMonth();
-              fetch(true);
-            }),
+          child: TimeRangeSelector(
+            initialValue: range,
+            onChanged: updateRange,
           ),
         ),
         busy
@@ -62,6 +56,14 @@ class _StatsTabState extends State<StatsTab>
     );
   }
 
+  void updateRange(TimeRange newRange) {
+    setState(() {
+      range = newRange;
+    });
+
+    fetch(true);
+  }
+
   Future<void> fetch(bool byCategory) async {
     if (busy) return;
 
@@ -71,8 +73,8 @@ class _StatsTabState extends State<StatsTab>
 
     try {
       analytics = byCategory
-          ? await ObjectBox().flowByCategories(from: from, to: to)
-          : await ObjectBox().flowByAccounts(from: from, to: to);
+          ? await ObjectBox().flowByCategories(from: range.from, to: range.to)
+          : await ObjectBox().flowByAccounts(from: range.from, to: range.to);
     } finally {
       busy = false;
 
@@ -84,4 +86,10 @@ class _StatsTabState extends State<StatsTab>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+enum StatsTabTimeRangeMode {
+  thisWeek,
+  thisMonth,
+  custom,
 }

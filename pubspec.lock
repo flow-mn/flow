@@ -697,10 +697,10 @@ packages:
     dependency: "direct main"
     description:
       name: moment_dart
-      sha256: aa2b9ac396a16681b8f4a73e48268d8b59dfe33202ae1f531c3a9c91096d66fc
+      sha256: "252e06594ad7d1f1815c18a9112b76451fcee05743667c0566e24b83a078b91d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "2.0.2"
   month_picker_dialog:
     dependency: "direct main"
     description:
