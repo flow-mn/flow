@@ -139,7 +139,7 @@ class SupportPage extends StatelessWidget {
                             "support.donateDeveloper.action".t(context),
                           ),
                         ),
-                        onTap: () => openUrl(flowGitHubRepoLink),
+                        onTap: () => openUrl(maintainerKoFiLink),
                       )
                     ],
                   ),
