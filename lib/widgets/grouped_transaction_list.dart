@@ -12,6 +12,9 @@ class GroupedTransactionList extends StatelessWidget {
   final List<List<Transaction>> transactions;
   final List<Widget> headers;
 
+  /// When set to true, displays one side of transfer transactions as empty [Container]s
+  final bool shouldCombineTransferIfNeeded;
+
   final ScrollController? controller;
 
   final Widget? header;
@@ -20,18 +23,19 @@ class GroupedTransactionList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.headers,
+    this.controller,
+    this.header,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
       horizontal: 16.0,
       vertical: 4.0,
     ),
-    this.controller,
-    this.header,
+    this.shouldCombineTransferIfNeeded = false,
   }) : assert(headers.length == transactions.length);
 
   @override
   Widget build(BuildContext context) {
-    final bool combineTransfers =
+    final bool combineTransfers = shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
     final List<Object> flattened = [

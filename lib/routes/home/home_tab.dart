@@ -90,6 +90,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     return GroupedTransactionList(
       controller: widget.scrollController,
       transactions: grouped.values.toList(),
+      shouldCombineTransferIfNeeded: true,
       headers: headers,
       listPadding: const EdgeInsets.only(
         top: 0,
