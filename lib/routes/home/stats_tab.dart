@@ -66,11 +66,12 @@ class _StatsTabState extends State<StatsTab>
                     onTap: changeMode,
                   ))
                 : Expanded(
-                    child: GroupPieChart(
-                      data: data,
-                      scrollLegendWithin: true,
-                      scrollPadding: const EdgeInsets.only(bottom: 96.0),
-                      unresolvedDataTitle: "category.none".t(context),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.only(bottom: 96.0),
+                      child: GroupPieChart(
+                        data: data,
+                        unresolvedDataTitle: "category.none".t(context),
+                      ),
                     ),
                   )),
       ],
