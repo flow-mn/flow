@@ -253,7 +253,7 @@ extension AccountActions on Account {
   /// This is probably better of as Singleton somewhere with memoization as
   /// account names won't get changed that frequently (I hope)
   ///
-  /// TODO
+  /// TODO refactor this to be more efficient
   static String nameByUuid(String uuid) {
     final query =
         ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();
