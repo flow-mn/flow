@@ -94,6 +94,9 @@ class BackupEntryCard extends StatelessWidget {
 
     await Share.shareXFiles([XFile(entry.filePath)],
         sharePositionOrigin: origin,
-        subject: "sync.export.share".t(context, entry.fileExt));
+        subject: "sync.export.save.shareTitle".t(context, {
+          "type": entry.fileExt,
+          "date": entry.createdDate.toMoment().lll,
+        }));
   }
 }

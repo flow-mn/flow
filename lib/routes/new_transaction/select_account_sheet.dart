@@ -1,6 +1,6 @@
 import 'package:flow/entity/account.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';

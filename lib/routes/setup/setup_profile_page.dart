@@ -3,7 +3,7 @@ import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -5,7 +5,7 @@ import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flow/widgets/home/prefs/profile_card.dart';
 import 'package:flutter/material.dart';

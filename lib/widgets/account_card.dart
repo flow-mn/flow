@@ -32,10 +32,10 @@ class AccountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double incomeSum = excludeTransfersInTotal
-        ? account.transactions.nonTransactions.incomeSum
+        ? account.transactions.nonTransfers.incomeSum
         : account.transactions.incomeSum;
     final double expenseSum = excludeTransfersInTotal
-        ? account.transactions.nonTransactions.expenseSum
+        ? account.transactions.nonTransfers.expenseSum
         : account.transactions.expenseSum;
 
     final child = Surface(

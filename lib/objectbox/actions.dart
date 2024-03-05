@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
@@ -14,6 +16,18 @@ import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
 extension MainActions on ObjectBox {
+  double getTotalBalance() {
+    final Query<Account> accountsQuery = box<Account>()
+        .query(Account_.excludeFromTotalBalance.equals(false))
+        .build();
+
+    final List<Account> accounts = accountsQuery.find();
+
+    return accounts
+        .map((e) => e.balance)
+        .fold(0, (previousValue, element) => previousValue + element);
+  }
+
   List<Account> getAccounts([bool sortByFrecency = true]) {
     final List<Account> accounts = box<Account>().getAll();
 
@@ -66,6 +80,83 @@ extension MainActions on ObjectBox {
     }
 
     await ObjectBox().box<Account>().putManyAsync(accounts);
+  }
+
+  /// Returns a map of category uuid -> [MoneyFlow]
+  Future<FlowAnalytics<Category>> flowByCategories({
+    required DateTime from,
+    required DateTime to,
+    bool ignoreTransfers = true,
+    bool omitZeroes = true,
+  }) async {
+    final Condition<Transaction> dateFilter =
+        Transaction_.transactionDate.betweenDate(from, to);
+
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
+
+    final List<Transaction> transactions = await transactionsQuery.findAsync();
+
+    transactionsQuery.close();
+
+    final Map<String, MoneyFlow<Category>> flow = {};
+
+    for (final transaction in transactions) {
+      if (ignoreTransfers && transaction.isTransfer) continue;
+
+      final String categoryUuid =
+          transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
+
+      flow[categoryUuid] ??=
+          MoneyFlow(associatedData: transaction.category.target);
+      flow[categoryUuid]!.add(transaction.amount);
+    }
+
+    if (omitZeroes) {
+      flow.removeWhere((key, value) => value.isEmpty);
+    }
+
+    return FlowAnalytics(flow: flow, from: from, to: to);
+  }
+
+  /// Returns a map of category uuid -> [MoneyFlow]
+  Future<FlowAnalytics<Account>> flowByAccounts({
+    required DateTime from,
+    required DateTime to,
+    bool ignoreTransfers = true,
+    bool omitZeroes = true,
+  }) async {
+    final Condition<Transaction> dateFilter =
+        Transaction_.transactionDate.betweenDate(from, to);
+
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
+
+    final List<Transaction> transactions = await transactionsQuery.findAsync();
+
+    transactionsQuery.close();
+
+    final Map<String, MoneyFlow<Account>> flow = {};
+
+    for (final transaction in transactions) {
+      if (ignoreTransfers && transaction.isTransfer) continue;
+
+      final String accountUuid =
+          transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
+
+      flow[accountUuid] ??=
+          MoneyFlow(associatedData: transaction.account.target);
+      flow[accountUuid]!.add(transaction.amount);
+    }
+
+    assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
+        "There is no way you've managed to make a transaction without an account");
+
+    if (omitZeroes) {
+      flow.removeWhere((key, value) => value.isEmpty);
+    }
+
+    return FlowAnalytics(from: from, to: to, flow: flow);
   }
 }
 
@@ -127,50 +218,26 @@ extension TransactionActions on Transaction {
 }
 
 extension TransactionListActions on Iterable<Transaction> {
-  Iterable<Transaction> get nonTransactions =>
+  Iterable<Transaction> get nonTransfers =>
       where((transaction) => !transaction.isTransfer);
+  Iterable<Transaction> get transfers =>
+      where((transaction) => transaction.isTransfer);
+  Iterable<Transaction> get expenses =>
+      where((transaction) => transaction.amount.isNegative);
+  Iterable<Transaction> get incomes =>
+      where((transaction) => transaction.amount > 0);
 
-  double get incomeSum => where((transaction) => transaction.amount >= 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get expenseSum => where((transaction) => transaction.amount < 0)
-      .map((transaction) => transaction.amount)
-      .fold(0, (value, element) => value + element);
-  double get sum =>
-      map((transaction) => transaction.amount).fold(0, (a, b) => a + b);
+  double get incomeSum =>
+      incomes.fold(0, (value, element) => value + element.amount);
+  double get expenseSum =>
+      expenses.fold(0, (value, element) => value + element.amount);
+  double get sum => fold(0, (value, element) => value + element.amount);
 
   Map<DateTime, List<Transaction>> groupByDate() {
     final Map<DateTime, List<Transaction>> value = {};
 
-    int? lastTransferIndex;
-    Transaction? lastTransferFrom;
-
-    for (final (index, transaction) in indexed) {
+    for (final transaction in this) {
       final date = transaction.transactionDate.toLocal().startOfDay();
-
-      if (LocalPreferences().combineTransferTransactions.get() &&
-          transaction.isTransfer) {
-        if (lastTransferIndex == null) {
-          lastTransferIndex = index;
-          lastTransferFrom = transaction;
-          continue;
-        }
-
-        value[date] ??= [];
-        value[date]!.add(
-          lastTransferFrom!
-            ..title ??= "transaction.transfer.fromToTitle".tr(
-              {
-                "from": lastTransferFrom.account.target!.name,
-                "to": transaction.account.target!.name
-              },
-            ),
-        );
-
-        lastTransferIndex = null;
-        lastTransferFrom = null;
-        continue;
-      }
 
       value[date] ??= [];
       value[date]!.add(transaction);
@@ -186,7 +253,7 @@ extension AccountActions on Account {
   /// This is probably better of as Singleton somewhere with memoization as
   /// account names won't get changed that frequently (I hope)
   ///
-  /// TODO
+  /// TODO refactor this to be more efficient
   static String nameByUuid(String uuid) {
     final query =
         ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();

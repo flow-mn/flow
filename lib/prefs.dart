@@ -173,8 +173,7 @@ class LocalPreferences {
 
         categoryTransactionsQuery.close();
 
-        // TODO do I have to use `await` here?
-        // doesn't seem necessary...
+        // Future
         setFrecencyData(
             "category",
             category.uuid,
@@ -214,8 +213,7 @@ class LocalPreferences {
 
         accountTransactionsQuery.close();
 
-        // TODO do I have to use `await` here?
-        // doesn't seem necessary...
+        // Future
         setFrecencyData(
             "account",
             account.uuid,

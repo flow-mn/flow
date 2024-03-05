@@ -1,9 +1,11 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -17,15 +19,15 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
-  // Query for today's transaction, newest to oldest
+  final DateTime startDate =
+      Moment.now().subtract(const Duration(days: 29)).startOfDay();
+
+  // Last 7 days, and planned payments, newest to oldest
   QueryBuilder<Transaction> qb() => ObjectBox()
       .box<Transaction>()
       .query(
         Transaction_.transactionDate.greaterOrEqual(
-          Moment.now()
-              .subtract(const Duration(days: 6))
-              .startOfDay()
-              .millisecondsSinceEpoch,
+          startDate.millisecondsSinceEpoch,
         ),
       )
       .order(Transaction_.transactionDate, flags: Order.descending);
@@ -63,14 +65,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                   ),
                 ),
               (_, true) => Expanded(
-                  child: GroupedTransactionList(
-                    controller: widget.scrollController,
-                    transactions: transactions!,
-                    listPadding: const EdgeInsets.only(
-                      top: 16.0,
-                      bottom: 80.0,
-                    ),
-                  ),
+                  child: buildGroupedList(context, transactions ?? []),
                 ),
               (_, false) => const Expanded(
                   child: Center(
@@ -81,6 +76,26 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           ],
         );
       },
+    );
+  }
+
+  Widget buildGroupedList(
+      BuildContext context, List<Transaction> transactions) {
+    final Map<DateTime, List<Transaction>> grouped = transactions.groupByDate();
+    final List<Widget> headers = grouped.keys
+        .map((date) =>
+            TransactionListDateHeader(transactions: grouped[date]!, date: date))
+        .toList();
+
+    return GroupedTransactionList(
+      controller: widget.scrollController,
+      transactions: grouped.values.toList(),
+      shouldCombineTransferIfNeeded: true,
+      headers: headers,
+      listPadding: const EdgeInsets.only(
+        top: 0,
+        bottom: 80.0,
+      ),
     );
   }
 

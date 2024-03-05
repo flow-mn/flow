@@ -4,11 +4,12 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class NoAccounts extends StatelessWidget {
-  const NoAccounts({super.key});
+class NoData extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const NoData({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -19,24 +20,24 @@ class NoAccounts extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "account.noAccounts".t(context),
+              "tabs.stats.chart.noData".t(context),
               textAlign: TextAlign.center,
               style: context.textTheme.headlineMedium,
             ),
             const SizedBox(height: 8.0),
             FlowIcon(
-              FlowIconData.icon(Symbols.wallet_rounded),
+              FlowIconData.icon(Symbols.query_stats_rounded),
               size: 128.0,
               color: context.colorScheme.primary,
             ),
             const SizedBox(height: 8.0),
             Button(
               trailing: const Icon(
-                Symbols.add_rounded,
+                Symbols.history_rounded,
                 weight: 600.0,
               ),
-              child: Text("account.new".t(context)),
-              onTap: () => context.push("/account/new"),
+              onTap: onTap,
+              child: Text("tabs.stats.timeRange.select".t(context)),
             ),
           ],
         ),

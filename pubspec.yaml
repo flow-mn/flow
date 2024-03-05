@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.2.3+26"
+version: "0.2.8+31"
 
 environment:
   sdk: ">=3.1.3 <4.0.0"
@@ -17,6 +17,7 @@ dependencies:
   desktop_drop: ^0.4.4
   file_picker: ^6.1.1
   file_saver: ^0.2.9
+  fl_chart: ^0.66.2
   flutter:
     sdk: flutter
   flutter_floating_bottom_bar: ^1.2.0
@@ -32,7 +33,8 @@ dependencies:
   local_settings: ^0.3.1
   mask_text_input_formatter: ^2.8.0
   material_symbols_icons: ^4.2719.1
-  moment_dart: ^1.1.1
+  moment_dart: ^2.0.2
+  month_picker_dialog: ^2.11.0
   objectbox: ^2.4.0
   objectbox_flutter_libs: ^2.4.0
   path: ^1.8.3

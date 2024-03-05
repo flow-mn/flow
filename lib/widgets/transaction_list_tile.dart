@@ -36,6 +36,12 @@ class TransactionListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (combineTransfers &&
+        transaction.isTransfer &&
+        transaction.amount.isNegative) {
+      return Container();
+    }
+
     final bool missingTitle = transaction.title == null;
 
     final Transfer? transfer =

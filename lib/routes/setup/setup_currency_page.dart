@@ -1,7 +1,7 @@
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';

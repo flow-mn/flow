@@ -95,7 +95,7 @@ class _ExportPageState extends State<ExportPage> {
     await Share.shareXFiles(
       [XFile(filePath!)],
       sharePositionOrigin: origin,
-      subject: "sync.export.share".t(context, {
+      subject: "sync.export.save.shareTitle".t(context, {
         "type": widget.mode.name,
         "date": Moment.now().lll,
       }),

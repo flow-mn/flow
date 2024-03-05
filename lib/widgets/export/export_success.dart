@@ -5,9 +5,9 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/button.dart';
+import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/info_text.dart';
+import 'package:flow/widgets/general/info_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,7 +81,7 @@ class ExportSuccess extends StatelessWidget {
             onTap: shareFn,
             leading: const Icon(Symbols.save_alt_rounded),
             child: Text(
-              "sync.export.share".t(context, mode.name),
+              "sync.export.save".t(context, mode.name),
             ),
           )
         ],
