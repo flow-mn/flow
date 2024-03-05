@@ -1,5 +1,6 @@
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
+import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -45,32 +46,33 @@ class _StatsTabState extends State<StatsTab>
               ),
           );
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 80.0),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            width: double.infinity,
-            child: TimeRangeSelector(
-              initialValue: range,
-              onChanged: updateRange,
-            ),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          width: double.infinity,
+          child: TimeRangeSelector(
+            initialValue: range,
+            onChanged: updateRange,
           ),
-          busy
-              ? const Spinner()
-              : (data.isEmpty
-                  ? const Text("mty")
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GroupPieChart(
-                          data: data,
-                        ),
-                      ],
-                    )),
-        ],
-      ),
+        ),
+        busy
+            ? const Spinner()
+            : (data.isEmpty
+                ? Center(
+                    child: Text(
+                      "tabs.stats.chart.noData".t(context),
+                    ),
+                  )
+                : Expanded(
+                    child: GroupPieChart(
+                      data: data,
+                      scrollLegendWithin: true,
+                      scrollPadding: const EdgeInsets.only(bottom: 96.0),
+                      unresolvedDataTitle: "category.none".t(context),
+                    ),
+                  )),
+      ],
     );
   }
 

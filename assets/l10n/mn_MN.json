@@ -95,6 +95,7 @@
     "category.delete": "Ангилалыг устгах",
     "category.delete.warning": "Энэ ангиллыг устгавал холбоотой {transactionCount} гүйлгээг ангилалгүй болохыг анхаарна уу. Энэ үйлдлийг буцаах боломжгүй юм!",
     "category.skip": "Ангилалгүй",
+    "category.none": "Ангилалгүй",
     "categories": "Ангиллууд",
     "categories.noCategories": "Танд үүсгэсэн ангилал алга байна",
 
@@ -143,6 +144,8 @@
     "tabs.stats.timeRange.mode.byWeek": "Долоо хоногоор",
     "tabs.stats.timeRange.mode.byMonth": "Сараар",
     "tabs.stats.timeRange.mode.byYear": "Жилээр",
+    "tabs.stats.chart.noData": "Сонгосон шүүлтүүрт тохирох хангалттай өгөгдөл байхгүй байна",
+    "tabs.stats.chart.select.clickToSelect": "Товшиж сонгоно уу",
     "tabs.accounts": "Данснууд",
     "tabs.accounts.reorder": "Дараалал өөрчлөх",
     "tabs.accounts.reorder.guide": "Удаан дарж чирнэ үү",

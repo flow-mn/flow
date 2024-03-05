@@ -95,6 +95,7 @@
     "category.delete": "Delete category",
     "category.delete.warning": "Deleting this category will leave {transactionCount} transactions with no category. This action is irreversible!",
     "category.skip": "No category",
+    "category.none": "No category",
     "categories": "Categories",
     "categories.noCategories": "You don't have any categories",
 
@@ -143,6 +144,8 @@
     "tabs.stats.timeRange.mode.byWeek": "By week",
     "tabs.stats.timeRange.mode.byMonth": "By month",
     "tabs.stats.timeRange.mode.byYear": "By year",
+    "tabs.stats.chart.noData": "No data to show for the selected filters",
+    "tabs.stats.chart.select.clickToSelect": "Click to select",
     "tabs.accounts": "Accounts",
     "tabs.accounts.reorder": "Reorder accounts",
     "tabs.accounts.reorder.guide": "Long press and drag",
