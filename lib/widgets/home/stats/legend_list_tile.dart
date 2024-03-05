@@ -7,6 +7,8 @@ class LegendListTile extends StatelessWidget {
   final Widget? title;
   final Widget? trailing;
 
+  final Color? color;
+
   final VoidCallback? onTap;
 
   const LegendListTile({
@@ -15,6 +17,7 @@ class LegendListTile extends StatelessWidget {
     this.title,
     this.trailing,
     this.onTap,
+    this.color,
     this.selected = false,
   });
 
@@ -26,6 +29,7 @@ class LegendListTile extends StatelessWidget {
       title: title,
       trailing: trailing,
       selected: selected,
+      iconColor: color,
     );
   }
 }
