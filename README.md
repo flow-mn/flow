@@ -4,11 +4,13 @@
 [![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
 [![Support on Ko-fi](https://img.shields.io/badge/kofi-sadespresso-f5ccff?logo=ko-fi&logoColor=white&style=for-the-badge&label=Ko-fi)](https://ko-fi.com/sadespresso)
 
-## Try test builds
+## Download Flow (beta)
 
 [![Join Play Store Open Testing](https://img.shields.io/badge/Google_Play-open_testing-f5ccff?logo=google-play&logoColor=white&style=for-the-badge)](https://play.google.com/store/apps/details?id=mn.flow.flow)
 [![Join TestFlight group](https://img.shields.io/badge/TestFlight-beta_testing-f5ccff?logo=appstore&logoColor=white&style=for-the-badge)](https://testflight.apple.com/join/NH4ifijS)
 [![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
+
+> Backuping up before updating is highly recommended!
 
 ## Preface
 
@@ -25,13 +27,17 @@ Flow is a free, open-source, cross-platform personal finance tracking app.
   * JSON for backup
   * CSV for external software use (i.e., Google Sheets)
 
-## Release date
+## Try Beta version
 
-Flow is currently in development, and is planned to release beta builds in
-early March.
+We've release Flow beta on March 6. You can download the
+[beta builds for iOS and Android](#try-test-builds) right now.
+Beta version features all the basic functionality for an expense tracker app.
+JSON backups from Alpha and Beta versions are guaranteed to be supported
+by the next major releases, until Production.
 
-You can try alpha builds right now from the badges at the top of the page.
-JSON backups are guaranteed to be supported by the stable release.
+Feedbacks and ideas are greatly appreciated 🌟
+
+See what's coming on [Flow's next release](https://github.com/flow-mn/flow/milestone/2)
 
 ## Supported platforms
 
