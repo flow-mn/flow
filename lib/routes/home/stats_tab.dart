@@ -5,6 +5,8 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/home/stats/group_pie_chart.dart';
+import 'package:flow/widgets/home/stats/no_data.dart';
+import 'package:flow/widgets/select_time_range_mode_sheet.dart';
 import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -59,11 +61,10 @@ class _StatsTabState extends State<StatsTab>
         busy
             ? const Spinner()
             : (data.isEmpty
-                ? Center(
-                    child: Text(
-                      "tabs.stats.chart.noData".t(context),
-                    ),
-                  )
+                ? Expanded(
+                    child: NoData(
+                    onTap: changeMode,
+                  ))
                 : Expanded(
                     child: GroupPieChart(
                       data: data,
@@ -102,6 +103,51 @@ class _StatsTabState extends State<StatsTab>
         setState(() {});
       }
     }
+  }
+
+  // TODO remove time range related code
+  // to avoid duplicating what's in [TimeRangeSelector]
+
+  Future<CustomTimeRange?> selectRange() async {
+    final newRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+      lastDate: DateTime.now().startOfNextYear(),
+      initialDateRange: range is CustomTimeRange
+          ? DateTimeRange(
+              start: (range as CustomTimeRange).from,
+              end: (range as CustomTimeRange).to)
+          : null,
+    );
+
+    if (newRange != null) {
+      return CustomTimeRange(newRange.start, newRange.end);
+    }
+
+    return null;
+  }
+
+  Future<void> changeMode() async {
+    final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
+      context: context,
+      builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
+    );
+
+    if (mode == null) return;
+
+    final TimeRange? newRange = switch (mode) {
+      TimeRangeMode.thisWeek => TimeRange.thisLocalWeek(),
+      TimeRangeMode.thisMonth => TimeRange.thisMonth(),
+      TimeRangeMode.thisYear => TimeRange.thisYear(),
+      TimeRangeMode.byYear => await selectRange(),
+      TimeRangeMode.byMonth => await selectRange(),
+      TimeRangeMode.custom => await selectRange(),
+    };
+
+    if (newRange == null) return;
+    if (!mounted) return;
+
+    updateRange(newRange);
   }
 
   @override
