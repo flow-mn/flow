@@ -38,32 +38,39 @@ class _StatsTabState extends State<StatsTab>
         ? {}
         : Map.fromEntries(
             analytics!.flow.entries
-                .where((element) => element.value.totalExpense < 0),
+                .where((element) => element.value.totalExpense < 0)
+                .toList()
+              ..sort(
+                (a, b) => b.value.totalExpense.compareTo(a.value.totalExpense),
+              ),
           );
 
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          width: double.infinity,
-          child: TimeRangeSelector(
-            initialValue: range,
-            onChanged: updateRange,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 80.0),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            width: double.infinity,
+            child: TimeRangeSelector(
+              initialValue: range,
+              onChanged: updateRange,
+            ),
           ),
-        ),
-        busy
-            ? const Spinner()
-            : (data.isEmpty
-                ? const Text("mty")
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GroupPieChart(
-                        data: data,
-                      ),
-                    ],
-                  )),
-      ],
+          busy
+              ? const Spinner()
+              : (data.isEmpty
+                  ? const Text("mty")
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GroupPieChart(
+                          data: data,
+                        ),
+                      ],
+                    )),
+        ],
+      ),
     );
   }
 
