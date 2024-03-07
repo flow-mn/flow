@@ -140,7 +140,7 @@
     "tabs.stats.timeRange.thisWeek": "This week",
     "tabs.stats.timeRange.thisMonth": "This month",
     "tabs.stats.timeRange.thisYear": "This year",
-    "tabs.stats.timeRange.mode.custom": "Select custom range",
+    "tabs.stats.timeRange.mode.custom": "Custom range",
     "tabs.stats.timeRange.mode.byWeek": "By week",
     "tabs.stats.timeRange.mode.byMonth": "By month",
     "tabs.stats.timeRange.mode.byYear": "By year",
