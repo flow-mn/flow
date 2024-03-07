@@ -9,6 +9,7 @@ extension ThemeAccessor on BuildContext {
 }
 
 extension TextStyleHelper on TextStyle {
+  TextStyle get medium => copyWith(fontWeight: FontWeight.w500);
   TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
   TextStyle semi(BuildContext context) =>
       copyWith(color: context.flowColors.semi);

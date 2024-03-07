@@ -18,6 +18,9 @@
     "general.delete.all": "Delete all",
     "general.copy.success": "Copied to clipboard",
     "general.copy.clickToCopy": "Click to copy",
+    "general.timeSelector.select.month": "Select a month",
+    "general.timeSelector.select.year": "Select a year",
+    "general.timeSelector.now": "Now",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
