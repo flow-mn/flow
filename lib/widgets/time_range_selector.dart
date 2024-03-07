@@ -93,7 +93,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                     ),
                   ),
                 _ => Button(
-                    onTap: selectRange,
+                    onTap: pickRange,
                     child: Text(
                       "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
                       textAlign: TextAlign.center,
@@ -131,6 +131,13 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
       _timeRange = newValue;
     });
     widget.onChanged(_timeRange);
+  }
+
+  void pickRange() async {
+    final TimeRange? newRange = await selectRange();
+    if (newRange != null) {
+      update(newRange);
+    }
   }
 
   Future<CustomTimeRange?> selectRange() async {
