@@ -55,19 +55,21 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            const Spacer(),
-            Button(
-              onTap: save,
-              trailing: const Icon(Symbols.chevron_right_rounded),
-              child: Text(_selected
-                  ? "setup.next".t(context)
-                  : "setup.profile.addPhoto.skip".t(context)),
-            ),
-          ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              const Spacer(),
+              Button(
+                onTap: save,
+                trailing: const Icon(Symbols.chevron_right_rounded),
+                child: Text(_selected
+                    ? "setup.next".t(context)
+                    : "setup.profile.addPhoto.skip".t(context)),
+              ),
+            ],
+          ),
         ),
       ),
     );

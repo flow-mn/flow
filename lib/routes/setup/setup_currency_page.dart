@@ -53,17 +53,19 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            const Spacer(),
-            Button(
-              onTap: save,
-              trailing: const Icon(Symbols.chevron_right_rounded),
-              child: Text("setup.next".t(context)),
-            )
-          ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              const Spacer(),
+              Button(
+                onTap: save,
+                trailing: const Icon(Symbols.chevron_right_rounded),
+                child: Text("setup.next".t(context)),
+              )
+            ],
+          ),
         ),
       ),
     );
