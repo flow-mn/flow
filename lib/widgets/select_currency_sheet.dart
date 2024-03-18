@@ -111,7 +111,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
               transformedCurrencyData.name,
             ),
             subtitle: Text(
-              transformedCurrencyData.country,
+              transformedCurrencyData.country.titleCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

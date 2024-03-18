@@ -1394,7 +1394,7 @@ final Map<String, CurrencyData> iso4217CurrenciesGrouped =
         code: value.first.code,
         country: _multinationCurrencyCountryNameOverride[value.first.code] ??
             value.map((e) => e.country).join(", "),
-        name: value.first.code,
+        name: value.first.name,
       ),
     );
   },
