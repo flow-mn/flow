@@ -32,8 +32,12 @@ class InputAmountSheet extends StatefulWidget {
   /// Disable changing between + and -
   final bool lockSign;
 
+  /// Small title on top of the amount
+  final String? title;
+
   const InputAmountSheet({
     super.key,
+    this.title,
     this.initialAmount,
     this.currency,
     this.overrideInitialAmount = true,
@@ -128,6 +132,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
           child: Column(
             children: [
               const SizedBox(height: 16.0),
+              if (widget.title != null) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    widget.title!,
+                    style: context.textTheme.headlineSmall,
+                  ),
+                ),
+                const SizedBox(height: 12.0),
+              ],
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SelectionArea(
@@ -137,13 +151,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                     child: SizedBox(
                       height: amountFieldMaxHeight,
                       child: AutoSizeText(
-                        currentAmount.formatMoney(
-                              decimalDigits: _decimalPart == 0
-                                  ? 0
-                                  : _decimalPart.abs().toString().length,
-                              includeCurrency: !widget.hideCurrencySymbol,
-                              currency: widget.currency,
-                            ) +
+                        currentAmount.abs().formatMoney(
+                                  decimalDigits: _decimalPart == 0
+                                      ? 0
+                                      : _decimalPart.abs().toString().length,
+                                  includeCurrency: !widget.hideCurrencySymbol,
+                                  currency: widget.currency,
+                                ) +
                             (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
                         style: context.textTheme.displayMedium,
                         maxLines: 1,

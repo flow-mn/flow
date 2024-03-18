@@ -4,6 +4,7 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
@@ -362,6 +363,7 @@ class _TransactionPageState extends State<TransactionPage> {
         initialAmount: _amount,
         currency: _selectedAccount?.currency,
         hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
+        title: _transactionType.localizedNameContext(context),
         lockSign: true,
       ),
       isScrollControlled: true,
