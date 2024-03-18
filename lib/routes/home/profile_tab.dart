@@ -51,7 +51,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           ListTile(
             title: Text("tabs.profile.import".t(context)),
-            leading: const Icon(Symbols.settings_backup_restore_rounded),
+            leading: const Icon(Symbols.restore_page_rounded),
             onTap: () => context.push("/import"),
           ),
           const SizedBox(height: 32.0),
