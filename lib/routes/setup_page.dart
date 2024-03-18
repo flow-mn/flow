@@ -54,36 +54,38 @@ class _SetupPageState extends State<SetupPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            SmoothPageIndicator(
-              controller: _pageController, // PageController
-              count: slideCount,
-              effect: WormEffect(
-                dotColor: context.flowColors.semi,
-                activeDotColor: context.colorScheme.primary,
-                dotWidth: 12.0,
-                dotHeight: 12.0,
-                radius: 12.0,
-                spacing: 6.0,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              SmoothPageIndicator(
+                controller: _pageController, // PageController
+                count: slideCount,
+                effect: WormEffect(
+                  dotColor: context.flowColors.semi,
+                  activeDotColor: context.colorScheme.primary,
+                  dotWidth: 12.0,
+                  dotHeight: 12.0,
+                  radius: 12.0,
+                  spacing: 6.0,
+                ),
+                onDotClicked: (index) => _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                ),
               ),
-              onDotClicked: (index) => _pageController.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOut,
-              ),
-            ),
-            const Spacer(),
-            Button(
-              onTap: next,
-              trailing: const Icon(Symbols.chevron_right_rounded),
-              child: Text(lastSlide
-                  ? "setup.getStarted".t(context)
-                  : "setup.next".t(context)),
-            )
-          ],
+              const Spacer(),
+              Button(
+                onTap: next,
+                trailing: const Icon(Symbols.chevron_right_rounded),
+                child: Text(lastSlide
+                    ? "setup.getStarted".t(context)
+                    : "setup.next".t(context)),
+              )
+            ],
+          ),
         ),
       ),
     );
