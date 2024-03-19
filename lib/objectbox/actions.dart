@@ -12,8 +12,12 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:fuzzy/data/result.dart';
+import 'package:fuzzy/fuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
+
+typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
   double getTotalBalance() {
@@ -158,9 +162,73 @@ extension MainActions on ObjectBox {
 
     return FlowAnalytics(from: from, to: to, flow: flow);
   }
+
+  Future<List<RelevanceScoredTitle>> transactionTitleSuggestions({
+    String? currentInput,
+    int? accountId,
+    int? categoryId,
+    int limit = -1,
+  }) async {
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.title
+            .contains(currentInput ?? "", caseSensitive: false))
+        .build();
+
+    final List<Transaction> transactions = await transactionsQuery
+        .findAsync()
+        .then((value) => value
+            .where((element) => element.title?.trim().isNotEmpty == true)
+            .toList());
+
+    transactionsQuery.close();
+
+    final Fuzzy<Transaction> fuzzy = Fuzzy(
+      transactions,
+      options: FuzzyOptions(
+        keys: [
+          WeightedKey(
+            name: "title",
+            getter: (transaction) => transaction.title ?? "",
+            weight: 1.0,
+          ),
+        ],
+      ),
+    );
+
+    final List<Result<Transaction>> fuzzyResult =
+        fuzzy.search(currentInput ?? "").sublist(0, limit);
+
+    final List<RelevanceScoredTitle> scoredTitles = fuzzyResult
+        .map((e) => (
+              title: e.item.title,
+              relevancy: e.score *
+                  e.item.titleSuggestionRelevancyMultipler(
+                    accountId: accountId,
+                    categoryId: categoryId,
+                  )
+            ))
+        .cast<RelevanceScoredTitle>()
+        .toList();
+
+    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+
+    return scoredTitles;
+  }
 }
 
 extension TransactionActions on Transaction {
+  double titleSuggestionRelevancyMultipler(
+      {int? accountId, int? categoryId, String? query}) {
+    double multiplier = 1;
+
+    if (account.targetId == accountId) multiplier += 0.16;
+
+    if (category.targetId == categoryId) multiplier += 0.84;
+
+    return multiplier;
+  }
+
   Transaction? findTransferOriginalOrThis() {
     if (!isTransfer) return this;
 
