@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
@@ -167,7 +168,8 @@ extension MainActions on ObjectBox {
     String? currentInput,
     int? accountId,
     int? categoryId,
-    int limit = -1,
+    bool? negative,
+    int? limit,
   }) async {
     final Query<Transaction> transactionsQuery = ObjectBox()
         .box<Transaction>()
@@ -197,34 +199,46 @@ extension MainActions on ObjectBox {
     );
 
     final List<Result<Transaction>> fuzzyResult =
-        fuzzy.search(currentInput ?? "").sublist(0, limit);
+        fuzzy.search(currentInput ?? "");
 
-    final List<RelevanceScoredTitle> scoredTitles = fuzzyResult
+    final Set<RelevanceScoredTitle> scoredTitlesSet = fuzzyResult
         .map((e) => (
               title: e.item.title,
               relevancy: e.score *
                   e.item.titleSuggestionRelevancyMultipler(
                     accountId: accountId,
                     categoryId: categoryId,
+                    negative: negative,
                   )
             ))
         .cast<RelevanceScoredTitle>()
-        .toList();
+        .toSet();
 
-    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+    final List<RelevanceScoredTitle> scoredTitles =
+        scoredTitlesSet.toList().sublist(
+              0,
+              limit == null ? null : math.min(limit, scoredTitlesSet.length),
+            );
+
+    scoredTitles.sort((a, b) => a.relevancy.compareTo(b.relevancy));
 
     return scoredTitles;
   }
 }
 
 extension TransactionActions on Transaction {
-  double titleSuggestionRelevancyMultipler(
-      {int? accountId, int? categoryId, String? query}) {
+  double titleSuggestionRelevancyMultipler({
+    int? accountId,
+    int? categoryId,
+    bool? negative,
+  }) {
     double multiplier = 1;
 
-    if (account.targetId == accountId) multiplier += 0.16;
+    if (account.targetId == accountId) multiplier += 0.12;
 
-    if (category.targetId == categoryId) multiplier += 0.84;
+    if (negative != null && negative == amount.isNegative) multiplier += 0.24;
+
+    if (category.targetId == categoryId) multiplier += 0.64;
 
     return multiplier;
   }
