@@ -53,12 +53,12 @@ class _TransactionPageState extends State<TransactionPage> {
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
   // TODO (sadespresso) maybe get rid of it
-  late final TextEditingController _titleTextController;
+  late String _title;
   late double _amount;
 
   late final Transaction? _currentlyEditing;
 
-  final FocusNode _titleFocusNode = FocusNode();
+  FocusNode? _titleFocusNode;
   final FocusNode _selectAccountFocusNode = FocusNode();
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
@@ -94,8 +94,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
-      _titleTextController =
-          TextEditingController(text: _currentlyEditing?.title);
+      _title = _currentlyEditing?.title ?? "";
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
@@ -120,8 +119,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   void dispose() {
-    _titleTextController.dispose();
-    _titleFocusNode.dispose();
     _selectAccountFocusNode.dispose();
     super.dispose();
   }
@@ -181,9 +178,25 @@ class _TransactionPageState extends State<TransactionPage> {
                         optionsBuilder: getAutocompleteOptions,
                         optionsMaxHeight: 260.0,
                         displayStringForOption: (option) => option.title,
-                        initialValue: _titleTextController.value,
+                        initialValue: TextEditingValue(text: _title),
+                        fieldViewBuilder: (
+                          BuildContext context,
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted,
+                        ) {
+                          _titleFocusNode = focusNode;
+                          return TextFormField(
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                            onFieldSubmitted: (String value) {
+                              onFieldSubmitted();
+                            },
+                            textAlign: TextAlign.center,
+                          );
+                        },
                         onSelected: (option) =>
-                            _titleTextController.text = option.title,
+                            setState(() => _title = option.title),
                       ),
                     ),
                     // TextField(
@@ -563,7 +576,7 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
-    final String trimmed = _titleTextController.text.trim();
+    final String trimmed = _title.trim();
     final String formattedTitle =
         trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
 
@@ -590,10 +603,10 @@ class _TransactionPageState extends State<TransactionPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       return _currentlyEditing!.amount != _amount ||
-          (_currentlyEditing!.title ?? "") != _titleTextController.text;
+          (_currentlyEditing!.title ?? "") != _title;
     }
 
-    return _amount != 0 || _titleTextController.text.isNotEmpty;
+    return _amount != 0 || _title.isNotEmpty;
   }
 
   Future<List<RelevanceScoredTitle>> getAutocompleteOptions(value) async =>
