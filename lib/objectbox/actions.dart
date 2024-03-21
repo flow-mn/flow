@@ -251,18 +251,18 @@ extension TransactionActions on Transaction {
         query.trim().isEmpty ||
         title == null ||
         title!.trim().isEmpty) {
-      score = 10.0;
+      score = 10.0; // Full match score is 100
     } else {
-      score = partialRatio(query, title!).toDouble();
+      score = partialRatio(query, title!).toDouble() + 10.0;
     }
 
     double multipler = 1.0;
 
-    if (account.targetId == accountId) multipler += 0.12;
+    if (account.targetId == accountId) multipler += 0.33;
 
-    if (negative != null && negative == amount.isNegative) multipler += 0.24;
+    if (negative != null && negative == amount.isNegative) multipler += 0.33;
 
-    if (category.targetId == categoryId) multipler += 0.64;
+    if (category.targetId == categoryId) multipler += 2.0;
 
     return score * multipler;
   }
