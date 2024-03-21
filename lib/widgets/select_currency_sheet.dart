@@ -4,8 +4,8 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy/data/result.dart';
-import 'package:fuzzy/fuzzy.dart';
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
+import 'package:fuzzywuzzy/model/extracted_result.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -24,29 +24,6 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
   String _query = "";
 
-  final Fuzzy<CurrencyData> _fuzzy = Fuzzy(
-    iso4217Currencies,
-    options: FuzzyOptions(
-      keys: [
-        WeightedKey(
-          name: "Country Name",
-          getter: (currencyData) => currencyData.country,
-          weight: 0.85,
-        ),
-        WeightedKey(
-          name: "Currency Name",
-          getter: (currencyData) => currencyData.name,
-          weight: 0.95,
-        ),
-        WeightedKey(
-          name: "ISO 4217 Code",
-          getter: (currencyData) => currencyData.code,
-          weight: 0.5,
-        ),
-      ],
-    ),
-  );
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -57,29 +34,35 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
   Widget build(BuildContext context) {
     // ISO4217Currencies.currencies.length
 
-    final List<Result<CurrencyData>> queryResults = _fuzzy
-        .search(_query, 15)
-        .groupBy((resultItem) => resultItem.item.code)
-        .values
-        .map((e) => e.firstOrNull)
-        .nonNulls
-        .toList();
+    final List<ExtractedResult<CurrencyData>> queryResults =
+        extractTop<CurrencyData>(
+      query: _query.trim(),
+      choices: iso4217Currencies,
+      limit: 10,
+      getter: (currencyData) =>
+          "${currencyData.code} ${currencyData.name} ${currencyData.country}",
+    )
+            .groupBy((resultItem) => resultItem.choice.code)
+            .values
+            .map((e) => e.firstOrNull)
+            .nonNulls
+            .toList();
 
     // Artificially deprioritize North Korean Won due to its unpopularity
     final int kpwIndex =
-        queryResults.indexWhere((element) => element.item.code == "KPW");
+        queryResults.indexWhere((element) => element.choice.code == "KPW");
 
     if (kpwIndex > -1) {
-      final Result<CurrencyData> kpw = queryResults.removeAt(kpwIndex);
+      final ExtractedResult<CurrencyData> kpw = queryResults.removeAt(kpwIndex);
       queryResults.add(kpw);
     }
 
     // Bring the selected item to top
-    final int selectedItemIndex = queryResults
-        .indexWhere((element) => element.item.code == widget.currentlySelected);
+    final int selectedItemIndex = queryResults.indexWhere(
+        (element) => element.choice.code == widget.currentlySelected);
 
     if (selectedItemIndex > -1) {
-      final Result<CurrencyData> selectedItem =
+      final ExtractedResult<CurrencyData> selectedItem =
           queryResults.removeAt(selectedItemIndex);
       queryResults.insert(0, selectedItem);
     }
@@ -103,7 +86,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         controller: _scrollController,
         itemBuilder: (context, i) {
           final CurrencyData transformedCurrencyData =
-              iso4217CurrenciesGrouped[queryResults[i].item.code]!;
+              iso4217CurrenciesGrouped[queryResults[i].choice.code]!;
 
           return ListTile(
             selected: widget.currentlySelected == transformedCurrencyData.code,

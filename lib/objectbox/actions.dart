@@ -13,9 +13,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:fuzzy/data/result.dart';
-import 'package:fuzzy/fuzzy.dart';
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -186,63 +184,87 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Fuzzy<Transaction> fuzzy = Fuzzy(
-      transactions,
-      options: FuzzyOptions(
-        keys: [
-          WeightedKey(
-            name: "title",
-            getter: (transaction) => transaction.title ?? "",
-            weight: 1.0,
-          ),
-        ],
-      ),
-    );
-
-    final List<Result<Transaction>> fuzzyResult =
-        fuzzy.search(currentInput ?? "");
-
-    final List<RelevanceScoredTitle> relevanceCalculatedList = fuzzyResult
+    final List<RelevanceScoredTitle> relevanceCalculatedList = transactions
         .map((e) => (
-              title: e.item.title,
-              relevancy: e.score *
-                  e.item.titleSuggestionRelevancyMultipler(
-                    accountId: accountId,
-                    categoryId: categoryId,
-                    negative: negative,
-                  )
+              title: e.title,
+              relevancy: e.titleSuggestionScore(
+                accountId: accountId,
+                categoryId: categoryId,
+                negative: negative,
+              )
             ))
         .cast<RelevanceScoredTitle>()
         .toList();
 
-    relevanceCalculatedList.sort((a, b) => a.relevancy.compareTo(b.relevancy));
+    relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
-    final List<RelevanceScoredTitle> scoredTitles = relevanceCalculatedList
-        .removeDuplicatesBy((e) => e.title.toLowerCase())
-        .toList();
+    final List<RelevanceScoredTitle> scoredTitles =
+        _mergeTitleRelevancy(relevanceCalculatedList);
+
+    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
     return scoredTitles.sublist(
       0,
       limit == null ? null : math.min(limit, scoredTitles.length),
     );
   }
+
+  /// Removes duplicates from the iterable based on the keyExtractor function.
+  ///
+  /// Keeps the first value seen for a given key.
+  List<RelevanceScoredTitle> _mergeTitleRelevancy(
+      List<RelevanceScoredTitle> scores) {
+    final Map<String, RelevanceScoredTitle> items = {};
+
+    for (final element in scores) {
+      final key = element.title.toLowerCase();
+
+      if (items.containsKey(key)) {
+        final RelevanceScoredTitle current = items[key]!;
+        items[key] = (
+          title: current.title,
+          relevancy: current.relevancy + element.relevancy
+        );
+      } else {
+        // Casing of the first occurance is preserved
+        //
+        // If you have "kfc" - 69 entries, and "KFC" - 420 entires,
+        // "KFC" will appear in the list, and any other casing will be ignored
+        items[key] = element;
+      }
+    }
+
+    return items.values.toList();
+  }
 }
 
 extension TransactionActions on Transaction {
-  double titleSuggestionRelevancyMultipler({
+  double titleSuggestionScore({
+    String? query,
     int? accountId,
     int? categoryId,
     bool? negative,
   }) {
-    double multiplier = 1;
+    late double score;
 
-    if (account.targetId == accountId) multiplier += 0.12;
+    if (query == null ||
+        query.trim().isEmpty ||
+        title == null ||
+        title!.trim().isEmpty) {
+      score = 10.0;
+    } else {
+      score = partialRatio(query, title!).toDouble();
+    }
 
-    if (negative != null && negative == amount.isNegative) multiplier += 0.24;
+    double multipler = 1.0;
 
-    if (category.targetId == categoryId) multiplier += 0.64;
+    if (account.targetId == accountId) multipler += 0.12;
 
-    return multiplier;
+    if (negative != null && negative == amount.isNegative) multipler += 0.24;
+
+    if (category.targetId == categoryId) multipler += 0.64;
+
+    return score * multipler;
   }
 
   Transaction? findTransferOriginalOrThis() {
