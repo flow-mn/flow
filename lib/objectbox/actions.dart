@@ -13,6 +13,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -201,7 +202,7 @@ extension MainActions on ObjectBox {
     final List<Result<Transaction>> fuzzyResult =
         fuzzy.search(currentInput ?? "");
 
-    final Set<RelevanceScoredTitle> scoredTitlesSet = fuzzyResult
+    final List<RelevanceScoredTitle> relevanceCalculatedList = fuzzyResult
         .map((e) => (
               title: e.item.title,
               relevancy: e.score *
@@ -212,17 +213,18 @@ extension MainActions on ObjectBox {
                   )
             ))
         .cast<RelevanceScoredTitle>()
-        .toSet();
+        .toList();
 
-    final List<RelevanceScoredTitle> scoredTitles =
-        scoredTitlesSet.toList().sublist(
-              0,
-              limit == null ? null : math.min(limit, scoredTitlesSet.length),
-            );
+    relevanceCalculatedList.sort((a, b) => a.relevancy.compareTo(b.relevancy));
 
-    scoredTitles.sort((a, b) => a.relevancy.compareTo(b.relevancy));
+    final List<RelevanceScoredTitle> scoredTitles = relevanceCalculatedList
+        .removeDuplicatesBy((e) => e.title.toLowerCase())
+        .toList();
 
-    return scoredTitles;
+    return scoredTitles.sublist(
+      0,
+      limit == null ? null : math.min(limit, scoredTitles.length),
+    );
   }
 }
 

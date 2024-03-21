@@ -195,6 +195,23 @@ extension Iterables<E> on Iterable<E> {
     }
     return null;
   }
+
+  /// Removes duplicates from the iterable based on the keyExtractor function.
+  ///
+  /// Keeps the first value seen for a given key.
+  Iterable<E> removeDuplicatesBy<K>(K Function(E) keyExtractor) {
+    final Map<K, E> items = {};
+
+    for (final element in this) {
+      final key = keyExtractor(element);
+
+      if (items.containsKey(key)) continue;
+
+      items[key] = element;
+    }
+
+    return items.values;
+  }
 }
 
 extension Casings on String {
