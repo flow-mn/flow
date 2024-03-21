@@ -52,12 +52,13 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
-  late final TextEditingController _titleTextController;
+  // TODO (sadespresso) maybe get rid of it
+  late String _title;
   late double _amount;
 
   late final Transaction? _currentlyEditing;
 
-  final FocusNode _titleFocusNode = FocusNode();
+  FocusNode? _titleFocusNode;
   final FocusNode _selectAccountFocusNode = FocusNode();
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
@@ -70,6 +71,8 @@ class _TransactionPageState extends State<TransactionPage> {
   Category? _selectedCategory;
 
   Account? _selectedAccountTransferTo;
+
+  List<RelevanceScoredTitle>? autofillHints;
 
   late DateTime _transactionDate;
 
@@ -91,8 +94,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
-      _titleTextController =
-          TextEditingController(text: _currentlyEditing?.title);
+      _title = _currentlyEditing?.title ?? "";
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
@@ -117,8 +119,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   void dispose() {
-    _titleTextController.dispose();
-    _titleFocusNode.dispose();
     _selectAccountFocusNode.dispose();
     super.dispose();
   }
@@ -173,20 +173,47 @@ class _TransactionPageState extends State<TransactionPage> {
                     //         style: context.textTheme.headlineMedium)),
                     Padding(
                       padding: contentPadding,
-                      child: TextField(
-                        style: context.textTheme.headlineMedium,
-                        controller: _titleTextController,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: "transaction.fallbackTitle".t(context),
-                          counter: const SizedBox.shrink(),
-                        ),
-                        maxLength: Transaction.maxTitleLength,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => save(),
-                        focusNode: _titleFocusNode,
+                      child: Autocomplete<RelevanceScoredTitle>(
+                        // TODO (sadespresso) focus node here
+                        optionsBuilder: getAutocompleteOptions,
+                        optionsMaxHeight: 260.0,
+                        displayStringForOption: (option) => option.title,
+                        initialValue: TextEditingValue(text: _title),
+                        fieldViewBuilder: (
+                          BuildContext context,
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted,
+                        ) {
+                          _titleFocusNode = focusNode;
+                          return TextFormField(
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                            onFieldSubmitted: (String value) {
+                              onFieldSubmitted();
+                            },
+                            textAlign: TextAlign.center,
+                          );
+                        },
+                        onSelected: (option) =>
+                            setState(() => _title = option.title),
                       ),
                     ),
+                    // TextField(
+                    //     style: context.textTheme.headlineMedium,
+                    //     controller: _titleTextController,
+                    //     textAlign: TextAlign.center,
+                    //     decoration: InputDecoration(
+                    //       hintText: "transaction.fallbackTitle".t(context),
+                    //       counter: const SizedBox.shrink(),
+                    //     ),
+                    //     autofillHints: autofillHints,
+                    //     maxLength: Transaction.maxTitleLength,
+                    //     textInputAction: TextInputAction.done,
+                    //     onChanged: (value) => updateTitleSuggestions(value),
+                    //     onSubmitted: (_) => save(),
+                    //     focusNode: _titleFocusNode,
+                    //   )
                     const SizedBox(height: 24.0),
                     Center(
                       child: InkWell(
@@ -549,7 +576,7 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
-    final String trimmed = _titleTextController.text.trim();
+    final String trimmed = _title.trim();
     final String formattedTitle =
         trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
 
@@ -576,11 +603,20 @@ class _TransactionPageState extends State<TransactionPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       return _currentlyEditing!.amount != _amount ||
-          (_currentlyEditing!.title ?? "") != _titleTextController.text;
+          (_currentlyEditing!.title ?? "") != _title;
     }
 
-    return _amount != 0 || _titleTextController.text.isNotEmpty;
+    return _amount != 0 || _title.isNotEmpty;
   }
+
+  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(value) async =>
+      ObjectBox().transactionTitleSuggestions(
+        currentInput: value.text,
+        negative: _amount.abs() == 0 ? null : _amount.isNegative,
+        accountId: _selectedAccount?.id,
+        categoryId: _selectedCategory?.id,
+        limit: 5,
+      );
 
   void _deleteTransaction() async {
     if (_currentlyEditing == null) return;

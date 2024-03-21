@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
@@ -12,8 +13,11 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
+
+typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
   double getTotalBalance() {
@@ -158,9 +162,111 @@ extension MainActions on ObjectBox {
 
     return FlowAnalytics(from: from, to: to, flow: flow);
   }
+
+  Future<List<RelevanceScoredTitle>> transactionTitleSuggestions({
+    String? currentInput,
+    int? accountId,
+    int? categoryId,
+    bool? negative,
+    int? limit,
+  }) async {
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.title
+            .contains(currentInput ?? "", caseSensitive: false))
+        .build();
+
+    final List<Transaction> transactions = await transactionsQuery
+        .findAsync()
+        .then((value) => value
+            .where((element) => element.title?.trim().isNotEmpty == true)
+            .toList());
+
+    transactionsQuery.close();
+
+    final List<RelevanceScoredTitle> relevanceCalculatedList = transactions
+        .map((e) => (
+              title: e.title,
+              relevancy: e.titleSuggestionScore(
+                accountId: accountId,
+                categoryId: categoryId,
+                negative: negative,
+              )
+            ))
+        .cast<RelevanceScoredTitle>()
+        .toList();
+
+    relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+
+    final List<RelevanceScoredTitle> scoredTitles =
+        _mergeTitleRelevancy(relevanceCalculatedList);
+
+    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+
+    return scoredTitles.sublist(
+      0,
+      limit == null ? null : math.min(limit, scoredTitles.length),
+    );
+  }
+
+  /// Removes duplicates from the iterable based on the keyExtractor function.
+  ///
+  /// Keeps the first value seen for a given key.
+  List<RelevanceScoredTitle> _mergeTitleRelevancy(
+      List<RelevanceScoredTitle> scores) {
+    final Map<String, RelevanceScoredTitle> items = {};
+
+    for (final element in scores) {
+      final key = element.title.toLowerCase();
+
+      if (items.containsKey(key)) {
+        final RelevanceScoredTitle current = items[key]!;
+        items[key] = (
+          title: current.title,
+          relevancy: current.relevancy + element.relevancy
+        );
+      } else {
+        // Casing of the first occurance is preserved
+        //
+        // If you have "kfc" - 69 entries, and "KFC" - 420 entires,
+        // "KFC" will appear in the list, and any other casing will be ignored
+        items[key] = element;
+      }
+    }
+
+    return items.values.toList();
+  }
 }
 
 extension TransactionActions on Transaction {
+  double titleSuggestionScore({
+    String? query,
+    int? accountId,
+    int? categoryId,
+    bool? negative,
+  }) {
+    late double score;
+
+    if (query == null ||
+        query.trim().isEmpty ||
+        title == null ||
+        title!.trim().isEmpty) {
+      score = 10.0; // Full match score is 100
+    } else {
+      score = partialRatio(query, title!).toDouble() + 10.0;
+    }
+
+    double multipler = 1.0;
+
+    if (account.targetId == accountId) multipler += 0.33;
+
+    if (negative != null && negative == amount.isNegative) multipler += 0.33;
+
+    if (category.targetId == categoryId) multipler += 2.0;
+
+    return score * multipler;
+  }
+
   Transaction? findTransferOriginalOrThis() {
     if (!isTransfer) return this;
 
