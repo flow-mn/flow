@@ -167,20 +167,29 @@ extension MainActions on ObjectBox {
     String? currentInput,
     int? accountId,
     int? categoryId,
-    bool? negative,
+    TransactionType? type,
     int? limit,
   }) async {
     final Query<Transaction> transactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.title
-            .contains(currentInput ?? "", caseSensitive: false))
+        .query(Transaction_.title.contains(
+          currentInput?.trim() ?? "",
+          caseSensitive: false,
+        ))
         .build();
 
     final List<Transaction> transactions = await transactionsQuery
         .findAsync()
-        .then((value) => value
-            .where((element) => element.title?.trim().isNotEmpty == true)
-            .toList());
+        .then((value) => value.where((element) {
+              if (element.title?.trim().isNotEmpty != true) {
+                return false;
+              }
+              if (type != TransactionType.transfer && element.isTransfer) {
+                return false;
+              }
+
+              return true;
+            }).toList());
 
     transactionsQuery.close();
 
@@ -190,7 +199,7 @@ extension MainActions on ObjectBox {
               relevancy: e.titleSuggestionScore(
                 accountId: accountId,
                 categoryId: categoryId,
-                negative: negative,
+                transactionType: type,
               )
             ))
         .cast<RelevanceScoredTitle>()
@@ -213,7 +222,8 @@ extension MainActions on ObjectBox {
   ///
   /// Keeps the first value seen for a given key.
   List<RelevanceScoredTitle> _mergeTitleRelevancy(
-      List<RelevanceScoredTitle> scores) {
+    List<RelevanceScoredTitle> scores,
+  ) {
     final Map<String, RelevanceScoredTitle> items = {};
 
     for (final element in scores) {
@@ -243,7 +253,7 @@ extension TransactionActions on Transaction {
     String? query,
     int? accountId,
     int? categoryId,
-    bool? negative,
+    TransactionType? transactionType,
   }) {
     late double score;
 
@@ -260,7 +270,7 @@ extension TransactionActions on Transaction {
 
     if (account.targetId == accountId) multipler += 0.33;
 
-    if (negative != null && negative == amount.isNegative) multipler += 0.33;
+    if (transactionType != null && transactionType == type) multipler += 0.33;
 
     if (category.targetId == categoryId) multipler += 2.0;
 

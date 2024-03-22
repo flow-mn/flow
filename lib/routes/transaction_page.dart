@@ -177,7 +177,16 @@ class _TransactionPageState extends State<TransactionPage> {
                       child: TypeAheadField<RelevanceScoredTitle>(
                         focusNode: _titleFocusNode,
                         controller: _titleController,
-                        itemBuilder: (context, value) => Text(value.title),
+                        itemBuilder: (context, value) =>
+                            ListTile(title: Text(value.title)),
+                        // TODO fix laoding indicator appearing everytime i type
+                        debounceDuration: const Duration(milliseconds: 180),
+                        decorationBuilder: (context, child) => Material(
+                          clipBehavior: Clip.hardEdge,
+                          elevation: 1.0,
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: child,
+                        ),
                         onSelected: (option) =>
                             _titleController.text = option.title,
                         suggestionsCallback: getAutocompleteOptions,
@@ -195,59 +204,9 @@ class _TransactionPageState extends State<TransactionPage> {
                             ),
                           );
                         },
+                        hideOnEmpty: true,
                       ),
-                      // style: context.textTheme.headlineMedium,
-                      // controller: _titleTextController,
-                      // textAlign: TextAlign.center,
-                      // decoration: InputDecoration(
-                      //   hintText: "transaction.fallbackTitle".t(context),
-                      //   counter: const SizedBox.shrink(),
-                      // ),
-                      // maxLength: Transaction.maxTitleLength,
-                      // textInputAction: TextInputAction.done,
-                      // onSubmitted: (_) => save(),
-                      // focusNode: _titleFocusNode,
-                      // child: Autocomplete<RelevanceScoredTitle>(
-                      //   // TODO (sadespresso) focus node here
-                      //   optionsBuilder: getAutocompleteOptions,
-                      //   optionsMaxHeight: 260.0,
-                      //   displayStringForOption: (option) => option.title,
-                      //   initialValue: TextEditingValue(text: _title),
-                      //   fieldViewBuilder: (
-                      //     BuildContext context,
-                      //     TextEditingController textEditingController,
-                      //     FocusNode focusNode,
-                      //     VoidCallback onFieldSubmitted,
-                      //   ) {
-                      //     _titleFocusNode = focusNode;
-                      //     return TextFormField(
-                      //       controller: textEditingController,
-                      //       focusNode: focusNode,
-                      //       onFieldSubmitted: (String value) {
-                      //         onFieldSubmitted();
-                      //       },
-                      //       textAlign: TextAlign.center,
-                      //     );
-                      //   },
-                      //   onSelected: (option) =>
-                      //       setState(() => _title = option.title),
-                      // ),
                     ),
-                    // TextField(
-                    //     style: context.textTheme.headlineMedium,
-                    //     controller: _titleTextController,
-                    //     textAlign: TextAlign.center,
-                    //     decoration: InputDecoration(
-                    //       hintText: "transaction.fallbackTitle".t(context),
-                    //       counter: const SizedBox.shrink(),
-                    //     ),
-                    //     autofillHints: autofillHints,
-                    //     maxLength: Transaction.maxTitleLength,
-                    //     textInputAction: TextInputAction.done,
-                    //     onChanged: (value) => updateTitleSuggestions(value),
-                    //     onSubmitted: (_) => save(),
-                    //     focusNode: _titleFocusNode,
-                    //   )
                     const SizedBox(height: 24.0),
                     Center(
                       child: InkWell(
@@ -647,9 +606,9 @@ class _TransactionPageState extends State<TransactionPage> {
           String query) async =>
       ObjectBox().transactionTitleSuggestions(
         currentInput: query,
-        negative: _amount.abs() == 0 ? null : _amount.isNegative,
         accountId: _selectedAccount?.id,
         categoryId: _selectedCategory?.id,
+        type: _transactionType,
         limit: 5,
       );
 
