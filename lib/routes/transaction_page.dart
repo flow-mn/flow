@@ -22,6 +22,7 @@ import 'package:flow/widgets/transaction/type_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -52,13 +53,12 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
-  // TODO (sadespresso) maybe get rid of it
-  late String _title;
+  late final TextEditingController _titleController;
   late double _amount;
 
   late final Transaction? _currentlyEditing;
 
-  FocusNode? _titleFocusNode;
+  final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _selectAccountFocusNode = FocusNode();
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
@@ -94,7 +94,8 @@ class _TransactionPageState extends State<TransactionPage> {
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
-      _title = _currentlyEditing?.title ?? "";
+      _titleController =
+          TextEditingController(text: _currentlyEditing?.title ?? "");
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
@@ -173,31 +174,64 @@ class _TransactionPageState extends State<TransactionPage> {
                     //         style: context.textTheme.headlineMedium)),
                     Padding(
                       padding: contentPadding,
-                      child: Autocomplete<RelevanceScoredTitle>(
-                        // TODO (sadespresso) focus node here
-                        optionsBuilder: getAutocompleteOptions,
-                        optionsMaxHeight: 260.0,
-                        displayStringForOption: (option) => option.title,
-                        initialValue: TextEditingValue(text: _title),
-                        fieldViewBuilder: (
-                          BuildContext context,
-                          TextEditingController textEditingController,
-                          FocusNode focusNode,
-                          VoidCallback onFieldSubmitted,
-                        ) {
-                          _titleFocusNode = focusNode;
-                          return TextFormField(
-                            controller: textEditingController,
+                      child: TypeAheadField<RelevanceScoredTitle>(
+                        focusNode: _titleFocusNode,
+                        controller: _titleController,
+                        itemBuilder: (context, value) => Text(value.title),
+                        onSelected: (option) =>
+                            _titleController.text = option.title,
+                        suggestionsCallback: getAutocompleteOptions,
+                        builder: (context, controller, focusNode) {
+                          return TextField(
+                            controller: controller,
                             focusNode: focusNode,
-                            onFieldSubmitted: (String value) {
-                              onFieldSubmitted();
-                            },
+                            style: context.textTheme.headlineMedium,
                             textAlign: TextAlign.center,
+                            maxLength: Transaction.maxTitleLength,
+                            onSubmitted: (_) => save(),
+                            decoration: InputDecoration(
+                              hintText: "transaction.fallbackTitle".t(context),
+                              counter: const SizedBox.shrink(),
+                            ),
                           );
                         },
-                        onSelected: (option) =>
-                            setState(() => _title = option.title),
                       ),
+                      // style: context.textTheme.headlineMedium,
+                      // controller: _titleTextController,
+                      // textAlign: TextAlign.center,
+                      // decoration: InputDecoration(
+                      //   hintText: "transaction.fallbackTitle".t(context),
+                      //   counter: const SizedBox.shrink(),
+                      // ),
+                      // maxLength: Transaction.maxTitleLength,
+                      // textInputAction: TextInputAction.done,
+                      // onSubmitted: (_) => save(),
+                      // focusNode: _titleFocusNode,
+                      // child: Autocomplete<RelevanceScoredTitle>(
+                      //   // TODO (sadespresso) focus node here
+                      //   optionsBuilder: getAutocompleteOptions,
+                      //   optionsMaxHeight: 260.0,
+                      //   displayStringForOption: (option) => option.title,
+                      //   initialValue: TextEditingValue(text: _title),
+                      //   fieldViewBuilder: (
+                      //     BuildContext context,
+                      //     TextEditingController textEditingController,
+                      //     FocusNode focusNode,
+                      //     VoidCallback onFieldSubmitted,
+                      //   ) {
+                      //     _titleFocusNode = focusNode;
+                      //     return TextFormField(
+                      //       controller: textEditingController,
+                      //       focusNode: focusNode,
+                      //       onFieldSubmitted: (String value) {
+                      //         onFieldSubmitted();
+                      //       },
+                      //       textAlign: TextAlign.center,
+                      //     );
+                      //   },
+                      //   onSelected: (option) =>
+                      //       setState(() => _title = option.title),
+                      // ),
                     ),
                     // TextField(
                     //     style: context.textTheme.headlineMedium,
@@ -576,7 +610,7 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
-    final String trimmed = _title.trim();
+    final String trimmed = _titleController.text.trim();
     final String formattedTitle =
         trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
 
@@ -603,15 +637,16 @@ class _TransactionPageState extends State<TransactionPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       return _currentlyEditing!.amount != _amount ||
-          (_currentlyEditing!.title ?? "") != _title;
+          (_currentlyEditing!.title ?? "") != _titleController.text;
     }
 
-    return _amount != 0 || _title.isNotEmpty;
+    return _amount != 0 || _titleController.text.isNotEmpty;
   }
 
-  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(value) async =>
+  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
+          String query) async =>
       ObjectBox().transactionTitleSuggestions(
-        currentInput: value.text,
+        currentInput: query,
         negative: _amount.abs() == 0 ? null : _amount.isNegative,
         accountId: _selectedAccount?.id,
         categoryId: _selectedCategory?.id,
