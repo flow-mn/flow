@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-const appVersion = "0.3.1+33";
+const appVersion = "0.3.2+34";
 const debugBuild = false;
 
 bool get flowDebugMode => kDebugMode || debugBuild;
