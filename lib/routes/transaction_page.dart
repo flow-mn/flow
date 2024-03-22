@@ -179,7 +179,14 @@ class _TransactionPageState extends State<TransactionPage> {
                         controller: _titleController,
                         itemBuilder: (context, value) =>
                             ListTile(title: Text(value.title)),
+                        // TODO
                         debounceDuration: const Duration(milliseconds: 180),
+                        decorationBuilder: (context, child) => Material(
+                          clipBehavior: Clip.hardEdge,
+                          elevation: 1.0,
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: child,
+                        ),
                         onSelected: (option) =>
                             _titleController.text = option.title,
                         suggestionsCallback: getAutocompleteOptions,
@@ -197,6 +204,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             ),
                           );
                         },
+                        hideOnEmpty: true,
                       ),
                     ),
                     const SizedBox(height: 24.0),
@@ -600,6 +608,7 @@ class _TransactionPageState extends State<TransactionPage> {
         currentInput: query,
         accountId: _selectedAccount?.id,
         categoryId: _selectedCategory?.id,
+        type: _transactionType,
         limit: 5,
       );
 
