@@ -179,7 +179,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         controller: _titleController,
                         itemBuilder: (context, value) =>
                             ListTile(title: Text(value.title)),
-                        // TODO
+                        // TODO fix laoding indicator appearing everytime i type
                         debounceDuration: const Duration(milliseconds: 180),
                         decorationBuilder: (context, child) => Material(
                           clipBehavior: Clip.hardEdge,
