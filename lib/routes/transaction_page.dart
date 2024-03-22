@@ -647,7 +647,6 @@ class _TransactionPageState extends State<TransactionPage> {
           String query) async =>
       ObjectBox().transactionTitleSuggestions(
         currentInput: query,
-        negative: _amount.abs() == 0 ? null : _amount.isNegative,
         accountId: _selectedAccount?.id,
         categoryId: _selectedCategory?.id,
         limit: 5,
