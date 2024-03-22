@@ -184,7 +184,7 @@ extension MainActions on ObjectBox {
               if (element.title?.trim().isNotEmpty != true) {
                 return false;
               }
-              if (type == TransactionType.transfer && !element.isTransfer) {
+              if (type != TransactionType.transfer && element.isTransfer) {
                 return false;
               }
 
@@ -222,7 +222,8 @@ extension MainActions on ObjectBox {
   ///
   /// Keeps the first value seen for a given key.
   List<RelevanceScoredTitle> _mergeTitleRelevancy(
-      List<RelevanceScoredTitle> scores) {
+    List<RelevanceScoredTitle> scores,
+  ) {
     final Map<String, RelevanceScoredTitle> items = {};
 
     for (final element in scores) {
