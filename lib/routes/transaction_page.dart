@@ -542,7 +542,7 @@ class _TransactionPageState extends State<TransactionPage> {
           title: formattedTitle,
           targetAccount: _selectedAccountTransferTo!,
           createdDate: _currentlyEditing!.createdDate,
-          transactionDate: _currentlyEditing!.transactionDate,
+          transactionDate: _transactionDate,
         );
 
         _currentlyEditing!.delete();
@@ -557,6 +557,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing!.setAccount(_selectedAccount);
     _currentlyEditing!.title = formattedTitle;
     _currentlyEditing!.amount = _amount;
+    _currentlyEditing!.transactionDate = _transactionDate;
 
     ObjectBox().box<Transaction>().put(
           _currentlyEditing!,
