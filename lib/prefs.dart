@@ -228,6 +228,20 @@ class LocalPreferences {
     }
   }
 
+  Future<void> setPrimaryColor(Color? color) async {
+    const prefixKey = "flow.primaryColor";
+
+    if (color == null) {
+      await _prefs.remove(prefixKey);
+    } else {
+      final colorValue = color.value.toRadixString(16);
+      await _prefs.setString(
+        prefixKey,
+        colorValue.toString(),
+      );
+    }
+  }
+
   Future<Color?> getPrimaryColor() async {
     const prefixKey = "flow.primaryColor";
     final String? colorString = _prefs.getString(prefixKey);
@@ -236,12 +250,7 @@ class LocalPreferences {
       return null;
     }
 
-    return Color(int.parse(colorString));
-  }
-
-  Future<void> setPrimaryColor(Color color) async {
-    const prefixKey = "flow.primaryColor";
-    await _prefs.setString(prefixKey, color.value.toRadixString(16));
+    return Color(int.parse(colorString, radix: 16) + 0xFF000000);
   }
 
   String getPrimaryCurrency() {
