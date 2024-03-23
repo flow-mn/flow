@@ -49,6 +49,13 @@ class Category implements EntityBase {
   })  : createdDate = createdDate ?? DateTime.now(),
         uuid = const Uuid().v4();
 
+  Category.preset({
+    required this.name,
+    required this.iconCode,
+    required this.uuid,
+  })  : createdDate = DateTime.now(),
+        id = -1;
+
   factory Category.fromJson(Map<String, dynamic> json) =>
       _$CategoryFromJson(json);
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
