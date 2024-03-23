@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class InfoText extends StatelessWidget {
+  /// Centers the text and icon vertically instead of top
+  final bool singleLine;
+
   final Widget child;
 
-  const InfoText({super.key, required this.child});
+  const InfoText({super.key, required this.child, this.singleLine = false});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          singleLine ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Icon(
           Symbols.info_rounded,
@@ -18,7 +22,7 @@ class InfoText extends StatelessWidget {
           color: context.flowColors.semi,
           size: 16.0,
         ),
-        const SizedBox(width: 8.0),
+        const SizedBox(width: 4.0),
         Flexible(
           child: DefaultTextStyle(
             style: context.textTheme.bodySmall!.semi(context),

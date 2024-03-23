@@ -4,13 +4,14 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/general/info_text.dart';
 import 'package:flow/widgets/setup/accounts/account_preset_card.dart';
 import 'package:flow/widgets/setup/accounts/add_account_card.dart';
-import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_hero/local_hero.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class SetupAccountsPage extends StatefulWidget {
@@ -42,14 +43,16 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
 
     presetAccounts = getAccountPresets(primaryCurrency)
         .where((account) => !existingAccounts
-            .any((existingAccount) => existingAccount.name == account.name))
+            .any((existingAccount) => existingAccount.uuid == account.uuid))
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("setup.accounts.setup".t(context)),
+      ),
       body: SafeArea(
         child: StreamBuilder(
             stream: qb().watch(triggerImmediately: true),
@@ -59,41 +62,52 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SetupHeader("setup.accounts.setup".t(context)),
+                    InfoText(
+                      child: Text(
+                        "setup.accounts.description".t(context),
+                      ),
+                    ),
                     const SizedBox(height: 16.0),
                     const AddAccountCard(),
                     const SizedBox(height: 16.0),
                     ...currentAccounts.map(
-                      (e) => Padding(
+                      (account) => Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: AccountPresetCard(
-                          account: e,
+                          key: ValueKey(account.uuid),
+                          account: account,
                           onSelect: null,
                           selected: true,
+                          preexisting: true,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-                    if (presetAccounts.isNotEmpty) ...[
-                      InfoText(
-                        child: Text(
-                          "setup.accounts.preset.description".t(context),
-                        ),
+                    LocalHeroScope(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: presetAccounts
+                            .map((preset) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: LocalHero(
+                                    key: ValueKey(preset.uuid),
+                                    tag: preset.uuid,
+                                    child: AccountPresetCard(
+                                      key: ValueKey(preset.uuid),
+                                      account: preset,
+                                      onSelect: (selected) =>
+                                          select(preset.uuid, selected),
+                                      selected: preset.id == 0,
+                                      preexisting: false,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
                       ),
-                      const SizedBox(height: 8.0),
-                    ],
-                    ...presetAccounts.indexed.map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: AccountPresetCard(
-                          account: e.$2,
-                          onSelect: (selected) => select(e.$1, selected),
-                          selected: e.$2.id == 0,
-                        ),
-                      ),
-                    ),
+                    )
                   ],
                 ),
               );
@@ -117,13 +131,26 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
     );
   }
 
-  void select(int index, bool selected) {
-    presetAccounts[index].id = selected ? 0 : -1;
+  void loadPresets() {}
+
+  void select(String uuid, bool selected) {
+    final Account? preset =
+        presetAccounts.firstWhereOrNull((element) => element.uuid == uuid);
+
+    if (preset != null) {
+      preset.id = selected ? 0 : -1;
+    }
+
+    presetAccounts.sort((a, b) => b.id.compareTo(a.id));
     setState(() {});
   }
 
   void save() async {
     if (busy) return;
+
+    setState(() {
+      busy = true;
+    });
 
     try {
       final List<Account> selectedAccounts =
@@ -134,6 +161,12 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
       }
 
       await ObjectBox().box<Account>().putManyAsync(selectedAccounts);
+
+      presetAccounts.removeWhere((element) =>
+          selectedAccounts.indexWhere(
+            (selected) => element.uuid == selected.uuid,
+          ) !=
+          -1);
 
       if (mounted) {
         context.push("/setup/categories");
