@@ -49,6 +49,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
+                title: Text('Set Primary Color'),
+                leading: Icon(Icons.color_lens),
+                trailing: Icon(Icons.chevron_right),
+                subtitle: Text(
+                  switch (Flow.of(context).themeMode) {
+                    ThemeMode.system =>
+                      "preferences.themeMode.system".t(context),
+                    ThemeMode.dark => "preferences.themeMode.dark".t(context),
+                    ThemeMode.light => "preferences.themeMode.light".t(context),
+                  },
+                ),
+              ),
+              ListTile(
                 title: Text("preferences.language".t(context)),
                 leading: const Icon(Symbols.language_rounded),
                 onTap: () => updateLanguage(),
