@@ -228,6 +228,22 @@ class LocalPreferences {
     }
   }
 
+  Future<Color?> getPrimaryColor() async {
+    const prefixKey = "flow.primaryColor";
+    final String? colorString = _prefs.getString(prefixKey);
+
+    if (colorString == null) {
+      return null;
+    }
+
+    return Color(int.parse(colorString));
+  }
+
+  Future<void> setPrimaryColor(Color color) async {
+    const prefixKey = "flow.primaryColor";
+    await _prefs.setString(prefixKey, color.value.toRadixString(16));
+  }
+
   String getPrimaryCurrency() {
     String? primaryCurrencyName = primaryCurrency.value;
 
