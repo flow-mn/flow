@@ -1,10 +1,10 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flow/widgets/select_primary_color_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -174,17 +174,72 @@ class _PreferencesPageState extends State<PreferencesPage> {
       Locale current = LocalPreferences().localeOverride.get() ??
           FlowLocalizations.supportedLanguages.first;
 
-      final selected = await showModalBottomSheet<String>(
-        context: context,
-        builder: (context) => SelectPrimaryColorSheet(currentLocale: current),
-      );
-
-      if (selected != null) {
-        await LocalPreferences().primaryCurrency.set(selected);
-      }
+      final selected = await openColorPickerDialog();
+      // await LocalPreferences().primaryCurrency.set(selected);
+      print(selected);
     } finally {
       _themeBusy = false;
     }
+  }
+
+  Future<bool> openColorPickerDialog() async {
+    return ColorPicker(
+      // Use the dialogPickerColor as start color.
+      color: Colors.red,
+      // Update the dialogPickerColor using the callback.
+      onColorChanged: (Color color) => print(color),
+      width: 40,
+      height: 40,
+      borderRadius: 4,
+      spacing: 5,
+      runSpacing: 5,
+      wheelDiameter: 155,
+      heading: Text(
+        'Select color',
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      subheading: Text(
+        'Select color shade',
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      wheelSubheading: Text(
+        'Selected color and its shades',
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      showMaterialName: true,
+      showColorName: true,
+      showColorCode: true,
+      copyPasteBehavior: const ColorPickerCopyPasteBehavior(
+        longPressMenu: true,
+        copyButton: true,
+        pasteButton: true,
+      ),
+      materialNameTextStyle: Theme.of(context).textTheme.bodySmall,
+      colorNameTextStyle: Theme.of(context).textTheme.bodySmall,
+      colorCodeTextStyle: Theme.of(context).textTheme.bodySmall,
+      pickersEnabled: const <ColorPickerType, bool>{
+        ColorPickerType.wheel: true,
+        ColorPickerType.accent: false,
+      },
+    ).showPickerDialog(
+      context,
+      // New in version 3.0.0 custom transitions support.
+      transitionBuilder: (BuildContext context, Animation<double> a1,
+          Animation<double> a2, Widget widget) {
+        final double curvedValue =
+            Curves.easeInOutBack.transform(a1.value) - 1.0;
+        return Transform(
+          transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+          child: Opacity(
+            opacity: a1.value,
+            child: widget,
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
+      constraints:
+          const BoxConstraints(minHeight: 460, minWidth: 300, maxWidth: 320),
+    );
   }
 
   void updatePrimaryCurrency() async {
