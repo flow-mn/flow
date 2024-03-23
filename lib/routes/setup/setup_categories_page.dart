@@ -11,9 +11,9 @@ import 'package:flow/widgets/category_card.dart';
 import 'package:flow/widgets/general/info_text.dart';
 
 import 'package:flow/widgets/setup/categories/category_preset_card.dart';
-import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_hero/local_hero.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class SetupCategoriesPage extends StatefulWidget {
@@ -43,14 +43,21 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
 
     presetCategories = getCategoryPresets()
         .where((category) => !existingCategories
-            .any((existingCategory) => existingCategory.name == category.name))
+            .any((existingCategory) => existingCategory.uuid == category.uuid))
         .toList();
+
+    // Select all in upon loading
+    for (final preset in presetCategories) {
+      preset.id = 0;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("setup.categories.setup".t(context)),
+      ),
       body: SafeArea(
         child: StreamBuilder(
             stream: qb().watch(triggerImmediately: true),
@@ -58,12 +65,42 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
               final List<Category> currentCategories =
                   snapshot.data?.find() ?? [];
 
+              final Set<bool> presetSelections =
+                  presetCategories.map((preset) => preset.id == 0).toSet();
+
+              final bool? presetSelectedAll =
+                  presetSelections.length == 1 ? presetSelections.first : null;
+
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SetupHeader("setup.categories.setup".t(context)),
+                    InfoText(
+                        child: Text("setup.categories.description".t(context))),
+                    if (presetCategories.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: TextButton(
+                          onPressed: selectAll,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("general.select.all".t(context)),
+                              const SizedBox(width: 8.0),
+                              IgnorePointer(
+                                child: Checkbox.adaptive(
+                                  value: presetSelectedAll,
+                                  onChanged: (value) => (),
+                                  tristate: true,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16.0),
                     const AddCategoryCard(),
                     const SizedBox(height: 16.0),
@@ -77,23 +114,29 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-                    if (presetCategories.isNotEmpty) ...[
-                      InfoText(
-                        child: Text(
-                          "setup.accounts.preset.description".t(context),
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                    ],
-                    ...presetCategories.indexed.map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: CategoryPresetCard(
-                          category: e.$2,
-                          onSelect: (selected) => select(e.$1, selected),
-                          selected: e.$2.id == 0,
-                        ),
+                    LocalHeroScope(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: presetCategories
+                            .map(
+                              (preset) => LocalHero(
+                                key: ValueKey(preset.uuid),
+                                tag: preset.uuid,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: CategoryPresetCard(
+                                    category: preset,
+                                    onSelect: (selected) =>
+                                        select(preset.uuid, selected),
+                                    selected: preset.id == 0,
+                                    preexisting: false,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
                   ],
@@ -119,19 +162,46 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
     );
   }
 
-  void select(int index, bool selected) {
-    presetCategories[index].id = selected ? 0 : -1;
+  void select(String uuid, bool selected) {
+    final Category? preset =
+        presetCategories.firstWhereOrNull((element) => element.uuid == uuid);
+
+    if (preset != null) {
+      preset.id = selected ? 0 : -1;
+    }
+
+    presetCategories.sort((a, b) => b.id.compareTo(a.id));
     setState(() {});
+  }
+
+  void selectAll() {
+    final bool select = presetCategories.any((element) => element.id == -1);
+
+    for (int i = 0; i < presetCategories.length; i++) {
+      presetCategories[i].id = select ? 0 : -1;
+    }
+
+    setState(() => {});
   }
 
   void save() async {
     if (busy) return;
+
+    setState(() {
+      busy = true;
+    });
 
     try {
       final List<Category> selectedCategories =
           presetCategories.where((element) => element.id == 0).toList();
 
       await ObjectBox().box<Category>().putManyAsync(selectedCategories);
+
+      presetCategories.removeWhere((element) =>
+          selectedCategories.indexWhere(
+            (selected) => element.uuid == selected.uuid,
+          ) !=
+          -1);
 
       if (mounted) {
         GoRouter.of(context).popUntil((route) => route.path == "/setup");

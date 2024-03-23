@@ -6,8 +6,8 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/button.dart';
+import 'package:flow/widgets/general/info_text.dart';
 import 'package:flow/widgets/general/profile_picture.dart';
-import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -30,7 +30,9 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("setup.profile.addPhoto".t(context)),
+      ),
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
@@ -40,8 +42,12 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SetupHeader("setup.profile.addPhoto".t(context)),
-                const SizedBox(height: 16.0),
+                InfoText(
+                  child: Text(
+                    "setup.profile.addPhoto.description".t(context),
+                  ),
+                ),
+                const SizedBox(height: 24.0),
                 ProfilePicture(
                   key: ValueKey(_profilePictureUpdateCounter),
                   filePath: widget.profileImagePath,
@@ -49,7 +55,6 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
                   showOverlayUponHover: true,
                   size: MediaQuery.of(context).size.width * 0.5,
                 ),
-                const SizedBox(height: 16.0),
               ],
             ),
           ),

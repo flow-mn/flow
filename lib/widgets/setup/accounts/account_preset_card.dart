@@ -4,10 +4,13 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class AccountPresetCard extends StatelessWidget {
   final Function(bool)? onSelect;
   final bool selected;
+
+  final bool preexisting;
 
   final Account account;
 
@@ -18,14 +21,14 @@ class AccountPresetCard extends StatelessWidget {
     required this.account,
     required this.onSelect,
     required this.selected,
+    required this.preexisting,
     this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
   });
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
+    return Opacity(
       opacity: selected ? 1.0 : 0.46,
-      duration: const Duration(milliseconds: 200),
       child: Surface(
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
         builder: (context) => InkWell(
@@ -58,7 +61,13 @@ class AccountPresetCard extends StatelessWidget {
                           style: context.textTheme.displaySmall,
                         ),
                       ],
-                    )
+                    ),
+                    if (!preexisting) ...[
+                      const Spacer(),
+                      Icon(
+                        selected ? Symbols.remove_rounded : Symbols.add_rounded,
+                      ),
+                    ],
                   ],
                 ),
               ],
