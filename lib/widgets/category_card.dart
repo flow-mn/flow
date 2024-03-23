@@ -17,10 +17,13 @@ class CategoryCard extends StatelessWidget {
 
   final ValueOr<VoidCallback>? onTapOverride;
 
+  final Widget? trailing;
+
   const CategoryCard({
     super.key,
     required this.category,
     this.onTapOverride,
+    this.trailing,
     this.showAmount = true,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
@@ -58,6 +61,10 @@ class CategoryCard extends StatelessWidget {
               ],
             ),
             const Spacer(),
+            if (trailing != null) ...[
+              trailing!,
+              const SizedBox(width: 12.0),
+            ],
           ],
         ),
       ),
