@@ -1,3 +1,12 @@
+## Beta 0.3.3
+
+- Improved Setup page
+
+## Beta 0.3.2
+
+- Fixed transaction page title suggestion was behaving differently from prior
+  releases. Improved UX
+
 ## Beta 0.3.1
 
 - Transaction page now suggests title based on relevancy (category, account, etc)
