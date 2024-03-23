@@ -228,14 +228,14 @@ class LocalPreferences {
     }
   }
 
-  Future<void> setPrimaryColor(Color? color) async {
+  Future<bool> setPrimaryColor(Color? color) async {
     const prefixKey = "flow.primaryColor";
 
     if (color == null) {
-      await _prefs.remove(prefixKey);
+      return await _prefs.remove(prefixKey);
     } else {
       final colorValue = color.value.toRadixString(16);
-      await _prefs.setString(
+      return await _prefs.setString(
         prefixKey,
         colorValue.toString(),
       );

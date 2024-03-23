@@ -25,6 +25,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
+import 'package:flow/theme/navbar_theme.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -74,12 +75,24 @@ class FlowState extends State<Flow> {
     return useDarkTheme ? pieThemeDark : pieThemeLight;
   }
 
+  Color? primaryColorFromPrefs = Colors.white;
+
   @override
   void initState() {
     super.initState();
 
     _reloadLocale();
     _reloadTheme();
+
+    _checkPrefsForPrimaryColor().then((color) {
+      setState(() {
+        if (color != null) {
+          primaryColorFromPrefs = color;
+        } else {
+          primaryColorFromPrefs = context.colorScheme.primary;
+        }
+      });
+    });
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
@@ -111,11 +124,14 @@ class FlowState extends State<Flow> {
         GlobalWidgetsLocalizations.delegate,
         FlowLocalizations.delegate,
       ],
-      supportedLocales: FlowLocalizations.supportedLanguages,
       locale: LocalPreferences().localeOverride.value,
       routerConfig: router,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: _overrideThemeWithPrimaryColor(lightTheme, primaryColorFromPrefs,
+          isLightMode: true),
+      darkTheme:
+          _overrideThemeWithPrimaryColor(darkTheme, primaryColorFromPrefs),
+      // theme: lightTheme,
+      // darkTheme: darkTheme,
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
     );
@@ -135,4 +151,41 @@ class FlowState extends State<Flow> {
     Intl.defaultLocale = _locale.code;
     setState(() {});
   }
+}
+
+ThemeData _overrideThemeWithPrimaryColor(ThemeData theme, Color? primaryColor,
+    {bool isLightMode = false}) {
+  return theme.copyWith(
+    colorScheme: theme.colorScheme.copyWith(primary: primaryColor),
+    listTileTheme: theme.listTileTheme.copyWith(
+      iconColor: primaryColor,
+    ),
+    extensions: theme.extensions.entries
+        .map(
+          (entry) => entry.value is NavbarTheme
+              ? NavbarTheme(
+                  backgroundColor: theme.colorScheme.onSurface,
+                  activeIconColor: primaryColor ??
+                      (entry.value as NavbarTheme).activeIconColor,
+                  inactiveIconOpacity: 0.5,
+                  transactionButtonBackgroundColor: primaryColor ??
+                      (entry.value as NavbarTheme)
+                          .transactionButtonBackgroundColor,
+                  transactionButtonForegroundColor: (entry.value as NavbarTheme)
+                      .transactionButtonForegroundColor,
+                )
+              : entry.value,
+        )
+        .toList(),
+    textSelectionTheme: theme.textSelectionTheme.copyWith(
+      cursorColor: primaryColor,
+      selectionColor: primaryColor,
+      selectionHandleColor: primaryColor,
+    ),
+  );
+}
+
+Future<Color?> _checkPrefsForPrimaryColor() async {
+  final prefs = LocalPreferences();
+  return await prefs.getPrimaryColor();
 }

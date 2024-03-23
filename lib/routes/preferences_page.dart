@@ -2,6 +2,7 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
@@ -56,7 +57,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 leading: const Icon(Icons.color_lens),
                 trailing: const Icon(Icons.chevron_right),
                 subtitle: _buildCurrentPrimaryThemeName(context),
-                onTap: () => updatePrimaryColor(),
+                onTap: () => updatePrimaryColor(context),
               ),
               ListTile(
                 title: Text("preferences.language".t(context)),
@@ -170,7 +171,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
-  void updatePrimaryColor() async {
+  void updatePrimaryColor(BuildContext context) async {
     if (_themeBusy) return;
 
     setState(() {
@@ -178,24 +179,42 @@ class _PreferencesPageState extends State<PreferencesPage> {
     });
 
     try {
-      Locale current = LocalPreferences().localeOverride.get() ??
-          FlowLocalizations.supportedLanguages.first;
-
-      final selected = await openColorPickerDialog();
-      // await LocalPreferences().primaryCurrency.set(selected);
-      print(selected);
+      final selected = await openColorPickerDialog(context);
+      if (selected) {
+        _openConfirmDialog();
+      }
     } finally {
       _themeBusy = false;
     }
   }
 
-  Future<bool> openColorPickerDialog() async {
+  void _openConfirmDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Restart Required'),
+        content:
+            Text('Flow has to be restarted in order to apply the changes.'),
+        // Text("".t(context)),
+        // content:
+        //     Text("preferences.primaryColor.confirmDialogMessage".t(context)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text("Okay", style: Theme.of(context).textTheme.titleSmall),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> openColorPickerDialog(BuildContext context) async {
     return ColorPicker(
       // Use the dialogPickerColor as start color.
       color: Colors.red,
       // Update the dialogPickerColor using the callback.
-      onColorChanged: (Color color) {
-        LocalPreferences().setPrimaryColor(color);
+      onColorChanged: (Color color) async {
+        await LocalPreferences().setPrimaryColor(color);
       },
       width: 40,
       height: 40,
