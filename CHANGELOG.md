@@ -1,6 +1,7 @@
 ## Beta 0.3.3
 
-- Improved Setup page
+- Fix transaction date doesn't get updated, closes [#100](https://github.com/flow-mn/flow/issues/100)
+- Improve setup by [#103](https://github.com/flow-mn/flow/pull/103)
 
 ## Beta 0.3.2
 
