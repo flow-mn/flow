@@ -6,6 +6,7 @@ import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
+import 'package:colornames/colornames.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -54,14 +55,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 title: const Text('Set Primary Color'),
                 leading: const Icon(Icons.color_lens),
                 trailing: const Icon(Icons.chevron_right),
-                subtitle: Text(
-                  switch (Flow.of(context).themeMode) {
-                    ThemeMode.system =>
-                      "preferences.themeMode.system".t(context),
-                    ThemeMode.dark => "preferences.themeMode.dark".t(context),
-                    ThemeMode.light => "preferences.themeMode.light".t(context),
-                  },
-                ),
+                subtitle: _buildCurrentPrimaryThemeName(context),
                 onTap: () => updatePrimaryColor(),
               ),
               ListTile(
@@ -106,6 +100,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCurrentPrimaryThemeName(BuildContext context) {
+    try {
+      final Color primaryColor = Theme.of(context).colorScheme.primary;
+
+      final primaryColorName = ColorNames.guess(primaryColor);
+
+      return Text(primaryColorName);
+    } catch (e) {
+      print(e);
+      return const Text("Unknown Color");
+    }
   }
 
   void updateTheme([ThemeMode? force]) async {
@@ -187,7 +194,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
       // Use the dialogPickerColor as start color.
       color: Colors.red,
       // Update the dialogPickerColor using the callback.
-      onColorChanged: (Color color) => print(color),
+      onColorChanged: (Color color) {
+        LocalPreferences().setPrimaryColor(color);
+      },
       width: 40,
       height: 40,
       borderRadius: 4,
