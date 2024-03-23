@@ -4,6 +4,7 @@ import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
+import 'package:flow/widgets/select_primary_color_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -49,9 +50,10 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
-                title: Text('Set Primary Color'),
-                leading: Icon(Icons.color_lens),
-                trailing: Icon(Icons.chevron_right),
+                ///TODO: Add Localization
+                title: const Text('Set Primary Color'),
+                leading: const Icon(Icons.color_lens),
+                trailing: const Icon(Icons.chevron_right),
                 subtitle: Text(
                   switch (Flow.of(context).themeMode) {
                     ThemeMode.system =>
@@ -60,6 +62,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     ThemeMode.light => "preferences.themeMode.light".t(context),
                   },
                 ),
+                onTap: () => updatePrimaryColor(),
               ),
               ListTile(
                 title: Text("preferences.language".t(context)),
@@ -157,6 +160,30 @@ class _PreferencesPageState extends State<PreferencesPage> {
       }
     } finally {
       _languageBusy = false;
+    }
+  }
+
+  void updatePrimaryColor() async {
+    if (_themeBusy) return;
+
+    setState(() {
+      _themeBusy = true;
+    });
+
+    try {
+      Locale current = LocalPreferences().localeOverride.get() ??
+          FlowLocalizations.supportedLanguages.first;
+
+      final selected = await showModalBottomSheet<String>(
+        context: context,
+        builder: (context) => SelectPrimaryColorSheet(currentLocale: current),
+      );
+
+      if (selected != null) {
+        await LocalPreferences().primaryCurrency.set(selected);
+      }
+    } finally {
+      _themeBusy = false;
     }
   }
 
