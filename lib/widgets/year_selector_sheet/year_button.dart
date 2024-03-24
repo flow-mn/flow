@@ -2,18 +2,18 @@ import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
-class MonthButton extends StatelessWidget {
+class YearButton extends StatelessWidget {
   final DateTime? currentDate;
 
-  final DateTime month;
+  final DateTime year;
 
   final VoidCallback? onTap;
 
   final BorderRadius borderRadius;
 
-  const MonthButton({
+  const YearButton({
     super.key,
-    required this.month,
+    required this.year,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
     this.currentDate,
     this.onTap,
@@ -21,10 +21,10 @@ class MonthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime now = Moment.startOfThisMonth();
-    final bool selected = currentDate?.isAtSameMonthAs(month) == true;
-    final bool highlighted = now.isAtSameMonthAs(month);
-    final bool future = month.startOfMonth().isAfter(now);
+    final DateTime now = Moment.startOfThisYear();
+    final bool selected = currentDate?.isAtSameYearAs(year) == true;
+    final bool highlighted = now.isAtSameYearAs(year);
+    final bool future = year.startOfYear().isAfter(now);
 
     return InkWell(
       onTap: onTap,
@@ -47,7 +47,7 @@ class MonthButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          month.format(payload: "MMMM"),
+          year.format(payload: "yyyy"),
           textAlign: TextAlign.center,
           style: future
               ? context.textTheme.bodyMedium?.semi(context)

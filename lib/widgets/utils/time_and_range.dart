@@ -1,5 +1,6 @@
 import 'package:flow/widgets/month_selector_sheet.dart';
 import 'package:flow/widgets/select_time_range_mode_sheet.dart';
+import 'package:flow/widgets/year_selector_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -18,7 +19,7 @@ Future<DateTime?> showYearPickerSheet(
 }) =>
     showModalBottomSheet<DateTime>(
       context: context,
-      builder: (context) => MonthSelectorSheet(initialDate: initialDate),
+      builder: (context) => YearSelectorSheet(initialDate: initialDate),
     );
 
 Future<TimeRange?> showTimeRangePickerSheet(
