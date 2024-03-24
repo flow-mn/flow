@@ -9,6 +9,7 @@ import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/theme/primary_colors.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/home/stats/legend_list_tile.dart';
 import 'package:flutter/material.dart' hide Flow;
@@ -47,6 +48,9 @@ class GroupPieChart<T> extends StatefulWidget {
 class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
   late Map<String, MoneyFlow<T>> data;
 
+  double get totalValue => data.values.fold<double>(
+      0, (previousValue, element) => previousValue + element.totalExpense);
+
   bool expense = true;
 
   String? selectedKey;
@@ -72,11 +76,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
 
     final double selectedSectionProc = selectedSection == null
         ? 0.0
-        : (selectedSection.totalExpense /
-            data.values.fold<double>(
-                0,
-                (previousValue, element) =>
-                    previousValue + element.totalExpense));
+        : (selectedSection.totalExpense / totalValue);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -99,50 +99,57 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         ],
         Padding(
           padding: widget.chartPadding,
-          child: AspectRatio(
-            aspectRatio: 1.0,
-            child: LayoutBuilder(builder: (context, constraints) {
-              final double size = constraints.maxWidth;
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: 300.0,
+              maxWidth: 300.0,
+            ),
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: LayoutBuilder(builder: (context, constraints) {
+                final double size = constraints.maxWidth;
 
-              final double centerHoleDiameter = math.min(96.0, size * 0.25);
-              final double radius = (size - centerHoleDiameter) * 0.5;
+                final double centerHoleDiameter = math.min(96.0, size * 0.25);
+                final double radius = (size - centerHoleDiameter) * 0.5;
 
-              return PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(touchCallback: (event, response) {
-                    if (!event.isInterestedForInteractions ||
-                        response == null ||
-                        response.touchedSection == null) {
-                      // setState(() {
-                      //   selectedKey = null;
-                      // });
-                      return;
-                    }
+                return PieChart(
+                  PieChartData(
+                    pieTouchData:
+                        PieTouchData(touchCallback: (event, response) {
+                      if (!event.isInterestedForInteractions ||
+                          response == null ||
+                          response.touchedSection == null) {
+                        // setState(() {
+                        //   selectedKey = null;
+                        // });
+                        return;
+                      }
 
-                    final int index =
-                        response.touchedSection!.touchedSectionIndex;
+                      final int index =
+                          response.touchedSection!.touchedSectionIndex;
 
-                    if (index > -1) {
-                      selectedKey = data.entries.elementAt(index).key;
-                      setState(() {});
-                    }
-                  }),
-                  sectionsSpace: 2.0,
-                  centerSpaceRadius: centerHoleDiameter / 2,
-                  startDegreeOffset: -90.0,
-                  sections: data.entries.indexed
-                      .map(
-                        (e) => sectionData(
-                          data[e.$2.key]!,
-                          selected: e.$2.key == selectedKey,
-                          index: e.$1,
-                          radius: radius,
-                        ),
-                      )
-                      .toList(),
-                ),
-              );
-            }),
+                      if (index > -1) {
+                        selectedKey = data.entries.elementAt(index).key;
+                        setState(() {});
+                      }
+                    }),
+                    sectionsSpace: 2.0,
+                    centerSpaceRadius: centerHoleDiameter / 2,
+                    startDegreeOffset: -90.0,
+                    sections: data.entries.indexed
+                        .map(
+                          (e) => sectionData(
+                            data[e.$2.key]!,
+                            selected: e.$2.key == selectedKey,
+                            index: e.$1,
+                            radius: radius,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                );
+              }),
+            ),
           ),
         ),
         if (widget.showLegend) buildLegend(context),
@@ -173,6 +180,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         backgroundColor: backgroundColor,
       ),
       title: Text(resolveName(entry.value.associatedData)),
+      subtitle: Text((entry.value.totalExpense / totalValue).percent1),
       trailing: Text(
         entry.value.totalExpense.moneyCompact,
         style: context.textTheme.bodyLarge,

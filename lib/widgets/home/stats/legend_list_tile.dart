@@ -5,6 +5,7 @@ class LegendListTile extends StatelessWidget {
 
   final Widget? leading;
   final Widget? title;
+  final Widget? subtitle;
   final Widget? trailing;
 
   final Color? color;
@@ -15,6 +16,7 @@ class LegendListTile extends StatelessWidget {
     super.key,
     this.leading,
     this.title,
+    this.subtitle,
     this.trailing,
     this.onTap,
     this.color,
@@ -27,6 +29,7 @@ class LegendListTile extends StatelessWidget {
       onTap: onTap,
       leading: leading,
       title: title,
+      subtitle: subtitle,
       trailing: trailing,
       selected: selected,
       iconColor: color,

@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+export 'extensions.dart';
 
 Future<bool> openUrl(
   Uri uri, [
@@ -160,81 +161,4 @@ Future<ui.Image?> pickAndCropSquareImage(
 
 bool isDesktop() {
   return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
-}
-
-// Ongoing issue about lack of `popUntil`
-// https://github.com/flutter/flutter/issues/131625
-extension GoRouterExt on GoRouter {
-  void popUntil(bool Function(GoRoute) predicate) {
-    List routeStacks = [...routerDelegate.currentConfiguration.routes];
-
-    for (int i = routeStacks.length - 1; i >= 0; i--) {
-      RouteBase route = routeStacks[i];
-      if (route is GoRoute) {
-        if (predicate(route)) break;
-        if (i != 0 && routeStacks[i - 1] is ShellRoute) {
-          RouteMatchList matchList = routerDelegate.currentConfiguration;
-          restore(matchList.remove(matchList.matches.last));
-        } else {
-          pop();
-        }
-      }
-    }
-  }
-}
-
-extension Iterables<E> on Iterable<E> {
-  Map<K, List<E>> groupBy<K>(K Function(E) keyFunction) => fold(
-      <K, List<E>>{},
-      (Map<K, List<E>> map, E element) =>
-          map..putIfAbsent(keyFunction(element), () => <E>[]).add(element));
-
-  E? firstWhereOrNull(bool Function(E element) test) {
-    for (var element in this) {
-      if (test(element)) return element;
-    }
-    return null;
-  }
-}
-
-extension Casings on String {
-  static RegExp whitespaceMatcher = RegExp(r"\s");
-
-  static List<String> titleCaseLowercaseWords = [
-    "a",
-    "an",
-    "the",
-    "at",
-    "by",
-    "for",
-    "in",
-    "of",
-    "on",
-    "to",
-    "up",
-    "and",
-    "as",
-    "but",
-    "or",
-    "nor",
-  ];
-
-  String capitalize() {
-    if (isEmpty) return this;
-
-    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-  }
-
-  /// Does not preserve original whitespace characters.
-  ///
-  /// All whitespace will be replaced with a single space.
-  String titleCase() {
-    if (isEmpty) return this;
-
-    return split(whitespaceMatcher)
-        .map((e) => titleCaseLowercaseWords.contains(e.toLowerCase())
-            ? e.toLowerCase()
-            : e.capitalize())
-        .join(" ");
-  }
 }
