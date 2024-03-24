@@ -47,12 +47,15 @@ class _StatsTabState extends State<StatsTab> {
 
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          width: double.infinity,
-          child: TimeRangeSelector(
-            initialValue: range,
-            onChanged: updateRange,
+        Material(
+          elevation: 1.0,
+          child: Container(
+            padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+            width: double.infinity,
+            child: TimeRangeSelector(
+              initialValue: range,
+              onChanged: updateRange,
+            ),
           ),
         ),
         busy
@@ -64,7 +67,7 @@ class _StatsTabState extends State<StatsTab> {
                   ))
                 : Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 96.0),
+                      padding: const EdgeInsets.only(bottom: 96.0, top: 8.0),
                       child: GroupPieChart(
                         data: data,
                         unresolvedDataTitle: "category.none".t(context),
@@ -103,28 +106,6 @@ class _StatsTabState extends State<StatsTab> {
     }
   }
 
-  // TODO remove time range related code
-  // to avoid duplicating what's in [TimeRangeSelector]
-
-  Future<CustomTimeRange?> selectRange() async {
-    final newRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
-      initialDateRange: range is CustomTimeRange
-          ? DateTimeRange(
-              start: (range as CustomTimeRange).from,
-              end: (range as CustomTimeRange).to)
-          : null,
-    );
-
-    if (newRange != null) {
-      return CustomTimeRange(newRange.start, newRange.end);
-    }
-
-    return null;
-  }
-
   Future<void> changeMode() async {
     final TimeRange? newRange = await showTimeRangePickerSheet(
       context,
@@ -137,10 +118,4 @@ class _StatsTabState extends State<StatsTab> {
       range = newRange;
     });
   }
-}
-
-enum StatsTabTimeRangeMode {
-  thisWeek,
-  thisMonth,
-  custom,
 }
