@@ -1,3 +1,9 @@
+## Beta 0.3.4
+
+- Added year/month selector, closes [#85](https://github.com/flow-mn/flow/issues/85)
+- No longer uses `AutomiaticKeepAlive` for stats tab, but will change this later. Fixes [#94](https://github.com/flow-mn/flow/issues/94)
+- Limited stats tab's pie chart to 300px
+
 ## Beta 0.3.3
 
 - Fix transaction date doesn't get updated, closes [#100](https://github.com/flow-mn/flow/issues/100)
