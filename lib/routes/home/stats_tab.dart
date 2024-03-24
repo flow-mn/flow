@@ -6,8 +6,8 @@ import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/home/stats/group_pie_chart.dart';
 import 'package:flow/widgets/home/stats/no_data.dart';
-import 'package:flow/widgets/select_time_range_mode_sheet.dart';
 import 'package:flow/widgets/time_range_selector.dart';
+import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -129,26 +129,16 @@ class _StatsTabState extends State<StatsTab>
   }
 
   Future<void> changeMode() async {
-    final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
-      context: context,
-      builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
+    final TimeRange? newRange = await showTimeRangePickerSheet(
+      context,
+      initialValue: range,
     );
 
-    if (mode == null) return;
+    if (!mounted || newRange == null) return;
 
-    final TimeRange? newRange = switch (mode) {
-      TimeRangeMode.thisWeek => TimeRange.thisLocalWeek(),
-      TimeRangeMode.thisMonth => TimeRange.thisMonth(),
-      TimeRangeMode.thisYear => TimeRange.thisYear(),
-      TimeRangeMode.byYear => await selectRange(),
-      TimeRangeMode.byMonth => await selectRange(),
-      TimeRangeMode.custom => await selectRange(),
-    };
-
-    if (newRange == null) return;
-    if (!mounted) return;
-
-    updateRange(newRange);
+    setState(() {
+      range = newRange;
+    });
   }
 
   @override

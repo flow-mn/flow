@@ -18,6 +18,9 @@
     "general.delete.all": "Бүгдийг устгах",
     "general.copy.success": "Амжилттай хууллаа",
     "general.copy.clickToCopy": "Дарвал бичвэр хуулна",
+    "general.timeSelector.select.month": "Сар сонгох",
+    "general.timeSelector.select.year": "Жил сонгох",
+    "general.timeSelector.now": "Одоо",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",

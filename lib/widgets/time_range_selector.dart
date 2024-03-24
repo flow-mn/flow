@@ -1,6 +1,6 @@
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/select_time_range_mode_sheet.dart';
+import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -75,6 +75,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                     ),
                   ),
                 MonthTimeRange monthTimeRange => Button(
+                    onTap: pickMonth,
                     child: Text(
                       monthTimeRange.from.format(
                         payload:
@@ -159,25 +160,22 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     return null;
   }
 
-  Future<void> changeMode() async {
-    final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
-      context: context,
-      builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
+  Future<void> pickMonth() async {
+    final DateTime? newDate = await showMonthPickerSheet(
+      context,
+      initialDate: _timeRange.from,
     );
 
-    if (mode == null) return;
+    if (!mounted || newDate == null) return;
 
-    final TimeRange? newRange = switch (mode) {
-      TimeRangeMode.thisWeek => TimeRange.thisLocalWeek(),
-      TimeRangeMode.thisMonth => TimeRange.thisMonth(),
-      TimeRangeMode.thisYear => TimeRange.thisYear(),
-      TimeRangeMode.byYear => await selectRange(),
-      TimeRangeMode.byMonth => await selectRange(),
-      TimeRangeMode.custom => await selectRange(),
-    };
+    update(MonthTimeRange.fromDateTime(newDate));
+  }
 
-    if (newRange == null) return;
-    if (!mounted) return;
+  Future<void> changeMode() async {
+    final TimeRange? newRange =
+        await showTimeRangePickerSheet(context, initialValue: _timeRange);
+
+    if (!mounted || newRange == null) return;
 
     update(newRange);
   }

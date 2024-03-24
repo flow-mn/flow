@@ -5,16 +5,16 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class AccountCardSkeleton extends StatelessWidget {
   final VoidCallback? onTap;
+  final BorderRadius borderRadius;
 
   const AccountCardSkeleton({
     super.key,
     this.onTap,
+    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(24.0);
-
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(

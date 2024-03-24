@@ -68,14 +68,14 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8.0),
-          // ListTile(
-          //   title: Text("tabs.stats.timeRange.mode.byMonth".t(context)),
-          //   onTap: () => context.pop(TimeRangeMode.byMonth),
-          // ),
-          // ListTile(
-          //   title: Text("tabs.stats.timeRange.mode.byYear".t(context)),
-          //   onTap: () => context.pop(TimeRangeMode.byYear),
-          // ),
+          ListTile(
+            title: Text("tabs.stats.timeRange.mode.byMonth".t(context)),
+            onTap: () => context.pop(TimeRangeMode.byMonth),
+          ),
+          ListTile(
+            title: Text("tabs.stats.timeRange.mode.byYear".t(context)),
+            onTap: () => context.pop(TimeRangeMode.byYear),
+          ),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.custom".t(context)),
             onTap: () => context.pop(TimeRangeMode.custom),
