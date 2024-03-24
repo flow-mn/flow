@@ -209,7 +209,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   Future<bool> openColorPickerDialog(BuildContext context) async {
     return ColorPicker(
       // Use the dialogPickerColor as start color.
-      color: Colors.red,
+      color: context.colorScheme.primary,
       // Update the dialogPickerColor using the callback.
       onColorChanged: (Color color) async {
         await LocalPreferences().setPrimaryColor(color);
@@ -237,7 +237,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       },
     ).showPickerDialog(
       context,
-      // New in version 3.0.0 custom transitions support.
       transitionBuilder: (BuildContext context, Animation<double> a1,
           Animation<double> a2, Widget widget) {
         final double curvedValue =
