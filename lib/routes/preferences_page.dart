@@ -1,3 +1,4 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
@@ -5,6 +6,7 @@ import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
+import 'package:colornames/colornames.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -49,6 +51,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
+                title: Text("preferences.theme.setPrimaryColor".t(context)),
+                leading: const Icon(Icons.color_lens),
+                trailing: const Icon(Icons.chevron_right),
+                subtitle: _buildCurrentPrimaryThemeName(context),
+                onTap: () => updatePrimaryColor(context),
+              ),
+              ListTile(
                 title: Text("preferences.language".t(context)),
                 leading: const Icon(Symbols.language_rounded),
                 onTap: () => updateLanguage(),
@@ -90,6 +99,18 @@ class _PreferencesPageState extends State<PreferencesPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCurrentPrimaryThemeName(BuildContext context) {
+    try {
+      final Color primaryColor = Theme.of(context).colorScheme.primary;
+
+      final primaryColorName = ColorNames.guess(primaryColor);
+
+      return Text(primaryColorName);
+    } catch (e) {
+      return Text("error.preferences.unknownColor".t(context));
+    }
   }
 
   void updateTheme([ThemeMode? force]) async {
@@ -145,6 +166,93 @@ class _PreferencesPageState extends State<PreferencesPage> {
     } finally {
       _languageBusy = false;
     }
+  }
+
+  void updatePrimaryColor(BuildContext context) async {
+    if (_themeBusy) return;
+
+    setState(() {
+      _themeBusy = true;
+    });
+
+    try {
+      final selected = await openColorPickerDialog(context);
+      if (selected) {
+        _openConfirmDialog();
+      }
+    } finally {
+      _themeBusy = false;
+    }
+  }
+
+  void _openConfirmDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("preferences.theme.setPrimaryColorDialog.title".t(context)),
+        content:
+            Text("preferences.theme.setPrimaryColorDialog.content".t(context)),
+        // Text("".t(context)),
+        // content:
+        //     Text("preferences.primaryColor.confirmDialogMessage".t(context)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text("general.confirm.okay",
+                style: Theme.of(context).textTheme.titleSmall),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> openColorPickerDialog(BuildContext context) async {
+    return ColorPicker(
+      // Use the dialogPickerColor as start color.
+      color: context.colorScheme.primary,
+      // Update the dialogPickerColor using the callback.
+      onColorChanged: (Color color) async {
+        await LocalPreferences().setPrimaryColor(color);
+      },
+      width: 40,
+      height: 40,
+      borderRadius: 4,
+      spacing: 5,
+      runSpacing: 5,
+      wheelDiameter: 155,
+      showMaterialName: true,
+      showColorName: true,
+      showColorCode: true,
+      copyPasteBehavior: const ColorPickerCopyPasteBehavior(
+        longPressMenu: true,
+        copyButton: true,
+        pasteButton: true,
+      ),
+      materialNameTextStyle: Theme.of(context).textTheme.bodySmall,
+      colorNameTextStyle: Theme.of(context).textTheme.bodySmall,
+      colorCodeTextStyle: Theme.of(context).textTheme.bodySmall,
+      pickersEnabled: const <ColorPickerType, bool>{
+        ColorPickerType.wheel: true,
+        ColorPickerType.accent: false,
+      },
+    ).showPickerDialog(
+      context,
+      transitionBuilder: (BuildContext context, Animation<double> a1,
+          Animation<double> a2, Widget widget) {
+        final double curvedValue =
+            Curves.easeInOutBack.transform(a1.value) - 1.0;
+        return Transform(
+          transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+          child: Opacity(
+            opacity: a1.value,
+            child: widget,
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
+      constraints:
+          const BoxConstraints(minHeight: 460, minWidth: 300, maxWidth: 320),
+    );
   }
 
   void updatePrimaryCurrency() async {
