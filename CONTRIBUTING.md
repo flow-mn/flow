@@ -24,6 +24,8 @@ create a branch `fix82` from `main`
 6. Ensure your code doesn't have any linter warnings, errors
 (Your editor will tell you, or you can run `flutter analyze`)
 7. Submit a PR to `main` branch
+8. If your feature involves UI changes, add a short video demonstrating the
+implement change/feature
 
 ## Translating
 
