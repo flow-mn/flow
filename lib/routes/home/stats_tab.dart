@@ -18,8 +18,7 @@ class StatsTab extends StatefulWidget {
   State<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab>
-    with AutomaticKeepAliveClientMixin {
+class _StatsTabState extends State<StatsTab> {
   TimeRange range = TimeRange.thisMonth();
 
   FlowAnalytics? analytics;
@@ -35,8 +34,6 @@ class _StatsTabState extends State<StatsTab>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     final Map<String, MoneyFlow> data = analytics == null
         ? {}
         : Map.fromEntries(
@@ -140,9 +137,6 @@ class _StatsTabState extends State<StatsTab>
       range = newRange;
     });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 enum StatsTabTimeRangeMode {
