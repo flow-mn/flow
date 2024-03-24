@@ -157,32 +157,34 @@ ThemeData _overrideThemeWithPrimaryColor(ThemeData theme, Color? primaryColor,
     {bool isLightMode = false}) {
   return theme.copyWith(
     colorScheme: theme.colorScheme.copyWith(primary: primaryColor),
-    listTileTheme: theme.listTileTheme.copyWith(
-      iconColor: primaryColor,
-    ),
-    extensions: theme.extensions.entries
-        .map(
-          (entry) => entry.value is NavbarTheme
-              ? NavbarTheme(
-                  backgroundColor: theme.colorScheme.onSurface,
-                  activeIconColor: primaryColor ??
-                      (entry.value as NavbarTheme).activeIconColor,
-                  inactiveIconOpacity: 0.5,
-                  transactionButtonBackgroundColor: primaryColor ??
-                      (entry.value as NavbarTheme)
-                          .transactionButtonBackgroundColor,
-                  transactionButtonForegroundColor: (entry.value as NavbarTheme)
-                      .transactionButtonForegroundColor,
-                )
-              : entry.value,
-        )
-        .toList(),
+    listTileTheme: theme.listTileTheme.copyWith(iconColor: primaryColor),
+    extensions: _mapExtensions(theme, primaryColor),
     textSelectionTheme: theme.textSelectionTheme.copyWith(
       cursorColor: primaryColor,
       selectionColor: primaryColor,
       selectionHandleColor: primaryColor,
     ),
   );
+}
+
+Iterable<ThemeExtension<dynamic>> _mapExtensions(
+    ThemeData theme, Color? primaryColor) {
+  return theme.extensions.entries.map((entry) {
+    if (entry.value is NavbarTheme) {
+      var navbarTheme = entry.value as NavbarTheme;
+      return NavbarTheme(
+        backgroundColor: theme.colorScheme.onSurface,
+        activeIconColor: primaryColor ?? navbarTheme.activeIconColor,
+        inactiveIconOpacity: 0.5,
+        transactionButtonBackgroundColor:
+            primaryColor ?? navbarTheme.transactionButtonBackgroundColor,
+        transactionButtonForegroundColor:
+            navbarTheme.transactionButtonForegroundColor,
+      );
+    } else {
+      return entry.value;
+    }
+  });
 }
 
 Future<Color?> _checkPrefsForPrimaryColor() async {
