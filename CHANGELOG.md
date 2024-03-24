@@ -1,3 +1,13 @@
+## Beta 0.3.3
+
+- Fix transaction date doesn't get updated, closes [#100](https://github.com/flow-mn/flow/issues/100)
+- Improve setup by [#103](https://github.com/flow-mn/flow/pull/103)
+
+## Beta 0.3.2
+
+- Fixed transaction page title suggestion was behaving differently from prior
+  releases. Improved UX
+
 ## Beta 0.3.1
 
 - Transaction page now suggests title based on relevancy (category, account, etc)

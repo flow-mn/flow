@@ -72,6 +72,16 @@ class Account implements EntityBase {
   })  : createdDate = createdDate ?? DateTime.now(),
         uuid = const Uuid().v4();
 
+  Account.preset({
+    required this.name,
+    required this.currency,
+    required this.iconCode,
+    required this.uuid,
+  })  : excludeFromTotalBalance = false,
+        sortOrder = -1,
+        id = -1,
+        createdDate = DateTime.now();
+
   factory Account.fromJson(Map<String, dynamic> json) =>
       _$AccountFromJson(json);
   Map<String, dynamic> toJson() => _$AccountToJson(this);

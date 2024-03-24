@@ -4,7 +4,6 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/setup/setup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -40,24 +39,20 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("setup.profile.setup".t(context)),
+      ),
       body: SafeArea(
         child: Form(
           key: formKey,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                SetupHeader("setup.profile.setup".t(context)),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _textEditingController,
-                  autofocus: true,
-                  validator: validateRequiredField,
-                  textInputAction: TextInputAction.send,
-                  onFieldSubmitted: (value) => save(),
-                ),
-              ],
+            child: TextFormField(
+              controller: _textEditingController,
+              autofocus: true,
+              validator: validateRequiredField,
+              textInputAction: TextInputAction.send,
+              onFieldSubmitted: (value) => save(),
             ),
           ),
         ),

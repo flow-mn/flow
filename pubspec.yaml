@@ -33,6 +33,7 @@ dependencies:
   image_picker: ^1.0.7
   intl: ^0.18.1
   json_annotation: ^4.8.1
+  local_hero: ^0.3.0
   local_settings: ^0.3.1
   mask_text_input_formatter: ^2.8.0
   material_symbols_icons: ^4.2719.1
