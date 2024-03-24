@@ -2,7 +2,6 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
-import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
@@ -52,8 +51,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
-                ///TODO: Add Localization
-                title: const Text('Set Primary Color'),
+                title: Text("preferences.theme.setPrimaryColor".t(context)),
                 leading: const Icon(Icons.color_lens),
                 trailing: const Icon(Icons.chevron_right),
                 subtitle: _buildCurrentPrimaryThemeName(context),
@@ -111,8 +109,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
       return Text(primaryColorName);
     } catch (e) {
-      print(e);
-      return const Text("Unknown Color");
+      return Text("error.preferences.unknownColor".t(context));
     }
   }
 
@@ -192,16 +189,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Restart Required'),
+        title: Text("preferences.theme.setPrimaryColorDialog.title".t(context)),
         content:
-            Text('Flow has to be restarted in order to apply the changes.'),
+            Text("preferences.theme.setPrimaryColorDialog.content".t(context)),
         // Text("".t(context)),
         // content:
         //     Text("preferences.primaryColor.confirmDialogMessage".t(context)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text("Okay", style: Theme.of(context).textTheme.titleSmall),
+            child: Text("general.confirm.okay",
+                style: Theme.of(context).textTheme.titleSmall),
           ),
         ],
       ),
@@ -222,18 +220,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       spacing: 5,
       runSpacing: 5,
       wheelDiameter: 155,
-      heading: Text(
-        'Select color',
-        style: Theme.of(context).textTheme.titleSmall,
-      ),
-      subheading: Text(
-        'Select color shade',
-        style: Theme.of(context).textTheme.titleSmall,
-      ),
-      wheelSubheading: Text(
-        'Selected color and its shades',
-        style: Theme.of(context).textTheme.titleSmall,
-      ),
       showMaterialName: true,
       showColorName: true,
       showColorCode: true,
