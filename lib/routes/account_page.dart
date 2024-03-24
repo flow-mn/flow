@@ -226,6 +226,7 @@ class _AccountPageState extends State<AccountPage> {
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
+                  activeColor: context.colorScheme.primary,
                 ),
                 if (_currentlyEditing != null) ...[
                   const SizedBox(height: 80.0),
