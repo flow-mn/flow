@@ -110,6 +110,7 @@
     "preferences.primaryCurrency": "Үндсэн валют",
     "preferences.language": "Хэл",
     "preferences.language.choose": "Хэл сонгох",
+    "preferences.theme.setPrimaryColor": "Үндсэн өнгө сонгох",
     "preferences.themeMode": "Үзэмж",
     "preferences.themeMode.light": "Гэгээлэг",
     "preferences.themeMode.dark": "Харанхуй",

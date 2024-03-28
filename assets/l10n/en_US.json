@@ -110,6 +110,7 @@
     "preferences.primaryCurrency": "Primary currency",
     "preferences.language": "Language",
     "preferences.language.choose": "Choose language",
+    "preferences.theme.setPrimaryColor": "Set primary color",
     "preferences.themeMode": "Theme",
     "preferences.themeMode.light": "Light",
     "preferences.themeMode.dark": "Dark",
