@@ -133,6 +133,8 @@
     "tabs.home.noTransactions.allTime": "Танд одоогоор гүйлгээ алга байна",
     "tabs.home.noTransactions.last7Days": "Сүүлийн долоо хоногт хийгдсэн гүйлгээ алга байна",
     "tabs.home.noTransactions.addSome": "Доор байрлах (+) товч дээр дарж гүйлгээ нэмээрэй",
+    "tabs.home.upcomingTransactions": "Төлөвлөсөн {count}",
+    "tabs.home.upcomingTransactions.seeAll": "Бүгдийг харах",
     "tabs.home.transactionsCount": "{count} гүйлгээ",
     "tabs.home.last7days": "Сүүлийн 7 хоног",
     "tabs.home.totalBalance": "Нийт үлдэгдэл",

@@ -133,6 +133,8 @@
     "tabs.home.noTransactions.allTime": "You don't have any transactions",
     "tabs.home.noTransactions.last7Days": "No transactions for the last 7 days",
     "tabs.home.noTransactions.addSome": "Click on (+) button below to add a new transaction",
+    "tabs.home.upcomingTransactions": "Upcoming {count}",
+    "tabs.home.upcomingTransactions.seeAll": "See all",
     "tabs.home.transactionsCount": "{count} transactions",
     "tabs.home.last7days": "Last 7 days",
     "tabs.home.totalBalance": "Total balance",

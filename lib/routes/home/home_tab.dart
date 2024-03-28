@@ -47,10 +47,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     return StreamBuilder<Query<Transaction>>(
       stream: qb().watch(triggerImmediately: true),
       builder: (context, snapshot) {
-        final transactions = snapshot.data
-            ?.find()
-            .where((element) => element.transactionDate <= Moment.now())
-            .toList();
+        final transactions = snapshot.data?.find();
 
         return Column(
           children: [
@@ -80,8 +77,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   Widget buildGroupedList(
-      BuildContext context, List<Transaction> transactions) {
-    final Map<DateTime, List<Transaction>> grouped = transactions.groupByDate();
+    BuildContext context,
+    List<Transaction> transactions,
+  ) {
+    final Map<DateTime, List<Transaction>> grouped =
+        transactions.groupByDate(mergeFutureTransactions: true);
     final List<Widget> headers = grouped.keys
         .map((date) =>
             TransactionListDateHeader(transactions: grouped[date]!, date: date))
