@@ -1,4 +1,5 @@
 import 'package:flow/l10n/flow_localizations.dart';
+import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,8 @@ class _LanguageSelectionSheetState extends State<LanguageSelectionSheet> {
           children: [
             ...FlowLocalizations.supportedLanguages.map(
               (locale) => ListTile(
+                selectedTileColor: context.colorScheme.primary,
+                selectedColor: context.colorScheme.onPrimary,
                 title: Text(locale.name),
                 onTap: () => context.pop(locale),
                 selected: widget.currentLocale == locale,

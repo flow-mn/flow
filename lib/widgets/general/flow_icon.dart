@@ -49,7 +49,7 @@ class FlowIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!plated) return buildChild(context, data);
 
-    final plateColor = this.plateColor ?? context.colorScheme.secondary;
+    final plateColor = this.plateColor ?? context.colorScheme.onSurface;
 
     return Surface(
       builder: (BuildContext context) => InkWell(

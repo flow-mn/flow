@@ -188,18 +188,16 @@ class _PreferencesPageState extends State<PreferencesPage> {
       wheelDiameter: 155,
       showColorCode: true,
       copyPasteBehavior: const ColorPickerCopyPasteBehavior(
-        longPressMenu: true,
         copyButton: true,
         pasteButton: true,
       ),
-      materialNameTextStyle: Theme.of(context).textTheme.bodySmall,
-      colorNameTextStyle: Theme.of(context).textTheme.bodySmall,
-      colorCodeTextStyle: Theme.of(context).textTheme.bodySmall,
       pickersEnabled: const <ColorPickerType, bool>{
         ColorPickerType.wheel: true,
         ColorPickerType.accent: false,
       },
     ).showPickerDialog(
+      backgroundColor: context.colorScheme.surface,
+      surfaceTintColor: context.colorScheme.primary,
       context,
       transitionBuilder: (BuildContext context, Animation<double> a1,
           Animation<double> a2, Widget widget) {
