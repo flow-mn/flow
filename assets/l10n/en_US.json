@@ -114,9 +114,6 @@
     "preferences.themeMode.light": "Light",
     "preferences.themeMode.dark": "Dark",
     "preferences.themeMode.system": "Auto (system)",
-    "preferences.theme.setPrimaryColor": "Set Primary Color",
-    "preferences.theme.setPrimaryColorDialog.title": "Flow has to be restarted in order to apply the changes.",
-    "preferences.theme.setPrimaryColorDialog.content": "Flow has to be restarted in order to apply the changes.",
     "preferences.numpad": "Numpad",
     "preferences.numpad.layout": "Numpad layout",
     "preferences.numpad.layout.classic": "Classic",
@@ -276,6 +273,5 @@
     "error.sync.invalidBackupFile": "Invalid backup file",
     "error.sync.safetyBackupFailed": "Unable to start import",
     "error.sync.exportFailed": "Unable to export, please contact developer.",
-    "error.transaction.missingAccount": "Please select an account",
-    "error.preferences.unknownColor": "Unknown color"
+    "error.transaction.missingAccount": "Please select an account"
 }
