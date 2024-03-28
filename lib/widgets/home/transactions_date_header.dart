@@ -33,7 +33,7 @@ class TransactionListDateHeader extends StatelessWidget {
           style: context.textTheme.headlineSmall,
         ),
         Text(
-          "${flow.moneyCompact} • $count transactions",
+          "${flow.moneyCompact} • ${'tabs.home.transactionsCount'.t(context, count)}",
           style: context.textTheme.labelMedium,
         ),
       ],
