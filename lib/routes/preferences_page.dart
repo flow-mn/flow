@@ -186,8 +186,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       spacing: 5,
       runSpacing: 5,
       wheelDiameter: 155,
-      showMaterialName: true,
-      showColorName: true,
       showColorCode: true,
       copyPasteBehavior: const ColorPickerCopyPasteBehavior(
         longPressMenu: true,
