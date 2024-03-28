@@ -53,7 +53,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 title: Text("preferences.theme.setPrimaryColor".t(context)),
                 leading: const Icon(Icons.color_lens),
                 trailing: const Icon(Icons.chevron_right),
-                subtitle: _buildCurrentPrimaryThemeName(context),
                 onTap: () => updatePrimaryColor(context),
               ),
               ListTile(
@@ -98,18 +97,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
         ),
       ),
     );
-  }
-
-  Widget _buildCurrentPrimaryThemeName(BuildContext context) {
-    try {
-      final Color primaryColor = Theme.of(context).colorScheme.primary;
-
-      final primaryColorName = ColorNames.guess(primaryColor);
-
-      return Text(primaryColorName);
-    } catch (e) {
-      return Text("error.preferences.unknownColor".t(context));
-    }
   }
 
   void updateTheme([ThemeMode? force]) async {
@@ -177,32 +164,12 @@ class _PreferencesPageState extends State<PreferencesPage> {
     try {
       final selected = await openColorPickerDialog(context);
       if (selected) {
-        _openConfirmDialog();
+        // _openConfirmDialog();
+        Flow.of(context).updatePrimaryColor();
       }
     } finally {
       _themeBusy = false;
     }
-  }
-
-  void _openConfirmDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("preferences.theme.setPrimaryColorDialog.title".t(context)),
-        content:
-            Text("preferences.theme.setPrimaryColorDialog.content".t(context)),
-        // Text("".t(context)),
-        // content:
-        //     Text("preferences.primaryColor.confirmDialogMessage".t(context)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text("general.confirm.okay",
-                style: Theme.of(context).textTheme.titleSmall),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<bool> openColorPickerDialog(BuildContext context) async {

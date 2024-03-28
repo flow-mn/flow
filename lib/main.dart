@@ -83,16 +83,7 @@ class FlowState extends State<Flow> {
 
     _reloadLocale();
     _reloadTheme();
-
-    _checkPrefsForPrimaryColor().then((color) {
-      setState(() {
-        if (color != null) {
-          primaryColorFromPrefs = color;
-        } else {
-          primaryColorFromPrefs = context.colorScheme.primary;
-        }
-      });
-    });
+    updatePrimaryColor();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
@@ -126,10 +117,10 @@ class FlowState extends State<Flow> {
       ],
       locale: LocalPreferences().localeOverride.value,
       routerConfig: router,
-      theme: _overrideThemeWithPrimaryColor(lightTheme, primaryColorFromPrefs,
+      theme: overrideThemeWithPrimaryColor(lightTheme, primaryColorFromPrefs,
           isLightMode: true),
       darkTheme:
-          _overrideThemeWithPrimaryColor(darkTheme, primaryColorFromPrefs),
+          overrideThemeWithPrimaryColor(darkTheme, primaryColorFromPrefs),
       // theme: lightTheme,
       // darkTheme: darkTheme,
       themeMode: _themeMode,
@@ -151,9 +142,21 @@ class FlowState extends State<Flow> {
     Intl.defaultLocale = _locale.code;
     setState(() {});
   }
+
+  void updatePrimaryColor() {
+    checkPrefsForPrimaryColor().then((color) {
+      setState(() {
+        if (color != null) {
+          primaryColorFromPrefs = color;
+        } else {
+          primaryColorFromPrefs = context.colorScheme.primary;
+        }
+      });
+    });
+  }
 }
 
-ThemeData _overrideThemeWithPrimaryColor(ThemeData theme, Color? primaryColor,
+ThemeData overrideThemeWithPrimaryColor(ThemeData theme, Color? primaryColor,
     {bool isLightMode = false}) {
   return theme.copyWith(
     colorScheme: theme.colorScheme.copyWith(primary: primaryColor),
@@ -187,7 +190,7 @@ Iterable<ThemeExtension<dynamic>> _mapExtensions(
   });
 }
 
-Future<Color?> _checkPrefsForPrimaryColor() async {
+Future<Color?> checkPrefsForPrimaryColor() async {
   final prefs = LocalPreferences();
   return await prefs.getPrimaryColor();
 }
