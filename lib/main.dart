@@ -25,6 +25,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
+import 'package:flow/theme/navbar_theme.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -74,12 +75,15 @@ class FlowState extends State<Flow> {
     return useDarkTheme ? pieThemeDark : pieThemeLight;
   }
 
+  Color? primaryColorFromPrefs = Colors.white;
+
   @override
   void initState() {
     super.initState();
 
     _reloadLocale();
     _reloadTheme();
+    updatePrimaryColor();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
@@ -111,11 +115,14 @@ class FlowState extends State<Flow> {
         GlobalWidgetsLocalizations.delegate,
         FlowLocalizations.delegate,
       ],
-      supportedLocales: FlowLocalizations.supportedLanguages,
       locale: LocalPreferences().localeOverride.value,
       routerConfig: router,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: overrideThemeWithPrimaryColor(lightTheme, primaryColorFromPrefs,
+          isLightMode: true),
+      darkTheme:
+          overrideThemeWithPrimaryColor(darkTheme, primaryColorFromPrefs),
+      // theme: lightTheme,
+      // darkTheme: darkTheme,
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
     );
@@ -135,4 +142,55 @@ class FlowState extends State<Flow> {
     Intl.defaultLocale = _locale.code;
     setState(() {});
   }
+
+  void updatePrimaryColor() {
+    checkPrefsForPrimaryColor().then((color) {
+      setState(() {
+        if (color != null) {
+          primaryColorFromPrefs = color;
+        } else {
+          primaryColorFromPrefs = context.colorScheme.primary;
+        }
+      });
+    });
+  }
+}
+
+ThemeData overrideThemeWithPrimaryColor(ThemeData theme, Color? primaryColor,
+    {bool isLightMode = false}) {
+  return theme.copyWith(
+    colorScheme: theme.colorScheme.copyWith(primary: primaryColor),
+    listTileTheme: theme.listTileTheme.copyWith(iconColor: primaryColor),
+    extensions: _mapExtensions(theme, primaryColor),
+    textSelectionTheme: theme.textSelectionTheme.copyWith(
+      cursorColor: primaryColor,
+      selectionColor: primaryColor,
+      selectionHandleColor: primaryColor,
+    ),
+  );
+}
+
+Iterable<ThemeExtension<dynamic>> _mapExtensions(
+    ThemeData theme, Color? primaryColor) {
+  return theme.extensions.entries.map((entry) {
+    if (entry.value is NavbarTheme) {
+      var navbarTheme = entry.value as NavbarTheme;
+      return NavbarTheme(
+        backgroundColor: theme.colorScheme.onSurface,
+        activeIconColor: primaryColor ?? navbarTheme.activeIconColor,
+        inactiveIconOpacity: 0.5,
+        transactionButtonBackgroundColor:
+            primaryColor ?? navbarTheme.transactionButtonBackgroundColor,
+        transactionButtonForegroundColor:
+            navbarTheme.transactionButtonForegroundColor,
+      );
+    } else {
+      return entry.value;
+    }
+  });
+}
+
+Future<Color?> checkPrefsForPrimaryColor() async {
+  final prefs = LocalPreferences();
+  return await prefs.getPrimaryColor();
 }

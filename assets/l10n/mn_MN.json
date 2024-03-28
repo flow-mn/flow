@@ -114,6 +114,9 @@
     "preferences.themeMode.light": "Гэгээлэг",
     "preferences.themeMode.dark": "Харанхуй",
     "preferences.themeMode.system": "Авто (систем)",
+    "preferences.theme.setPrimaryColor": "Үндсэн өнгө оноох",
+    "preferences.theme.setPrimaryColorDialog.title": "Өөрийгөө өөрчлөлтийг хэрэглэхийн тулд Flow-г дахин эхлүүлж давтах ёстой.",
+    "preferences.theme.setPrimaryColorDialog.content": "Өөрийгөө өөрчлөлтийг хэрэглэхийн тулд Flow-г дахин эхлүүлж давтах ёстой.",
     "preferences.numpad": "Тоон товчлуур",
     "preferences.numpad.layout": "Тооны байрлал",
     "preferences.numpad.layout.classic": "Хуучны",
@@ -273,5 +276,6 @@
     "error.sync.invalidBackupFile": "Нөөц файл алдаатай байна",
     "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
     "error.sync.exportFailed": "Нөөцлөх явцад алдаа гарлаа, хөгжүүлэгчид хандана уу.",
-    "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"
+    "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу",
+    "error.preferences.unknownColor": "Тодорхойгүй өнгө"
 }
