@@ -56,6 +56,7 @@ class FlowLocalizations {
   static const List<Locale> supportedLanguages = [
     Locale("en", "US"), // Will fallback to this for unsupported locales
     Locale("mn", "MN"),
+    Locale("it", "IT"),
   ];
 
   static FlowLocalizations of(BuildContext context) =>
