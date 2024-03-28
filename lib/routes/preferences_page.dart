@@ -6,7 +6,6 @@ import 'package:flow/routes/preferences/language_selection_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
-import 'package:colornames/colornames.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
