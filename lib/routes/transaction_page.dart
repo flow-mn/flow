@@ -481,10 +481,10 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectTransactionDate() async {
-    final result = await showDatePicker(
+    final DateTime? result = await showDatePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime(9999, 12, 31),
       initialDate: _transactionDate,
     );
 
@@ -494,7 +494,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (!mounted || result == null) return;
 
-    final timeResult = await showTimePicker(
+    final TimeOfDay? timeResult = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_transactionDate),
     );
@@ -582,12 +582,15 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedAccount!.transferTo(
         targetAccount: _selectedAccountTransferTo!,
         amount: _amount.abs(),
+        transactionDate: _transactionDate,
+        title: formattedTitle,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
         amount: _amount,
         title: formattedTitle,
         category: _selectedCategory,
+        transactionDate: _transactionDate,
       );
     }
 
