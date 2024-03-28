@@ -14,6 +14,9 @@ As of now, publishing fees have been paid by the maintainer.
 
 ## Developing
 
+NOTE: A quick discussion upfront can highlight any potential issues, streamline
+the merge process, and ensure you're on the right track to avoid rework.
+
 1. Fork the repository
 2. Pick an issue. If the fix/feature you're gonna work doesn't have an issue,
 please create one first.
@@ -24,6 +27,16 @@ create a branch `fix82` from `main`
 6. Ensure your code doesn't have any linter warnings, errors
 (Your editor will tell you, or you can run `flutter analyze`)
 7. Submit a PR to `main` branch
+8. If your feature involves UI changes, add a short video demonstrating the
+implement change/feature
+
+## Code guides
+
+* Please consider accessibility, localization, and technical factors before
+implementing a new feature
+* Any new dependency must support the all the platforms except for Web
+* It is not necessary to change the version unless you're in charge of
+publishing a release
 
 ## Translating
 

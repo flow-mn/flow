@@ -6,8 +6,8 @@ import 'package:flow/objectbox/actions.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/home/stats/group_pie_chart.dart';
 import 'package:flow/widgets/home/stats/no_data.dart';
-import 'package:flow/widgets/select_time_range_mode_sheet.dart';
 import 'package:flow/widgets/time_range_selector.dart';
+import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -18,8 +18,7 @@ class StatsTab extends StatefulWidget {
   State<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab>
-    with AutomaticKeepAliveClientMixin {
+class _StatsTabState extends State<StatsTab> {
   TimeRange range = TimeRange.thisMonth();
 
   FlowAnalytics? analytics;
@@ -35,8 +34,6 @@ class _StatsTabState extends State<StatsTab>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     final Map<String, MoneyFlow> data = analytics == null
         ? {}
         : Map.fromEntries(
@@ -50,12 +47,15 @@ class _StatsTabState extends State<StatsTab>
 
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          width: double.infinity,
-          child: TimeRangeSelector(
-            initialValue: range,
-            onChanged: updateRange,
+        Material(
+          elevation: 1.0,
+          child: Container(
+            padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+            width: double.infinity,
+            child: TimeRangeSelector(
+              initialValue: range,
+              onChanged: updateRange,
+            ),
           ),
         ),
         busy
@@ -67,7 +67,7 @@ class _StatsTabState extends State<StatsTab>
                   ))
                 : Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 96.0),
+                      padding: const EdgeInsets.only(bottom: 96.0, top: 8.0),
                       child: GroupPieChart(
                         data: data,
                         unresolvedDataTitle: "category.none".t(context),
@@ -106,57 +106,16 @@ class _StatsTabState extends State<StatsTab>
     }
   }
 
-  // TODO remove time range related code
-  // to avoid duplicating what's in [TimeRangeSelector]
-
-  Future<CustomTimeRange?> selectRange() async {
-    final newRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
-      initialDateRange: range is CustomTimeRange
-          ? DateTimeRange(
-              start: (range as CustomTimeRange).from,
-              end: (range as CustomTimeRange).to)
-          : null,
-    );
-
-    if (newRange != null) {
-      return CustomTimeRange(newRange.start, newRange.end);
-    }
-
-    return null;
-  }
-
   Future<void> changeMode() async {
-    final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
-      context: context,
-      builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
+    final TimeRange? newRange = await showTimeRangePickerSheet(
+      context,
+      initialValue: range,
     );
 
-    if (mode == null) return;
+    if (!mounted || newRange == null) return;
 
-    final TimeRange? newRange = switch (mode) {
-      TimeRangeMode.thisWeek => TimeRange.thisLocalWeek(),
-      TimeRangeMode.thisMonth => TimeRange.thisMonth(),
-      TimeRangeMode.thisYear => TimeRange.thisYear(),
-      TimeRangeMode.byYear => await selectRange(),
-      TimeRangeMode.byMonth => await selectRange(),
-      TimeRangeMode.custom => await selectRange(),
-    };
-
-    if (newRange == null) return;
-    if (!mounted) return;
-
-    updateRange(newRange);
+    setState(() {
+      range = newRange;
+    });
   }
-
-  @override
-  bool get wantKeepAlive => true;
-}
-
-enum StatsTabTimeRangeMode {
-  thisWeek,
-  thisMonth,
-  custom,
 }

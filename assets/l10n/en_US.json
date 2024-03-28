@@ -18,6 +18,9 @@
     "general.delete.all": "Delete all",
     "general.copy.success": "Copied to clipboard",
     "general.copy.clickToCopy": "Click to copy",
+    "general.timeSelector.select.month": "Select a month",
+    "general.timeSelector.select.year": "Select a year",
+    "general.timeSelector.now": "Now",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
@@ -133,6 +136,7 @@
     "tabs.home.noTransactions.allTime": "You don't have any transactions",
     "tabs.home.noTransactions.last7Days": "No transactions for the last 7 days",
     "tabs.home.noTransactions.addSome": "Click on (+) button below to add a new transaction",
+    "tabs.home.transactionsCount": "{count} transactions",
     "tabs.home.last7days": "Last 7 days",
     "tabs.home.totalBalance": "Total balance",
     "tabs.home.flowToday": "Flow today",

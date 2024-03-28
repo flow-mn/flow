@@ -2,89 +2,73 @@ import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
 
-class MonthSelectorBar extends StatelessWidget {
+class YearSelectorBar extends StatelessWidget {
   /// If specified, used instead of `DateTime.now`
   final DateTime? anchor;
 
   final int year;
-  final int month;
 
-  final Function(int year, int month) onUpdate;
+  final Function(int year) onUpdate;
 
-  const MonthSelectorBar({
+  const YearSelectorBar({
     super.key,
     required this.year,
-    required this.month,
     required this.onUpdate,
     this.anchor,
   });
-  MonthSelectorBar.fromDate({
+  YearSelectorBar.fromDate({
     super.key,
     required DateTime value,
     required this.onUpdate,
     this.anchor,
-  })  : year = value.year,
-        month = value.month;
+  }) : year = value.year;
 
   @override
   Widget build(BuildContext context) {
-    final bool showYear = (anchor ?? DateTime.now()).year != year;
-    final String monthName = DateTime(year, month, 1)
-        .format(payload: showYear ? 'MMMM YYYY' : "MMMM");
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         IconButton(
-            onPressed: prev, icon: const Icon(Symbols.chevron_left_rounded)),
+          onPressed: prev,
+          icon: const Icon(Symbols.chevron_left_rounded),
+        ),
         const SizedBox(width: 8.0),
         Expanded(
           child: Button(
             child: Text(
-              monthName,
+              year.toString(),
               textAlign: TextAlign.center,
             ),
             onTap: () => select(context),
           ),
         ),
-        // InkWell(
-        //   onTap: () => select(context),
-        //   child: Text(monthName),
-        // ),
         const SizedBox(width: 8.0),
         IconButton(
-            onPressed: next, icon: const Icon(Symbols.chevron_right_rounded)),
+          onPressed: next,
+          icon: const Icon(Symbols.chevron_right_rounded),
+        ),
       ],
     );
   }
 
   void next() {
-    if (month == 12) {
-      onUpdate(year + 1, 1);
-    } else {
-      onUpdate(year, month + 1);
-    }
+    onUpdate.call(year + 1);
   }
 
   void prev() {
-    if (month == 1) {
-      onUpdate(year - 1, 12);
-    } else {
-      onUpdate(year, month - 1);
-    }
+    onUpdate.call(year - 1);
   }
 
   void select(BuildContext context) async {
-    final DateTime? value = await showMonthPickerSheet(
+    final DateTime? value = await showYearPickerSheet(
       context,
-      initialDate: DateTime(year, month),
+      initialDate: DateTime(year),
     );
 
     if (value == null || !context.mounted) return;
 
-    onUpdate(value.year, value.month);
+    onUpdate(value.year);
   }
 }

@@ -3,6 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
+
 version: "0.3.4+37"
 
 environment:
@@ -37,7 +38,6 @@ dependencies:
   mask_text_input_formatter: ^2.8.0
   material_symbols_icons: ^4.2719.1
   moment_dart: ^2.0.2
-  month_picker_dialog: ^2.11.0
   objectbox: ^2.4.0
   objectbox_flutter_libs: ^2.4.0
   path: ^1.8.3
