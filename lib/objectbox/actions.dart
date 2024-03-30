@@ -349,11 +349,17 @@ extension TransactionListActions on Iterable<Transaction> {
       expenses.fold(0, (value, element) => value + element.amount);
   double get sum => fold(0, (value, element) => value + element.amount);
 
-  Map<DateTime, List<Transaction>> groupByDate() {
+  /// If [mergeFutureTransactions] is set to true, transactions in future
+  /// relative to [anchor] will be grouped into the same group
+  Map<DateTime, List<Transaction>> groupByDate({
+    DateTime? anchor,
+  }) {
+    anchor ??= DateTime.now();
+
     final Map<DateTime, List<Transaction>> value = {};
 
     for (final transaction in this) {
-      final date = transaction.transactionDate.toLocal().startOfDay();
+      final DateTime date = transaction.transactionDate.toLocal().startOfDay();
 
       value[date] ??= [];
       value[date]!.add(transaction);

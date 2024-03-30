@@ -3,6 +3,7 @@ import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moment_dart/moment_dart.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,10 +56,12 @@ class Account implements EntityBase {
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   double get balance {
-    return transactions.fold<double>(
-      0,
-      (previousValue, element) => previousValue + element.amount,
-    );
+    return transactions
+        .where((element) => element.transactionDate.isPast)
+        .fold<double>(
+          0,
+          (previousValue, element) => previousValue + element.amount,
+        );
   }
 
   Account({

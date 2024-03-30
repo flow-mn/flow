@@ -10,14 +10,32 @@ class TransactionListDateHeader extends StatelessWidget {
   final DateTime date;
   final List<Transaction> transactions;
 
+  /// Hides count and flow
+  final bool future;
+
   const TransactionListDateHeader({
     super.key,
     required this.transactions,
     required this.date,
+    this.future = false,
   });
+  const TransactionListDateHeader.future({
+    super.key,
+    required this.date,
+  })  : future = true,
+        transactions = const [];
 
   @override
   Widget build(BuildContext context) {
+    final Widget title = Text(
+      date.toMoment().calendar(omitHours: true),
+      style: context.textTheme.headlineSmall,
+    );
+
+    if (future) {
+      return title;
+    }
+
     final double flow = transactions.sum;
     final int count = transactions.length -
         (LocalPreferences().combineTransferTransactions.get()
@@ -28,10 +46,7 @@ class TransactionListDateHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          date.toMoment().calendar(omitHours: true),
-          style: context.textTheme.headlineSmall,
-        ),
+        title,
         Text(
           "${flow.moneyCompact} • ${'tabs.home.transactionsCount'.t(context, count)}",
           style: context.textTheme.labelMedium,

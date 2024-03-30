@@ -11,10 +11,21 @@ class TransactionsPage extends StatefulWidget {
   final QueryBuilder<Transaction> query;
   final String? title;
 
-  const TransactionsPage({super.key, required this.query, this.title});
+  final Widget? header;
 
-  factory TransactionsPage.account(
-      {Key? key, required int accountId, String? title}) {
+  const TransactionsPage({
+    super.key,
+    required this.query,
+    this.title,
+    this.header,
+  });
+
+  factory TransactionsPage.account({
+    Key? key,
+    required int accountId,
+    String? title,
+    Widget? header,
+  }) {
     final QueryBuilder<Transaction> queryBuilder = ObjectBox()
         .box<Transaction>()
         .query(Transaction_.account.equals(accountId))
@@ -24,6 +35,46 @@ class TransactionsPage extends StatefulWidget {
       query: queryBuilder,
       key: key,
       title: title,
+      header: header,
+    );
+  }
+
+  factory TransactionsPage.all({
+    Key? key,
+    String? title,
+    Widget? header,
+  }) {
+    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
+        .box<Transaction>()
+        .query()
+        .order(Transaction_.transactionDate, flags: Order.descending);
+
+    return TransactionsPage(
+      query: queryBuilder,
+      key: key,
+      title: title,
+      header: header,
+    );
+  }
+
+  factory TransactionsPage.upcoming({
+    Key? key,
+    DateTime? anchor,
+    String? title,
+    Widget? header,
+  }) {
+    anchor ??= DateTime.now();
+
+    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.transactionDate.greaterThanDate(anchor))
+        .order(Transaction_.transactionDate, flags: Order.descending);
+
+    return TransactionsPage(
+      query: queryBuilder,
+      key: key,
+      title: title,
+      header: header,
     );
   }
 
@@ -55,6 +106,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               return GroupedTransactionList(
                 transactions: grouped.values.toList(),
                 headers: headers,
+                header: widget.header,
               );
             },
           ),
