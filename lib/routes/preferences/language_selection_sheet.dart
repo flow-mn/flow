@@ -33,7 +33,8 @@ class _LanguageSelectionSheetState extends State<LanguageSelectionSheet> {
           children: [
             ...FlowLocalizations.supportedLanguages.map(
               (locale) => ListTile(
-                title: Text(locale.name),
+                title: Text(locale.endonym),
+                subtitle: Text(locale.name),
                 onTap: () => context.pop(locale),
                 selected: widget.currentLocale == locale,
               ),

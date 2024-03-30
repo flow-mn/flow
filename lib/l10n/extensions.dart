@@ -14,7 +14,7 @@ extension L10nHelper on BuildContext {
 /// * We have multiple region/dialect support for the same language
 final Map<String, (String, String)> _localeNames = {
   "mn_MN": ("Mongolian", "Монгол"),
-  "en_US": ("English", "Default"),
+  "en_US": ("Default", "English"),
   "it_IT": ("Italian", "Italiano"),
 };
 
@@ -24,8 +24,10 @@ extension Underscore on Locale {
   /// * mn_Mong_MN
   String get code => [languageCode, scriptCode, countryCode].nonNulls.join("_");
 
+  /// English name
   String get name => _localeNames[code]?.$1 ?? "Unknown";
 
+  /// Language name in the language
   String get endonym => _localeNames[code]?.$2 ?? "Unknown";
 }
 
