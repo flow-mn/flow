@@ -5,7 +5,7 @@
     "visitGitHubRepo": "Visita la repo su GitHub",
 
     "general.back": "Torna indietro",
-    "general.delete": "Cancella",
+    "general.delete": "Eliminare",
     "general.delete.permanentWarning": "Questa azione è irreversible",
     "general.delete.confirmName": "Conferma l'eliminazione di {name}?",
     "general.areYouSure": "Sei sicuro?",
@@ -72,7 +72,7 @@
     "account.edit": "Modifica conto",
     "account.edit.selectCurrency": "Seleziona una valuta",
     "account.transactions": "Transazioni",
-    "account.transactions.title": "Li transazioni di \"{account}\"",
+    "account.transactions.title": "Transazioni di \"{account}\"",
     "account.delete": "Elimina conto",
     "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile!",
     "account.noAccounts": "Non hai nessun conto!",
