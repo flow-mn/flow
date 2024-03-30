@@ -90,6 +90,8 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
           return ListTile(
             selected: widget.currentlySelected == transformedCurrencyData.code,
+            selectedTileColor: context.colorScheme.primary,
+            selectedColor: context.colorScheme.onPrimary,
             title: Text(
               transformedCurrencyData.name,
             ),

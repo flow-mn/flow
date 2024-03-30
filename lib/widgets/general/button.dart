@@ -61,7 +61,7 @@ class Button extends StatelessWidget {
 
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      // color: backgroundColor ?? context.colorScheme.primary,
+      color: backgroundColor ?? context.colorScheme.primary,
       builder: (context) => InkWell(
         onTap: onTap,
         onLongPress: onLongPress,

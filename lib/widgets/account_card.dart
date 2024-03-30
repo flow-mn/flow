@@ -39,6 +39,7 @@ class AccountCard extends StatelessWidget {
         : account.transactions.expenseSum;
 
     final child = Surface(
+      color: context.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         onTap: onTapOverride == null

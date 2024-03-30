@@ -16,6 +16,7 @@ class AccountCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Surface(
+      color: context.colorScheme.primary,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         onTap: onTap,

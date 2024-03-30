@@ -42,7 +42,7 @@ class NumpadButton extends StatelessWidget {
       child: Material(
         textStyle: DefaultTextStyle.of(context).style,
         type: MaterialType.button,
-        color: backgroundColor ?? context.colorScheme.secondary,
+        color: backgroundColor ?? context.colorScheme.primary,
         borderRadius: borderRadius,
         child: InkWell(
           borderRadius: borderRadius,

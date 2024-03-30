@@ -31,6 +31,7 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Surface(
+      color: context.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         borderRadius: borderRadius,

@@ -22,6 +22,7 @@ class ActionCard extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Surface(
+        color: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius,
         ),
