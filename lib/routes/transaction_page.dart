@@ -377,10 +377,10 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (!mounted) return;
 
-    final result = await showModalBottomSheet<double>(
+    final double? result = await showModalBottomSheet<double>(
       context: context,
       builder: (context) => InputAmountSheet(
-        initialAmount: _amount,
+        initialAmount: _amount.abs(),
         currency: _selectedAccount?.currency,
         hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
         title: _transactionType.localizedNameContext(context),
@@ -389,8 +389,16 @@ class _TransactionPageState extends State<TransactionPage> {
       isScrollControlled: true,
     );
 
+    final double? resultAmount = result == null
+        ? null
+        : switch (_transactionType) {
+            TransactionType.expense => -result.abs(),
+            TransactionType.income => result.abs(),
+            TransactionType.transfer => result.abs(),
+          };
+
     setState(() {
-      _amount = result ?? _amount;
+      _amount = resultAmount ?? _amount;
     });
 
     if (mounted && widget.isNewTransaction && result != null) {

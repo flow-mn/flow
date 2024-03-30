@@ -151,13 +151,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                     child: SizedBox(
                       height: amountFieldMaxHeight,
                       child: AutoSizeText(
-                        currentAmount.abs().formatMoney(
-                                  decimalDigits: _decimalPart == 0
-                                      ? 0
-                                      : _decimalPart.abs().toString().length,
-                                  includeCurrency: !widget.hideCurrencySymbol,
-                                  currency: widget.currency,
-                                ) +
+                        currentAmount.formatMoney(
+                              decimalDigits: _decimalPart == 0
+                                  ? 0
+                                  : _decimalPart.abs().toString().length,
+                              includeCurrency: !widget.hideCurrencySymbol,
+                              currency: widget.currency,
+                            ) +
                             (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
                         style: context.textTheme.displayMedium,
                         maxLines: 1,
