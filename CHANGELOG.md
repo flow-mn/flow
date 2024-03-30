@@ -1,3 +1,11 @@
+## Beta 0.4.0
+
+* Upcoming transactions by @sadespresso in https://github.com/flow-mn/flow/pull/122
+* add it-IT language by @albertorizzi in https://github.com/flow-mn/flow/pull/116
+* Translation missing by @sadespresso in https://github.com/flow-mn/flow/pull/111
+* Fixed new transaction date wasn't being set
+* Fixed transfer titles not being set
+
 ## Beta 0.3.4
 
 - Added year/month selector, closes [#85](https://github.com/flow-mn/flow/issues/85)
