@@ -10,15 +10,27 @@ export 'extensions.dart';
 class FlowLocalizations {
   final Locale locale;
   static Map<String, String> _localizedValues = {};
+  static Map<String, String> _enUS = {};
 
   FlowLocalizations(this.locale);
 
-  Future<void> load() async {
+  static Future<Map<String, String>> _loadLocale(Locale locale) async {
     String jsonStringValues =
         await rootBundle.loadString('assets/l10n/${locale.code}.json');
     Map<String, dynamic> mappedJson = json.decode(jsonStringValues);
-    _localizedValues =
-        mappedJson.map((key, value) => MapEntry(key, value.toString()));
+    return mappedJson.map((key, value) => MapEntry(key, value.toString()));
+  }
+
+  Future<void> load() async {
+    _localizedValues = await _loadLocale(locale);
+
+    if (_enUS.isEmpty) {
+      if (locale.code == supportedLanguages.first.code) {
+        _enUS = {..._localizedValues};
+      } else {
+        _enUS = await _loadLocale(supportedLanguages.first);
+      }
+    }
   }
 
   static String _fillFromTable(Map lookupTable, String text) {
@@ -37,7 +49,7 @@ class FlowLocalizations {
     if (key == null) return "";
     if (_localizedValues.isEmpty) return "";
 
-    final String translatedText = _localizedValues[key] ?? key;
+    final String translatedText = _localizedValues[key] ?? _enUS[key] ?? key;
 
     return switch (replace) {
       null => translatedText,

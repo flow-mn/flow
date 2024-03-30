@@ -8,9 +8,14 @@ extension L10nHelper on BuildContext {
   FlowLocalizations get l => FlowLocalizations.of(this);
 }
 
+/// No need to specify the regoin/country unless:
+///
+/// * The dialect is very different from other dialects of the same language
+/// * We have multiple region/dialect support for the same language
 final Map<String, String> _localeNames = {
-  "mn_MN": "Mongolian (Mongolia)",
-  "en_US": "English (US)",
+  "mn_MN": "Mongolian",
+  "en_US": "English",
+  "it_IT": "Italian",
 };
 
 extension Underscore on Locale {
