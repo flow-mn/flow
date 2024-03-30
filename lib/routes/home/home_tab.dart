@@ -2,9 +2,11 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/widgets/general/wavy_divider.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/home/upcoming_transactions_list.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -80,18 +82,42 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     BuildContext context,
     List<Transaction> transactions,
   ) {
-    final Map<DateTime, List<Transaction>> grouped =
-        transactions.groupByDate(mergeFutureTransactions: true);
+    final Map<DateTime, List<Transaction>> grouped = transactions
+        .where((element) => element.transactionDate.isPast)
+        .groupByDate();
+
     final List<Widget> headers = grouped.keys
-        .map((date) =>
-            TransactionListDateHeader(transactions: grouped[date]!, date: date))
+        .map(
+          (date) => TransactionListDateHeader(
+            transactions: grouped[date]!,
+            date: date,
+          ),
+        )
         .toList();
+
+    final List<Transaction> upcoming = transactions
+        .where((element) => element.transactionDate.isFuture)
+        .toList();
+
+    final Widget? header = upcoming.isEmpty
+        ? null
+        : Column(
+            children: [
+              UpcomingTransactionsList(
+                transactions: upcoming,
+                shouldCombineTransferIfNeeded: true,
+              ),
+              const SizedBox(height: 16.0),
+              const WavyDivider(),
+            ],
+          );
 
     return GroupedTransactionList(
       controller: widget.scrollController,
       transactions: grouped.values.toList(),
       shouldCombineTransferIfNeeded: true,
       headers: headers,
+      header: header,
       listPadding: const EdgeInsets.only(
         top: 0,
         bottom: 80.0,

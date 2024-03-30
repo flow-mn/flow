@@ -27,6 +27,8 @@ import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/utils/utils.dart';
+import 'package:flow/widgets/general/info_text.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 final router = GoRouter(
@@ -50,6 +52,26 @@ final router = GoRouter(
       path: '/transaction/:id',
       builder: (context, state) => TransactionPage.edit(
         transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      ),
+    ),
+    GoRoute(
+      path: '/transactions',
+      builder: (context, state) => TransactionsPage.all(
+        title: "transactions.all".t(context),
+      ),
+    ),
+    GoRoute(
+      path: '/transactions/upcoming',
+      builder: (context, state) => TransactionsPage.upcoming(
+        title: "transactions.upcoming".t(context),
+        header: InfoText(
+          singleLine: true,
+          child: Text(
+            "account.balance.upcomingDescription".t(context),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
     ),
     GoRoute(

@@ -137,7 +137,7 @@ class AccountCard extends StatelessWidget {
         ),
         CupertinoContextMenuAction(
           onPressed: () => context.push(
-              "/account/${account.id}/transactions?title=${account.name}"),
+              "/account/${account.id}/transactions?title=${"account.transactions.title".t(context, account.name)}"),
           isDefaultAction: true,
           trailingIcon: CupertinoIcons.square_list,
           child: Text("account.transactions".t(context)),

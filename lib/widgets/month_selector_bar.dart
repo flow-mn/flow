@@ -39,7 +39,9 @@ class MonthSelectorBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         IconButton(
-            onPressed: prev, icon: const Icon(Symbols.chevron_left_rounded)),
+          onPressed: prev,
+          icon: const Icon(Symbols.chevron_left_rounded),
+        ),
         const SizedBox(width: 8.0),
         Expanded(
           child: Button(
@@ -50,13 +52,11 @@ class MonthSelectorBar extends StatelessWidget {
             onTap: () => select(context),
           ),
         ),
-        // InkWell(
-        //   onTap: () => select(context),
-        //   child: Text(monthName),
-        // ),
         const SizedBox(width: 8.0),
         IconButton(
-            onPressed: next, icon: const Icon(Symbols.chevron_right_rounded)),
+          onPressed: next,
+          icon: const Icon(Symbols.chevron_right_rounded),
+        ),
       ],
     );
   }
