@@ -104,7 +104,7 @@ class _FlowSeparateLineChartState extends State<FlowSeparateLineChart> {
       ),
       lineTouchData: LineTouchData(
         touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: context.colorScheme.background,
+          getTooltipColor: (touchedSpot) => context.colorScheme.background,
           tooltipPadding: const EdgeInsets.all(4.0),
           fitInsideHorizontally: true,
           fitInsideVertically: true,
