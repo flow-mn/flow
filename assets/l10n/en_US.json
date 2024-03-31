@@ -33,7 +33,7 @@
     "setup.profile.addPhoto": "Add a photo",
     "setup.profile.addPhoto.skip": "Skip",
     "setup.profile.addPhoto.description": "This is optional. Your photo will be stored only on your device, and will not be included in backups.",
-    "setup.primaryCurrency.setup": "Select currency",
+    "setup.primaryCurrency.setup": "Select a currency",
     "setup.primaryCurrency.description": "This will be your primary currency. You can change this later in \"Preferences\" menu.",
     "setup.primaryCurrency.choose": "Choose a currency",
     "setup.accounts.setup": "Setup accounts",
