@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/memo.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
@@ -370,13 +371,17 @@ extension TransactionListActions on Iterable<Transaction> {
 }
 
 extension AccountActions on Account {
-  /// I'm super sleepy and practically a zombie r.n.
-  ///
-  /// This is probably better of as Singleton somewhere with memoization as
-  /// account names won't get changed that frequently (I hope)
-  ///
-  /// TODO refactor this to be more efficient
+  static Memoizer<String, String?>? accountNameToUuid;
+
   static String nameByUuid(String uuid) {
+    accountNameToUuid ??= Memoizer(
+      compute: _nameByUuid,
+    );
+
+    return accountNameToUuid!.get(uuid) ?? "???";
+  }
+
+  static String _nameByUuid(String uuid) {
     final query =
         ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();
 
