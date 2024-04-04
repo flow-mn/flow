@@ -61,6 +61,8 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   json_serializable: ^6.7.1
   objectbox_generator: ^2.3.1
 
