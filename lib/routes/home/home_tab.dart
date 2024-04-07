@@ -6,7 +6,6 @@ import 'package:flow/widgets/general/wavy_divider.dart';
 import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
-import 'package:flow/widgets/home/home/upcoming_transactions_list.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -82,45 +81,26 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     BuildContext context,
     List<Transaction> transactions,
   ) {
-    final Map<DateTime, List<Transaction>> grouped = transactions
-        .where((element) => element.transactionDate.isPast)
-        .groupByDate();
-
-    final List<Widget> headers = grouped.keys
-        .map(
-          (date) => TransactionListDateHeader(
-            transactions: grouped[date]!,
-            date: date,
-          ),
-        )
-        .toList();
-
-    final List<Transaction> upcoming = transactions
-        .where((element) => element.transactionDate.isFuture)
-        .toList();
-
-    final Widget? header = upcoming.isEmpty
-        ? null
-        : Column(
-            children: [
-              UpcomingTransactionsList(
-                transactions: upcoming,
-                shouldCombineTransferIfNeeded: true,
-              ),
-              const SizedBox(height: 16.0),
-              const WavyDivider(),
-            ],
-          );
+    final Map<TimeRange, List<Transaction>> grouped =
+        transactions.groupByDate();
 
     return GroupedTransactionList(
       controller: widget.scrollController,
-      transactions: grouped.values.toList(),
+      transactions: grouped,
       shouldCombineTransferIfNeeded: true,
-      headers: headers,
-      header: header,
+      futureDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
         top: 0,
         bottom: 80.0,
+      ),
+      headerBuilder: (
+        TimeRange range,
+        List<Transaction> transactions,
+      ) =>
+          TransactionListDateHeader(
+        transactions: transactions,
+        date: range.from,
+        future: !range.from.isPast,
       ),
     );
   }
