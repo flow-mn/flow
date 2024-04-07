@@ -9,6 +9,7 @@
     "general.delete.permanentWarning": "Questa azione è irreversibile",
     "general.delete.confirmName": "Confermi l'eliminazione di {name}?",
     "general.areYouSure": "Sei sicuro?",
+    "general.edit": "Modifica",
     "general.save": "Salva",
     "general.done": "Fatto",
     "general.confirm": "Conferma",

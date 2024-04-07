@@ -357,6 +357,11 @@ extension TransactionListActions on Iterable<Transaction> {
       expenses.fold(0, (value, element) => value + element.amount);
   double get sum => fold(0, (value, element) => value + element.amount);
 
+  MoneyFlow get flow => MoneyFlow(
+        totalExpense: expenseSum,
+        totalIncome: incomeSum,
+      );
+
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group
   Map<TimeRange, List<Transaction>> groupByDate({
