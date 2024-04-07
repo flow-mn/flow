@@ -98,14 +98,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
               }
 
               final grouped = snapshot.data!.find().groupByDate();
-              final headers = grouped.keys
-                  .map((date) => TransactionListDateHeader(
-                      transactions: grouped[date]!, date: date))
-                  .toList();
 
               return GroupedTransactionList(
-                transactions: grouped.values.toList(),
-                headers: headers,
+                transactions: grouped,
+                headerBuilder: (range, transactions) =>
+                    TransactionListDateHeader(
+                  transactions: transactions,
+                  date: range.from,
+                ),
                 header: widget.header,
               );
             },

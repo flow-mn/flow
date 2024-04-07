@@ -5,12 +5,26 @@ import 'package:flow/prefs.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
 import 'package:flutter/widgets.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class GroupedTransactionList extends StatelessWidget {
   final EdgeInsets listPadding;
   final EdgeInsets itemPadding;
-  final List<List<Transaction>> transactions;
-  final List<Widget> headers;
+
+  /// Expects [transactions] to be sorted from oldest to newest
+  final Map<TimeRange, List<Transaction>> transactions;
+
+  final Widget Function(TimeRange range, List<Transaction> transaction)
+      headerBuilder;
+
+  /// Divider to displayed between future/past transactions. How it's divided
+  /// is based on [anchor]
+  final Widget? futureDivider;
+
+  /// Used to determine which transactions are considered future or past.
+  ///
+  /// For now, only [futureDivider] makes use of this
+  final DateTime? anchor;
 
   /// When set to true, displays one side of transfer transactions as empty [Container]s
   final bool shouldCombineTransferIfNeeded;
@@ -22,7 +36,7 @@ class GroupedTransactionList extends StatelessWidget {
   const GroupedTransactionList({
     super.key,
     required this.transactions,
-    required this.headers,
+    required this.headerBuilder,
     this.controller,
     this.header,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
@@ -31,18 +45,37 @@ class GroupedTransactionList extends StatelessWidget {
       vertical: 4.0,
     ),
     this.shouldCombineTransferIfNeeded = false,
-  }) : assert(headers.length == transactions.length);
+    this.futureDivider,
+    this.anchor,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final DateTime anchor = this.anchor ?? DateTime.now();
+
     final bool combineTransfers = shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
+    final Map<TimeRange, List<Transaction>> past = Map.fromEntries(transactions
+        .entries
+        .where((element) => element.key.from.isPastAnchored(anchor)));
+
+    final Map<TimeRange, List<Transaction>> future = Map.fromEntries(
+        transactions.entries
+            .where((element) => !element.key.from.isPastAnchored(anchor)));
+
     final List<Object> flattened = [
       if (header != null) header!,
-      ...List.generate(transactions.length,
-              (index) => [headers[index], ...transactions[index]])
-          .expand((element) => element),
+      for (final entry in future.entries) ...[
+        headerBuilder(entry.key, entry.value),
+        ...entry.value,
+      ],
+      if (futureDivider != null && past.isNotEmpty && future.isNotEmpty)
+        futureDivider!,
+      for (final entry in past.entries) ...[
+        headerBuilder(entry.key, entry.value),
+        ...entry.value,
+      ],
     ];
 
     return ListView.builder(

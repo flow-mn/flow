@@ -278,6 +278,13 @@ extension TransactionActions on Transaction {
     return score * multipler;
   }
 
+  /// When user makes a transfer, it actually creates two transactions.
+  ///
+  /// 1. The main one (amount is positive)
+  /// 2. The counter one (amount is negative)
+  ///
+  /// When editting transfer, everything should be applied to both
+  /// transactions for consistency.
   Transaction? findTransferOriginalOrThis() {
     if (!isTransfer) return this;
 
@@ -352,18 +359,29 @@ extension TransactionListActions on Iterable<Transaction> {
 
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group
-  Map<DateTime, List<Transaction>> groupByDate({
+  Map<TimeRange, List<Transaction>> groupByDate({
     DateTime? anchor,
+  }) =>
+      groupByRange(
+        rangeFn: (transaction) => DayTimeRange.fromDateTime(
+          transaction.transactionDate,
+        ),
+        anchor: anchor,
+      );
+
+  Map<TimeRange, List<Transaction>> groupByRange({
+    DateTime? anchor,
+    required TimeRange Function(Transaction) rangeFn,
   }) {
     anchor ??= DateTime.now();
 
-    final Map<DateTime, List<Transaction>> value = {};
+    final Map<TimeRange, List<Transaction>> value = {};
 
     for (final transaction in this) {
-      final DateTime date = transaction.transactionDate.toLocal().startOfDay();
+      final TimeRange range = rangeFn(transaction);
 
-      value[date] ??= [];
-      value[date]!.add(transaction);
+      value[range] ??= [];
+      value[range]!.add(transaction);
     }
 
     return value;
