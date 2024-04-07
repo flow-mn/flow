@@ -4,6 +4,55 @@ import 'package:flow/widgets/year_selector_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
+extension TimeRangeSerializer on TimeRange {
+  String serialize() => switch (this) {
+        HourTimeRange hourRange =>
+          "HourTimeRange:${hourRange.from.toIso8601String()}",
+        DayTimeRange dayRange =>
+          "DayTimeRange:${dayRange.from.toIso8601String()}",
+        LocalWeekTimeRange localWeekRange =>
+          "LocalWeekTimeRange:${localWeekRange.from.toIso8601String()}",
+        MonthTimeRange monthRange =>
+          "MonthTimeRange:${monthRange.from.toIso8601String()}",
+        YearTimeRange yearRange =>
+          "YearTimeRange:${yearRange.from.toIso8601String()}",
+        _ => "CustomTimeRange:${from.toIso8601String()}:${to.toIso8601String()}"
+      };
+
+  static TimeRange parse(String serialized) {
+    final TimeRange? result = tryParse(serialized);
+
+    if (result == null) {
+      throw const FormatException(
+        "Cannot parse TimeRange from serialized string",
+      );
+    }
+
+    return result;
+  }
+
+  static TimeRange? tryParse(String serialized) {
+    final List<String> parts = serialized.split(":");
+
+    if (parts.length < 2) return null;
+
+    final DateTime? from = DateTime.tryParse(parts[1]);
+    final DateTime? to = parts.length > 2 ? DateTime.tryParse(parts[2]) : null;
+
+    if (from == null) return null;
+    if (parts.first == "CustomTimeRange" && to == null) return null;
+
+    return switch (parts[0]) {
+      "HourTimeRange" => HourTimeRange.fromDateTime(from),
+      "DayTimeRange" => DayTimeRange.fromDateTime(from),
+      "LocalWeekTimeRange" => LocalWeekTimeRange(from),
+      "MonthTimeRange" => MonthTimeRange.fromDateTime(from),
+      "YearTimeRange" => YearTimeRange.fromDateTime(from),
+      _ => CustomTimeRange(from, to!)
+    };
+  }
+}
+
 Future<DateTime?> showMonthPickerSheet(
   BuildContext context, {
   DateTime? initialDate,
