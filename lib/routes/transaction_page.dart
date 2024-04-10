@@ -199,7 +199,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             maxLength: Transaction.maxTitleLength,
                             onSubmitted: (_) => save(),
                             decoration: InputDecoration(
-                              hintText: "transaction.fallbackTitle".t(context),
+                              hintText: fallbackTitle,
                               counter: const SizedBox.shrink(),
                             ),
                           );
@@ -579,8 +579,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (!_ensureAccountsSelected()) return;
 
     final String trimmed = _titleController.text.trim();
-    final String formattedTitle =
-        trimmed.isNotEmpty ? trimmed : "transaction.fallbackTitle".t(context);
+    final String formattedTitle = trimmed.isNotEmpty ? trimmed : fallbackTitle;
 
     if (_currentlyEditing != null) {
       return update(formattedTitle: formattedTitle);
@@ -647,4 +646,18 @@ class _TransactionPageState extends State<TransactionPage> {
   void pop() {
     context.pop();
   }
+
+  String get fallbackTitle => switch (_transactionType) {
+        TransactionType.transfer
+            when _selectedAccount != null &&
+                _selectedAccountTransferTo != null =>
+          "transaction.transfer.fromToTitle".t(
+            context,
+            {
+              "from": _selectedAccount!.name,
+              "to": _selectedAccountTransferTo!.name,
+            },
+          ),
+        _ => "transaction.fallbackTitle".t(context)
+      };
 }

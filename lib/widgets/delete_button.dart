@@ -20,7 +20,7 @@ class DeleteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: context.colorScheme.onError,
+      color: context.colorScheme.background,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       elevation: 0.0,
       type: MaterialType.button,
@@ -34,7 +34,7 @@ class DeleteButton extends StatelessWidget {
           ),
           child: DefaultTextStyle(
             style: TextStyle(
-              color: context.colorScheme.error,
+              color: context.colorScheme.onBackground,
               fontWeight: FontWeight.w500,
             ),
             child: Row(

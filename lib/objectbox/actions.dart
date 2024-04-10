@@ -14,6 +14,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
@@ -190,7 +191,13 @@ extension MainActions on ObjectBox {
               }
 
               return true;
-            }).toList());
+            }).toList())
+        .catchError(
+      (error) {
+        log("Failed to fetch transactions for title suggestions: $error");
+        return <Transaction>[];
+      },
+    );
 
     transactionsQuery.close();
 
@@ -220,32 +227,29 @@ extension MainActions on ObjectBox {
   }
 
   /// Removes duplicates from the iterable based on the keyExtractor function.
-  ///
-  /// Keeps the first value seen for a given key.
   List<RelevanceScoredTitle> _mergeTitleRelevancy(
     List<RelevanceScoredTitle> scores,
   ) {
-    final Map<String, RelevanceScoredTitle> items = {};
+    final List<List<RelevanceScoredTitle>> grouped =
+        scores.groupBy((relevance) => relevance.title).values.toList();
 
-    for (final element in scores) {
-      final key = element.title.toLowerCase();
+    return grouped.map(
+      (items) {
+        final double sum = items
+            .map((x) => x.relevancy)
+            .fold<double>(0, (value, element) => value + element);
 
-      if (items.containsKey(key)) {
-        final RelevanceScoredTitle current = items[key]!;
-        items[key] = (
-          title: current.title,
-          relevancy: current.relevancy + element.relevancy
+        final double average = sum / items.length;
+
+        /// If an item occurs multiple times, its relevancy is increased
+        final double weight = 1 + (items.length * 0.025);
+
+        return (
+          title: items.first.title,
+          relevancy: average * weight,
         );
-      } else {
-        // Casing of the first occurance is preserved
-        //
-        // If you have "kfc" - 69 entries, and "KFC" - 420 entires,
-        // "KFC" will appear in the list, and any other casing will be ignored
-        items[key] = element;
-      }
-    }
-
-    return items.values.toList();
+      },
+    ).toList();
   }
 }
 
@@ -269,11 +273,17 @@ extension TransactionActions on Transaction {
 
     double multipler = 1.0;
 
-    if (account.targetId == accountId) multipler += 0.33;
+    if (account.targetId == accountId) {
+      multipler += 0.25;
+    }
 
-    if (transactionType != null && transactionType == type) multipler += 0.33;
+    if (transactionType != null && transactionType == type) {
+      multipler += 0.75;
+    }
 
-    if (category.targetId == categoryId) multipler += 2.0;
+    if (category.targetId == categoryId) {
+      multipler += 2.75;
+    }
 
     return score * multipler;
   }
