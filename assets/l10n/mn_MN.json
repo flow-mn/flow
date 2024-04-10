@@ -219,7 +219,7 @@
     "sync.export.history": "Нөөцүүдийн түүх",
     "sync.export.history.description": "Таны үүсгэсэн болон автоматаар үүссэн нөөц файлуудыг харах",
     "sync.export.history.empty": "Одоогоор танд үүссэн нөөц алга",
-    "sync.export.success": "Амжилттай өгөгдлийг нөөцөллөө!",
+    "sync.export.success": "Өгөгдлийг амжилттай нөөцөллөө!",
     "sync.export.success.filePath[0]": "Файлыг ",
     "sync.export.success.filePath[1]": "-т хадгаллаа",
     "sync.export.save": "Нөөц хадгалах",
