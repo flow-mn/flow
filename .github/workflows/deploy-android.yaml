@@ -43,3 +43,5 @@ jobs:
         with:
           name: Android APK
           path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Clean up
+        run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
