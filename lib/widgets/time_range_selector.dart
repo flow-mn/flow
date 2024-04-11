@@ -22,7 +22,7 @@ class TimeRangeSelector extends StatefulWidget {
 }
 
 class _TimeRangeSelectorState extends State<TimeRangeSelector> {
-  static const double _dragThreshold = 24.0;
+  static const double _dragThreshold = 32.0;
 
   late TimeRange _timeRange;
 
@@ -73,12 +73,10 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                   final double? velocity = details.primaryVelocity;
                   if (velocity == null) return;
 
-                  if (velocity.abs() >= _dragThreshold) {
-                    if (velocity.isNegative) {
-                      next();
-                    } else {
-                      prev();
-                    }
+                  if (velocity <= -_dragThreshold) {
+                    next();
+                  } else if (velocity >= _dragThreshold) {
+                    prev();
                   }
                 },
                 child: switch (_timeRange) {

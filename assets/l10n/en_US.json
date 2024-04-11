@@ -100,6 +100,7 @@
     "transactions.upcoming": "Upcoming transactions",
     "transactions.query.noResult": "No transactions to show",
     "transactions.query.noResult.description": "Try updating the filters",
+    "transactions.count": "{} transactions",
 
     "category": "Category",
     "category.name": "Category name",

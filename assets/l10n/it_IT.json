@@ -98,6 +98,9 @@
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",
+    "transactions.query.noResult": "Nessuna transazione da mostrare",
+    "transactions.query.noResult.description": "Prova ad aggiornare i filtri",
+    "transactions.count": "{count} transazioni",
 
     "category": "Categoria",
     "category.name": "Nome della categoria",

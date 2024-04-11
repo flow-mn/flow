@@ -100,6 +100,7 @@
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",
     "transactions.query.noResult": "Тохирох гүйлгээнүүд олдсонгүй",
     "transactions.query.noResult.description": "Шүүлтүүрээ өөрчлөөд дахин оролдоно уу",
+    "transactions.count": "{} гүйлгээ",
 
     "category": "Ангилал",
     "category.name": "Нэр",

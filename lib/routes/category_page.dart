@@ -8,7 +8,8 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/routes/error_page.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/category/transactions_info.dart';
+import 'package:flow/widgets/flow_card.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
@@ -20,10 +21,26 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class CategoryPage extends StatefulWidget {
+  static const EdgeInsets _defaultHeaderPadding = EdgeInsets.fromLTRB(
+    16.0,
+    16.0,
+    16.0,
+    8.0,
+  );
+
   final int categoryId;
   final TimeRange? initialRange;
 
-  const CategoryPage({super.key, required this.categoryId, this.initialRange});
+  final EdgeInsets headerPadding;
+  final EdgeInsets listPadding;
+
+  const CategoryPage({
+    super.key,
+    required this.categoryId,
+    this.initialRange,
+    this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
+    this.headerPadding = _defaultHeaderPadding,
+  });
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
@@ -57,27 +74,45 @@ class _CategoryPageState extends State<CategoryPage> {
 
     final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
 
-    const EdgeInsets headerPadding = EdgeInsets.symmetric(horizontal: 16.0);
-    const EdgeInsets listPadding = EdgeInsets.symmetric(vertical: 16.0);
-
-    const double firstHeaderTopPadding = 8.0;
+    const double firstHeaderTopPadding = 0.0;
 
     final Widget header = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        FlowIcon(
-          category.icon,
-          size: 60.0,
-          plated: true,
-        ),
-        const SizedBox(height: 24.0),
         TimeRangeSelector(
           initialValue: range,
           onChanged: onRangeChange,
         ),
-        // TODO show flow for range here
+        const SizedBox(height: 8.0),
+        TransactionsInfo(
+          count: transactions?.length,
+          flow: flow.flow,
+          icon: category.icon,
+        ),
+        const SizedBox(height: 12.0),
+        Row(
+          children: [
+            Expanded(
+              child: FlowCard(
+                flow: flow.totalIncome,
+                type: TransactionType.income,
+              ),
+            ),
+            const SizedBox(width: 12.0),
+            Expanded(
+              child: FlowCard(
+                flow: flow.totalExpense,
+                type: TransactionType.expense,
+              ),
+            ),
+          ],
+        ),
       ],
     );
+
+    final EdgeInsets headerPaddingOutOfList = widget.headerPadding +
+        widget.listPadding.copyWith(bottom: 0, top: 0) +
+        const EdgeInsets.only(top: firstHeaderTopPadding);
 
     return Scaffold(
       appBar: AppBar(
@@ -93,9 +128,7 @@ class _CategoryPageState extends State<CategoryPage> {
       body: SafeArea(
         child: switch (busy) {
           true => Padding(
-              padding: headerPadding +
-                  listPadding +
-                  const EdgeInsets.only(top: firstHeaderTopPadding),
+              padding: headerPaddingOutOfList,
               child: Column(
                 children: [
                   header,
@@ -104,9 +137,7 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
           false when noTransactions => Padding(
-              padding: headerPadding +
-                  listPadding +
-                  const EdgeInsets.only(top: firstHeaderTopPadding),
+              padding: headerPaddingOutOfList,
               child: Column(
                 children: [
                   header,
@@ -117,8 +148,9 @@ class _CategoryPageState extends State<CategoryPage> {
           _ => GroupedTransactionList(
               header: header,
               transactions: transactions?.groupByDate() ?? {},
-              listPadding: listPadding,
-              headerPadding: headerPadding,
+              listPadding: widget.listPadding,
+              headerPadding: widget.headerPadding,
+              firstHeaderTopPadding: firstHeaderTopPadding,
               headerBuilder: (range, rangeTransactions) =>
                   TransactionListDateHeader(
                 transactions: rangeTransactions,
@@ -147,6 +179,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               ),
         )
+        .order(Transaction_.transactionDate, flags: Order.descending)
         .build();
 
     try {

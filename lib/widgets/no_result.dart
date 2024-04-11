@@ -13,7 +13,6 @@ class NoResult extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // TODO italian translation
             Text(
               "transactions.query.noResult".t(context),
               textAlign: TextAlign.center,
