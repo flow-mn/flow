@@ -22,6 +22,8 @@ class TimeRangeSelector extends StatefulWidget {
 }
 
 class _TimeRangeSelectorState extends State<TimeRangeSelector> {
+  static const double _dragThreshold = 24.0;
+
   late TimeRange _timeRange;
 
   @override
@@ -66,41 +68,55 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
               const SizedBox(width: 12.0),
             ],
             Expanded(
-              child: switch (_timeRange) {
-                LocalWeekTimeRange localWeekTimeRange => Button(
-                    onTap: selectRange,
-                    child: Text(
-                      "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                MonthTimeRange monthTimeRange => Button(
-                    onTap: pickMonth,
-                    child: Text(
-                      monthTimeRange.from.format(
-                        payload:
-                            monthTimeRange.from.isAtSameYearAs(DateTime.now())
-                                ? "MMMM"
-                                : "MMMM YYYY",
+              child: GestureDetector(
+                onHorizontalDragEnd: (details) {
+                  final double? velocity = details.primaryVelocity;
+                  if (velocity == null) return;
+
+                  if (velocity.abs() >= _dragThreshold) {
+                    if (velocity.isNegative) {
+                      next();
+                    } else {
+                      prev();
+                    }
+                  }
+                },
+                child: switch (_timeRange) {
+                  LocalWeekTimeRange localWeekTimeRange => Button(
+                      onTap: selectRange,
+                      child: Text(
+                        "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                YearTimeRange yearTimeRange => Button(
-                    onTap: selectRange,
-                    child: Text(
-                      yearTimeRange.year.toString(),
-                      textAlign: TextAlign.center,
+                  MonthTimeRange monthTimeRange => Button(
+                      onTap: pickMonth,
+                      child: Text(
+                        monthTimeRange.from.format(
+                          payload:
+                              monthTimeRange.from.isAtSameYearAs(DateTime.now())
+                                  ? "MMMM"
+                                  : "MMMM YYYY",
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                _ => Button(
-                    onTap: pickRange,
-                    child: Text(
-                      "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
-                      textAlign: TextAlign.center,
+                  YearTimeRange yearTimeRange => Button(
+                      onTap: selectRange,
+                      child: Text(
+                        yearTimeRange.year.toString(),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-              },
+                  _ => Button(
+                      onTap: pickRange,
+                      child: Text(
+                        "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                },
+              ),
             ),
             if (buildNextPrev) ...[
               const SizedBox(width: 12.0),
