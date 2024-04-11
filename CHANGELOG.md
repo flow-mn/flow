@@ -1,8 +1,22 @@
+## Beta 0.4.2
+
+* Category page reform by @sadespresso in https://github.com/flow-mn/flow/pull/135
+* feat: memoize account names by @sadespresso in https://github.com/flow-mn/flow/pull/129
+* Upcoming transaction hitbox by @sadespresso in https://github.com/flow-mn/flow/pull/132
+* Title suggestion improvement by @sadespresso in https://github.com/flow-mn/flow/pull/134
+* Minor UI and l10n improvements
+
+## Beta 0.4.1
+
+* fix minus sign missing by @sadespresso in <https://github.com/flow-mn/flow/pull/125>
+* Fallback to English when translation keys are missing by @sadespresso in <https://github.com/flow-mn/flow/pull/126>
+* l10n: add missing italian transactions by @sadespresso in <https://github.com/flow-mn/flow/pull/123>
+
 ## Beta 0.4.0
 
-* Upcoming transactions by @sadespresso in https://github.com/flow-mn/flow/pull/122
-* add it-IT language by @albertorizzi in https://github.com/flow-mn/flow/pull/116
-* Translation missing by @sadespresso in https://github.com/flow-mn/flow/pull/111
+* Upcoming transactions by @sadespresso in <https://github.com/flow-mn/flow/pull/122>
+* add it-IT language by @albertorizzi in <https://github.com/flow-mn/flow/pull/116>
+* Translation missing by @sadespresso in <https://github.com/flow-mn/flow/pull/111>
 * Fixed new transaction date wasn't being set
 * Fixed transfer titles not being set
 

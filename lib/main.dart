@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flow/constants.dart';
@@ -30,10 +31,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:moment_dart/moment_dart.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pie_menu/pie_menu.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  const String debugBuildSuffix = debugBuild ? " (dev)" : "";
+
+  PackageInfo.fromPlatform()
+      .then((value) => appVersion = "${value.version}$debugBuildSuffix")
+      .catchError((e) {
+    log("An error was occured while fetching app version: $e");
+    return appVersion = "<unknown>$debugBuildSuffix";
+  });
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();

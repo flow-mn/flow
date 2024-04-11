@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/memo.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
@@ -13,6 +14,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:uuid/uuid.dart';
@@ -189,7 +191,13 @@ extension MainActions on ObjectBox {
               }
 
               return true;
-            }).toList());
+            }).toList())
+        .catchError(
+      (error) {
+        log("Failed to fetch transactions for title suggestions: $error");
+        return <Transaction>[];
+      },
+    );
 
     transactionsQuery.close();
 
@@ -219,32 +227,29 @@ extension MainActions on ObjectBox {
   }
 
   /// Removes duplicates from the iterable based on the keyExtractor function.
-  ///
-  /// Keeps the first value seen for a given key.
   List<RelevanceScoredTitle> _mergeTitleRelevancy(
     List<RelevanceScoredTitle> scores,
   ) {
-    final Map<String, RelevanceScoredTitle> items = {};
+    final List<List<RelevanceScoredTitle>> grouped =
+        scores.groupBy((relevance) => relevance.title).values.toList();
 
-    for (final element in scores) {
-      final key = element.title.toLowerCase();
+    return grouped.map(
+      (items) {
+        final double sum = items
+            .map((x) => x.relevancy)
+            .fold<double>(0, (value, element) => value + element);
 
-      if (items.containsKey(key)) {
-        final RelevanceScoredTitle current = items[key]!;
-        items[key] = (
-          title: current.title,
-          relevancy: current.relevancy + element.relevancy
+        final double average = sum / items.length;
+
+        /// If an item occurs multiple times, its relevancy is increased
+        final double weight = 1 + (items.length * 0.025);
+
+        return (
+          title: items.first.title,
+          relevancy: average * weight,
         );
-      } else {
-        // Casing of the first occurance is preserved
-        //
-        // If you have "kfc" - 69 entries, and "KFC" - 420 entires,
-        // "KFC" will appear in the list, and any other casing will be ignored
-        items[key] = element;
-      }
-    }
-
-    return items.values.toList();
+      },
+    ).toList();
   }
 }
 
@@ -268,15 +273,28 @@ extension TransactionActions on Transaction {
 
     double multipler = 1.0;
 
-    if (account.targetId == accountId) multipler += 0.33;
+    if (account.targetId == accountId) {
+      multipler += 0.25;
+    }
 
-    if (transactionType != null && transactionType == type) multipler += 0.33;
+    if (transactionType != null && transactionType == type) {
+      multipler += 0.75;
+    }
 
-    if (category.targetId == categoryId) multipler += 2.0;
+    if (category.targetId == categoryId) {
+      multipler += 2.75;
+    }
 
     return score * multipler;
   }
 
+  /// When user makes a transfer, it actually creates two transactions.
+  ///
+  /// 1. The main one (amount is positive)
+  /// 2. The counter one (amount is negative)
+  ///
+  /// When editting transfer, everything should be applied to both
+  /// transactions for consistency.
   Transaction? findTransferOriginalOrThis() {
     if (!isTransfer) return this;
 
@@ -349,20 +367,36 @@ extension TransactionListActions on Iterable<Transaction> {
       expenses.fold(0, (value, element) => value + element.amount);
   double get sum => fold(0, (value, element) => value + element.amount);
 
+  MoneyFlow get flow => MoneyFlow(
+        totalExpense: expenseSum,
+        totalIncome: incomeSum,
+      );
+
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group
-  Map<DateTime, List<Transaction>> groupByDate({
+  Map<TimeRange, List<Transaction>> groupByDate({
     DateTime? anchor,
+  }) =>
+      groupByRange(
+        rangeFn: (transaction) => DayTimeRange.fromDateTime(
+          transaction.transactionDate,
+        ),
+        anchor: anchor,
+      );
+
+  Map<TimeRange, List<Transaction>> groupByRange({
+    DateTime? anchor,
+    required TimeRange Function(Transaction) rangeFn,
   }) {
     anchor ??= DateTime.now();
 
-    final Map<DateTime, List<Transaction>> value = {};
+    final Map<TimeRange, List<Transaction>> value = {};
 
     for (final transaction in this) {
-      final DateTime date = transaction.transactionDate.toLocal().startOfDay();
+      final TimeRange range = rangeFn(transaction);
 
-      value[date] ??= [];
-      value[date]!.add(transaction);
+      value[range] ??= [];
+      value[range]!.add(transaction);
     }
 
     return value;
@@ -370,13 +404,17 @@ extension TransactionListActions on Iterable<Transaction> {
 }
 
 extension AccountActions on Account {
-  /// I'm super sleepy and practically a zombie r.n.
-  ///
-  /// This is probably better of as Singleton somewhere with memoization as
-  /// account names won't get changed that frequently (I hope)
-  ///
-  /// TODO refactor this to be more efficient
+  static Memoizer<String, String?>? accountNameToUuid;
+
   static String nameByUuid(String uuid) {
+    accountNameToUuid ??= Memoizer(
+      compute: _nameByUuid,
+    );
+
+    return accountNameToUuid!.get(uuid) ?? "???";
+  }
+
+  static String _nameByUuid(String uuid) {
     final query =
         ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();
 

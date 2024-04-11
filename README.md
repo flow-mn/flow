@@ -16,7 +16,7 @@
 
 Flow is a free, open-source, cross-platform personal finance tracking app.
 
-[**Will be**](#release-date) available on Android, iOS, and more[^1]
+Beta available on Android, iOS, and more[^1]
 
 ### Features
 
@@ -30,7 +30,7 @@ Flow is a free, open-source, cross-platform personal finance tracking app.
 ## Try Beta version
 
 We've release Flow beta on March 6. You can download the
-[beta builds for iOS and Android](#try-test-builds) right now.
+[beta builds for iOS and Android](#download-flow-beta) right now.
 Beta version features all the basic functionality for an expense tracker app.
 JSON backups from Alpha and Beta versions are guaranteed to be supported
 by the next major releases, until Production.

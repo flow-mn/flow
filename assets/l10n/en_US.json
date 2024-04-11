@@ -9,6 +9,7 @@
     "general.delete.permanentWarning": "This action is irreversible",
     "general.delete.confirmName": "Confirm deleting {name}?",
     "general.areYouSure": "Are you sure?",
+    "general.edit": "Edit",
     "general.save": "Save",
     "general.done": "Done",
     "general.confirm": "Confirm",
@@ -33,7 +34,7 @@
     "setup.profile.addPhoto": "Add a photo",
     "setup.profile.addPhoto.skip": "Skip",
     "setup.profile.addPhoto.description": "This is optional. Your photo will be stored only on your device, and will not be included in backups.",
-    "setup.primaryCurrency.setup": "Select currency",
+    "setup.primaryCurrency.setup": "Select a currency",
     "setup.primaryCurrency.description": "This will be your primary currency. You can change this later in \"Preferences\" menu.",
     "setup.primaryCurrency.choose": "Choose a currency",
     "setup.accounts.setup": "Setup accounts",
@@ -97,6 +98,9 @@
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",
+    "transactions.query.noResult": "No transactions to show",
+    "transactions.query.noResult.description": "Try updating the filters",
+    "transactions.count": "{} transactions",
 
     "category": "Category",
     "category.name": "Category name",
