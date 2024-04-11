@@ -2,6 +2,7 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
+import 'package:flow/routes/category/category_edit_page.dart';
 import 'package:flow/routes/category_page.dart';
 import 'package:flow/routes/error_page.dart';
 import 'package:flow/routes/export/export_history_page.dart';
@@ -28,6 +29,7 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/info_text.dart';
+import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -79,27 +81,39 @@ final router = GoRouter(
       builder: (context, state) => const AccountPage.create(),
     ),
     GoRoute(
-      path: '/account/:id',
-      builder: (context, state) => AccountPage.edit(
-        accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
-      ),
-    ),
-    GoRoute(
-      path: '/account/:id/transactions',
-      builder: (context, state) => TransactionsPage.account(
-        accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
-        title: state.uri.queryParameters["title"],
-      ),
-    ),
+        path: '/account/:id',
+        builder: (context, state) => AccountPage.edit(
+              accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+            ),
+        routes: [
+          GoRoute(
+            path: 'transactions',
+            builder: (context, state) => TransactionsPage.account(
+              accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+              title: state.uri.queryParameters["title"],
+            ),
+          ),
+        ]),
     GoRoute(
       path: '/category/new',
-      builder: (context, state) => const CategoryPage.create(),
+      builder: (context, state) => const CategoryEditPage.create(),
     ),
     GoRoute(
       path: '/category/:id',
-      builder: (context, state) => CategoryPage.edit(
+      builder: (context, state) => CategoryPage(
         categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+        initialRange: TimeRangeSerializer.tryParse(
+          state.uri.queryParameters["range"] ?? "",
+        ),
       ),
+      routes: [
+        GoRoute(
+          path: 'edit',
+          builder: (context, state) => CategoryEditPage(
+            categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: '/categories',

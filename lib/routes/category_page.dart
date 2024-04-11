@@ -1,253 +1,213 @@
 import 'dart:developer';
 
-import 'package:flow/data/flow_icon.dart';
+import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/delete_button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/select_icon_sheet.dart';
+import 'package:flow/routes/error_page.dart';
+import 'package:flow/widgets/category/transactions_info.dart';
+import 'package:flow/widgets/flow_card.dart';
+import 'package:flow/widgets/general/spinner.dart';
+import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/transactions_date_header.dart';
+import 'package:flow/widgets/no_result.dart';
+import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class CategoryPage extends StatefulWidget {
+  static const EdgeInsets _defaultHeaderPadding = EdgeInsets.fromLTRB(
+    16.0,
+    16.0,
+    16.0,
+    8.0,
+  );
+
   final int categoryId;
+  final TimeRange? initialRange;
 
-  bool get isNewCategory => categoryId == 0;
+  final EdgeInsets headerPadding;
+  final EdgeInsets listPadding;
 
-  const CategoryPage.create({
+  const CategoryPage({
     super.key,
-  }) : categoryId = 0;
-  const CategoryPage.edit({super.key, required this.categoryId});
+    required this.categoryId,
+    this.initialRange,
+    this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
+    this.headerPadding = _defaultHeaderPadding,
+  });
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  bool busy = false;
 
-  late final TextEditingController _nameTextController;
+  List<Transaction>? transactions;
 
-  late FlowIconData? _iconData;
+  late Category? category;
 
-  late final Category? _currentlyEditing;
-
-  String get iconCodeOrError =>
-      _iconData?.toString() ??
-      FlowIconData.icon(Symbols.category_rounded).toString();
-
-  dynamic error;
+  late TimeRange range;
 
   @override
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewCategory
-        ? null
-        : ObjectBox().box<Category>().get(widget.categoryId);
-
-    if (!widget.isNewCategory && _currentlyEditing == null) {
-      error = "Category with id ${widget.categoryId} was not found";
-    } else {
-      _nameTextController =
-          TextEditingController(text: _currentlyEditing?.name);
-      _iconData = _currentlyEditing?.icon;
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameTextController.dispose();
-    super.dispose();
+    category = ObjectBox().box<Category>().get(widget.categoryId);
+    range = widget.initialRange ?? TimeRange.thisMonth();
+    fetch();
   }
 
   @override
   Widget build(BuildContext context) {
-    const contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
+    if (this.category == null) return const ErrorPage();
+
+    final bool noTransactions = (transactions?.length ?? 0) == 0;
+
+    final Category category = this.category!;
+
+    final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+
+    const double firstHeaderTopPadding = 0.0;
+
+    final Widget header = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TimeRangeSelector(
+          initialValue: range,
+          onChanged: onRangeChange,
+        ),
+        const SizedBox(height: 8.0),
+        TransactionsInfo(
+          count: transactions?.length,
+          flow: flow.flow,
+          icon: category.icon,
+        ),
+        const SizedBox(height: 12.0),
+        Row(
+          children: [
+            Expanded(
+              child: FlowCard(
+                flow: flow.totalIncome,
+                type: TransactionType.income,
+              ),
+            ),
+            const SizedBox(width: 12.0),
+            Expanded(
+              child: FlowCard(
+                flow: flow.totalExpense,
+                type: TransactionType.expense,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final EdgeInsets headerPaddingOutOfList = widget.headerPadding +
+        widget.listPadding.copyWith(bottom: 0, top: 0) +
+        const EdgeInsets.only(top: firstHeaderTopPadding);
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(category.name),
         actions: [
           IconButton(
-            onPressed: () => save(),
-            icon: const Icon(Symbols.check_rounded),
-            tooltip: "general.save".t(context),
+            icon: const Icon(Symbols.edit_rounded),
+            onPressed: () => edit(),
+            tooltip: "general.edit".t(context),
           ),
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16.0),
-                FlowIcon(
-                  _iconData ?? CharacterFlowIcon("T"),
-                  size: 80.0,
-                  plated: true,
-                  onTap: selectIcon,
-                ),
-                const SizedBox(height: 8.0),
-                TextButton(
-                  onPressed: selectIcon,
-                  child: Text("flowIcon.change".t(context)),
-                ),
-                const SizedBox(height: 24.0),
-                Padding(
-                  padding: contentPadding,
-                  child: TextFormField(
-                    controller: _nameTextController,
-                    maxLength: Category.maxNameLength,
-                    decoration: InputDecoration(
-                      label: Text(
-                        "category.name".t(context),
-                      ),
-                      focusColor: context.colorScheme.secondary,
-                      counter: const SizedBox.shrink(),
-                    ),
-                    validator: validateNameField,
-                  ),
-                ),
-                if (_currentlyEditing != null) ...[
-                  const SizedBox(height: 36.0),
-                  DeleteButton(
-                    onTap: _deleteCategory,
-                    label: Text("category.delete".t(context)),
-                  ),
-                  const SizedBox(height: 16.0),
+        child: switch (busy) {
+          true => Padding(
+              padding: headerPaddingOutOfList,
+              child: Column(
+                children: [
+                  header,
+                  const Expanded(child: Spinner.center()),
                 ],
-              ],
+              ),
             ),
-          ),
-        ),
+          false when noTransactions => Padding(
+              padding: headerPaddingOutOfList,
+              child: Column(
+                children: [
+                  header,
+                  const Expanded(child: NoResult()),
+                ],
+              ),
+            ),
+          _ => GroupedTransactionList(
+              header: header,
+              transactions: transactions?.groupByDate() ?? {},
+              listPadding: widget.listPadding,
+              headerPadding: widget.headerPadding,
+              firstHeaderTopPadding: firstHeaderTopPadding,
+              headerBuilder: (range, rangeTransactions) =>
+                  TransactionListDateHeader(
+                transactions: rangeTransactions,
+                date: range.from,
+              ),
+            )
+        },
       ),
     );
   }
 
-  Future<void> update({required String formattedName}) async {
-    if (_currentlyEditing == null) return;
+  Future<void> fetch() async {
+    if (busy) return;
 
-    _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.iconCode = iconCodeOrError;
+    setState(() {
+      busy = true;
+    });
 
-    ObjectBox().box<Category>().put(
-          _currentlyEditing!,
-          mode: PutMode.update,
-        );
-
-    context.pop();
-  }
-
-  Future<void> save() async {
-    if (_formKey.currentState?.validate() != true) return;
-
-    final String trimmed = _nameTextController.text.trim();
-
-    if (_currentlyEditing != null) {
-      return update(formattedName: trimmed);
-    }
-
-    final Category category = Category(
-      name: trimmed,
-      iconCode: iconCodeOrError,
-    );
-
-    ObjectBox().box<Category>().putAsync(
-          category,
-          mode: PutMode.insert,
-        );
-
-    context.pop();
-  }
-
-  String? validateNameField(String? value) {
-    final requiredValidationError = validateRequiredField(value);
-    if (requiredValidationError != null) {
-      return requiredValidationError.t(context);
-    }
-
-    final String trimmed = value!.trim();
-
-    final Query<Category> otherCategoriesWithSameNameQuery = ObjectBox()
-        .box<Category>()
-        .query(
-          Category_.name
-              .equals(trimmed)
-              .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
-        )
-        .build();
-
-    final bool isNameUnique = otherCategoriesWithSameNameQuery.count() == 0;
-
-    otherCategoriesWithSameNameQuery.close();
-
-    if (!isNameUnique) {
-      return "error.input.duplicate.accountName".t(context, trimmed);
-    }
-
-    return null;
-  }
-
-  void _updateIcon(FlowIconData? data) {
-    log("_updateIcon_updateIcon_updateIcon_updateIcon");
-    _iconData = data;
-    setState(() {});
-  }
-
-  Future<void> selectIcon() async {
-    onChange(FlowIconData? data) => _updateIcon(data);
-
-    final result = await showModalBottomSheet<FlowIconData>(
-      context: context,
-      builder: (context) => SelectIconSheet(
-        current: _iconData,
-        onChange: onChange,
-      ),
-      isScrollControlled: true,
-    );
-
-    if (result != null) {
-      _updateIcon(result);
-    }
-
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _deleteCategory() async {
-    if (_currentlyEditing == null) return;
-
-    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
+    final Query<Transaction> transactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.category.equals(_currentlyEditing!.id))
+        .query(
+          Transaction_.category.equals(category!.id).and(
+                Transaction_.transactionDate.betweenDate(
+                  range.from,
+                  range.to,
+                ),
+              ),
+        )
+        .order(Transaction_.transactionDate, flags: Order.descending)
         .build();
 
-    final int txnCount = associatedTransactionsQuery.count();
-
-    associatedTransactionsQuery.close();
-
-    final bool? confirmation = await context.showConfirmDialog(
-      isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
-      child: Text(
-        "category.delete.warning".t(context, txnCount),
-      ),
-    );
-
-    if (confirmation == true) {
-      ObjectBox().box<Category>().remove(_currentlyEditing!.id);
-
+    try {
+      transactions = await transactionsQuery.findAsync();
+    } catch (e) {
+      transactions = [];
+      log("Error fetching transactions: $e");
+    } finally {
+      busy = false;
+      transactionsQuery.close();
       if (mounted) {
-        context.pop();
+        setState(() {});
       }
+    }
+  }
+
+  void onRangeChange(TimeRange range) {
+    this.range = range;
+    fetch();
+  }
+
+  Future<void> edit() async {
+    await context.push("/category/${category!.id}/edit");
+
+    category = ObjectBox().box<Category>().get(widget.categoryId);
+
+    if (mounted) {
+      setState(() {});
     }
   }
 }

@@ -9,6 +9,7 @@
     "general.delete.permanentWarning": "This action is irreversible",
     "general.delete.confirmName": "Confirm deleting {name}?",
     "general.areYouSure": "Are you sure?",
+    "general.edit": "Edit",
     "general.save": "Save",
     "general.done": "Done",
     "general.confirm": "Confirm",
@@ -97,6 +98,9 @@
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",
+    "transactions.query.noResult": "No transactions to show",
+    "transactions.query.noResult.description": "Try updating the filters",
+    "transactions.count": "{} transactions",
 
     "category": "Category",
     "category.name": "Category name",

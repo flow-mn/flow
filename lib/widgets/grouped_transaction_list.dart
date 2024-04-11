@@ -11,10 +11,16 @@ class GroupedTransactionList extends StatelessWidget {
   final EdgeInsets listPadding;
   final EdgeInsets itemPadding;
 
+  /// When null, same as [itemPadding]
+  final EdgeInsets? headerPadding;
+
+  /// Top padding for the first header
+  final double firstHeaderTopPadding;
+
   /// Expects [transactions] to be sorted from oldest to newest
   final Map<TimeRange, List<Transaction>> transactions;
 
-  final Widget Function(TimeRange range, List<Transaction> transaction)
+  final Widget Function(TimeRange range, List<Transaction> transactions)
       headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
@@ -39,14 +45,16 @@ class GroupedTransactionList extends StatelessWidget {
     required this.headerBuilder,
     this.controller,
     this.header,
+    this.futureDivider,
+    this.anchor,
+    this.headerPadding,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
       horizontal: 16.0,
       vertical: 4.0,
     ),
+    this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
-    this.futureDivider,
-    this.anchor,
   });
 
   @override
@@ -78,12 +86,16 @@ class GroupedTransactionList extends StatelessWidget {
       ],
     ];
 
+    final EdgeInsets headerPadding = this.headerPadding ?? itemPadding;
+
     return ListView.builder(
       controller: controller,
-      padding: listPadding.copyWith(bottom: listPadding.bottom),
+      padding: listPadding,
       itemBuilder: (context, index) => switch (flattened[index]) {
         (Widget header) => Padding(
-            padding: itemPadding.copyWith(top: index == 0 ? 8.0 : 24.0),
+            padding: headerPadding.copyWith(
+              top: index == 0 ? firstHeaderTopPadding : headerPadding.top,
+            ),
             child: header,
           ),
         (Transaction transaction) => TransactionListTile(

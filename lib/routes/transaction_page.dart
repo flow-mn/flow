@@ -230,7 +230,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           isTransfer
                               ? "transaction.transfer.from".t(context)
                               : "account".t(context),
-                          style: context.textTheme.titleSmall,
+                          style: context.textTheme.titleSmall?.semi(context),
                         ),
                       ),
                     ),
@@ -263,7 +263,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           isTransfer
                               ? "transaction.transfer.to".t(context)
                               : "category".t(context),
-                          style: context.textTheme.titleSmall,
+                          style: context.textTheme.titleSmall?.semi(context),
                         ),
                       ),
                     ),
@@ -314,7 +314,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         padding: contentPadding,
                         child: Text(
                           "transaction.date".t(context),
-                          style: context.textTheme.titleSmall,
+                          style: context.textTheme.titleSmall?.semi(context),
                         ),
                       ),
                     ),
