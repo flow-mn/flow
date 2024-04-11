@@ -72,6 +72,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                 onHorizontalDragEnd: (details) {
                   final double? velocity = details.primaryVelocity;
                   if (velocity == null) return;
+                  if (_timeRange is! PageableRange) return;
 
                   if (velocity <= -_dragThreshold) {
                     next();
