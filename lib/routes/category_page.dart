@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
@@ -49,7 +47,17 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   bool busy = false;
 
-  List<Transaction>? transactions;
+  QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
+      .box<Transaction>()
+      .query(
+        Transaction_.category.equals(category!.id).and(
+              Transaction_.transactionDate.betweenDate(
+                range.from,
+                range.to,
+              ),
+            ),
+      )
+      .order(Transaction_.transactionDate, flags: Order.descending);
 
   late Category? category;
 
@@ -61,144 +69,119 @@ class _CategoryPageState extends State<CategoryPage> {
 
     category = ObjectBox().box<Category>().get(widget.categoryId);
     range = widget.initialRange ?? TimeRange.thisMonth();
-    fetch();
   }
 
   @override
   Widget build(BuildContext context) {
     if (this.category == null) return const ErrorPage();
 
-    final bool noTransactions = (transactions?.length ?? 0) == 0;
-
     final Category category = this.category!;
 
-    final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+    return StreamBuilder<List<Transaction>>(
+      stream: qb(range)
+          .watch(triggerImmediately: true)
+          .map((event) => event.find()),
+      builder: (context, snapshot) {
+        final List<Transaction>? transactions = snapshot.data;
 
-    const double firstHeaderTopPadding = 0.0;
+        final bool noTransactions = (transactions?.length ?? 0) == 0;
 
-    final Widget header = Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        TimeRangeSelector(
-          initialValue: range,
-          onChanged: onRangeChange,
-        ),
-        const SizedBox(height: 8.0),
-        TransactionsInfo(
-          count: transactions?.length,
-          flow: flow.flow,
-          icon: category.icon,
-        ),
-        const SizedBox(height: 12.0),
-        Row(
+        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+
+        const double firstHeaderTopPadding = 0.0;
+
+        final Widget header = Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: FlowCard(
-                flow: flow.totalIncome,
-                type: TransactionType.income,
-              ),
+            TimeRangeSelector(
+              initialValue: range,
+              onChanged: onRangeChange,
             ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: FlowCard(
-                flow: flow.totalExpense,
-                type: TransactionType.expense,
-              ),
+            const SizedBox(height: 8.0),
+            TransactionsInfo(
+              count: transactions?.length,
+              flow: flow.flow,
+              icon: category.icon,
+            ),
+            const SizedBox(height: 12.0),
+            Row(
+              children: [
+                Expanded(
+                  child: FlowCard(
+                    flow: flow.totalIncome,
+                    type: TransactionType.income,
+                  ),
+                ),
+                const SizedBox(width: 12.0),
+                Expanded(
+                  child: FlowCard(
+                    flow: flow.totalExpense,
+                    type: TransactionType.expense,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
-    );
+        );
 
-    final EdgeInsets headerPaddingOutOfList = widget.headerPadding +
-        widget.listPadding.copyWith(bottom: 0, top: 0) +
-        const EdgeInsets.only(top: firstHeaderTopPadding);
+        final EdgeInsets headerPaddingOutOfList = widget.headerPadding +
+            widget.listPadding.copyWith(bottom: 0, top: 0) +
+            const EdgeInsets.only(top: firstHeaderTopPadding);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(category.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Symbols.edit_rounded),
-            onPressed: () => edit(),
-            tooltip: "general.edit".t(context),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(category.name),
+            actions: [
+              IconButton(
+                icon: const Icon(Symbols.edit_rounded),
+                onPressed: () => edit(),
+                tooltip: "general.edit".t(context),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: switch (busy) {
-          true => Padding(
-              padding: headerPaddingOutOfList,
-              child: Column(
-                children: [
-                  header,
-                  const Expanded(child: Spinner.center()),
-                ],
-              ),
-            ),
-          false when noTransactions => Padding(
-              padding: headerPaddingOutOfList,
-              child: Column(
-                children: [
-                  header,
-                  const Expanded(child: NoResult()),
-                ],
-              ),
-            ),
-          _ => GroupedTransactionList(
-              header: header,
-              transactions: transactions?.groupByDate() ?? {},
-              listPadding: widget.listPadding,
-              headerPadding: widget.headerPadding,
-              firstHeaderTopPadding: firstHeaderTopPadding,
-              headerBuilder: (range, rangeTransactions) =>
-                  TransactionListDateHeader(
-                transactions: rangeTransactions,
-                date: range.from,
-              ),
-            )
-        },
-      ),
-    );
-  }
-
-  Future<void> fetch() async {
-    if (busy) return;
-
-    setState(() {
-      busy = true;
-    });
-
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(
-          Transaction_.category.equals(category!.id).and(
-                Transaction_.transactionDate.betweenDate(
-                  range.from,
-                  range.to,
+          body: SafeArea(
+            child: switch (busy) {
+              true => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: Spinner.center()),
+                    ],
+                  ),
                 ),
-              ),
-        )
-        .order(Transaction_.transactionDate, flags: Order.descending)
-        .build();
-
-    try {
-      transactions = await transactionsQuery.findAsync();
-    } catch (e) {
-      transactions = [];
-      log("Error fetching transactions: $e");
-    } finally {
-      busy = false;
-      transactionsQuery.close();
-      if (mounted) {
-        setState(() {});
-      }
-    }
+              false when noTransactions => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: NoResult()),
+                    ],
+                  ),
+                ),
+              _ => GroupedTransactionList(
+                  header: header,
+                  transactions: transactions?.groupByDate() ?? {},
+                  listPadding: widget.listPadding,
+                  headerPadding: widget.headerPadding,
+                  firstHeaderTopPadding: firstHeaderTopPadding,
+                  headerBuilder: (range, rangeTransactions) =>
+                      TransactionListDateHeader(
+                    transactions: rangeTransactions,
+                    date: range.from,
+                  ),
+                )
+            },
+          ),
+        );
+      },
+    );
   }
 
   void onRangeChange(TimeRange newRange) {
-    range = newRange;
-    fetch();
+    setState(() {
+      range = newRange;
+    });
   }
 
   Future<void> edit() async {
