@@ -25,12 +25,13 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
     return Scaffold(
       appBar: AppBar(title: Text("sync.export.history".t(context))),
       body: SafeArea(
-        child: StreamBuilder<Query<BackupEntry>>(
-          stream: qb().watch(triggerImmediately: true),
+        child: StreamBuilder<List<BackupEntry>>(
+          stream:
+              qb().watch(triggerImmediately: true).map((event) => event.find()),
           builder: (context, snapshot) {
-            final backupEntires = snapshot.data?.find();
+            final List<BackupEntry>? backupEntires = snapshot.data;
 
-            const separator = SizedBox(height: 16.0);
+            const Widget separator = SizedBox(height: 16.0);
 
             return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
               (0, true) => const Text("empty"),

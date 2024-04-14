@@ -1,3 +1,9 @@
+## Beta 0.4.3
+
+* Fix Category page re renders upon change in db by @sadespresso in https://github.com/flow-mn/flow/pull/140
+* Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in https://github.com/flow-mn/flow/pull/141
+* Fix Time range selector bottom sheet overflows by @sadespresso in https://github.com/flow-mn/flow/pull/142
+
 ## Beta 0.4.2
 
 * Category page reform by @sadespresso in https://github.com/flow-mn/flow/pull/135

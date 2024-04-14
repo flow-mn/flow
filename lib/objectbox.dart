@@ -18,6 +18,8 @@ import 'package:flow/objectbox/objectbox.g.dart';
 class ObjectBox {
   static ObjectBox? _instance;
 
+  static late String appDataDirectory;
+
   /// A subdirectory to store app data.
   ///
   /// This is useful if you want to separate multiple user data or just
@@ -31,7 +33,8 @@ class ObjectBox {
   /// By default, it uses [getApplicationSupportDirectory] (from path_provider)
   static late final String? customDirectory;
 
-  /// Update this count to invalidate accounts tab
+  /// Update this count to trigger a re-fetch in all the widgets that subscribe
+  /// to this [ValueNotifier].
   final ValueNotifier<int> invalidateAccounts = ValueNotifier(0);
 
   /// The Store of this app.
@@ -51,17 +54,9 @@ class ObjectBox {
 
   ObjectBox._internal(this.store);
 
-  static Future<String> _appDataDirectory() async {
-    if (customDirectory != null) {
-      return path.join(customDirectory!, subdirectory);
-    }
-
-    final appDataDir = await getApplicationSupportDirectory();
-
-    return path.join(appDataDir.path, subdirectory);
+  void invalidateAccountsTab() {
+    invalidateAccounts.value++;
   }
-
-  static late String appDataDirectory;
 
   static Future<ObjectBox> initialize({
     String? customDirectory,
@@ -84,6 +79,16 @@ class ObjectBox {
     final store = await openStore(directory: appDataDirectory);
 
     return _instance = ObjectBox._internal(store);
+  }
+
+  static Future<String> _appDataDirectory() async {
+    if (customDirectory != null) {
+      return path.join(customDirectory!, subdirectory);
+    }
+
+    final appDataDir = await getApplicationSupportDirectory();
+
+    return path.join(appDataDir.path, subdirectory);
   }
 
   Future<void> createAndPutDebugData() async {
@@ -190,10 +195,6 @@ class ObjectBox {
       targetAccount: savings2,
       transactionDate: DateTime.now() - const Duration(days: 1),
     );
-  }
-
-  void invalidateAccountsTab() {
-    invalidateAccounts.value++;
   }
 
   /// Deletes everything except for

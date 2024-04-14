@@ -54,10 +54,12 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
         title: Text("setup.accounts.setup".t(context)),
       ),
       body: SafeArea(
-        child: StreamBuilder(
-            stream: qb().watch(triggerImmediately: true),
+        child: StreamBuilder<List<Account>>(
+            stream: qb()
+                .watch(triggerImmediately: true)
+                .map((event) => event.find()),
             builder: (context, snapshot) {
-              final List<Account> currentAccounts = snapshot.data?.find() ?? [];
+              final List<Account> currentAccounts = snapshot.data ?? [];
 
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),

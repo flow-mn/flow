@@ -21,10 +21,12 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Query<Profile>>(
-        stream: qb().watch(triggerImmediately: true),
+    return StreamBuilder<Profile?>(
+        stream: qb()
+            .watch(triggerImmediately: true)
+            .map((event) => event.findFirst()),
         builder: (context, snapshot) {
-          final profile = snapshot.data?.findFirst();
+          final profile = snapshot.data;
 
           return InkWell(
             borderRadius: borderRadius,

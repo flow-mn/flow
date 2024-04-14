@@ -2,5 +2,6 @@
 
 ## Double check before shipping
 
-* Sync model version (`latestSyncModelVersion`) in `lib/sync/sync.dart`.
-* App version string in `lib/main.dart`
+* Ensure `flutter test` command exits with code 0
+* Sync model version (`latestSyncModelVersion`) in [`lib/sync/sync.dart`](./lib/sync/sync.dart).
+* Bump version in [`pubspec.yaml`](./pubspec.yaml)

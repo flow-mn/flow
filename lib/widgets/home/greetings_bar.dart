@@ -13,30 +13,33 @@ class GreetingsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Query<Profile>>(
-        stream: qb().watch(triggerImmediately: true),
-        builder: (context, snapshot) {
-          final profile = snapshot.data?.findFirst();
+    return StreamBuilder<Profile?>(
+      stream: qb()
+          .watch(triggerImmediately: true)
+          .map((event) => event.findFirst()),
+      builder: (context, snapshot) {
+        final profile = snapshot.data;
 
-          return Row(
-            children: [
-              Text(
-                "tabs.home.greetings".t(context, profile?.name ?? "..."),
-                style: Theme.of(context).textTheme.titleMedium,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Spacer(),
-              const SizedBox(width: 12.0),
-              ProfilePicture(
-                filePath: profile?.imagePath,
-                size: 40.0,
-                onTap: profile != null
-                    ? () => context.push("/profile/${profile.id}")
-                    : null,
-              ),
-            ],
-          );
-        });
+        return Row(
+          children: [
+            Text(
+              "tabs.home.greetings".t(context, profile?.name ?? "..."),
+              style: Theme.of(context).textTheme.titleMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Spacer(),
+            const SizedBox(width: 12.0),
+            ProfilePicture(
+              filePath: profile?.imagePath,
+              size: 40.0,
+              onTap: profile != null
+                  ? () => context.push("/profile/${profile.id}")
+                  : null,
+            ),
+          ],
+        );
+      },
+    );
   }
 }
