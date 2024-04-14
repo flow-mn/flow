@@ -31,7 +31,8 @@ class ObjectBox {
   /// By default, it uses [getApplicationSupportDirectory] (from path_provider)
   static late final String? customDirectory;
 
-  /// Update this count to invalidate accounts tab
+  /// Update this count to trigger a re-fetch in all the widgets that subscribe
+  /// to this [ValueNotifier].
   final ValueNotifier<int> invalidateAccounts = ValueNotifier(0);
 
   /// The Store of this app.

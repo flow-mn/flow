@@ -59,8 +59,8 @@ Other:
 * [XCode](https://developer.apple.com/xcode/) if you're gonna build for iOS/macOS
 * To run tests on your machine, see [Testing](#testing)
 
-Building for Windows, Linux-based requires the same dependencies as Flutter.
-Read more on <https://docs.flutter.dev/platform-integration>
+Building for Windows, and Linux-based systems requires the same dependencies
+as Flutter. Read more on <https://docs.flutter.dev/platform-integration>
 
 ### Running
 
@@ -70,8 +70,8 @@ See more on <https://flutter.dev/>
 
 ### Testing
 
-Generally, tests will be run by GitHub actions. But if you plan to run tests on
-your machine, ensure you've installed ObjectBox dynamic libraries.
+If you plan to run tests on your machine, ensure you've installed ObjectBox
+dynamic libraries.
 
 Install ObjectBox dynamic libraries[^2]:
 
