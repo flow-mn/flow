@@ -26,14 +26,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
         title: Text("categories".t(context)),
       ),
       body: SafeArea(
-        child: StreamBuilder(
-          stream: qb().watch(triggerImmediately: true),
+        child: StreamBuilder<List<Category>>(
+          stream:
+              qb().watch(triggerImmediately: true).map((event) => event.find()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Spinner.center();
             }
 
-            final categories = snapshot.data!.find();
+            final categories = snapshot.requireData;
 
             return switch (categories.length) {
               0 => const NoCategories(),
