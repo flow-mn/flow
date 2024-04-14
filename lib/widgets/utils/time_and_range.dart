@@ -103,8 +103,9 @@ Future<TimeRange?> showTimeRangePickerSheet(
         initialDateRange: initialValue is CustomTimeRange
             ? DateTimeRange(start: initialValue.from, end: initialValue.to)
             : null,
-      ).then((value) =>
-          value == null ? null : CustomTimeRange(value.start, value.end)),
+      ).then((value) => value == null
+          ? null
+          : CustomTimeRange(value.start.startOfDay(), value.end.endOfDay())),
     _ => null, // context.mounted == true
   };
 }
