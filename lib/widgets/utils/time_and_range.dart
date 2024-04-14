@@ -59,6 +59,7 @@ Future<DateTime?> showMonthPickerSheet(
 }) =>
     showModalBottomSheet<DateTime>(
       context: context,
+      isScrollControlled: true,
       builder: (context) => MonthSelectorSheet(initialDate: initialDate),
     );
 
@@ -68,6 +69,7 @@ Future<DateTime?> showYearPickerSheet(
 }) =>
     showModalBottomSheet<DateTime>(
       context: context,
+      isScrollControlled: true,
       builder: (context) => YearSelectorSheet(initialDate: initialDate),
     );
 
@@ -77,6 +79,7 @@ Future<TimeRange?> showTimeRangePickerSheet(
 }) async {
   final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
     context: context,
+    isScrollControlled: true,
     builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
   );
 

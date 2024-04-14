@@ -40,10 +40,11 @@ void main() async {
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
   PackageInfo.fromPlatform()
-      .then((value) => appVersion = "${value.version}$debugBuildSuffix")
+      .then((value) =>
+          appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
     log("An error was occured while fetching app version: $e");
-    return appVersion = "<unknown>$debugBuildSuffix";
+    return appVersion = "<unknown>+<0>$debugBuildSuffix";
   });
 
   if (flowDebugMode) {
