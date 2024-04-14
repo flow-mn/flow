@@ -1,0 +1,10 @@
+Flow is a free, open-source, cross-platform personal finance tracking app.
+
+## Features
+
+- Multiple accounts
+- Multiple currencies
+- Fully-offline
+- Full export/backup
+  - JSON for backup
+  - CSV for external software use (i.e., Google Sheets)
