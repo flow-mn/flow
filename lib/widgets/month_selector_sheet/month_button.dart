@@ -49,6 +49,8 @@ class MonthButton extends StatelessWidget {
         child: Text(
           month.format(payload: "MMMM"),
           textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: future
               ? context.textTheme.bodyMedium?.semi(context)
               : context.textTheme.bodyMedium?.copyWith(
