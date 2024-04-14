@@ -6,6 +6,7 @@ import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
 import 'package:flutter/material.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class TransactionsPage extends StatefulWidget {
   final QueryBuilder<Transaction> query;
@@ -90,14 +91,17 @@ class _TransactionsPageState extends State<TransactionsPage> {
           title: widget.title == null ? null : Text(widget.title!),
         ),
         body: SafeArea(
-          child: StreamBuilder(
-            stream: widget.query.watch(triggerImmediately: true),
+          child: StreamBuilder<Map<TimeRange, List<Transaction>>>(
+            stream: widget.query
+                .watch(triggerImmediately: true)
+                .map((event) => event.find().groupByDate()),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Spinner.center();
               }
 
-              final grouped = snapshot.data!.find().groupByDate();
+              final Map<TimeRange, List<Transaction>> grouped =
+                  snapshot.requireData;
 
               return GroupedTransactionList(
                 transactions: grouped,

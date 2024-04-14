@@ -38,14 +38,16 @@ class _AccountsTabState extends State<AccountsTab>
     return ValueListenableBuilder(
         valueListenable: ObjectBox().invalidateAccounts,
         builder: (context, snapshot, child) {
-          return StreamBuilder<Query<Account>>(
-              stream: qb().watch(triggerImmediately: true),
+          return StreamBuilder<List<Account>>(
+              stream: qb()
+                  .watch(triggerImmediately: true)
+                  .map((event) => event.find()),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Spinner.center();
                 }
 
-                final accounts = snapshot.data!.find();
+                final List<Account> accounts = snapshot.requireData;
 
                 return switch (accounts.length) {
                   0 => const NoAccounts(),

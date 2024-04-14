@@ -23,7 +23,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   final DateTime startDate =
       Moment.now().subtract(const Duration(days: 29)).startOfDay();
 
-  // Last 7 days, and planned payments, newest to oldest
   QueryBuilder<Transaction> qb() => ObjectBox()
       .box<Transaction>()
       .query(
@@ -45,10 +44,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-    return StreamBuilder<Query<Transaction>>(
-      stream: qb().watch(triggerImmediately: true),
+    return StreamBuilder<List<Transaction>>(
+      stream: qb().watch(triggerImmediately: true).map((event) => event.find()),
       builder: (context, snapshot) {
-        final transactions = snapshot.data?.find();
+        final List<Transaction>? transactions = snapshot.data;
 
         return Column(
           children: [

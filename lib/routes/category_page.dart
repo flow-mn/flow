@@ -196,8 +196,8 @@ class _CategoryPageState extends State<CategoryPage> {
     }
   }
 
-  void onRangeChange(TimeRange range) {
-    this.range = range;
+  void onRangeChange(TimeRange newRange) {
+    range = newRange;
     fetch();
   }
 
