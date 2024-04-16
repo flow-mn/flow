@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flow/constants.dart';
 import 'package:flow/data/flow_icon.dart';
 import 'package:flow/l10n/extensions.dart';
@@ -107,44 +109,46 @@ class SupportPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
-              Card(
-                shape: cardShape,
-                child: Padding(
-                  padding: cardPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FlowIcon(
-                        FlowIconData.icon(Symbols.favorite_rounded),
-                        size: 80.0,
-                        plated: true,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        "support.donateDeveloper".t(context),
-                        style: context.textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        "support.donateDeveloper.description".t(context),
-                        style: context.textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Button(
-                        trailing: const Icon(Symbols.chevron_right_rounded),
-                        child: Expanded(
-                          child: Text(
-                            "support.donateDeveloper.action".t(context),
-                          ),
+              if (!(Platform.isIOS || Platform.isMacOS)) ...[
+                const SizedBox(height: 16.0),
+                Card(
+                  shape: cardShape,
+                  child: Padding(
+                    padding: cardPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FlowIcon(
+                          FlowIconData.icon(Symbols.favorite_rounded),
+                          size: 80.0,
+                          plated: true,
                         ),
-                        onTap: () => openUrl(maintainerKoFiLink),
-                      )
-                    ],
+                        const SizedBox(height: 8.0),
+                        Text(
+                          "support.donateDeveloper".t(context),
+                          style: context.textTheme.headlineSmall,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          "support.donateDeveloper.description".t(context),
+                          style: context.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Button(
+                          trailing: const Icon(Symbols.chevron_right_rounded),
+                          child: Expanded(
+                            child: Text(
+                              "support.donateDeveloper.action".t(context),
+                            ),
+                          ),
+                          onTap: () => openUrl(maintainerKoFiLink),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
               const SizedBox(height: 16.0),
             ],
           ),
