@@ -1,5 +1,6 @@
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
+import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
@@ -9,6 +10,7 @@ import 'package:flow/widgets/home/stats/no_data.dart';
 import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class StatsTab extends StatefulWidget {
@@ -71,6 +73,15 @@ class _StatsTabState extends State<StatsTab> {
                       child: GroupPieChart(
                         data: data,
                         unresolvedDataTitle: "category.none".t(context),
+                        onReselect: (key) {
+                          if (!data.containsKey(key)) return;
+
+                          final associatedData = data[key]!.associatedData;
+
+                          if (associatedData is Category) {
+                            context.push("/category/${associatedData.id}");
+                          }
+                        },
                       ),
                     ),
                   )),
