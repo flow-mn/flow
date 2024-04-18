@@ -79,7 +79,8 @@ class _StatsTabState extends State<StatsTab> {
                           final associatedData = data[key]!.associatedData;
 
                           if (associatedData is Category) {
-                            context.push("/category/${associatedData.id}");
+                            context.push(
+                                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.serialize())}");
                           }
                         },
                       ),
