@@ -77,8 +77,10 @@ class GroupedTransactionList extends StatelessWidget {
         transactions.entries
             .where((element) => !element.key.from.isPastAnchored(anchor)));
 
-    final Widget? header =
-        this.header ?? (implyHeader ? _getImpliedHeader(context) : null);
+    final Widget? header = this.header ??
+        (implyHeader
+            ? _getImpliedHeader(context, futureTransactions: future)
+            : null);
 
     final List<Object> flattened = [
       if (header != null) header,
@@ -136,31 +138,33 @@ class GroupedTransactionList extends StatelessWidget {
     }
   }
 
-  Widget? _getImpliedHeader(BuildContext context) {
-    if (transactions.entries.any(
-      (entry) => entry.value.any(
-        (transaction) => transaction.transactionDate.isFutureAnchored(anchor),
-      ),
-    )) {
-      return Row(
-        children: [
-          Expanded(
-            child: Text(
-              "tabs.home.upcomingTransactions".t(context, transactions.length),
-              style: context.textTheme.bodyLarge?.semi(context),
-            ),
-          ),
-          const SizedBox(width: 16.0),
-          TextButton(
-            onPressed: () => context.push("/transactions/upcoming"),
-            child: Text(
-              "tabs.home.upcomingTransactions.seeAll".t(context),
-            ),
-          )
-        ],
-      );
-    }
+  Widget? _getImpliedHeader(
+    BuildContext context, {
+    required Map<TimeRange, List<Transaction>>? futureTransactions,
+  }) {
+    if (futureTransactions == null || futureTransactions.isEmpty) return null;
 
-    return null;
+    final int count = futureTransactions.values.fold<int>(
+      0,
+      (previousValue, element) => previousValue + element.renderableCount,
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            "tabs.home.upcomingTransactions".t(context, count),
+            style: context.textTheme.bodyLarge?.semi(context),
+          ),
+        ),
+        const SizedBox(width: 16.0),
+        TextButton(
+          onPressed: () => context.push("/transactions/upcoming"),
+          child: Text(
+            "tabs.home.upcomingTransactions.seeAll".t(context),
+          ),
+        )
+      ],
+    );
   }
 }

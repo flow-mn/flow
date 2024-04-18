@@ -361,6 +361,16 @@ extension TransactionListActions on Iterable<Transaction> {
   Iterable<Transaction> get incomes =>
       where((transaction) => transaction.amount > 0);
 
+  /// Number of transactions that are rendered on the screen
+  ///
+  /// This depends on [LocalPreferences().combineTransferTransactions]
+  /// and current list of transactions
+  int get renderableCount =>
+      length -
+      (LocalPreferences().combineTransferTransactions.get()
+          ? transfers.length ~/ 2
+          : 0);
+
   double get incomeSum =>
       incomes.fold(0, (value, element) => value + element.amount);
   double get expenseSum =>
