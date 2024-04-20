@@ -7,6 +7,7 @@ import 'package:flow/routes/home/accounts_tab.dart';
 import 'package:flow/routes/home/home_tab.dart';
 import 'package:flow/routes/home/profile_tab.dart';
 import 'package:flow/routes/home/stats_tab.dart';
+import 'package:flow/utils/shortcut.dart';
 import 'package:flow/widgets/home/navbar.dart';
 import 'package:flow/widgets/home/navbar/new_transaction_button.dart';
 import 'package:flutter/material.dart' hide Flow;
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyN, control: true): () =>
+        osSingleActivator(LogicalKeyboardKey.keyN): () =>
             _newTransactionPage(null),
       },
       child: Focus(

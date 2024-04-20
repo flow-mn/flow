@@ -1,16 +1,27 @@
 import 'dart:math' as math;
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/routes/new_transaction/amount_text.dart';
+import 'package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart';
+import 'package:flow/routes/new_transaction/input_amount_sheet/input_value.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/shortcut.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+
+enum CalculatorOperation {
+  add,
+  subtract,
+  multiply,
+  divide,
+}
 
 class InputAmountSheet extends StatefulWidget {
   static const double maxValue = 10e13;
@@ -35,12 +46,16 @@ class InputAmountSheet extends StatefulWidget {
   /// Small title on top of the amount
   final String? title;
 
+  /// Whether this numpad should have a calculator button
+  final bool hasCalculator;
+
   const InputAmountSheet({
     super.key,
     this.title,
     this.initialAmount,
     this.currency,
     this.overrideInitialAmount = true,
+    this.hasCalculator = true,
     this.hideCurrencySymbol = false,
     this.allowNegative = true,
     this.lockSign = false,
@@ -54,45 +69,22 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     with SingleTickerProviderStateMixin {
   final FocusNode _amountSelectionAreaFocusNode = FocusNode();
 
-  late AnimationController _amountTextAnimationController;
-
-  late Animation<double> _amountTextScaleAnimation;
-
-  late int _wholePart;
-  late int _decimalPart;
-  late bool _negative;
-
-  int get _decimalLength =>
-      _decimalPart == 0 ? 0 : _decimalPart.abs().toString().length;
+  late InputValue value;
 
   /// Number of decimals used for a currency
   late int _numberOfDecimals;
 
-  double get currentAmount =>
-      (_wholePart +
-          (_decimalPart * math.pow(10.0, -_decimalLength).toDouble())) *
-      (_negative ? -1 : 1);
-
   bool _inputtingDecimal = false;
   bool _resetOnNextInput = false;
+
+  bool _calculatorMode = false;
+
+  CalculatorOperation? _currentOperation;
+  InputValue? _operationCache;
 
   @override
   void initState() {
     super.initState();
-
-    _amountTextAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 60),
-    )..addListener(() {
-        setState(() {});
-      });
-
-    _amountTextScaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _amountTextAnimationController,
-        curve: Curves.easeOutExpo,
-      ),
-    );
 
     _numberOfDecimals = NumberFormat.simpleCurrency(
           name: widget.currency ?? LocalPreferences().getPrimaryCurrency(),
@@ -113,17 +105,12 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
   @override
   void dispose() {
-    _amountTextAnimationController.dispose();
     _amountSelectionAreaFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final amountFieldMaxHeight = MediaQuery.of(context).textScaler.scale(
-        context.textTheme.displayMedium!.fontSize! *
-            context.textTheme.displayMedium!.height!);
-
     return CallbackShortcuts(
       bindings: bindings,
       child: Focus(
@@ -142,72 +129,70 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                 ),
                 const SizedBox(height: 12.0),
               ],
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SelectionArea(
-                  focusNode: _amountSelectionAreaFocusNode,
-                  child: Transform.scale(
-                    scale: _amountTextScaleAnimation.value,
-                    child: SizedBox(
-                      height: amountFieldMaxHeight,
-                      child: AutoSizeText(
-                        currentAmount.formatMoney(
-                              decimalDigits: _decimalPart == 0
-                                  ? 0
-                                  : _decimalPart.abs().toString().length,
-                              includeCurrency: !widget.hideCurrencySymbol,
-                              currency: widget.currency,
-                            ) +
-                            (_inputtingDecimal && _decimalPart == 0 ? "." : ""),
-                        style: context.textTheme.displayMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.visible,
-                      ),
-                    ),
-                  ),
-                ),
+              AmountText(
+                value: value,
+                currency: widget.currency,
+                focusNode: _amountSelectionAreaFocusNode,
+                inputtingDecimal: _inputtingDecimal,
+                numberOfDecimals: _numberOfDecimals,
+                hideCurrencySymbol: widget.hideCurrencySymbol,
               ),
               const SizedBox(height: 16.0),
               // Numpad
               Numpad(
                 children: [
-                  ...getNumberRows(0),
-                  NumpadButton(
-                    onTap: () => removeDigit(),
-                    onLongPress: () => _reset(),
-                    mainAxisCellCount: widget.lockSign ? 2 : 1,
-                    child: const Icon(Symbols.backspace_rounded),
-                  ),
-                  ...getNumberRows(1),
-                  if (!widget.lockSign)
+                  if (_calculatorMode) ...getCalculatorRow(),
+                  ..._getNumberRow(0),
+                  _calculatorMode
+                      ? CalculatorButton(
+                          operation: CalculatorOperation.multiply,
+                          onTap: setCalculatorOperation,
+                          currentOperation: _currentOperation,
+                        )
+                      : NumpadButton(
+                          onTap: () => removeDigit(),
+                          onLongPress: () => _reset(),
+                          mainAxisCellCount: widget.lockSign ? 2 : 1,
+                          child: const Icon(Symbols.backspace_rounded),
+                        ),
+                  ..._getNumberRow(1),
+                  if (!widget.lockSign && !_calculatorMode)
                     NumpadButton(
                       child: widget.allowNegative
                           ? const Icon(Symbols.remove_rounded)
                           : const Icon(Symbols.add_rounded),
                       onTap: () => _negate(),
                     ),
-                  ...getNumberRows(2),
-                  NumpadButton(
-                    onTap: () => {},
-                    child: const Icon(Symbols.settings_rounded),
-                  ),
+                  if (_calculatorMode)
+                    CalculatorButton(
+                      operation: CalculatorOperation.add,
+                      onTap: setCalculatorOperation,
+                      currentOperation: _currentOperation,
+                    ),
+                  ..._getNumberRow(2),
+                  widget.hasCalculator
+                      ? (_calculatorMode
+                          ? CalculatorButton(
+                              operation: CalculatorOperation.subtract,
+                              onTap: setCalculatorOperation,
+                              currentOperation: _currentOperation,
+                            )
+                          : NumpadButton(
+                              onTap: () => calculatorMode(),
+                              child: const Icon(Symbols.calculate_rounded),
+                            ))
+                      : _doneButton(context),
                   NumpadButton(
                     onTap: () => insertDigit(0),
                     crossAxisCellCount: 2,
                     child: const Text("0"),
                   ),
                   NumpadButton(
-                    child: const Text("."),
+                    child:
+                        Text(getDecimalSeparatorForCurrency(widget.currency)),
                     onTap: () => decimalMode(),
                   ),
-                  NumpadButton(
-                    backgroundColor: context.flowColors.income,
-                    child: Icon(
-                      Symbols.check,
-                      color: context.colorScheme.background,
-                    ),
-                    onTap: () => _pop(),
-                  ),
+                  if (widget.hasCalculator) _doneButton(context),
                 ],
               ),
               const SizedBox(height: 16.0),
@@ -221,24 +206,74 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   /// Returns iterable of three widgets
   ///
   /// [row] - 0, 1, 2
-  Iterable<Widget> getNumberRows(int row) {
-    final usePhoneLayout =
+  Iterable<Widget> getCalculatorRow() {
+    return [
+      NumpadButton(
+        child: _currentOperation == null ? const Text("AC") : const Text("C"),
+        onTap: () => _reset(),
+      ),
+      NumpadButton(
+        child: const Icon(Symbols.backspace_rounded),
+        onTap: () => removeDigit(),
+        onLongPress: () => _reset(),
+      ),
+      NumpadButton(
+        child: const Icon(Symbols.percent_rounded),
+        onTap: () {
+          setCalculatorOperation(CalculatorOperation.divide);
+          value = InputValue.fromDouble(100.0);
+          evaluateCalculation();
+        },
+      ),
+      CalculatorButton(
+        operation: CalculatorOperation.divide,
+        onTap: setCalculatorOperation,
+        currentOperation: _currentOperation,
+      ),
+    ];
+  }
+
+  /// Returns iterable of three widgets
+  ///
+  /// [row] - 0, 1, 2
+  Iterable<Widget> _getNumberRow(int row) {
+    final useModernLayout =
         LocalPreferences().usePhoneNumpadLayout.value == true;
 
     late final List<int> digits;
 
     if (row <= 0) {
-      digits = usePhoneLayout ? [1, 2, 3] : [7, 8, 9];
+      digits = useModernLayout ? [1, 2, 3] : [7, 8, 9];
     } else if (row == 1) {
       digits = [4, 5, 6];
     } else {
-      digits = usePhoneLayout ? [7, 8, 9] : [1, 2, 3];
+      digits = useModernLayout ? [7, 8, 9] : [1, 2, 3];
     }
 
     return digits.map(
       (digit) => NumpadButton(
         child: Text(digit.toString()),
         onTap: () => insertDigit(digit),
+      ),
+    );
+  }
+
+  Widget _doneButton(BuildContext context) {
+    final bool popOnClick = !_calculatorMode || _currentOperation == null;
+
+    return NumpadButton(
+      backgroundColor: popOnClick ? context.flowColors.income : null,
+      crossAxisCellCount: widget.hasCalculator ? 1 : 2,
+      onTap: () {
+        if (popOnClick) {
+          _saveOrPop();
+        } else {
+          evaluateCalculation();
+        }
+      },
+      child: Icon(
+        popOnClick ? Symbols.check : Symbols.equal_rounded,
+        color: popOnClick ? context.colorScheme.background : null,
       ),
     );
   }
@@ -255,14 +290,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
 
     if (_inputtingDecimal) {
-      if (_decimalLength < _numberOfDecimals) {
-        _decimalPart = _decimalPart * 10 + n;
+      if (value.decimalLength < _numberOfDecimals) {
+        value = value.appendDecimal(n);
       }
-    } else if (_wholePart * 10 < InputAmountSheet.maxValue) {
-      _wholePart = _wholePart.abs() * 10 + n;
-    }
+    } else {
+      final InputValue newValue = value.appendWhole(n);
 
-    _animateAmountText();
+      if (newValue.currentAmount <= InputAmountSheet.maxValue) {
+        value = newValue;
+      }
+    }
 
     setState(() {});
   }
@@ -276,18 +313,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
 
     if (_inputtingDecimal) {
-      if (_decimalPart == 0) {
+      if (value.decimalLength == 0) {
         _inputtingDecimal = false;
       }
-      _decimalPart = _decimalPart ~/ 10;
+      value = value.removeDecimal();
     } else {
-      if (_wholePart.abs() == 0) {
+      if (value.wholePart.abs() == 0) {
         HapticFeedback.heavyImpact();
       }
-      _wholePart = _wholePart ~/ 10;
+      value = value.removeWhole();
     }
-
-    _animateAmountText();
 
     setState(() {});
   }
@@ -296,35 +331,32 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     if (widget.lockSign) return;
 
     if (widget.allowNegative) {
-      _negative = forceNegative ?? !_negative;
+      value = value.negated(forceNegative);
     } else {
-      _negative = false;
+      value = value.abs();
     }
 
     setState(() {});
   }
 
-  void _animateAmountText() async {
-    if (_amountTextAnimationController.isAnimating) return;
+  void _saveOrPop() {
+    if (_calculatorMode && _currentOperation != null) {
+      evaluateCalculation();
+      return;
+    }
 
-    await _amountTextAnimationController.forward().orCancel;
-    await _amountTextAnimationController.reverse().orCancel;
-  }
-
-  void _pop() {
-    context.pop(currentAmount);
+    context.pop(value.currentAmount);
   }
 
   void _reset() {
-    _wholePart = 0;
-    _decimalPart = 0;
+    value = InputValue.zero.negated(value.isNegative);
     _inputtingDecimal = false;
     _resetOnNextInput = false;
     setState(() {});
   }
 
   void _paste() async {
-    final clipboardData = await Clipboard.getData("text/plain");
+    final ClipboardData? clipboardData = await Clipboard.getData("text/plain");
 
     if (clipboardData == null ||
         clipboardData.text == null ||
@@ -346,7 +378,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     Clipboard.setData(
       ClipboardData(
-        text: currentAmount.toStringAsFixed(_decimalLength),
+        text: value.currentAmount.toStringAsFixed(value.decimalLength),
       ),
     );
 
@@ -355,16 +387,100 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
   void _updateAmountFromNumber(num initialAmount) {
     initialAmount = initialAmount.toDouble();
-    _wholePart = initialAmount.abs().truncate();
-    _decimalPart = ((initialAmount - initialAmount.truncate()).abs() *
+    final int wholePart = initialAmount.abs().truncate();
+    final int decimalPart = ((initialAmount - initialAmount.truncate()).abs() *
             math.pow(10, _numberOfDecimals))
         .round();
-    _inputtingDecimal = _decimalPart.abs() != 0;
-    _negative =
+    _inputtingDecimal = decimalPart.abs() != 0;
+    final bool isNegative =
         widget.allowNegative ? (widget.initialAmount ?? 1.0).isNegative : false;
+
+    value = InputValue(
+        wholePart: wholePart, decimalPart: decimalPart, isNegative: isNegative);
+  }
+
+  void calculatorMode() {
+    setState(() {
+      _calculatorMode = true;
+    });
+  }
+
+  void setCalculatorOperation(CalculatorOperation op) {
+    if (!_calculatorMode) return;
+
+    if (_currentOperation == null) {
+      _operationCache = value;
+      value = InputValue.zero;
+      _inputtingDecimal = false;
+    }
+
+    _currentOperation = op;
+
+    setState(() {});
+  }
+
+  void evaluateCalculation() {
+    if (!_calculatorMode) return;
+
+    if (_operationCache == null) return;
+    if (_currentOperation == null) return;
+
+    switch (_currentOperation!) {
+      case CalculatorOperation.add:
+        value = _operationCache!.add(value);
+        break;
+      case CalculatorOperation.subtract:
+        value = _operationCache!.subtract(value);
+        break;
+      case CalculatorOperation.multiply:
+        value = _operationCache!.multiply(value);
+        break;
+      case CalculatorOperation.divide:
+        value = _operationCache!.divide(value);
+        break;
+    }
+
+    _inputtingDecimal = value.decimalLength > 0;
+
+    _operationCache = null;
+    _currentOperation = null;
+
+    setState(() {});
+  }
+
+  void _shortcutMinusKey() {
+    if (_calculatorMode) {
+      setCalculatorOperation(CalculatorOperation.subtract);
+    } else {
+      _negate();
+    }
+  }
+
+  void _shortcutPlusKey() {
+    if (_calculatorMode) {
+      setCalculatorOperation(CalculatorOperation.add);
+    } else {
+      _negate(false);
+    }
+  }
+
+  void _shortcutMultiplyKey() {
+    if (_calculatorMode) {
+      setCalculatorOperation(CalculatorOperation.multiply);
+    }
+  }
+
+  void _shortcutDivideKey() {
+    if (_calculatorMode) {
+      setCalculatorOperation(CalculatorOperation.divide);
+    }
   }
 
   Map<ShortcutActivator, VoidCallback> get bindings => {
+        const CharacterActivator('/'): () => _shortcutDivideKey(),
+        const CharacterActivator('*'): () => _shortcutMultiplyKey(),
+        const CharacterActivator('+'): () => _shortcutPlusKey(),
+        const CharacterActivator('-'): () => _shortcutMinusKey(),
         const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
@@ -385,24 +501,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         const SingleActivator(LogicalKeyboardKey.numpad9): () => insertDigit(9),
         const SingleActivator(LogicalKeyboardKey.digit0): () => insertDigit(0),
         const SingleActivator(LogicalKeyboardKey.numpad0): () => insertDigit(0),
-        const SingleActivator(LogicalKeyboardKey.minus): () => _negate(),
-        const SingleActivator(LogicalKeyboardKey.numpadSubtract): () =>
-            _negate(),
-        const SingleActivator(LogicalKeyboardKey.equal): () => _negate(false),
-        const SingleActivator(LogicalKeyboardKey.numpadAdd): () =>
-            _negate(false),
         const SingleActivator(LogicalKeyboardKey.period): () => decimalMode(),
         const SingleActivator(LogicalKeyboardKey.numpadDecimal): () =>
             decimalMode(),
-        const SingleActivator(LogicalKeyboardKey.enter): () => _pop(),
-        const SingleActivator(LogicalKeyboardKey.numpadEnter): () => _pop(),
+        const SingleActivator(LogicalKeyboardKey.enter): () => _saveOrPop(),
+        const SingleActivator(LogicalKeyboardKey.numpadEnter): () =>
+            _saveOrPop(),
         const SingleActivator(LogicalKeyboardKey.backspace): () =>
             removeDigit(),
-        const SingleActivator(LogicalKeyboardKey.backspace, control: true):
-            () => _reset(),
-        const SingleActivator(LogicalKeyboardKey.keyC, control: true): () =>
-            _copy(),
-        const SingleActivator(LogicalKeyboardKey.keyV, control: true): () =>
-            _paste(),
+        osSingleActivator(LogicalKeyboardKey.backspace): () => _reset(),
+        osSingleActivator(LogicalKeyboardKey.keyC): () => _copy(),
+        osSingleActivator(LogicalKeyboardKey.keyV): () => _paste(),
       };
 }

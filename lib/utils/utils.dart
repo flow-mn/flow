@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 export 'extensions.dart';
@@ -161,4 +162,10 @@ Future<ui.Image?> pickAndCropSquareImage(
 
 bool isDesktop() {
   return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+}
+
+String getDecimalSeparatorForCurrency(String? currency) {
+  return currency == null
+      ? "."
+      : NumberFormat.simpleCurrency(name: currency).symbols.DECIMAL_SEP;
 }
