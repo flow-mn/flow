@@ -84,6 +84,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 ),
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
+              ListTile(
+                title: Text("preferences.transactionButtonOrder".t(context)),
+                leading: const Icon(Symbols.action_key_rounded),
+                onTap: openTransactionButtonOrderPrefs,
+                subtitle: Text(
+                  "preferences.transfer.description".t(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
             ],
             color: context.colorScheme.onBackground.withAlpha(0x20),
           ).toList(),
@@ -179,5 +190,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransferPrefs() async {
     await context.push("/preferences/transfer");
+  }
+
+  void openTransactionButtonOrderPrefs() async {
+    await context.push("/preferences/transactionButtonOrder");
   }
 }

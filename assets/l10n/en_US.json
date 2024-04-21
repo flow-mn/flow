@@ -129,6 +129,8 @@
     "preferences.numpad.layout.modern": "Modern",
     "preferences.numpad.haptics": "Button feedback",
     "preferences.numpad.haptics.description": "Sound/haptic feedback upon click",
+    "preferences.transactionButtonOrder": "Button placement",
+    "preferences.transactionButtonOrder.description": "Change new transaction button placement",
     "preferences.transfer": "Transfers",
     "preferences.transfer.description": "Combine into one, exclude from expense/income",
     "preferences.transfer.combineTransferTransaction": "Layout",
