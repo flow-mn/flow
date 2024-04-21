@@ -1,452 +1,196 @@
-import 'dart:developer';
-
-import 'package:flow/data/flow_icon.dart';
+import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/account.dart';
-import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/transaction.dart';
-import 'package:flow/form_validators.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
-import 'package:flow/sync/export.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/delete_button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flow/widgets/select_icon_sheet.dart';
+import 'package:flow/routes/error_page.dart';
+import 'package:flow/widgets/category/transactions_info.dart';
+import 'package:flow/widgets/flow_card.dart';
+import 'package:flow/widgets/general/spinner.dart';
+import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/transactions_date_header.dart';
+import 'package:flow/widgets/no_result.dart';
+import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class AccountPage extends StatefulWidget {
-  /// Account Object ID
+  static const EdgeInsets _defaultHeaderPadding = EdgeInsets.fromLTRB(
+    16.0,
+    16.0,
+    16.0,
+    8.0,
+  );
+
   final int accountId;
+  final TimeRange? initialRange;
 
-  bool get isNewAccount => accountId == 0;
+  final EdgeInsets headerPadding;
+  final EdgeInsets listPadding;
 
-  const AccountPage.create({
+  const AccountPage({
     super.key,
-  }) : accountId = 0;
-  const AccountPage.edit({super.key, required this.accountId});
+    required this.accountId,
+    this.initialRange,
+    this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
+    this.headerPadding = _defaultHeaderPadding,
+  });
 
   @override
   State<AccountPage> createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  bool busy = false;
 
-  late final TextEditingController _nameTextController;
+  QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
+      .box<Transaction>()
+      .query(
+        Transaction_.account.equals(account!.id).and(
+              Transaction_.transactionDate.betweenDate(
+                range.from,
+                range.to,
+              ),
+            ),
+      )
+      .order(Transaction_.transactionDate, flags: Order.descending);
 
-  final FocusNode _editNameFocusNode = FocusNode();
+  late Account? account;
 
-  late String _currency;
-  late FlowIconData? _iconData;
-  late bool _excludeFromTotalBalance;
-
-  late double _balance;
-
-  late final Account? _currentlyEditing;
-
-  bool _editingName = false;
-
-  String get iconCodeOrError =>
-      _iconData?.toString() ??
-      FlowIconData.icon(Symbols.wallet_rounded).toString();
-
-  dynamic error;
+  late TimeRange range;
 
   @override
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewAccount
-        ? null
-        : ObjectBox().box<Account>().get(widget.accountId);
-
-    if (!widget.isNewAccount && _currentlyEditing == null) {
-      error = "Account with id ${widget.accountId} was not found";
-    } else {
-      _nameTextController =
-          TextEditingController(text: _currentlyEditing?.name);
-      _balance = _currentlyEditing?.balance ?? 0.0;
-      _currency = _currentlyEditing?.currency ??
-          LocalPreferences().getPrimaryCurrency();
-      _iconData = _currentlyEditing?.icon;
-      _excludeFromTotalBalance =
-          _currentlyEditing?.excludeFromTotalBalance ?? false;
-    }
-
-    _editNameFocusNode.addListener(() {
-      if (!_editNameFocusNode.hasFocus) {
-        toggleEditName(false);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _editNameFocusNode.dispose();
-    _nameTextController.dispose();
-
-    super.dispose();
+    account = ObjectBox().box<Account>().get(widget.accountId);
+    range = widget.initialRange ?? TimeRange.thisMonth();
   }
 
   @override
   Widget build(BuildContext context) {
-    const contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
+    if (this.account == null) return const ErrorPage();
 
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () => save(),
-            icon: const Icon(Symbols.check_rounded),
-            tooltip: "general.save".t(context),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
+    final Account account = this.account!;
+
+    return StreamBuilder<List<Transaction>>(
+      stream: qb(range)
+          .watch(triggerImmediately: true)
+          .map((event) => event.find()),
+      builder: (context, snapshot) {
+        final List<Transaction>? transactions = snapshot.data;
+
+        final bool noTransactions = (transactions?.length ?? 0) == 0;
+
+        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+
+        const double firstHeaderTopPadding = 0.0;
+
+        final Widget header = Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TimeRangeSelector(
+              initialValue: range,
+              onChanged: onRangeChange,
+            ),
+            const SizedBox(height: 8.0),
+            TransactionsInfo(
+              count: transactions?.length,
+              flow: flow.flow,
+              icon: account.icon,
+            ),
+            const SizedBox(height: 12.0),
+            Row(
               children: [
-                const SizedBox(height: 16.0),
-                Padding(
-                  padding: contentPadding,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Expanded(
+                  child: FlowCard(
+                    flow: flow.totalIncome,
+                    type: TransactionType.income,
+                  ),
+                ),
+                const SizedBox(width: 12.0),
+                Expanded(
+                  child: FlowCard(
+                    flow: flow.totalExpense,
+                    type: TransactionType.expense,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+
+        final EdgeInsets headerPaddingOutOfList = widget.headerPadding +
+            widget.listPadding.copyWith(bottom: 0, top: 0) +
+            const EdgeInsets.only(top: firstHeaderTopPadding);
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(account.name),
+            actions: [
+              IconButton(
+                icon: const Icon(Symbols.edit_rounded),
+                onPressed: () => edit(),
+                tooltip: "general.edit".t(context),
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: switch (busy) {
+              true => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
                     children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FlowIcon(
-                            _iconData ??
-                                FlowIconData.icon(Symbols.wallet_rounded),
-                            size: 64.0,
-                            plated: true,
-                            onTap: selectIcon,
-                          ),
-                          TextButton(
-                            onPressed: selectIcon,
-                            child: Text(
-                              "flowIcon.change".t(context),
-                              style: context.textTheme.labelSmall?.copyWith(
-                                color: context.colorScheme.primary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _nameTextController,
-                                    focusNode: _editNameFocusNode,
-                                    maxLength: Account.maxNameLength,
-                                    decoration: InputDecoration(
-                                      hintText: "account.name".t(context),
-                                      focusColor: context.colorScheme.secondary,
-                                      isDense: true,
-                                      border: _editingName
-                                          ? null
-                                          : InputBorder.none,
-                                      counter: const SizedBox.shrink(),
-                                    ),
-                                    onTap: () => toggleEditName(true),
-                                    onFieldSubmitted: (_) =>
-                                        toggleEditName(false),
-                                    readOnly: !_editingName,
-                                    validator: validateNameField,
-                                  ),
-                                ),
-                                const SizedBox(width: 12.0),
-                                IconButton(
-                                  icon: _editingName
-                                      ? const Icon(Symbols.done_rounded)
-                                      : const Icon(Symbols.edit_rounded),
-                                  onPressed: toggleEditName,
-                                )
-                              ],
-                            ),
-                            Text(
-                              _currency,
-                              style:
-                                  context.textTheme.labelLarge?.semi(context),
-                            ),
-                          ],
-                        ),
-                      ),
+                      header,
+                      const Expanded(child: Spinner.center()),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24.0),
-                InkWell(
-                  borderRadius: BorderRadius.circular(16.0),
-                  onTap: updateBalance,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: contentPadding,
-                          child: Text(
-                            _balance.formatMoney(currency: _currency),
-                            style: context.textTheme.displayMedium,
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          "account.updateBalance".t(context),
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      ],
-                    ),
+              false when noTransactions => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: NoResult()),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 24.0),
-                CheckboxListTile.adaptive(
-                  value: _excludeFromTotalBalance,
-                  onChanged: updateBalanceExclusion,
-                  title: Text("account.excludeFromTotalBalance".t(context)),
-                  activeColor: context.colorScheme.primary,
-                ),
-                if (_currentlyEditing != null) ...[
-                  const SizedBox(height: 80.0),
-                  DeleteButton(
-                    onTap: _deleteAccount,
-                    label: Text("account.delete".t(context)),
+              _ => GroupedTransactionList(
+                  header: header,
+                  transactions: transactions?.groupByDate() ?? {},
+                  listPadding: widget.listPadding,
+                  headerPadding: widget.headerPadding,
+                  firstHeaderTopPadding: firstHeaderTopPadding,
+                  headerBuilder: (range, rangeTransactions) =>
+                      TransactionListDateHeader(
+                    transactions: rangeTransactions,
+                    date: range.from,
                   ),
-                  const SizedBox(height: 16.0),
-                ],
-              ],
-            ),
+                )
+            },
           ),
-        ),
-      ),
-    );
-  }
-
-  void updateBalance() async {
-    final result = await showModalBottomSheet<double>(
-      context: context,
-      builder: (context) => InputAmountSheet(
-        initialAmount: _balance,
-        currency: _currency,
-      ),
-      isScrollControlled: true,
-    );
-
-    setState(() {
-      _balance = result ?? _balance;
-    });
-  }
-
-  void updateBalanceExclusion(bool? value) {
-    if (value != null) {
-      setState(() {
-        _excludeFromTotalBalance = value;
-      });
-    }
-  }
-
-  void selectCurrency() async {
-    final result = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => const SelectCurrencySheet(),
-      isScrollControlled: true,
-    );
-
-    setState(() {
-      _currency = result ?? _currency;
-    });
-  }
-
-  void update({required String formattedName}) async {
-    if (_currentlyEditing == null) return;
-
-    _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.currency = _currency;
-
-    _currentlyEditing!.iconCode = iconCodeOrError;
-    _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
-
-    if (_balance != _currentlyEditing!.balance) {
-      _currentlyEditing!.updateBalanceAndSave(
-        _balance,
-        title: "account.updateBalance.transactionTitle".tr(),
-      );
-    }
-
-    ObjectBox().box<Account>().put(
-          _currentlyEditing!,
-          mode: PutMode.update,
         );
+      },
+    );
+  }
+
+  void onRangeChange(TimeRange newRange) {
+    setState(() {
+      range = newRange;
+    });
+  }
+
+  Future<void> edit() async {
+    await context.push("/account/${account!.id}/edit");
+
+    account = ObjectBox().box<Account>().get(widget.accountId);
 
     if (mounted) {
-      context.pop();
-    }
-  }
-
-  void save() async {
-    if (_formKey.currentState?.validate() != true) return;
-
-    final String trimmed = _nameTextController.text.trim();
-
-    if (_currentlyEditing != null) {
-      return update(formattedName: trimmed);
-    }
-
-    final int sortOrder = ObjectBox().box<Account>().count();
-
-    final account = Account(
-      name: trimmed,
-      iconCode: iconCodeOrError,
-      currency: _currency,
-      excludeFromTotalBalance: _excludeFromTotalBalance,
-      sortOrder: sortOrder,
-    );
-
-    if (_balance.abs() != 0) {
-      ObjectBox()
-          .box<Account>()
-          .putAndGetAsync(
-            account,
-            mode: PutMode.insert,
-          )
-          .then((value) {
-        value.updateBalanceAndSave(
-          _balance,
-          title: "account.updateBalance.transactionTitle".tr(),
-        );
-        ObjectBox().box<Account>().putAsync(value);
-      });
-    } else {
-      ObjectBox().box<Account>().putAsync(
-            account,
-            mode: PutMode.insert,
-          );
-    }
-
-    context.pop();
-  }
-
-  void toggleEditName([bool? force]) {
-    setState(() {
-      _editingName = force ?? !_editingName;
-    });
-
-    if (_editingName) {
-      _editNameFocusNode.requestFocus();
-    }
-  }
-
-  String? validateNameField(String? value) {
-    final requiredValidationError = validateRequiredField(value);
-    if (requiredValidationError != null) {
-      return requiredValidationError.t(context);
-    }
-
-    final String trimmed = value!.trim();
-
-    final Query<Account> sameNameQuery = ObjectBox()
-        .box<Account>()
-        .query(
-          Account_.name
-              .equals(trimmed)
-              .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
-        )
-        .build();
-
-    final bool isNameUnique = sameNameQuery.count() == 0;
-
-    sameNameQuery.close();
-
-    if (!isNameUnique) {
-      return "error.input.duplicate.accountName".t(context, trimmed);
-    }
-
-    return null;
-  }
-
-  void _updateIcon(FlowIconData? data) {
-    _iconData = data;
-  }
-
-  Future<void> selectIcon() async {
-    final result = await showModalBottomSheet<FlowIconData>(
-      context: context,
-      builder: (context) => SelectIconSheet(
-        current: _iconData,
-        onChange: (value) => _updateIcon(value),
-      ),
-      isScrollControlled: true,
-    );
-
-    if (result != null) {
-      _updateIcon(result);
-    }
-
-    if (mounted) setState(() {});
-  }
-
-  void _deleteAccount() async {
-    if (_currentlyEditing == null) return;
-
-    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing!.id))
-        .build();
-
-    final int txnCount = associatedTransactionsQuery.count();
-
-    final bool? confirmation = await context.showConfirmDialog(
-      isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
-      child: Text("account.delete.warning".t(context, txnCount)),
-    );
-
-    if (confirmation == true) {
-      await export(
-        showShareDialog: false,
-        subfolder: "anti-blunder",
-        type: BackupEntryType.preAccountDeletion,
-      );
-
-      try {
-        await associatedTransactionsQuery.removeAsync();
-      } catch (e) {
-        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
-      } finally {
-        associatedTransactionsQuery.close();
-      }
-
-      try {
-        await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
-      } catch (e) {
-        log("[Account Page] Failed to delete account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
-      } finally {
-        if (mounted) {
-          context.pop();
-        }
-      }
+      setState(() {});
     }
   }
 }
