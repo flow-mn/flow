@@ -14,13 +14,20 @@ class FlowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Surface(builder: (context) {
-      return Padding(
+      return Container(
+        constraints: BoxConstraints(
+          minHeight: context.textTheme.displaySmall!.height! *
+                  context.textTheme.displaySmall!.fontSize! +
+              24.0,
+        ),
+        alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         child: AutoSizeText(
-          flow.money,
+          flow.abs().money,
           style: context.textTheme.displaySmall?.copyWith(
             color: type.color(context),
           ),
+          minFontSize: 10.0,
           maxLines: 1,
         ),
       );

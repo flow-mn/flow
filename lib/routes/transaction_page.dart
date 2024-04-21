@@ -13,6 +13,7 @@ import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
 import 'package:flow/routes/new_transaction/select_account_sheet.dart';
 import 'package:flow/routes/new_transaction/select_category_sheet.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/utils/shortcut.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/utils/value_or.dart';
@@ -131,10 +132,8 @@ class _TransactionPageState extends State<TransactionPage> {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
-        const SingleActivator(LogicalKeyboardKey.enter, control: true): () =>
-            save(),
-        const SingleActivator(LogicalKeyboardKey.numpadEnter, control: true):
-            () => save(),
+        osSingleActivator(LogicalKeyboardKey.enter): () => save(),
+        osSingleActivator(LogicalKeyboardKey.numpadEnter): () => save(),
       },
       child: Focus(
         autofocus: true,

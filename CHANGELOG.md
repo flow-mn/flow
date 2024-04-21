@@ -1,3 +1,9 @@
+## Beta 0.5.0
+
+* Added calculator by @sadespresso in <https://github.com/flow-mn/flow/pull/147>
+* Uses correct control modifier - `Meta` for macOS and iOS, `Control` for others
+* Comma separator is now displayed correctly when inputting amount
+
 ## Beta 0.4.3
 
 * Fix Category page re renders upon change in db by @sadespresso in https://github.com/flow-mn/flow/pull/140

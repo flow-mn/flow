@@ -1,7 +1,6 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
-import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -37,10 +36,6 @@ class TransactionListDateHeader extends StatelessWidget {
     }
 
     final double flow = transactions.sum;
-    final int count = transactions.length -
-        (LocalPreferences().combineTransferTransactions.get()
-            ? transactions.transfers.length ~/ 2
-            : 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +43,7 @@ class TransactionListDateHeader extends StatelessWidget {
       children: [
         title,
         Text(
-          "${flow.moneyCompact} • ${'tabs.home.transactionsCount'.t(context, count)}",
+          "${flow.moneyCompact} • ${'tabs.home.transactionsCount'.t(context, transactions.renderableCount)}",
           style: context.textTheme.labelMedium,
         ),
       ],

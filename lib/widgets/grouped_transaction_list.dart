@@ -2,9 +2,11 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
+import 'package:flow/theme/helpers.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/transaction_list_tile.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class GroupedTransactionList extends StatelessWidget {
@@ -39,6 +41,8 @@ class GroupedTransactionList extends StatelessWidget {
 
   final Widget? header;
 
+  final bool implyHeader;
+
   const GroupedTransactionList({
     super.key,
     required this.transactions,
@@ -48,6 +52,7 @@ class GroupedTransactionList extends StatelessWidget {
     this.futureDivider,
     this.anchor,
     this.headerPadding,
+    this.implyHeader = true,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
       horizontal: 16.0,
@@ -72,8 +77,13 @@ class GroupedTransactionList extends StatelessWidget {
         transactions.entries
             .where((element) => !element.key.from.isPastAnchored(anchor)));
 
+    final Widget? header = this.header ??
+        (implyHeader
+            ? _getImpliedHeader(context, futureTransactions: future)
+            : null);
+
     final List<Object> flattened = [
-      if (header != null) header!,
+      if (header != null) header,
       for (final entry in future.entries) ...[
         headerBuilder(entry.key, entry.value),
         ...entry.value,
@@ -126,5 +136,35 @@ class GroupedTransactionList extends StatelessWidget {
     if (confirmation == true) {
       transaction.delete();
     }
+  }
+
+  Widget? _getImpliedHeader(
+    BuildContext context, {
+    required Map<TimeRange, List<Transaction>>? futureTransactions,
+  }) {
+    if (futureTransactions == null || futureTransactions.isEmpty) return null;
+
+    final int count = futureTransactions.values.fold<int>(
+      0,
+      (previousValue, element) => previousValue + element.renderableCount,
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            "tabs.home.upcomingTransactions".t(context, count),
+            style: context.textTheme.bodyLarge?.semi(context),
+          ),
+        ),
+        const SizedBox(width: 16.0),
+        TextButton(
+          onPressed: () => context.push("/transactions/upcoming"),
+          child: Text(
+            "tabs.home.upcomingTransactions.seeAll".t(context),
+          ),
+        )
+      ],
+    );
   }
 }

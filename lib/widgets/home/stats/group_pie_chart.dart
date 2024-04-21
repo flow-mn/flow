@@ -29,6 +29,8 @@ class GroupPieChart<T> extends StatefulWidget {
 
   final String? unresolvedDataTitle;
 
+  final void Function(String key)? onReselect;
+
   const GroupPieChart({
     super.key,
     required this.data,
@@ -39,6 +41,7 @@ class GroupPieChart<T> extends StatefulWidget {
     this.showSelectedSection = true,
     this.sortLegend = true,
     this.unresolvedDataTitle,
+    this.onReselect,
   });
 
   @override
@@ -186,7 +189,15 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         style: context.textTheme.bodyLarge,
       ),
       selected: entry.key == selectedKey,
-      onTap: () => setState(() => selectedKey = entry.key),
+      onTap: () {
+        if (widget.onReselect != null &&
+            selectedKey != null &&
+            selectedKey == entry.key) {
+          widget.onReselect!(selectedKey!);
+        } else {
+          setState(() => selectedKey = entry.key);
+        }
+      },
     );
   }
 
