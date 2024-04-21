@@ -129,6 +129,8 @@
     "preferences.numpad.layout.modern": "Орчин үеийн",
     "preferences.numpad.haptics": "Товчны хариу",
     "preferences.numpad.haptics.description": "Дарах үед дуу/чичиргээ тоглуулна",
+    "preferences.transactionButtonOrder": "Товчны байрлал",
+    "preferences.transactionButtonOrder.description": "Шинэ гүйлгээ хийх товчны байрлал өөрчлөх",
     "preferences.transfer": "Шижлүүлэг",
     "preferences.transfer.description": "Нэгтгэж харах, орлого/зарлагаас хасах",
     "preferences.transfer.combineTransferTransaction": "Харагдах байдал",

@@ -4,6 +4,7 @@ import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction/extensions/base.dart';
 import 'package:flow/entity/transaction/wrapper.dart';
 import 'package:flow/l10n/named_enum.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:uuid/uuid.dart';
@@ -153,9 +154,9 @@ class Transaction implements EntityBase {
 
 @JsonEnum(valueField: "value")
 enum TransactionType implements LocalizedEnum {
+  transfer("transfer"),
   income("income"),
-  expense("expense"),
-  transfer("transfer");
+  expense("expense");
 
   final String value;
 
@@ -165,6 +166,13 @@ enum TransactionType implements LocalizedEnum {
   String get localizationEnumValue => name;
   @override
   String get localizationEnumName => "TransactionType";
+
+  static TransactionType? fromJson(Map json) {
+    return TransactionType.values
+        .firstWhereOrNull((element) => element.value == json["value"]);
+  }
+
+  Map<String, dynamic> toJson() => {"value": value};
 }
 
 @JsonEnum(valueField: "value")
