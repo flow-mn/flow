@@ -229,14 +229,15 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   title: Text("account.excludeFromTotalBalance".t(context)),
                   activeColor: context.colorScheme.primary,
                 ),
-                ListTile(
-                  title: Text("currency".t(context)),
-                  trailing: Text(
-                    _currency,
-                    style: context.textTheme.labelLarge,
+                if (widget.isNewAccount)
+                  ListTile(
+                    title: Text("currency".t(context)),
+                    trailing: Text(
+                      _currency,
+                      style: context.textTheme.labelLarge,
+                    ),
+                    onTap: selectCurrency,
                   ),
-                  onTap: selectCurrency,
-                ),
                 if (_currentlyEditing != null) ...[
                   const SizedBox(height: 80.0),
                   DeleteButton(
