@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/numpad_button.dart';
@@ -24,9 +26,15 @@ class CalculatorButton extends StatelessWidget {
     return NumpadButton(
       backgroundColor: selected ? context.colorScheme.primary : null,
       onTap: () => onTap(operation),
-      child: Icon(
-        iconData,
-        color: selected ? context.colorScheme.onPrimary : null,
+      child: Transform.scale(
+        scale: operation == CalculatorOperation.divide ? 0.8 : 1.0,
+        child: Transform.rotate(
+          angle: operation == CalculatorOperation.divide ? (pi / 4.0) : 0,
+          child: Icon(
+            iconData,
+            color: selected ? context.colorScheme.onPrimary : null,
+          ),
+        ),
       ),
     );
   }
@@ -35,6 +43,6 @@ class CalculatorButton extends StatelessWidget {
         CalculatorOperation.add => Symbols.add_rounded,
         CalculatorOperation.subtract => Symbols.remove_rounded,
         CalculatorOperation.multiply => Symbols.close_small_rounded,
-        CalculatorOperation.divide => IconData('➗'.codeUnitAt(0)),
+        CalculatorOperation.divide => Symbols.percent_rounded,
       };
 }
