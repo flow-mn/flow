@@ -1,12 +1,19 @@
+import 'dart:developer';
+
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
-import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/prefs.dart';
-import 'package:flow/theme/theme.dart';
+import 'package:flow/routes/preferences/button_order_preferences/transaction_type_button.dart';
 import 'package:flutter/material.dart';
 
 class ButtonOrderPreferencesPage extends StatefulWidget {
-  const ButtonOrderPreferencesPage({super.key});
+  final Radius radius;
+
+  const ButtonOrderPreferencesPage({
+    super.key,
+    this.radius = const Radius.circular(16.0),
+  });
 
   @override
   State<ButtonOrderPreferencesPage> createState() =>
@@ -15,53 +22,119 @@ class ButtonOrderPreferencesPage extends StatefulWidget {
 
 class ButtonOrderPreferencesPageState
     extends State<ButtonOrderPreferencesPage> {
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     final List<TransactionType> transactionButtonOrder = getButtonOrder();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("preferences.transactionButtonOrder".t(context)),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              SizedBox(
-                height: 300.0,
-                child: ReorderableListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => ListTile(
-                    key: ValueKey(transactionButtonOrder[index].value),
-                    leading: Container(
-                      width: 40.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: transactionButtonOrder[index]
-                            .actionBackgroundColor(context),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: transactionButtonOrder
+                    .map(
+                      (transactionType) => Container(
+                        margin: EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: transactionButtonOrder
+                                        .indexOf(transactionType) !=
+                                    1
+                                ? 72.0
+                                : 0.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(widget.radius),
+                        ),
+                        clipBehavior: Clip.none,
+                        child: DottedBorder(
+                          color: Theme.of(context).dividerColor.withAlpha(0x80),
+                          strokeWidth: 4.0,
+                          radius: widget.radius,
+                          strokeCap: StrokeCap.round,
+                          borderType: BorderType.RRect,
+                          dashPattern: const [
+                            6.0,
+                            10.0,
+                          ],
+                          child: DragTarget<TransactionType>(
+                            onWillAcceptWithDetails: (details) =>
+                                details.data != transactionType,
+                            onAcceptWithDetails: (details) => swap(
+                                transactionButtonOrder,
+                                details.data,
+                                transactionType),
+                            builder: (context, candidateData, rejectedData) {
+                              final List<TransactionType> candidates =
+                                  candidateData.nonNulls.toList();
+
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Draggable<TransactionType>(
+                                  data: transactionType,
+                                  childWhenDragging: TransactionTypeButton(
+                                    type: transactionType,
+                                    opacity: 0.25,
+                                  ),
+                                  feedback: TransactionTypeButton(
+                                    type: transactionType,
+                                  ),
+                                  child: TransactionTypeButton(
+                                    type: transactionType,
+                                    opacity: candidates.isNotEmpty ? 0.5 : 1.0,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        transactionButtonOrder[index].icon,
-                        color:
-                            transactionButtonOrder[index].actionColor(context),
-                      ),
-                    ),
-                    title: Text(
-                      transactionButtonOrder[index].localizedTextKey.t(context),
-                    ),
-                  ),
-                  itemCount: transactionButtonOrder.length,
-                  onReorder: (oldIndex, newIndex) =>
-                      onReorder(transactionButtonOrder, oldIndex, newIndex),
-                ),
+                    )
+                    .toList(),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void swap(
+    List<TransactionType> order,
+    TransactionType a,
+    TransactionType b,
+  ) async {
+    if (busy) return;
+
+    setState(() {
+      busy = true;
+    });
+
+    try {
+      final int indexA = order.indexOf(a);
+      final int indexB = order.indexOf(b);
+
+      order[indexA] = b;
+      order[indexB] = a;
+
+      await LocalPreferences().transactionButtonOrder.set(order);
+    } catch (e) {
+      log("An error was occured while swapping transaction button order: $e");
+    } finally {
+      busy = false;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   void onReorder(
