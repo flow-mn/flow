@@ -1,5 +1,6 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
+import 'package:flow/routes/account/account_edit_page.dart';
 import 'package:flow/routes/account_page.dart';
 import 'package:flow/routes/categories_page.dart';
 import 'package:flow/routes/category/category_edit_page.dart';
@@ -11,6 +12,7 @@ import 'package:flow/routes/export_page.dart';
 import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/import_page.dart';
 import 'package:flow/routes/import_wizard/v1.dart';
+import 'package:flow/routes/preferences/button_order_preferences_page.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/preferences/transfer_preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
@@ -29,9 +31,9 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/info_text.dart';
-import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 final router = GoRouter(
   errorBuilder: (context, state) => ErrorPage(error: state.error?.toString()),
@@ -78,14 +80,23 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/account/new',
-      builder: (context, state) => const AccountPage.create(),
+      builder: (context, state) => const AccountEditPage.create(),
     ),
     GoRoute(
         path: '/account/:id',
-        builder: (context, state) => AccountPage.edit(
+        builder: (context, state) => AccountPage(
               accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+              initialRange: TimeRange.tryParse(
+                state.uri.queryParameters["range"] ?? "",
+              ),
             ),
         routes: [
+          GoRoute(
+            path: 'edit',
+            builder: (context, state) => AccountEditPage(
+              accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+            ),
+          ),
           GoRoute(
             path: 'transactions',
             builder: (context, state) => TransactionsPage.account(
@@ -102,7 +113,7 @@ final router = GoRouter(
       path: '/category/:id',
       builder: (context, state) => CategoryPage(
         categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
-        initialRange: TimeRangeSerializer.tryParse(
+        initialRange: TimeRange.tryParse(
           state.uri.queryParameters["range"] ?? "",
         ),
       ),
@@ -130,6 +141,10 @@ final router = GoRouter(
         GoRoute(
           path: 'transfer',
           builder: (context, state) => const TransferPreferencesPage(),
+        ),
+        GoRoute(
+          path: 'transactionButtonOrder',
+          builder: (context, state) => const ButtonOrderPreferencesPage(),
         ),
       ],
     ),

@@ -52,7 +52,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 title: Text("preferences.language".t(context)),
                 leading: const Icon(Symbols.language_rounded),
                 onTap: () => updateLanguage(),
-                subtitle: Text(FlowLocalizations.of(context).locale.name),
+                subtitle: Text(FlowLocalizations.of(context).locale.endonym),
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
@@ -77,6 +77,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 title: Text("preferences.transfer".t(context)),
                 leading: const Icon(Symbols.sync_alt_rounded),
                 onTap: openTransferPrefs,
+                subtitle: Text(
+                  "preferences.transfer.description".t(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
+              ListTile(
+                title: Text("preferences.transactionButtonOrder".t(context)),
+                leading: const Icon(Symbols.action_key_rounded),
+                onTap: openTransactionButtonOrderPrefs,
                 subtitle: Text(
                   "preferences.transfer.description".t(context),
                   maxLines: 1,
@@ -179,5 +190,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransferPrefs() async {
     await context.push("/preferences/transfer");
+  }
+
+  void openTransactionButtonOrderPrefs() async {
+    await context.push("/preferences/transactionButtonOrder");
   }
 }

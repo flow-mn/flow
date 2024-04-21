@@ -129,6 +129,8 @@
     "preferences.numpad.layout.modern": "Moderno",
     "preferences.numpad.haptics": "Feedback dei tasti",
     "preferences.numpad.haptics.description": "Feedback sonoro/tattile alla pressione",
+    "preferences.transactionButtonOrder": "Posizione pulsanti",
+    "preferences.transactionButtonOrder.description": "Modifica la posizione del pulsante per le nuove transazioni",
     "preferences.transfer": "Trasferimenti",
     "preferences.transfer.description": "Combina in uno, escludi da spese/entrate",
     "preferences.transfer.combineTransferTransaction": "Layout",

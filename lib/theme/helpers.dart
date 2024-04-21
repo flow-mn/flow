@@ -1,6 +1,7 @@
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/theme/flow_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 extension ThemeAccessor on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
@@ -15,10 +16,33 @@ extension TextStyleHelper on TextStyle {
       copyWith(color: context.flowColors.semi);
 }
 
-extension TransactionTypeColor on TransactionType {
+extension TransactionTypeWidgetData on TransactionType {
+  IconData get icon {
+    switch (this) {
+      case TransactionType.income:
+        return Symbols.stat_2_rounded;
+      case TransactionType.expense:
+        return Symbols.stat_minus_2_rounded;
+      case TransactionType.transfer:
+        return Symbols.compare_arrows_rounded;
+    }
+  }
+
   Color color(BuildContext context) => switch (this) {
         TransactionType.income => context.flowColors.income,
         TransactionType.expense => context.flowColors.expense,
         TransactionType.transfer => context.colorScheme.onBackground,
+      };
+
+  Color actionColor(BuildContext context) => switch (this) {
+        TransactionType.income => context.colorScheme.onError,
+        TransactionType.expense => context.colorScheme.onError,
+        TransactionType.transfer => context.colorScheme.onSecondary,
+      };
+
+  Color actionBackgroundColor(BuildContext context) => switch (this) {
+        TransactionType.income => context.flowColors.income,
+        TransactionType.expense => context.flowColors.expense,
+        TransactionType.transfer => context.colorScheme.secondary,
       };
 }

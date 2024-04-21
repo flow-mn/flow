@@ -16,9 +16,10 @@ class FlowCard extends StatelessWidget {
     return Surface(builder: (context) {
       return Container(
         constraints: BoxConstraints(
-          minHeight: context.textTheme.displaySmall!.height! *
-                  context.textTheme.displaySmall!.fontSize! +
-              24.0,
+          minHeight: MediaQuery.of(context).textScaler.scale(
+              context.textTheme.displaySmall!.height! *
+                      context.textTheme.displaySmall!.fontSize! +
+                  24.0),
         ),
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),

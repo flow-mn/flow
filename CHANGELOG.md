@@ -1,8 +1,13 @@
+## Next
+
+* Uses serializer from [`moment_dart`](https://github.com/sadespresso/moment_dart)
+
 ## Beta 0.5.0
 
 * Added calculator by @sadespresso in <https://github.com/flow-mn/flow/pull/147>
 * Uses correct control modifier - `Meta` for macOS and iOS, `Control` for others
 * Comma separator is now displayed correctly when inputting amount
+* Minor UX tweaks
 
 ## Beta 0.4.3
 

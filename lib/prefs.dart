@@ -23,6 +23,7 @@ class LocalPreferences {
   late final BoolSettingsEntry enableNumpadHapticFeedback;
   late final BoolSettingsEntry combineTransferTransactions;
   late final BoolSettingsEntry excludeTransferFromFlow;
+  late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
 
@@ -58,6 +59,15 @@ class LocalPreferences {
       key: "flow.excludeTransferFromFlow",
       preferences: _prefs,
       initialValue: false,
+    );
+    transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
+      key: "flow.transactionButtonOrder",
+      preferences: _prefs,
+      removeDuplicates: true,
+      initialValue: TransactionType.values,
+      fromJson: (json) =>
+          TransactionType.fromJson(json) ?? TransactionType.expense,
+      toJson: (transactionType) => transactionType.toJson(),
     );
 
     completedInitialSetup = BoolSettingsEntry(
