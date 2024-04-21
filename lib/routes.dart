@@ -29,9 +29,9 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/info_text.dart';
-import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 final router = GoRouter(
   errorBuilder: (context, state) => ErrorPage(error: state.error?.toString()),
@@ -102,7 +102,7 @@ final router = GoRouter(
       path: '/category/:id',
       builder: (context, state) => CategoryPage(
         categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
-        initialRange: TimeRangeSerializer.tryParse(
+        initialRange: TimeRange.tryParse(
           state.uri.queryParameters["range"] ?? "",
         ),
       ),

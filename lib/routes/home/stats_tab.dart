@@ -80,7 +80,7 @@ class _StatsTabState extends State<StatsTab> {
 
                           if (associatedData is Category) {
                             context.push(
-                                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.serialize())}");
+                                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.toString())}");
                           }
                         },
                       ),
