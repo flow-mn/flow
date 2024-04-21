@@ -52,7 +52,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 title: Text("preferences.language".t(context)),
                 leading: const Icon(Symbols.language_rounded),
                 onTap: () => updateLanguage(),
-                subtitle: Text(FlowLocalizations.of(context).locale.name),
+                subtitle: Text(FlowLocalizations.of(context).locale.endonym),
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
               ListTile(
