@@ -131,6 +131,7 @@
     "preferences.numpad.haptics.description": "Дарах үед дуу/чичиргээ тоглуулна",
     "preferences.transactionButtonOrder": "Товчны байрлал",
     "preferences.transactionButtonOrder.description": "Шинэ гүйлгээ хийх товчны байрлал өөрчлөх",
+    "preferences.transactionButtonOrder.guide": "Чирж байрлалыг өөрчлөөрэй",
     "preferences.transfer": "Шижлүүлэг",
     "preferences.transfer.description": "Нэгтгэж харах, орлого/зарлагаас хасах",
     "preferences.transfer.combineTransferTransaction": "Харагдах байдал",

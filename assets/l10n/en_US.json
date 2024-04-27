@@ -131,6 +131,7 @@
     "preferences.numpad.haptics.description": "Sound/haptic feedback upon click",
     "preferences.transactionButtonOrder": "Button placement",
     "preferences.transactionButtonOrder.description": "Change new transaction button placement",
+    "preferences.transactionButtonOrder.guide": "Drag the buttons to reorder",
     "preferences.transfer": "Transfers",
     "preferences.transfer.description": "Combine into one, exclude from expense/income",
     "preferences.transfer.combineTransferTransaction": "Layout",

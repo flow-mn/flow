@@ -89,7 +89,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 leading: const Icon(Symbols.action_key_rounded),
                 onTap: openTransactionButtonOrderPrefs,
                 subtitle: Text(
-                  "preferences.transfer.description".t(context),
+                  "preferences.transactionButtonOrder.description".t(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
