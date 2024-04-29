@@ -488,6 +488,8 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectTransactionDate() async {
+    final TimeOfDay currentTimeOfDay = TimeOfDay.fromDateTime(_transactionDate);
+
     final DateTime? result = await showDatePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
@@ -503,7 +505,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     final TimeOfDay? timeResult = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_transactionDate),
+      initialTime: currentTimeOfDay,
     );
 
     if (timeResult == null) return;

@@ -5,6 +5,7 @@ import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/button_order_preferences/transaction_type_button.dart';
+import 'package:flow/widgets/general/info_text.dart';
 import 'package:flutter/material.dart';
 
 class ButtonOrderPreferencesPage extends StatefulWidget {
@@ -34,9 +35,16 @@ class ButtonOrderPreferencesPageState
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16.0),
+              InfoText(
+                child: Text(
+                  "preferences.transactionButtonOrder.guide".t(context),
+                ),
+              ),
               const SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

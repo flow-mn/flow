@@ -42,6 +42,7 @@ Future<ExportStatus> export({
     isShareSupported,
     fileExt: mode.fileExt,
     subfolder: subfolder,
+    type: type,
   );
 
   // Try to add backup record
@@ -69,13 +70,20 @@ Future<String> saveBackupFile(
   String backupContent,
   bool isShareSupported, {
   required String fileExt,
+  required BackupEntryType type,
   String? subfolder,
 }) async {
   // Save to cache if it's possible to share later.
   // Otherwise, save to documents directory, and reveal the file on system.
-  final Directory saveDir = isShareSupported
-      ? await getApplicationCacheDirectory()
-      : await getApplicationDocumentsDirectory();
+
+  final Directory saveDir = switch (type) {
+    BackupEntryType.automated ||
+    BackupEntryType.preAccountDeletion ||
+    BackupEntryType.preImport =>
+      Directory(ObjectBox.appDataDirectory),
+    _ when isShareSupported => await getApplicationCacheDirectory(),
+    _ => await getApplicationDocumentsDirectory()
+  };
 
   final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
   final String randomValue = math.Random().nextInt(536870912).toRadixString(36);

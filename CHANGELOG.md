@@ -1,6 +1,11 @@
 ## Next
 
+* Fixed transaction page date selector's time was always set to **zero** (12AM)
+* Now uses [pie_menu](https://pub.dev/packages/pie_menu) from pub.dev since
+fork's additional features have are in the new release
 * Uses serializer from [`moment_dart`](https://github.com/sadespresso/moment_dart)
+* Saves automated backups in app data, fixes [#131](https://github.com/flow-mn/flow/issues/131) for now
+* Minor improvements
 
 ## Beta 0.5.0
 
