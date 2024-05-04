@@ -1,11 +1,17 @@
-## Next
+## Beta 0.5.2
 
 * Fixed transaction page date selector's time was always set to **zero** (12AM)
 * Now uses [pie_menu](https://pub.dev/packages/pie_menu) from pub.dev since
 fork's additional features have are in the new release
 * Uses serializer from [`moment_dart`](https://github.com/sadespresso/moment_dart)
-* Saves automated backups in app data, fixes [#131](https://github.com/flow-mn/flow/issues/131) for now
+* Saves all backups in app data, fixes [#131](https://github.com/flow-mn/flow/issues/131)
+* Backups are now deletable
 * Minor improvements
+
+## Beta 0.5.1
+
+* [FEAT] Customize order of new transaction buttons by @sadespresso in https://github.com/flow-mn/flow/pull/148
+* Reform account edit page by @sadespresso in https://github.com/flow-mn/flow/pull/149
 
 ## Beta 0.5.0
 

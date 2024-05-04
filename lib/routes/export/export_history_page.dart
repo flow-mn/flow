@@ -36,9 +36,10 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
             return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
               (0, true) => const Text("empty"),
               (_, true) => ListView.separated(
-                  padding: const EdgeInsets.all(16.0),
-                  itemBuilder: (context, index) =>
-                      BackupEntryCard(entry: backupEntires[index]),
+                  itemBuilder: (context, index) => BackupEntryCard(
+                    entry: backupEntires[index],
+                    dismissibleKey: ValueKey(backupEntires[index].id),
+                  ),
                   separatorBuilder: (context, index) => separator,
                   itemCount: backupEntires!.length,
                 ),
