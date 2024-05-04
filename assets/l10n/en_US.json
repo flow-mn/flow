@@ -287,5 +287,6 @@
     "error.sync.invalidBackupFile": "Invalid backup file",
     "error.sync.safetyBackupFailed": "Unable to start import",
     "error.sync.exportFailed": "Unable to export, please contact developer.",
+    "error.sync.fileDeleteFailed": "An error occured during backup deletion",
     "error.transaction.missingAccount": "Please select an account"
 }

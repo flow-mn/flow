@@ -287,5 +287,6 @@
     "error.sync.invalidBackupFile": "File di backup non valido",
     "error.sync.safetyBackupFailed": "Impossibile avviare l'importazione",
     "error.sync.exportFailed": "Impossibile esportare, si prega di contattare lo sviluppatore.",
+    "error.sync.fileDeleteFailed": "Impossibile eliminare il file",
     "error.transaction.missingAccount": "Selezionare un account"
 }

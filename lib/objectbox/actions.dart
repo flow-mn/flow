@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
@@ -6,6 +7,7 @@ import 'package:flow/data/memo.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/entity/account.dart';
+import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/entity/transaction/extensions/base.dart';
@@ -549,5 +551,21 @@ extension AccountActions on Account {
     }
 
     return id;
+  }
+}
+
+extension BackupEntryActions on BackupEntry {
+  Future<bool> delete() async {
+    try {
+      final File file = File(filePath);
+
+      if (await file.exists()) {
+        await file.delete();
+      }
+
+      return ObjectBox().box<BackupEntry>().remove(id);
+    } catch (e) {
+      return false;
+    }
   }
 }

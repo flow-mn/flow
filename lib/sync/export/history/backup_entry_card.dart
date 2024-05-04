@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/l10n/named_enum.dart';
+import 'package:flow/objectbox/actions.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
+import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:share_plus/share_plus.dart';
@@ -16,21 +18,29 @@ class BackupEntryCard extends StatelessWidget {
   final BackupEntry entry;
 
   final BorderRadius borderRadius;
+  final EdgeInsets padding;
+
+  final Key? dismissibleKey;
 
   const BackupEntryCard({
     super.key,
     required this.entry,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: 16.0,
+      vertical: 4.0,
+    ),
+    this.dismissibleKey,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool fileExists = entry.existsSync();
+    final int? fileSize = entry.getFileSizeSync();
 
-    return Surface(
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      builder: (context) => InkWell(
-        borderRadius: borderRadius,
+    final Widget listTile = InkWell(
+      borderRadius: borderRadius,
+      child: Padding(
+        padding: padding,
         child: Row(
           children: [
             FlowIcon(
@@ -48,9 +58,14 @@ class BackupEntryCard extends StatelessWidget {
                     entry.backupEntryType.localizedNameContext(context),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                    style: context.textTheme.labelLarge,
                   ),
                   Text(
-                    "${entry.fileExt} • ${entry.createdDate.toMoment().calendar()}",
+                    [
+                      entry.createdDate.toMoment().calendar(),
+                      entry.fileExt,
+                      fileSize?.binarySize
+                    ].nonNulls.join(" • "),
                     style: context.textTheme.bodyMedium?.semi(context),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -60,8 +75,8 @@ class BackupEntryCard extends StatelessWidget {
             ),
             const SizedBox(width: 8.0),
             IconButton(
-              onPressed: () => showShareSheet(context, fileExists),
-              icon: fileExists
+              onPressed: () => showShareSheet(context, fileSize != null),
+              icon: fileSize != null
                   ? const Icon(Symbols.save_alt_rounded)
                   : Icon(
                       Symbols.error_circle_rounded_error,
@@ -72,6 +87,21 @@ class BackupEntryCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+
+    return Slidable(
+      key: dismissibleKey,
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (context) => delete(context),
+            icon: Symbols.delete_forever_rounded,
+            backgroundColor: context.flowColors.expense,
+          )
+        ],
+      ),
+      child: listTile,
     );
   }
 
@@ -98,5 +128,24 @@ class BackupEntryCard extends StatelessWidget {
           "type": entry.fileExt,
           "date": entry.createdDate.toMoment().lll,
         }));
+  }
+
+  Future<void> delete(BuildContext context) async {
+    final String title = entry.backupEntryType.localizedNameContext(context);
+
+    final confirmation = await context.showConfirmDialog(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, title),
+    );
+
+    if (confirmation == true) {
+      final bool deleted = await entry.delete();
+
+      if (!context.mounted) return;
+
+      if (!deleted) {
+        context.showErrorToast(error: "error.sync.fileDeleteFailed".t(context));
+      }
+    }
   }
 }
