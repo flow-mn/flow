@@ -140,6 +140,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
     if (Platform.isIOS) {
       LocalPreferences().localeOverride.remove().catchError((e) {
         log("[PreferencesPage] failed to remove locale override: $e");
+        return false;
       });
       try {
         AppSettings.openAppSettings(type: AppSettingsType.appLocale);
