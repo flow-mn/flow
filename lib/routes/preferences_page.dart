@@ -1,3 +1,7 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:app_settings/app_settings.dart';
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
@@ -133,6 +137,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
   }
 
   void updateLanguage() async {
+    if (Platform.isIOS) {
+      LocalPreferences().localeOverride.remove().catchError((e) {
+        log("[PreferencesPage] failed to remove locale override: $e");
+        return false;
+      });
+      try {
+        AppSettings.openAppSettings(type: AppSettingsType.appLocale);
+        return;
+      } catch (e) {
+        log("[PreferencesPage] failed to open system app settings on iOS: $e");
+      }
+    }
+
     if (_languageBusy) return;
 
     setState(() {
