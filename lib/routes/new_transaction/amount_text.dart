@@ -42,8 +42,8 @@ class _AmountTextState extends State<AmountText>
 
   late Animation<double> _amountTextScaleAnimation;
 
-  double get currentAmount => widget.value.currentAmount;
-  int get _decimalPart => widget.value.decimalPart;
+  InputValue get currentValue => widget.value;
+
   bool get _inputtingDecimal => widget.inputtingDecimal;
 
   @override
@@ -109,18 +109,16 @@ class _AmountTextState extends State<AmountText>
   }
 
   String amountText() {
-    final int currentDecimalDigits = _decimalPart == 0
-        ? 0
-        : math.min(
-            _decimalPart.abs().toString().length, widget.numberOfDecimals);
+    print("currentValue.currentAmount -> ${currentValue.currentAmount}");
 
-    final String formatted = currentAmount.formatMoney(
-      decimalDigits: math.max(currentDecimalDigits, _inputtingDecimal ? 1 : 0),
+    final String formatted = currentValue.currentAmount.formatMoney(
+      decimalDigits:
+          math.max(currentValue.decimalLength, _inputtingDecimal ? 1 : 0),
       includeCurrency: !widget.hideCurrencySymbol,
       currency: widget.currency,
     );
 
-    if (currentDecimalDigits == 0) {
+    if (currentValue.decimalLength == 0) {
       final String decimalSeparator =
           getDecimalSeparatorForCurrency(widget.currency);
 

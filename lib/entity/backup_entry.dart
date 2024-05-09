@@ -44,6 +44,14 @@ class BackupEntry {
 
   Future<bool> exists() => File(filePath).exists();
   bool existsSync() => File(filePath).existsSync();
+  Future<int> getFileSize() => File(filePath).length();
+  int? getFileSizeSync() {
+    try {
+      return File(filePath).lengthSync();
+    } catch (e) {
+      return null;
+    }
+  }
 
   BackupEntry({
     this.id = 0,

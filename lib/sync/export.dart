@@ -9,7 +9,6 @@ import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/sync.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:moment_dart/moment_dart.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
@@ -76,14 +75,8 @@ Future<String> saveBackupFile(
   // Save to cache if it's possible to share later.
   // Otherwise, save to documents directory, and reveal the file on system.
 
-  final Directory saveDir = switch (type) {
-    BackupEntryType.automated ||
-    BackupEntryType.preAccountDeletion ||
-    BackupEntryType.preImport =>
-      Directory(ObjectBox.appDataDirectory),
-    _ when isShareSupported => await getApplicationCacheDirectory(),
-    _ => await getApplicationDocumentsDirectory()
-  };
+  final Directory saveDir =
+      Directory(path.join(ObjectBox.appDataDirectory, 'backups'));
 
   final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
   final String randomValue = math.Random().nextInt(536870912).toRadixString(36);

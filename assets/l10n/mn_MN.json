@@ -287,5 +287,6 @@
     "error.sync.invalidBackupFile": "Нөөц файл алдаатай байна",
     "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
     "error.sync.exportFailed": "Нөөцлөх явцад алдаа гарлаа, хөгжүүлэгчид хандана уу.",
+    "error.sync.fileDeleteFailed": "Нөөц устгах үед алдаа гарлаа",
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"
 }

@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/new_transaction/amount_text.dart';
@@ -224,11 +222,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       ),
       NumpadButton(
         child: const Icon(Symbols.percent_rounded),
-        onTap: () {
-          setCalculatorOperation(CalculatorOperation.divide);
-          value = InputValue.fromDouble(100.0);
-          evaluateCalculation();
-        },
+        onTap: () => _evaluatePercent(),
       ),
       CalculatorButton(
         operation: CalculatorOperation.divide,
@@ -295,7 +289,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
 
     if (_inputtingDecimal) {
-      if (value.decimalLength < _numberOfDecimals) {
+      final bool hasAvailableDigits = value.decimalLength < _numberOfDecimals;
+
+      final bool canAppendZero = (n == 0 && value.decimalPart == 0)
+          ? (value.decimalLength + 1 < _numberOfDecimals)
+          : true;
+
+      if (hasAvailableDigits && canAppendZero) {
         value = value.appendDecimal(n);
       }
     } else {
@@ -367,12 +367,12 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         clipboardData.text == null ||
         clipboardData.text!.trim().isEmpty) return;
 
-    final parsed =
-        num.tryParse(clipboardData.text!.replaceAll(RegExp(r"[^\d.]"), ""));
+    final parsed = num.tryParse(clipboardData.text!);
 
     if (parsed == null) return;
 
     _updateAmountFromNumber(parsed);
+
     _resetOnNextInput = true;
     setState(() {});
   }
@@ -391,17 +391,11 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _updateAmountFromNumber(num initialAmount) {
-    initialAmount = initialAmount.toDouble();
-    final int wholePart = initialAmount.abs().truncate();
-    final int decimalPart = ((initialAmount - initialAmount.truncate()).abs() *
-            math.pow(10, _numberOfDecimals))
-        .round();
-    _inputtingDecimal = decimalPart.abs() != 0;
-    final bool isNegative =
-        widget.allowNegative ? (widget.initialAmount ?? 1.0).isNegative : false;
+    value = InputValue.fromDouble(initialAmount.toDouble(),
+            maxNumberOfDecimals: _numberOfDecimals)
+        .signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
 
-    value = InputValue(
-        wholePart: wholePart, decimalPart: decimalPart, isNegative: isNegative);
+    _inputtingDecimal = value.decimalLength > 0;
   }
 
   void calculatorMode() {
@@ -413,12 +407,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   void setCalculatorOperation(CalculatorOperation op) {
     if (!_calculatorMode) return;
 
-    if (_currentOperation == null) {
-      _operationCache = value;
-      value = InputValue.zero;
-      _inputtingDecimal = false;
+    if (_currentOperation != null) {
+      evaluateCalculation();
     }
 
+    _operationCache = value;
+    value = InputValue.zero;
+    _inputtingDecimal = false; // value.decimalLength > 0
     _currentOperation = op;
 
     setState(() {});
@@ -453,6 +448,23 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     setState(() {});
   }
 
+  void _evaluatePercent() {
+    if (_operationCache == null) {
+      setCalculatorOperation(CalculatorOperation.divide);
+      value = InputValue.fromDouble(100.0);
+      evaluateCalculation();
+      return;
+    }
+
+    value = switch (_currentOperation) {
+      CalculatorOperation.add ||
+      CalculatorOperation.subtract =>
+        _operationCache! * InputValue.fromDouble(value.currentAmount * 0.01),
+      _ => InputValue.fromDouble(value.currentAmount * 0.01)
+    };
+    setState(() {});
+  }
+
   void _shortcutMinusKey() {
     if (_calculatorMode) {
       setCalculatorOperation(CalculatorOperation.subtract);
@@ -481,11 +493,18 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
   }
 
+  void _shortcutPercentKey() {
+    if (_calculatorMode) {
+      _evaluatePercent();
+    }
+  }
+
   Map<ShortcutActivator, VoidCallback> get bindings => {
         const CharacterActivator('/'): () => _shortcutDivideKey(),
         const CharacterActivator('*'): () => _shortcutMultiplyKey(),
         const CharacterActivator('+'): () => _shortcutPlusKey(),
         const CharacterActivator('-'): () => _shortcutMinusKey(),
+        const CharacterActivator('%'): () => _shortcutPercentKey(),
         const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
