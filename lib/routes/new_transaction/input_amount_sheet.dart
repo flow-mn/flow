@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/new_transaction/amount_text.dart';
@@ -367,12 +365,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         clipboardData.text == null ||
         clipboardData.text!.trim().isEmpty) return;
 
-    final parsed =
-        num.tryParse(clipboardData.text!.replaceAll(RegExp(r"[^\d.]"), ""));
+    final parsed = num.tryParse(clipboardData.text!);
 
     if (parsed == null) return;
 
     _updateAmountFromNumber(parsed);
+
+    if (value.decimalLength > 0) {
+      _inputtingDecimal = true;
+    }
+
     _resetOnNextInput = true;
     setState(() {});
   }
@@ -391,17 +393,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _updateAmountFromNumber(num initialAmount) {
-    initialAmount = initialAmount.toDouble();
-    final int wholePart = initialAmount.abs().truncate();
-    final int decimalPart = ((initialAmount - initialAmount.truncate()).abs() *
-            math.pow(10, _numberOfDecimals))
-        .round();
-    _inputtingDecimal = decimalPart.abs() != 0;
-    final bool isNegative =
-        widget.allowNegative ? (widget.initialAmount ?? 1.0).isNegative : false;
-
-    value = InputValue(
-        wholePart: wholePart, decimalPart: decimalPart, isNegative: isNegative);
+    value = InputValue.fromDouble(initialAmount.toDouble())
+        .signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
   }
 
   void calculatorMode() {
