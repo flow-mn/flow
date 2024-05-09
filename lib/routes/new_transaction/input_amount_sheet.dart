@@ -222,11 +222,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       ),
       NumpadButton(
         child: const Icon(Symbols.percent_rounded),
-        onTap: () {
-          setCalculatorOperation(CalculatorOperation.divide);
-          value = InputValue.fromDouble(100.0);
-          evaluateCalculation();
-        },
+        onTap: () => _evaluatePercent(),
       ),
       CalculatorButton(
         operation: CalculatorOperation.divide,
@@ -411,12 +407,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   void setCalculatorOperation(CalculatorOperation op) {
     if (!_calculatorMode) return;
 
-    if (_currentOperation == null) {
-      _operationCache = value;
-      value = InputValue.zero;
-      _inputtingDecimal = false;
+    if (_currentOperation != null) {
+      evaluateCalculation();
     }
 
+    _operationCache = value;
+    value = InputValue.zero;
+    _inputtingDecimal = false; // value.decimalLength > 0
     _currentOperation = op;
 
     setState(() {});
@@ -451,6 +448,23 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     setState(() {});
   }
 
+  void _evaluatePercent() {
+    if (_operationCache == null) {
+      setCalculatorOperation(CalculatorOperation.divide);
+      value = InputValue.fromDouble(100.0);
+      evaluateCalculation();
+      return;
+    }
+
+    value = switch (_currentOperation) {
+      CalculatorOperation.add ||
+      CalculatorOperation.subtract =>
+        _operationCache! * InputValue.fromDouble(value.currentAmount * 0.01),
+      _ => InputValue.fromDouble(value.currentAmount * 0.01)
+    };
+    setState(() {});
+  }
+
   void _shortcutMinusKey() {
     if (_calculatorMode) {
       setCalculatorOperation(CalculatorOperation.subtract);
@@ -479,11 +493,18 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
   }
 
+  void _shortcutPercentKey() {
+    if (_calculatorMode) {
+      _evaluatePercent();
+    }
+  }
+
   Map<ShortcutActivator, VoidCallback> get bindings => {
         const CharacterActivator('/'): () => _shortcutDivideKey(),
         const CharacterActivator('*'): () => _shortcutMultiplyKey(),
         const CharacterActivator('+'): () => _shortcutPlusKey(),
         const CharacterActivator('-'): () => _shortcutMinusKey(),
+        const CharacterActivator('%'): () => _shortcutPercentKey(),
         const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
