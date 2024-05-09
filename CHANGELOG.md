@@ -1,3 +1,9 @@
+## Beta 0.5.3
+
+* Fixed entering decimal amount with leading '0' decimal was impossible. (e.g., `1.02` was impossible to input)
+* Calculator percent button now adds/subtracts percent of initial value when adding/subtracting
+* [iOS only] Now uses iOS system language settings for app language
+
 ## Beta 0.5.2
 
 * Fixed transaction page date selector's time was always set to **zero** (12AM)
