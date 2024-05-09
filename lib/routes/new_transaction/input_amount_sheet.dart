@@ -293,7 +293,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
 
     if (_inputtingDecimal) {
-      if (value.decimalLength < _numberOfDecimals) {
+      final bool hasAvailableDigits = value.decimalLength < _numberOfDecimals;
+
+      final bool canAppendZero = (n == 0 && value.decimalPart == 0)
+          ? (value.decimalLength + 1 < _numberOfDecimals)
+          : true;
+
+      if (hasAvailableDigits && canAppendZero) {
         value = value.appendDecimal(n);
       }
     } else {
@@ -371,10 +377,6 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     _updateAmountFromNumber(parsed);
 
-    if (value.decimalLength > 0) {
-      _inputtingDecimal = true;
-    }
-
     _resetOnNextInput = true;
     setState(() {});
   }
@@ -393,8 +395,11 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _updateAmountFromNumber(num initialAmount) {
-    value = InputValue.fromDouble(initialAmount.toDouble())
+    value = InputValue.fromDouble(initialAmount.toDouble(),
+            maxNumberOfDecimals: _numberOfDecimals)
         .signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
+
+    _inputtingDecimal = value.decimalLength > 0;
   }
 
   void calculatorMode() {
