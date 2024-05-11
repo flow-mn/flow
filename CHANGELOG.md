@@ -1,3 +1,9 @@
+## (Next) Beta
+
+* Selecting icons should be slightly better
+* Now icons (Material Symbols and Simple Icons) are searchable (only in English)
+* Improved backup history empty UI
+
 ## Beta 0.5.3
 
 * Fixed entering decimal amount with leading '0' decimal was impossible. (e.g., `1.02` was impossible to input)
