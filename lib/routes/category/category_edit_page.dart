@@ -204,13 +204,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   }
 
   Future<void> selectIcon() async {
-    onChange(FlowIconData? data) => _updateIcon(data);
-
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
       builder: (context) => SelectFlowIconSheet(
         current: _iconData,
-        onChange: onChange,
       ),
       isScrollControlled: true,
     );

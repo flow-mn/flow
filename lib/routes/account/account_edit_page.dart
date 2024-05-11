@@ -405,7 +405,6 @@ class _AccountEditPageState extends State<AccountEditPage> {
       context: context,
       builder: (context) => SelectFlowIconSheet(
         current: _iconData,
-        onChange: (value) => _updateIcon(value),
       ),
       isScrollControlled: true,
     );
