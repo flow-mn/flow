@@ -17,7 +17,7 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flow/widgets/select_icon_sheet.dart';
+import 'package:flow/widgets/select_flow_icon_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -403,7 +403,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
   Future<void> selectIcon() async {
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
-      builder: (context) => SelectIconSheet(
+      builder: (context) => SelectFlowIconSheet(
         current: _iconData,
         onChange: (value) => _updateIcon(value),
       ),

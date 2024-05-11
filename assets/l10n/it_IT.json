@@ -190,6 +190,9 @@
 
     "flowIcon.change": "Cambia icona",
     "flowIcon.type.icon": "Icona",
+    "flowIcon.type.icon.brands": "Marchi e Loghi",
+    "flowIcon.type.icon.symbols": "Icone",
+    "flowIcon.type.icon.search": "Cerca... (Solo inglese)",
     "flowIcon.type.image": "Immagine",
     "flowIcon.type.image.pick": "Scegli un'immagine",
     "flowIcon.type.image.description": "Scegli un'immagine da usare come icona",

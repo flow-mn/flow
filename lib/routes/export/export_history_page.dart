@@ -3,6 +3,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/sync/export/history/backup_entry_card.dart';
+import 'package:flow/widgets/export/export_history/no_backups.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,7 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
             const Widget separator = SizedBox(height: 16.0);
 
             return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
-              (0, true) => const Text("empty"),
+              (0, true) => const NoBackups(),
               (_, true) => ListView.separated(
                   itemBuilder: (context, index) => BackupEntryCard(
                     entry: backupEntires[index],
