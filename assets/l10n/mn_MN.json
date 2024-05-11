@@ -190,6 +190,9 @@
 
     "flowIcon.change": "Дүрс солих",
     "flowIcon.type.icon": "Дүрс",
+    "flowIcon.type.icon.brands": "Брэнд ба логонууд",
+    "flowIcon.type.icon.symbols": "Дүрсүүд",
+    "flowIcon.type.icon.search": "Хайх... (зөвхөн англиар)",
     "flowIcon.type.image": "Зураг",
     "flowIcon.type.image.pick": "Зураг сонгох",
     "flowIcon.type.image.description": "Зураг сонгож дүрс болгон ашиглаарай",
