@@ -190,6 +190,9 @@
 
     "flowIcon.change": "Change icon",
     "flowIcon.type.icon": "Icon",
+    "flowIcon.type.icon.brands": "Brands & Logos",
+    "flowIcon.type.icon.symbols": "Symbols",
+    "flowIcon.type.icon.search": "Search icons...",
     "flowIcon.type.image": "Image",
     "flowIcon.type.image.pick": "Choose an image",
     "flowIcon.type.image.description": "Choose an image to use as an icon",
