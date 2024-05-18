@@ -31,7 +31,7 @@ extension TransactionTypeWidgetData on TransactionType {
   Color color(BuildContext context) => switch (this) {
         TransactionType.income => context.flowColors.income,
         TransactionType.expense => context.flowColors.expense,
-        TransactionType.transfer => context.colorScheme.onBackground,
+        TransactionType.transfer => context.colorScheme.onSurface,
       };
 
   Color actionColor(BuildContext context) => switch (this) {

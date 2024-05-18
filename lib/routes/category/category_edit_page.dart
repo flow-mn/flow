@@ -136,11 +136,11 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   Future<void> update({required String formattedName}) async {
     if (_currentlyEditing == null) return;
 
-    _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.iconCode = iconCodeOrError;
+    _currentlyEditing.name = formattedName;
+    _currentlyEditing.iconCode = iconCodeOrError;
 
     ObjectBox().box<Category>().put(
-          _currentlyEditing!,
+          _currentlyEditing,
           mode: PutMode.update,
         );
 
@@ -224,7 +224,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.category.equals(_currentlyEditing!.id))
+        .query(Transaction_.category.equals(_currentlyEditing.id))
         .build();
 
     final int txnCount = associatedTransactionsQuery.count();
@@ -233,14 +233,14 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+      title: "general.delete.confirmName".t(context, _currentlyEditing.name),
       child: Text(
         "category.delete.warning".t(context, txnCount),
       ),
     );
 
     if (confirmation == true) {
-      ObjectBox().box<Category>().remove(_currentlyEditing!.id);
+      ObjectBox().box<Category>().remove(_currentlyEditing.id);
 
       if (mounted) {
         context.pop();

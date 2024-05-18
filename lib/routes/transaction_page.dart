@@ -155,11 +155,11 @@ class _TransactionPageState extends State<TransactionPage> {
               current: _transactionType,
               onChange: updateTransactionType,
               canEdit: _currentlyEditing == null ||
-                  _currentlyEditing!.isTransfer == false,
+                  _currentlyEditing.isTransfer == false,
             ),
             titleTextStyle: context.textTheme.bodyLarge,
             centerTitle: true,
-            backgroundColor: context.colorScheme.background,
+            backgroundColor: context.colorScheme.surface,
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -333,7 +333,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
                       Text(
-                        "${"transaction.createdDate".t(context)} ${_currentlyEditing!.createdDate.format(payload: "LLL", forceLocal: true)}",
+                        "${"transaction.createdDate".t(context)} ${_currentlyEditing.createdDate.format(payload: "LLL", forceLocal: true)}",
                         style: context.textTheme.bodyMedium?.semi(context),
                       ),
                       const SizedBox(height: 36.0),
@@ -355,7 +355,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void updateTransactionType(TransactionType type) {
     if (type == _transactionType ||
-        (_currentlyEditing != null && _currentlyEditing!.isTransfer)) return;
+        (_currentlyEditing != null && _currentlyEditing.isTransfer)) return;
 
     _transactionType = type;
 
@@ -550,11 +550,11 @@ class _TransactionPageState extends State<TransactionPage> {
           amount: _amount,
           title: formattedTitle,
           targetAccount: _selectedAccountTransferTo!,
-          createdDate: _currentlyEditing!.createdDate,
+          createdDate: _currentlyEditing.createdDate,
           transactionDate: _transactionDate,
         );
 
-        _currentlyEditing!.delete();
+        _currentlyEditing.delete();
         context.pop();
       } catch (e) {
         log("[Transaction Page] Failed to update transfer transaction due to: $e");
@@ -562,14 +562,14 @@ class _TransactionPageState extends State<TransactionPage> {
       return;
     }
 
-    _currentlyEditing!.setCategory(_selectedCategory);
-    _currentlyEditing!.setAccount(_selectedAccount);
-    _currentlyEditing!.title = formattedTitle;
-    _currentlyEditing!.amount = _amount;
-    _currentlyEditing!.transactionDate = _transactionDate;
+    _currentlyEditing.setCategory(_selectedCategory);
+    _currentlyEditing.setAccount(_selectedAccount);
+    _currentlyEditing.title = formattedTitle;
+    _currentlyEditing.amount = _amount;
+    _currentlyEditing.transactionDate = _transactionDate;
 
     ObjectBox().box<Transaction>().put(
-          _currentlyEditing!,
+          _currentlyEditing,
           mode: PutMode.update,
         );
 
@@ -607,8 +607,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool hasChanged() {
     if (_currentlyEditing != null) {
-      return _currentlyEditing!.amount != _amount ||
-          (_currentlyEditing!.title ?? "") != _titleController.text;
+      return _currentlyEditing.amount != _amount ||
+          (_currentlyEditing.title ?? "") != _titleController.text;
     }
 
     return _amount != 0 || _titleController.text.isNotEmpty;
@@ -628,7 +628,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (_currentlyEditing == null) return;
 
     final String txnTitle =
-        _currentlyEditing!.title ?? "transaction.fallbackTitle".t(context);
+        _currentlyEditing.title ?? "transaction.fallbackTitle".t(context);
 
     final confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
@@ -636,7 +636,7 @@ class _TransactionPageState extends State<TransactionPage> {
     );
 
     if (confirmation == true) {
-      _currentlyEditing!.delete();
+      _currentlyEditing.delete();
 
       if (mounted) {
         pop();

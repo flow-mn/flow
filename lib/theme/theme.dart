@@ -47,7 +47,7 @@ final lightTheme = ThemeData(
     ),
   ],
   iconTheme: IconThemeData(
-    color: _light.onBackground,
+    color: _light.onSurface,
     size: 24.0,
     fill: 1.0,
   ),
@@ -60,13 +60,13 @@ final lightTheme = ThemeData(
       .apply(
         fontFamily: _fontFamily,
         fontFamilyFallback: _fontFamilyFallback,
-        bodyColor: _light.onBackground,
+        bodyColor: _light.onSurface,
         displayColor: _light.onSurface,
-        decorationColor: _light.onBackground,
+        decorationColor: _light.onSurface,
       )
       .copyWith(),
-  highlightColor: _light.onBackground.withAlpha(0x16),
-  splashColor: _light.onBackground.withAlpha(0x12),
+  highlightColor: _light.onSurface.withAlpha(0x16),
+  splashColor: _light.onSurface.withAlpha(0x12),
   listTileTheme: ListTileThemeData(
     iconColor: _light.primary,
     selectedTileColor: _light.secondary,
@@ -103,7 +103,7 @@ final darkTheme = ThemeData(
     ),
   ],
   iconTheme: IconThemeData(
-    color: _dark.onBackground,
+    color: _dark.onSurface,
     size: 24.0,
     fill: 1.0,
   ),
@@ -116,13 +116,13 @@ final darkTheme = ThemeData(
       .apply(
         fontFamily: _fontFamily,
         fontFamilyFallback: _fontFamilyFallback,
-        bodyColor: _dark.onBackground,
+        bodyColor: _dark.onSurface,
         displayColor: _dark.onSurface,
-        decorationColor: _dark.onBackground,
+        decorationColor: _dark.onSurface,
       )
       .copyWith(),
-  highlightColor: _dark.onBackground.withAlpha(0x16),
-  splashColor: _dark.onBackground.withAlpha(0x12),
+  highlightColor: _dark.onSurface.withAlpha(0x16),
+  splashColor: _dark.onSurface.withAlpha(0x12),
   listTileTheme: ListTileThemeData(
     iconColor: _dark.primary,
     selectedTileColor: _dark.secondary,

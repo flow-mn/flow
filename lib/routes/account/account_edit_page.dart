@@ -292,21 +292,21 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void update({required String formattedName}) async {
     if (_currentlyEditing == null) return;
 
-    _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.currency = _currency;
+    _currentlyEditing.name = formattedName;
+    _currentlyEditing.currency = _currency;
 
-    _currentlyEditing!.iconCode = iconCodeOrError;
-    _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
+    _currentlyEditing.iconCode = iconCodeOrError;
+    _currentlyEditing.excludeFromTotalBalance = _excludeFromTotalBalance;
 
-    if (_balance != _currentlyEditing!.balance) {
-      _currentlyEditing!.updateBalanceAndSave(
+    if (_balance != _currentlyEditing.balance) {
+      _currentlyEditing.updateBalanceAndSave(
         _balance,
         title: "account.updateBalance.transactionTitle".tr(),
       );
     }
 
     ObjectBox().box<Account>().put(
-          _currentlyEditing!,
+          _currentlyEditing,
           mode: PutMode.update,
         );
 
@@ -421,14 +421,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing!.id))
+        .query(Transaction_.account.equals(_currentlyEditing.id))
         .build();
 
     final int txnCount = associatedTransactionsQuery.count();
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+      title: "general.delete.confirmName".t(context, _currentlyEditing.name),
       child: Text("account.delete.warning".t(context, txnCount)),
     );
 
@@ -442,15 +442,15 @@ class _AccountEditPageState extends State<AccountEditPage> {
       try {
         await associatedTransactionsQuery.removeAsync();
       } catch (e) {
-        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
+        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing.name} (${_currentlyEditing.uuid}) due to:\n$e");
       } finally {
         associatedTransactionsQuery.close();
       }
 
       try {
-        await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
+        await ObjectBox().box<Account>().removeAsync(_currentlyEditing.id);
       } catch (e) {
-        log("[Account Page] Failed to delete account ${_currentlyEditing?.name} (${_currentlyEditing?.uuid}) due to:\n$e");
+        log("[Account Page] Failed to delete account ${_currentlyEditing.name} (${_currentlyEditing.uuid}) due to:\n$e");
       } finally {
         if (mounted) {
           context.pop();

@@ -100,7 +100,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
             ],
-            color: context.colorScheme.onBackground.withAlpha(0x20),
+            color: context.colorScheme.onSurface.withAlpha(0x20),
           ).toList(),
         ),
       ),

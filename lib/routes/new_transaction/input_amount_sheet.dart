@@ -272,7 +272,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       },
       child: Icon(
         popOnClick ? Symbols.check : Symbols.equal_rounded,
-        color: popOnClick ? context.colorScheme.background : null,
+        color: popOnClick ? context.colorScheme.surface : null,
       ),
     );
   }
