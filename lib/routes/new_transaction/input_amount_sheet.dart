@@ -459,8 +459,15 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     value = switch (_currentOperation) {
       CalculatorOperation.add ||
       CalculatorOperation.subtract =>
-        _operationCache! * InputValue.fromDouble(value.currentAmount * 0.01),
-      _ => InputValue.fromDouble(value.currentAmount * 0.01)
+        _operationCache! *
+            InputValue.fromDouble(
+              value.currentAmount * 0.01,
+              maxNumberOfDecimals: _numberOfDecimals,
+            ),
+      _ => InputValue.fromDouble(
+          value.currentAmount * 0.01,
+          maxNumberOfDecimals: _numberOfDecimals,
+        )
     };
     setState(() {});
   }
