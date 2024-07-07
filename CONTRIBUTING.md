@@ -24,7 +24,7 @@ TIP: Look for issues with `ready` label to get contributing immediately
 please create one first.
 3. Let everyone know that you're working on it by commenting "I'm working on it"
 4. Create a feature branch. For example, if you're working on [#82](https://github.com/flow-mn/flow/issues/82),
-create a branch `fix82` from `develop`
+create a branch `username/fix82` from `develop`
 5. Make changes on the new branch
 6. Ensure your code doesn't have any linter warnings, errors
 (Your editor will tell you, or you can run `flutter analyze`)
