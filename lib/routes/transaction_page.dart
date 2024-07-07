@@ -19,6 +19,7 @@ import 'package:flow/utils/utils.dart';
 import 'package:flow/utils/value_or.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/general/form_close_button.dart';
 import 'package:flow/widgets/transaction/type_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -139,9 +140,9 @@ class _TransactionPageState extends State<TransactionPage> {
         autofocus: true,
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              onPressed: () => context.pop(),
-              icon: const Icon(Symbols.close_rounded),
+            leadingWidth: 40.0,
+            leading: FormCloseButton(
+              canPop: () => !hasChanged(),
             ),
             actions: [
               IconButton(
@@ -150,7 +151,6 @@ class _TransactionPageState extends State<TransactionPage> {
                 tooltip: "general.save".t(context),
               )
             ],
-            leadingWidth: 40.0,
             title: TypeSelector(
               current: _transactionType,
               onChange: updateTransactionType,
@@ -607,11 +607,27 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool hasChanged() {
     if (_currentlyEditing != null) {
+      final bool transferToAccountDifferent = _currentlyEditing.isTransfer &&
+          _currentlyEditing.extensions.transfer?.fromAccountUuid !=
+              _selectedAccountTransferTo?.uuid;
+
+      if (transferToAccountDifferent) {
+        return true;
+      }
+
       return _currentlyEditing.amount != _amount ||
-          (_currentlyEditing.title ?? "") != _titleController.text;
+          (_currentlyEditing.title ?? "") != _titleController.text ||
+          _currentlyEditing.type != _transactionType ||
+          _currentlyEditing.accountUuid != _selectedAccount?.uuid ||
+          _currentlyEditing.categoryUuid != _selectedCategory?.uuid ||
+          _currentlyEditing.transactionDate != _transactionDate;
     }
 
-    return _amount != 0 || _titleController.text.isNotEmpty;
+    return _amount != 0 ||
+        _titleController.text.isNotEmpty ||
+        _selectedAccount != null ||
+        _selectedAccountTransferTo != null ||
+        _selectedCategory != null;
   }
 
   Future<List<RelevanceScoredTitle>> getAutocompleteOptions(

@@ -11,6 +11,7 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/general/form_close_button.dart';
 import 'package:flow/widgets/select_flow_icon_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +75,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 40.0,
+        leading: FormCloseButton(
+          canPop: () => !hasChanged(),
+        ),
         actions: [
           IconButton(
             onPressed: () => save(),
@@ -167,6 +172,15 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
         );
 
     context.pop();
+  }
+
+  bool hasChanged() {
+    if (_currentlyEditing != null) {
+      return _currentlyEditing.name != _nameTextController.text.trim() ||
+          _currentlyEditing.iconCode != iconCodeOrError;
+    }
+
+    return _nameTextController.text.trim().isNotEmpty || _iconData != null;
   }
 
   String? validateNameField(String? value) {

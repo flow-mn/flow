@@ -8,6 +8,8 @@
     "general.delete": "Elimina",
     "general.delete.permanentWarning": "Questa azione è irreversibile",
     "general.delete.confirmName": "Confermi l'eliminazione di {name}?",
+    "general.delete.unsavedProgress": "Chiudere senza salvare?",
+    "general.delete.unsavedProgress.description": "Tutte le modifiche andranno perse.",
     "general.areYouSure": "Sei sicuro?",
     "general.edit": "Modifica",
     "general.save": "Salva",

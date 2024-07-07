@@ -8,6 +8,8 @@
     "general.delete": "Delete",
     "general.delete.permanentWarning": "This action is irreversible",
     "general.delete.confirmName": "Confirm deleting {name}?",
+    "general.delete.unsavedProgress": "Close without saving?",
+    "general.delete.unsavedProgress.description": "All changes will be lost.",
     "general.areYouSure": "Are you sure?",
     "general.edit": "Edit",
     "general.save": "Save",
