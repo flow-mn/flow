@@ -1,9 +1,10 @@
-## (Next) Beta
+## Beta 0.5.5
 
 * Selecting icons should be slightly better
 * Now icons (Material Symbols and Simple Icons) are searchable (only in English)
 * Improved backup history empty UI
 * Fixed number format was messed up when dividing with input sheet calculator
+* When making changes, pages will now confirm to close without saving. (converted form pages -> modals)
 
 ## Beta 0.5.3
 
