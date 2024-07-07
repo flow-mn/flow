@@ -1,8 +1,8 @@
-name: Deploy Android
+name: Deploy Beta build for Android
 on:
   push:
     branches:
-      - "release"
+      - "beta"
 jobs:
   build:
     runs-on: "ubuntu-latest"
@@ -36,12 +36,5 @@ jobs:
           packageName: mn.flow.flow
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: beta
-      - name: Build apk
-        run: flutter build apk --release --no-tree-shake-icons
-      - name: Upload artifacts for GitHub
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android APK
-          path: build/app/outputs/flutter-apk/app-release.apk
       - name: Clean up
         run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
