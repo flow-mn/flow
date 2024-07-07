@@ -17,18 +17,18 @@ As of now, publishing fees have been paid by the maintainer.
 NOTE: A quick discussion upfront can highlight any potential issues, streamline
 the merge process, and ensure you're on the right track to avoid rework.
 
-TIP: Work on issues with `ready` label
+TIP: Look for issues with `ready` label to get contributing immediately
 
 1. Fork the repository
 2. Pick an issue. If the fix/feature you're gonna work doesn't have an issue,
 please create one first.
 3. Let everyone know that you're working on it by commenting "I'm working on it"
 4. Create a feature branch. For example, if you're working on [#82](https://github.com/flow-mn/flow/issues/82),
-create a branch `fix82` from `main`
+create a branch `fix82` from `develop`
 5. Make changes on the new branch
 6. Ensure your code doesn't have any linter warnings, errors
 (Your editor will tell you, or you can run `flutter analyze`)
-7. Submit a PR to `main` branch
+7. Submit a PR to `develop` branch
 8. If your feature involves UI changes, add a short video demonstrating the
 implement change/feature
 
