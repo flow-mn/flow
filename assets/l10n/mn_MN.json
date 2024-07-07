@@ -8,6 +8,8 @@
     "general.delete": "Устгах",
     "general.delete.permanentWarning": "Энэ үйлдлийг буцаах боломжгүй",
     "general.delete.confirmName": "{name}-г устгах уу?",
+    "general.delete.unsavedProgress": "Хадгалахгүй гарах уу?",
+    "general.delete.unsavedProgress.description": "Бүх өөрчлөлтүүд устах болно.",
     "general.areYouSure": "Итгэлтэй байна уу?",
     "general.edit": "Засварлах",
     "general.save": "Хадгалах",

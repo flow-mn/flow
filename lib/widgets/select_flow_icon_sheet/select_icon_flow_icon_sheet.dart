@@ -45,7 +45,7 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
   @override
   Widget build(BuildContext context) {
     final double scrollableContentMaxHeight =
-        MediaQuery.of(context).size.height * 0.65 -
+        MediaQuery.of(context).size.height * 0.4 -
             MediaQuery.of(context).viewInsets.vertical;
 
     final List<IconData> simpleIconsResult = querySimpleIcons(_query);

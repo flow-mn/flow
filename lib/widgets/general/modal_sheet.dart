@@ -72,16 +72,21 @@ class ModalSheet extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: child,
         ),
-      (Widget scrollableChild, true) => AnimatedContainer(
-          constraints: BoxConstraints.loose(
-            Size(
-              double.infinity,
-              max(minScrollableContentHeight, scrollableContentMaxHeight),
+      (Widget scrollableChild, true) =>
+        LayoutBuilder(builder: (context, constraints) {
+          return AnimatedContainer(
+            constraints: BoxConstraints.loose(
+              Size(
+                double.infinity,
+                // TODO move this to the parent widget (down below)
+                min(max(minScrollableContentHeight, scrollableContentMaxHeight),
+                    constraints.maxHeight),
+              ),
             ),
-          ),
-          duration: const Duration(milliseconds: 200),
-          child: scrollableChild,
-        ),
+            duration: const Duration(milliseconds: 200),
+            child: scrollableChild,
+          );
+        }),
     };
 
     return Padding(

@@ -1,6 +1,8 @@
 import "dart:math" as math;
 
 class InputValue implements Comparable<InputValue> {
+  static const int _defaultMaxNumberOfDecimals = 8;
+
   final int wholePart;
   final int decimalPart;
   final bool isNegative;
@@ -25,19 +27,21 @@ class InputValue implements Comparable<InputValue> {
         assert(
             decimalPart >= 0, 'decimalPart must be greater than or equal to 0');
 
-  factory InputValue.fromDouble(double value, {int maxNumberOfDecimals = 10}) {
+  factory InputValue.fromDouble(
+    double value, {
+    int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
+  }) {
     if (value.isInfinite || value.isNaN || value == 0) return zero;
 
     final int wholePart = value.abs().truncate();
 
-    final String rawDecimal = value
-        .toString()
-        .split(".")
-        .last
-        .padRight(maxNumberOfDecimals, '0')
-        .substring(0, maxNumberOfDecimals);
+    String rawDecimal = value.toString().split(".").last;
 
-    final int decimalPart = int.parse(rawDecimal);
+    if (rawDecimal.length > maxNumberOfDecimals) {
+      rawDecimal = rawDecimal.substring(0, maxNumberOfDecimals);
+    }
+
+    final int decimalPart = int.tryParse(rawDecimal) ?? 0;
 
     final int decimalLeadingZeroesCount = decimalPart == 0
         ? 0
@@ -135,14 +139,38 @@ class InputValue implements Comparable<InputValue> {
         decimalLeadingZeroesCount: 0,
       );
 
-  InputValue add(InputValue other) =>
-      InputValue.fromDouble(currentAmount + other.currentAmount);
-  InputValue subtract(InputValue other) =>
-      InputValue.fromDouble(currentAmount - other.currentAmount);
-  InputValue multiply(InputValue other) =>
-      InputValue.fromDouble(currentAmount * other.currentAmount);
-  InputValue divide(InputValue other) =>
-      InputValue.fromDouble(currentAmount / other.currentAmount);
+  InputValue add(
+    InputValue other, {
+    int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
+  }) =>
+      InputValue.fromDouble(
+        currentAmount + other.currentAmount,
+        maxNumberOfDecimals: maxNumberOfDecimals,
+      );
+  InputValue subtract(
+    InputValue other, {
+    int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
+  }) =>
+      InputValue.fromDouble(
+        currentAmount - other.currentAmount,
+        maxNumberOfDecimals: maxNumberOfDecimals,
+      );
+  InputValue multiply(
+    InputValue other, {
+    int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
+  }) =>
+      InputValue.fromDouble(
+        currentAmount * other.currentAmount,
+        maxNumberOfDecimals: maxNumberOfDecimals,
+      );
+  InputValue divide(
+    InputValue other, {
+    int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
+  }) =>
+      InputValue.fromDouble(
+        currentAmount / other.currentAmount,
+        maxNumberOfDecimals: maxNumberOfDecimals,
+      );
 
   InputValue operator +(InputValue other) => add(other);
   InputValue operator -(InputValue other) => subtract(other);

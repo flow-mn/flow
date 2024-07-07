@@ -15,6 +15,7 @@ import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/button_order_preferences_page.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/preferences/transfer_preferences_page.dart';
+import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/profile_page.dart';
 import 'package:flow/routes/setup/setup_accounts_page.dart';
 import 'package:flow/routes/setup/setup_categories_page.dart';
@@ -24,14 +25,13 @@ import 'package:flow/routes/setup/setup_profile_picture_page.dart';
 import 'package:flow/routes/setup_page.dart';
 import 'package:flow/routes/support_page.dart';
 import 'package:flow/routes/transaction_page.dart';
-import 'package:flow/routes/preferences_page.dart';
 import 'package:flow/routes/transactions_page.dart';
 import 'package:flow/routes/utils/crop_square_image_page.dart';
 import 'package:flow/sync/export/mode.dart';
 import 'package:flow/sync/import/import_v1.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/general/info_text.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -44,18 +44,24 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/transaction/new',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final TransactionType? type = TransactionType.values.firstWhereOrNull(
           (element) => element.value == state.uri.queryParameters["type"],
         );
 
-        return TransactionPage.create(initialTransactionType: type);
+        return MaterialPage(
+          child: TransactionPage.create(initialTransactionType: type),
+          fullscreenDialog: true,
+        );
       },
     ),
     GoRoute(
       path: '/transaction/:id',
-      builder: (context, state) => TransactionPage.edit(
-        transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      pageBuilder: (context, state) => MaterialPage(
+        child: TransactionPage.edit(
+          transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+        ),
+        fullscreenDialog: true,
       ),
     ),
     GoRoute(
@@ -93,8 +99,11 @@ final router = GoRouter(
         routes: [
           GoRoute(
             path: 'edit',
-            builder: (context, state) => AccountEditPage(
-              accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+            pageBuilder: (context, state) => MaterialPage(
+              child: AccountEditPage(
+                accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+              ),
+              fullscreenDialog: true,
             ),
           ),
           GoRoute(
@@ -120,8 +129,11 @@ final router = GoRouter(
       routes: [
         GoRoute(
           path: 'edit',
-          builder: (context, state) => CategoryEditPage(
-            categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+          pageBuilder: (context, state) => MaterialPage(
+            child: CategoryEditPage(
+              categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+            ),
+            fullscreenDialog: true,
           ),
         ),
       ],
@@ -159,12 +171,15 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/utils/cropsquare',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         return switch (state.extra) {
-          CropSquareImagePageProps props => CropSquareImagePage(
-              image: props.image,
-              maxDimension: props.maxDimension,
-              returnBitmap: props.returnBitmap,
+          CropSquareImagePageProps props => MaterialPage(
+              child: CropSquareImagePage(
+                image: props.image,
+                maxDimension: props.maxDimension,
+                returnBitmap: props.returnBitmap,
+              ),
+              fullscreenDialog: true,
             ),
           _ => throw const ErrorPage(
               error:

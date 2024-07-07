@@ -272,7 +272,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       },
       child: Icon(
         popOnClick ? Symbols.check : Symbols.equal_rounded,
-        color: popOnClick ? context.colorScheme.background : null,
+        color: popOnClick ? context.colorScheme.surface : null,
       ),
     );
   }
@@ -459,8 +459,15 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     value = switch (_currentOperation) {
       CalculatorOperation.add ||
       CalculatorOperation.subtract =>
-        _operationCache! * InputValue.fromDouble(value.currentAmount * 0.01),
-      _ => InputValue.fromDouble(value.currentAmount * 0.01)
+        _operationCache! *
+            InputValue.fromDouble(
+              value.currentAmount * 0.01,
+              maxNumberOfDecimals: _numberOfDecimals,
+            ),
+      _ => InputValue.fromDouble(
+          value.currentAmount * 0.01,
+          maxNumberOfDecimals: _numberOfDecimals,
+        )
     };
     setState(() {});
   }

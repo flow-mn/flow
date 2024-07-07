@@ -10,7 +10,6 @@ import 'package:material_symbols_icons/symbols.dart';
 
 /// Pops with [FlowIconData] or [null]
 class SelectFlowIconSheet extends StatefulWidget {
-  final Function(FlowIconData? value)? onChange;
   final FlowIconData? current;
 
   final double iconSize;
@@ -18,7 +17,6 @@ class SelectFlowIconSheet extends StatefulWidget {
   const SelectFlowIconSheet({
     super.key,
     this.current,
-    this.onChange,
     this.iconSize = 96.0,
   });
 
@@ -71,12 +69,13 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
   }
 
   void _selectEmoji() async {
-    final FlowIconData? result = await showModalBottomSheet(
+    final FlowIconData? result = await showModalBottomSheet<CharacterFlowIcon>(
       context: context,
       builder: (context) => SelectCharFlowIconSheet(
         iconSize: widget.iconSize,
         initialValue: widget.current,
       ),
+      isScrollControlled: true,
     );
 
     if (mounted) {
@@ -85,7 +84,7 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
   }
 
   void _selectImage() async {
-    final FlowIconData? result = await showModalBottomSheet(
+    final FlowIconData? result = await showModalBottomSheet<ImageFlowIcon>(
       context: context,
       builder: (context) => SelectImageFlowIconSheet(
         iconSize: widget.iconSize,

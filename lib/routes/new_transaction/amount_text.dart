@@ -109,8 +109,6 @@ class _AmountTextState extends State<AmountText>
   }
 
   String amountText() {
-    print("currentValue.currentAmount -> ${currentValue.currentAmount}");
-
     final String formatted = currentValue.currentAmount.formatMoney(
       decimalDigits:
           math.max(currentValue.decimalLength, _inputtingDecimal ? 1 : 0),

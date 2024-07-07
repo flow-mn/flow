@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         tag: "pfp",
                         child: ProfilePicture(
                           key: ValueKey(_profilePictureUpdateCounter),
-                          filePath: _profile!.imagePath,
+                          filePath: _profile.imagePath,
                           onTap: changeProfilePicture,
                           showOverlayUponHover: true,
                         ),
@@ -141,9 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_profile == null) return;
 
     try {
-      _profile!.name = _nameController.text;
+      _profile.name = _nameController.text;
 
-      await ObjectBox().box<Profile>().putAsync(_profile!);
+      await ObjectBox().box<Profile>().putAsync(_profile);
 
       if (mounted) {
         context.pop();

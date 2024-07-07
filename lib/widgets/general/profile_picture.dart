@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flow/data/flow_icon.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -48,10 +50,10 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 width: widget.size,
                 height: widget.size,
               )
-            : Image.asset(
-                "assets/images/missing.png",
-                width: widget.size,
-                height: widget.size,
+            : FlowIcon(
+                const IconFlowIcon(Symbols.person_rounded),
+                size: widget.size,
+                color: context.colorScheme.onPrimary,
               ),
       ),
     );

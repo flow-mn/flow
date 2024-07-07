@@ -11,6 +11,7 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
+import 'package:flow/widgets/general/form_close_button.dart';
 import 'package:flow/widgets/select_flow_icon_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +75,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 40.0,
+        leading: FormCloseButton(
+          canPop: () => !hasChanged(),
+        ),
         actions: [
           IconButton(
             onPressed: () => save(),
@@ -136,11 +141,11 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   Future<void> update({required String formattedName}) async {
     if (_currentlyEditing == null) return;
 
-    _currentlyEditing!.name = formattedName;
-    _currentlyEditing!.iconCode = iconCodeOrError;
+    _currentlyEditing.name = formattedName;
+    _currentlyEditing.iconCode = iconCodeOrError;
 
     ObjectBox().box<Category>().put(
-          _currentlyEditing!,
+          _currentlyEditing,
           mode: PutMode.update,
         );
 
@@ -167,6 +172,15 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
         );
 
     context.pop();
+  }
+
+  bool hasChanged() {
+    if (_currentlyEditing != null) {
+      return _currentlyEditing.name != _nameTextController.text.trim() ||
+          _currentlyEditing.iconCode != iconCodeOrError;
+    }
+
+    return _nameTextController.text.trim().isNotEmpty || _iconData != null;
   }
 
   String? validateNameField(String? value) {
@@ -204,13 +218,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   }
 
   Future<void> selectIcon() async {
-    onChange(FlowIconData? data) => _updateIcon(data);
-
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
       builder: (context) => SelectFlowIconSheet(
         current: _iconData,
-        onChange: onChange,
       ),
       isScrollControlled: true,
     );
@@ -227,7 +238,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.category.equals(_currentlyEditing!.id))
+        .query(Transaction_.category.equals(_currentlyEditing.id))
         .build();
 
     final int txnCount = associatedTransactionsQuery.count();
@@ -236,14 +247,14 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
+      title: "general.delete.confirmName".t(context, _currentlyEditing.name),
       child: Text(
         "category.delete.warning".t(context, txnCount),
       ),
     );
 
     if (confirmation == true) {
-      ObjectBox().box<Category>().remove(_currentlyEditing!.id);
+      ObjectBox().box<Category>().remove(_currentlyEditing.id);
 
       if (mounted) {
         context.pop();

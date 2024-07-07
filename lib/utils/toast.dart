@@ -49,13 +49,13 @@ extension ToastHelper on BuildContext {
       autoCloseDuration: const Duration(seconds: 5),
       alignment: Alignment.topCenter,
       primaryColor: colorScheme.primary,
-      backgroundColor: colorScheme.background,
-      foregroundColor: colorScheme.onBackground,
+      backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
       showProgressBar: false,
       style: ToastificationStyle.flat,
       boxShadow: [
         BoxShadow(
-          color: colorScheme.onBackground.withAlpha(0x40),
+          color: colorScheme.onSurface.withAlpha(0x40),
           offset: const Offset(0.0, 1.0),
           blurRadius: 4.0,
           spreadRadius: -1.5,
