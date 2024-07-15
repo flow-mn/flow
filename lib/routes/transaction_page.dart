@@ -16,7 +16,7 @@ import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/shortcut.dart';
 import 'package:flow/utils/toast.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/utils/value_or.dart';
+import 'package:flow/utils/optional.dart';
 import 'package:flow/widgets/delete_button.dart';
 import 'package:flow/widgets/general/flow_icon.dart';
 import 'package:flow/widgets/general/form_close_button.dart';
@@ -468,8 +468,8 @@ class _TransactionPageState extends State<TransactionPage> {
       return;
     }
 
-    final ValueOr<Category>? result =
-        await showModalBottomSheet<ValueOr<Category>>(
+    final Optional<Category>? result =
+        await showModalBottomSheet<Optional<Category>>(
       context: context,
       builder: (context) => SelectCategorySheet(
         categories: categories,

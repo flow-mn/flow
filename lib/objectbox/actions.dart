@@ -6,6 +6,7 @@ import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/memo.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
+import 'package:flow/data/transactions_filter.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
@@ -256,21 +257,30 @@ extension MainActions on ObjectBox {
 }
 
 extension TransactionActions on Transaction {
+  /// Base score is 10.0
+  ///
+  /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
+  /// * If [accountId] matches, score is increased by 25%
+  /// * If [transactionType] matches, score is increased by 75%
+  /// * If [categoryId] matches, score is increased by 275%
+  ///
+  /// **Max score**: 412.5
+  /// **Query only max score**: 110.0
+  ///
+  /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
   double titleSuggestionScore({
     String? query,
     int? accountId,
     int? categoryId,
     TransactionType? transactionType,
+    bool fuzzyPartial = true,
   }) {
-    late double score;
+    double score = 10.0;
 
-    if (query == null ||
-        query.trim().isEmpty ||
-        title == null ||
-        title!.trim().isEmpty) {
-      score = 10.0; // Full match score is 100
-    } else {
-      score = partialRatio(query, title!).toDouble() + 10.0;
+    if (query?.trim().isNotEmpty == true && title?.trim().isNotEmpty == true) {
+      score += fuzzyPartial
+          ? partialRatio(query!, title!).toDouble()
+          : ratio(query!, title!).toDouble();
     }
 
     double multipler = 1.0;
@@ -413,6 +423,11 @@ extension TransactionListActions on Iterable<Transaction> {
 
     return value;
   }
+
+  List<Transaction> filter(TransactionFilter filter) =>
+      where((Transaction t) => filter.predicates
+          .map((predicate) => predicate(t))
+          .every((element) => element)).toList();
 }
 
 extension AccountActions on Account {

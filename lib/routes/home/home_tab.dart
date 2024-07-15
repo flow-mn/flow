@@ -7,6 +7,7 @@ import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
+import 'package:flow/widgets/transaction_filter_head.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -92,6 +93,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         top: 0,
         bottom: 80.0,
       ),
+      header: TransactionFilterHead(onChanged: (_) => {}),
       headerBuilder: (
         TimeRange range,
         List<Transaction> transactions,
