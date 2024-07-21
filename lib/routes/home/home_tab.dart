@@ -1,13 +1,13 @@
+import 'package:flow/data/transactions_filter.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/widgets/default_transaction_filter_head.dart';
 import 'package:flow/widgets/general/wavy_divider.dart';
-import 'package:flow/widgets/home/home/no_transactions.dart';
-import 'package:flow/widgets/home/greetings_bar.dart';
 import 'package:flow/widgets/grouped_transaction_list.dart';
+import 'package:flow/widgets/home/greetings_bar.dart';
+import 'package:flow/widgets/home/home/no_transactions.dart';
 import 'package:flow/widgets/home/transactions_date_header.dart';
-import 'package:flow/widgets/transaction_filter_head.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -21,17 +21,17 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
+  final TransactionFilter defaultFilter = TransactionFilter(
+    range: Moment.now()
+        .subtract(const Duration(days: 29))
+        .startOfDay()
+        .rangeTo(Moment.maxValue),
+  );
+
+  late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
+
   final DateTime startDate =
       Moment.now().subtract(const Duration(days: 29)).startOfDay();
-
-  QueryBuilder<Transaction> qb() => ObjectBox()
-      .box<Transaction>()
-      .query(
-        Transaction_.transactionDate.greaterOrEqual(
-          startDate.millisecondsSinceEpoch,
-        ),
-      )
-      .order(Transaction_.transactionDate, flags: Order.descending);
 
   late final bool noTransactionsAtAll;
 
@@ -46,15 +46,32 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.build(context);
 
     return StreamBuilder<List<Transaction>>(
-      stream: qb().watch(triggerImmediately: true).map((event) => event.find()),
+      stream: currentFilter
+          .queryBuilder()
+          .watch(triggerImmediately: true)
+          .map((event) => event.find()),
       builder: (context, snapshot) {
         final List<Transaction>? transactions = snapshot.data;
+
+        final Widget header = DefaultTransactionsFilterHead(
+          defaultFilter: defaultFilter,
+          current: currentFilter,
+          onChanged: (value) {
+            setState(() {
+              currentFilter = value;
+            });
+          },
+        );
 
         return Column(
           children: [
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: GreetingsBar(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: header,
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
@@ -93,7 +110,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         top: 0,
         bottom: 80.0,
       ),
-      header: TransactionFilterHead(onChanged: (_) => {}),
       headerBuilder: (
         TimeRange range,
         List<Transaction> transactions,
