@@ -109,8 +109,10 @@
     "transactions.query.filter.timeRange": "Хугацаа",
     "transactions.query.filter.timeRange.all": "Бүх цаг үе",
     "transactions.query.filter.accounts": "Данс",
+    "transactions.query.filter.accounts.n": "{} данс",
     "transactions.query.filter.accounts.all": "Бүх данс",
     "transactions.query.filter.categories": "Ангилал",
+    "transactions.query.filter.categories.n": "{} ангилал",
     "transactions.query.filter.categories.all": "Бүх ангилал",
     "transactions.count": "{} гүйлгээ",
 

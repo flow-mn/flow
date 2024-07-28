@@ -109,8 +109,10 @@
     "transactions.query.filter.timeRange": "Time Range",
     "transactions.query.filter.timeRange.all": "All Time",
     "transactions.query.filter.accounts": "Accounts",
+    "transactions.query.filter.accounts.n": "{} accounts",
     "transactions.query.filter.accounts.all": "All Accounts",
     "transactions.query.filter.categories": "Categories",
+    "transactions.query.filter.categories.n": "{} categories",
     "transactions.query.filter.categories.all": "All Categories",
     "transactions.count": "{} transactions",
 

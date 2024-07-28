@@ -56,7 +56,7 @@ class TransactionFilterChip<T> extends StatelessWidget {
     );
   }
 
-  String getValueLabel(BuildContext context, T? value) {
+  String getValueLabel(BuildContext context, dynamic value) {
     if (valueLabelOverride != null) {
       final String? overriden = valueLabelOverride!(value);
       if (overriden != null) {
@@ -80,8 +80,16 @@ class TransactionFilterChip<T> extends StatelessWidget {
     }
 
     if (value case List<dynamic> list) {
+      if (list.length > 2) {
+        if (list.first is Account) {
+          return "transactions.query.filter.accounts.n".tr(list.length);
+        } else if (list.first is Category) {
+          return "transactions.query.filter.categories.n".tr(list.length);
+        }
+      }
+
       final String items =
-          list.map<String>((item) => getValueLabel(context, item)).join(", ");
+          list.map((item) => getValueLabel(context, item)).join(", ");
 
       return "(${list.length}) $items";
     }
