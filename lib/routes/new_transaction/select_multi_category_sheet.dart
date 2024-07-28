@@ -45,7 +45,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
       trailing: ButtonBar(
         children: [
           TextButton.icon(
-            onPressed: () => context.pop(),
+            onPressed: pop,
             icon: const Icon(Symbols.check),
             label: Text("general.done".t(context)),
           ),

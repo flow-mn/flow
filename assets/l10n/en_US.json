@@ -151,6 +151,7 @@
     "preferences.transfer.combineTransferTransaction": "Layout",
     "preferences.transfer.combineTransferTransaction.combine": "Combine",
     "preferences.transfer.combineTransferTransaction.separate": "Separate",
+    "preferences.transfer.combineTransferTransaction.filterDescription": "When using filters, transfers will always display separately",
     "preferences.transfer.excludeTransferFromFlow": "Exclude from totals",
     "preferences.transfer.excludeTransferFromFlow.description": "Don't count towards total expense/income",
     "preferences.home": "Home page",

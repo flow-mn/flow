@@ -91,6 +91,10 @@ class TransactionFilterChip<T> extends StatelessWidget {
       final String items =
           list.map((item) => getValueLabel(context, item)).join(", ");
 
+      if (list.length == 1) {
+        return items;
+      }
+
       return "(${list.length}) $items";
     }
 

@@ -2,6 +2,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/transfer_preferences/combine_transfer_radio.dart.dart';
 import 'package:flow/theme/theme.dart';
+import 'package:flow/widgets/general/info_text.dart';
 import 'package:flow/widgets/general/list_header.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +52,16 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: InfoText(
+                  child: Text(
+                    "preferences.transfer.combineTransferTransaction.filterDescription"
+                        .t(context),
+                  ),
                 ),
               ),
               const SizedBox(height: 32.0),
