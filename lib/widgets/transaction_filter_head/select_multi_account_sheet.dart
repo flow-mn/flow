@@ -50,6 +50,11 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
       trailing: ButtonBar(
         children: [
           TextButton.icon(
+            onPressed: () => context.pop(<Account>[]),
+            icon: const Icon(Symbols.block_rounded),
+            label: Text("transactions.query.clearSelection".t(context)),
+          ),
+          TextButton.icon(
             onPressed: pop,
             icon: const Icon(Symbols.check),
             label: Text("general.done".t(context)),

@@ -46,10 +46,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.build(context);
 
     return StreamBuilder<List<Transaction>>(
-      stream: currentFilter
-          .queryBuilder()
-          .watch(triggerImmediately: true)
-          .map((event) => event.find()),
+      stream: currentFilter.queryBuilder().watch(triggerImmediately: true).map(
+            (event) => event.find().search(currentFilter.searchData),
+          ),
       builder: (context, snapshot) {
         final List<Transaction>? transactions = snapshot.data;
 

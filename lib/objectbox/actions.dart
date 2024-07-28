@@ -428,6 +428,12 @@ extension TransactionListActions on Iterable<Transaction> {
       where((Transaction t) => filter.predicates
           .map((predicate) => predicate(t))
           .every((element) => element)).toList();
+
+  List<Transaction> search(TransactionSearchData? data) {
+    if (data == null || data.normalizedKeyword == null) return toList();
+
+    return where(data.predicate).toList();
+  }
 }
 
 extension AccountActions on Account {

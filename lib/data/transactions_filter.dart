@@ -1,11 +1,14 @@
+import 'package:flow/data/transactions_filter/search_data.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/utils/optional.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:moment_dart/moment_dart.dart';
+
+export 'package:flow/data/transactions_filter/search_data.dart';
 
 typedef TransactionPredicate = bool Function(Transaction);
 
@@ -23,10 +26,9 @@ class TransactionFilter {
   /// If null, all-time
   final TimeRange? range;
 
-  final String? keyword;
+  final TransactionSearchData searchData;
 
-  /// Base score is 10.0
-  final double keywordScoreThreshold;
+  final List<TransactionType>? types;
 
   final List<Category>? categories;
   final List<Account>? accounts;
@@ -35,16 +37,30 @@ class TransactionFilter {
   final TransactionSortField sortBy;
 
   const TransactionFilter({
-    this.range,
-    this.keyword,
     this.categories,
     this.accounts,
-    this.keywordScoreThreshold = 80.0,
+    this.range,
+    this.types,
     this.sortDescending = true,
+    this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
   });
 
   static const empty = TransactionFilter();
+
+  List<TransactionPredicate> get postPredicates {
+    final List<TransactionPredicate> predicates = [];
+
+    if (types?.isNotEmpty == true) {
+      predicates.add(
+        (Transaction t) => types!.contains(t.type),
+      );
+    }
+
+    predicates.add(searchData.predicate);
+
+    return predicates;
+  }
 
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
@@ -54,17 +70,13 @@ class TransactionFilter {
           .add((Transaction t) => filterTimeRange.contains(t.transactionDate));
     }
 
-    if (keyword case String filterKeyword) {
+    if (types?.isNotEmpty == true) {
       predicates.add(
-        (Transaction t) {
-          final double score = t.titleSuggestionScore(
-            query: filterKeyword,
-            fuzzyPartial: false,
-          );
-          return score >= keywordScoreThreshold;
-        },
+        (Transaction t) => types!.contains(t.type),
       );
     }
+
+    predicates.add(searchData.predicate);
 
     if (categories?.isNotEmpty == true) {
       predicates.add(
@@ -98,9 +110,9 @@ class TransactionFilter {
           .betweenDate(filterTimeRange.from, filterTimeRange.to));
     }
 
-    if (keyword case String filterKeyword) {
-      conditions.add(
-          Transaction_.title.contains(filterKeyword, caseSensitive: false));
+    final searchFilter = searchData.filter;
+    if (searchFilter != null) {
+      conditions.add(searchFilter);
     }
 
     if (categories?.isNotEmpty == true) {
@@ -134,19 +146,46 @@ class TransactionFilter {
   }
 
   TransactionFilter copyWithOptional({
+    Optional<List<TransactionType>>? types,
     Optional<TimeRange>? range,
-    Optional<String>? keyword,
-    Optional<List<Category>>? cateogries,
+    TransactionSearchData? searchData,
+    Optional<List<Category>>? categories,
     Optional<List<Account>>? accounts,
-    double? keywordScoreThreshold,
+    bool? sortDescending,
+    TransactionSortField? sortBy,
   }) {
     return TransactionFilter(
+      types: types == null ? this.types : types.value,
       range: range == null ? this.range : range.value,
-      keyword: keyword == null ? this.keyword : keyword.value,
-      categories: cateogries == null ? categories : cateogries.value,
+      searchData: searchData ?? this.searchData,
+      categories: categories == null ? this.categories : categories.value,
       accounts: accounts == null ? this.accounts : accounts.value,
-      keywordScoreThreshold:
-          keywordScoreThreshold ?? this.keywordScoreThreshold,
+      sortBy: sortBy ?? this.sortBy,
+      sortDescending: sortDescending ?? this.sortDescending,
     );
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+        types,
+        range,
+        searchData,
+        categories,
+        accounts,
+        sortDescending,
+        sortBy,
+      ]);
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! TransactionFilter) return false;
+
+    return other.range == range &&
+        other.sortDescending == sortDescending &&
+        other.sortBy == sortBy &&
+        other.searchData == searchData &&
+        setEquals(other.types?.toSet(), types?.toSet()) &&
+        setEquals(other.categories?.toSet(), categories?.toSet()) &&
+        setEquals(other.accounts?.toSet(), accounts?.toSet());
   }
 }

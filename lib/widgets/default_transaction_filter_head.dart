@@ -3,11 +3,12 @@ import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
-import 'package:flow/routes/new_transaction/select_multi_account_sheet.dart';
-import 'package:flow/routes/new_transaction/select_multi_category_sheet.dart';
 import 'package:flow/utils/optional.dart';
 import 'package:flow/widgets/transaction_filter_head.dart';
+import 'package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart';
+import 'package:flow/widgets/transaction_filter_head/select_multi_category_sheet.dart';
 import 'package:flow/widgets/transaction_filter_head/transaction_filter_chip.dart';
+import 'package:flow/widgets/transaction_filter_head/transaction_search_sheet.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -58,12 +59,13 @@ class _DefaultTransactionsFilterHeadState
   @override
   Widget build(BuildContext context) {
     return TransactionFilterHead(filterChips: [
-      TransactionFilterChip<String>(
+      TransactionFilterChip<TransactionSearchData>(
         translationKey: "transactions.query.filter.keyword",
         avatar: const Icon(Symbols.search_rounded),
-        onSelect: () {},
-        defaultValue: widget.defaultFilter.keyword,
-        value: _filter.keyword?.isNotEmpty == true ? _filter.keyword : null,
+        onSelect: onSearch,
+        defaultValue: widget.defaultFilter.searchData,
+        value: _filter.searchData,
+        highlightOverride: _filter.searchData.normalizedKeyword != null,
       ),
       TransactionFilterChip<TimeRange>(
         translationKey: "transactions.query.filter.timeRange",
@@ -88,6 +90,23 @@ class _DefaultTransactionsFilterHeadState
             _filter.categories?.isNotEmpty == true ? _filter.categories : null,
       ),
     ]);
+  }
+
+  void onSearch() async {
+    final TransactionSearchData? searchData =
+        await showModalBottomSheet<TransactionSearchData>(
+      context: context,
+      builder: (context) => TransactionSearchSheet(
+        searchData: filter.searchData,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (searchData != null) {
+      setState(() {
+        filter = filter.copyWithOptional(searchData: searchData);
+      });
+    }
   }
 
   void onSelectAccounts() async {
@@ -121,7 +140,7 @@ class _DefaultTransactionsFilterHeadState
 
     if (categories != null) {
       setState(() {
-        filter = filter.copyWithOptional(cateogries: Optional(categories));
+        filter = filter.copyWithOptional(categories: Optional(categories));
       });
     }
   }

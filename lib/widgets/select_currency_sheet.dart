@@ -38,7 +38,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         extractTop<CurrencyData>(
       query: _query.trim(),
       choices: iso4217Currencies,
-      limit: 10,
+      limit: iso4217Currencies.length,
       getter: (currencyData) =>
           "${currencyData.code} ${currencyData.name} ${currencyData.country}",
     )

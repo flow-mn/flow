@@ -304,7 +304,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     if (_balance != _currentlyEditing.balance) {
       _currentlyEditing.updateBalanceAndSave(
         _balance,
-        title: "account.updateBalance.transactionTitle".tr(),
+        title: "account.updateBalance.transactionTitle".t(context),
       );
     }
 
@@ -347,7 +347,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
           .then((value) {
         value.updateBalanceAndSave(
           _balance,
-          title: "account.updateBalance.transactionTitle".tr(),
+          title: "account.updateBalance.transactionTitle".t(context),
         );
         ObjectBox().box<Account>().putAsync(value);
       });

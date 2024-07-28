@@ -1,3 +1,4 @@
+import 'package:flow/data/transactions_filter.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/l10n/extensions.dart';
@@ -6,6 +7,8 @@ import 'package:moment_dart/moment_dart.dart';
 
 class TransactionFilterChip<T> extends StatelessWidget {
   final Widget? avatar;
+
+  final bool? highlightOverride;
 
   /// Translation key for the label
   ///
@@ -16,7 +19,7 @@ class TransactionFilterChip<T> extends StatelessWidget {
   final T? value;
   final T? defaultValue;
 
-  bool get highlight => value != defaultValue;
+  bool get highlight => highlightOverride ?? value != defaultValue;
 
   /// * If [defaultValue] and [value] are null, displays translated [translationKey]
   /// * If [defaultValue] isn't null, but [value] is null, displays translated `$translationKey.all`
@@ -40,6 +43,7 @@ class TransactionFilterChip<T> extends StatelessWidget {
     required this.translationKey,
     required this.onSelect,
     this.valueLabelOverride,
+    this.highlightOverride,
   });
 
   @override
@@ -75,16 +79,31 @@ class TransactionFilterChip<T> extends StatelessWidget {
     if (value case Account account) {
       return account.name;
     }
+
     if (value case Category category) {
       return category.name;
+    }
+
+    if (value case TransactionSearchData searchData) {
+      if (searchData.normalizedKeyword != null) {
+        return searchData.keyword ?? "";
+      } else {
+        return "transactions.query.filter.keyword".t(context);
+      }
     }
 
     if (value case List<dynamic> list) {
       if (list.length > 2) {
         if (list.first is Account) {
-          return "transactions.query.filter.accounts.n".tr(list.length);
+          return "transactions.query.filter.accounts.n".t(
+            context,
+            list.length,
+          );
         } else if (list.first is Category) {
-          return "transactions.query.filter.categories.n".tr(list.length);
+          return "transactions.query.filter.categories.n".t(
+            context,
+            list.length,
+          );
         }
       }
 
