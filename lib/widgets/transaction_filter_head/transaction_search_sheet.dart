@@ -59,6 +59,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
+                autofocus: true,
                 controller: _controller,
                 onSubmitted: (_) => pop(),
                 decoration: InputDecoration(
