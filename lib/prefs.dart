@@ -12,6 +12,7 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:local_settings/local_settings.dart';
+import 'package:moment_dart/moment_dart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// This class contains everything that's stored on
@@ -154,9 +155,11 @@ class LocalPreferences {
       log("[LocalPreferences] cannot update transitive properties due to: $e");
     }
 
-    if (transitiveLastTimeFrecencyUpdated.get() == null) {
+    if (transitiveLastTimeFrecencyUpdated.get() == null ||
+        !transitiveLastTimeFrecencyUpdated.get()!.isAtSameDayAs(Moment.now())) {
       unawaited(_reevaluateCategoryFrecency());
       unawaited(_reevaluateAccountFrecency());
+      unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
     }
   }
 

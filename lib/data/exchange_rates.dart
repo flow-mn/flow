@@ -109,8 +109,6 @@ class ExchangeRates {
       final ExchangeRates exchangeRates =
           await fetchRates(baseCurrency, dateTime);
 
-      inspect(exchangeRates);
-
       return exchangeRates;
     } catch (e) {
       log("Failed to fetch exchange rates", error: e);
