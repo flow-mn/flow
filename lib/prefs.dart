@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -143,8 +144,8 @@ class LocalPreferences {
     }
 
     if (transitiveLastTimeFrecencyUpdated.get() == null) {
-      _reevaluateCategoryFrecency();
-      _reevaluateAccountFrecency();
+      unawaited(_reevaluateCategoryFrecency());
+      unawaited(_reevaluateAccountFrecency());
     }
   }
 
@@ -213,15 +214,17 @@ class LocalPreferences {
 
         categoryTransactionsQuery.close();
 
-        // Future
-        setFrecencyData(
+        unawaited(
+          setFrecencyData(
             "category",
             category.uuid,
             FrecencyData(
               uuid: category.uuid,
               lastUsed: lastUsed,
               useCount: useCount,
-            ));
+            ),
+          ),
+        );
       } catch (e) {
         log("Failed to build category FrecencyData for $category due to: $e");
       }
@@ -253,15 +256,17 @@ class LocalPreferences {
 
         accountTransactionsQuery.close();
 
-        // Future
-        setFrecencyData(
+        unawaited(
+          setFrecencyData(
             "account",
             account.uuid,
             FrecencyData(
               uuid: account.uuid,
               lastUsed: lastUsed,
               useCount: useCount,
-            ));
+            ),
+          ),
+        );
       } catch (e) {
         log("Failed to build account FrecencyData for $account due to: $e");
       }

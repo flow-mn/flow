@@ -191,6 +191,7 @@
     "tabs.stats.timeRange.mode.byWeek": "Долоо хоногоор",
     "tabs.stats.timeRange.mode.byMonth": "Сараар",
     "tabs.stats.timeRange.mode.byYear": "Жилээр",
+    "tabs.stats.chart.total": "Нийт",
     "tabs.stats.chart.noData": "Харуулах өгөгдөл байхгүй байна",
     "tabs.stats.chart.select.clickToSelect": "Товшиж сонгоно уу",
     "tabs.accounts": "Данснууд",

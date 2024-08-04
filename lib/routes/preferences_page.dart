@@ -151,19 +151,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void updateLanguage() async {
     if (Platform.isIOS) {
-      LocalPreferences().localeOverride.remove().catchError((e) {
+      await LocalPreferences().localeOverride.remove().catchError((e) {
         log("[PreferencesPage] failed to remove locale override: $e");
         return false;
       });
       try {
-        AppSettings.openAppSettings(type: AppSettingsType.appLocale);
+        await AppSettings.openAppSettings(type: AppSettingsType.appLocale);
         return;
       } catch (e) {
         log("[PreferencesPage] failed to open system app settings on iOS: $e");
       }
     }
 
-    if (_languageBusy) return;
+    if (_languageBusy || !mounted) return;
 
     setState(() {
       _languageBusy = true;

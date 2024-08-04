@@ -12,18 +12,13 @@ import 'package:flow/main.dart';
 import 'package:flow/theme/primary_colors.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/home/stats/pie_percent_badge.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide Flow;
 
 class GroupPieChart<T> extends StatefulWidget {
   final EdgeInsets chartPadding;
 
-  final bool showSelectedSection;
-
-  final bool showLegend;
-  final bool sortLegend;
-
   final bool scrollLegendWithin;
-  final EdgeInsets scrollPadding;
 
   final Map<String, MoneyFlow<T>> data;
 
@@ -41,11 +36,7 @@ class GroupPieChart<T> extends StatefulWidget {
     required this.data,
     required this.type,
     this.chartPadding = const EdgeInsets.all(24.0),
-    this.scrollPadding = EdgeInsets.zero,
-    this.showLegend = true,
     this.scrollLegendWithin = false,
-    this.showSelectedSection = true,
-    this.sortLegend = true,
     this.unresolvedDataTitle,
     this.onReselect,
   });
@@ -68,6 +59,8 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
 
   String? selectedKey;
 
+  bool usingMouse = false;
+
   @override
   void initState() {
     super.initState();
@@ -88,103 +81,129 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         selectedKey == null ? null : data[selectedKey!];
 
     final String selectedSectionTotal =
-        selectedSection?.getTotalByType(widget.type).abs().money ?? "-";
+        selectedSection?.getTotalByType(widget.type).abs().formatMoney() ?? "-";
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        //
-        Padding(
-          padding: widget.chartPadding,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: GroupPieChart.graphSizeMax,
-              maxWidth: GroupPieChart.graphSizeMax,
-            ),
-            child: AspectRatio(
-              aspectRatio: 1.0,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final double size = constraints.maxWidth;
+    return MouseRegion(
+      onHover: (event) {
+        if (event.kind == PointerDeviceKind.mouse) {
+          setState(() {
+            usingMouse = true;
+          });
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 16.0),
+          Text(
+            "tabs.stats.chart.total".t(context),
+            style: context.textTheme.labelMedium,
+          ),
+          Text(
+            totalValue.formatMoney(),
+            style: context.textTheme.headlineMedium,
+          ),
+          Padding(
+            padding: widget.chartPadding,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxHeight: GroupPieChart.graphSizeMax,
+                maxWidth: GroupPieChart.graphSizeMax,
+              ),
+              child: AspectRatio(
+                aspectRatio: 1.0,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double size = constraints.maxWidth;
 
-                  final double centerHoleDiameter =
-                      math.max(size * 0.5, GroupPieChart.graphHoleSizeMin);
-                  final double radius = (size - centerHoleDiameter) * 0.5;
+                    final double centerHoleDiameter =
+                        math.max(size * 0.5, GroupPieChart.graphHoleSizeMin);
+                    final double radius = (size - centerHoleDiameter) * 0.5;
 
-                  return Stack(
-                    children: [
-                      PieChart(
-                        PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback: (event, response) {
-                              if (!event.isInterestedForInteractions ||
-                                  response == null ||
-                                  response.touchedSection == null) {
-                                return;
-                              }
+                    return Stack(
+                      children: [
+                        PieChart(
+                          PieChartData(
+                            pieTouchData: PieTouchData(
+                              touchCallback: (event, response) {
+                                if (!event.isInterestedForInteractions ||
+                                    response == null ||
+                                    response.touchedSection == null) {
+                                  return;
+                                }
 
-                              final int index =
-                                  response.touchedSection!.touchedSectionIndex;
+                                final int index = response
+                                    .touchedSection!.touchedSectionIndex;
 
-                              if (index > -1) {
-                                selectedKey = data.entries.elementAt(index).key;
-                                setState(() {});
-                              }
-                            },
+                                if (index > -1) {
+                                  final String newSelectedKey =
+                                      data.entries.elementAt(index).key;
+
+                                  if (!usingMouse &&
+                                      newSelectedKey == selectedKey) {
+                                    widget.onReselect?.call(newSelectedKey);
+                                  }
+
+                                  setState(() {
+                                    selectedKey = newSelectedKey;
+                                  });
+                                }
+                              },
+                            ),
+                            sectionsSpace: 0.0,
+                            centerSpaceRadius: centerHoleDiameter / 2,
+                            startDegreeOffset: -90.0,
+                            sections: data.entries.indexed
+                                .map(
+                                  (e) => sectionData(
+                                    data[e.$2.key]!,
+                                    selected: e.$2.key == selectedKey,
+                                    index: e.$1,
+                                    radius: radius,
+                                  ),
+                                )
+                                .toList(),
                           ),
-                          sectionsSpace: 0.0,
-                          centerSpaceRadius: centerHoleDiameter / 2,
-                          startDegreeOffset: -90.0,
-                          sections: data.entries.indexed
-                              .map(
-                                (e) => sectionData(
-                                  data[e.$2.key]!,
-                                  selected: e.$2.key == selectedKey,
-                                  index: e.$1,
-                                  radius: radius,
-                                ),
-                              )
-                              .toList(),
                         ),
-                      ),
-                      Positioned.fill(
-                        child: Center(
-                          child: ClipOval(
-                            child: Container(
-                              width: centerHoleDiameter,
-                              height: centerHoleDiameter,
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    resolveName(
-                                      selectedSection?.associatedData,
+                        Positioned.fill(
+                          child: Center(
+                            child: ClipOval(
+                              child: Container(
+                                width: centerHoleDiameter,
+                                height: centerHoleDiameter,
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      resolveName(
+                                        selectedSection?.associatedData,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  AutoSizeText(
-                                    selectedSectionTotal,
-                                    textAlign: TextAlign.center,
-                                    style: context.textTheme.headlineSmall,
-                                  ),
-                                ],
+                                    AutoSizeText(
+                                      selectedSectionTotal,
+                                      textAlign: TextAlign.center,
+                                      style: context.textTheme.headlineSmall,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                  );
-                },
+                        )
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

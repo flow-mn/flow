@@ -191,6 +191,7 @@
     "tabs.stats.timeRange.mode.byWeek": "Per settimana",
     "tabs.stats.timeRange.mode.byMonth": "Per mese",
     "tabs.stats.timeRange.mode.byYear": "Per anno",
+    "tabs.stats.chart.total": "Totale",
     "tabs.stats.chart.noData": "Nessun dato da mostrare",
     "tabs.stats.chart.select.clickToSelect": "Clicca per selezionare",
     "tabs.accounts": "Conti",

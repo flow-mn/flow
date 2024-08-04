@@ -15,10 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flow/constants.dart';
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/entity/profile.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
@@ -39,13 +41,13 @@ void main() async {
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
-  PackageInfo.fromPlatform()
+  unawaited(PackageInfo.fromPlatform()
       .then((value) =>
           appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
     log("An error was occured while fetching app version: $e");
     return appVersion = "<unknown>+<0>$debugBuildSuffix";
-  });
+  }));
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
@@ -103,6 +105,12 @@ class FlowState extends State<Flow> {
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
     }
+
+    unawaited(
+      ExchangeRates.tryFetchRates(
+        LocalPreferences().getPrimaryCurrency(),
+      ),
+    );
   }
 
   @override

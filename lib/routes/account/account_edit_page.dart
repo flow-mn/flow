@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flow/data/flow_icon.dart';
@@ -337,24 +338,30 @@ class _AccountEditPageState extends State<AccountEditPage> {
     );
 
     if (_balance.abs() != 0) {
-      ObjectBox()
-          .box<Account>()
-          .putAndGetAsync(
-            account,
-            mode: PutMode.insert,
-          )
-          .then((value) {
-        value.updateBalanceAndSave(
-          _balance,
-          title: "account.updateBalance.transactionTitle".t(context),
-        );
-        ObjectBox().box<Account>().putAsync(value);
-      });
+      unawaited(
+        ObjectBox()
+            .box<Account>()
+            .putAndGetAsync(
+              account,
+              mode: PutMode.insert,
+            )
+            .then(
+          (value) {
+            value.updateBalanceAndSave(
+              _balance,
+              title: "account.updateBalance.transactionTitle".t(context),
+            );
+            ObjectBox().box<Account>().putAsync(value);
+          },
+        ),
+      );
     } else {
-      ObjectBox().box<Account>().putAsync(
-            account,
-            mode: PutMode.insert,
-          );
+      unawaited(
+        ObjectBox().box<Account>().putAsync(
+              account,
+              mode: PutMode.insert,
+            ),
+      );
     }
 
     context.pop();

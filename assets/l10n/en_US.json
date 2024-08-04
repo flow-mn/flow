@@ -191,6 +191,7 @@
     "tabs.stats.timeRange.mode.byWeek": "By week",
     "tabs.stats.timeRange.mode.byMonth": "By month",
     "tabs.stats.timeRange.mode.byYear": "By year",
+    "tabs.stats.chart.total": "Total",
     "tabs.stats.chart.noData": "No data to show",
     "tabs.stats.chart.select.clickToSelect": "Click to select",
     "tabs.accounts": "Accounts",
