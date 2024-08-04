@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flow/data/exchange_rates_set.dart';
 import 'package:flow/data/prefs/frecency.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
@@ -60,6 +61,8 @@ class LocalPreferences {
   late final BoolSettingsEntry transitiveUsesSingleCurrency;
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
+
+  late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -126,6 +129,14 @@ class LocalPreferences {
     transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
       key: "flow.transitive.lastTimeFrecencyUpdated",
       preferences: _prefs,
+    );
+
+    exchangeRatesCache = JsonSettingsEntry<ExchangeRatesSet>(
+      initialValue: const ExchangeRatesSet({}),
+      key: "flow.caches.exchangeRatesCache",
+      preferences: _prefs,
+      fromJson: (json) => ExchangeRatesSet.fromJson(json),
+      toJson: (data) => data.toJson(),
     );
 
     updateTransitiveProperties();
