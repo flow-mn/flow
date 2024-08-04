@@ -20,10 +20,9 @@ class ExchangeRates {
     required this.rates,
   });
 
-  factory ExchangeRates.fromJson(
-    String baseCurrency,
-    Map<String, dynamic> json,
-  ) {
+  factory ExchangeRates.fromJson(Map<String, dynamic> json) {
+    final String baseCurrency = json.keys.firstWhere((key) => key != "date");
+
     return ExchangeRates(
       date: DateTime.parse(json['date']),
       baseCurrency: baseCurrency,
@@ -33,10 +32,13 @@ class ExchangeRates {
 
   Map<String, dynamic> toJson() {
     return {
-      "date": date.format(payload: "yyyy-MM-dd"),
-      "baseCurrency": baseCurrency,
-      "rates": rates,
+      "date": date.format(payload: "YYYY-MM-DD"),
+      baseCurrency: rates,
     };
+  }
+
+  double? getRate(String currency) {
+    return rates[currency.toLowerCase()]?.toDouble();
   }
 
   static final ExchangeRatesSet _cache =
@@ -94,9 +96,8 @@ class ExchangeRates {
       throw Exception("Failed to fetch exchange rates");
     }
 
-    final exchangeRates =
-        ExchangeRates.fromJson(normalizedCurrency, jsonResponse);
-    _cache.set(baseCurrency, exchangeRates);
+    final exchangeRates = ExchangeRates.fromJson(jsonResponse);
+    updateCache(baseCurrency, exchangeRates);
     return exchangeRates;
   }
 

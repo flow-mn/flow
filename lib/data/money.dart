@@ -46,11 +46,14 @@ class Money implements Comparable<Money> {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
     final ExchangeRates rates = ExchangeRates.getPrimaryCurrencyRates()!;
 
-    if (currency == primaryCurrency) {
-      return Money(amount * rates.rates[newCurrency]!, newCurrency);
-    } else {
-      return this & primaryCurrency & newCurrency;
+    if (newCurrency == primaryCurrency) {
+      return Money(amount / rates.getRate(currency)!, newCurrency);
     }
+    if (currency == primaryCurrency) {
+      return Money(amount * rates.getRate(newCurrency)!, newCurrency);
+    }
+
+    return this & primaryCurrency & newCurrency;
   }
 
   Money operator &(String currency) => convert(currency);

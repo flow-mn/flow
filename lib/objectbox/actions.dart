@@ -98,6 +98,7 @@ extension MainActions on ObjectBox {
     required DateTime to,
     bool ignoreTransfers = true,
     bool omitZeroes = true,
+    String? currencyOverride,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -119,7 +120,7 @@ extension MainActions on ObjectBox {
 
       flow[categoryUuid] ??= MoneyFlow(
         associatedData: transaction.category.target,
-        currency: transaction.currency,
+        currency: currencyOverride ?? transaction.currency,
       );
       flow[categoryUuid]!.addMoney(transaction.money);
     }
@@ -137,6 +138,7 @@ extension MainActions on ObjectBox {
     required DateTime to,
     bool ignoreTransfers = true,
     bool omitZeroes = true,
+    String? currencyOverride,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -158,7 +160,7 @@ extension MainActions on ObjectBox {
 
       flow[accountUuid] ??= MoneyFlow(
         associatedData: transaction.account.target,
-        currency: transaction.currency,
+        currency: currencyOverride ?? transaction.currency,
       );
       flow[accountUuid]!.addMoney(transaction.money);
     }

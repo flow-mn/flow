@@ -5,6 +5,7 @@ import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/routes/home/stats_tab/pie_graph_view.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/time_range_selector.dart';
@@ -128,8 +129,16 @@ class _StatsTabState extends State<StatsTab>
 
     try {
       analytics = byCategory
-          ? await ObjectBox().flowByCategories(from: range.from, to: range.to)
-          : await ObjectBox().flowByAccounts(from: range.from, to: range.to);
+          ? await ObjectBox().flowByCategories(
+              from: range.from,
+              to: range.to,
+              currencyOverride: LocalPreferences().getPrimaryCurrency(),
+            )
+          : await ObjectBox().flowByAccounts(
+              from: range.from,
+              to: range.to,
+              currencyOverride: LocalPreferences().getPrimaryCurrency(),
+            );
     } finally {
       busy = false;
 

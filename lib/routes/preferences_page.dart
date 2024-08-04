@@ -208,6 +208,10 @@ class _PreferencesPageState extends State<PreferencesPage> {
       }
     } finally {
       _currencyBusy = false;
+
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
