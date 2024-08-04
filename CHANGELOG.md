@@ -3,8 +3,12 @@
 * Updated theme to correct `activeColor` for radio/checkboxes and its lists
 * Added filters to home tab, and added preferences for home page
 * Added error builder for Image `FlowIcon`s when the image is missing
-* Made Stats tab better, hopefully...
 * TimeRange selector now listens for mouse wheel scroll
+* Added exchange rates
+* Stats tab:
+  * Uses primary currency to show all the data
+  * Now separates income/expense
+* Frecency data updates one per day max. (was updating at every launch before)
 
 ## Beta 0.5.5
 
