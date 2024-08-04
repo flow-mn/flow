@@ -71,6 +71,45 @@ final lightTheme = ThemeData(
     iconColor: _light.primary,
     selectedTileColor: _light.secondary,
   ),
+  radioTheme: RadioThemeData(
+    fillColor: WidgetStateProperty.resolveWith(
+      (states) {
+        if (states.contains(WidgetState.disabled)) {
+          return _light.onSurface.withOpacity(0.38);
+        }
+        if (states.contains(WidgetState.selected)) {
+          return _light.primary;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return _light.onSurface;
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return _light.onSurface;
+        }
+        if (states.contains(WidgetState.focused)) {
+          return _light.onSurface;
+        }
+        return _light.onSurfaceVariant;
+      },
+    ),
+  ),
+  checkboxTheme: CheckboxThemeData(
+    fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        if (states.contains(WidgetState.selected)) {
+          return _light.onSurface.withOpacity(0.38);
+        }
+        return kTransparent;
+      }
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.error)) {
+          return _light.error;
+        }
+        return _light.primary;
+      }
+      return kTransparent;
+    }),
+  ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: _light.secondary,
     cursorColor: _light.primary,
@@ -126,6 +165,47 @@ final darkTheme = ThemeData(
   listTileTheme: ListTileThemeData(
     iconColor: _dark.primary,
     selectedTileColor: _dark.secondary,
+    selectedColor: _dark.primary,
+  ),
+  // The amount of buraucracy to get thru to see the default implementation is insane!!!
+  radioTheme: RadioThemeData(
+    fillColor: WidgetStateProperty.resolveWith(
+      (states) {
+        if (states.contains(WidgetState.disabled)) {
+          return _dark.onSurface.withOpacity(0.38);
+        }
+        if (states.contains(WidgetState.selected)) {
+          return _dark.primary;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return _dark.onSurface;
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return _dark.onSurface;
+        }
+        if (states.contains(WidgetState.focused)) {
+          return _dark.onSurface;
+        }
+        return _dark.onSurfaceVariant;
+      },
+    ),
+  ),
+  checkboxTheme: CheckboxThemeData(
+    fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        if (states.contains(WidgetState.selected)) {
+          return _dark.onSurface.withOpacity(0.38);
+        }
+        return kTransparent;
+      }
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.error)) {
+          return _dark.error;
+        }
+        return _dark.primary;
+      }
+      return kTransparent;
+    }),
   ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: _dark.primary,

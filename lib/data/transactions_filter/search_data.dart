@@ -109,6 +109,10 @@ class TransactionSearchData {
 
   @override
   operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
     if (other is! TransactionSearchData) {
       return false;
     }

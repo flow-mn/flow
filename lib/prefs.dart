@@ -18,11 +18,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalPreferences {
   final SharedPreferences _prefs;
 
+  static const int homeTabPlannedTransactionsDaysDefault = 7;
+
+  /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
+
+  /// Whether to use phone numpad layout
+  ///
+  /// When set to true, 1 2 3 will be the top row like
+  /// in a modern dialpad
   late final BoolSettingsEntry usePhoneNumpadLayout;
+
+  /// Whether to enable haptic feedback on numpad touch
   late final BoolSettingsEntry enableNumpadHapticFeedback;
+
+  /// Whether to combine transfer transactions in the transaction list
+  ///
+  /// Doesn't necessarily combine the transactions, but rather
+  /// shows them as a single transaction in the transaction list
+  ///
+  /// It will not work in transactions list where a filter has applied
   late final BoolSettingsEntry combineTransferTransactions;
+
+  /// Whether to exclude transfer transactions from the flow
+  ///
+  /// When set to true, transfer transactions will not contribute
+  /// to total income/expense for a given context
   late final BoolSettingsEntry excludeTransferFromFlow;
+
+  /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
+  late final PrimitiveSettingsEntry<int> homeTabPlannedTransactionsDays;
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -59,6 +84,11 @@ class LocalPreferences {
       key: "flow.excludeTransferFromFlow",
       preferences: _prefs,
       initialValue: false,
+    );
+    homeTabPlannedTransactionsDays = PrimitiveSettingsEntry<int>(
+      key: "flow.homeTabPlannedTransactionsDays",
+      preferences: _prefs,
+      initialValue: homeTabPlannedTransactionsDaysDefault,
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "flow.transactionButtonOrder",

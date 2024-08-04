@@ -38,6 +38,7 @@ Future<TimeRange?> showTimeRangePickerSheet(
   if (!context.mounted) return null;
 
   return switch (mode) {
+    TimeRangeMode.last30Days => last30Days(),
     TimeRangeMode.thisWeek => TimeRange.thisLocalWeek(),
     TimeRangeMode.thisMonth => TimeRange.thisMonth(),
     TimeRangeMode.thisYear => TimeRange.thisYear(),
@@ -63,3 +64,8 @@ Future<TimeRange?> showTimeRangePickerSheet(
     _ => null, // context.mounted == true
   };
 }
+
+CustomTimeRange last30Days() => Moment.now()
+    .subtract(const Duration(days: 29))
+    .startOfDay()
+    .rangeTo(Moment.endOfToday());

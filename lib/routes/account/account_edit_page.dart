@@ -230,7 +230,6 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
-                  activeColor: context.colorScheme.primary,
                 ),
                 if (widget.isNewAccount)
                   ListTile(

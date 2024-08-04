@@ -6,7 +6,7 @@ import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/main.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/preferences/language_selection_sheet.dart';
-import 'package:flow/theme/theme.dart';
+import 'package:flow/routes/preferences/theme_selection_sheet.dart';
 import 'package:flow/widgets/select_currency_sheet.dart';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:go_router/go_router.dart';
@@ -28,81 +28,93 @@ class _PreferencesPageState extends State<PreferencesPage> {
   Widget build(BuildContext context) {
     final ThemeMode currentThemeMode = Flow.of(context).themeMode;
 
+    final int showUpcomingTransactionDays =
+        LocalPreferences().homeTabPlannedTransactionsDays.get() ??
+            LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("preferences".t(context)),
       ),
       body: SafeArea(
-        child: ListView(
-          children: ListTile.divideTiles(
-            tiles: [
-              ListTile(
-                title: Text("preferences.themeMode".t(context)),
-                leading: switch (currentThemeMode) {
-                  ThemeMode.system => const Icon(Symbols.routine_rounded),
-                  ThemeMode.dark => const Icon(Symbols.light_mode_rounded),
-                  ThemeMode.light => const Icon(Symbols.dark_mode_rounded),
-                },
-                subtitle: Text(switch (currentThemeMode) {
-                  ThemeMode.system => "preferences.themeMode.system".t(context),
-                  ThemeMode.dark => "preferences.themeMode.dark".t(context),
-                  ThemeMode.light => "preferences.themeMode.light".t(context),
-                }),
-                onTap: () => updateTheme(),
-                onLongPress: () => updateTheme(ThemeMode.system),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              ListTile(
-                title: Text("preferences.language".t(context)),
-                leading: const Icon(Symbols.language_rounded),
-                onTap: () => updateLanguage(),
-                subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              ListTile(
-                title: Text("preferences.primaryCurrency".t(context)),
-                leading: const Icon(Symbols.universal_currency_alt_rounded),
-                onTap: () => updatePrimaryCurrency(),
-                subtitle: Text(LocalPreferences().getPrimaryCurrency()),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              ListTile(
-                title: Text("preferences.numpad".t(context)),
-                leading: const Icon(Symbols.dialpad_rounded),
-                onTap: openNumpadPrefs,
-                subtitle: Text(
-                  LocalPreferences().usePhoneNumpadLayout.get()
-                      ? "preferences.numpad.layout.modern".t(context)
-                      : "preferences.numpad.layout.classic".t(context),
-                ),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              ListTile(
-                title: Text("preferences.transfer".t(context)),
-                leading: const Icon(Symbols.sync_alt_rounded),
-                onTap: openTransferPrefs,
-                subtitle: Text(
-                  "preferences.transfer.description".t(context),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-              ListTile(
-                title: Text("preferences.transactionButtonOrder".t(context)),
-                leading: const Icon(Symbols.action_key_rounded),
-                onTap: openTransactionButtonOrderPrefs,
-                subtitle: Text(
-                  "preferences.transactionButtonOrder.description".t(context),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: const Icon(Symbols.chevron_right_rounded),
-              ),
-            ],
-            color: context.colorScheme.onSurface.withAlpha(0x20),
-          ).toList(),
-        ),
+        child: ListView(children: [
+          ListTile(
+            title: Text("preferences.home.upcoming".t(context)),
+            subtitle: Text(
+              showUpcomingTransactionDays == 0
+                  ? "preferences.home.upcoming.none".t(context)
+                  : "preferences.home.upcoming.nextNdays"
+                      .t(context, showUpcomingTransactionDays),
+            ),
+            leading: const Icon(Symbols.hourglass_top_rounded),
+            onTap: openHomeTabPrefs,
+            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.themeMode".t(context)),
+            leading: switch (currentThemeMode) {
+              ThemeMode.system => const Icon(Symbols.routine_rounded),
+              ThemeMode.dark => const Icon(Symbols.dark_mode_rounded),
+              ThemeMode.light => const Icon(Symbols.light_mode_rounded),
+            },
+            subtitle: Text(switch (currentThemeMode) {
+              ThemeMode.system => "preferences.themeMode.system".t(context),
+              ThemeMode.dark => "preferences.themeMode.dark".t(context),
+              ThemeMode.light => "preferences.themeMode.light".t(context),
+            }),
+            onTap: () => updateTheme(),
+            onLongPress: () => updateTheme(ThemeMode.system),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.language".t(context)),
+            leading: const Icon(Symbols.language_rounded),
+            onTap: () => updateLanguage(),
+            subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.primaryCurrency".t(context)),
+            leading: const Icon(Symbols.universal_currency_alt_rounded),
+            onTap: () => updatePrimaryCurrency(),
+            subtitle: Text(LocalPreferences().getPrimaryCurrency()),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.numpad".t(context)),
+            leading: const Icon(Symbols.dialpad_rounded),
+            onTap: openNumpadPrefs,
+            subtitle: Text(
+              LocalPreferences().usePhoneNumpadLayout.get()
+                  ? "preferences.numpad.layout.modern".t(context)
+                  : "preferences.numpad.layout.classic".t(context),
+            ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.transfer".t(context)),
+            leading: const Icon(Symbols.sync_alt_rounded),
+            onTap: openTransferPrefs,
+            subtitle: Text(
+              "preferences.transfer.description".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.transactionButtonOrder".t(context)),
+            leading: const Icon(Symbols.action_key_rounded),
+            onTap: openTransactionButtonOrderPrefs,
+            subtitle: Text(
+              "preferences.transactionButtonOrder.description".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+        ]),
       ),
     );
   }
@@ -115,15 +127,16 @@ class _PreferencesPageState extends State<PreferencesPage> {
     });
 
     try {
-      final ThemeMode newThemeMode = force ??
-          switch ((Flow.of(context).themeMode, Flow.of(context).useDarkTheme)) {
-            (ThemeMode.light, _) => ThemeMode.dark,
-            (ThemeMode.dark, _) => ThemeMode.light,
-            (ThemeMode.system, true) => ThemeMode.light,
-            (ThemeMode.system, false) => ThemeMode.dark,
-          };
+      final ThemeMode? selected = await showModalBottomSheet<ThemeMode>(
+        context: context,
+        builder: (context) => ThemeSelectionSheet(
+          currentTheme: Flow.of(context).themeMode,
+        ),
+      );
 
-      await LocalPreferences().themeMode.set(newThemeMode);
+      if (selected != null) {
+        await LocalPreferences().themeMode.set(selected);
+      }
 
       if (mounted) {
         // Even tho the whole app state refreshes, it doesn't get refreshed
@@ -207,6 +220,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransferPrefs() async {
     await context.push("/preferences/transfer");
+  }
+
+  void openHomeTabPrefs() async {
+    await context.push("/preferences/home");
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
   }
 
   void openTransactionButtonOrderPrefs() async {

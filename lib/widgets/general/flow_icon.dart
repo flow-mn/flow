@@ -5,6 +5,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/widgets/general/surface.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart';
 
 class FlowIcon extends StatelessWidget {
@@ -87,6 +88,11 @@ class FlowIcon extends StatelessWidget {
             File(join(ObjectBox.appDataDirectory, image.imagePath)),
             width: size,
             height: size,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              Symbols.error_rounded,
+              color: context.flowColors.expense,
+              size: size,
+            ),
           ),
         ),
       CharacterFlowIcon character => SizedBox.square(

@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class LanguageSelectionSheet extends StatelessWidget {
-  final Locale? currentLocale;
+/// Pops with a [ThemeMode]
+class ThemeSelectionSheet extends StatelessWidget {
+  final ThemeMode? currentTheme;
 
-  const LanguageSelectionSheet({super.key, this.currentLocale});
+  const ThemeSelectionSheet({super.key, this.currentTheme});
 
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: MediaQuery.of(context).size.height,
-      title: Text("preferences.language.choose".t(context)),
+      title: Text("preferences.themeMode.choose".t(context)),
       trailing: ButtonBar(
         children: [
           TextButton.icon(
@@ -26,13 +27,13 @@ class LanguageSelectionSheet extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            ...FlowLocalizations.supportedLanguages.map(
-              (locale) => RadioListTile<Locale>.adaptive(
-                title: Text(locale.endonym),
-                subtitle: Text(locale.name),
-                selected: currentLocale == locale,
-                value: locale,
-                groupValue: currentLocale,
+            ...ThemeMode.values.map(
+              (themeMode) => RadioListTile<ThemeMode>.adaptive(
+                title:
+                    Text("preferences.themeMode.${themeMode.name}".t(context)),
+                selected: currentTheme == themeMode,
+                value: themeMode,
+                groupValue: currentTheme,
                 onChanged: (value) => context.pop(value),
               ),
             ),

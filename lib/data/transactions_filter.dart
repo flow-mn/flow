@@ -165,6 +165,22 @@ class TransactionFilter {
     );
   }
 
+  /// Returns a filter with planned transactions
+  ///
+  /// Overrides [to] of the TimeRange
+  TransactionFilter withPlannedTransactions(int days) => copyWithOptional(
+        range: range == null
+            ? null
+            : Optional(
+                CustomTimeRange(
+                  range!.from,
+                  Moment.startOfTomorrow()
+                      .add(Duration(days: days - 1))
+                      .endOfDay(),
+                ),
+              ),
+      );
+
   @override
   int get hashCode => Object.hashAll([
         types,
@@ -178,6 +194,10 @@ class TransactionFilter {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
     if (other is! TransactionFilter) return false;
 
     return other.range == range &&
