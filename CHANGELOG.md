@@ -10,6 +10,11 @@
   * Now separates income/expense
 * Frecency data updates one per day max. (was updating at every launch before)
 
+TODO:
+- [ ] Fallback when there's no exchange rate
+- [ ] Optimize FlowAnalytics adding to group by currencies first, then adding
+- [ ] Test, test, test
+
 ## Beta 0.5.5
 
 * Selecting icons should be slightly better
