@@ -132,7 +132,7 @@ class LocalPreferences {
     );
 
     exchangeRatesCache = JsonSettingsEntry<ExchangeRatesSet>(
-      initialValue: const ExchangeRatesSet({}),
+      initialValue: ExchangeRatesSet({}),
       key: "flow.caches.exchangeRatesCache",
       preferences: _prefs,
       fromJson: (json) => ExchangeRatesSet.fromJson(json),

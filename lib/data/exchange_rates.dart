@@ -12,7 +12,7 @@ import 'package:moment_dart/moment_dart.dart';
 class ExchangeRates {
   final DateTime date;
   final String baseCurrency;
-  final Map<String, double> rates;
+  final Map<String, num> rates;
 
   const ExchangeRates({
     required this.date,
@@ -27,7 +27,7 @@ class ExchangeRates {
     return ExchangeRates(
       date: DateTime.parse(json['date']),
       baseCurrency: baseCurrency,
-      rates: Map<String, double>.from(json[baseCurrency.toLowerCase()]),
+      rates: Map<String, num>.from(json[baseCurrency.toLowerCase()]),
     );
   }
 
@@ -39,7 +39,8 @@ class ExchangeRates {
     };
   }
 
-  static const ExchangeRatesSet _cache = ExchangeRatesSet({});
+  static final ExchangeRatesSet _cache =
+      ExchangeRatesSet(<String, ExchangeRates>{});
 
   static void updateCache(String baseCurrency, ExchangeRates exchangeRates) {
     _cache.set(baseCurrency, exchangeRates);
@@ -106,8 +107,13 @@ class ExchangeRates {
     try {
       final ExchangeRates exchangeRates =
           await fetchRates(baseCurrency, dateTime);
+
+      inspect(exchangeRates);
+
       return exchangeRates;
     } catch (e) {
+      log("Failed to fetch exchange rates", error: e);
+
       return _cache.get(baseCurrency);
     }
   }

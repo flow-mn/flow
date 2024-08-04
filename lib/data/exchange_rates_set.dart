@@ -3,7 +3,7 @@ import 'package:flow/data/exchange_rates.dart';
 class ExchangeRatesSet {
   final Map<String, ExchangeRates> rates;
 
-  const ExchangeRatesSet(this.rates);
+  ExchangeRatesSet(this.rates);
 
   void set(String baseCurrency, ExchangeRates exchangeRates) {
     rates[baseCurrency] = exchangeRates;

@@ -74,10 +74,23 @@ class Money implements Comparable<Money> {
   @override
   int compareTo(Money other) {
     if (currency != other.currency) {
-      // TODO (@sadespresso) convert currencies
-      throw ArgumentError("Cannot compare money with different currencies");
+      return compareTo(other & currency);
     }
 
     return amount.compareTo(other.amount);
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    if (other is! Money) return false;
+
+    return amount == other.amount && currency == other.currency;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([amount, currency]);
 }
