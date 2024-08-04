@@ -3,6 +3,8 @@
 * Updated theme to correct `activeColor` for radio/checkboxes and its lists
 * Added filters to home tab, and added preferences for home page
 * Added error builder for Image `FlowIcon`s when the image is missing
+* Made Stats tab better, hopefully...
+* TimeRange selector now listens for mouse wheel scroll
 
 ## Beta 0.5.5
 

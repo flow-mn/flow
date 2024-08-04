@@ -115,6 +115,9 @@ final lightTheme = ThemeData(
     cursorColor: _light.primary,
     selectionHandleColor: _light.primary,
   ),
+  tabBarTheme: TabBarTheme(
+    dividerColor: _light.primary,
+  ),
 );
 final darkTheme = ThemeData(
   useMaterial3: true,
@@ -211,5 +214,8 @@ final darkTheme = ThemeData(
     selectionColor: _dark.primary,
     cursorColor: _dark.primary,
     selectionHandleColor: _dark.primary,
+  ),
+  tabBarTheme: TabBarTheme(
+    dividerColor: _dark.primary,
   ),
 );
