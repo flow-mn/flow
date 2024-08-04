@@ -1,7 +1,10 @@
+import 'package:flow/data/money.dart';
 import 'package:flow/entity/transaction.dart';
 
 class MoneyFlow<T> implements Comparable<MoneyFlow> {
   final T? associatedData;
+
+  final String currency;
 
   double totalExpense;
   double totalIncome;
@@ -11,6 +14,7 @@ class MoneyFlow<T> implements Comparable<MoneyFlow> {
   bool get isEmpty => totalExpense.abs() == 0.0 && totalIncome.abs() == 0.0;
 
   MoneyFlow({
+    required this.currency,
     this.associatedData,
     this.totalExpense = 0.0,
     this.totalIncome = 0.0,
@@ -21,11 +25,23 @@ class MoneyFlow<T> implements Comparable<MoneyFlow> {
     return flow.compareTo(other.flow);
   }
 
-  void addExpense(double expense) => totalExpense += expense;
-  void addIncome(double income) => totalIncome += income;
-  void add(double amount) =>
-      amount.isNegative ? addExpense(amount) : addIncome(amount);
-  void addAll(Iterable<double> amounts) => amounts.forEach(add);
+  void addMoney(Money money) => add(money.amount, money.currency);
+
+  void addExpense(double expense, String currency) =>
+      totalExpense += Money.convertDouble(
+        currency,
+        this.currency,
+        expense,
+      );
+  void addIncome(double income, String currency) =>
+      totalIncome += Money.convertDouble(
+        currency,
+        this.currency,
+        income,
+      );
+  void add(double amount, String currency) => amount.isNegative
+      ? addExpense(amount, currency)
+      : addIncome(amount, currency);
 
   double getTotalByType(TransactionType type) => switch (type) {
         TransactionType.expense => totalExpense,
@@ -35,15 +51,21 @@ class MoneyFlow<T> implements Comparable<MoneyFlow> {
 
   operator +(MoneyFlow other) {
     return MoneyFlow(
-      totalExpense: totalExpense + other.totalExpense,
-      totalIncome: totalIncome + other.totalIncome,
+      totalExpense: totalExpense +
+          Money.convertDouble(other.currency, currency, other.totalExpense),
+      totalIncome: totalIncome +
+          Money.convertDouble(other.currency, currency, other.totalIncome),
+      currency: currency,
     );
   }
 
   operator -(MoneyFlow other) {
     return MoneyFlow(
-      totalExpense: totalExpense - other.totalExpense,
-      totalIncome: totalIncome - other.totalIncome,
+      totalExpense: totalExpense -
+          Money.convertDouble(other.currency, currency, other.totalExpense),
+      totalIncome: totalIncome -
+          Money.convertDouble(other.currency, currency, other.totalIncome),
+      currency: currency,
     );
   }
 
@@ -51,6 +73,7 @@ class MoneyFlow<T> implements Comparable<MoneyFlow> {
     return MoneyFlow(
       totalExpense: -totalExpense,
       totalIncome: -totalIncome,
+      currency: currency,
     );
   }
 }

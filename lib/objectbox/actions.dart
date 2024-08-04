@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/memo.dart';
+import 'package:flow/data/money.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/data/transactions_filter.dart';
@@ -116,9 +117,11 @@ extension MainActions on ObjectBox {
       final String categoryUuid =
           transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[categoryUuid] ??=
-          MoneyFlow(associatedData: transaction.category.target);
-      flow[categoryUuid]!.add(transaction.amount);
+      flow[categoryUuid] ??= MoneyFlow(
+        associatedData: transaction.category.target,
+        currency: transaction.currency,
+      );
+      flow[categoryUuid]!.addMoney(transaction.money);
     }
 
     if (omitZeroes) {
@@ -153,9 +156,11 @@ extension MainActions on ObjectBox {
       final String accountUuid =
           transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[accountUuid] ??=
-          MoneyFlow(associatedData: transaction.account.target);
-      flow[accountUuid]!.add(transaction.amount);
+      flow[accountUuid] ??= MoneyFlow(
+        associatedData: transaction.account.target,
+        currency: transaction.currency,
+      );
+      flow[accountUuid]!.addMoney(transaction.money);
     }
 
     assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
@@ -392,6 +397,7 @@ extension TransactionListActions on Iterable<Transaction> {
   MoneyFlow get flow => MoneyFlow(
         totalExpense: expenseSum,
         totalIncome: incomeSum,
+        currency: firstOrNull?.currency ?? Money.invalidCurrency,
       );
 
   /// If [mergeFutureTransactions] is set to true, transactions in future

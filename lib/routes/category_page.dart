@@ -5,6 +5,7 @@ import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
+import 'package:flow/prefs.dart';
 import 'package:flow/routes/error_page.dart';
 import 'package:flow/widgets/category/transactions_info.dart';
 import 'package:flow/widgets/flow_card.dart';
@@ -86,7 +87,11 @@ class _CategoryPageState extends State<CategoryPage> {
 
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
-        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+        final MoneyFlow flow = transactions?.flow ??
+            MoneyFlow(
+              currency: transactions?.firstOrNull?.currency ??
+                  LocalPreferences().getPrimaryCurrency(),
+            );
 
         const double firstHeaderTopPadding = 0.0;
 

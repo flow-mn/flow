@@ -1,3 +1,4 @@
+import 'package:flow/data/money.dart';
 import 'package:flow/entity/_base.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
@@ -35,6 +36,9 @@ class Transaction implements EntityBase {
 
   /// Currency code complying with [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
   String currency;
+
+  @Transient()
+  Money get money => Money(amount, currency);
 
   // Later, we might need to reference the parent transaction in order to
   // edit them as one. This can be useful, for example, in loan/savings with

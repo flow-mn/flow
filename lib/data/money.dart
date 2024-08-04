@@ -6,10 +6,12 @@ class Money implements Comparable<Money> {
   final double amount;
   final String currency;
 
-  static const String _invalidCurrency = "   ";
+  static const String invalidCurrency = "   ";
 
   /// Not a money; lmao
-  static const Money nam = Money._(double.nan, _invalidCurrency);
+  static const Money nam = Money._(double.nan, invalidCurrency);
+
+  static const Money zeroUSD = Money._(0.0, "USD");
 
   const Money._(this.amount, this.currency);
 
@@ -21,7 +23,17 @@ class Money implements Comparable<Money> {
     return Money._(amount, currency.toUpperCase());
   }
 
-  /// Assumes
+  static double convertDouble(String from, String to, double amount) {
+    if (from == to) return amount;
+
+    if (!isCurrencyCodeValid(from) || !isCurrencyCodeValid(to)) {
+      throw Exception("Invalid or unsupported currency code");
+    }
+
+    return Money(amount, from).convert(to).amount;
+  }
+
+  /// Assumes primary currency rates exist
   Money convert(String newCurrency) {
     if (!isCurrencyCodeValid(newCurrency)) {
       throw Exception("Invalid or unsupported currency code: $currency");
@@ -90,6 +102,10 @@ class Money implements Comparable<Money> {
 
     return amount == other.amount && currency == other.currency;
   }
+
+  bool get isNegative => amount.isNegative;
+
+  Money abs() => Money(amount.abs(), currency);
 
   @override
   int get hashCode => Object.hashAll([amount, currency]);
