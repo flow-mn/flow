@@ -1,3 +1,5 @@
+import 'package:flow/entity/transaction.dart';
+
 class MoneyFlow<T> implements Comparable<MoneyFlow> {
   final T? associatedData;
 
@@ -24,6 +26,12 @@ class MoneyFlow<T> implements Comparable<MoneyFlow> {
   void add(double amount) =>
       amount.isNegative ? addExpense(amount) : addIncome(amount);
   void addAll(Iterable<double> amounts) => amounts.forEach(add);
+
+  double getTotalByType(TransactionType type) => switch (type) {
+        TransactionType.expense => totalExpense,
+        TransactionType.income => totalIncome,
+        TransactionType.transfer => 0,
+      };
 
   operator +(MoneyFlow other) {
     return MoneyFlow(

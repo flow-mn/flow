@@ -1,16 +1,15 @@
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/money_flow.dart';
-import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
+import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/routes/home/stats_tab/pie_graph_view.dart';
 import 'package:flow/widgets/general/spinner.dart';
-import 'package:flow/widgets/home/stats/group_pie_chart.dart';
-import 'package:flow/widgets/home/stats/no_data.dart';
 import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class StatsTab extends StatefulWidget {
@@ -20,7 +19,10 @@ class StatsTab extends StatefulWidget {
   State<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab> {
+class _StatsTabState extends State<StatsTab>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
   TimeRange range = TimeRange.thisMonth();
 
   FlowAnalytics? analytics;
@@ -31,12 +33,14 @@ class _StatsTabState extends State<StatsTab> {
   void initState() {
     super.initState();
 
+    _tabController = TabController(length: 2, vsync: this);
+
     fetch(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, MoneyFlow> data = analytics == null
+    final Map<String, MoneyFlow> expenses = analytics == null
         ? {}
         : Map.fromEntries(
             analytics!.flow.entries
@@ -44,6 +48,16 @@ class _StatsTabState extends State<StatsTab> {
                 .toList()
               ..sort(
                 (a, b) => b.value.totalExpense.compareTo(a.value.totalExpense),
+              ),
+          );
+    final Map<String, MoneyFlow> incomes = analytics == null
+        ? {}
+        : Map.fromEntries(
+            analytics!.flow.entries
+                .where((element) => element.value.totalIncome > 0)
+                .toList()
+              ..sort(
+                (a, b) => a.value.totalIncome.compareTo(b.value.totalIncome),
               ),
           );
 
@@ -60,32 +74,39 @@ class _StatsTabState extends State<StatsTab> {
             ),
           ),
         ),
-        busy
-            ? const Spinner()
-            : (data.isEmpty
-                ? Expanded(
-                    child: NoData(
-                    onTap: changeMode,
-                  ))
-                : Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 96.0, top: 8.0),
-                      child: GroupPieChart(
-                        data: data,
-                        unresolvedDataTitle: "category.none".t(context),
-                        onReselect: (key) {
-                          if (!data.containsKey(key)) return;
-
-                          final associatedData = data[key]!.associatedData;
-
-                          if (associatedData is Category) {
-                            context.push(
-                                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.toString())}");
-                          }
-                        },
-                      ),
-                    ),
-                  )),
+        if (busy)
+          const Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Spinner(),
+          )
+        else ...[
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: TransactionType.expense.localizedTextKey.t(context)),
+              Tab(text: TransactionType.income.localizedTextKey.t(context)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                PieGraphView(
+                  data: expenses,
+                  changeMode: changeMode,
+                  range: range,
+                  type: TransactionType.expense,
+                ),
+                PieGraphView(
+                  data: incomes,
+                  changeMode: changeMode,
+                  range: range,
+                  type: TransactionType.income,
+                ),
+              ],
+            ),
+          )
+        ],
       ],
     );
   }
