@@ -67,7 +67,7 @@ extension CustomDialogs on BuildContext {
       context: this,
       builder: (context) => ModalSheet(
         title: Text(title ?? "general.areYouSure".t(context)),
-        trailing: ButtonBar(
+        trailing: OverflowBar(
           children: [
             Button(
               onTap: () => context.pop(false),

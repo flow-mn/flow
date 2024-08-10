@@ -349,7 +349,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
           (value) {
             value.updateBalanceAndSave(
               _balance,
-              title: "account.updateBalance.transactionTitle".t(context),
+              title: "account.updateBalance.transactionTitle".tr(),
             );
             ObjectBox().box<Account>().putAsync(value);
           },

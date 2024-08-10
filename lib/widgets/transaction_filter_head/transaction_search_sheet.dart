@@ -37,7 +37,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text('transactions.query.filter.keyword'.t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
         children: [
           TextButton.icon(
             onPressed: clear,

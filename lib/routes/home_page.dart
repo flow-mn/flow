@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/main.dart';
@@ -50,10 +52,12 @@ class _HomePageState extends State<HomePage>
     });
 
     Future.delayed(const Duration(milliseconds: 200)).then((_) {
-      if (!LocalPreferences().completedInitialSetup.get()) {
-        context.pushReplacement("/setup");
-        LocalPreferences().completedInitialSetup.set(true);
-      }
+      if (!mounted) return;
+
+      if (LocalPreferences().completedInitialSetup.get()) return;
+
+      context.pushReplacement("/setup");
+      unawaited(LocalPreferences().completedInitialSetup.set(true));
     });
   }
 

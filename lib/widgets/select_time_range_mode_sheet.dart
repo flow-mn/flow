@@ -30,7 +30,7 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("tabs.stats.timeRange.select".t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
         children: [
           TextButton.icon(
             onPressed: () => context.pop(null),

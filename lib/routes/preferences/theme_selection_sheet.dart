@@ -15,7 +15,7 @@ class ThemeSelectionSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.themeMode.choose".t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
         children: [
           TextButton.icon(
             onPressed: () => context.pop(),
