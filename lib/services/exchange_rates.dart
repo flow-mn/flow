@@ -118,4 +118,9 @@ class ExchangeRatesService {
       log("Failed to update exchange rates cache", error: e);
     }
   }
+
+  void debugClearCache() {
+    LocalPreferences().exchangeRatesCache.remove();
+    exchangeRatesCache.value = null;
+  }
 }

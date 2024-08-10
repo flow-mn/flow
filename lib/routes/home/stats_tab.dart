@@ -205,9 +205,10 @@ class _StatsTabState extends State<StatsTab>
         (entry) => MapEntry<String, ChartData<T>>(
           entry.key,
           ChartData<T>(
-              key: entry.key,
-              money: cache[entry.key]!,
-              associatedData: entry.value.associatedData),
+            key: entry.key,
+            money: cache[entry.key]!,
+            associatedData: entry.value.associatedData,
+          ),
         ),
       ),
     );

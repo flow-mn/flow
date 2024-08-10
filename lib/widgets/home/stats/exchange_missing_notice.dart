@@ -56,6 +56,7 @@ class _ExchangeMissingNoticeState extends State<ExchangeMissingNotice> {
       await ExchangeRatesService().tryFetchRates(
         LocalPreferences().getPrimaryCurrency(),
       );
+      await Future.delayed(const Duration(milliseconds: 1000));
     } finally {
       setState(() {
         busy = false;
