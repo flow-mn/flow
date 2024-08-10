@@ -108,8 +108,9 @@ class ExchangeRatesService {
       });
     } else {
       current.set(baseCurrency, exchangeRates);
-      exchangeRatesCache.value = current;
     }
+
+    exchangeRatesCache.value = current;
 
     try {
       LocalPreferences().exchangeRatesCache.set(current);
