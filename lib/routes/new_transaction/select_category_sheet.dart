@@ -23,6 +23,7 @@ class SelectCategorySheet extends StatelessWidget {
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory".t(context)),
       trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<Category>(null)),

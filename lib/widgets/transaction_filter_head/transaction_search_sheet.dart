@@ -38,6 +38,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
     return ModalSheet.scrollable(
       title: Text('transactions.query.filter.keyword'.t(context)),
       trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: clear,

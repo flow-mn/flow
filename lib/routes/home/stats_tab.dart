@@ -1,4 +1,7 @@
+import 'package:flow/data/chart_data.dart';
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/money.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
@@ -41,26 +44,11 @@ class _StatsTabState extends State<StatsTab>
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, MoneyFlow> expenses = analytics == null
-        ? {}
-        : Map.fromEntries(
-            analytics!.flow.entries
-                .where((element) => element.value.totalExpense < 0)
-                .toList()
-              ..sort(
-                (a, b) => b.value.totalExpense.compareTo(a.value.totalExpense),
-              ),
-          );
-    final Map<String, MoneyFlow> incomes = analytics == null
-        ? {}
-        : Map.fromEntries(
-            analytics!.flow.entries
-                .where((element) => element.value.totalIncome > 0)
-                .toList()
-              ..sort(
-                (a, b) => a.value.totalIncome.compareTo(b.value.totalIncome),
-              ),
-          );
+    final Map<String, ChartData> expenses =
+        _prepareChartData(analytics?.flow, TransactionType.expense);
+
+    final Map<String, ChartData> incomes =
+        _prepareChartData(analytics?.flow, TransactionType.income);
 
     return Column(
       children: [
@@ -96,13 +84,11 @@ class _StatsTabState extends State<StatsTab>
                   data: expenses,
                   changeMode: changeMode,
                   range: range,
-                  type: TransactionType.expense,
                 ),
                 PieGraphView(
                   data: incomes,
                   changeMode: changeMode,
                   range: range,
-                  type: TransactionType.income,
                 ),
               ],
             ),
@@ -159,5 +145,50 @@ class _StatsTabState extends State<StatsTab>
     setState(() {
       range = newRange;
     });
+  }
+
+  Map<String, ChartData<T>> _prepareChartData<T>(
+    Map<String, MoneyFlow<T>>? raw,
+    TransactionType type,
+  ) {
+    if (raw == null || raw.isEmpty) return {};
+
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+    final ExchangeRates? rates = ExchangeRates.getPrimaryCurrencyRates();
+
+    final Map<String, Money> cache = {};
+
+    final List<MapEntry<String, MoneyFlow<T>>> filtered =
+        raw.entries.where((entry) {
+      if (rates != null) {
+        cache[entry.key] =
+            entry.value.getTotalByType(type, rates, primaryCurrency);
+      } else {
+        cache[entry.key] =
+            entry.value.getByTypeAndCurrency(primaryCurrency, type);
+      }
+
+      if (type == TransactionType.expense) {
+        return cache[entry.key]!.amount < 0.0;
+      } else {
+        return cache[entry.key]!.amount > 0.0;
+      }
+    }).toList();
+
+    filtered.sort(
+      (a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!),
+    );
+
+    return Map.fromEntries(
+      filtered.map(
+        (entry) => MapEntry<String, ChartData<T>>(
+          entry.key,
+          ChartData<T>(
+              key: entry.key,
+              money: cache[entry.key]!,
+              associatedData: entry.value.associatedData),
+        ),
+      ),
+    );
   }
 }

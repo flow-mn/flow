@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:flow/data/currencies.dart';
 import 'package:flow/data/exchange_rates.dart';
-import 'package:flow/prefs.dart';
 
-class Money implements Comparable<Money> {
+class Money {
   final double amount;
   final String currency;
 
@@ -17,50 +18,56 @@ class Money implements Comparable<Money> {
 
   factory Money(double amount, String currency) {
     if (!isCurrencyCodeValid(currency)) {
-      throw Exception("Invalid or unsupported currency code: $currency");
+      throw MoneyException("Invalid or unsupported currency code: $currency");
     }
 
     return Money._(amount, currency.toUpperCase());
   }
 
-  static double convertDouble(String from, String to, double amount) {
+  static double convertDouble(
+      String from, String to, double amount, ExchangeRates rates) {
     if (from == to) return amount;
 
     if (!isCurrencyCodeValid(from) || !isCurrencyCodeValid(to)) {
-      throw Exception("Invalid or unsupported currency code");
+      throw const MoneyException("Invalid or unsupported currency code");
     }
 
-    return Money(amount, from).convert(to).amount;
+    return Money(amount, from).convert(to, rates).amount;
   }
 
   /// Assumes primary currency rates exist
-  Money convert(String newCurrency) {
+  Money convert(String newCurrency, ExchangeRates rates) {
     if (!isCurrencyCodeValid(newCurrency)) {
-      throw Exception("Invalid or unsupported currency code: $currency");
+      throw MoneyException("Invalid or unsupported currency code: $currency");
     }
 
     if (currency == newCurrency) {
       return this;
     }
 
-    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-    final ExchangeRates rates = ExchangeRates.getPrimaryCurrencyRates()!;
+    if (rates.getRate(currency) == null || rates.getRate(newCurrency) == null) {
+      throw MoneyException(
+        "Exchange rates for both $currency and $newCurrency are required",
+      );
+    }
 
-    if (newCurrency == primaryCurrency) {
+    final String currencyFranco = rates.baseCurrency;
+
+    if (newCurrency == currencyFranco) {
       return Money(amount / rates.getRate(currency)!, newCurrency);
     }
-    if (currency == primaryCurrency) {
+    if (currency == currencyFranco) {
       return Money(amount * rates.getRate(newCurrency)!, newCurrency);
     }
 
-    return this & primaryCurrency & newCurrency;
+    return convert(currencyFranco, rates).convert(newCurrency, rates);
   }
-
-  Money operator &(String currency) => convert(currency);
 
   Money operator +(Money other) {
     if (currency != other.currency) {
-      return this + (other & currency);
+      throw const MoneyException(
+        "Cannot add Money of different currencies",
+      );
     }
 
     return Money(amount + other.amount, currency);
@@ -68,7 +75,9 @@ class Money implements Comparable<Money> {
 
   Money operator -(Money other) {
     if (currency != other.currency) {
-      return this - (other & currency);
+      throw const MoneyException(
+        "Cannot subtract Money of different currencies",
+      );
     }
 
     return Money(amount - other.amount, currency);
@@ -86,13 +95,25 @@ class Money implements Comparable<Money> {
     return Money(amount / divisor, currency);
   }
 
-  @override
-  int compareTo(Money other) {
+  /// Compare doesn't work for [Money]s of different currencies
+  int tryCompareTo(Money other) {
     if (currency != other.currency) {
-      return compareTo(other & currency);
+      log("Cannot compare Money of different currencies, returning 0");
+      return 0;
     }
 
     return amount.compareTo(other.amount);
+  }
+
+  /// If [rates] is given, converts [this] and [other] to
+  /// [rates.baseCurrency] before calling [tryCompareTo]
+  int tryCompareToWithExchange(Money other, ExchangeRates? rates) {
+    if (rates == null) {
+      return tryCompareTo(other);
+    }
+
+    return convert(rates.baseCurrency, rates)
+        .tryCompareTo(other.convert(rates.baseCurrency, rates));
   }
 
   @override
@@ -112,4 +133,13 @@ class Money implements Comparable<Money> {
 
   @override
   int get hashCode => Object.hashAll([amount, currency]);
+}
+
+class MoneyException implements Exception {
+  final String message;
+
+  const MoneyException(this.message);
+
+  @override
+  String toString() => message;
 }

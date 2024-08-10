@@ -15,6 +15,7 @@ class LanguageSelectionSheet extends StatelessWidget {
       scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.language.choose".t(context)),
       trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(),

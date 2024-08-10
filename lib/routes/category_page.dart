@@ -1,3 +1,4 @@
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/category.dart';
 import 'package:flow/entity/transaction.dart';
@@ -77,6 +78,8 @@ class _CategoryPageState extends State<CategoryPage> {
     if (this.category == null) return const ErrorPage();
 
     final Category category = this.category!;
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+    final ExchangeRates? rates = ExchangeRates.getPrimaryCurrencyRates();
 
     return StreamBuilder<List<Transaction>>(
       stream: qb(range)
@@ -87,11 +90,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
-        final MoneyFlow flow = transactions?.flow ??
-            MoneyFlow(
-              currency: transactions?.firstOrNull?.currency ??
-                  LocalPreferences().getPrimaryCurrency(),
-            );
+        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
 
         const double firstHeaderTopPadding = 0.0;
 
@@ -105,7 +104,9 @@ class _CategoryPageState extends State<CategoryPage> {
             const SizedBox(height: 8.0),
             TransactionsInfo(
               count: transactions?.length,
-              flow: flow.flow,
+              flow: rates == null
+                  ? flow.getFlowByCurrency(primaryCurrency).amount
+                  : flow.getTotalFlow(rates, primaryCurrency).amount,
               icon: category.icon,
             ),
             const SizedBox(height: 12.0),
@@ -113,14 +114,18 @@ class _CategoryPageState extends State<CategoryPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: flow.totalIncome,
+                    flow: rates == null
+                        ? flow.getIncomeByCurrency(primaryCurrency).amount
+                        : flow.getTotalIncome(rates, primaryCurrency).amount,
                     type: TransactionType.income,
                   ),
                 ),
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: flow.totalExpense,
+                    flow: rates == null
+                        ? flow.getExpenseByCurrency(primaryCurrency).amount
+                        : flow.getTotalExpense(rates, primaryCurrency).amount,
                     type: TransactionType.expense,
                   ),
                 ),

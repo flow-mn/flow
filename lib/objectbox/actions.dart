@@ -4,7 +4,6 @@ import 'dart:math' as math;
 
 import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/memo.dart';
-import 'package:flow/data/money.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
 import 'package:flow/data/transactions_filter.dart';
@@ -97,7 +96,6 @@ extension MainActions on ObjectBox {
     required DateTime from,
     required DateTime to,
     bool ignoreTransfers = true,
-    bool omitZeroes = true,
     String? currencyOverride,
   }) async {
     final Condition<Transaction> dateFilter =
@@ -120,13 +118,8 @@ extension MainActions on ObjectBox {
 
       flow[categoryUuid] ??= MoneyFlow(
         associatedData: transaction.category.target,
-        currency: currencyOverride ?? transaction.currency,
       );
-      flow[categoryUuid]!.addMoney(transaction.money);
-    }
-
-    if (omitZeroes) {
-      flow.removeWhere((key, value) => value.isEmpty);
+      flow[categoryUuid]!.add(transaction.money);
     }
 
     return FlowAnalytics(flow: flow, from: from, to: to);
@@ -160,17 +153,14 @@ extension MainActions on ObjectBox {
 
       flow[accountUuid] ??= MoneyFlow(
         associatedData: transaction.account.target,
-        currency: currencyOverride ?? transaction.currency,
       );
-      flow[accountUuid]!.addMoney(transaction.money);
+      flow[accountUuid]!.add(transaction.money);
     }
 
-    assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
-        "There is no way you've managed to make a transaction without an account");
-
-    if (omitZeroes) {
-      flow.removeWhere((key, value) => value.isEmpty);
-    }
+    assert(
+      !flow.containsKey(Uuid.NAMESPACE_NIL),
+      "There is no way you've managed to make a transaction without an account",
+    );
 
     return FlowAnalytics(from: from, to: to, flow: flow);
   }
@@ -396,11 +386,10 @@ extension TransactionListActions on Iterable<Transaction> {
       expenses.fold(0, (value, element) => value + element.amount);
   double get sum => fold(0, (value, element) => value + element.amount);
 
-  MoneyFlow get flow => MoneyFlow(
-        totalExpense: expenseSum,
-        totalIncome: incomeSum,
-        currency: firstOrNull?.currency ?? Money.invalidCurrency,
-      );
+  MoneyFlow get flow => MoneyFlow()
+    ..addAll(
+      map((transaction) => transaction.money),
+    );
 
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group

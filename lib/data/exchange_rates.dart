@@ -68,7 +68,7 @@ class ExchangeRates {
     final String normalizedCurrency = baseCurrency.trim().toLowerCase();
 
     if (!isCurrencyCodeValid(normalizedCurrency)) {
-      throw Exception("Invalid currency code: $baseCurrency");
+      throw FormatException("Invalid currency code: $baseCurrency");
     }
 
     final String dateParam =
@@ -96,7 +96,8 @@ class ExchangeRates {
       throw Exception("Failed to fetch exchange rates");
     }
 
-    final exchangeRates = ExchangeRates.fromJson(jsonResponse);
+    final ExchangeRates exchangeRates = ExchangeRates.fromJson(jsonResponse);
+
     updateCache(baseCurrency, exchangeRates);
     return exchangeRates;
   }
@@ -106,12 +107,17 @@ class ExchangeRates {
     DateTime? dateTime,
   ]) async {
     try {
+      log("[ExchangeRates] Fetching exchange rates for $baseCurrency");
+
       final ExchangeRates exchangeRates =
           await fetchRates(baseCurrency, dateTime);
 
       return exchangeRates;
     } catch (e) {
-      log("Failed to fetch exchange rates", error: e);
+      log(
+        "[ExchangeRates] Failed to fetch exchange rates ($baseCurrency)",
+        error: e,
+      );
 
       return _cache.get(baseCurrency);
     }

@@ -28,6 +28,7 @@ class SelectAccountSheet extends StatelessWidget {
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: accounts.isEmpty
           ? OverflowBar(
+              alignment: MainAxisAlignment.end,
               children: [
                 Button(
                   onTap: () => context.pop(false),

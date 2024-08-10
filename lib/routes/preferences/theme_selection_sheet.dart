@@ -16,6 +16,7 @@ class ThemeSelectionSheet extends StatelessWidget {
       scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.themeMode.choose".t(context)),
       trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(),

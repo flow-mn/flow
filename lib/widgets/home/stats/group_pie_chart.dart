@@ -2,11 +2,11 @@ import 'dart:math' as math;
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flow/data/chart_data.dart';
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/flow_icon.dart';
-import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/main.dart';
 import 'package:flow/theme/primary_colors.dart';
@@ -20,13 +20,13 @@ class GroupPieChart<T> extends StatefulWidget {
 
   final bool scrollLegendWithin;
 
-  final Map<String, MoneyFlow<T>> data;
+  final Map<String, ChartData<T>> data;
 
   final String? unresolvedDataTitle;
 
   final void Function(String key)? onReselect;
 
-  final TransactionType type;
+  final ExchangeRates? rates;
 
   static const double graphSizeMax = 320.0;
   static const double graphHoleSizeMin = 96.0;
@@ -34,11 +34,11 @@ class GroupPieChart<T> extends StatefulWidget {
   const GroupPieChart({
     super.key,
     required this.data,
-    required this.type,
     this.chartPadding = const EdgeInsets.all(24.0),
     this.scrollLegendWithin = false,
     this.unresolvedDataTitle,
     this.onReselect,
+    this.rates,
   });
 
   @override
@@ -46,16 +46,14 @@ class GroupPieChart<T> extends StatefulWidget {
 }
 
 class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
-  late Map<String, MoneyFlow<T>> data;
+  late Map<String, ChartData<T>> data;
 
-  double get totalValue => data.values.fold<double>(
-        0.0,
-        (previousValue, element) =>
-            previousValue +
-            element.getTotalByType(
-              widget.type,
-            ),
-      );
+  double get totalValue {
+    return data.values.fold<double>(
+      0.0,
+      (previousValue, element) => previousValue + element.money.amount,
+    );
+  }
 
   String? selectedKey;
 
@@ -77,11 +75,11 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow<T>? selectedSection =
+    final ChartData<T>? selectedSection =
         selectedKey == null ? null : data[selectedKey!];
 
     final String selectedSectionTotal =
-        selectedSection?.getTotalByType(widget.type).abs().formatMoney() ?? "-";
+        selectedSection?.money.amount.abs().formatMoney() ?? "-";
 
     return MouseRegion(
       onHover: (event) {
@@ -208,7 +206,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
   }
 
   PieChartSectionData sectionData(
-    MoneyFlow<T> flow, {
+    ChartData<T> data, {
     required double radius,
     bool selected = false,
     int index = 0,
@@ -225,15 +223,15 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
     return PieChartSectionData(
       color: color,
       radius: radius,
-      value: flow.getTotalByType(widget.type).abs(),
-      title: resolveName(flow.associatedData),
+      value: data.displayTotal,
+      title: resolveName(data.associatedData),
       showTitle: false,
       badgeWidget: selected
           ? resolveBadgeWidget(
-              flow.associatedData,
+              data.associatedData,
               color: color,
               backgroundColor: backgroundColor,
-              percent: flow.getTotalByType(widget.type) / totalValue,
+              percent: data.displayTotal / totalValue,
             )
           : null,
       badgePositionPercentageOffset: 0.8,

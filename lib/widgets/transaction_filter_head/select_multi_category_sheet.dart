@@ -43,6 +43,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory.multiple".t(context)),
       trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<Category>[]),
