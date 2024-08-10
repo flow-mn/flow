@@ -12,6 +12,9 @@ class MoneyFlow<T> {
   final Map<String, double> _totalExpenseByCurrency = {};
   final Map<String, double> _totalIncomeByCurrency = {};
 
+  int expenseCount = 0;
+  int incomeCount = 0;
+
   MoneyFlow({this.associatedData});
 
   void add(Money money) {
@@ -35,12 +38,14 @@ class MoneyFlow<T> {
         (value) => value + amount,
         ifAbsent: () => amount,
       );
+      expenseCount++;
     } else {
       _totalIncomeByCurrency.update(
         currency,
         (value) => value + amount,
         ifAbsent: () => amount,
       );
+      incomeCount++;
     }
   }
 

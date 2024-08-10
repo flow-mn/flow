@@ -194,6 +194,8 @@
     "tabs.stats.chart.total": "Total",
     "tabs.stats.chart.noData": "No data to show",
     "tabs.stats.chart.select.clickToSelect": "Click to select",
+    "tabs.stats.chart.noExchangeRatesWarning": "Missing exchange rate data. Transactions in non-primary currencies are not displayed.",
+    "tabs.stats.chart.noExchangeRatesWarning.retry": "Retry",
     "tabs.accounts": "Accounts",
     "tabs.accounts.reorder": "Reorder accounts",
     "tabs.accounts.reorder.guide": "Long press and drag",

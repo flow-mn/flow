@@ -194,6 +194,8 @@
     "tabs.stats.chart.total": "Нийт",
     "tabs.stats.chart.noData": "Харуулах өгөгдөл байхгүй байна",
     "tabs.stats.chart.select.clickToSelect": "Товшиж сонгоно уу",
+    "tabs.stats.chart.noExchangeRatesWarning": "Валютын ханшийн мэдээлэл байхгүй учир үндсэн валютаас ({currency}) бусад гүйлгээнүүд харагдахгүй байна",
+    "tabs.stats.chart.noExchangeRatesWarning.retry": "Дахин оролдох",
     "tabs.accounts": "Данснууд",
     "tabs.accounts.reorder": "Дараалал өөрчлөх",
     "tabs.accounts.reorder.guide": "Удаан дарж чирнэ үү",

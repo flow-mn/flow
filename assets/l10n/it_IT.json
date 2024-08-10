@@ -194,6 +194,8 @@
     "tabs.stats.chart.total": "Totale",
     "tabs.stats.chart.noData": "Nessun dato da mostrare",
     "tabs.stats.chart.select.clickToSelect": "Clicca per selezionare",
+    "tabs.stats.chart.noExchangeRatesWarning": "Dati dei tassi di cambio mancanti. Le transazioni in valute diverse dalla principale non sono visualizzate.",
+    "tabs.stats.chart.noExchangeRatesWarning.retry": "Riprova",
     "tabs.accounts": "Conti",
     "tabs.accounts.reorder": "Riordina i conti",
     "tabs.accounts.reorder.guide": "Premi a lungo e trascina",
