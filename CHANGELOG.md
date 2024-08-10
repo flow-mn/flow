@@ -1,19 +1,20 @@
 ## Beta 0.6.0
 
-* Updated theme to correct `activeColor` for radio/checkboxes and its lists
-* Added filters to home tab, and added preferences for home page
-* Added error builder for Image `FlowIcon`s when the image is missing
-* TimeRange selector now listens for mouse wheel scroll
-* Added exchange rates
+* Added exchange rates, currently only works in Stats tab
 * Stats tab:
-  * Uses primary currency to show all the data
+  * Converts all money to the primary currency
   * Now separates income/expense
-* Frecency data updates one per day max. (was updating at every launch before)
-
-TODO:
-- [ ] Fallback when there's no exchange rate
-- [ ] Optimize FlowAnalytics adding to group by currencies first, then adding
-- [ ] Test, test, test
+  * Fallback when there's no exchange rate
+* Home tab
+  * Search, filter transactions
+  * Set planned transaction preferences @ preferences page
+* Minor, QoL
+  * Added error builder for Image `FlowIcon`s when the image is missing
+  * TimeRange selector now listens for mouse wheel scroll
+  * Frecency data updates one per day max. (was updating at every launch before)
+  * Updated theme to correct `activeColor` for radio/checkboxes and its lists
+* Flutter upgraded to 3.24.0
+* Dart upgraded to 3.5
 
 ## Beta 0.5.5
 
