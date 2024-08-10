@@ -1,3 +1,21 @@
+## Beta 0.6.0
+
+* Added exchange rates, currently only works in Stats tab
+* Stats tab:
+  * Converts all money to the primary currency
+  * Now separates income/expense
+  * Fallback when there's no exchange rate
+* Home tab
+  * Search, filter transactions
+  * Set planned transaction preferences @ preferences page
+* Minor, QoL
+  * Added error builder for Image `FlowIcon`s when the image is missing
+  * TimeRange selector now listens for mouse wheel scroll
+  * Frecency data updates one per day max. (was updating at every launch before)
+  * Updated theme to correct `activeColor` for radio/checkboxes and its lists
+* Flutter upgraded to 3.24.0
+* Dart upgraded to 3.5
+
 ## Beta 0.5.5
 
 * Selecting icons should be slightly better

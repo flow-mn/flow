@@ -171,7 +171,7 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
           -1);
 
       if (mounted) {
-        context.push("/setup/categories");
+        await context.push("/setup/categories");
       }
     } finally {
       busy = false;

@@ -1,6 +1,7 @@
 import 'package:flow/constants.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/sync/import.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/toast.dart';
@@ -80,6 +81,11 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => ObjectBox().createAndPutDebugData(),
             ),
             ListTile(
+              title: const Text("Clear exchange rates cache"),
+              onTap: () => clearExchangeRatesCache(),
+              leading: const Icon(Symbols.adb_rounded),
+            ),
+            ListTile(
               title:
                   Text(_debugDbBusy ? "Clearing database" : "Clear objectbox"),
               onTap: () => resetDatabase(),
@@ -153,6 +159,10 @@ class _ProfileTabState extends State<ProfileTab> {
         setState(() {});
       }
     }
+  }
+
+  void clearExchangeRatesCache() {
+    ExchangeRatesService().debugClearCache();
   }
 
   void import() async {

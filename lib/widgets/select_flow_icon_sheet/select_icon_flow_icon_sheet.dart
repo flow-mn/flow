@@ -82,7 +82,8 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
           )
         ],
       ),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(value),

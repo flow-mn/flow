@@ -4,22 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class LanguageSelectionSheet extends StatefulWidget {
+class LanguageSelectionSheet extends StatelessWidget {
   final Locale? currentLocale;
 
   const LanguageSelectionSheet({super.key, this.currentLocale});
 
   @override
-  State<LanguageSelectionSheet> createState() => _LanguageSelectionSheetState();
-}
-
-class _LanguageSelectionSheetState extends State<LanguageSelectionSheet> {
-  @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.language.choose".t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(),
@@ -32,11 +28,13 @@ class _LanguageSelectionSheetState extends State<LanguageSelectionSheet> {
         child: Column(
           children: [
             ...FlowLocalizations.supportedLanguages.map(
-              (locale) => ListTile(
+              (locale) => RadioListTile<Locale>.adaptive(
                 title: Text(locale.endonym),
                 subtitle: Text(locale.name),
-                onTap: () => context.pop(locale),
-                selected: widget.currentLocale == locale,
+                selected: currentLocale == locale,
+                value: locale,
+                groupValue: currentLocale,
+                onChanged: (value) => context.pop(value),
               ),
             ),
           ],

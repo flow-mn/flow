@@ -52,7 +52,6 @@ class CombineTransferRadio extends StatelessWidget {
                     value: combine,
                     groupValue: currentlyUsingCombineMode,
                     onChanged: (_) {},
-                    activeColor: context.colorScheme.primary,
                   ),
                 ),
               ],

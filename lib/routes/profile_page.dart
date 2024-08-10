@@ -56,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (_) => save(),
+      onPopInvokedWithResult: (_, __) => save(),
       child: Scaffold(
         appBar: AppBar(
           actions: [

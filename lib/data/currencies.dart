@@ -1399,3 +1399,7 @@ final Map<String, CurrencyData> iso4217CurrenciesGrouped =
     );
   },
 );
+
+bool isCurrencyCodeValid(String currencyCode) {
+  return iso4217CurrenciesGrouped.containsKey(currencyCode.toUpperCase());
+}

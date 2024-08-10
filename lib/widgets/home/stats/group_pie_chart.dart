@@ -1,47 +1,43 @@
 import 'dart:math' as math;
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flow/data/chart_data.dart';
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/flow_icon.dart';
-import 'package:flow/data/money_flow.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/category.dart';
-import 'package:flow/l10n/flow_localizations.dart';
+import 'package:flow/l10n/extensions.dart';
 import 'package:flow/main.dart';
 import 'package:flow/theme/primary_colors.dart';
 import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/home/stats/legend_list_tile.dart';
+import 'package:flow/widgets/home/stats/pie_percent_badge.dart';
 import 'package:flutter/material.dart' hide Flow;
 
 class GroupPieChart<T> extends StatefulWidget {
   final EdgeInsets chartPadding;
 
-  final bool showSelectedSection;
-
-  final bool showLegend;
-  final bool sortLegend;
-
   final bool scrollLegendWithin;
-  final EdgeInsets scrollPadding;
 
-  final Map<String, MoneyFlow<T>> data;
+  final Map<String, ChartData<T>> data;
 
   final String? unresolvedDataTitle;
 
   final void Function(String key)? onReselect;
 
+  final ExchangeRates? rates;
+
+  static const double graphSizeMax = 320.0;
+  static const double graphHoleSizeMin = 96.0;
+
   const GroupPieChart({
     super.key,
     required this.data,
     this.chartPadding = const EdgeInsets.all(24.0),
-    this.scrollPadding = EdgeInsets.zero,
-    this.showLegend = true,
     this.scrollLegendWithin = false,
-    this.showSelectedSection = true,
-    this.sortLegend = true,
     this.unresolvedDataTitle,
     this.onReselect,
+    this.rates,
   });
 
   @override
@@ -49,12 +45,14 @@ class GroupPieChart<T> extends StatefulWidget {
 }
 
 class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
-  late Map<String, MoneyFlow<T>> data;
+  late Map<String, ChartData<T>> data;
 
-  double get totalValue => data.values.fold<double>(
-      0, (previousValue, element) => previousValue + element.totalExpense);
-
-  bool expense = true;
+  double get totalValue {
+    return data.values.fold<double>(
+      0.0,
+      (previousValue, element) => previousValue + element.money.amount,
+    );
+  }
 
   String? selectedKey;
 
@@ -74,163 +72,129 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow<T>? selectedSection =
+    final ChartData<T>? selectedSection =
         selectedKey == null ? null : data[selectedKey!];
 
-    final double selectedSectionProc = selectedSection == null
-        ? 0.0
-        : (selectedSection.totalExpense / totalValue);
+    final String selectedSectionTotal =
+        selectedSection?.money.amount.abs().formatMoney() ?? "-";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.showSelectedSection) ...[
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                selectedSection == null
-                    ? "tabs.stats.chart.select.clickToSelect".t(context)
-                    : resolveName(selectedSection.associatedData),
-                style: context.textTheme.headlineSmall,
-              ),
-              Text(
-                  "${selectedSection?.totalExpense.abs().money ?? "-"} • ${(100 * selectedSectionProc).toStringAsFixed(1)}%"),
-            ],
-          ),
-          const SizedBox(height: 8.0),
-        ],
+        const SizedBox(height: 16.0),
+        Text(
+          "tabs.stats.chart.total".t(context),
+          style: context.textTheme.labelMedium,
+        ),
+        Text(
+          totalValue.formatMoney(),
+          style: context.textTheme.headlineMedium,
+        ),
         Padding(
           padding: widget.chartPadding,
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxHeight: 300.0,
-              maxWidth: 300.0,
+              maxHeight: GroupPieChart.graphSizeMax,
+              maxWidth: GroupPieChart.graphSizeMax,
             ),
             child: AspectRatio(
               aspectRatio: 1.0,
-              child: LayoutBuilder(builder: (context, constraints) {
-                final double size = constraints.maxWidth;
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final double size = constraints.maxWidth;
 
-                final double centerHoleDiameter = math.min(96.0, size * 0.25);
-                final double radius = (size - centerHoleDiameter) * 0.5;
+                  final double centerHoleDiameter =
+                      math.max(size * 0.5, GroupPieChart.graphHoleSizeMin);
+                  final double radius = (size - centerHoleDiameter) * 0.5;
 
-                return PieChart(
-                  PieChartData(
-                    pieTouchData:
-                        PieTouchData(touchCallback: (event, response) {
-                      if (!event.isInterestedForInteractions ||
-                          response == null ||
-                          response.touchedSection == null) {
-                        // setState(() {
-                        //   selectedKey = null;
-                        // });
-                        return;
-                      }
+                  return Stack(
+                    children: [
+                      PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback: (event, response) {
+                              if (!event.isInterestedForInteractions ||
+                                  response == null ||
+                                  response.touchedSection == null) {
+                                return;
+                              }
 
-                      final int index =
-                          response.touchedSection!.touchedSectionIndex;
+                              final int index =
+                                  response.touchedSection!.touchedSectionIndex;
 
-                      if (index > -1) {
-                        selectedKey = data.entries.elementAt(index).key;
-                        setState(() {});
-                      }
-                    }),
-                    sectionsSpace: 2.0,
-                    centerSpaceRadius: centerHoleDiameter / 2,
-                    startDegreeOffset: -90.0,
-                    sections: data.entries.indexed
-                        .map(
-                          (e) => sectionData(
-                            data[e.$2.key]!,
-                            selected: e.$2.key == selectedKey,
-                            index: e.$1,
-                            radius: radius,
+                              if (index > -1) {
+                                final String newSelectedKey =
+                                    data.entries.elementAt(index).key;
+
+                                // if (!usingMouse &&
+                                //     newSelectedKey == selectedKey) {
+                                //   widget.onReselect?.call(newSelectedKey);
+                                // }
+
+                                setState(() {
+                                  selectedKey = newSelectedKey;
+                                });
+                              }
+                            },
                           ),
-                        )
-                        .toList(),
-                  ),
-                );
-              }),
+                          sectionsSpace: 0.0,
+                          centerSpaceRadius: centerHoleDiameter / 2,
+                          startDegreeOffset: -90.0,
+                          sections: data.entries.indexed
+                              .map(
+                                (e) => sectionData(
+                                  data[e.$2.key]!,
+                                  selected: e.$2.key == selectedKey,
+                                  index: e.$1,
+                                  radius: radius,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Center(
+                          child: ClipOval(
+                            child: Container(
+                              width: centerHoleDiameter,
+                              height: centerHoleDiameter,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    resolveName(
+                                      selectedSection?.associatedData,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  AutoSizeText(
+                                    selectedSectionTotal,
+                                    textAlign: TextAlign.center,
+                                    style: context.textTheme.headlineSmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
-        if (widget.showLegend) buildLegend(context),
       ],
     );
   }
 
-  Widget buildLegendItem(
-    BuildContext context,
-    int index,
-    MapEntry<String, MoneyFlow<T>> entry,
-  ) {
-    final bool usingDarkTheme = Flow.of(context).useDarkTheme;
-
-    final Color color = (usingDarkTheme
-        ? accentColors
-        : primaryColors)[index % primaryColors.length];
-    final Color backgroundColor = (usingDarkTheme
-        ? primaryColors
-        : accentColors)[index % primaryColors.length];
-
-    return LegendListTile(
-      key: ValueKey(entry.key),
-      color: color,
-      leading: resolveBadgeWidget(
-        entry.value.associatedData,
-        color: color,
-        backgroundColor: backgroundColor,
-      ),
-      title: Text(resolveName(entry.value.associatedData)),
-      subtitle: Text((entry.value.totalExpense / totalValue).percent1),
-      trailing: Text(
-        entry.value.totalExpense.moneyCompact,
-        style: context.textTheme.bodyLarge,
-      ),
-      selected: entry.key == selectedKey,
-      onTap: () {
-        if (widget.onReselect != null &&
-            selectedKey != null &&
-            selectedKey == entry.key) {
-          widget.onReselect!(selectedKey!);
-        } else {
-          setState(() => selectedKey = entry.key);
-        }
-      },
-    );
-  }
-
-  Widget buildLegend(BuildContext context) {
-    final indexed = data.entries.toList().indexed.toList();
-    if (widget.sortLegend) {
-      indexed.sort(
-        (a, b) => a.$2.value.totalExpense.compareTo(
-          b.$2.value.totalExpense,
-        ),
-      );
-    }
-
-    if (widget.scrollLegendWithin) {
-      return Expanded(
-        child: ListView.builder(
-          itemBuilder: (context, index) =>
-              buildLegendItem(context, indexed[index].$1, indexed[index].$2),
-          itemCount: indexed.length,
-          padding: widget.scrollPadding,
-        ),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children:
-          indexed.map((e) => buildLegendItem(context, e.$1, e.$2)).toList(),
-    );
-  }
-
   PieChartSectionData sectionData(
-    MoneyFlow<T> flow, {
+    ChartData<T> data, {
     required double radius,
     bool selected = false,
     int index = 0,
@@ -247,53 +211,56 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
     return PieChartSectionData(
       color: color,
       radius: radius,
-      value: flow.totalExpense.abs(),
-      title: resolveName(flow.associatedData),
+      value: data.displayTotal,
+      title: resolveName(data.associatedData),
       showTitle: false,
       badgeWidget: selected
           ? resolveBadgeWidget(
-              flow.associatedData,
+              data.associatedData,
               color: color,
               backgroundColor: backgroundColor,
+              percent: data.displayTotal / totalValue,
             )
           : null,
       badgePositionPercentageOffset: 0.8,
       borderSide: selected
           ? BorderSide(
-              color: context.colorScheme.primary,
-              width: 2.0,
-              strokeAlign: BorderSide.strokeAlignInside,
+              color: backgroundColor,
+              width: 3.0,
             )
-          : BorderSide.none,
+          : null,
     );
   }
 
   String resolveName(Object? entity) => switch (entity) {
         Category category => category.name,
         Account account => account.name,
-        _ => widget.unresolvedDataTitle ?? "???"
+        _ => widget.unresolvedDataTitle ?? "-"
       };
 
-  Widget? resolveBadgeWidget(Object? entity,
-          {Color? color, Color? backgroundColor}) =>
+  Widget? resolveBadgeWidget(
+    Object? entity, {
+    Color? color,
+    Color? backgroundColor,
+    required double percent,
+  }) =>
       switch (entity) {
-        Category category => FlowIcon(
-            category.icon,
-            plated: true,
+        Category category => PiePercentBadge(
+            icon: category.icon,
             color: color,
-            plateColor: backgroundColor ?? color?.withAlpha(0x40),
+            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+            percent: percent,
           ),
-        Account account => FlowIcon(
-            account.icon,
-            plated: true,
+        Account account => PiePercentBadge(
+            icon: account.icon,
             color: color,
-            plateColor: backgroundColor ?? color?.withAlpha(0x40),
+            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+            percent: percent,
           ),
-        _ => FlowIcon(
-            FlowIconData.emoji("?"),
-            plated: true,
+        _ => PiePercentBadge(
+            icon: FlowIconData.emoji("?"),
             color: color,
-            plateColor: backgroundColor ?? color?.withAlpha(0x40),
-          ),
+            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+            percent: percent),
       };
 }

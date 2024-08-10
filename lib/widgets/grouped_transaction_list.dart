@@ -1,3 +1,4 @@
+import 'package:flow/data/transactions_filter.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/extensions.dart';
 import 'package:flow/objectbox/actions.dart';
@@ -43,6 +44,8 @@ class GroupedTransactionList extends StatelessWidget {
 
   final bool implyHeader;
 
+  final TransactionFilter? filter;
+
   const GroupedTransactionList({
     super.key,
     required this.transactions,
@@ -60,6 +63,7 @@ class GroupedTransactionList extends StatelessWidget {
     ),
     this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
+    this.filter,
   });
 
   @override

@@ -1,48 +1,134 @@
-class MoneyFlow<T> implements Comparable<MoneyFlow> {
+import 'dart:developer';
+
+import 'package:flow/data/currencies.dart';
+import 'package:flow/data/exchange_rates.dart';
+import 'package:flow/data/money.dart';
+import 'package:flow/entity/transaction.dart';
+import 'package:flow/prefs.dart';
+
+class MoneyFlow<T> {
   final T? associatedData;
 
-  double totalExpense;
-  double totalIncome;
+  final Map<String, double> _totalExpenseByCurrency = {};
+  final Map<String, double> _totalIncomeByCurrency = {};
 
-  double get flow => totalExpense + totalIncome;
+  int expenseCount = 0;
+  int incomeCount = 0;
 
-  bool get isEmpty => totalExpense.abs() == 0.0 && totalIncome.abs() == 0.0;
+  MoneyFlow({this.associatedData});
 
-  MoneyFlow({
-    this.associatedData,
-    this.totalExpense = 0.0,
-    this.totalIncome = 0.0,
-  });
+  void add(Money money) {
+    final double amount = money.amount;
+    final String currency = money.currency.trim().toUpperCase();
 
-  @override
-  int compareTo(MoneyFlow other) {
-    return flow.compareTo(other.flow);
+    if (amount.abs() == 0.0) {
+      log("[MoneyFlow] Ignoring zero entry");
+      return;
+    }
+
+    if (!isCurrencyCodeValid(currency)) {
+      throw FormatException(
+        "[MoneyFlow] Failed adding income, invalid currency code: $currency",
+      );
+    }
+
+    if (amount.isNegative) {
+      _totalExpenseByCurrency.update(
+        currency,
+        (value) => value + amount,
+        ifAbsent: () => amount,
+      );
+      expenseCount++;
+    } else {
+      _totalIncomeByCurrency.update(
+        currency,
+        (value) => value + amount,
+        ifAbsent: () => amount,
+      );
+      incomeCount++;
+    }
   }
 
-  void addExpense(double expense) => totalExpense += expense;
-  void addIncome(double income) => totalIncome += income;
-  void add(double amount) =>
-      amount.isNegative ? addExpense(amount) : addIncome(amount);
-  void addAll(Iterable<double> amounts) => amounts.forEach(add);
+  void addAll(Iterable<Money> moneys) => moneys.forEach(add);
 
-  operator +(MoneyFlow other) {
-    return MoneyFlow(
-      totalExpense: totalExpense + other.totalExpense,
-      totalIncome: totalIncome + other.totalIncome,
-    );
+  /// Returns the expense for the given currency, excludes other currency expenses
+  Money getExpenseByCurrency(String currency) {
+    return Money(_totalExpenseByCurrency[currency] ?? 0.0, currency);
   }
 
-  operator -(MoneyFlow other) {
-    return MoneyFlow(
-      totalExpense: totalExpense - other.totalExpense,
-      totalIncome: totalIncome - other.totalIncome,
-    );
+  /// Returns the income for the given currency, excludes other currency incomes
+  Money getIncomeByCurrency(String currency) {
+    return Money(_totalIncomeByCurrency[currency] ?? 0.0, currency);
   }
 
-  operator -() {
-    return MoneyFlow(
-      totalExpense: -totalExpense,
-      totalIncome: -totalIncome,
-    );
+  Money getFlowByCurrency(String currency) {
+    return getIncomeByCurrency(currency) + getExpenseByCurrency(currency);
+  }
+
+  /// Calls [getExpenseByCurrency] or [getIncomeByCurrency] based on [type]
+  ///
+  /// If type is transfer, returns `Money(0.0, currency)`
+  Money getByTypeAndCurrency(String currency, TransactionType type) {
+    return switch (type) {
+      TransactionType.expense => getExpenseByCurrency(currency),
+      TransactionType.income => getIncomeByCurrency(currency),
+      _ => Money(0.0, currency),
+    };
+  }
+
+  /// Returns the converted sum of all expenses in given [currency],
+  /// or rates.baseCurrency if null
+  Money getTotalExpense(ExchangeRates rates, String? currency) {
+    currency ??= rates.baseCurrency;
+
+    double amount = 0.0;
+
+    for (final entry in _totalExpenseByCurrency.entries) {
+      if (entry.key == currency) {
+        amount += entry.value;
+      } else {
+        amount += Money.convertDouble(entry.key, currency, entry.value, rates);
+      }
+    }
+
+    return Money(amount, currency);
+  }
+
+  /// Returns the converted sum of all incomes in given [currency],
+  /// or rates.baseCurrency if null
+  Money getTotalIncome(ExchangeRates rates, String? currency) {
+    currency ??= rates.baseCurrency;
+
+    double amount = 0.0;
+
+    for (final entry in _totalIncomeByCurrency.entries) {
+      if (entry.key == currency) {
+        amount += entry.value;
+      } else {
+        amount += Money.convertDouble(entry.key, currency, entry.value, rates);
+      }
+    }
+
+    return Money(amount, currency);
+  }
+
+  Money getTotalByType(
+    TransactionType type,
+    ExchangeRates rates,
+    String? currency,
+  ) {
+    currency ??= LocalPreferences().getPrimaryCurrency();
+
+    return switch (type) {
+      TransactionType.expense => getTotalExpense(rates, currency),
+      TransactionType.income => getTotalIncome(rates, currency),
+      _ => Money(0.0, currency),
+    };
+  }
+
+  Money getTotalFlow(ExchangeRates rates, String? currency) {
+    currency ??= LocalPreferences().getPrimaryCurrency();
+
+    return getTotalIncome(rates, currency) + getTotalExpense(rates, currency);
   }
 }
