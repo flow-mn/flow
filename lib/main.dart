@@ -20,7 +20,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flow/constants.dart';
-import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/entity/profile.dart';
 import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
@@ -28,6 +27,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -60,6 +60,8 @@ void main() async {
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
+
+  ExchangeRatesService().init();
 
   runApp(const Flow());
 }
@@ -105,12 +107,6 @@ class FlowState extends State<Flow> {
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
     }
-
-    unawaited(
-      ExchangeRates.tryFetchRates(
-        LocalPreferences().getPrimaryCurrency(),
-      ),
-    );
   }
 
   @override

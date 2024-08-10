@@ -1,5 +1,5 @@
-import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/money.dart';
+import 'package:flow/services/exchange_rates.dart';
 
 class ChartData<T> implements Comparable<ChartData<T>> {
   final String key;
@@ -18,7 +18,7 @@ class ChartData<T> implements Comparable<ChartData<T>> {
   int compareTo(ChartData<T> other) {
     return money.tryCompareToWithExchange(
       other.money,
-      ExchangeRates.getPrimaryCurrencyRates(),
+      ExchangeRatesService().getPrimaryCurrencyRates(),
     );
   }
 }

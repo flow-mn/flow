@@ -8,6 +8,7 @@ import 'package:flow/objectbox/actions.dart';
 import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/error_page.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/widgets/category/transactions_info.dart';
 import 'package:flow/widgets/flow_card.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -79,7 +80,8 @@ class _CategoryPageState extends State<CategoryPage> {
 
     final Category category = this.category!;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-    final ExchangeRates? rates = ExchangeRates.getPrimaryCurrencyRates();
+    final ExchangeRates? rates =
+        ExchangeRatesService().getPrimaryCurrencyRates();
 
     return StreamBuilder<List<Transaction>>(
       stream: qb(range)

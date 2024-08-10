@@ -10,6 +10,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes/home/stats_tab/pie_graph_view.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/widgets/general/spinner.dart';
 import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
@@ -44,58 +45,76 @@ class _StatsTabState extends State<StatsTab>
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, ChartData> expenses =
-        _prepareChartData(analytics?.flow, TransactionType.expense);
+    return ValueListenableBuilder(
+        valueListenable: ExchangeRatesService().exchangeRatesCache,
+        builder: (context, exchangeRatesCache, child) {
+          final ExchangeRates? rates = exchangeRatesCache?.get(
+            LocalPreferences().getPrimaryCurrency(),
+          );
 
-    final Map<String, ChartData> incomes =
-        _prepareChartData(analytics?.flow, TransactionType.income);
+          final Map<String, ChartData> expenses = _prepareChartData(
+            analytics?.flow,
+            TransactionType.expense,
+            rates,
+          );
 
-    return Column(
-      children: [
-        Material(
-          elevation: 1.0,
-          child: Container(
-            padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
-            width: double.infinity,
-            child: TimeRangeSelector(
-              initialValue: range,
-              onChanged: updateRange,
-            ),
-          ),
-        ),
-        if (busy)
-          const Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Spinner(),
-          )
-        else ...[
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: TransactionType.expense.localizedTextKey.t(context)),
-              Tab(text: TransactionType.income.localizedTextKey.t(context)),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                PieGraphView(
-                  data: expenses,
-                  changeMode: changeMode,
-                  range: range,
+          final Map<String, ChartData> incomes = _prepareChartData(
+            analytics?.flow,
+            TransactionType.income,
+            rates,
+          );
+
+          return Column(
+            children: [
+              Material(
+                elevation: 1.0,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+                  width: double.infinity,
+                  child: TimeRangeSelector(
+                    initialValue: range,
+                    onChanged: updateRange,
+                  ),
                 ),
-                PieGraphView(
-                  data: incomes,
-                  changeMode: changeMode,
-                  range: range,
+              ),
+              if (busy)
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Spinner(),
+                )
+              else ...[
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                      text: TransactionType.expense.localizedTextKey.t(context),
+                    ),
+                    Tab(
+                      text: TransactionType.income.localizedTextKey.t(context),
+                    ),
+                  ],
                 ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      PieGraphView(
+                        data: expenses,
+                        changeMode: changeMode,
+                        range: range,
+                      ),
+                      PieGraphView(
+                        data: incomes,
+                        changeMode: changeMode,
+                        range: range,
+                      ),
+                    ],
+                  ),
+                )
               ],
-            ),
-          )
-        ],
-      ],
-    );
+            ],
+          );
+        });
   }
 
   void updateRange(TimeRange newRange) {
@@ -150,11 +169,11 @@ class _StatsTabState extends State<StatsTab>
   Map<String, ChartData<T>> _prepareChartData<T>(
     Map<String, MoneyFlow<T>>? raw,
     TransactionType type,
+    ExchangeRates? rates,
   ) {
     if (raw == null || raw.isEmpty) return {};
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-    final ExchangeRates? rates = ExchangeRates.getPrimaryCurrencyRates();
 
     final Map<String, Money> cache = {};
 
