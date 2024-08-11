@@ -137,7 +137,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                               }
                             },
                           ),
-                          sectionsSpace: 0.0,
+                          sectionsSpace: 1.0,
                           centerSpaceRadius: centerHoleDiameter / 2,
                           startDegreeOffset: -90.0,
                           sections: data.entries.indexed
