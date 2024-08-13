@@ -1,5 +1,5 @@
 import 'package:flow/entity/category.dart';
-import 'package:flow/utils/value_or.dart';
+import 'package:flow/utils/optional.dart';
 import 'package:flow/widgets/category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -25,7 +25,7 @@ class CategoryPresetCard extends StatelessWidget {
       opacity: selected ? 1.0 : 0.46,
       child: CategoryCard(
         category: category,
-        onTapOverride: ValueOr(() => onSelect(!selected)),
+        onTapOverride: Optional(() => onSelect(!selected)),
         showAmount: false,
         trailing: preexisting
             ? null

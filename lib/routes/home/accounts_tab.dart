@@ -8,7 +8,7 @@ import 'package:flow/objectbox/objectbox.g.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flow/utils/utils.dart';
-import 'package:flow/utils/value_or.dart';
+import 'package:flow/utils/optional.dart';
 import 'package:flow/widgets/account_card.dart';
 import 'package:flow/widgets/account_card_skeleton.dart';
 import 'package:flow/widgets/general/spinner.dart';
@@ -101,7 +101,7 @@ class _AccountsTabState extends State<AccountsTab>
                                                     excludeTransfersInTotal ==
                                                         true,
                                                 onTapOverride:
-                                                    ValueOr(() async {
+                                                    Optional(() async {
                                                   await context.push(
                                                       "/account/${account.id}");
                                                   setState(() {});

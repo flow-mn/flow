@@ -35,7 +35,8 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
   Widget build(BuildContext context) {
     return ModalSheet(
       title: Text("general.timeSelector.select.month".t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton(
             onPressed: () => setState(() {

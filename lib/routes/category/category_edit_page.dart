@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flow/data/flow_icon.dart';
@@ -166,10 +167,12 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
       iconCode: iconCodeOrError,
     );
 
-    ObjectBox().box<Category>().putAsync(
-          category,
-          mode: PutMode.insert,
-        );
+    unawaited(
+      ObjectBox().box<Category>().putAsync(
+            category,
+            mode: PutMode.insert,
+          ),
+    );
 
     context.pop();
   }

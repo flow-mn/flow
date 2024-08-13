@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -26,6 +27,7 @@ import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
 import 'package:flow/prefs.dart';
 import 'package:flow/routes.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -39,13 +41,13 @@ void main() async {
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
-  PackageInfo.fromPlatform()
+  unawaited(PackageInfo.fromPlatform()
       .then((value) =>
           appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
     log("An error was occured while fetching app version: $e");
     return appVersion = "<unknown>+<0>$debugBuildSuffix";
-  });
+  }));
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
@@ -58,6 +60,8 @@ void main() async {
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
+
+  ExchangeRatesService().init();
 
   runApp(const Flow());
 }

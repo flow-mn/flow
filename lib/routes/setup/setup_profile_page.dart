@@ -98,7 +98,10 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
           await ObjectBox().box<Profile>().putAndGetAsync(_currentlyEditing!);
 
       if (mounted) {
-        context.push('/setup/profile/photo', extra: updatedProfile.imagePath);
+        await context.push(
+          '/setup/profile/photo',
+          extra: updatedProfile.imagePath,
+        );
       }
     } finally {
       busy = false;

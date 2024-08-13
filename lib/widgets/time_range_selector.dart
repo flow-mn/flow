@@ -1,6 +1,7 @@
 import 'package:flow/l10n/flow_localizations.dart';
 import 'package:flow/widgets/general/button.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -68,53 +69,65 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
               const SizedBox(width: 12.0),
             ],
             Expanded(
-              child: GestureDetector(
-                onHorizontalDragEnd: (details) {
-                  final double? velocity = details.primaryVelocity;
-                  if (velocity == null) return;
+              child: Listener(
+                onPointerSignal: (event) {
                   if (_timeRange is! PageableRange) return;
+                  if (event is! PointerScrollEvent) return;
 
-                  if (velocity <= -_dragThreshold) {
-                    next();
-                  } else if (velocity >= _dragThreshold) {
+                  if (event.scrollDelta.dy < 0) {
                     prev();
+                  } else if (event.scrollDelta.dy > 0) {
+                    next();
                   }
                 },
-                child: switch (_timeRange) {
-                  LocalWeekTimeRange localWeekTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  MonthTimeRange monthTimeRange => Button(
-                      onTap: pickMonth,
-                      child: Text(
-                        monthTimeRange.from.format(
-                          payload:
-                              monthTimeRange.from.isAtSameYearAs(DateTime.now())
-                                  ? "MMMM"
-                                  : "MMMM YYYY",
+                child: GestureDetector(
+                  onHorizontalDragEnd: (details) {
+                    final double? velocity = details.primaryVelocity;
+                    if (velocity == null) return;
+                    if (_timeRange is! PageableRange) return;
+
+                    if (velocity <= -_dragThreshold) {
+                      next();
+                    } else if (velocity >= _dragThreshold) {
+                      prev();
+                    }
+                  },
+                  child: switch (_timeRange) {
+                    LocalWeekTimeRange localWeekTimeRange => Button(
+                        onTap: selectRange,
+                        child: Text(
+                          "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ),
-                  YearTimeRange yearTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        yearTimeRange.year.toString(),
-                        textAlign: TextAlign.center,
+                    MonthTimeRange monthTimeRange => Button(
+                        onTap: pickMonth,
+                        child: Text(
+                          monthTimeRange.from.format(
+                            payload: monthTimeRange.from
+                                    .isAtSameYearAs(DateTime.now())
+                                ? "MMMM"
+                                : "MMMM YYYY",
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  _ => Button(
-                      onTap: pickRange,
-                      child: Text(
-                        "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
+                    YearTimeRange yearTimeRange => Button(
+                        onTap: selectRange,
+                        child: Text(
+                          yearTimeRange.year.toString(),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                },
+                    _ => Button(
+                        onTap: pickRange,
+                        child: Text(
+                          "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                  },
+                ),
               ),
             ),
             if (buildNextPrev) ...[

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
@@ -45,17 +46,21 @@ Future<ExportStatus> export({
   );
 
   // Try to add backup record
-  ObjectBox()
-      .box<BackupEntry>()
-      .putAsync(BackupEntry(
-        filePath: savedFilePath,
-        type: type.value,
-        fileExt: mode.fileExt,
-      ))
-      .catchError((error) {
-    log("[Export] Failed to add BackupEntry due to: $error");
-    return -1;
-  });
+  unawaited(
+    ObjectBox()
+        .box<BackupEntry>()
+        .putAsync(BackupEntry(
+          filePath: savedFilePath,
+          type: type.value,
+          fileExt: mode.fileExt,
+        ))
+        .catchError(
+      (error) {
+        log("[Export] Failed to add BackupEntry due to: $error");
+        return -1;
+      },
+    ),
+  );
 
   if (!showShareDialog) {
     return (shareDialogSucceeded: false, filePath: savedFilePath);

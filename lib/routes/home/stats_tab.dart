@@ -1,16 +1,21 @@
+import 'package:flow/data/chart_data.dart';
+import 'package:flow/data/exchange_rates.dart';
 import 'package:flow/data/flow_analytics.dart';
+import 'package:flow/data/money.dart';
 import 'package:flow/data/money_flow.dart';
-import 'package:flow/entity/category.dart';
+import 'package:flow/entity/transaction.dart';
 import 'package:flow/l10n/flow_localizations.dart';
+import 'package:flow/l10n/named_enum.dart';
 import 'package:flow/objectbox.dart';
 import 'package:flow/objectbox/actions.dart';
+import 'package:flow/prefs.dart';
+import 'package:flow/routes/home/stats_tab/pie_graph_view.dart';
+import 'package:flow/services/exchange_rates.dart';
 import 'package:flow/widgets/general/spinner.dart';
-import 'package:flow/widgets/home/stats/group_pie_chart.dart';
-import 'package:flow/widgets/home/stats/no_data.dart';
+import 'package:flow/widgets/home/stats/exchange_missing_notice.dart';
 import 'package:flow/widgets/time_range_selector.dart';
 import 'package:flow/widgets/utils/time_and_range.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class StatsTab extends StatefulWidget {
@@ -20,7 +25,10 @@ class StatsTab extends StatefulWidget {
   State<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab> {
+class _StatsTabState extends State<StatsTab>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
   TimeRange range = TimeRange.thisMonth();
 
   FlowAnalytics? analytics;
@@ -31,63 +39,84 @@ class _StatsTabState extends State<StatsTab> {
   void initState() {
     super.initState();
 
+    _tabController = TabController(length: 2, vsync: this);
+
     fetch(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, MoneyFlow> data = analytics == null
-        ? {}
-        : Map.fromEntries(
-            analytics!.flow.entries
-                .where((element) => element.value.totalExpense < 0)
-                .toList()
-              ..sort(
-                (a, b) => b.value.totalExpense.compareTo(a.value.totalExpense),
-              ),
+    return ValueListenableBuilder(
+        valueListenable: ExchangeRatesService().exchangeRatesCache,
+        builder: (context, exchangeRatesCache, child) {
+          final ExchangeRates? rates = exchangeRatesCache?.get(
+            LocalPreferences().getPrimaryCurrency(),
           );
 
-    return Column(
-      children: [
-        Material(
-          elevation: 1.0,
-          child: Container(
-            padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
-            width: double.infinity,
-            child: TimeRangeSelector(
-              initialValue: range,
-              onChanged: updateRange,
-            ),
-          ),
-        ),
-        busy
-            ? const Spinner()
-            : (data.isEmpty
-                ? Expanded(
-                    child: NoData(
-                    onTap: changeMode,
-                  ))
-                : Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 96.0, top: 8.0),
-                      child: GroupPieChart(
-                        data: data,
-                        unresolvedDataTitle: "category.none".t(context),
-                        onReselect: (key) {
-                          if (!data.containsKey(key)) return;
+          final Map<String, ChartData> expenses = _prepareChartData(
+            analytics?.flow,
+            TransactionType.expense,
+            rates,
+          );
 
-                          final associatedData = data[key]!.associatedData;
+          final Map<String, ChartData> incomes = _prepareChartData(
+            analytics?.flow,
+            TransactionType.income,
+            rates,
+          );
 
-                          if (associatedData is Category) {
-                            context.push(
-                                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.toString())}");
-                          }
-                        },
-                      ),
+          return Column(
+            children: [
+              Material(
+                elevation: 1.0,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+                  width: double.infinity,
+                  child: TimeRangeSelector(
+                    initialValue: range,
+                    onChanged: updateRange,
+                  ),
+                ),
+              ),
+              if (busy)
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Spinner(),
+                )
+              else ...[
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                      text: TransactionType.expense.localizedTextKey.t(context),
                     ),
-                  )),
-      ],
-    );
+                    Tab(
+                      text: TransactionType.income.localizedTextKey.t(context),
+                    ),
+                  ],
+                ),
+                if (rates == null) const ExchangeMissingNotice(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      PieGraphView(
+                        data: expenses,
+                        changeMode: changeMode,
+                        range: range,
+                      ),
+                      PieGraphView(
+                        data: incomes,
+                        changeMode: changeMode,
+                        range: range,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ],
+          );
+        });
   }
 
   void updateRange(TimeRange newRange) {
@@ -107,8 +136,16 @@ class _StatsTabState extends State<StatsTab> {
 
     try {
       analytics = byCategory
-          ? await ObjectBox().flowByCategories(from: range.from, to: range.to)
-          : await ObjectBox().flowByAccounts(from: range.from, to: range.to);
+          ? await ObjectBox().flowByCategories(
+              from: range.from,
+              to: range.to,
+              currencyOverride: LocalPreferences().getPrimaryCurrency(),
+            )
+          : await ObjectBox().flowByAccounts(
+              from: range.from,
+              to: range.to,
+              currencyOverride: LocalPreferences().getPrimaryCurrency(),
+            );
     } finally {
       busy = false;
 
@@ -129,5 +166,51 @@ class _StatsTabState extends State<StatsTab> {
     setState(() {
       range = newRange;
     });
+  }
+
+  Map<String, ChartData<T>> _prepareChartData<T>(
+    Map<String, MoneyFlow<T>>? raw,
+    TransactionType type,
+    ExchangeRates? rates,
+  ) {
+    if (raw == null || raw.isEmpty) return {};
+
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
+    final Map<String, Money> cache = {};
+
+    final List<MapEntry<String, MoneyFlow<T>>> filtered =
+        raw.entries.where((entry) {
+      if (rates != null) {
+        cache[entry.key] =
+            entry.value.getTotalByType(type, rates, primaryCurrency);
+      } else {
+        cache[entry.key] =
+            entry.value.getByTypeAndCurrency(primaryCurrency, type);
+      }
+
+      if (type == TransactionType.expense) {
+        return cache[entry.key]!.amount < 0.0;
+      } else {
+        return cache[entry.key]!.amount > 0.0;
+      }
+    }).toList();
+
+    filtered.sort(
+      (a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!),
+    );
+
+    return Map.fromEntries(
+      filtered.map(
+        (entry) => MapEntry<String, ChartData<T>>(
+          entry.key,
+          ChartData<T>(
+            key: entry.key,
+            money: cache[entry.key]!,
+            associatedData: entry.value.associatedData,
+          ),
+        ),
+      ),
+    );
   }
 }

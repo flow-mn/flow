@@ -186,6 +186,10 @@ class InputValue implements Comparable<InputValue> {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
     if (other is InputValue) return currentAmount == other.currentAmount;
 
     if (other is! num) return false;
