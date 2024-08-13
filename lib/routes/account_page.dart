@@ -87,6 +87,10 @@ class _AccountPageState extends State<AccountPage> {
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
         final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+        final double totalIncome =
+            flow.getIncomeByCurrency(account.currency).amount;
+        final double totalExpense =
+            flow.getExpenseByCurrency(account.currency).amount;
 
         const double firstHeaderTopPadding = 0.0;
 
@@ -100,7 +104,7 @@ class _AccountPageState extends State<AccountPage> {
             const SizedBox(height: 8.0),
             TransactionsInfo(
               count: transactions?.length,
-              flow: flow.flow,
+              flow: totalIncome + totalExpense,
               icon: account.icon,
             ),
             const SizedBox(height: 12.0),
@@ -108,14 +112,14 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: flow.totalIncome,
+                    flow: totalIncome,
                     type: TransactionType.income,
                   ),
                 ),
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: flow.totalExpense,
+                    flow: totalExpense,
                     type: TransactionType.expense,
                   ),
                 ),

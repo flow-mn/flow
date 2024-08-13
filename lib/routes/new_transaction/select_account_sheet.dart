@@ -27,7 +27,8 @@ class SelectAccountSheet extends StatelessWidget {
       title: Text(titleOverride ?? "transaction.edit.selectAccount".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: accounts.isEmpty
-          ? ButtonBar(
+          ? OverflowBar(
+              alignment: MainAxisAlignment.end,
               children: [
                 Button(
                   onTap: () => context.pop(false),

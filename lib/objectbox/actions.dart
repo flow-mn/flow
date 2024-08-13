@@ -6,6 +6,7 @@ import 'package:flow/data/flow_analytics.dart';
 import 'package:flow/data/memo.dart';
 import 'package:flow/data/money_flow.dart';
 import 'package:flow/data/prefs/frecency_group.dart';
+import 'package:flow/data/transactions_filter.dart';
 import 'package:flow/entity/account.dart';
 import 'package:flow/entity/backup_entry.dart';
 import 'package:flow/entity/category.dart';
@@ -95,7 +96,7 @@ extension MainActions on ObjectBox {
     required DateTime from,
     required DateTime to,
     bool ignoreTransfers = true,
-    bool omitZeroes = true,
+    String? currencyOverride,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -115,13 +116,10 @@ extension MainActions on ObjectBox {
       final String categoryUuid =
           transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[categoryUuid] ??=
-          MoneyFlow(associatedData: transaction.category.target);
-      flow[categoryUuid]!.add(transaction.amount);
-    }
-
-    if (omitZeroes) {
-      flow.removeWhere((key, value) => value.isEmpty);
+      flow[categoryUuid] ??= MoneyFlow(
+        associatedData: transaction.category.target,
+      );
+      flow[categoryUuid]!.add(transaction.money);
     }
 
     return FlowAnalytics(flow: flow, from: from, to: to);
@@ -133,6 +131,7 @@ extension MainActions on ObjectBox {
     required DateTime to,
     bool ignoreTransfers = true,
     bool omitZeroes = true,
+    String? currencyOverride,
   }) async {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
@@ -152,17 +151,16 @@ extension MainActions on ObjectBox {
       final String accountUuid =
           transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
 
-      flow[accountUuid] ??=
-          MoneyFlow(associatedData: transaction.account.target);
-      flow[accountUuid]!.add(transaction.amount);
+      flow[accountUuid] ??= MoneyFlow(
+        associatedData: transaction.account.target,
+      );
+      flow[accountUuid]!.add(transaction.money);
     }
 
-    assert(!flow.containsKey(Uuid.NAMESPACE_NIL),
-        "There is no way you've managed to make a transaction without an account");
-
-    if (omitZeroes) {
-      flow.removeWhere((key, value) => value.isEmpty);
-    }
+    assert(
+      !flow.containsKey(Uuid.NAMESPACE_NIL),
+      "There is no way you've managed to make a transaction without an account",
+    );
 
     return FlowAnalytics(from: from, to: to, flow: flow);
   }
@@ -256,21 +254,30 @@ extension MainActions on ObjectBox {
 }
 
 extension TransactionActions on Transaction {
+  /// Base score is 10.0
+  ///
+  /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
+  /// * If [accountId] matches, score is increased by 25%
+  /// * If [transactionType] matches, score is increased by 75%
+  /// * If [categoryId] matches, score is increased by 275%
+  ///
+  /// **Max score**: 412.5
+  /// **Query only max score**: 110.0
+  ///
+  /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
   double titleSuggestionScore({
     String? query,
     int? accountId,
     int? categoryId,
     TransactionType? transactionType,
+    bool fuzzyPartial = true,
   }) {
-    late double score;
+    double score = 10.0;
 
-    if (query == null ||
-        query.trim().isEmpty ||
-        title == null ||
-        title!.trim().isEmpty) {
-      score = 10.0; // Full match score is 100
-    } else {
-      score = partialRatio(query, title!).toDouble() + 10.0;
+    if (query?.trim().isNotEmpty == true && title?.trim().isNotEmpty == true) {
+      score += fuzzyPartial
+          ? partialRatio(query!, title!).toDouble()
+          : ratio(query!, title!).toDouble();
     }
 
     double multipler = 1.0;
@@ -379,10 +386,10 @@ extension TransactionListActions on Iterable<Transaction> {
       expenses.fold(0, (value, element) => value + element.amount);
   double get sum => fold(0, (value, element) => value + element.amount);
 
-  MoneyFlow get flow => MoneyFlow(
-        totalExpense: expenseSum,
-        totalIncome: incomeSum,
-      );
+  MoneyFlow get flow => MoneyFlow()
+    ..addAll(
+      map((transaction) => transaction.money),
+    );
 
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group
@@ -412,6 +419,17 @@ extension TransactionListActions on Iterable<Transaction> {
     }
 
     return value;
+  }
+
+  List<Transaction> filter(TransactionFilter filter) =>
+      where((Transaction t) => filter.predicates
+          .map((predicate) => predicate(t))
+          .every((element) => element)).toList();
+
+  List<Transaction> search(TransactionSearchData? data) {
+    if (data == null || data.normalizedKeyword == null) return toList();
+
+    return where(data.predicate).toList();
   }
 }
 

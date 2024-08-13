@@ -13,6 +13,7 @@ import 'package:flow/routes/home_page.dart';
 import 'package:flow/routes/import_page.dart';
 import 'package:flow/routes/import_wizard/v1.dart';
 import 'package:flow/routes/preferences/button_order_preferences_page.dart';
+import 'package:flow/routes/preferences/home_tab_preferences.dart';
 import 'package:flow/routes/preferences/numpad_preferences_page.dart';
 import 'package:flow/routes/preferences/transfer_preferences_page.dart';
 import 'package:flow/routes/preferences_page.dart';
@@ -146,6 +147,10 @@ final router = GoRouter(
       path: '/preferences',
       builder: (context, state) => const PreferencesPage(),
       routes: [
+        GoRoute(
+          path: 'home',
+          builder: (context, state) => const HomeTabPreferencesPage(),
+        ),
         GoRoute(
           path: 'numpad',
           builder: (context, state) => const NumpadPreferencesPage(),

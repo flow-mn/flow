@@ -48,7 +48,8 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("flowIcon.type.character".t(context)),
-      trailing: ButtonBar(
+      trailing: OverflowBar(
+        alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(value),
