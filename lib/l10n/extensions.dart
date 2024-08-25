@@ -13,10 +13,10 @@ extension L10nHelper on BuildContext {
 /// * The dialect is very different from other dialects of the same language
 /// * We have multiple region/dialect support for the same language
 final Map<String, (String, String)> _localeNames = {
-  "mn": ("Mongolian", "Монгол"),
-  "en": ("English", "English"),
+  "mn_MN": ("Mongolian (Mongolia)", "Монгол (Монгол)"),
+  "en_US": ("English (US)", "English (US)"),
   "en_IN": ("English (India)", "English (India)"),
-  "it": ("Italian", "Italiano"),
+  "it_IT": ("Italian (Italy)", "Italiano (Italia)"),
 };
 
 extension Underscore on Locale {
