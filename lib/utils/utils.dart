@@ -1,22 +1,22 @@
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui' as ui;
+import "dart:developer";
+import "dart:io";
+import "dart:ui" as ui;
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/routes/utils/crop_square_image_page.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/toast.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-export 'extensions.dart';
+import "package:file_picker/file_picker.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/routes/utils/crop_square_image_page.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/toast.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:go_router/go_router.dart";
+import "package:image_picker/image_picker.dart";
+import "package:intl/intl.dart";
+import "package:path_provider/path_provider.dart";
+import "package:url_launcher/url_launcher.dart";
+export "extensions.dart";
 
 Future<bool> openUrl(
   Uri uri, [

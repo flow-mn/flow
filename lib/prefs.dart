@@ -1,19 +1,19 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
+import "dart:async";
+import "dart:convert";
+import "dart:developer";
 
-import 'package:flow/data/exchange_rates_set.dart';
-import 'package:flow/data/prefs/frecency.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:local_settings/local_settings.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:flow/data/exchange_rates_set.dart";
+import "package:flow/data/prefs/frecency.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:local_settings/local_settings.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 /// This class contains everything that's stored on
 /// device. Such as user preferences and per-device

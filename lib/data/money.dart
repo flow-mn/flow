@@ -1,7 +1,7 @@
-import 'dart:developer';
+import "dart:developer";
 
-import 'package:flow/data/currencies.dart';
-import 'package:flow/data/exchange_rates.dart';
+import "package:flow/data/currencies.dart";
+import "package:flow/data/exchange_rates.dart";
 
 class Money {
   final double amount;

@@ -1,11 +1,11 @@
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/_base.dart";
+import "package:flow/entity/transaction.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:objectbox/objectbox.dart";
+import "package:uuid/uuid.dart";
 
 part "account.g.dart";
 
@@ -32,7 +32,7 @@ class Account implements EntityBase {
 
   int sortOrder;
 
-  @Backlink('account')
+  @Backlink("account")
   @JsonKey(includeFromJson: false, includeToJson: false)
   final transactions = ToMany<Transaction>();
 

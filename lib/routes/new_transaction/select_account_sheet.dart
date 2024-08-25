@@ -1,11 +1,11 @@
-import 'package:flow/entity/account.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with [Account]
 class SelectAccountSheet extends StatelessWidget {

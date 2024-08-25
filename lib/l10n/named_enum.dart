@@ -1,5 +1,5 @@
-import 'package:flow/l10n/extensions.dart';
-import 'package:flutter/material.dart';
+import "package:flow/l10n/extensions.dart";
+import "package:flutter/material.dart";
 
 abstract class LocalizedEnum {
   String get localizationEnumValue;

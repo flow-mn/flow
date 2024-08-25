@@ -1,11 +1,11 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/l10n/named_enum.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:flow/sync/sync.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/l10n/named_enum.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:objectbox/objectbox.dart";
+import "package:flow/sync/sync.dart";
 
 @Entity()
 class BackupEntry {

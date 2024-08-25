@@ -1,8 +1,8 @@
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/prefs.dart';
-import 'package:flutter/widgets.dart';
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/prefs.dart";
+import "package:flutter/widgets.dart";
 
-import 'package:intl/intl.dart';
+import "package:intl/intl.dart";
 
 extension L10nHelper on BuildContext {
   FlowLocalizations get l => FlowLocalizations.of(this);
@@ -13,9 +13,10 @@ extension L10nHelper on BuildContext {
 /// * The dialect is very different from other dialects of the same language
 /// * We have multiple region/dialect support for the same language
 final Map<String, (String, String)> _localeNames = {
-  "mn_MN": ("Mongolian", "Монгол"),
-  "en_US": ("Default", "English"),
-  "it_IT": ("Italian", "Italiano"),
+  "mn": ("Mongolian", "Монгол"),
+  "en": ("English", "English"),
+  "en_IN": ("English (India)", "English (India)"),
+  "it": ("Italian", "Italiano"),
 };
 
 extension Underscore on Locale {

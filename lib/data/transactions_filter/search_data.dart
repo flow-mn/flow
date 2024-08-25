@@ -1,7 +1,7 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/utils/optional.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/utils/optional.dart";
 
 /// Fuzzy finding is case insensitive regardless of [caseInsensitive]
 class TransactionSearchData {

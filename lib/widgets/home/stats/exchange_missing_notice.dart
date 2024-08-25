@@ -1,9 +1,9 @@
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/services/exchange_rates.dart';
-import 'package:flow/theme/helpers.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flutter/material.dart';
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flutter/material.dart";
 
 class ExchangeMissingNotice extends StatefulWidget {
   const ExchangeMissingNotice({super.key});

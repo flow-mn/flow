@@ -1,8 +1,8 @@
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 
-export 'numpad_button.dart';
+export "numpad_button.dart";
 
 /// By default, numbers, icons inside [NumpadButton]
 /// takes 50% of the button width.

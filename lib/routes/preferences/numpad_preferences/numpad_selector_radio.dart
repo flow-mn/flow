@@ -1,6 +1,6 @@
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/widgets/numpad.dart';
-import 'package:flutter/material.dart';
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/widgets/numpad.dart";
+import "package:flutter/material.dart";
 
 class NumpadSelectorRadio extends StatelessWidget {
   final VoidCallback onTap;
@@ -75,7 +75,7 @@ class NumpadSelectorRadio extends StatelessWidget {
         .characters
         .map(
           (char) => NumpadButton(
-            crossAxisCellCount: char == '0' ? 2 : 1,
+            crossAxisCellCount: char == "0" ? 2 : 1,
             borderRadiusSize: 6.0,
             child: Text(char),
           ),
@@ -94,7 +94,7 @@ class NumpadSelectorRadio extends StatelessWidget {
         .characters
         .map(
           (char) => NumpadButton(
-            crossAxisCellCount: char == '0' ? 2 : 1,
+            crossAxisCellCount: char == "0" ? 2 : 1,
             borderRadiusSize: 6.0,
             child: Text(char),
           ),

@@ -1,15 +1,15 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flutter_test/flutter_test.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flutter_test/flutter_test.dart";
 
-import 'package:path/path.dart' as path;
+import "package:path/path.dart" as path;
 
-import 'objectbox_erase.dart';
+import "objectbox_erase.dart";
 
 void main() {
   group("ObjectBox data insertion", () {
@@ -25,17 +25,17 @@ void main() {
         Account(
           name: "Tugrik",
           currency: "MNT",
-          iconCode: '@@@@@irrelevant_here@@@@@',
+          iconCode: "@@@@@irrelevant_here@@@@@",
         ),
         Account(
           name: "Dollars US",
           currency: "USD",
-          iconCode: '@@@@@irrelevant_here@@@@@',
+          iconCode: "@@@@@irrelevant_here@@@@@",
         ),
         Account(
           name: "Tugrik Account 2",
           currency: "MNT",
-          iconCode: '@@@@@irrelevant_here@@@@@',
+          iconCode: "@@@@@irrelevant_here@@@@@",
         ),
       ]);
 

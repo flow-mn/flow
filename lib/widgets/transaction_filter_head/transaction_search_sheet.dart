@@ -1,10 +1,10 @@
-import 'package:flow/data/transactions_filter.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/utils/optional.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/transactions_filter.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/utils/optional.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with [TransactionSearchData]
 class TransactionSearchSheet extends StatefulWidget {
@@ -36,7 +36,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      title: Text('transactions.query.filter.keyword'.t(context)),
+      title: Text("transactions.query.filter.keyword".t(context)),
       trailing: OverflowBar(
         alignment: MainAxisAlignment.end,
         children: [

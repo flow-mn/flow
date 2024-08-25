@@ -1,12 +1,12 @@
-import 'dart:developer';
+import "dart:developer";
 
-import 'package:dotted_border/dotted_border.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes/preferences/button_order_preferences/transaction_type_button.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flutter/material.dart';
+import "package:dotted_border/dotted_border.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes/preferences/button_order_preferences/transaction_type_button.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flutter/material.dart";
 
 class ButtonOrderPreferencesPage extends StatefulWidget {
   final Radius radius;

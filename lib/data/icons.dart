@@ -1,10 +1,10 @@
 library flow_selected_icons;
 
-import 'package:flutter/material.dart';
-import 'package:fuzzywuzzy/fuzzywuzzy.dart';
-import 'package:material_symbols_icons/iconname_to_unicode_map.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:simple_icons/simple_icons.dart';
+import "package:flutter/material.dart";
+import "package:fuzzywuzzy/fuzzywuzzy.dart";
+import "package:material_symbols_icons/iconname_to_unicode_map.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:simple_icons/simple_icons.dart";
 
 List<IconData> querySimpleIcons(String query) {
   final String trimmed = query.trim();
@@ -12,7 +12,7 @@ List<IconData> querySimpleIcons(String query) {
   if (trimmed.isEmpty) return SimpleIcons.values.values.toList();
 
   final List<String> queryResults = extractTop<String>(
-    query: trimmed.startsWith(RegExp(r'\d')) ? "n$trimmed" : trimmed,
+    query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
     choices: SimpleIcons.values.keys.toList(),
     limit: 50,
   ).map((extractedResult) => extractedResult.choice).toList();
@@ -33,7 +33,7 @@ List<IconData> queryMaterialSymbols(String query) {
   }
 
   final List<String> queryResults = extractTop<String>(
-    query: trimmed.startsWith(RegExp(r'\d')) ? "n$trimmed" : trimmed,
+    query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
     choices: materialSymbolsIconNameToUnicodeMap.keys.toList(),
     limit: 50,
   ).map((extractedResult) => extractedResult.choice).toList();

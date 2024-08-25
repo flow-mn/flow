@@ -1,6 +1,6 @@
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class InfoText extends StatelessWidget {
   /// Centers the text and icon vertically instead of top

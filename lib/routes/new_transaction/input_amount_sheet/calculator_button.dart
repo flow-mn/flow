@@ -1,10 +1,10 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/numpad_button.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/numpad_button.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class CalculatorButton extends StatelessWidget {
   final CalculatorOperation operation;

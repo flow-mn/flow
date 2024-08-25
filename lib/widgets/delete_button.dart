@@ -1,7 +1,7 @@
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/l10n/extensions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class DeleteButton extends StatelessWidget {
   final Widget? label;

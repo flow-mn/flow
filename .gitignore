@@ -46,3 +46,7 @@ app.*.map.json
 # ObjectBox unit testing
 
 .objectbox_test
+
+# Objectbox library
+
+/download

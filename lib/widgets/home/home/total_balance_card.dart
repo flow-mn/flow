@@ -1,9 +1,9 @@
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/home/home/analytics_card.dart';
-import 'package:flutter/material.dart';
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/home/home/analytics_card.dart";
+import "package:flutter/material.dart";
 
 class TotalBalanceCard extends StatelessWidget {
   const TotalBalanceCard({super.key});

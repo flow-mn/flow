@@ -1,14 +1,14 @@
-import 'package:flow/data/money.dart';
-import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction/extensions/base.dart';
-import 'package:flow/entity/transaction/wrapper.dart';
-import 'package:flow/l10n/named_enum.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
+import "package:flow/data/money.dart";
+import "package:flow/entity/_base.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/wrapper.dart";
+import "package:flow/l10n/named_enum.dart";
+import "package:flow/utils/utils.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:objectbox/objectbox.dart";
+import "package:uuid/uuid.dart";
 
 part "transaction.g.dart";
 

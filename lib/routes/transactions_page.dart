@@ -1,12 +1,12 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/widgets/general/spinner.dart';
-import 'package:flow/widgets/grouped_transaction_list.dart';
-import 'package:flow/widgets/home/transactions_date_header.dart';
-import 'package:flutter/material.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/grouped_transaction_list.dart";
+import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flutter/material.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class TransactionsPage extends StatefulWidget {
   final QueryBuilder<Transaction> query;

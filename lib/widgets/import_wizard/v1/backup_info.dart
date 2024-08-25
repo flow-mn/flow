@@ -1,13 +1,13 @@
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/sync/import/import_v1.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/list_header.dart';
-import 'package:flow/widgets/import_wizard/import_item_list_tile.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/sync/import/import_v1.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/import_wizard/import_item_list_tile.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class BackupInfo extends StatelessWidget {
   final VoidCallback onTap;

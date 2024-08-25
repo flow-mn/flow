@@ -1,4 +1,4 @@
-import 'package:flow/l10n/named_enum.dart';
+import "package:flow/l10n/named_enum.dart";
 
 enum CSVHeadersV1 implements LocalizedEnum {
   uuid,

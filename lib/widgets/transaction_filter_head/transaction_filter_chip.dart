@@ -1,10 +1,10 @@
-import 'package:flow/data/transactions_filter.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/utils/time_and_range.dart';
-import 'package:flutter/material.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/data/transactions_filter.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flutter/material.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class TransactionFilterChip<T> extends StatelessWidget {
   final Widget? avatar;

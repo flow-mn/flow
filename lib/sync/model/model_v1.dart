@@ -1,10 +1,10 @@
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/sync/model/base.dart';
-import 'package:json_annotation/json_annotation.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/sync/model/base.dart";
+import "package:json_annotation/json_annotation.dart";
 
-part 'model_v1.g.dart';
+part "model_v1.g.dart";
 
 @JsonSerializable()
 class SyncModelV1 extends SyncModelBase {

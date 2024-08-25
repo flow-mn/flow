@@ -1,5 +1,5 @@
-import 'package:flow/widgets/general/wavy_divider/wavy_divider_painter.dart';
-import 'package:flutter/material.dart';
+import "package:flow/widgets/general/wavy_divider/wavy_divider_painter.dart";
+import "package:flutter/material.dart";
 
 class WavyDivider extends StatelessWidget {
   /// Height of the divider

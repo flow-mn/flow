@@ -1,16 +1,16 @@
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui' as ui;
+import "dart:developer";
+import "dart:io";
+import "dart:ui" as ui;
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/routes/utils/crop_square_image_page.dart';
-import 'package:flow/utils/toast.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
+import "package:file_picker/file_picker.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/routes/utils/crop_square_image_page.dart";
+import "package:flow/utils/toast.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:go_router/go_router.dart";
+import "package:image_picker/image_picker.dart";
+import "package:url_launcher/url_launcher.dart";
 
 Future<bool> openUrl(
   Uri uri, [

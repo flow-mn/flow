@@ -1,8 +1,8 @@
-import 'package:flow/entity/_base.dart';
-import 'package:flow/objectbox.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
+import "package:flow/entity/_base.dart";
+import "package:flow/objectbox.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:objectbox/objectbox.dart";
+import "package:uuid/uuid.dart";
 
 part "profile.g.dart";
 

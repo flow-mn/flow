@@ -1,19 +1,19 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/constants.dart';
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/data/setup/default_accounts.dart';
-import 'package:flow/data/setup/default_categories.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
+import "package:flow/constants.dart";
+import "package:flow/data/flow_icon.dart";
+import "package:flow/data/setup/default_accounts.dart";
+import "package:flow/data/setup/default_categories.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:path/path.dart" as path;
+import "package:path_provider/path_provider.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 
 class ObjectBox {
   static ObjectBox? _instance;
@@ -120,7 +120,7 @@ class ObjectBox {
         element.iconCode ==
         const IconFlowIcon(Symbols.request_quote_rounded).toString());
 
-    final [main, cash, savings] = getAccountPresets('USD').map((e) {
+    final [main, cash, savings] = getAccountPresets("USD").map((e) {
       e.id = 0;
       return e;
     }).toList();

@@ -1,9 +1,9 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/home/home/analytics_card.dart';
-import 'package:flow/widgets/home/home/flow_separate_line_chart.dart';
-import 'package:flutter/material.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/home/home/analytics_card.dart";
+import "package:flow/widgets/home/home/flow_separate_line_chart.dart";
+import "package:flutter/material.dart";
 
 class FlowGraph extends StatelessWidget {
   final DateTime startDate;

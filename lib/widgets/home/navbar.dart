@@ -1,8 +1,8 @@
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/navbar_theme.dart';
-import 'package:flow/widgets/home/navbar/navbar_button.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/l10n/extensions.dart";
+import "package:flow/theme/navbar_theme.dart";
+import "package:flow/widgets/home/navbar/navbar_button.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class Navbar extends StatelessWidget {
   final Function(int i) onTap;
