@@ -1,5 +1,5 @@
 import "package:flow/entity/transaction.dart";
-import "package:flow/utils/jsonable.dart";
+import "package:flow/utils/jasonable.dart";
 
 abstract class TransactionExtension implements Jasonable {
   String get key;

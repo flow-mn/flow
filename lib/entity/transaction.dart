@@ -5,7 +5,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/utils/utils.dart";
+import "package:flow/utils/extensions.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
 import "package:uuid/uuid.dart";
@@ -31,6 +31,10 @@ class Transaction implements EntityBase {
   static const int maxTitleLength = 256;
 
   String? title;
+
+  /// Raw length (in case we use Markdown)
+  static const int maxDescriptionLength = 65536;
+  String? description;
 
   double amount;
 

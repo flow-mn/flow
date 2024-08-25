@@ -1,3 +1,9 @@
+## Next
+
+* Added the gap back in pie chart (One of the worst decision I've made in my life)
+* Added `en_IN` locale
+* Added optional description field for transactions
+
 ## Beta 0.6.0
 
 * Added exchange rates, currently only works in Stats tab

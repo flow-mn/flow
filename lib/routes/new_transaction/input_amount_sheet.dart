@@ -4,8 +4,6 @@ import "package:flow/routes/new_transaction/amount_text.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/shortcut.dart";
-import "package:flow/utils/toast.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/numpad.dart";

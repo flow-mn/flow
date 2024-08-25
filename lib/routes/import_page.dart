@@ -4,7 +4,7 @@ import "dart:io";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/utils/toast.dart";
+import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import/file_select_area.dart";
 import "package:flutter/material.dart";

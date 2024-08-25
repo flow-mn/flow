@@ -5,7 +5,6 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/toast.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
