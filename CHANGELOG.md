@@ -2,9 +2,10 @@
 
 ## Beta 0.6.1
 
-* Added the gap back in pie chart (One of the worst decision I've made in my life)
+* Added the gap back in pie chart
 * Added `en_IN` locale
 * Added optional description field for transactions
+* Added little bit breathing space for dialog buttons 🥳
 
 ## Beta 0.6.0
 
