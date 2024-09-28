@@ -1,6 +1,7 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -17,7 +18,7 @@ extension CustomDialogs on BuildContext {
       context: this,
       builder: (context) => ModalSheet(
         title: Text(title ?? "general.areYouSure".t(context)),
-        trailing: OverflowBar(
+        trailing: ModalOverflowBar(
           alignment: MainAxisAlignment.end,
           children: [
             Button(

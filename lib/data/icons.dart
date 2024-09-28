@@ -1,5 +1,3 @@
-library flow_selected_icons;
-
 import "package:flutter/material.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:material_symbols_icons/iconname_to_unicode_map.dart";

@@ -15,11 +15,11 @@ dependencies:
   cross_file: ^0.3.3+8
   csv: ^6.0.0
   cupertino_icons: ^1.0.6
-  desktop_drop: ^0.4.4
+  desktop_drop: ^0.5.0
   dotted_border: ^2.1.0
   file_picker: ^8.0.7
   file_saver: ^0.2.9
-  fl_chart: ^0.68.0
+  fl_chart: ^0.69.0
   flutter:
     sdk: flutter
   flutter_floating_bottom_bar: ^1.2.0
@@ -57,9 +57,9 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.10
 
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.1
 
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
   json_serializable: ^6.8.0

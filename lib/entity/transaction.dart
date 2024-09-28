@@ -32,7 +32,6 @@ class Transaction implements EntityBase {
 
   String? title;
 
-  /// Raw length (in case we use Markdown)
   static const int maxDescriptionLength = 65536;
   String? description;
 
