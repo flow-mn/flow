@@ -99,6 +99,9 @@
     "transaction.transfer.to.select": "Trasferisci a",
     "transaction.transfer.to.title": "A {account}",
     "transaction.transfer.fromToTitle": "Da {from} a {to}",
+    "transaction.description": "Note",
+    "transaction.description.add": "Aggiungi note",
+    "transaction.description.markdownSupported": "Markdown supportato",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",
@@ -323,5 +326,6 @@
     "error.sync.safetyBackupFailed": "Impossibile avviare l'importazione",
     "error.sync.exportFailed": "Impossibile esportare, si prega di contattare lo sviluppatore.",
     "error.sync.fileDeleteFailed": "Impossibile eliminare il file",
-    "error.transaction.missingAccount": "Selezionare un account"
+    "error.transaction.missingAccount": "Selezionare un account",
+    "error.url.cannotOpen": "Impossibile aprire il collegamento"
 }

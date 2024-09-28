@@ -99,6 +99,9 @@
     "transaction.transfer.to.select": "Хүлээн авах данс",
     "transaction.transfer.to.title": "{account}-руу",
     "transaction.transfer.fromToTitle": "{from}-с {to} руу",
+    "transaction.description": "Тэмдэглэл",
+    "transaction.description.add": "Тэмдэглэл нэмэх",
+    "transaction.description.markdownSupported": "Markdown ашиглах боломжтой",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",
@@ -323,5 +326,6 @@
     "error.sync.safetyBackupFailed": "Сэргээх үйлдэл эхлэх боломжгүй",
     "error.sync.exportFailed": "Нөөцлөх явцад алдаа гарлаа, хөгжүүлэгчид хандана уу.",
     "error.sync.fileDeleteFailed": "Нөөц устгах үед алдаа гарлаа",
-    "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу"
+    "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу",
+    "error.url.cannotOpen": "Холбоосыг нээхэд алдаа гарлаа"
 }

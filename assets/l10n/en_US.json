@@ -99,6 +99,9 @@
     "transaction.transfer.to.select": "Transfer to",
     "transaction.transfer.to.title": "To {account}",
     "transaction.transfer.fromToTitle": "From {from} to {to}",
+    "transaction.description": "Notes",
+    "transaction.description.add": "Add notes",
+    "transaction.description.markdownSupported": "Markdown supported",
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",
@@ -323,5 +326,6 @@
     "error.sync.safetyBackupFailed": "Unable to start import",
     "error.sync.exportFailed": "Unable to export, please contact developer.",
     "error.sync.fileDeleteFailed": "An error occured during backup deletion",
-    "error.transaction.missingAccount": "Please select an account"
+    "error.transaction.missingAccount": "Please select an account",
+    "error.url.cannotOpen": "Can't open the link"
 }

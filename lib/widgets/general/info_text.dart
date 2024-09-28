@@ -8,7 +8,14 @@ class InfoText extends StatelessWidget {
 
   final Widget child;
 
-  const InfoText({super.key, required this.child, this.singleLine = false});
+  final IconData icon;
+
+  const InfoText({
+    super.key,
+    required this.child,
+    this.singleLine = false,
+    this.icon = Symbols.info_rounded,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class InfoText extends StatelessWidget {
           singleLine ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Icon(
-          Symbols.info_rounded,
+          icon,
           fill: 0,
           color: context.flowColors.semi,
           size: 16.0,

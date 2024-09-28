@@ -28,6 +28,7 @@ import "package:flow/routes/support_page.dart";
 import "package:flow/routes/transaction_page.dart";
 import "package:flow/routes/transactions_page.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
+import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/utils/utils.dart";
@@ -189,6 +190,28 @@ final router = GoRouter(
           _ => throw const ErrorPage(
               error:
                   "Invalid state. Pass [CropSquareImagePageProps] object to `extra` prop",
+            )
+        };
+      },
+    ),
+    GoRoute(
+      path: "/utils/editmd",
+      pageBuilder: (context, state) {
+        return switch (state.extra) {
+          null => MaterialPage(
+              child: EditMarkdownPage(),
+              fullscreenDialog: true,
+            ),
+          EditMarkdownPageProps props => MaterialPage(
+              child: EditMarkdownPage(
+                initialValue: props.initialValue,
+                maxLength: props.maxLength,
+              ),
+              fullscreenDialog: true,
+            ),
+          _ => throw const ErrorPage(
+              error:
+                  "Invalid state. Pass [EditMarkdownPageProps] object or nothing to `extra` prop",
             )
         };
       },

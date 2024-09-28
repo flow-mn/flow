@@ -144,6 +144,7 @@ class Transaction implements EntityBase {
   Transaction({
     this.id = 0,
     this.title,
+    this.description,
     this.subtype,
     required this.amount,
     required this.currency,
