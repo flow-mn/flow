@@ -315,6 +315,7 @@
     "error.route.400": "Failed to load the page",
     "error.input.mustBeNotEmpty": "Please fill out this field",
     "error.input.duplicate.accountName": "Name \"{}\" already in use. Try a different name.",
+    "error.input.noFilePicked": "No file was selected",
     "error.input.noImagePicked": "No image was selected",
     "error.input.cropFailed": "An error occured during cropping the picture",
     "error.input.wrongFileType": "Please choose a {type} file",
