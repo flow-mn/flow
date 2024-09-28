@@ -1,18 +1,18 @@
-import 'dart:math' as math;
+import "dart:math" as math;
 
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flow/data/chart_data.dart';
-import 'package:flow/data/exchange_rates.dart';
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/main.dart';
-import 'package:flow/theme/primary_colors.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/home/stats/pie_percent_badge.dart';
-import 'package:flutter/material.dart' hide Flow;
+import "package:auto_size_text/auto_size_text.dart";
+import "package:fl_chart/fl_chart.dart";
+import "package:flow/data/chart_data.dart";
+import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/main.dart";
+import "package:flow/theme/primary_colors.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/home/stats/pie_percent_badge.dart";
+import "package:flutter/material.dart" hide Flow;
 
 class GroupPieChart<T> extends StatefulWidget {
   final EdgeInsets chartPadding;
@@ -137,7 +137,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                               }
                             },
                           ),
-                          sectionsSpace: 0.0,
+                          sectionsSpace: 1.0,
                           centerSpaceRadius: centerHoleDiameter / 2,
                           startDegreeOffset: -90.0,
                           sections: data.entries.indexed

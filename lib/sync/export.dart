@@ -1,17 +1,17 @@
-import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:math' as math;
+import "dart:async";
+import "dart:developer";
+import "dart:io";
+import "dart:math" as math;
 
-import 'package:flow/entity/backup_entry.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/sync/export/export_v1.dart';
-import 'package:flow/sync/export/mode.dart';
-import 'package:flow/sync/sync.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:path/path.dart' as path;
-import 'package:share_plus/share_plus.dart';
+import "package:flow/entity/backup_entry.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/sync/export/export_v1.dart";
+import "package:flow/sync/export/mode.dart";
+import "package:flow/sync/sync.dart";
+import "package:flow/utils/utils.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:path/path.dart" as path;
+import "package:share_plus/share_plus.dart";
 
 typedef ExportStatus = ({bool shareDialogSucceeded, String filePath});
 
@@ -81,7 +81,7 @@ Future<String> saveBackupFile(
   // Otherwise, save to documents directory, and reveal the file on system.
 
   final Directory saveDir =
-      Directory(path.join(ObjectBox.appDataDirectory, 'backups'));
+      Directory(path.join(ObjectBox.appDataDirectory, "backups"));
 
   final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
   final String randomValue = math.Random().nextInt(536870912).toRadixString(36);

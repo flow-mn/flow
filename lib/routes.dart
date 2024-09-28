@@ -1,50 +1,51 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/routes/account/account_edit_page.dart';
-import 'package:flow/routes/account_page.dart';
-import 'package:flow/routes/categories_page.dart';
-import 'package:flow/routes/category/category_edit_page.dart';
-import 'package:flow/routes/category_page.dart';
-import 'package:flow/routes/error_page.dart';
-import 'package:flow/routes/export/export_history_page.dart';
-import 'package:flow/routes/export_options_page.dart';
-import 'package:flow/routes/export_page.dart';
-import 'package:flow/routes/home_page.dart';
-import 'package:flow/routes/import_page.dart';
-import 'package:flow/routes/import_wizard/v1.dart';
-import 'package:flow/routes/preferences/button_order_preferences_page.dart';
-import 'package:flow/routes/preferences/home_tab_preferences.dart';
-import 'package:flow/routes/preferences/numpad_preferences_page.dart';
-import 'package:flow/routes/preferences/transfer_preferences_page.dart';
-import 'package:flow/routes/preferences_page.dart';
-import 'package:flow/routes/profile_page.dart';
-import 'package:flow/routes/setup/setup_accounts_page.dart';
-import 'package:flow/routes/setup/setup_categories_page.dart';
-import 'package:flow/routes/setup/setup_currency_page.dart';
-import 'package:flow/routes/setup/setup_profile_page.dart';
-import 'package:flow/routes/setup/setup_profile_picture_page.dart';
-import 'package:flow/routes/setup_page.dart';
-import 'package:flow/routes/support_page.dart';
-import 'package:flow/routes/transaction_page.dart';
-import 'package:flow/routes/transactions_page.dart';
-import 'package:flow/routes/utils/crop_square_image_page.dart';
-import 'package:flow/sync/export/mode.dart';
-import 'package:flow/sync/import/import_v1.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/routes/account/account_edit_page.dart";
+import "package:flow/routes/account_page.dart";
+import "package:flow/routes/categories_page.dart";
+import "package:flow/routes/category/category_edit_page.dart";
+import "package:flow/routes/category_page.dart";
+import "package:flow/routes/error_page.dart";
+import "package:flow/routes/export/export_history_page.dart";
+import "package:flow/routes/export_options_page.dart";
+import "package:flow/routes/export_page.dart";
+import "package:flow/routes/home_page.dart";
+import "package:flow/routes/import_page.dart";
+import "package:flow/routes/import_wizard/v1.dart";
+import "package:flow/routes/preferences/button_order_preferences_page.dart";
+import "package:flow/routes/preferences/home_tab_preferences.dart";
+import "package:flow/routes/preferences/numpad_preferences_page.dart";
+import "package:flow/routes/preferences/transfer_preferences_page.dart";
+import "package:flow/routes/preferences_page.dart";
+import "package:flow/routes/profile_page.dart";
+import "package:flow/routes/setup/setup_accounts_page.dart";
+import "package:flow/routes/setup/setup_categories_page.dart";
+import "package:flow/routes/setup/setup_currency_page.dart";
+import "package:flow/routes/setup/setup_profile_page.dart";
+import "package:flow/routes/setup/setup_profile_picture_page.dart";
+import "package:flow/routes/setup_page.dart";
+import "package:flow/routes/support_page.dart";
+import "package:flow/routes/transaction_page.dart";
+import "package:flow/routes/transactions_page.dart";
+import "package:flow/routes/utils/crop_square_image_page.dart";
+import "package:flow/routes/utils/edit_markdown_page.dart";
+import "package:flow/sync/export/mode.dart";
+import "package:flow/sync/import/import_v1.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:moment_dart/moment_dart.dart";
 
 final router = GoRouter(
   errorBuilder: (context, state) => ErrorPage(error: state.error?.toString()),
   routes: [
     GoRoute(
-      path: '/',
+      path: "/",
       builder: (context, state) => const HomePage(),
     ),
     GoRoute(
-      path: '/transaction/new',
+      path: "/transaction/new",
       pageBuilder: (context, state) {
         final TransactionType? type = TransactionType.values.firstWhereOrNull(
           (element) => element.value == state.uri.queryParameters["type"],
@@ -57,7 +58,7 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/transaction/:id',
+      path: "/transaction/:id",
       pageBuilder: (context, state) => MaterialPage(
         child: TransactionPage.edit(
           transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
@@ -66,13 +67,13 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/transactions',
+      path: "/transactions",
       builder: (context, state) => TransactionsPage.all(
         title: "transactions.all".t(context),
       ),
     ),
     GoRoute(
-      path: '/transactions/upcoming',
+      path: "/transactions/upcoming",
       builder: (context, state) => TransactionsPage.upcoming(
         title: "transactions.upcoming".t(context),
         header: InfoText(
@@ -86,11 +87,11 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/account/new',
+      path: "/account/new",
       builder: (context, state) => const AccountEditPage.create(),
     ),
     GoRoute(
-        path: '/account/:id',
+        path: "/account/:id",
         builder: (context, state) => AccountPage(
               accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
               initialRange: TimeRange.tryParse(
@@ -99,7 +100,7 @@ final router = GoRouter(
             ),
         routes: [
           GoRoute(
-            path: 'edit',
+            path: "edit",
             pageBuilder: (context, state) => MaterialPage(
               child: AccountEditPage(
                 accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
@@ -108,7 +109,7 @@ final router = GoRouter(
             ),
           ),
           GoRoute(
-            path: 'transactions',
+            path: "transactions",
             builder: (context, state) => TransactionsPage.account(
               accountId: int.tryParse(state.pathParameters["id"]!) ?? -1,
               title: state.uri.queryParameters["title"],
@@ -116,11 +117,11 @@ final router = GoRouter(
           ),
         ]),
     GoRoute(
-      path: '/category/new',
+      path: "/category/new",
       builder: (context, state) => const CategoryEditPage.create(),
     ),
     GoRoute(
-      path: '/category/:id',
+      path: "/category/:id",
       builder: (context, state) => CategoryPage(
         categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
         initialRange: TimeRange.tryParse(
@@ -129,7 +130,7 @@ final router = GoRouter(
       ),
       routes: [
         GoRoute(
-          path: 'edit',
+          path: "edit",
           pageBuilder: (context, state) => MaterialPage(
             child: CategoryEditPage(
               categoryId: int.tryParse(state.pathParameters["id"]!) ?? -1,
@@ -140,42 +141,42 @@ final router = GoRouter(
       ],
     ),
     GoRoute(
-      path: '/categories',
+      path: "/categories",
       builder: (context, state) => const CategoriesPage(),
     ),
     GoRoute(
-      path: '/preferences',
+      path: "/preferences",
       builder: (context, state) => const PreferencesPage(),
       routes: [
         GoRoute(
-          path: 'home',
+          path: "home",
           builder: (context, state) => const HomeTabPreferencesPage(),
         ),
         GoRoute(
-          path: 'numpad',
+          path: "numpad",
           builder: (context, state) => const NumpadPreferencesPage(),
         ),
         GoRoute(
-          path: 'transfer',
+          path: "transfer",
           builder: (context, state) => const TransferPreferencesPage(),
         ),
         GoRoute(
-          path: 'transactionButtonOrder',
+          path: "transactionButtonOrder",
           builder: (context, state) => const ButtonOrderPreferencesPage(),
         ),
       ],
     ),
     GoRoute(
-      path: '/profile',
+      path: "/profile",
       builder: (context, state) => const ProfilePage(),
     ),
     GoRoute(
-      path: '/profile/:id',
+      path: "/profile/:id",
       builder: (context, state) => ProfilePage(
-          profileId: int.tryParse(state.pathParameters['id']!) ?? -1),
+          profileId: int.tryParse(state.pathParameters["id"]!) ?? -1),
     ),
     GoRoute(
-      path: '/utils/cropsquare',
+      path: "/utils/cropsquare",
       pageBuilder: (context, state) {
         return switch (state.extra) {
           CropSquareImagePageProps props => MaterialPage(
@@ -194,15 +195,37 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/exportOptions',
+      path: "/utils/editmd",
+      pageBuilder: (context, state) {
+        return switch (state.extra) {
+          null => MaterialPage(
+              child: EditMarkdownPage(),
+              fullscreenDialog: true,
+            ),
+          EditMarkdownPageProps props => MaterialPage(
+              child: EditMarkdownPage(
+                initialValue: props.initialValue,
+                maxLength: props.maxLength,
+              ),
+              fullscreenDialog: true,
+            ),
+          _ => throw const ErrorPage(
+              error:
+                  "Invalid state. Pass [EditMarkdownPageProps] object or nothing to `extra` prop",
+            )
+        };
+      },
+    ),
+    GoRoute(
+      path: "/exportOptions",
       builder: (context, state) => const ExportOptionsPage(),
     ),
     GoRoute(
-      path: '/import',
+      path: "/import",
       builder: (context, state) => const ImportPage(),
     ),
     GoRoute(
-      path: '/import/wizard/v1',
+      path: "/import/wizard/v1",
       builder: (context, state) {
         if (state.extra case ImportV1 importV1) {
           return ImportWizardV1Page(importer: importV1);
@@ -214,11 +237,11 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/export/history',
+      path: "/export/history",
       builder: (context, state) => const ExportHistoryPage(),
     ),
     GoRoute(
-      path: '/export/:type',
+      path: "/export/:type",
       builder: (context, state) => ExportPage(
         state.pathParameters["type"] == "csv"
             ? ExportMode.csv
@@ -226,39 +249,39 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/import',
+      path: "/import",
       builder: (context, state) => const ImportPage(),
     ),
     GoRoute(
-      path: '/setup',
+      path: "/setup",
       builder: (context, state) => const SetupPage(),
       routes: [
         GoRoute(
-          path: 'profile',
+          path: "profile",
           builder: (context, state) => const SetupProfilePage(),
         ),
         GoRoute(
-          path: 'profile/photo',
+          path: "profile/photo",
           builder: (context, state) => SetupProfilePhotoPage(
             profileImagePath: state.extra as String,
           ),
         ),
         GoRoute(
-          path: 'currency',
+          path: "currency",
           builder: (context, state) => const SetupCurrencyPage(),
         ),
         GoRoute(
-          path: 'accounts',
+          path: "accounts",
           builder: (context, state) => const SetupAccountsPage(),
         ),
         GoRoute(
-          path: 'categories',
+          path: "categories",
           builder: (context, state) => const SetupCategoriesPage(),
         ),
       ],
     ),
     GoRoute(
-      path: '/support',
+      path: "/support",
       builder: (context, state) => const SupportPage(),
     ),
   ],

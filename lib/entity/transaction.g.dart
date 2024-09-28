@@ -8,6 +8,7 @@ part of 'transaction.dart';
 
 Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       title: json['title'] as String?,
+      description: json['description'] as String?,
       subtype: json['subtype'] as String?,
       amount: (json['amount'] as num).toDouble(),
       currency: json['currency'] as String,
@@ -29,6 +30,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'createdDate': instance.createdDate.toIso8601String(),
       'transactionDate': instance.transactionDate.toIso8601String(),
       'title': instance.title,
+      'description': instance.description,
       'amount': instance.amount,
       'currency': instance.currency,
       'subtype': instance.subtype,

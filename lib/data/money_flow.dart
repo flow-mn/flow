@@ -1,10 +1,10 @@
-import 'dart:developer';
+import "dart:developer";
 
-import 'package:flow/data/currencies.dart';
-import 'package:flow/data/exchange_rates.dart';
-import 'package:flow/data/money.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/prefs.dart';
+import "package:flow/data/currencies.dart";
+import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/money.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/prefs.dart";
 
 class MoneyFlow<T> {
   final T? associatedData;

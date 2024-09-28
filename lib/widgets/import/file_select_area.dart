@@ -1,13 +1,13 @@
-import 'package:cross_file/cross_file.dart';
-import 'package:desktop_drop/desktop_drop.dart';
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/surface.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:cross_file/cross_file.dart";
+import "package:desktop_drop/desktop_drop.dart";
+import "package:flow/data/flow_icon.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/surface.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class FileSelectArea extends StatefulWidget {
   final Function(XFile? file)? onFileDropped;

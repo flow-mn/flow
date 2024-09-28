@@ -1,9 +1,9 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/surface.dart';
-import 'package:flutter/material.dart';
+import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/surface.dart";
+import "package:flutter/material.dart";
 
 class FlowCard extends StatelessWidget {
   final TransactionType type;

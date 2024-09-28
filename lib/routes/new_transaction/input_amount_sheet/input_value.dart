@@ -23,9 +23,9 @@ class InputValue implements Comparable<InputValue> {
     required this.decimalPart,
     required this.isNegative,
     required this.decimalLeadingZeroesCount,
-  })  : assert(wholePart >= 0, 'wholePart must be greater than or equal to 0'),
+  })  : assert(wholePart >= 0, "wholePart must be greater than or equal to 0"),
         assert(
-            decimalPart >= 0, 'decimalPart must be greater than or equal to 0');
+            decimalPart >= 0, "decimalPart must be greater than or equal to 0");
 
   factory InputValue.fromDouble(
     double value, {

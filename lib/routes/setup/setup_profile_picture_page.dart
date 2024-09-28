@@ -1,17 +1,17 @@
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui' as ui;
+import "dart:developer";
+import "dart:io";
+import "dart:ui" as ui;
 
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flow/widgets/general/profile_picture.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart' as path;
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/profile_picture.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:path/path.dart" as path;
 
 class SetupProfilePhotoPage extends StatefulWidget {
   final String profileImagePath;
@@ -117,6 +117,6 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
   }
 
   void save() {
-    context.push('/setup/currency');
+    context.push("/setup/currency");
   }
 }

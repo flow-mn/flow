@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 /// An icon, emoji, or image used for [Account] or [Category]
 abstract class FlowIconData {

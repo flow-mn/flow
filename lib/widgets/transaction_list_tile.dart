@@ -1,15 +1,15 @@
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/entity/transaction/extensions/default/transfer.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/transfer.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flutter/material.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class TransactionListTile extends StatelessWidget {
   final Transaction transaction;

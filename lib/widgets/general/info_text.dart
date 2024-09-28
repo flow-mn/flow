@@ -1,6 +1,6 @@
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class InfoText extends StatelessWidget {
   /// Centers the text and icon vertically instead of top
@@ -8,7 +8,14 @@ class InfoText extends StatelessWidget {
 
   final Widget child;
 
-  const InfoText({super.key, required this.child, this.singleLine = false});
+  final IconData icon;
+
+  const InfoText({
+    super.key,
+    required this.child,
+    this.singleLine = false,
+    this.icon = Symbols.info_rounded,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class InfoText extends StatelessWidget {
           singleLine ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Icon(
-          Symbols.info_rounded,
+          icon,
           fill: 0,
           color: context.flowColors.semi,
           size: 16.0,

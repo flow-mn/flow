@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 /// Indefinite waiting indicator
 class Spinner extends StatelessWidget {

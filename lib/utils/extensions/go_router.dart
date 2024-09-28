@@ -1,6 +1,6 @@
 // Ongoing issue about lack of `popUntil`
 // https://github.com/flutter/flutter/issues/131625
-import 'package:go_router/go_router.dart';
+import "package:go_router/go_router.dart";
 
 extension GoRouterExt on GoRouter {
   void popUntil(bool Function(GoRoute) predicate) {

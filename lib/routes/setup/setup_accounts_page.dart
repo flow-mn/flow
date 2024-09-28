@@ -1,18 +1,18 @@
-import 'package:flow/data/setup/default_accounts.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flow/widgets/setup/accounts/account_preset_card.dart';
-import 'package:flow/widgets/setup/accounts/add_account_card.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:local_hero/local_hero.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/setup/default_accounts.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/setup/accounts/account_preset_card.dart";
+import "package:flow/widgets/setup/accounts/add_account_card.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:local_hero/local_hero.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class SetupAccountsPage extends StatefulWidget {
   const SetupAccountsPage({super.key});

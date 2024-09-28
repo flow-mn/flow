@@ -1,7 +1,7 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/theme/flow_colors.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/theme/flow_colors.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 extension ThemeAccessor on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;

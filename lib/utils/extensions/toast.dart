@@ -1,9 +1,9 @@
-import 'package:flow/l10n/localized_exception.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:toastification/toastification.dart';
+import "package:flow/l10n/localized_exception.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:toastification/toastification.dart";
 
 extension ToastHelper on BuildContext {
   ToastificationItem showErrorToast({required dynamic error, Widget? icon}) =>

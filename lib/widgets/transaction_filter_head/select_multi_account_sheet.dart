@@ -1,9 +1,10 @@
-import 'package:flow/entity/account.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with [List] of selected [Account]s
 class SelectMultiAccountSheet extends StatefulWidget {
@@ -47,7 +48,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
       title: Text(
           widget.titleOverride ?? "transaction.edit.selectAccount".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(

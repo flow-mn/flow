@@ -166,7 +166,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "13:8197332672689416676",
+      "lastPropertyId": "14:1785368014330843933",
       "name": "Transaction",
       "properties": [
         {
@@ -241,6 +241,11 @@
         {
           "id": "13:8197332672689416676",
           "name": "accountUuid",
+          "type": 9
+        },
+        {
+          "id": "14:1785368014330843933",
+          "name": "description",
           "type": 9
         }
       ],

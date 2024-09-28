@@ -1,9 +1,9 @@
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:fl_chart/fl_chart.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class FlowSeparateLineChart extends StatefulWidget {
   final DateTime startDate;
@@ -90,8 +90,8 @@ class _FlowSeparateLineChartState extends State<FlowSeparateLineChart> {
             interval: const Duration(days: 1).inMicroseconds.toDouble(),
             getTitlesWidget: (value, meta) => Text(
               value % const Duration(days: 1).inMicroseconds == 0
-                  ? Moment.fromMicrosecondsSinceEpoch(value.toInt()).format('D')
-                  : '',
+                  ? Moment.fromMicrosecondsSinceEpoch(value.toInt()).format("D")
+                  : "",
               style: context.textTheme.labelSmall?.semi(context),
             ),
           ),

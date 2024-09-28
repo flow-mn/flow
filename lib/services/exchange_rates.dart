@@ -1,12 +1,12 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'package:flow/data/currencies.dart';
-import 'package:flow/data/exchange_rates.dart';
-import 'package:flow/data/exchange_rates_set.dart';
-import 'package:flow/prefs.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
-import 'package:moment_dart/moment_dart.dart';
+import "dart:convert";
+import "dart:developer";
+import "package:flow/data/currencies.dart";
+import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/exchange_rates_set.dart";
+import "package:flow/prefs.dart";
+import "package:flutter/widgets.dart";
+import "package:http/http.dart" as http;
+import "package:moment_dart/moment_dart.dart";
 
 class ExchangeRatesService {
   final ValueNotifier<ExchangeRatesSet?> exchangeRatesCache =

@@ -1,9 +1,9 @@
-import 'package:crop_image/crop_image.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/general/spinner.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:crop_image/crop_image.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/spinner.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class CropSquareImagePageProps {
   final Image image;

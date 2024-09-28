@@ -1,9 +1,10 @@
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 enum TimeRangeMode {
   last30Days("last30Days"),
@@ -30,7 +31,7 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("tabs.stats.timeRange.select".t(context)),
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(

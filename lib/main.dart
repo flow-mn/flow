@@ -15,26 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
+import "dart:async";
+import "dart:developer";
+import "dart:io";
 
-import 'package:flow/constants.dart';
-import 'package:flow/entity/profile.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes.dart';
-import 'package:flow/services/exchange_rates.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pie_menu/pie_menu.dart';
+import "package:flow/constants.dart";
+import "package:flow/entity/profile.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes.dart";
+import "package:flow/services/exchange_rates.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
+import "package:flutter_localizations/flutter_localizations.dart";
+import "package:intl/intl.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:package_info_plus/package_info_plus.dart";
+import "package:pie_menu/pie_menu.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -128,7 +128,7 @@ class FlowState extends State<Flow> {
         FlowLocalizations.delegate,
       ],
       supportedLocales: FlowLocalizations.supportedLanguages,
-      locale: LocalPreferences().localeOverride.value,
+      locale: _locale,
       routerConfig: router,
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -144,11 +144,26 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadLocale() {
-    _locale = LocalPreferences().localeOverride.value ?? _locale;
+    final List<Locale> systemLocales =
+        WidgetsBinding.instance.platformDispatcher.locales;
+
+    final String? country = systemLocales
+        .where(
+          (element) => element.countryCode != null,
+        )
+        .firstOrNull
+        ?.countryCode;
+
+    final Locale overriddenLocale =
+        LocalPreferences().localeOverride.value ?? _locale;
+
+    _locale = Locale(
+        overriddenLocale.languageCode, overriddenLocale.countryCode ?? country);
     Moment.setGlobalLocalization(
-      MomentLocalizations.byLocale(_locale.code) ?? MomentLocalizations.enUS(),
+      MomentLocalizations.byLocale(overriddenLocale.code) ??
+          MomentLocalizations.enUS(),
     );
-    Intl.defaultLocale = _locale.code;
+    Intl.defaultLocale = overriddenLocale.code;
     setState(() {});
   }
 }

@@ -23,7 +23,7 @@ extension Iterables<E> on Iterable<E> {
   /// ```
   List<E> alternate(Iterable<E> other) {
     if (length != other.length) {
-      throw ArgumentError('Both iterables must have the same length');
+      throw ArgumentError("Both iterables must have the same length");
     }
 
     List<E> result = [];

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import "package:flutter/foundation.dart";
 
 String appVersion = "0.0.0";
 const debugBuild = false;

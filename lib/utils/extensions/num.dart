@@ -1,4 +1,4 @@
-import 'dart:math';
+import "dart:math";
 
 extension NumberFormatter on num {
   /// Returns string with [decimalPlaces] decimal places.
@@ -29,7 +29,7 @@ extension NumberFormatter on num {
 
   String get binarySize {
     const log1024 = 6.931471805599453;
-    const formats = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
+    const formats = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"];
 
     final int unitIndex = (log(toDouble()) / log1024).floor();
 

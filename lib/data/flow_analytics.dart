@@ -1,4 +1,4 @@
-import 'package:flow/data/money_flow.dart';
+import "package:flow/data/money_flow.dart";
 
 class FlowAnalytics<T> {
   final DateTime from;

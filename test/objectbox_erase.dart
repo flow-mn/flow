@@ -1,6 +1,6 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/objectbox.dart';
+import "package:flow/objectbox.dart";
 
 Future<void> testCleanupObject({
   required ObjectBox instance,

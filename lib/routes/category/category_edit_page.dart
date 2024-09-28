@@ -1,22 +1,22 @@
-import 'dart:async';
-import 'dart:developer';
+import "dart:async";
+import "dart:developer";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/form_validators.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/delete_button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/form_close_button.dart';
-import 'package:flow/widgets/select_flow_icon_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/form_validators.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/delete_button.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/select_flow_icon_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class CategoryEditPage extends StatefulWidget {
   final int categoryId;

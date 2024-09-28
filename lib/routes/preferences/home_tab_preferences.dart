@@ -1,8 +1,8 @@
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/widgets/general/info_text.dart';
-import 'package:flow/widgets/general/list_header.dart';
-import 'package:flutter/material.dart';
+import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/list_header.dart";
+import "package:flutter/material.dart";
 
 class HomeTabPreferencesPage extends StatefulWidget {
   const HomeTabPreferencesPage({super.key});

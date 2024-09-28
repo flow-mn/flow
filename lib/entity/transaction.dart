@@ -1,14 +1,14 @@
-import 'package:flow/data/money.dart';
-import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction/extensions/base.dart';
-import 'package:flow/entity/transaction/wrapper.dart';
-import 'package:flow/l10n/named_enum.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
+import "package:flow/data/money.dart";
+import "package:flow/entity/_base.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/wrapper.dart";
+import "package:flow/l10n/named_enum.dart";
+import "package:flow/utils/extensions.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:objectbox/objectbox.dart";
+import "package:uuid/uuid.dart";
 
 part "transaction.g.dart";
 
@@ -31,6 +31,9 @@ class Transaction implements EntityBase {
   static const int maxTitleLength = 256;
 
   String? title;
+
+  static const int maxDescriptionLength = 65536;
+  String? description;
 
   double amount;
 
@@ -141,6 +144,7 @@ class Transaction implements EntityBase {
   Transaction({
     this.id = 0,
     this.title,
+    this.description,
     this.subtype,
     required this.amount,
     required this.currency,
