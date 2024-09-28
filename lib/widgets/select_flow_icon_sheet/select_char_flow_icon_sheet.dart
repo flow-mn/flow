@@ -1,6 +1,7 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
@@ -48,7 +49,7 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
     return ModalSheet.scrollable(
       scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("flowIcon.type.character".t(context)),
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(

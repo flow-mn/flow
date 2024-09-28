@@ -8,7 +8,6 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/utils/optional.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/account_card_skeleton.dart";
 import "package:flow/widgets/general/spinner.dart";

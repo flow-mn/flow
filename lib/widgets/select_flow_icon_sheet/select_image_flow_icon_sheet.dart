@@ -7,12 +7,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
-import "package:uuid/uuid.dart";
 import "package:path/path.dart" as path;
+import "package:uuid/uuid.dart";
 
 class SelectImageFlowIconSheet extends StatefulWidget {
   final FlowIconData? initialValue;
@@ -79,7 +80,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
   Widget build(BuildContext context) {
     return ModalSheet(
       title: Text("flowIcon.type.image".t(context)),
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(

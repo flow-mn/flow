@@ -65,6 +65,8 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
+  late final BoolSettingsEntry preferMarkdown;
+
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
       key: "flow.primaryCurrency",
@@ -138,6 +140,12 @@ class LocalPreferences {
       preferences: _prefs,
       fromJson: (json) => ExchangeRatesSet.fromJson(json),
       toJson: (data) => data.toJson(),
+    );
+
+    preferMarkdown = BoolSettingsEntry(
+      key: "flow.preferMarkdown",
+      preferences: _prefs,
+      initialValue: true,
     );
 
     updateTransitiveProperties();

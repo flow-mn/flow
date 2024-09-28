@@ -481,6 +481,7 @@ extension AccountActions on Account {
   /// Second transaction represents money incoming to the target account
   (int from, int to) transferTo({
     String? title,
+    String? description,
     required Account targetAccount,
     required double amount,
     DateTime? createdDate,
@@ -491,6 +492,7 @@ extension AccountActions on Account {
         targetAccount: this,
         amount: amount.abs(),
         title: title,
+        description: description,
         createdDate: createdDate,
         transactionDate: transactionDate,
       );
@@ -513,6 +515,7 @@ extension AccountActions on Account {
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
+      description: description,
       extensions: [transferData],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
@@ -521,6 +524,7 @@ extension AccountActions on Account {
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
       title: resolvedTitle,
+      description: description,
       extensions: [
         transferData.copyWith(relatedTransactionUuid: fromTransactionUuid)
       ],
@@ -538,6 +542,7 @@ extension AccountActions on Account {
     DateTime? transactionDate,
     DateTime? createdDate,
     String? title,
+    String? description,
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
@@ -546,6 +551,7 @@ extension AccountActions on Account {
       amount: amount,
       currency: currency,
       title: title,
+      description: description,
       transactionDate: transactionDate,
       createdDate: createdDate,
       uuidOverride: uuidOverride,

@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
 
@@ -7,32 +6,20 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
-import "package:url_launcher/url_launcher.dart";
+import "package:path_provider/path_provider.dart";
 
-Future<bool> openUrl(
-  Uri uri, [
-  LaunchMode mode = LaunchMode.externalApplication,
-]) async {
-  final canOpen = await canLaunchUrl(uri);
-  if (!canOpen) return false;
-
-  try {
-    return await launchUrl(uri);
-  } catch (e) {
-    log("[Flow] Failed to launch uri ($uri) due to $e");
-    return false;
-  }
-}
-
-void numpadHaptic() {
-  HapticFeedback.mediumImpact();
-}
-
-Future<File?> pickFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+Future<File?> pickJsonFile({String? dialogTitle}) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    dialogTitle: dialogTitle ?? "Select a backup file",
+    initialDirectory: await getApplicationDocumentsDirectory()
+        .then<String?>((value) => value.path)
+        .catchError((_) => null),
+    allowedExtensions: ["json"],
+    type: FileType.custom,
+    allowMultiple: false,
+  );
 
   if (result == null) {
     return null;

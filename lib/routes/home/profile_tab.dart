@@ -4,7 +4,6 @@ import "package:flow/objectbox.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/toast.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/list_header.dart";
