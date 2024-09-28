@@ -31,11 +31,13 @@
 * Now icons (Material Symbols and Simple Icons) are searchable (only in English)
 * Improved backup history empty UI
 * Fixed number format was messed up when dividing with input sheet calculator
-* When making changes, pages will now confirm to close without saving. (converted form pages -> modals)
+* When making changes, pages will now confirm to close without saving.
+(converted form pages -> modals)
 
 ## Beta 0.5.3
 
-* Fixed entering decimal amount with leading '0' decimal was impossible. (e.g., `1.02` was impossible to input)
+* Fixed entering decimal amount with leading '0' decimal was impossible.
+(e.g., `1.02` was impossible to input)
 * Calculator percent button now adds/subtracts percent of initial value when adding/subtracting
 * [iOS only] Now uses iOS system language settings for app language
 
@@ -53,6 +55,8 @@ fork's additional features have are in the new release
 
 * [FEAT] Customize order of new transaction buttons by @sadespresso in <https://github.com/flow-mn/flow/pull/148>
 * Reform account edit page by @sadespresso in <https://github.com/flow-mn/flow/pull/149>
+* [FEAT] Customize order of new transaction buttons by @sadespresso in <https://github.com/flow-mn/flow/pull/148>
+* Reform account edit page by @sadespresso in <https://github.com/flow-mn/flow/pull/149>
 
 ## Beta 0.5.0
 
@@ -66,9 +70,16 @@ fork's additional features have are in the new release
 * Fix Category page re renders upon change in db by @sadespresso in <https://github.com/flow-mn/flow/pull/140>
 * Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in <https://github.com/flow-mn/flow/pull/141>
 * Fix Time range selector bottom sheet overflows by @sadespresso in <https://github.com/flow-mn/flow/pull/142>
+* Fix Category page re renders upon change in db by @sadespresso in <https://github.com/flow-mn/flow/pull/140>
+* Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in <https://github.com/flow-mn/flow/pull/141>
+* Fix Time range selector bottom sheet overflows by @sadespresso in <https://github.com/flow-mn/flow/pull/142>
 
 ## Beta 0.4.2
 
+* Category page reform by @sadespresso in <https://github.com/flow-mn/flow/pull/135>
+* feat: memoize account names by @sadespresso in <https://github.com/flow-mn/flow/pull/129>
+* Upcoming transaction hitbox by @sadespresso in <https://github.com/flow-mn/flow/pull/132>
+* Title suggestion improvement by @sadespresso in <https://github.com/flow-mn/flow/pull/134>
 * Category page reform by @sadespresso in <https://github.com/flow-mn/flow/pull/135>
 * feat: memoize account names by @sadespresso in <https://github.com/flow-mn/flow/pull/129>
 * Upcoming transaction hitbox by @sadespresso in <https://github.com/flow-mn/flow/pull/132>
