@@ -169,6 +169,9 @@
     "preferences.home.upcoming.nextNdays": "Next {} days",
     "preferences.home.upcoming.alwaysVisible": "Always show",
     "preferences.home.upcoming.alwaysVisible.description": "Stay visible when the filters are active",
+    "preferences.transactionGeo": "Transaction location",
+    "preferences.transactionGeo.enable": "Enable",
+    "preferences.transactionGeo.description": "Automatically attach your current location to new transactions",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",

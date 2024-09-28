@@ -65,7 +65,7 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
-  late final BoolSettingsEntry preferMarkdown;
+  late final BoolSettingsEntry autoAttachGeo;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -142,8 +142,8 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
 
-    preferMarkdown = BoolSettingsEntry(
-      key: "flow.preferMarkdown",
+    autoAttachGeo = BoolSettingsEntry(
+      key: "flow.autoAttachGeo",
       preferences: _prefs,
       initialValue: true,
     );

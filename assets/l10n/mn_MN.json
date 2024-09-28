@@ -169,6 +169,9 @@
     "preferences.home.upcoming.nextNdays": "Ирэх {} хоног",
     "preferences.home.upcoming.alwaysVisible": "Үргэлж харуулах",
     "preferences.home.upcoming.alwaysVisible.description": "Шүүлтүүр өөрчлөгдсөн ч харуулах",
+    "preferences.transactionGeo": "Гүйлгээний байршил",
+    "preferences.transactionGeo.enable": "Идэвхжүүлэх",
+    "preferences.transactionGeo.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг хавсаргана",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

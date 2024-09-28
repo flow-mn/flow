@@ -169,6 +169,9 @@
     "preferences.home.upcoming.nextNdays": "Prossimi {} giorni",
     "preferences.home.upcoming.alwaysVisible": "Mostra sempre",
     "preferences.home.upcoming.alwaysVisible.description": "Rimane visibile quando i filtri sono attivi",
+    "preferences.transactionGeo": "Posizione transazione",
+    "preferences.transactionGeo.enable": "Attiva",
+    "preferences.transactionGeo.description": "Associa automaticamente la tua posizione attuale alle nuove transazioni",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",
