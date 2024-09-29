@@ -1,5 +1,5 @@
-import 'package:flow/data/transactions_filter.dart';
-import 'package:flutter/material.dart';
+import "package:flow/data/transactions_filter.dart";
+import "package:flutter/material.dart";
 
 /// Renders a row of [TransactionFilterChip]s.
 class TransactionFilterHead extends StatelessWidget {

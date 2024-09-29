@@ -1,12 +1,12 @@
-import 'package:flow/entity/profile.dart';
-import 'package:flow/form_validators.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/widgets/general/button.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/profile.dart";
+import "package:flow/form_validators.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/widgets/general/button.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class SetupProfilePage extends StatefulWidget {
   const SetupProfilePage({super.key});
@@ -99,7 +99,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
 
       if (mounted) {
         await context.push(
-          '/setup/profile/photo',
+          "/setup/profile/photo",
           extra: updatedProfile.imagePath,
         );
       }

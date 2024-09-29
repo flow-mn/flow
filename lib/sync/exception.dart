@@ -1,5 +1,5 @@
-import 'package:flow/l10n/localized_exception.dart';
-import 'package:flow/sync/sync.dart';
+import "package:flow/l10n/localized_exception.dart";
+import "package:flow/sync/sync.dart";
 
 class ImportException extends LocalizedException implements Exception {
   final String message;

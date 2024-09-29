@@ -1,9 +1,10 @@
-import 'package:flow/entity/category.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/category.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with [List] of selected [Category]s
 class SelectMultiCategorySheet extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory.multiple".t(context)),
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(

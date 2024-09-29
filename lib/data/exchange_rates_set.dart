@@ -1,4 +1,4 @@
-import 'package:flow/data/exchange_rates.dart';
+import "package:flow/data/exchange_rates.dart";
 
 class ExchangeRatesSet {
   final Map<String, ExchangeRates> rates;

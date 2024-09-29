@@ -1,8 +1,8 @@
-import 'package:flow/data/prefs/frecency.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:json_annotation/json_annotation.dart';
+import "package:flow/data/prefs/frecency.dart";
+import "package:flow/utils/utils.dart";
+import "package:json_annotation/json_annotation.dart";
 
-part 'frecency_group.g.dart';
+part "frecency_group.g.dart";
 
 @JsonSerializable()
 class FrecencyGroup {

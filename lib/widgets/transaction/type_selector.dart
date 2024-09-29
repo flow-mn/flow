@@ -1,7 +1,7 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/named_enum.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/named_enum.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
 
 class TypeSelector extends StatelessWidget {
   final TransactionType current;

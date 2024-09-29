@@ -12,7 +12,7 @@ Account _$AccountFromJson(Map<String, dynamic> json) => Account(
       iconCode: json['iconCode'] as String,
       excludeFromTotalBalance:
           json['excludeFromTotalBalance'] as bool? ?? false,
-      sortOrder: json['sortOrder'] as int? ?? -1,
+      sortOrder: (json['sortOrder'] as num?)?.toInt() ?? -1,
       createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),

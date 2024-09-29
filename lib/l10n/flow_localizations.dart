@@ -1,11 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
+import "dart:convert";
+import "dart:developer";
 
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import "package:flutter/services.dart";
+import "package:flutter/widgets.dart";
 
-import 'extensions.dart';
-export 'extensions.dart';
+import "extensions.dart";
+export "extensions.dart";
 
 class FlowLocalizations {
   final Locale locale;
@@ -16,7 +16,7 @@ class FlowLocalizations {
 
   static Future<Map<String, String>> _loadLocale(Locale locale) async {
     String jsonStringValues =
-        await rootBundle.loadString('assets/l10n/${locale.code}.json');
+        await rootBundle.loadString("assets/l10n/${locale.code}.json");
     Map<String, dynamic> mappedJson = json.decode(jsonStringValues);
     return mappedJson.map((key, value) => MapEntry(key, value.toString()));
   }
@@ -69,6 +69,7 @@ class FlowLocalizations {
     Locale("en", "US"), // Will fallback to this for unsupported locales
     Locale("mn", "MN"),
     Locale("it", "IT"),
+    Locale("en", "IN"),
   ];
 
   static FlowLocalizations of(BuildContext context) =>
@@ -80,7 +81,7 @@ class FlowLocalizations {
     final Map<String, Map<String, String>> languages = {};
     for (Locale locale in supportedLanguages) {
       String value =
-          await rootBundle.loadString('assets/l10n/${locale.code}.json');
+          await rootBundle.loadString("assets/l10n/${locale.code}.json");
 
       languages[locale.code] = (json.decode(value) as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, value.toString()));

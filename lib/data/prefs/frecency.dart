@@ -1,6 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
+import "package:json_annotation/json_annotation.dart";
 
-part 'frecency.g.dart';
+part "frecency.g.dart";
 
 @JsonSerializable()
 class FrecencyData {

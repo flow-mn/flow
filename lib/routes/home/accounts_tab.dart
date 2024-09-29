@@ -1,21 +1,20 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/entity/account.dart';
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/utils/optional.dart';
-import 'package:flow/widgets/account_card.dart';
-import 'package:flow/widgets/account_card_skeleton.dart';
-import 'package:flow/widgets/general/spinner.dart';
-import 'package:flow/widgets/home/home/account/no_accounts.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/account_card.dart";
+import "package:flow/widgets/account_card_skeleton.dart";
+import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/home/account/no_accounts.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class AccountsTab extends StatefulWidget {
   const AccountsTab({super.key});

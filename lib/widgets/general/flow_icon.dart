@@ -1,12 +1,12 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/surface.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/surface.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:path/path.dart";
 
 class FlowIcon extends StatelessWidget {
   final FlowIconData data;

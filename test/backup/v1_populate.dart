@@ -1,13 +1,13 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
 
 Future<void> populateDummyData([int entryCount = 100]) async {
   final Query<Account> firstAccountQuery =

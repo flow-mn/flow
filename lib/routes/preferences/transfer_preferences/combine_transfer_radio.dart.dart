@@ -1,8 +1,8 @@
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/routes/preferences/transfer_preferences/demo_transaction_list_tile.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flutter/material.dart';
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/routes/preferences/transfer_preferences/demo_transaction_list_tile.dart";
+import "package:flow/theme/theme.dart";
+import "package:flutter/material.dart";
 
 class CombineTransferRadio extends StatelessWidget {
   final VoidCallback onTap;

@@ -1,28 +1,28 @@
-import 'dart:async';
-import 'dart:developer';
+import "dart:async";
+import "dart:developer";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/backup_entry.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/form_validators.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/actions.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes/new_transaction/input_amount_sheet.dart';
-import 'package:flow/sync/export.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/delete_button.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/form_close_button.dart';
-import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flow/widgets/select_flow_icon_sheet.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/backup_entry.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/form_validators.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/sync/export.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/delete_button.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/select_currency_sheet.dart";
+import "package:flow/widgets/select_flow_icon_sheet.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class AccountEditPage extends StatefulWidget {
   /// Account Object ID

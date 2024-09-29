@@ -1,6 +1,6 @@
-import 'package:flow/theme/navbar_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/theme/navbar_theme.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class NavbarButton extends StatelessWidget {
   final String tooltip;

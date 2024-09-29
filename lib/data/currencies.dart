@@ -1,6 +1,4 @@
-library iso4217_currencies;
-
-import 'package:flow/utils/utils.dart';
+import "package:flow/utils/utils.dart";
 
 class CurrencyData {
   /// Three letter [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code

@@ -1,6 +1,6 @@
-import 'package:flow/entity/transaction/extensions/base.dart';
-import 'package:flow/utils/jsonable.dart';
-import 'package:json_annotation/json_annotation.dart';
+import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/utils/jasonable.dart";
+import "package:json_annotation/json_annotation.dart";
 
 part "transfer.g.dart";
 

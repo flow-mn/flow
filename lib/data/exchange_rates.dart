@@ -1,4 +1,4 @@
-import 'package:moment_dart/moment_dart.dart';
+import "package:moment_dart/moment_dart.dart";
 
 /// Uses endpoints from here:
 class ExchangeRates {
@@ -16,7 +16,7 @@ class ExchangeRates {
     final String baseCurrency = json.keys.firstWhere((key) => key != "date");
 
     return ExchangeRates(
-      date: DateTime.parse(json['date']),
+      date: DateTime.parse(json["date"]),
       baseCurrency: baseCurrency,
       rates: Map<String, num>.from(json[baseCurrency.toLowerCase()]),
     );

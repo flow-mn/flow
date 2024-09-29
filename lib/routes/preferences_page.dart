@@ -1,16 +1,16 @@
-import 'dart:developer';
-import 'dart:io';
+import "dart:developer";
+import "dart:io";
 
-import 'package:app_settings/app_settings.dart';
-import 'package:flow/l10n/flow_localizations.dart';
-import 'package:flow/main.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes/preferences/language_selection_sheet.dart';
-import 'package:flow/routes/preferences/theme_selection_sheet.dart';
-import 'package:flow/widgets/select_currency_sheet.dart';
-import 'package:flutter/material.dart' hide Flow;
-import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:app_settings/app_settings.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/main.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes/preferences/language_selection_sheet.dart";
+import "package:flow/routes/preferences/theme_selection_sheet.dart";
+import "package:flow/widgets/select_currency_sheet.dart";
+import "package:flutter/material.dart" hide Flow;
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});

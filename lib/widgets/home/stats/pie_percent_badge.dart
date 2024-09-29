@@ -1,7 +1,7 @@
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flutter/material.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flutter/material.dart";
 
 class PiePercentBadge extends StatelessWidget {
   final FlowIconData icon;

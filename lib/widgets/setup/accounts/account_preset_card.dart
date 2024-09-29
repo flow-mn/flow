@@ -1,10 +1,10 @@
-import 'package:flow/entity/account.dart';
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flow/widgets/general/surface.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/l10n/extensions.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/surface.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class AccountPresetCard extends StatelessWidget {
   final Function(bool)? onSelect;

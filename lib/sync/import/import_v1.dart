@@ -1,17 +1,17 @@
-import 'dart:developer';
+import "dart:developer";
 
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/backup_entry.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/l10n/named_enum.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flow/sync/exception.dart';
-import 'package:flow/sync/import/base.dart';
-import 'package:flow/sync/import/mode.dart';
-import 'package:flow/sync/sync.dart';
-import 'package:flutter/widgets.dart';
+import "package:flow/entity/account.dart";
+import "package:flow/entity/backup_entry.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/named_enum.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/sync/exception.dart";
+import "package:flow/sync/import/base.dart";
+import "package:flow/sync/import/mode.dart";
+import "package:flow/sync/sync.dart";
+import "package:flutter/widgets.dart";
 
 /// Used to report current status to user
 enum ImportV1Progress implements LocalizedEnum {

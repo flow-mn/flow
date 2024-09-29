@@ -1,10 +1,10 @@
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/entity/_base.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/_base.dart";
+import "package:flow/entity/transaction.dart";
+import "package:json_annotation/json_annotation.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:objectbox/objectbox.dart";
+import "package:uuid/uuid.dart";
 
 part "category.g.dart";
 
@@ -26,7 +26,7 @@ class Category implements EntityBase {
   @Unique()
   String name;
 
-  @Backlink('category')
+  @Backlink("category")
   @JsonKey(includeFromJson: false, includeToJson: false)
   final transactions = ToMany<Transaction>();
 

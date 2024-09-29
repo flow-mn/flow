@@ -7,7 +7,7 @@ part of 'model_v1.dart';
 // **************************************************************************
 
 SyncModelV1 _$SyncModelV1FromJson(Map<String, dynamic> json) => SyncModelV1(
-      versionCode: json['versionCode'] as int,
+      versionCode: (json['versionCode'] as num).toInt(),
       exportDate: DateTime.parse(json['exportDate'] as String),
       username: json['username'] as String,
       appVersion: json['appVersion'] as String,

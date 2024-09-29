@@ -1,19 +1,19 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
+import "dart:async";
+import "dart:convert";
+import "dart:developer";
 
-import 'package:flow/data/exchange_rates_set.dart';
-import 'package:flow/data/prefs/frecency.dart';
-import 'package:flow/entity/account.dart';
-import 'package:flow/entity/category.dart';
-import 'package:flow/entity/transaction.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/objectbox/objectbox.g.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:local_settings/local_settings.dart';
-import 'package:moment_dart/moment_dart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:flow/data/exchange_rates_set.dart";
+import "package:flow/data/prefs/frecency.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:local_settings/local_settings.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 /// This class contains everything that's stored on
 /// device. Such as user preferences and per-device
@@ -64,6 +64,8 @@ class LocalPreferences {
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
+
+  late final BoolSettingsEntry preferMarkdown;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -138,6 +140,12 @@ class LocalPreferences {
       preferences: _prefs,
       fromJson: (json) => ExchangeRatesSet.fromJson(json),
       toJson: (data) => data.toJson(),
+    );
+
+    preferMarkdown = BoolSettingsEntry(
+      key: "flow.preferMarkdown",
+      preferences: _prefs,
+      initialValue: true,
     );
 
     updateTransitiveProperties();

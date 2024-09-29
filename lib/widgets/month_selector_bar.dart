@@ -1,8 +1,8 @@
-import 'package:flow/widgets/general/button.dart';
-import 'package:flow/widgets/utils/time_and_range.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:moment_dart/moment_dart.dart';
+import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class MonthSelectorBar extends StatelessWidget {
   /// If specified, used instead of `DateTime.now`
@@ -32,7 +32,7 @@ class MonthSelectorBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool showYear = (anchor ?? DateTime.now()).year != year;
     final String monthName = DateTime(year, month, 1)
-        .format(payload: showYear ? 'MMMM YYYY' : "MMMM");
+        .format(payload: showYear ? "MMMM YYYY" : "MMMM");
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

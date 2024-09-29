@@ -1,5 +1,5 @@
-import 'package:flow/widgets/general/surface.dart';
-import 'package:flutter/material.dart';
+import "package:flow/widgets/general/surface.dart";
+import "package:flutter/material.dart";
 
 class AnalyticsCard extends StatelessWidget {
   final Widget child;

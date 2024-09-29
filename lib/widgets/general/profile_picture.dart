@@ -1,13 +1,13 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flow/data/flow_icon.dart';
-import 'package:flow/objectbox.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/widgets/general/flow_icon.dart';
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/data/flow_icon.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 
-import 'package:path/path.dart' as path;
+import "package:path/path.dart" as path;
 
 class ProfilePicture extends StatefulWidget {
   final VoidCallback? onTap;

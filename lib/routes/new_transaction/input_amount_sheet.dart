@@ -1,19 +1,17 @@
-import 'package:flow/l10n/extensions.dart';
-import 'package:flow/prefs.dart';
-import 'package:flow/routes/new_transaction/amount_text.dart';
-import 'package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart';
-import 'package:flow/routes/new_transaction/input_amount_sheet/input_value.dart';
-import 'package:flow/theme/theme.dart';
-import 'package:flow/utils/shortcut.dart';
-import 'package:flow/utils/toast.dart';
-import 'package:flow/utils/utils.dart';
-import 'package:flow/widgets/general/modal_sheet.dart';
-import 'package:flow/widgets/numpad.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes/new_transaction/amount_text.dart";
+import "package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart";
+import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
+import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flow/widgets/numpad.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:go_router/go_router.dart";
+import "package:intl/intl.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 enum CalculatorOperation {
   add,
@@ -507,11 +505,11 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   Map<ShortcutActivator, VoidCallback> get bindings => {
-        const CharacterActivator('/'): () => _shortcutDivideKey(),
-        const CharacterActivator('*'): () => _shortcutMultiplyKey(),
-        const CharacterActivator('+'): () => _shortcutPlusKey(),
-        const CharacterActivator('-'): () => _shortcutMinusKey(),
-        const CharacterActivator('%'): () => _shortcutPercentKey(),
+        const CharacterActivator("/"): () => _shortcutDivideKey(),
+        const CharacterActivator("*"): () => _shortcutMultiplyKey(),
+        const CharacterActivator("+"): () => _shortcutPlusKey(),
+        const CharacterActivator("-"): () => _shortcutMinusKey(),
+        const CharacterActivator("%"): () => _shortcutPercentKey(),
         const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
         const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
