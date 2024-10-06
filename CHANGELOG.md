@@ -1,5 +1,14 @@
 # Changelog
 
+## Next
+
+* Fixed upcoming transactions config wasn't getting loaded initially, closes
+  #187
+* Added this week, this month, this year, and all time options for upcoming
+  transactions, close #186
+* Fixed today's transactions made in future were included in non-future
+  transactions
+
 ## Beta 0.6.1
 
 * Added the gap back in pie chart
