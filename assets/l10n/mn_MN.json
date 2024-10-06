@@ -165,8 +165,6 @@
     "preferences.home": "Нүүр хуудас",
     "preferences.home.upcoming": "Төлөвлөсөн гүйлгээнүүд",
     "preferences.home.upcoming.description": "Сонгосон хугацааны төлөвлөгөөт гүйлгээнүүдийг харуулна",
-    "preferences.home.upcoming.none": "Харуулахгүй",
-    "preferences.home.upcoming.nextNdays": "Ирэх {} хоног",
     "preferences.home.upcoming.alwaysVisible": "Үргэлж харуулах",
     "preferences.home.upcoming.alwaysVisible.description": "Шүүлтүүр өөрчлөгдсөн ч харуулах",
 
@@ -279,6 +277,14 @@
     "enum.TransactionType@income": "Орлого",
     "enum.TransactionType@expense": "Зарлага",
     "enum.TransactionType@transfer": "Шилжүүлэг",
+    "enum.UpcomingTransactionsDuration@none": "Харуулахгүй",
+    "enum.UpcomingTransactionsDuration@next7Days": "Ирэх 7 хоног",
+    "enum.UpcomingTransactionsDuration@next14Days": "Ирэх 14 хоног",
+    "enum.UpcomingTransactionsDuration@next30Days": "Ирэх 30 хоног",
+    "enum.UpcomingTransactionsDuration@thisWeek": "Энэ долоо хоног",
+    "enum.UpcomingTransactionsDuration@thisMonth": "Энэ сар",
+    "enum.UpcomingTransactionsDuration@thisYear": "Энэ жил",
+    "enum.UpcomingTransactionsDuration@allTime": "Бүгдийг харуулах",
 
     "enum.CSVHeadersV1": "CSV Толгой",
     "enum.CSVHeadersV1@uuid": "Код",

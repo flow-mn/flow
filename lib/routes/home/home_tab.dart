@@ -1,4 +1,8 @@
+import "dart:async";
+import "dart:developer";
+
 import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
@@ -24,8 +28,8 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
-  int _plannedTransactionDays =
-      LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+  UpcomingTransactionsDuration _plannedTransactionsDuration =
+      LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
   final TransactionFilter defaultFilter = TransactionFilter(
     range: last30Days(),
@@ -34,15 +38,22 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
 
   TransactionFilter get currentFilterWithPlanned {
-    final Moment plannedTransactionTo =
-        Moment.now().add(Duration(days: _plannedTransactionDays)).endOfDay();
+    final DateTime? plannedTransactionTo =
+        _plannedTransactionsDuration.endsAt();
+
+    if (plannedTransactionTo == null) return currentFilter;
 
     if (currentFilter.range != null &&
         currentFilter.range!.contains(Moment.now()) &&
         !currentFilter.range!.contains(plannedTransactionTo)) {
       return currentFilter.copyWithOptional(
-          range: Optional(CustomTimeRange(
-              currentFilter.range!.from, plannedTransactionTo.endOfDay())));
+        range: Optional(
+          CustomTimeRange(
+            currentFilter.range!.from,
+            plannedTransactionTo,
+          ),
+        ),
+      );
     }
 
     return currentFilter;
@@ -50,20 +61,31 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late final bool noTransactionsAtAll;
 
+  DateTime now = DateTime.now();
+
   @override
   void initState() {
     super.initState();
     noTransactionsAtAll = ObjectBox().box<Transaction>().count(limit: 1) == 0;
     _updatePlannedTransactionDays();
     LocalPreferences()
-        .homeTabPlannedTransactionsDays
+        .homeTabPlannedTransactionsDuration
         .addListener(_updatePlannedTransactionDays);
+
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        now = DateTime.now();
+      });
+    });
   }
 
   @override
   void dispose() {
     LocalPreferences()
-        .homeTabPlannedTransactionsDays
+        .homeTabPlannedTransactionsDuration
         .removeListener(_updatePlannedTransactionDays);
     super.dispose();
   }
@@ -109,7 +131,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                   ),
                 ),
               (_, true) => Expanded(
-                  child: buildGroupedList(context, transactions ?? []),
+                  child: buildGroupedList(context, now, transactions ?? []),
                 ),
               (_, false) => const Expanded(
                   child: Center(
@@ -125,14 +147,23 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   Widget buildGroupedList(
     BuildContext context,
+    DateTime now,
     List<Transaction> transactions,
   ) {
-    final Map<TimeRange, List<Transaction>> grouped =
-        transactions.groupByDate();
+    final Map<TimeRange, List<Transaction>> grouped = transactions
+        .where((transaction) => !transaction.transactionDate.isAfter(now))
+        .groupByDate();
+    final Map<TimeRange, List<Transaction>> groupedFuture = transactions
+        .where((transaction) => transaction.transactionDate.isAfter(now))
+        .groupByDate();
+
+    inspect(grouped);
+    inspect(groupedFuture);
 
     return GroupedTransactionList(
       controller: widget.scrollController,
       transactions: grouped,
+      futureTransactions: groupedFuture,
       shouldCombineTransferIfNeeded: currentFilter.accounts?.isNotEmpty != true,
       futureDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
@@ -152,9 +183,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   void _updatePlannedTransactionDays() {
-    _plannedTransactionDays =
-        LocalPreferences().homeTabPlannedTransactionsDays.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+    _plannedTransactionsDuration =
+        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
+            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
     setState(() {});
   }
 
