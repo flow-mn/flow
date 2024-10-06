@@ -54,6 +54,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     noTransactionsAtAll = ObjectBox().box<Transaction>().count(limit: 1) == 0;
+    _updatePlannedTransactionDays();
     LocalPreferences()
         .homeTabPlannedTransactionsDays
         .addListener(_updatePlannedTransactionDays);
