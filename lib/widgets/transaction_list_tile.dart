@@ -68,7 +68,7 @@ class TransactionListTile extends StatelessWidget {
                     (missingTitle
                         ? "transaction.fallbackTitle".t(context)
                         : transaction.title!),
-                    maxLines: 1,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
