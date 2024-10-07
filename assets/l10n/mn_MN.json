@@ -168,8 +168,9 @@
     "preferences.home.upcoming.alwaysVisible": "Үргэлж харуулах",
     "preferences.home.upcoming.alwaysVisible.description": "Шүүлтүүр өөрчлөгдсөн ч харуулах",
     "preferences.transactionGeo": "Гүйлгээний байршил",
-    "preferences.transactionGeo.enable": "Идэвхжүүлэх",
-    "preferences.transactionGeo.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг хавсаргана",
+    "preferences.transactionGeo.enable": "Автоматаар хавсаргах",
+    "preferences.transactionGeo.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
+    "preferences.transactionGeo.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

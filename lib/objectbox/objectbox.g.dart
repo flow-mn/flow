@@ -190,7 +190,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(7, 5357777579468740615),
       name: 'Transaction',
-      lastPropertyId: const obx_int.IdUid(14, 1785368014330843933),
+      lastPropertyId: const obx_int.IdUid(16, 1620591330122290687),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -267,6 +267,16 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(14, 1785368014330843933),
             name: 'description',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 7884365526573124998),
+            name: 'latitude',
+            type: 8,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 1620591330122290687),
+            name: 'longitude',
+            type: 8,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -571,7 +581,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final descriptionOffset = object.description == null
               ? null
               : fbb.writeString(object.description!);
-          fbb.startTable(15);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, uuidOffset);
           fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -586,6 +596,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(11, categoryUuidOffset);
           fbb.addOffset(12, accountUuidOffset);
           fbb.addOffset(13, descriptionOffset);
+          fbb.addFloat64(14, object.latitude);
+          fbb.addFloat64(15, object.longitude);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -625,7 +637,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ..categoryUuid = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 26)
             ..accountUuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 28);
+                .vTableGetNullable(buffer, rootOffset, 28)
+            ..latitude = const fb.Float64Reader()
+                .vTableGetNullable(buffer, rootOffset, 32)
+            ..longitude = const fb.Float64Reader()
+                .vTableGetNullable(buffer, rootOffset, 34);
           object.category.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0);
           object.category.attach(store);
@@ -808,4 +824,12 @@ class Transaction_ {
   /// See [Transaction.description].
   static final description =
       obx.QueryStringProperty<Transaction>(_entities[4].properties[13]);
+
+  /// See [Transaction.latitude].
+  static final latitude =
+      obx.QueryDoubleProperty<Transaction>(_entities[4].properties[14]);
+
+  /// See [Transaction.longitude].
+  static final longitude =
+      obx.QueryDoubleProperty<Transaction>(_entities[4].properties[15]);
 }

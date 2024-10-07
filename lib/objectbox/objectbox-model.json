@@ -166,7 +166,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "14:1785368014330843933",
+      "lastPropertyId": "16:1620591330122290687",
       "name": "Transaction",
       "properties": [
         {
@@ -247,6 +247,16 @@
           "id": "14:1785368014330843933",
           "name": "description",
           "type": 9
+        },
+        {
+          "id": "15:7884365526573124998",
+          "name": "latitude",
+          "type": 8
+        },
+        {
+          "id": "16:1620591330122290687",
+          "name": "longitude",
+          "type": 8
         }
       ],
       "relations": []

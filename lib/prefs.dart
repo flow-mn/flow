@@ -69,7 +69,7 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
-  late final BoolSettingsEntry autoAttachGeo;
+  late final BoolSettingsEntry autoAttachTransactionGeo;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -151,10 +151,10 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
 
-    autoAttachGeo = BoolSettingsEntry(
-      key: "flow.autoAttachGeo",
+    autoAttachTransactionGeo = BoolSettingsEntry(
+      key: "flow.autoAttachTransactionGeo",
       preferences: _prefs,
-      initialValue: true,
+      initialValue: false,
     );
 
     updateTransitiveProperties();

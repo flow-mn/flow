@@ -20,6 +20,8 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
           : DateTime.parse(json['createdDate'] as String),
     )
       ..uuid = json['uuid'] as String
+      ..latitude = (json['latitude'] as num?)?.toDouble()
+      ..longitude = (json['longitude'] as num?)?.toDouble()
       ..extra = json['extra'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
       ..accountUuid = json['accountUuid'] as String?;
@@ -29,6 +31,8 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'uuid': instance.uuid,
       'createdDate': instance.createdDate.toIso8601String(),
       'transactionDate': instance.transactionDate.toIso8601String(),
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
       'title': instance.title,
       'description': instance.description,
       'amount': instance.amount,

@@ -486,6 +486,8 @@ extension AccountActions on Account {
     required double amount,
     DateTime? createdDate,
     DateTime? transactionDate,
+    double? latitude,
+    double? longitude,
   }) {
     if (amount <= 0) {
       return targetAccount.transferTo(
@@ -495,6 +497,8 @@ extension AccountActions on Account {
         description: description,
         createdDate: createdDate,
         transactionDate: transactionDate,
+        latitude: latitude,
+        longitude: longitude,
       );
     }
 
@@ -520,6 +524,8 @@ extension AccountActions on Account {
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      latitude: latitude,
+      longitude: longitude,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
@@ -531,6 +537,8 @@ extension AccountActions on Account {
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      latitude: latitude,
+      longitude: longitude,
     );
 
     return (fromTransaction, toTransaction);
@@ -546,6 +554,8 @@ extension AccountActions on Account {
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
+    double? latitude,
+    double? longitude,
   }) {
     Transaction value = Transaction(
       amount: amount,
