@@ -2,7 +2,9 @@ import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/main.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
@@ -28,9 +30,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
   Widget build(BuildContext context) {
     final ThemeMode currentThemeMode = Flow.of(context).themeMode;
 
-    final int showUpcomingTransactionDays =
-        LocalPreferences().homeTabPlannedTransactionsDays.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
+        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
+            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,10 +43,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.home.upcoming".t(context)),
             subtitle: Text(
-              showUpcomingTransactionDays == 0
-                  ? "preferences.home.upcoming.none".t(context)
-                  : "preferences.home.upcoming.nextNdays"
-                      .t(context, showUpcomingTransactionDays),
+              homeTabPlannedTransactionsDuration.localizedNameContext(context),
             ),
             leading: const Icon(Symbols.hourglass_top_rounded),
             onTap: openHomeTabPrefs,
