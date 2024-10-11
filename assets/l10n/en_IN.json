@@ -24,6 +24,8 @@
     "general.timeSelector.select.month": "Select a month",
     "general.timeSelector.select.year": "Select a year",
     "general.timeSelector.now": "Now",
+    "general.enabled": "Enabled",
+    "general.disabled": "Disabled",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
@@ -102,6 +104,9 @@
     "transaction.description": "Notes",
     "transaction.description.add": "Add notes",
     "transaction.description.markdownSupported": "Markdown supported",
+    "transaction.location": "Location",
+    "transaction.location.add": "Add a location",
+    "transaction.location.edit": "Edit location",
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",
@@ -167,6 +172,11 @@
     "preferences.home.upcoming.description": "Shows planned transactions for the selected duration",
     "preferences.home.upcoming.alwaysVisible": "Always show",
     "preferences.home.upcoming.alwaysVisible.description": "Stay visible when the filters are active",
+    "preferences.transactionGeo": "Transaction location",
+    "preferences.transactionGeo.disableInstructions": "You can hide this section in settings",
+    "preferences.transactionGeo.auto.enable": "Auto-attach",
+    "preferences.transactionGeo.auto.description": "Automatically attach your current location to new transactions. Even if you have this turned off, you can still choose a location on a map to attach it.",
+    "preferences.transactionGeo.auto.permissionDenied": "Location permission was denied. You can enable it from your settings if you wish.",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",

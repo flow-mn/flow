@@ -34,6 +34,11 @@ class _PreferencesPageState extends State<PreferencesPage> {
         LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
             LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
+    final bool autoAttachTransactionGeo =
+        LocalPreferences().autoAttachTransactionGeo.get();
+
+    final bool geoSupported = !Platform.isLinux;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("preferences".t(context)),
@@ -113,6 +118,20 @@ class _PreferencesPageState extends State<PreferencesPage> {
             ),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
+          if (geoSupported)
+            ListTile(
+              title: Text("preferences.transactionGeo".t(context)),
+              leading: const Icon(Symbols.location_pin_rounded),
+              onTap: openTransactionGeo,
+              subtitle: Text(
+                autoAttachTransactionGeo
+                    ? "preferences.transactionGeo.enabled".t(context)
+                    : "general.disabled".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
         ]),
       ),
     );
@@ -234,5 +253,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransactionButtonOrderPrefs() async {
     await context.push("/preferences/transactionButtonOrder");
+  }
+
+  void openTransactionGeo() async {
+    await context.push("/preferences/transactionGeo");
   }
 }

@@ -190,7 +190,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(7, 5357777579468740615),
       name: 'Transaction',
-      lastPropertyId: const obx_int.IdUid(14, 1785368014330843933),
+      lastPropertyId: const obx_int.IdUid(16, 1620591330122290687),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -341,7 +341,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         5446772239174299489,
         3056128952161562633,
         2675470948342446870,
-        2832069050067036408
+        2832069050067036408,
+        7884365526573124998,
+        1620591330122290687
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -571,7 +573,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final descriptionOffset = object.description == null
               ? null
               : fbb.writeString(object.description!);
-          fbb.startTable(15);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, uuidOffset);
           fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);

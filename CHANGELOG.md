@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## Beta 0.6.2
 
 * Fixed upcoming transactions config wasn't getting loaded initially, closes
   #187
@@ -8,6 +8,10 @@
   transactions, close #186
 * Fixed today's transactions made in future were included in non-future
   transactions
+* Added automatic location data attachment, disabled by default
+* Added a map preview
+* TODO (@sadespresso) will do an option to choose a location from map even
+if you choose to not give location permissions
 
 ## Beta 0.6.1
 
