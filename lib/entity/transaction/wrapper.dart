@@ -2,12 +2,14 @@ import "dart:convert";
 import "dart:developer";
 
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/utils/utils.dart";
 
 class ExtensionsWrapper {
   Transfer? get transfer =>
       data.firstWhereOrNull((element) => element is Transfer) as Transfer?;
+  Geo? get geo => data.firstWhereOrNull((element) => element is Geo) as Geo?;
 
   final List<TransactionExtension> data;
 
@@ -55,6 +57,7 @@ class ExtensionsWrapper {
       Map<String, dynamic> value) {
     return switch (value["key"]) {
       Transfer.keyName => Transfer.fromJson(value) as T,
+      Geo.keyName => Geo.fromJson(value) as T,
       _ => null,
     };
   }

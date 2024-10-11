@@ -3,6 +3,7 @@ import "dart:developer";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
@@ -10,6 +11,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/description_section.dart";
+import "package:flow/routes/new_transaction/geo_preview.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
 import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
@@ -24,6 +26,7 @@ import "package:flow/widgets/transaction/type_selector.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
+import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -67,6 +70,11 @@ class _TransactionPageState extends State<TransactionPage> {
 
   late final List<Account> accounts;
   late final List<Category> categories;
+
+  double? newTransactionLatitude;
+  double? newTransactionLongitude;
+
+  bool locationFailed = false;
 
   dynamic error;
 
@@ -119,6 +127,8 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     if (widget.isNewTransaction) {
+      tryFetchLocation();
+
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         selectAccount();
       });
@@ -140,6 +150,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Geo? geo = _currentlyEditing?.extensions.geo;
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -284,6 +296,23 @@ class _TransactionPageState extends State<TransactionPage> {
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
+                    // TODO @sadespresso add an option to choose a location from a map
+                    if (geo != null) ...[
+                      const SizedBox(height: 16.0),
+                      Section(
+                        title: "transaction.location".t(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: GeoPreview(
+                              latitude: geo.latitude ?? 47.91882595001899,
+                              longitude: geo.longitude ?? 106.91756644507088,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                     const SizedBox(height: 16.0),
                     Section(
                       title: "transaction.date".t(context),
@@ -322,6 +351,37 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
       ),
     );
+  }
+
+  void tryFetchLocation() {
+    if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
+
+    Geolocator.getLastKnownPosition().then((lastKnown) {
+      if (lastKnown == null) {
+        return;
+      }
+
+      if (newTransactionLatitude != null && newTransactionLongitude != null) {
+        return;
+      }
+
+      newTransactionLatitude = lastKnown.latitude;
+      newTransactionLongitude = lastKnown.longitude;
+
+      if (mounted) setState(() => {});
+    }).catchError((_) {
+      log("[Transaction Page] Failed to get last known location");
+    });
+
+    Geolocator.getCurrentPosition().then((current) {
+      newTransactionLatitude = current.latitude;
+      newTransactionLongitude = current.longitude;
+    }).catchError((_) {
+      locationFailed = true;
+      log("[Transaction Page] Failed to get current location");
+    }).whenComplete(() {
+      if (mounted) setState(() => {});
+    });
   }
 
   void updateTransactionType(TransactionType type) {
@@ -577,6 +637,8 @@ class _TransactionPageState extends State<TransactionPage> {
         transactionDate: _transactionDate,
         title: formattedTitle,
         description: formattedDescription,
+        latitude: newTransactionLatitude,
+        longitude: newTransactionLongitude,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -585,6 +647,8 @@ class _TransactionPageState extends State<TransactionPage> {
         description: formattedDescription,
         category: _selectedCategory,
         transactionDate: _transactionDate,
+        latitude: newTransactionLatitude,
+        longitude: newTransactionLongitude,
       );
     }
 

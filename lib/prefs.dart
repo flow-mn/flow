@@ -4,6 +4,7 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -21,7 +22,9 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const int homeTabPlannedTransactionsDaysDefault = 7;
+  static const UpcomingTransactionsDuration
+      homeTabPlannedTransactionsDurationDefault =
+      UpcomingTransactionsDuration.thisWeek;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -50,7 +53,8 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final PrimitiveSettingsEntry<int> homeTabPlannedTransactionsDays;
+  late final JsonSettingsEntry<UpcomingTransactionsDuration>
+      homeTabPlannedTransactionsDuration;
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -65,7 +69,7 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
-  late final BoolSettingsEntry preferMarkdown;
+  late final BoolSettingsEntry autoAttachTransactionGeo;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -92,10 +96,15 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    homeTabPlannedTransactionsDays = PrimitiveSettingsEntry<int>(
-      key: "flow.homeTabPlannedTransactionsDays",
+    homeTabPlannedTransactionsDuration =
+        JsonSettingsEntry<UpcomingTransactionsDuration>(
+      key: "flow.homeTabPlannedTransactionsDuration",
       preferences: _prefs,
-      initialValue: homeTabPlannedTransactionsDaysDefault,
+      initialValue: homeTabPlannedTransactionsDurationDefault,
+      fromJson: (map) =>
+          UpcomingTransactionsDuration.fromJson(map) ??
+          homeTabPlannedTransactionsDurationDefault,
+      toJson: (data) => data.toJson(),
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "flow.transactionButtonOrder",
@@ -142,10 +151,10 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
 
-    preferMarkdown = BoolSettingsEntry(
-      key: "flow.preferMarkdown",
+    autoAttachTransactionGeo = BoolSettingsEntry(
+      key: "flow.autoAttachTransactionGeo",
       preferences: _prefs,
-      initialValue: true,
+      initialValue: false,
     );
 
     updateTransitiveProperties();
