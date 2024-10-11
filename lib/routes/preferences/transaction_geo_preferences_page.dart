@@ -2,7 +2,7 @@ import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/utils/extensions/toast.dart";
-import "package:flow/widgets/general/info_text.dart";
+// import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 
@@ -32,19 +32,23 @@ class _TransactionGeoPreferencesPageState
             children: [
               const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
-                title: Text("preferences.transactionGeo.enable".t(context)),
+                title:
+                    Text("preferences.transactionGeo.auto.enable".t(context)),
                 value: autoAttachTransactionGeo,
                 onChanged: updateAutoAttachTransactionGeo,
               ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: InfoText(
-                  child: Text(
-                    "preferences.transactionGeo.description".t(context),
-                  ),
-                ),
-              ),
+              // TODO @sadespresso: Add an option to choose a location from a map
+              // then uncomment this
+              //
+              // const SizedBox(height: 16.0),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              //   child: InfoText(
+              //     child: Text(
+              //       "preferences.transactionGeo.auto.description".t(context),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16.0),
             ],
           ),
@@ -96,7 +100,7 @@ class _TransactionGeoPreferencesPageState
 
       if (!granted) {
         context.showErrorToast(
-          error: "preferences.transactionGeo.permissionDenied".t(context),
+          error: "preferences.transactionGeo.auto.permissionDenied".t(context),
         );
 
         await LocalPreferences().autoAttachTransactionGeo.set(false);

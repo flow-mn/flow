@@ -102,6 +102,9 @@
     "transaction.description": "Note",
     "transaction.description.add": "Aggiungi note",
     "transaction.description.markdownSupported": "Markdown supportato",
+    "transaction.location": "Posizione",
+    "transaction.location.add": "Aggiungi una posizione",
+    "transaction.location.edit": "Modifica posizione",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",
@@ -168,8 +171,10 @@
     "preferences.home.upcoming.alwaysVisible": "Mostra sempre",
     "preferences.home.upcoming.alwaysVisible.description": "Rimane visibile quando i filtri sono attivi",
     "preferences.transactionGeo": "Posizione transazione",
-    "preferences.transactionGeo.enable": "Attiva",
-    "preferences.transactionGeo.description": "Associa automaticamente la tua posizione attuale alle nuove transazioni",
+    "preferences.transactionGeo.disableInstructions": "Puoi nascondere questa sezione nelle impostazioni.",
+    "preferences.transactionGeo.auto.enable": "Auto-allega",
+    "preferences.transactionGeo.auto.description": "Allega automaticamente la tua posizione attuale alle nuove transazioni. Anche se hai disattivato questa funzione, puoi comunque scegliere una posizione su una mappa per allegarla.",
+    "preferences.transactionGeo.auto.permissionDenied": "L'autorizzazione per la posizione è stata negata. Puoi abilitarmi dalle tue impostazioni se lo desideri.",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",

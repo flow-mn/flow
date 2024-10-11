@@ -267,16 +267,6 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(14, 1785368014330843933),
             name: 'description',
             type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(15, 7884365526573124998),
-            name: 'latitude',
-            type: 8,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(16, 1620591330122290687),
-            name: 'longitude',
-            type: 8,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -351,7 +341,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         5446772239174299489,
         3056128952161562633,
         2675470948342446870,
-        2832069050067036408
+        2832069050067036408,
+        7884365526573124998,
+        1620591330122290687
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -596,8 +588,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(11, categoryUuidOffset);
           fbb.addOffset(12, accountUuidOffset);
           fbb.addOffset(13, descriptionOffset);
-          fbb.addFloat64(14, object.latitude);
-          fbb.addFloat64(15, object.longitude);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -637,11 +627,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ..categoryUuid = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 26)
             ..accountUuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 28)
-            ..latitude = const fb.Float64Reader()
-                .vTableGetNullable(buffer, rootOffset, 32)
-            ..longitude = const fb.Float64Reader()
-                .vTableGetNullable(buffer, rootOffset, 34);
+                .vTableGetNullable(buffer, rootOffset, 28);
           object.category.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0);
           object.category.attach(store);
@@ -824,12 +810,4 @@ class Transaction_ {
   /// See [Transaction.description].
   static final description =
       obx.QueryStringProperty<Transaction>(_entities[4].properties[13]);
-
-  /// See [Transaction.latitude].
-  static final latitude =
-      obx.QueryDoubleProperty<Transaction>(_entities[4].properties[14]);
-
-  /// See [Transaction.longitude].
-  static final longitude =
-      obx.QueryDoubleProperty<Transaction>(_entities[4].properties[15]);
 }

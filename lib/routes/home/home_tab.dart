@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/data/upcoming_transactions.dart";
@@ -156,9 +155,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     final Map<TimeRange, List<Transaction>> groupedFuture = transactions
         .where((transaction) => transaction.transactionDate.isAfter(now))
         .groupByDate();
-
-    inspect(grouped);
-    inspect(groupedFuture);
 
     return GroupedTransactionList(
       controller: widget.scrollController,

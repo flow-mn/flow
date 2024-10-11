@@ -102,6 +102,9 @@
     "transaction.description": "Тэмдэглэл",
     "transaction.description.add": "Тэмдэглэл нэмэх",
     "transaction.description.markdownSupported": "Markdown ашиглах боломжтой",
+    "transaction.location": "Байршил",
+    "transaction.location.add": "Байршил нэмэх",
+    "transaction.location.edit": "Байршил засах",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",
@@ -168,9 +171,10 @@
     "preferences.home.upcoming.alwaysVisible": "Үргэлж харуулах",
     "preferences.home.upcoming.alwaysVisible.description": "Шүүлтүүр өөрчлөгдсөн ч харуулах",
     "preferences.transactionGeo": "Гүйлгээний байршил",
-    "preferences.transactionGeo.enable": "Автоматаар хавсаргах",
-    "preferences.transactionGeo.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
-    "preferences.transactionGeo.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
+    "preferences.transactionGeo.disableInstructions": "Энэ хэсгийг тохиргооноос нуух боломжтой",
+    "preferences.transactionGeo.auto.enable": "Автоматаар хавсаргах",
+    "preferences.transactionGeo.auto.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
+    "preferences.transactionGeo.auto.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

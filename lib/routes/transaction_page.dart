@@ -3,6 +3,7 @@ import "dart:developer";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
@@ -10,6 +11,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/description_section.dart";
+import "package:flow/routes/new_transaction/geo_preview.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
 import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
@@ -148,6 +150,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Geo? geo = _currentlyEditing?.extensions.geo;
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -292,6 +296,23 @@ class _TransactionPageState extends State<TransactionPage> {
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
+                    // TODO @sadespresso add an option to choose a location from a map
+                    if (geo != null) ...[
+                      const SizedBox(height: 16.0),
+                      Section(
+                        title: "transaction.location".t(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: GeoPreview(
+                              latitude: geo.latitude ?? 47.91882595001899,
+                              longitude: geo.longitude ?? 106.91756644507088,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                     const SizedBox(height: 16.0),
                     Section(
                       title: "transaction.date".t(context),
