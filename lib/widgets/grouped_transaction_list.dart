@@ -20,8 +20,11 @@ class GroupedTransactionList extends StatelessWidget {
   /// Top padding for the first header
   final double firstHeaderTopPadding;
 
-  /// Expects [transactions] to be sorted from oldest to newest
+  /// Rendered in order.
   final Map<TimeRange, List<Transaction>> transactions;
+
+  /// Rendered in order.
+  final Map<TimeRange, List<Transaction>>? futureTransactions;
 
   final Widget Function(TimeRange range, List<Transaction> transactions)
       headerBuilder;
@@ -50,6 +53,7 @@ class GroupedTransactionList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.headerBuilder,
+    this.futureTransactions,
     this.controller,
     this.header,
     this.futureDivider,
@@ -68,33 +72,26 @@ class GroupedTransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime anchor = this.anchor ?? DateTime.now();
-
     final bool combineTransfers = shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
-    final Map<TimeRange, List<Transaction>> past = Map.fromEntries(transactions
-        .entries
-        .where((element) => element.key.from.isPastAnchored(anchor)));
-
-    final Map<TimeRange, List<Transaction>> future = Map.fromEntries(
-        transactions.entries
-            .where((element) => !element.key.from.isPastAnchored(anchor)));
-
     final Widget? header = this.header ??
         (implyHeader
-            ? _getImpliedHeader(context, futureTransactions: future)
+            ? _getImpliedHeader(context, futureTransactions: futureTransactions)
             : null);
 
     final List<Object> flattened = [
       if (header != null) header,
-      for (final entry in future.entries) ...[
-        headerBuilder(entry.key, entry.value),
-        ...entry.value,
-      ],
-      if (futureDivider != null && past.isNotEmpty && future.isNotEmpty)
+      if (futureTransactions != null)
+        for (final entry in futureTransactions!.entries) ...[
+          headerBuilder(entry.key, entry.value),
+          ...entry.value,
+        ],
+      if (futureDivider != null &&
+          futureTransactions?.isNotEmpty == true &&
+          transactions.isNotEmpty)
         futureDivider!,
-      for (final entry in past.entries) ...[
+      for (final entry in transactions.entries) ...[
         headerBuilder(entry.key, entry.value),
         ...entry.value,
       ],
