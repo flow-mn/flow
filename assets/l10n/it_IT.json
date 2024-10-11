@@ -24,6 +24,8 @@
     "general.timeSelector.select.month": "Seleziona un mese",
     "general.timeSelector.select.year": "Seleziona un anno",
     "general.timeSelector.now": "Ora",
+    "general.enabled": "Abilitato",
+    "general.disabled": "Disabilitato",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",

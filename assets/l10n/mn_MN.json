@@ -24,6 +24,8 @@
     "general.timeSelector.select.month": "Сар сонгох",
     "general.timeSelector.select.year": "Жил сонгох",
     "general.timeSelector.now": "Одоо",
+    "general.enabled": "Идэвхтэй",
+    "general.disabled": "Идэвхгүй",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",
