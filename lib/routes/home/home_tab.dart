@@ -60,7 +60,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late final bool noTransactionsAtAll;
 
-  DateTime now = DateTime.now();
+  DateTime now = DateTime.now().startOfNextMinute();
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         return;
       }
       setState(() {
-        now = DateTime.now();
+        now = DateTime.now().startOfNextMinute();
       });
     });
   }
