@@ -30,5 +30,7 @@
 		<string>NSApplication</string>
 		<key>com.apple.security.files.downloads.read-write</key>
 		<true />
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Location is used if you choose to auto-attach your current location to your transactions.</string>
 	</dict>
 </plist>
