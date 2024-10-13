@@ -387,6 +387,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void tryFetchLocation() {
+    if (LocalPreferences().enableGeo.get() != true) return;
     if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
 
     Geolocator.getLastKnownPosition().then((lastKnown) {
