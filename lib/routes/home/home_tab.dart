@@ -59,8 +59,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   late final bool noTransactionsAtAll;
+  late final Timer _updateTimer;
 
-  DateTime now = DateTime.now();
+  DateTime now = DateTime.now().startOfNextMinute();
 
   @override
   void initState() {
@@ -71,18 +72,19 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .homeTabPlannedTransactionsDuration
         .addListener(_updatePlannedTransactionDays);
 
-    Timer.periodic(const Duration(minutes: 1), (timer) {
+    _updateTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (!mounted) {
         return;
       }
       setState(() {
-        now = DateTime.now();
+        now = DateTime.now().startOfNextMinute();
       });
     });
   }
 
   @override
   void dispose() {
+    _updateTimer.cancel();
     LocalPreferences()
         .homeTabPlannedTransactionsDuration
         .removeListener(_updatePlannedTransactionDays);
