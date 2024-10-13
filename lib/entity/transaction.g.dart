@@ -12,6 +12,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       subtype: json['subtype'] as String?,
       amount: (json['amount'] as num).toDouble(),
       currency: json['currency'] as String,
+      uuid: json['uuid'] as String,
       transactionDate: json['transactionDate'] == null
           ? null
           : DateTime.parse(json['transactionDate'] as String),
@@ -19,7 +20,6 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
           ? null
           : DateTime.parse(json['createdDate'] as String),
     )
-      ..uuid = json['uuid'] as String
       ..extra = json['extra'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
       ..accountUuid = json['accountUuid'] as String?;

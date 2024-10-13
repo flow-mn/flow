@@ -49,6 +49,8 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is used if you choose to auto-attach your current location to your transactions.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>

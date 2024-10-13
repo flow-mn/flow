@@ -1,14 +1,14 @@
-import "package:flow/entity/transaction.dart";
 import "package:flow/utils/jasonable.dart";
 
 abstract class TransactionExtension implements Jasonable {
+  final String uuid;
+
   String get key;
+  String? get relatedTransactionUuid;
+  set relatedTransactionUuid(String? uuid);
 
-  const TransactionExtension();
-}
+  void setRelatedTransactionUuid(String uuid) =>
+      relatedTransactionUuid = relatedTransactionUuid;
 
-abstract class TransactionDataExtension extends TransactionExtension {
-  final Transaction transaction;
-
-  const TransactionDataExtension(this.transaction) : super();
+  const TransactionExtension({required this.uuid});
 }
