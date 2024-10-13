@@ -156,8 +156,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Geo? geo = _currentlyEditing?.extensions.geo;
-
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -303,7 +301,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       onChanged: (_) => setState(() => {}),
                     ),
                     // TODO @sadespresso add an option to choose a location from a map
-                    if (geo != null || enableGeo) ...[
+                    if (_geo != null || enableGeo) ...[
                       const SizedBox(height: 16.0),
                       Section(
                         title: "transaction.location".t(context),
@@ -311,7 +309,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: geo == null
+                            child: _geo == null
                                 ? Container(
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
@@ -339,8 +337,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                     ),
                                   )
                                 : GeoPreview(
-                                    latitude: geo.latitude,
-                                    longitude: geo.longitude,
+                                    latitude: _geo!.latitude,
+                                    longitude: _geo!.longitude,
                                   ),
                           ),
                         ),

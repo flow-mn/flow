@@ -28,16 +28,18 @@ class GeoPreview extends StatelessWidget {
         options: MapOptions(
           initialCenter: center,
           initialZoom: 17.0,
+          keepAlive: false,
+          interactionOptions: InteractionOptions(flags: InteractiveFlag.none),
         ),
         children: [
           TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
           ),
           MarkerLayer(
             markers: [
               Marker(
                 point: center,
-                child: Text("📍"),
+                child: Image.asset("assets/images/pin.png"),
                 alignment: Alignment.topCenter,
               ),
             ],
