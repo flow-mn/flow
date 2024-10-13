@@ -3,6 +3,7 @@ import "dart:developer";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
@@ -20,6 +21,7 @@ import "package:flow/routes/new_transaction/title_input.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
@@ -71,8 +73,7 @@ class _TransactionPageState extends State<TransactionPage> {
   late final List<Account> accounts;
   late final List<Category> categories;
 
-  double? newTransactionLatitude;
-  double? newTransactionLongitude;
+  Geo? _geo;
 
   bool locationFailed = false;
 
@@ -86,6 +87,8 @@ class _TransactionPageState extends State<TransactionPage> {
   List<RelevanceScoredTitle>? autofillHints;
 
   late DateTime _transactionDate;
+
+  late final bool enableGeo;
 
   @override
   void initState() {
@@ -124,6 +127,7 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedAccountTransferTo = accounts.firstWhereOrNull((account) =>
           account.uuid ==
           _currentlyEditing?.extensions.transfer?.toAccountUuid);
+      _geo = _currentlyEditing?.extensions.geo;
     }
 
     if (widget.isNewTransaction) {
@@ -133,6 +137,8 @@ class _TransactionPageState extends State<TransactionPage> {
         selectAccount();
       });
     }
+
+    enableGeo = LocalPreferences().enableGeo.get();
   }
 
   @override
@@ -297,7 +303,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       onChanged: (_) => setState(() => {}),
                     ),
                     // TODO @sadespresso add an option to choose a location from a map
-                    if (geo != null) ...[
+                    if (geo != null || enableGeo) ...[
                       const SizedBox(height: 16.0),
                       Section(
                         title: "transaction.location".t(context),
@@ -305,13 +311,40 @@ class _TransactionPageState extends State<TransactionPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: GeoPreview(
-                              latitude: geo.latitude ?? 47.91882595001899,
-                              longitude: geo.longitude ?? 106.91756644507088,
-                            ),
+                            child: geo == null
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          "assets/images/map_square.png",
+                                        ),
+                                      ),
+                                    ),
+                                    child: AspectRatio(
+                                      aspectRatio: 1.0,
+                                      child: Center(
+                                        child: Button(
+                                          onTap: () => context.showToast(
+                                            text: "Coming soon",
+                                          ),
+                                          trailing: const Icon(
+                                            Symbols.pin_drop_rounded,
+                                          ),
+                                          child: Text(
+                                            "transaction.location.add"
+                                                .t(context),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : GeoPreview(
+                                    latitude: geo.latitude,
+                                    longitude: geo.longitude,
+                                  ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                     const SizedBox(height: 16.0),
                     Section(
@@ -361,12 +394,12 @@ class _TransactionPageState extends State<TransactionPage> {
         return;
       }
 
-      if (newTransactionLatitude != null && newTransactionLongitude != null) {
+      if (_geo != null) {
+        // In case we already have a location, don't override with less accurate one
         return;
       }
 
-      newTransactionLatitude = lastKnown.latitude;
-      newTransactionLongitude = lastKnown.longitude;
+      _geo = Geo.fromPosition(lastKnown);
 
       if (mounted) setState(() => {});
     }).catchError((_) {
@@ -374,8 +407,7 @@ class _TransactionPageState extends State<TransactionPage> {
     });
 
     Geolocator.getCurrentPosition().then((current) {
-      newTransactionLatitude = current.latitude;
-      newTransactionLongitude = current.longitude;
+      _geo = Geo.fromPosition(current);
     }).catchError((_) {
       locationFailed = true;
       log("[Transaction Page] Failed to get current location");
@@ -630,6 +662,10 @@ class _TransactionPageState extends State<TransactionPage> {
       );
     }
 
+    final List<TransactionExtension> extensions = [
+      if (_geo != null) _geo!,
+    ];
+
     if (isTransfer) {
       _selectedAccount!.transferTo(
         targetAccount: _selectedAccountTransferTo!,
@@ -637,8 +673,7 @@ class _TransactionPageState extends State<TransactionPage> {
         transactionDate: _transactionDate,
         title: formattedTitle,
         description: formattedDescription,
-        latitude: newTransactionLatitude,
-        longitude: newTransactionLongitude,
+        extensions: extensions,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -647,8 +682,7 @@ class _TransactionPageState extends State<TransactionPage> {
         description: formattedDescription,
         category: _selectedCategory,
         transactionDate: _transactionDate,
-        latitude: newTransactionLatitude,
-        longitude: newTransactionLongitude,
+        extensions: extensions,
       );
     }
 

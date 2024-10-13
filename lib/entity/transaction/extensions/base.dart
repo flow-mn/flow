@@ -3,6 +3,11 @@ import "package:flow/utils/jasonable.dart";
 
 abstract class TransactionExtension implements Jasonable {
   String get key;
+  String? get relatedTransactionUuid;
+  set relatedTransactionUuid(String? uuid);
+
+  void setRelatedTransactionUuid(String uuid) =>
+      relatedTransactionUuid = relatedTransactionUuid;
 
   const TransactionExtension();
 }

@@ -15,7 +15,9 @@ class Geo extends TransactionExtension implements Jasonable {
   final String key = Geo.keyName;
 
   final String uuid;
-  final String relatedTransactionUuid;
+
+  @override
+  String? relatedTransactionUuid;
 
   final double? latitude;
   final double? longitude;
@@ -23,20 +25,38 @@ class Geo extends TransactionExtension implements Jasonable {
   final DateTime? timestamp;
   final bool isMocked;
 
-  const Geo({
+  Geo({
     required this.uuid,
-    required this.relatedTransactionUuid,
     required this.latitude,
     required this.longitude,
+    this.relatedTransactionUuid,
     this.altitude,
     this.timestamp,
     this.isMocked = false,
   }) : super();
 
-  factory Geo.fromPosition(String relatedTransactionUuid, Position position) =>
+  Geo copyWith({
+    String? uuid,
+    String? relatedTransactionUuid,
+    double? latitude,
+    double? longitude,
+    double? altitude,
+    DateTime? timestamp,
+    bool? isMocked,
+  }) =>
       Geo(
+        uuid: uuid ?? this.uuid,
+        relatedTransactionUuid:
+            relatedTransactionUuid ?? this.relatedTransactionUuid,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
+        altitude: altitude ?? this.altitude,
+        timestamp: timestamp ?? this.timestamp,
+        isMocked: isMocked ?? this.isMocked,
+      );
+
+  factory Geo.fromPosition(Position position) => Geo(
         uuid: const Uuid().v4(),
-        relatedTransactionUuid: relatedTransactionUuid,
         latitude: position.latitude,
         longitude: position.longitude,
         altitude: position.altitude,

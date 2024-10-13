@@ -173,8 +173,10 @@
     "preferences.home.upcoming.alwaysVisible": "Always show",
     "preferences.home.upcoming.alwaysVisible.description": "Stay visible when the filters are active",
     "preferences.transactionGeo": "Transaction location",
+    "preferences.transactionGeo.enable": "Enable",
     "preferences.transactionGeo.disableInstructions": "You can hide this section in settings",
     "preferences.transactionGeo.auto.enable": "Auto-attach",
+    "preferences.transactionGeo.auto.enabled": "Auto-attach enabled",
     "preferences.transactionGeo.auto.description": "Automatically attach your current location to new transactions. Even if you have this turned off, you can still choose a location on a map to attach it.",
     "preferences.transactionGeo.auto.permissionDenied": "Location permission was denied. You can enable it from your settings if you wish.",
 

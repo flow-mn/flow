@@ -173,8 +173,10 @@
     "preferences.home.upcoming.alwaysVisible": "Mostra sempre",
     "preferences.home.upcoming.alwaysVisible.description": "Rimane visibile quando i filtri sono attivi",
     "preferences.transactionGeo": "Posizione transazione",
+    "preferences.transactionGeo.enable": "Abilita",
     "preferences.transactionGeo.disableInstructions": "Puoi nascondere questa sezione nelle impostazioni.",
     "preferences.transactionGeo.auto.enable": "Auto-allega",
+    "preferences.transactionGeo.auto.enabled": "Auto-attach abilitato",
     "preferences.transactionGeo.auto.description": "Allega automaticamente la tua posizione attuale alle nuove transazioni. Anche se hai disattivato questa funzione, puoi comunque scegliere una posizione su una mappa per allegarla.",
     "preferences.transactionGeo.auto.permissionDenied": "L'autorizzazione per la posizione è stata negata. Puoi abilitarmi dalle tue impostazioni se lo desideri.",
 

@@ -15,11 +15,12 @@ class Transfer extends TransactionExtension implements Jasonable {
   final String fromAccountUuid;
   final String toAccountUuid;
 
-  final String relatedTransactionUuid;
+  @override
+  String? relatedTransactionUuid;
 
   final String uuid;
 
-  const Transfer({
+  Transfer({
     required this.uuid,
     required this.fromAccountUuid,
     required this.toAccountUuid,

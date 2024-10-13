@@ -173,8 +173,10 @@
     "preferences.home.upcoming.alwaysVisible": "Үргэлж харуулах",
     "preferences.home.upcoming.alwaysVisible.description": "Шүүлтүүр өөрчлөгдсөн ч харуулах",
     "preferences.transactionGeo": "Гүйлгээний байршил",
+    "preferences.transactionGeo.enable": "Идэвхжүүлэх",
     "preferences.transactionGeo.disableInstructions": "Энэ хэсгийг тохиргооноос нуух боломжтой",
     "preferences.transactionGeo.auto.enable": "Автоматаар хавсаргах",
+    "preferences.transactionGeo.auto.enabled": "Автоматаар хавсаргах идэвхжсэн",
     "preferences.transactionGeo.auto.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
     "preferences.transactionGeo.auto.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
 
