@@ -119,6 +119,7 @@ final lightTheme = ThemeData(
     dividerColor: _light.primary,
   ),
 );
+
 final darkTheme = ThemeData(
   useMaterial3: true,
   fontFamily: _fontFamily,

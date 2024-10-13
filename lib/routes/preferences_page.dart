@@ -34,10 +34,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
         LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
             LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
+    final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
-
-    final bool geoSupported = !Platform.isLinux;
 
     return Scaffold(
       appBar: AppBar(
@@ -118,20 +117,21 @@ class _PreferencesPageState extends State<PreferencesPage> {
             ),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
-          if (geoSupported)
-            ListTile(
-              title: Text("preferences.transactionGeo".t(context)),
-              leading: const Icon(Symbols.location_pin_rounded),
-              onTap: openTransactionGeo,
-              subtitle: Text(
-                autoAttachTransactionGeo
-                    ? "preferences.transactionGeo.enabled".t(context)
-                    : "general.disabled".t(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+          ListTile(
+            title: Text("preferences.transactionGeo".t(context)),
+            leading: const Icon(Symbols.location_pin_rounded),
+            onTap: openTransactionGeo,
+            subtitle: Text(
+              enableGeo
+                  ? (autoAttachTransactionGeo
+                      ? "preferences.transactionGeo.auto.enabled".t(context)
+                      : "general.enabled".t(context))
+                  : "general.disabled".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
         ]),
       ),
     );

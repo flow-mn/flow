@@ -12,6 +12,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -69,7 +70,11 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
 
+  late final BoolSettingsEntry enableGeo;
+
   late final BoolSettingsEntry autoAttachTransactionGeo;
+
+  late final JsonSettingsEntry<LatLng> lastKnownGeo;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -151,10 +156,23 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
 
+    enableGeo = BoolSettingsEntry(
+      key: "flow.enableGeo",
+      preferences: _prefs,
+      initialValue: false,
+    );
+
     autoAttachTransactionGeo = BoolSettingsEntry(
       key: "flow.autoAttachTransactionGeo",
       preferences: _prefs,
       initialValue: false,
+    );
+
+    lastKnownGeo = JsonSettingsEntry<LatLng>(
+      key: "flow.lastKnownGeo",
+      preferences: _prefs,
+      fromJson: (json) => LatLng.fromJson(json),
+      toJson: (data) => data.toJson(),
     );
 
     updateTransitiveProperties();

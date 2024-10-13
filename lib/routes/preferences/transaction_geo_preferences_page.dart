@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
@@ -18,6 +20,9 @@ class _TransactionGeoPreferencesPageState
     extends State<TransactionGeoPreferencesPage> {
   @override
   Widget build(BuildContext context) {
+    final bool geoSupported = !Platform.isLinux;
+
+    final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
 
@@ -32,11 +37,19 @@ class _TransactionGeoPreferencesPageState
             children: [
               const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
-                title:
-                    Text("preferences.transactionGeo.auto.enable".t(context)),
-                value: autoAttachTransactionGeo,
-                onChanged: updateAutoAttachTransactionGeo,
+                title: Text("preferences.transactionGeo.enable".t(context)),
+                value: enableGeo,
+                onChanged: updateEnableGeo,
               ),
+              if (geoSupported) ...[
+                const SizedBox(height: 16.0),
+                CheckboxListTile.adaptive(
+                  title:
+                      Text("preferences.transactionGeo.auto.enable".t(context)),
+                  value: autoAttachTransactionGeo,
+                  onChanged: updateAutoAttachTransactionGeo,
+                ),
+              ],
               // TODO @sadespresso: Add an option to choose a location from a map
               // then uncomment this
               //
@@ -88,6 +101,14 @@ class _TransactionGeoPreferencesPageState
       case LocationPermission.unableToDetermine:
         return false;
     }
+  }
+
+  void updateEnableGeo(bool? newEnableGeo) async {
+    if (newEnableGeo == null) return;
+
+    await LocalPreferences().enableGeo.set(newEnableGeo);
+
+    if (mounted) setState(() {});
   }
 
   void updateAutoAttachTransactionGeo(bool? newAutoAttachTransactionGeo) async {

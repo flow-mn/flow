@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
@@ -27,6 +25,8 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
+  late final AppLifecycleListener _listener;
+
   UpcomingTransactionsDuration _plannedTransactionsDuration =
       LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
@@ -59,9 +59,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   late final bool noTransactionsAtAll;
-  late final Timer _updateTimer;
-
-  DateTime now = DateTime.now().startOfNextMinute();
 
   @override
   void initState() {
@@ -72,19 +69,12 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .homeTabPlannedTransactionsDuration
         .addListener(_updatePlannedTransactionDays);
 
-    _updateTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        now = DateTime.now().startOfNextMinute();
-      });
-    });
+    _listener = AppLifecycleListener(onShow: () => setState(() {}));
   }
 
   @override
   void dispose() {
-    _updateTimer.cancel();
+    _listener.dispose();
     LocalPreferences()
         .homeTabPlannedTransactionsDuration
         .removeListener(_updatePlannedTransactionDays);
@@ -103,6 +93,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             (event) => event.find().search(currentFilter.searchData),
           ),
       builder: (context, snapshot) {
+        final DateTime now = DateTime.now().startOfNextMinute();
         final List<Transaction>? transactions = snapshot.data;
 
         final Widget header = DefaultTransactionsFilterHead(

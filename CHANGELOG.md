@@ -8,10 +8,13 @@
   transactions, close #186
 * Fixed today's transactions made in future were included in non-future
   transactions
+* Now it's possible to add location data to your transactions, disabled by default
 * Added automatic location data attachment, disabled by default
-* Added a map preview
+* Added a map preview ([osm](https://www.openstreetmap.org/))
+* Now it's possible to set transaction extensions' transaction uuid after
+  it's initialized
 * TODO (@sadespresso) will do an option to choose a location from map even
-if you choose to not give location permissions
+  if you choose to not give location permissions
 
 ## Beta 0.6.1
 

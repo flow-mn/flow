@@ -313,7 +313,8 @@ extension TransactionActions on Transaction {
 
     final Query<Transaction> query = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.uuid.equals(transfer.relatedTransactionUuid))
+        .query(Transaction_.uuid
+            .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
         .build();
 
     try {
@@ -334,7 +335,8 @@ extension TransactionActions on Transaction {
       } else {
         final Query<Transaction> relatedTransactionQuery = ObjectBox()
             .box<Transaction>()
-            .query(Transaction_.uuid.equals(transfer.relatedTransactionUuid))
+            .query(Transaction_.uuid
+                .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
             .build();
 
         final Transaction? relatedTransaction =
@@ -488,6 +490,7 @@ extension AccountActions on Account {
     DateTime? transactionDate,
     double? latitude,
     double? longitude,
+    List<TransactionExtension>? extensions,
   }) {
     if (amount <= 0) {
       return targetAccount.transferTo(
@@ -499,6 +502,7 @@ extension AccountActions on Account {
         transactionDate: transactionDate,
         latitude: latitude,
         longitude: longitude,
+        extensions: extensions,
       );
     }
 
@@ -516,29 +520,32 @@ extension AccountActions on Account {
         "transaction.transfer.fromToTitle"
             .tr({"from": name, "to": targetAccount.name});
 
+    final List<TransactionExtension> filteredExtensions =
+        extensions?.where((ext) => ext is! Transfer).toList() ?? [];
+
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [transferData],
+      extensions: [
+        transferData,
+        ...filteredExtensions,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
-      latitude: latitude,
-      longitude: longitude,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
       title: resolvedTitle,
       description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid)
+        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
+        ...filteredExtensions,
       ],
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
-      latitude: latitude,
-      longitude: longitude,
     );
 
     return (fromTransaction, toTransaction);
@@ -554,8 +561,6 @@ extension AccountActions on Account {
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
-    double? latitude,
-    double? longitude,
   }) {
     Transaction value = Transaction(
       amount: amount,
@@ -569,8 +574,25 @@ extension AccountActions on Account {
       ..setCategory(category)
       ..setAccount(this);
 
-    if (extensions != null && extensions.isNotEmpty) {
-      value.addExtensions(extensions);
+    if (uuidOverride != null) {
+      final List<TransactionExtension>? applicableExtensions = extensions
+          ?.map((ext) {
+            if (ext.relatedTransactionUuid == null) {
+              return ext..setRelatedTransactionUuid(uuidOverride);
+            }
+
+            if (ext.relatedTransactionUuid == uuidOverride) {
+              return ext;
+            }
+
+            return null;
+          })
+          .nonNulls
+          .toList();
+
+      if (applicableExtensions != null && applicableExtensions.isNotEmpty) {
+        value.addExtensions(applicableExtensions);
+      }
     }
 
     final int id = ObjectBox().box<Transaction>().put(value);
