@@ -14,10 +14,11 @@ class Geo extends TransactionExtension implements Jasonable {
   @JsonKey(includeToJson: true)
   final String key = Geo.keyName;
 
-  final String uuid;
-
   @override
   String? relatedTransactionUuid;
+
+  @override
+  setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
   final double? latitude;
   final double? longitude;
@@ -26,7 +27,7 @@ class Geo extends TransactionExtension implements Jasonable {
   final bool isMocked;
 
   Geo({
-    required this.uuid,
+    required super.uuid,
     required this.latitude,
     required this.longitude,
     this.relatedTransactionUuid,

@@ -8,9 +8,9 @@ part of 'geo.dart';
 
 Geo _$GeoFromJson(Map<String, dynamic> json) => Geo(
       uuid: json['uuid'] as String,
-      relatedTransactionUuid: json['relatedTransactionUuid'] as String,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
+      relatedTransactionUuid: json['relatedTransactionUuid'] as String?,
       altitude: (json['altitude'] as num?)?.toDouble(),
       timestamp: json['timestamp'] == null
           ? null
@@ -19,8 +19,8 @@ Geo _$GeoFromJson(Map<String, dynamic> json) => Geo(
     );
 
 Map<String, dynamic> _$GeoToJson(Geo instance) => <String, dynamic>{
-      'key': instance.key,
       'uuid': instance.uuid,
+      'key': instance.key,
       'relatedTransactionUuid': instance.relatedTransactionUuid,
       'latitude': instance.latitude,
       'longitude': instance.longitude,

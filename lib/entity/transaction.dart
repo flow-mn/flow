@@ -8,7 +8,6 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
-import "package:uuid/uuid.dart";
 
 part "transaction.g.dart";
 
@@ -148,12 +147,11 @@ class Transaction implements EntityBase {
     this.subtype,
     required this.amount,
     required this.currency,
+    required this.uuid,
     DateTime? transactionDate,
     DateTime? createdDate,
-    String? uuidOverride,
   })  : createdDate = createdDate ?? DateTime.now(),
-        transactionDate = transactionDate ?? createdDate ?? DateTime.now(),
-        uuid = uuidOverride ?? const Uuid().v4();
+        transactionDate = transactionDate ?? createdDate ?? DateTime.now();
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
