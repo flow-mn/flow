@@ -257,5 +257,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransactionGeo() async {
     await context.push("/preferences/transactionGeo");
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
   }
 }
