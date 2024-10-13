@@ -607,6 +607,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
           final currencyParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 16, '');
+          final uuidParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
           final transactionDateParam = DateTime.fromMillisecondsSinceEpoch(
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
           final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
@@ -618,10 +620,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               subtype: subtypeParam,
               amount: amountParam,
               currency: currencyParam,
+              uuid: uuidParam,
               transactionDate: transactionDateParam,
               createdDate: createdDateParam)
-            ..uuid = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 6, '')
             ..extra = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 20)
             ..categoryUuid = const fb.StringReader(asciiOptimization: true)

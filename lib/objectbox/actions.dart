@@ -562,6 +562,8 @@ extension AccountActions on Account {
     List<TransactionExtension>? extensions,
     String? uuidOverride,
   }) {
+    final String uuid = uuidOverride ?? const Uuid().v4();
+
     Transaction value = Transaction(
       amount: amount,
       currency: currency,
@@ -569,30 +571,31 @@ extension AccountActions on Account {
       description: description,
       transactionDate: transactionDate,
       createdDate: createdDate,
-      uuidOverride: uuidOverride,
+      uuid: uuid,
     )
       ..setCategory(category)
       ..setAccount(this);
 
-    if (uuidOverride != null) {
-      final List<TransactionExtension>? applicableExtensions = extensions
-          ?.map((ext) {
-            if (ext.relatedTransactionUuid == null) {
-              return ext..setRelatedTransactionUuid(uuidOverride);
-            }
+    final List<TransactionExtension>? applicableExtensions = extensions
+        ?.map((ext) {
+          log("Adding extension to Transaction($uuidOverride): ${ext.runtimeType}(${ext.uuid})");
+          log("Checking extension: ${ext.runtimeType}");
 
-            if (ext.relatedTransactionUuid == uuidOverride) {
-              return ext;
-            }
+          if (ext.relatedTransactionUuid == null) {
+            return ext..setRelatedTransactionUuid(uuid);
+          }
 
-            return null;
-          })
-          .nonNulls
-          .toList();
+          if (ext.relatedTransactionUuid == uuid) {
+            return ext;
+          }
 
-      if (applicableExtensions != null && applicableExtensions.isNotEmpty) {
-        value.addExtensions(applicableExtensions);
-      }
+          return null;
+        })
+        .nonNulls
+        .toList();
+
+    if (applicableExtensions != null && applicableExtensions.isNotEmpty) {
+      value.addExtensions(applicableExtensions);
     }
 
     final int id = ObjectBox().box<Transaction>().put(value);
