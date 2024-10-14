@@ -26,6 +26,7 @@
     "general.timeSelector.now": "Одоо",
     "general.enabled": "Идэвхтэй",
     "general.disabled": "Идэвхгүй",
+    "general.selectLocation": "Байршил сонгох",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",
@@ -106,7 +107,7 @@
     "transaction.description.markdownSupported": "Markdown ашиглах боломжтой",
     "transaction.location": "Байршил",
     "transaction.location.add": "Байршил нэмэх",
-    "transaction.location.edit": "Байршил засах",
+    "transaction.location.edit": "Газын зурган дээр товшиж байршлыг өөрчлөөрэй",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",

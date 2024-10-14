@@ -2,6 +2,7 @@ import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/utils/utils.dart";
 import "package:geolocator/geolocator.dart";
 import "package:json_annotation/json_annotation.dart";
+import "package:latlong2/latlong.dart";
 import "package:uuid/uuid.dart";
 
 part "geo.g.dart";
@@ -63,6 +64,15 @@ class Geo extends TransactionExtension implements Jasonable {
         altitude: position.altitude,
         timestamp: position.timestamp,
         isMocked: position.isMocked,
+      );
+
+  factory Geo.fromLatLng(LatLng latLng) => Geo(
+        uuid: const Uuid().v4(),
+        latitude: latLng.latitude,
+        longitude: latLng.longitude,
+        altitude: null,
+        timestamp: DateTime.now(),
+        isMocked: false,
       );
 
   factory Geo.fromJson(Map<String, dynamic> json) => _$GeoFromJson(json);

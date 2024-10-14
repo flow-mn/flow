@@ -26,6 +26,7 @@
     "general.timeSelector.now": "Now",
     "general.enabled": "Enabled",
     "general.disabled": "Disabled",
+    "general.selectLocation": "Choose location",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
@@ -106,7 +107,7 @@
     "transaction.description.markdownSupported": "Markdown supported",
     "transaction.location": "Location",
     "transaction.location.add": "Add a location",
-    "transaction.location.edit": "Edit location",
+    "transaction.location.edit": "Tap on the map to edit",
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",

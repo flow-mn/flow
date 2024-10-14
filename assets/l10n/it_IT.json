@@ -26,6 +26,7 @@
     "general.timeSelector.now": "Ora",
     "general.enabled": "Abilitato",
     "general.disabled": "Disabilitato",
+    "general.selectLocation": "Scegli la posizione",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",
@@ -106,7 +107,7 @@
     "transaction.description.markdownSupported": "Markdown supportato",
     "transaction.location": "Posizione",
     "transaction.location.add": "Aggiungi una posizione",
-    "transaction.location.edit": "Modifica posizione",
+    "transaction.location.edit": "Tocca la mappa per modificare",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",

@@ -1,4 +1,5 @@
 import "package:flutter/foundation.dart";
+import "package:latlong2/latlong.dart";
 
 String appVersion = "0.0.0";
 const debugBuild = false;
@@ -11,3 +12,11 @@ final Uri flowGitHubRepoLink = Uri.parse("https://github.com/flow-mn/flow");
 final Uri flowGitHubIssuesLink =
     Uri.parse("https://github.com/flow-mn/flow/issues");
 final Uri maintainerGitHubLink = Uri.parse("https://github.com/sadespresso");
+
+const double sukhbaatarSquareCenterLat = 47.918828;
+const double sukhbaatarSquareCenterLong = 106.917604;
+
+const LatLng sukhbaatarSquareCenter = LatLng(
+  sukhbaatarSquareCenterLat,
+  sukhbaatarSquareCenterLong,
+);
