@@ -81,7 +81,7 @@ class Transaction implements EntityBase {
   }
 
   void addExtensions(Iterable<TransactionExtension> newExtensions) {
-    extensions = extensions.merge(newExtensions.toList());
+    extensions = extensions.getMerged(newExtensions.toList());
   }
 
   @Transient()

@@ -80,6 +80,7 @@ class _TransactionPageState extends State<TransactionPage> {
   late final List<Category> categories;
 
   Geo? _geo;
+  bool _geoHandpicked = false;
 
   bool locationFailed = false;
 
@@ -142,7 +143,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     _mapController = enableGeo ? MapController() : null;
 
-    if (widget.isNewTransaction || _geo == null) {
+    if (widget.isNewTransaction) {
       tryFetchLocation();
     }
 
@@ -628,6 +629,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     final LatLng? newLatLng = result.value;
 
+    _geoHandpicked = newLatLng?.toSexagesimal() != _geo?.toSexagesimal();
     _geo = newLatLng == null ? null : Geo.fromLatLng(newLatLng);
 
     setState(() {});
@@ -674,6 +676,8 @@ class _TransactionPageState extends State<TransactionPage> {
           targetAccount: _selectedAccountTransferTo!,
           createdDate: _currentlyEditing.createdDate,
           transactionDate: _transactionDate,
+          extensions:
+              _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
         );
 
         _currentlyEditing.delete();
@@ -690,6 +694,14 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
     _currentlyEditing.transactionDate = _transactionDate;
+
+    print(
+        "_currentlyEditing.extensions -> ${_currentlyEditing.extensions.data.length}");
+    print(
+        "_currentlyEditing.extensions.getOverriden(_geo, Geo.keyName) -> ${_currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data.length}");
+
+    _currentlyEditing.extensions =
+        _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
     ObjectBox().box<Transaction>().put(
           _currentlyEditing,
@@ -755,6 +767,7 @@ class _TransactionPageState extends State<TransactionPage> {
       }
 
       return _currentlyEditing.amount != _amount ||
+          _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
           (_currentlyEditing.description ?? "") !=
               _descriptionController.text ||
@@ -765,6 +778,7 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return _amount != 0 ||
+        _geoHandpicked ||
         _titleController.text.isNotEmpty ||
         _descriptionController.text.isNotEmpty ||
         _selectedAccount != null ||

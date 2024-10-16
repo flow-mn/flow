@@ -27,6 +27,12 @@ class Geo extends TransactionExtension implements Jasonable {
   final DateTime? timestamp;
   final bool isMocked;
 
+  String? toSexagesimal() {
+    if (latitude == null || longitude == null) return null;
+
+    return LatLng(latitude!, longitude!).toSexagesimal();
+  }
+
   Geo({
     required super.uuid,
     required this.latitude,
