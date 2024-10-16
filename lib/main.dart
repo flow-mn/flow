@@ -156,19 +156,9 @@ class FlowState extends State<Flow> {
         )
         .toList();
 
-    print("-------------------;");
-    systemLocales.forEach(print);
-    print("-------------------;");
-    favorableLocales.forEach(print);
-    print("-------------------;");
-
     final Locale overriddenLocale = LocalPreferences().localeOverride.value ??
         favorableLocales.firstOrNull ??
         _locale;
-
-    print("-------------------;");
-    print(overriddenLocale);
-    print("-------------------;");
 
     _locale =
         Locale(overriddenLocale.languageCode, overriddenLocale.countryCode);

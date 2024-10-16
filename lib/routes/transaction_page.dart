@@ -695,11 +695,6 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.amount = _amount;
     _currentlyEditing.transactionDate = _transactionDate;
 
-    print(
-        "_currentlyEditing.extensions -> ${_currentlyEditing.extensions.data.length}");
-    print(
-        "_currentlyEditing.extensions.getOverriden(_geo, Geo.keyName) -> ${_currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data.length}");
-
     _currentlyEditing.extensions =
         _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
