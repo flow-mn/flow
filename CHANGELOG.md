@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## Beta 0.7.0
 
 * Added an option to choose location on a map
 * Fixed iOS locale
