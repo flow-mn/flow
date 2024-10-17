@@ -1,5 +1,7 @@
 import "dart:developer";
+import "dart:io";
 
+import "package:flow/constants.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -12,7 +14,6 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/description_section.dart";
-import "package:flow/routes/new_transaction/geo_preview.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
 import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
@@ -24,12 +25,17 @@ import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/location_picker_sheet.dart";
+import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
+import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
+import "package:latlong2/latlong.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -74,6 +80,7 @@ class _TransactionPageState extends State<TransactionPage> {
   late final List<Category> categories;
 
   Geo? _geo;
+  bool _geoHandpicked = false;
 
   bool locationFailed = false;
 
@@ -89,6 +96,8 @@ class _TransactionPageState extends State<TransactionPage> {
   late DateTime _transactionDate;
 
   late final bool enableGeo;
+
+  late final MapController? _mapController;
 
   @override
   void initState() {
@@ -130,15 +139,19 @@ class _TransactionPageState extends State<TransactionPage> {
       _geo = _currentlyEditing?.extensions.geo;
     }
 
+    enableGeo = LocalPreferences().enableGeo.get();
+
+    _mapController = enableGeo ? MapController() : null;
+
     if (widget.isNewTransaction) {
       tryFetchLocation();
+    }
 
+    if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         selectAccount();
       });
     }
-
-    enableGeo = LocalPreferences().enableGeo.get();
   }
 
   @override
@@ -322,9 +335,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                       aspectRatio: 1.0,
                                       child: Center(
                                         child: Button(
-                                          onTap: () => context.showToast(
-                                            text: "Coming soon",
-                                          ),
+                                          onTap: selectLocation,
                                           trailing: const Icon(
                                             Symbols.pin_drop_rounded,
                                           ),
@@ -336,9 +347,28 @@ class _TransactionPageState extends State<TransactionPage> {
                                       ),
                                     ),
                                   )
-                                : GeoPreview(
-                                    latitude: _geo!.latitude,
-                                    longitude: _geo!.longitude,
+                                : Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      InfoText(
+                                        singleLine: true,
+                                        child: Text(
+                                          "transaction.location.edit"
+                                              .t(context),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      SquareMap(
+                                        mapController: _mapController,
+                                        onTap: (_) => selectLocation(),
+                                        center: LatLng(
+                                          _geo?.latitude ??
+                                              sukhbaatarSquareCenterLat,
+                                          _geo?.longitude ??
+                                              sukhbaatarSquareCenterLong,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                           ),
                         ),
@@ -385,6 +415,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void tryFetchLocation() {
+    if (Platform.isLinux) return;
     if (LocalPreferences().enableGeo.get() != true) return;
     if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
 
@@ -583,6 +614,33 @@ class _TransactionPageState extends State<TransactionPage> {
     });
   }
 
+  void selectLocation() async {
+    final Optional<LatLng>? result =
+        await showModalBottomSheet<Optional<LatLng>>(
+      context: context,
+      builder: (context) => LocationPickerSheet(
+        latitude: _geo?.latitude,
+        longitude: _geo?.longitude,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (result == null) return;
+
+    final LatLng? newLatLng = result.value;
+
+    _geoHandpicked = newLatLng?.toSexagesimal() != _geo?.toSexagesimal();
+    _geo = newLatLng == null ? null : Geo.fromLatLng(newLatLng);
+
+    setState(() {});
+
+    if (newLatLng != null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _mapController?.move(newLatLng, _mapController.camera.zoom);
+      });
+    }
+  }
+
   bool _ensureAccountsSelected() {
     if (_selectedAccount == null) {
       context.showErrorToast(
@@ -618,6 +676,8 @@ class _TransactionPageState extends State<TransactionPage> {
           targetAccount: _selectedAccountTransferTo!,
           createdDate: _currentlyEditing.createdDate,
           transactionDate: _transactionDate,
+          extensions:
+              _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
         );
 
         _currentlyEditing.delete();
@@ -634,6 +694,9 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
     _currentlyEditing.transactionDate = _transactionDate;
+
+    _currentlyEditing.extensions =
+        _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
     ObjectBox().box<Transaction>().put(
           _currentlyEditing,
@@ -699,6 +762,7 @@ class _TransactionPageState extends State<TransactionPage> {
       }
 
       return _currentlyEditing.amount != _amount ||
+          _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
           (_currentlyEditing.description ?? "") !=
               _descriptionController.text ||
@@ -709,6 +773,7 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return _amount != 0 ||
+        _geoHandpicked ||
         _titleController.text.isNotEmpty ||
         _descriptionController.text.isNotEmpty ||
         _selectedAccount != null ||

@@ -1,5 +1,10 @@
 # Changelog
 
+## Beta 0.7.0
+
+* Added an option to choose location on a map
+* Fixed iOS locale
+
 ## Beta 0.6.2
 
 * Fixed upcoming transactions config wasn't getting loaded initially, closes

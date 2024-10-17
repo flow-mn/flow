@@ -147,18 +147,21 @@ class FlowState extends State<Flow> {
     final List<Locale> systemLocales =
         WidgetsBinding.instance.platformDispatcher.locales;
 
-    final String? country = systemLocales
+    final List<Locale> favorableLocales = systemLocales
         .where(
-          (element) => element.countryCode != null,
+          (locale) => FlowLocalizations.supportedLanguages.any(
+              (flowSupportedLocalization) =>
+                  flowSupportedLocalization.languageCode ==
+                  locale.languageCode),
         )
-        .firstOrNull
-        ?.countryCode;
+        .toList();
 
-    final Locale overriddenLocale =
-        LocalPreferences().localeOverride.value ?? _locale;
+    final Locale overriddenLocale = LocalPreferences().localeOverride.value ??
+        favorableLocales.firstOrNull ??
+        _locale;
 
-    _locale = Locale(
-        overriddenLocale.languageCode, overriddenLocale.countryCode ?? country);
+    _locale =
+        Locale(overriddenLocale.languageCode, overriddenLocale.countryCode);
     Moment.setGlobalLocalization(
       MomentLocalizations.byLocale(overriddenLocale.code) ??
           MomentLocalizations.enUS(),
