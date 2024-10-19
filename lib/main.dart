@@ -28,13 +28,14 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
-import "package:pie_menu/pie_menu.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,15 +81,13 @@ class FlowState extends State<Flow> {
   Locale _locale = FlowLocalizations.supportedLanguages.first;
   ThemeMode _themeMode = ThemeMode.system;
 
+  ThemeFactory _themeFactory = ThemeFactory.fromThemeName(null);
+
   ThemeMode get themeMode => _themeMode;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
       ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
       : (_themeMode == ThemeMode.dark));
-
-  PieTheme get pieTheme {
-    return useDarkTheme ? pieThemeDark : pieThemeLight;
-  }
 
   @override
   void initState() {
@@ -99,6 +98,7 @@ class FlowState extends State<Flow> {
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeMode.addListener(_reloadTheme);
+    LocalPreferences().experimentalTheme.addListener(_reloadTheme);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
       ObjectBox().invalidateAccountsTab();
@@ -113,6 +113,7 @@ class FlowState extends State<Flow> {
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
     LocalPreferences().themeMode.removeListener(_reloadTheme);
+    LocalPreferences().experimentalTheme.removeListener(_reloadTheme);
     super.dispose();
   }
 
@@ -130,16 +131,29 @@ class FlowState extends State<Flow> {
       supportedLocales: FlowLocalizations.supportedLanguages,
       locale: _locale,
       routerConfig: router,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: _themeFactory.materialTheme,
+      darkTheme: _themeFactory.materialTheme,
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
     );
   }
 
   void _reloadTheme() {
+    ({FlowColorScheme scheme, ThemeMode mode})? experimentalTheme =
+        getTheme(LocalPreferences().experimentalTheme.value);
+
+    if (experimentalTheme != null) {
+      unawaited(
+          LocalPreferences().experimentalTheme.set(lightThemes.keys.first));
+      experimentalTheme = null;
+    }
+
     setState(() {
-      _themeMode = LocalPreferences().themeMode.value ?? _themeMode;
+      _themeMode = experimentalTheme?.mode ??
+          LocalPreferences().themeMode.value ??
+          _themeMode;
+      _themeFactory = ThemeFactory(experimentalTheme?.scheme ??
+          (_themeMode == ThemeMode.dark ? darkDefault : shadeOfViolet));
     });
   }
 

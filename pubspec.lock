@@ -286,6 +286,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  dynamic_color:
+    dependency: "direct main"
+    description:
+      name: dynamic_color
+      sha256: eae98052fa6e2826bdac3dd2e921c6ce2903be15c6b7f8b6d8a5d49b5086298d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.7.0"
   equatable:
     dependency: transitive
     description:
@@ -822,10 +830,10 @@ packages:
     dependency: "direct main"
     description:
       name: local_settings
-      sha256: "968206e7928c82246b019371fda3ab62371912177a9cd58e0519c9b92166482f"
+      sha256: "075185cd021ae0df7f8743ead77cfbad33a3a8430f39f3fe340b9bd5d6943d93"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.4.0"
   logger:
     dependency: transitive
     description:

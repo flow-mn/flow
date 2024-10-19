@@ -1,7 +1,6 @@
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/main.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/navbar_theme.dart";
 import "package:flow/theme/theme.dart";
@@ -32,15 +31,15 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
           buttonOrder ??= TransactionType.values;
 
           return PieMenu(
-            theme: Flow.of(context).pieTheme.copyWith(
-                  customAngle: 90.0,
-                  customAngleDiff: 48.0,
-                  radius: 108.0,
-                  customAngleAnchor: PieAnchor.center,
-                  leftClickShowsMenu: true,
-                  rightClickShowsMenu: true,
-                  delayDuration: Duration.zero,
-                ),
+            theme: context.pieTheme.copyWith(
+              customAngle: 90.0,
+              customAngleDiff: 48.0,
+              radius: 108.0,
+              customAngleAnchor: PieAnchor.center,
+              leftClickShowsMenu: true,
+              rightClickShowsMenu: true,
+              delayDuration: Duration.zero,
+            ),
             onToggle: onToggle,
             actions: [
               for (final transactionType in buttonOrder)

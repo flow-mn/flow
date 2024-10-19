@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 
-class FlowColors extends ThemeExtension<FlowColors> {
+class FlowCustomColors extends ThemeExtension<FlowCustomColors> {
   /// Color for income
   final Color income;
 
@@ -10,19 +10,19 @@ class FlowColors extends ThemeExtension<FlowColors> {
   /// Color for labels, secondary body texts
   final Color semi;
 
-  const FlowColors({
+  const FlowCustomColors({
     required this.income,
     required this.expense,
     required this.semi,
   });
 
   @override
-  FlowColors copyWith({
+  FlowCustomColors copyWith({
     Color? income,
     Color? expense,
     Color? semi,
   }) {
-    return FlowColors(
+    return FlowCustomColors(
       income: income ?? this.income,
       expense: expense ?? this.expense,
       semi: semi ?? this.semi,
@@ -30,10 +30,10 @@ class FlowColors extends ThemeExtension<FlowColors> {
   }
 
   @override
-  FlowColors lerp(FlowColors? other, double t) {
-    if (other is! FlowColors) return this;
+  FlowCustomColors lerp(FlowCustomColors? other, double t) {
+    if (other is! FlowCustomColors) return this;
 
-    return FlowColors(
+    return FlowCustomColors(
       income: Color.lerp(income, other.income, t)!,
       expense: Color.lerp(expense, other.expense, t)!,
       semi: Color.lerp(semi, other.semi, t)!,

@@ -10,6 +10,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:latlong2/latlong.dart";
@@ -75,6 +76,8 @@ class LocalPreferences {
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
   late final JsonSettingsEntry<LatLng> lastKnownGeo;
+
+  late final PrimitiveSettingsEntry<String> experimentalTheme;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -173,6 +176,12 @@ class LocalPreferences {
       preferences: _prefs,
       fromJson: (json) => LatLng.fromJson(json),
       toJson: (data) => data.toJson(),
+    );
+
+    experimentalTheme = PrimitiveSettingsEntry<String>(
+      key: "flow.experimentalTheme",
+      preferences: _prefs,
+      initialValue: lightThemes.keys.first,
     );
 
     updateTransitiveProperties();
