@@ -144,10 +144,15 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    ({FlowColorScheme scheme, ThemeMode mode})? experimentalTheme =
-        getTheme(LocalPreferences().experimentalTheme.value);
+    final String? themeName = LocalPreferences().experimentalTheme.value;
 
-    if (experimentalTheme != null) {
+    log("[Theme] Reloading theme $themeName");
+
+    ({FlowColorScheme scheme, ThemeMode mode})? experimentalTheme =
+        getTheme(themeName);
+
+    if (experimentalTheme == null) {
+      log("[Theme] Didn't find theme for $themeName");
       unawaited(
           LocalPreferences().experimentalTheme.set(lightThemes.keys.first));
       experimentalTheme = null;

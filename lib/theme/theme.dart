@@ -1,6 +1,7 @@
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/navbar_theme.dart";
+import "package:flow/theme/pie_theme_extension.dart";
 import "package:flow/theme/text_theme.dart";
 import "package:flutter/material.dart";
 import "package:pie_menu/pie_menu.dart";
@@ -57,7 +58,7 @@ class ThemeFactory {
       fontFamily: fontFamily,
       fontFamilyFallback: fontFamilyFallback,
       visualDensity: VisualDensity.adaptivePlatformDensity,
-      brightness: Brightness.light,
+      brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       cardTheme: CardTheme(
         color: colorScheme.surface,
@@ -65,6 +66,7 @@ class ThemeFactory {
       ),
       extensions: [
         flowColorScheme.customColors,
+        PieThemeExtension(pieTheme: pieTheme),
         NavbarTheme(
           backgroundColor: colorScheme.secondary,
           activeIconColor: colorScheme.primary,

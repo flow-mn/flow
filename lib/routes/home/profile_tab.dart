@@ -31,14 +31,6 @@ class _ProfileTabState extends State<ProfileTab> {
   int _debugDiscoIndex = 0;
 
   @override
-  void dispose() {
-    if (_debugDiscoTimer != null) {
-      _debugDiscoTimer!.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       // padding: const EdgeInsets.all(16.0),
@@ -90,9 +82,11 @@ class _ProfileTabState extends State<ProfileTab> {
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(
-              title: const Text("Turn on disco"),
+              title: _debugDiscoTimer == null
+                  ? const Text("Turn on disco")
+                  : const Text("Turn off disco"),
               leading: const Icon(Symbols.party_mode_rounded),
-              onTap: () => ObjectBox().createAndPutDebugData(),
+              onTap: toggleDisco,
             ),
             ListTile(
               title: const Text("Populate objectbox"),
@@ -148,14 +142,20 @@ class _ProfileTabState extends State<ProfileTab> {
       _debugDiscoTimer!.cancel();
       _debugDiscoTimer = null;
     } else {
-      _debugDiscoTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-        unawaited(
-          LocalPreferences().experimentalTheme.set(
-                allThemes.keys.elementAt(
-                  ++_debugDiscoIndex,
-                ),
-              ),
-        );
+      _debugDiscoTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        try {
+          final newThemeName = allThemes.keys.elementAt(_debugDiscoIndex++);
+
+          unawaited(
+            LocalPreferences().experimentalTheme.set(newThemeName),
+          );
+        } catch (e) {
+          timer.cancel();
+          _debugDiscoTimer = null;
+          if (mounted) {
+            setState(() {});
+          }
+        }
       });
     }
     setState(() {});
