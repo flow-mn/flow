@@ -31,6 +31,11 @@ final Map<String, FlowColorScheme> darkThemes = {
   "dark": darkDefault, // default
 };
 
+final Map<String, FlowColorScheme> allThemes = {
+  ...lightThemes,
+  ...darkThemes,
+};
+
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {
   if (themeName == null) return null;
 

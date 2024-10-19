@@ -19,6 +19,7 @@ import "dart:async";
 import "dart:developer";
 import "dart:io";
 
+import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
@@ -119,22 +120,26 @@ class FlowState extends State<Flow> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      onGenerateTitle: (context) => "appName".t(context),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        if (flowDebugMode || Platform.isIOS)
-          GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        FlowLocalizations.delegate,
-      ],
-      supportedLocales: FlowLocalizations.supportedLanguages,
-      locale: _locale,
-      routerConfig: router,
-      theme: _themeFactory.materialTheme,
-      darkTheme: _themeFactory.materialTheme,
-      themeMode: _themeMode,
-      debugShowCheckedModeBanner: false,
+    return DynamicColorBuilder(
+      builder: (dynamicLight, dynamicDark) {
+        return MaterialApp.router(
+          onGenerateTitle: (context) => "appName".t(context),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            if (flowDebugMode || Platform.isIOS)
+              GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            FlowLocalizations.delegate,
+          ],
+          supportedLocales: FlowLocalizations.supportedLanguages,
+          locale: _locale,
+          routerConfig: router,
+          theme: _themeFactory.materialTheme,
+          darkTheme: _themeFactory.materialTheme,
+          themeMode: _themeMode,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 
