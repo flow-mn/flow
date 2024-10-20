@@ -585,6 +585,11 @@ extension AccountActions on Account {
             return ext..setRelatedTransactionUuid(uuid);
           }
 
+          if (ext.key == Transfer.keyName) {
+            // Transfer extension is handled separately
+            return ext;
+          }
+
           if (ext.relatedTransactionUuid == uuid) {
             return ext;
           }
