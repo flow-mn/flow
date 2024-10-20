@@ -513,7 +513,7 @@ extension AccountActions on Account {
       uuid: const Uuid().v4(),
       fromAccountUuid: uuid,
       toAccountUuid: targetAccount.uuid,
-      relatedTransactionUuid: toTransactionUuid,
+      relatedTransactionUuid: fromTransactionUuid,
     );
 
     final String resolvedTitle = title ??
@@ -540,7 +540,7 @@ extension AccountActions on Account {
       title: resolvedTitle,
       description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
+        transferData.copyWith(relatedTransactionUuid: toTransactionUuid),
         ...filteredExtensions,
       ],
       uuidOverride: toTransactionUuid,

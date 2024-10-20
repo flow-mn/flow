@@ -149,11 +149,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .where((transaction) => transaction.transactionDate.isAfter(now))
         .groupByDate();
 
+    final bool shouldCombineTransferIfNeeded =
+        currentFilter.accounts?.isNotEmpty != true;
+
     return GroupedTransactionList(
       controller: widget.scrollController,
       transactions: grouped,
       futureTransactions: groupedFuture,
-      shouldCombineTransferIfNeeded: currentFilter.accounts?.isNotEmpty != true,
+      shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       futureDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
         top: 0,
