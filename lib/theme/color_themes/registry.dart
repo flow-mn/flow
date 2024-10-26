@@ -1,12 +1,14 @@
 import "dart:developer";
 
-import "package:flow/theme/color_themes/dark_default.dart";
-import "package:flow/theme/color_themes/light.dart";
+import "package:flow/theme/color_themes/default_darks.dart";
+import "package:flow/theme/color_themes/default_lights.dart";
+import "package:flow/theme/color_themes/palenight.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flutter/material.dart";
 
-export "dark_default.dart";
-export "light.dart";
+export "default_darks.dart";
+export "default_lights.dart";
+export "palenight.dart";
 
 final Map<String, FlowColorScheme> lightThemes = {
   "shadeOfViolet": shadeOfViolet, // default
@@ -28,7 +30,23 @@ final Map<String, FlowColorScheme> lightThemes = {
 };
 
 final Map<String, FlowColorScheme> darkThemes = {
-  "dark": darkDefault, // default
+  "electricLavender": electricLavender,
+  "pinkQuartz": pinkQuartz,
+  "cottonCandy": cottonCandy,
+  "piglet": piglet,
+  "simplyDelicious": simplyDelicious,
+  "creamyApricot": creamyApricot,
+  "yellYellow": yellYellow,
+  "fallGreen": fallGreen,
+  "frostedMintHills": frostedMintHills,
+  "coastalTrim": coastalTrim,
+  "seafairGreen": seafairGreen,
+  "crushedIce": crushedIce,
+  "iceEffect": iceEffect,
+  "arcLight": arcLight,
+  "driedLilac": driedLilac,
+  "neonBoneyard": neonBoneyard,
+  "palenight": palenight,
 };
 
 final Map<String, FlowColorScheme> allThemes = {

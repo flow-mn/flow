@@ -163,7 +163,7 @@ class FlowState extends State<Flow> {
           LocalPreferences().themeMode.value ??
           _themeMode;
       _themeFactory = ThemeFactory(experimentalTheme?.scheme ??
-          (_themeMode == ThemeMode.dark ? darkDefault : shadeOfViolet));
+          (_themeMode == ThemeMode.dark ? electricLavender : shadeOfViolet));
     });
   }
 

@@ -31,10 +31,16 @@ class FlowColorScheme {
   final bool isDark;
   final ColorScheme? baseScheme;
 
+  final Color surface;
+  final Color onSurface;
+
   final Color primary;
   final Color? onPrimary;
   final Color secondary;
   final Color? onSecondary;
+
+  final Color? error;
+  final Color? onError;
 
   final FlowCustomColors customColors;
 
@@ -42,19 +48,29 @@ class FlowColorScheme {
 
   FlowColorScheme({
     required this.isDark,
+    required this.surface,
+    required this.onSurface,
     required this.primary,
     required this.secondary,
     required this.onSecondary,
     required this.customColors,
+    this.error,
+    this.onError,
     this.baseScheme,
     this.onPrimary,
   }) {
+    final defaultBase = (isDark ? _defaultDarkBase : _defaultLightBase);
+
     colorScheme = baseScheme ??
-        (isDark ? _defaultDarkBase : _defaultLightBase).copyWith(
+        defaultBase.copyWith(
+          surface: surface,
+          onSurface: onSurface,
           primary: primary,
           onPrimary: onPrimary,
           secondary: secondary,
           onSecondary: onSecondary,
+          error: error ?? defaultBase.error,
+          onError: onError ?? defaultBase.onError,
         );
   }
 }
