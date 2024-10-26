@@ -54,6 +54,12 @@ final Map<String, FlowColorScheme> allThemes = {
   ...darkThemes,
 };
 
+bool validateThemeName(String? themeName) {
+  if (themeName == null) return false;
+
+  return allThemes.containsKey(themeName);
+}
+
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {
   if (themeName == null) return null;
 

@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 
 final FlowColorScheme shadeOfViolet = FlowColorScheme(
+  name: "Shade of Violet",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -19,6 +20,7 @@ final FlowColorScheme shadeOfViolet = FlowColorScheme(
 ); // contrast: 5.82456471142964
 
 final FlowColorScheme blissfulBerry = FlowColorScheme(
+  name: "Blissful Berry",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -34,6 +36,7 @@ final FlowColorScheme blissfulBerry = FlowColorScheme(
 ); // contrast: 5.131551048194216
 
 final FlowColorScheme cherryPlum = FlowColorScheme(
+  name: "Cherry Plum",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -49,6 +52,7 @@ final FlowColorScheme cherryPlum = FlowColorScheme(
 ); // contrast: 5.529257614713291
 
 final FlowColorScheme crispChristmasCranberries = FlowColorScheme(
+  name: "Crisp Christmas Cranberries",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -64,6 +68,7 @@ final FlowColorScheme crispChristmasCranberries = FlowColorScheme(
 ); // contrast: 5.644652409710161
 
 final FlowColorScheme burntSienna = FlowColorScheme(
+  name: "Burnt Sienna",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -79,6 +84,7 @@ final FlowColorScheme burntSienna = FlowColorScheme(
 ); // contrast: 5.272019425653915
 
 final FlowColorScheme soilOfAvagddu = FlowColorScheme(
+  name: "Soil of Avagddu",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -94,6 +100,7 @@ final FlowColorScheme soilOfAvagddu = FlowColorScheme(
 ); // contrast: 5.3249027529793045
 
 final FlowColorScheme flagGreen = FlowColorScheme(
+  name: "Flag Green",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -109,6 +116,7 @@ final FlowColorScheme flagGreen = FlowColorScheme(
 ); // contrast: 4.4056160670194595
 
 final FlowColorScheme tropicana = FlowColorScheme(
+  name: "Tropicana",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -124,6 +132,7 @@ final FlowColorScheme tropicana = FlowColorScheme(
 ); // contrast: 4.759500600587007
 
 final FlowColorScheme toyCamouflage = FlowColorScheme(
+  name: "Toy Camouflage",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -139,6 +148,7 @@ final FlowColorScheme toyCamouflage = FlowColorScheme(
 ); // contrast: 4.872864221074725
 
 final FlowColorScheme spreadsheetGreen = FlowColorScheme(
+  name: "Spreadsheet Green",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -154,6 +164,7 @@ final FlowColorScheme spreadsheetGreen = FlowColorScheme(
 ); // contrast: 4.856003928836115
 
 final FlowColorScheme tokiwaGreen = FlowColorScheme(
+  name: "Tokiwa Green",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -169,6 +180,7 @@ final FlowColorScheme tokiwaGreen = FlowColorScheme(
 ); // contrast: 4.816518785663914
 
 final FlowColorScheme hydraTurquoise = FlowColorScheme(
+  name: "Hydra Turquoise",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -184,6 +196,7 @@ final FlowColorScheme hydraTurquoise = FlowColorScheme(
 ); // contrast: 4.6801442121694015
 
 final FlowColorScheme peacockBlue = FlowColorScheme(
+  name: "Peacock Blue",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -199,6 +212,7 @@ final FlowColorScheme peacockBlue = FlowColorScheme(
 ); // contrast: 5.179720075231227
 
 final FlowColorScheme egyptianBlue = FlowColorScheme(
+  name: "Egyptian Blue",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -214,6 +228,7 @@ final FlowColorScheme egyptianBlue = FlowColorScheme(
 ); // contrast: 7.478914206842744
 
 final FlowColorScheme bohemianBlue = FlowColorScheme(
+  name: "Bohemian Blue",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),
@@ -229,6 +244,7 @@ final FlowColorScheme bohemianBlue = FlowColorScheme(
 ); // contrast: 8.795416386639062
 
 final FlowColorScheme spaceBattleBlue = FlowColorScheme(
+  name: "Space Battle Blue",
   isDark: false,
   surface: const Color(0xfff5f6fa),
   onSurface: const Color(0xff111111),

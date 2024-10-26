@@ -3,6 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 
 final FlowColorScheme electricLavender = FlowColorScheme(
+  name: "Electric Lavender",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -18,6 +19,7 @@ final FlowColorScheme electricLavender = FlowColorScheme(
 );
 
 final FlowColorScheme pinkQuartz = FlowColorScheme(
+  name: "Pink Quartz",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -33,6 +35,7 @@ final FlowColorScheme pinkQuartz = FlowColorScheme(
 );
 
 final FlowColorScheme cottonCandy = FlowColorScheme(
+  name: "Cotton Candy",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -48,6 +51,7 @@ final FlowColorScheme cottonCandy = FlowColorScheme(
 );
 
 final FlowColorScheme piglet = FlowColorScheme(
+  name: "Piglet",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -63,6 +67,7 @@ final FlowColorScheme piglet = FlowColorScheme(
 );
 
 final FlowColorScheme simplyDelicious = FlowColorScheme(
+  name: "Simply Delicious",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -78,6 +83,7 @@ final FlowColorScheme simplyDelicious = FlowColorScheme(
 );
 
 final FlowColorScheme creamyApricot = FlowColorScheme(
+  name: "Creamy Apricot",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -93,6 +99,7 @@ final FlowColorScheme creamyApricot = FlowColorScheme(
 );
 
 final FlowColorScheme yellYellow = FlowColorScheme(
+  name: "Yell Yellow",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -108,6 +115,7 @@ final FlowColorScheme yellYellow = FlowColorScheme(
 );
 
 final FlowColorScheme fallGreen = FlowColorScheme(
+  name: "Fall Green",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -123,6 +131,7 @@ final FlowColorScheme fallGreen = FlowColorScheme(
 );
 
 final FlowColorScheme frostedMintHills = FlowColorScheme(
+  name: "Frosted Mint Hills",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -138,6 +147,7 @@ final FlowColorScheme frostedMintHills = FlowColorScheme(
 );
 
 final FlowColorScheme coastalTrim = FlowColorScheme(
+  name: "Coastal Trim",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -153,6 +163,7 @@ final FlowColorScheme coastalTrim = FlowColorScheme(
 );
 
 final FlowColorScheme seafairGreen = FlowColorScheme(
+  name: "Seafair Green",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -168,6 +179,7 @@ final FlowColorScheme seafairGreen = FlowColorScheme(
 );
 
 final FlowColorScheme crushedIce = FlowColorScheme(
+  name: "Crushed Ice",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -183,6 +195,7 @@ final FlowColorScheme crushedIce = FlowColorScheme(
 );
 
 final FlowColorScheme iceEffect = FlowColorScheme(
+  name: "Ice Effect",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -198,6 +211,7 @@ final FlowColorScheme iceEffect = FlowColorScheme(
 );
 
 final FlowColorScheme arcLight = FlowColorScheme(
+  name: "Arc Light",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -213,6 +227,7 @@ final FlowColorScheme arcLight = FlowColorScheme(
 );
 
 final FlowColorScheme driedLilac = FlowColorScheme(
+  name: "Dried Lilac",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),
@@ -228,6 +243,7 @@ final FlowColorScheme driedLilac = FlowColorScheme(
 );
 
 final FlowColorScheme neonBoneyard = FlowColorScheme(
+  name: "Neon Boneyard",
   isDark: true,
   surface: const Color(0xff141414),
   onSurface: const Color(0xfff5f6fa),

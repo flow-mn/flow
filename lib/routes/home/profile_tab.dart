@@ -86,8 +86,6 @@ class _ProfileTabState extends State<ProfileTab> {
                   ? const Text("Turn on disco")
                   : const Text("Turn off disco"),
               leading: const Icon(Symbols.party_mode_rounded),
-              onLongPress: () =>
-                  LocalPreferences().experimentalTheme.set("palenight"),
               onTap: toggleDisco,
             ),
             ListTile(
@@ -149,7 +147,7 @@ class _ProfileTabState extends State<ProfileTab> {
           final newThemeName = darkThemes.keys.elementAt(_debugDiscoIndex++);
 
           unawaited(
-            LocalPreferences().experimentalTheme.set(newThemeName),
+            LocalPreferences().themeName.set(newThemeName),
           );
         } catch (e) {
           timer.cancel();

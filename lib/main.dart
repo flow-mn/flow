@@ -98,8 +98,7 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeMode.addListener(_reloadTheme);
-    LocalPreferences().experimentalTheme.addListener(_reloadTheme);
+    LocalPreferences().themeName.addListener(_reloadTheme);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
       ObjectBox().invalidateAccountsTab();
@@ -113,8 +112,7 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeMode.removeListener(_reloadTheme);
-    LocalPreferences().experimentalTheme.removeListener(_reloadTheme);
+    LocalPreferences().themeName.removeListener(_reloadTheme);
     super.dispose();
   }
 
@@ -144,7 +142,7 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().experimentalTheme.value;
+    final String? themeName = LocalPreferences().themeName.value;
 
     log("[Theme] Reloading theme $themeName");
 
@@ -153,15 +151,12 @@ class FlowState extends State<Flow> {
 
     if (experimentalTheme == null) {
       log("[Theme] Didn't find theme for $themeName");
-      unawaited(
-          LocalPreferences().experimentalTheme.set(lightThemes.keys.first));
+      unawaited(LocalPreferences().themeName.set(lightThemes.keys.first));
       experimentalTheme = null;
     }
 
     setState(() {
-      _themeMode = experimentalTheme?.mode ??
-          LocalPreferences().themeMode.value ??
-          _themeMode;
+      _themeMode = experimentalTheme?.mode ?? _themeMode;
       _themeFactory = ThemeFactory(experimentalTheme?.scheme ??
           (_themeMode == ThemeMode.dark ? electricLavender : shadeOfViolet));
     });

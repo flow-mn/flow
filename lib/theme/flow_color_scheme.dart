@@ -28,6 +28,8 @@ const _defaultDarkBase = ColorScheme(
 );
 
 class FlowColorScheme {
+  final String name;
+
   final bool isDark;
   final ColorScheme? baseScheme;
 
@@ -54,6 +56,7 @@ class FlowColorScheme {
     required this.secondary,
     required this.onSecondary,
     required this.customColors,
+    required this.name,
     this.error,
     this.onError,
     this.baseScheme,

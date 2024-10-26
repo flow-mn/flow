@@ -3,6 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 
 final FlowColorScheme palenight = FlowColorScheme(
+  name: "Palenight",
   isDark: true,
   surface: const Color(0xff292D3E),
   onSurface: const Color(0xfff5f6fa),

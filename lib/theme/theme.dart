@@ -85,6 +85,9 @@ class ThemeFactory {
         unselectedItemColor: bottomNavigationBarItemColor.withAlpha(0x80),
         backgroundColor: colorScheme.secondary,
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surface,
+      ),
       textTheme: flowTextTheme
           .apply(
             fontFamily: fontFamily,
