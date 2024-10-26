@@ -114,7 +114,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String categoryUuid =
-          transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.category.target?.uuid ?? Namespace.nil.value;
 
       flow[categoryUuid] ??= MoneyFlow(
         associatedData: transaction.category.target,
@@ -149,7 +149,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String accountUuid =
-          transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.account.target?.uuid ?? Namespace.nil.value;
 
       flow[accountUuid] ??= MoneyFlow(
         associatedData: transaction.account.target,
@@ -158,7 +158,7 @@ extension MainActions on ObjectBox {
     }
 
     assert(
-      !flow.containsKey(Uuid.NAMESPACE_NIL),
+      !flow.containsKey(Namespace.nil.value),
       "There is no way you've managed to make a transaction without an account",
     );
 
@@ -314,7 +314,7 @@ extension TransactionActions on Transaction {
     final Query<Transaction> query = ObjectBox()
         .box<Transaction>()
         .query(Transaction_.uuid
-            .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
+            .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
         .build();
 
     try {
@@ -336,7 +336,7 @@ extension TransactionActions on Transaction {
         final Query<Transaction> relatedTransactionQuery = ObjectBox()
             .box<Transaction>()
             .query(Transaction_.uuid
-                .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
+                .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
             .build();
 
         final Transaction? relatedTransaction =
@@ -513,7 +513,7 @@ extension AccountActions on Account {
       uuid: const Uuid().v4(),
       fromAccountUuid: uuid,
       toAccountUuid: targetAccount.uuid,
-      relatedTransactionUuid: fromTransactionUuid,
+      relatedTransactionUuid: toTransactionUuid,
     );
 
     final String resolvedTitle = title ??
@@ -540,7 +540,7 @@ extension AccountActions on Account {
       title: resolvedTitle,
       description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: toTransactionUuid),
+        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
         ...filteredExtensions,
       ],
       uuidOverride: toTransactionUuid,
@@ -583,6 +583,11 @@ extension AccountActions on Account {
 
           if (ext.relatedTransactionUuid == null) {
             return ext..setRelatedTransactionUuid(uuid);
+          }
+
+          if (ext.key == Transfer.keyName) {
+            // Transfer extension is handled separately
+            return ext;
           }
 
           if (ext.relatedTransactionUuid == uuid) {
