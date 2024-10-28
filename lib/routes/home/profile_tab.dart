@@ -15,6 +15,7 @@ import "package:flow/widgets/home/prefs/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:simple_icons/simple_icons.dart";
 
 class ProfileTab extends StatefulWidget {
@@ -26,6 +27,7 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   bool _debugDbBusy = false;
+  bool _debugPrefsBusy = false;
 
   Timer? _debugDiscoTimer;
   int _debugDiscoIndex = 0;
@@ -102,6 +104,11 @@ class _ProfileTabState extends State<ProfileTab> {
               title:
                   Text(_debugDbBusy ? "Clearing database" : "Clear objectbox"),
               onTap: () => resetDatabase(),
+              leading: const Icon(Symbols.adb_rounded),
+            ),
+            ListTile(
+              title: Text("Clear Shared Preferences"),
+              onTap: () => resetPrefs(),
               leading: const Icon(Symbols.adb_rounded),
             ),
             ListTile(
@@ -191,6 +198,44 @@ class _ProfileTabState extends State<ProfileTab> {
       }
     } finally {
       _debugDbBusy = false;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void resetPrefs() async {
+    if (_debugPrefsBusy) return;
+
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(
+        title: const Text("[dev] Clear Shared Preferences?"),
+        actions: [
+          Button(
+            onTap: () => context.pop(true),
+            child: const Text("Confirm clear"),
+          ),
+          Button(
+            onTap: () => context.pop(false),
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
+
+    setState(() {
+      _debugPrefsBusy = true;
+    });
+
+    try {
+      if (confirm == true) {
+        final instance = await SharedPreferences.getInstance();
+        await instance.clear();
+      }
+    } finally {
+      _debugPrefsBusy = false;
 
       if (mounted) {
         setState(() {});

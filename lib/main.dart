@@ -18,6 +18,7 @@
 import "dart:async";
 import "dart:developer";
 import "dart:io";
+import "dart:ui";
 
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
@@ -87,7 +88,7 @@ class FlowState extends State<Flow> {
   ThemeMode get themeMode => _themeMode;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
-      ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
+      ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
       : (_themeMode == ThemeMode.dark));
 
   @override
