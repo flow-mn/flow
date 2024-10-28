@@ -1,12 +1,17 @@
 import "package:flow/entity/transaction.dart";
-import "package:flow/theme/flow_colors.dart";
+import "package:flow/theme/flow_custom_colors.dart";
+import "package:flow/theme/pie_theme_extension.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:pie_menu/pie_menu.dart";
 
 extension ThemeAccessor on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
-  FlowColors get flowColors => Theme.of(this).extension<FlowColors>()!;
+  FlowCustomColors get flowColors =>
+      Theme.of(this).extension<FlowCustomColors>()!;
+  PieTheme get pieTheme =>
+      Theme.of(this).extension<PieThemeExtension>()!.pieTheme;
 }
 
 extension TextStyleHelper on TextStyle {
