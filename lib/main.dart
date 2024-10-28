@@ -142,6 +142,8 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
+    final ThemeMode legacyThemeMode =
+        LocalPreferences().themeMode.value ?? ThemeMode.system;
     final String? themeName = LocalPreferences().themeName.value;
 
     log("[Theme] Reloading theme $themeName");
@@ -150,15 +152,28 @@ class FlowState extends State<Flow> {
         getTheme(themeName);
 
     if (experimentalTheme == null) {
+      final bool fallbackToDarkTheme =
+          switch ((legacyThemeMode, useDarkTheme)) {
+        (ThemeMode.system, true) => true,
+        (ThemeMode.system, false) => true,
+        (ThemeMode.dark, _) => true,
+        (ThemeMode.light, _) => false
+      };
+
       log("[Theme] Didn't find theme for $themeName");
-      unawaited(LocalPreferences().themeName.set(lightThemes.keys.first));
-      experimentalTheme = null;
+      unawaited(
+        LocalPreferences()
+            .themeName
+            .set((fallbackToDarkTheme ? darkThemes : lightThemes).keys.first),
+      );
     }
 
     setState(() {
-      _themeMode = experimentalTheme?.mode ?? _themeMode;
-      _themeFactory = ThemeFactory(experimentalTheme?.scheme ??
-          (_themeMode == ThemeMode.dark ? electricLavender : shadeOfViolet));
+      _themeMode = experimentalTheme?.mode ?? legacyThemeMode;
+      _themeFactory = ThemeFactory(
+        experimentalTheme?.scheme ??
+            (useDarkTheme ? electricLavender : shadeOfViolet),
+      );
     });
   }
 
