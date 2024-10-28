@@ -1,5 +1,13 @@
 # Changelog
 
+## Beta 0.7.2
+
+* Added themes
+
+## Beta 0.7.1
+
+* Fixed transfer transactions
+
 ## Beta 0.7.0
 
 * Added an option to choose location on a map

@@ -19,6 +19,7 @@ import "dart:async";
 import "dart:developer";
 import "dart:io";
 
+import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
@@ -28,13 +29,14 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
-import "package:pie_menu/pie_menu.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,15 +82,13 @@ class FlowState extends State<Flow> {
   Locale _locale = FlowLocalizations.supportedLanguages.first;
   ThemeMode _themeMode = ThemeMode.system;
 
+  ThemeFactory _themeFactory = ThemeFactory.fromThemeName(null);
+
   ThemeMode get themeMode => _themeMode;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
       ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark)
       : (_themeMode == ThemeMode.dark));
-
-  PieTheme get pieTheme {
-    return useDarkTheme ? pieThemeDark : pieThemeLight;
-  }
 
   @override
   void initState() {
@@ -98,7 +98,7 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeMode.addListener(_reloadTheme);
+    LocalPreferences().themeName.addListener(_reloadTheme);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
       ObjectBox().invalidateAccountsTab();
@@ -112,34 +112,53 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeMode.removeListener(_reloadTheme);
+    LocalPreferences().themeName.removeListener(_reloadTheme);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      onGenerateTitle: (context) => "appName".t(context),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        if (flowDebugMode || Platform.isIOS)
-          GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        FlowLocalizations.delegate,
-      ],
-      supportedLocales: FlowLocalizations.supportedLanguages,
-      locale: _locale,
-      routerConfig: router,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: _themeMode,
-      debugShowCheckedModeBanner: false,
+    return DynamicColorBuilder(
+      builder: (dynamicLight, dynamicDark) {
+        return MaterialApp.router(
+          onGenerateTitle: (context) => "appName".t(context),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            if (flowDebugMode || Platform.isIOS)
+              GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            FlowLocalizations.delegate,
+          ],
+          supportedLocales: FlowLocalizations.supportedLanguages,
+          locale: _locale,
+          routerConfig: router,
+          theme: _themeFactory.materialTheme,
+          darkTheme: _themeFactory.materialTheme,
+          themeMode: _themeMode,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 
   void _reloadTheme() {
+    final String? themeName = LocalPreferences().themeName.value;
+
+    log("[Theme] Reloading theme $themeName");
+
+    ({FlowColorScheme scheme, ThemeMode mode})? experimentalTheme =
+        getTheme(themeName);
+
+    if (experimentalTheme == null) {
+      log("[Theme] Didn't find theme for $themeName");
+      unawaited(LocalPreferences().themeName.set(lightThemes.keys.first));
+      experimentalTheme = null;
+    }
+
     setState(() {
-      _themeMode = LocalPreferences().themeMode.value ?? _themeMode;
+      _themeMode = experimentalTheme?.mode ?? _themeMode;
+      _themeFactory = ThemeFactory(experimentalTheme?.scheme ??
+          (_themeMode == ThemeMode.dark ? electricLavender : shadeOfViolet));
     });
   }
 

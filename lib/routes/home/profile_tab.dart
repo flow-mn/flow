@@ -1,8 +1,12 @@
+import "dart:async";
+
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/sync/import.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -22,6 +26,9 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   bool _debugDbBusy = false;
+
+  Timer? _debugDiscoTimer;
+  int _debugDiscoIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +82,13 @@ class _ProfileTabState extends State<ProfileTab> {
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(
+              title: _debugDiscoTimer == null
+                  ? const Text("Turn on disco")
+                  : const Text("Turn off disco"),
+              leading: const Icon(Symbols.party_mode_rounded),
+              onTap: toggleDisco,
+            ),
+            ListTile(
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
               onTap: () => ObjectBox().createAndPutDebugData(),
@@ -121,6 +135,30 @@ class _ProfileTabState extends State<ProfileTab> {
         ],
       ),
     );
+  }
+
+  void toggleDisco() {
+    if (_debugDiscoTimer != null) {
+      _debugDiscoTimer!.cancel();
+      _debugDiscoTimer = null;
+    } else {
+      _debugDiscoTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        try {
+          final newThemeName = darkThemes.keys.elementAt(_debugDiscoIndex++);
+
+          unawaited(
+            LocalPreferences().themeName.set(newThemeName),
+          );
+        } catch (e) {
+          timer.cancel();
+          _debugDiscoTimer = null;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+    }
+    setState(() {});
   }
 
   void resetDatabase() async {

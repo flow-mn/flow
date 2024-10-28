@@ -10,7 +10,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flutter/material.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
@@ -60,7 +60,6 @@ class LocalPreferences {
 
   late final BoolSettingsEntry completedInitialSetup;
 
-  late final ThemeModeSettingsEntry themeMode;
   late final LocaleSettingsEntry localeOverride;
 
   /// Whether the user uses only one currency across accounts
@@ -75,6 +74,8 @@ class LocalPreferences {
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
   late final JsonSettingsEntry<LatLng> lastKnownGeo;
+
+  late final PrimitiveSettingsEntry<String> themeName;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -127,11 +128,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeMode = ThemeModeSettingsEntry(
-      key: "flow.themeMode",
-      preferences: _prefs,
-      initialValue: ThemeMode.system,
-    );
     localeOverride = LocaleSettingsEntry(
       key: "flow.localeOverride",
       preferences: _prefs,
@@ -173,6 +169,12 @@ class LocalPreferences {
       preferences: _prefs,
       fromJson: (json) => LatLng.fromJson(json),
       toJson: (data) => data.toJson(),
+    );
+
+    themeName = PrimitiveSettingsEntry<String>(
+      key: "flow.themeName",
+      preferences: _prefs,
+      initialValue: lightThemes.keys.first,
     );
 
     updateTransitiveProperties();

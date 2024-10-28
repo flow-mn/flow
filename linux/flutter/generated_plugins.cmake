@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_drop
+  dynamic_color
   file_saver
   file_selector_linux
   objectbox_flutter_libs
