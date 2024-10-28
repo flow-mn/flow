@@ -2,7 +2,8 @@
 
 ## Beta 0.7.2
 
-* Added themes
+* Added themes, closes [#105](https://github.com/flow-mn/flow/issues/105)
+* Add transaction description, type, and lat/long for CSV exports, closes [#203](https://github.com/flow-mn/flow/issues/203)
 
 ## Beta 0.7.1
 
