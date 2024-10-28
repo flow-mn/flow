@@ -11,6 +11,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
+import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
@@ -75,6 +76,7 @@ class LocalPreferences {
 
   late final JsonSettingsEntry<LatLng> lastKnownGeo;
 
+  late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
 
   LocalPreferences._internal(this._prefs) {
@@ -171,6 +173,11 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
 
+    themeMode = ThemeModeSettingsEntry(
+      key: "flow.themeMode",
+      preferences: _prefs,
+      initialValue: ThemeMode.system,
+    );
     themeName = PrimitiveSettingsEntry<String>(
       key: "flow.themeName",
       preferences: _prefs,
