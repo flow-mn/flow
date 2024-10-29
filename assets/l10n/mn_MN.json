@@ -82,6 +82,7 @@
     "account.delete": "Дансыг устгах",
     "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
     "account.noAccounts": "Танд үүсгэсэн данс алга байна!",
+    "account.thisMonth": "Энэ сар",
 
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",

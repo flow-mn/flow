@@ -82,6 +82,7 @@
     "account.delete": "Delete account",
     "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible!",
     "account.noAccounts": "You don't have any accounts!",
+    "account.thisMonth": "This month",
 
     "transaction": "Transaction",
     "transaction.new": "New transaction",

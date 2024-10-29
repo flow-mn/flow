@@ -82,6 +82,7 @@
     "account.delete": "Elimina conto",
     "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile!",
     "account.noAccounts": "Non hai nessun conto!",
+    "account.thisMonth": "Questo mese",
 
     "transaction": "Transazione",
     "transaction.new": "Nuova transazione",
