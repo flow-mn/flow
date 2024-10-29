@@ -1,5 +1,9 @@
 # Changelog
 
+## Beta next
+
+* Fixed account card "this month" summary
+
 ## Beta 0.7.2
 
 * Added themes, closes [#105](https://github.com/flow-mn/flow/issues/105)
