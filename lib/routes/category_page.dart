@@ -107,8 +107,8 @@ class _CategoryPageState extends State<CategoryPage> {
             TransactionsInfo(
               count: transactions?.length,
               flow: rates == null
-                  ? flow.getFlowByCurrency(primaryCurrency).amount
-                  : flow.getTotalFlow(rates, primaryCurrency).amount,
+                  ? flow.getFlowByCurrency(primaryCurrency)
+                  : flow.getTotalFlow(rates, primaryCurrency),
               icon: category.icon,
             ),
             const SizedBox(height: 12.0),
@@ -117,8 +117,8 @@ class _CategoryPageState extends State<CategoryPage> {
                 Expanded(
                   child: FlowCard(
                     flow: rates == null
-                        ? flow.getIncomeByCurrency(primaryCurrency).amount
-                        : flow.getTotalIncome(rates, primaryCurrency).amount,
+                        ? flow.getIncomeByCurrency(primaryCurrency)
+                        : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
                   ),
                 ),
@@ -126,8 +126,8 @@ class _CategoryPageState extends State<CategoryPage> {
                 Expanded(
                   child: FlowCard(
                     flow: rates == null
-                        ? flow.getExpenseByCurrency(primaryCurrency).amount
-                        : flow.getTotalExpense(rates, primaryCurrency).amount,
+                        ? flow.getExpenseByCurrency(primaryCurrency)
+                        : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
                   ),
                 ),

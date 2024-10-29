@@ -1,3 +1,4 @@
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
@@ -82,7 +83,7 @@ class AccountCard extends StatelessWidget {
                         style: context.textTheme.titleSmall,
                       ),
                       Text(
-                        account.balance.formatMoney(currency: account.currency),
+                        account.balance.formatMoney(),
                         style: context.textTheme.displaySmall,
                       ),
                     ],
@@ -112,17 +113,13 @@ class AccountCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      incomeSum.formatMoney(
-                        currency: account.currency,
-                      ),
+                      Money(incomeSum, account.currency).formatMoney(),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),
                   Expanded(
                     child: Text(
-                      expenseSum.formatMoney(
-                        currency: account.currency,
-                      ),
+                      Money(expenseSum, account.currency).formatMoney(),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),

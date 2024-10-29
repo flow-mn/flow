@@ -96,14 +96,20 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         final DateTime now = DateTime.now().startOfNextMinute();
         final List<Transaction>? transactions = snapshot.data;
 
-        final Widget header = DefaultTransactionsFilterHead(
-          defaultFilter: defaultFilter,
-          current: currentFilter,
-          onChanged: (value) {
-            setState(() {
-              currentFilter = value;
-            });
-          },
+        final Widget header = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DefaultTransactionsFilterHead(
+              defaultFilter: defaultFilter,
+              current: currentFilter,
+              onChanged: (value) {
+                setState(() {
+                  currentFilter = value;
+                });
+              },
+            ),
+            const SizedBox(height: 12.0),
+          ],
         );
 
         return Column(

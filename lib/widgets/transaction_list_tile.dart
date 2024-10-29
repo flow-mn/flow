@@ -110,8 +110,7 @@ class TransactionListTile extends StatelessWidget {
 
   Widget _buildAmountText(BuildContext context) {
     return Text(
-      transaction.amount.formatMoney(
-        currency: transaction.currency,
+      transaction.money.formatMoney(
         takeAbsoluteValue: transaction.isTransfer && combineTransfers,
       ),
       style: context.textTheme.bodyLarge?.copyWith(

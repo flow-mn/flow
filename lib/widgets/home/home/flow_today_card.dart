@@ -1,6 +1,8 @@
+import "package:flow/data/money.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/home/home/analytics_card.dart";
 import "package:flutter/material.dart";
@@ -13,6 +15,8 @@ class FlowTodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     final double flow = transactions == null
         ? 0
         : transactions!
@@ -40,7 +44,7 @@ class FlowTodayCard extends StatelessWidget {
             ),
             Flexible(
               child: Text(
-                flow.moneyCompact,
+                Money(flow, primaryCurrency).moneyCompact,
                 style: context.textTheme.displaySmall,
               ),
             ),
