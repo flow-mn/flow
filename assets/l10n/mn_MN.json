@@ -191,7 +191,7 @@
     "tabs.home.transactionsCount": "{count} гүйлгээ",
     "tabs.home.last7days": "Сүүлийн 7 хоног",
     "tabs.home.totalBalance": "Нийт үлдэгдэл",
-    "tabs.home.flowToday": "Өнөөдөр",
+    "tabs.home.flow": "Урсгал",
 
     "tabs.stats": "Тоо",
     "tabs.stats.timeRange.select": "Хугацаа сонгох",
@@ -350,5 +350,7 @@
     "error.sync.exportFailed": "Нөөцлөх явцад алдаа гарлаа, хөгжүүлэгчид хандана уу.",
     "error.sync.fileDeleteFailed": "Нөөц устгах үед алдаа гарлаа",
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу",
-    "error.url.cannotOpen": "Холбоосыг нээхэд алдаа гарлаа"
+    "error.url.cannotOpen": "Холбоосыг нээхэд алдаа гарлаа",
+    "error.exchangeRates.inaccurateDataDueToMissingRates": "Ханшийн мэдээлэл татахад асуудал гарсан тул гүйлгээний мэдээлэл зөрөх магадлалтай",
+    "error.exchangeRates.cannotFetch": "Мэдээлэл татахад алдаа гарлаа. Холболтоо шалгаад дахин оролдоно уу."
 }

@@ -191,7 +191,7 @@
     "tabs.home.transactionsCount": "{count} transazioni",
     "tabs.home.last7days": "Ultimi 7 giorni",
     "tabs.home.totalBalance": "Saldo totale",
-    "tabs.home.flowToday": "Movimenti di oggi",
+    "tabs.home.flow": "Flusso",
 
     "tabs.stats": "Statistiche",
     "tabs.stats.timeRange.select": "Seleziona intervallo",
@@ -350,5 +350,7 @@
     "error.sync.exportFailed": "Impossibile esportare, si prega di contattare lo sviluppatore.",
     "error.sync.fileDeleteFailed": "Impossibile eliminare il file",
     "error.transaction.missingAccount": "Selezionare un account",
-    "error.url.cannotOpen": "Impossibile aprire il collegamento"
+    "error.url.cannotOpen": "Impossibile aprire il collegamento",
+    "error.exchangeRates.inaccurateDataDueToMissingRates": "Impossibile recuperare i tassi di cambio, i dati delle transazioni potrebbero non essere completamente accurati.",
+    "error.exchangeRates.cannotFetch": "Impossibile recuperare i dati, si prega di verificare la connessione internet."
 }

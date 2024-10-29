@@ -191,7 +191,7 @@
     "tabs.home.transactionsCount": "{count} transactions",
     "tabs.home.last7days": "Last 7 days",
     "tabs.home.totalBalance": "Total balance",
-    "tabs.home.flowToday": "Flow today",
+    "tabs.home.flow": "Flow",
 
     "tabs.stats": "Stats",
     "tabs.stats.timeRange.select": "Select range",
@@ -350,5 +350,7 @@
     "error.sync.exportFailed": "Unable to export, please contact developer.",
     "error.sync.fileDeleteFailed": "An error occured during backup deletion",
     "error.transaction.missingAccount": "Please select an account",
-    "error.url.cannotOpen": "Can't open the link"
+    "error.url.cannotOpen": "Can't open the link",
+    "error.exchangeRates.inaccurateDataDueToMissingRates": "Failed to fetch exchange rates, transaction data might not be fully accurate",
+    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection."
 }

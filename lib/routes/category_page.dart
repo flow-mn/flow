@@ -15,6 +15,7 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/transactions_date_header.dart";
 import "package:flow/widgets/no_result.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -96,6 +97,8 @@ class _CategoryPageState extends State<CategoryPage> {
 
         const double firstHeaderTopPadding = 0.0;
 
+        final bool missingRates = rates == null;
+
         final Widget header = Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -116,7 +119,7 @@ class _CategoryPageState extends State<CategoryPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: rates == null
+                    flow: missingRates
                         ? flow.getIncomeByCurrency(primaryCurrency)
                         : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
@@ -125,7 +128,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: rates == null
+                    flow: missingRates
                         ? flow.getExpenseByCurrency(primaryCurrency)
                         : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
@@ -133,6 +136,10 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               ],
             ),
+            if (missingRates) ...[
+              const SizedBox(height: 12.0),
+              RatesMissingWarning(),
+            ],
           ],
         );
 
