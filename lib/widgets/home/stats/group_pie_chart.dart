@@ -5,6 +5,7 @@ import "package:fl_chart/fl_chart.dart";
 import "package:flow/data/chart_data.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
@@ -47,10 +48,10 @@ class GroupPieChart<T> extends StatefulWidget {
 class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
   late Map<String, ChartData<T>> data;
 
-  double get totalValue {
-    return data.values.fold<double>(
-      0.0,
-      (previousValue, element) => previousValue + element.money.amount,
+  Money get totalAmount {
+    return data.values.fold<Money>(
+      Money(0, data.values.first.money.currency),
+      (previousValue, element) => previousValue + element.money,
     );
   }
 
@@ -76,7 +77,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         selectedKey == null ? null : data[selectedKey!];
 
     final String selectedSectionTotal =
-        selectedSection?.money.amount.abs().formatMoney() ?? "-";
+        selectedSection?.money.abs().formatMoney() ?? "-";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -87,7 +88,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
           style: context.textTheme.labelMedium,
         ),
         Text(
-          totalValue.formatMoney(),
+          totalAmount.formatMoney(),
           style: context.textTheme.headlineMedium,
         ),
         Padding(
@@ -219,7 +220,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
               data.associatedData,
               color: color,
               backgroundColor: backgroundColor,
-              percent: data.displayTotal / totalValue,
+              percent: data.displayTotal / totalAmount.amount,
             )
           : null,
       badgePositionPercentageOffset: 0.8,

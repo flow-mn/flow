@@ -207,6 +207,7 @@ class _StatsTabState extends State<StatsTab>
           ChartData<T>(
             key: entry.key,
             money: cache[entry.key]!,
+            currency: primaryCurrency,
             associatedData: entry.value.associatedData,
           ),
         ),

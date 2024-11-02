@@ -28,7 +28,7 @@ class TotalBalanceCard extends StatelessWidget {
             ),
             Flexible(
               child: Text(
-                ObjectBox().getTotalBalance().moneyCompact,
+                ObjectBox().getPrimaryCurrencyGrandTotal().moneyCompact,
                 style: context.textTheme.displaySmall,
               ),
             ),

@@ -49,6 +49,38 @@ final Map<String, FlowColorScheme> darkThemes = {
   "palenight": palenight,
 };
 
+final Map<String, String> lightDarkThemeMapping = {
+  "shadeOfViolet": "electricLavender",
+  "blissfulBerry": "pinkQuartz",
+  "cherryPlum": "cottonCandy",
+  "crispChristmasCranberries": "piglet",
+  "burntSienna": "simplyDelicious",
+  "soilOfAvagddu": "creamyApricot",
+  "flagGreen": "yellYellow",
+  "tropicana": "fallGreen",
+  "toyCamouflage": "frostedMintHills",
+  "spreadsheetGreen": "coastalTrim",
+  "tokiwaGreen": "seafairGreen",
+  "hydraTurquoise": "crushedIce",
+  "peacockBlue": "iceEffect",
+  "egyptianBlue": "arcLight",
+  "bohemianBlue": "driedLilac",
+  "spaceBattleBlue": "neonBoneyard",
+};
+
+String? reverseThemeMode(String themeName) {
+  if (lightThemes.containsKey(themeName)) {
+    return lightDarkThemeMapping[themeName];
+  } else if (darkThemes.containsKey(themeName)) {
+    return lightDarkThemeMapping.entries
+        .where((entry) => entry.value == themeName)
+        .firstOrNull
+        ?.key;
+  }
+
+  return null;
+}
+
 final Map<String, FlowColorScheme> allThemes = {
   ...lightThemes,
   ...darkThemes,
@@ -58,6 +90,12 @@ bool validateThemeName(String? themeName) {
   if (themeName == null) return false;
 
   return allThemes.containsKey(themeName);
+}
+
+bool isThemeDark(String? themeName) {
+  if (themeName == null) return false;
+
+  return darkThemes.containsKey(themeName);
 }
 
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {

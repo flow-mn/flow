@@ -2,6 +2,7 @@ import "dart:developer";
 import "dart:io";
 
 import "package:flow/constants.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -169,6 +170,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -222,9 +225,11 @@ class _TransactionPageState extends State<TransactionPage> {
                         onTap: inputAmount,
                         child: Center(
                           child: Text(
-                            _amount.formatMoney(
-                              currency: _selectedAccount?.currency,
-                            ),
+                            Money(
+                                    _amount,
+                                    _selectedAccount?.currency ??
+                                        primaryCurrency)
+                                .formatMoney(),
                             style: context.textTheme.displayMedium,
                           ),
                         ),
@@ -247,9 +252,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             "transaction.edit.selectAccount".t(context)),
                         subtitle: _selectedAccount == null
                             ? null
-                            : Text(_selectedAccount!.balance.formatMoney(
-                                currency: _selectedAccount!.currency,
-                              )),
+                            : Text(_selectedAccount!.balance.formatMoney()),
                         onTap: () => selectAccount(),
                         trailing: _selectedAccount == null
                             ? const Icon(Symbols.chevron_right)
@@ -274,10 +277,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           subtitle: _selectedAccountTransferTo == null
                               ? null
                               : Text(_selectedAccountTransferTo!.balance
-                                  .formatMoney(
-                                  currency:
-                                      _selectedAccountTransferTo!.currency,
-                                )),
+                                  .formatMoney()),
                           onTap: () => selectAccountTransferTo(),
                           trailing: _selectedAccountTransferTo == null
                               ? const Icon(Symbols.chevron_right)

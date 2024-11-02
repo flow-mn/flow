@@ -57,7 +57,7 @@ class AccountPresetCard extends StatelessWidget {
                         ),
                         Text(
                           account.balance
-                              .formatMoney(currency: account.currency),
+                              .formatMoney(),
                           style: context.textTheme.displaySmall,
                         ),
                       ],

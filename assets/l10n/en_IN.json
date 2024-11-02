@@ -82,6 +82,7 @@
     "account.delete": "Delete account",
     "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible!",
     "account.noAccounts": "You don't have any accounts!",
+    "account.thisMonth": "This month",
 
     "transaction": "Transaction",
     "transaction.new": "New transaction",
@@ -150,6 +151,9 @@
     "preferences.theme.choose": "Select a theme",
     "preferences.theme.light": "Light",
     "preferences.theme.dark": "Dark",
+    "preferences.theme.other": "Other themes",
+    "preferences.theme.themeChangesAppIcon": "App icon follows theme",
+    "preferences.theme.enableDynamicTheme": "Dynamic theme",
     "preferences.numpad": "Numpad",
     "preferences.numpad.layout": "Numpad layout",
     "preferences.numpad.layout.classic": "Classic",
@@ -190,7 +194,7 @@
     "tabs.home.transactionsCount": "{count} transactions",
     "tabs.home.last7days": "Last 7 days",
     "tabs.home.totalBalance": "Total balance",
-    "tabs.home.flowToday": "Flow today",
+    "tabs.home.flow": "Flow",
 
     "tabs.stats": "Stats",
     "tabs.stats.timeRange.select": "Select range",
@@ -349,5 +353,7 @@
     "error.sync.exportFailed": "Unable to export, please contact developer.",
     "error.sync.fileDeleteFailed": "An error occured during backup deletion",
     "error.transaction.missingAccount": "Please select an account",
-    "error.url.cannotOpen": "Can't open the link"
+    "error.url.cannotOpen": "Can't open the link",
+    "error.exchangeRates.inaccurateDataDueToMissingRates": "Failed to fetch exchange rates, transaction data might not be fully accurate",
+    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection."
 }

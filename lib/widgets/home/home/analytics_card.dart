@@ -4,11 +4,15 @@ import "package:flutter/material.dart";
 class AnalyticsCard extends StatelessWidget {
   final Widget child;
 
-  static const borderRadius = BorderRadius.all(
-    Radius.circular(24.0),
-  );
+  final BorderRadius borderRadius;
 
-  const AnalyticsCard({super.key, required this.child});
+  const AnalyticsCard({
+    super.key,
+    required this.child,
+    this.borderRadius = const BorderRadius.all(
+      Radius.circular(16.0),
+    ),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,7 @@ class AnalyticsCard extends StatelessWidget {
         borderRadius: borderRadius,
         child: child,
       ),
-      shape: const RoundedRectangleBorder(borderRadius: borderRadius),
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
     );
   }
 }
