@@ -3,6 +3,7 @@
 ## Beta next
 
 * Fixed account card "this month" summary
+* Added new theme selector
 
 ## Beta 0.7.2
 
