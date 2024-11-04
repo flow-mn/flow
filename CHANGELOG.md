@@ -4,6 +4,7 @@
 
 * Fixed account card "this month" summary
 * Added new theme selector
+* Added icons for each color (ios exclusive)
 
 ## Beta 0.7.2
 

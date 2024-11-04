@@ -1,6 +1,7 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/theme_petal_selector.dart";
 import "package:flutter/material.dart";
@@ -50,12 +51,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               //   value: themeChangesAppIcon,
               //   onChanged: changeThemeChangesAppIcon,
               //   secondary: Icon(Symbols.photo_prints_rounded),
+              //   activeColor: context.colorScheme.primary,
               // ),
               // CheckboxListTile.adaptive(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
               //   onChanged: changeEnableDynamicTheme,
               //   secondary: Icon(Symbols.palette),
+              //   activeColor: context.colorScheme.primary,
               // ),
               const SizedBox(height: 16.0),
               ListHeader(
@@ -66,6 +69,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 value: "palenight",
                 groupValue: currentTheme,
                 onChanged: (value) => handleChange(value),
+                activeColor: context.colorScheme.primary,
               ),
             ],
           ),
