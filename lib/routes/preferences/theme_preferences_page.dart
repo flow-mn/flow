@@ -5,6 +5,7 @@ import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/theme_petal_selector.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 // import "package:material_symbols_icons/symbols.dart";
 
 class ThemePreferencesPage extends StatefulWidget {
@@ -27,8 +28,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
-    // final bool themeChangesAppIcon =
-    // LocalPreferences().themeChangesAppIcon.get();
+    final bool themeChangesAppIcon =
+        LocalPreferences().themeChangesAppIcon.get();
     // final bool enableDynamicTheme = LocalPreferences().enableDynamicTheme.get();
 
     return Scaffold(
@@ -45,14 +46,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                   updateOnHover: true,
                 ),
               ),
-              // const SizedBox(height: 16.0),
-              // CheckboxListTile.adaptive(
-              //   title: Text("preferences.theme.themeChangesAppIcon".t(context)),
-              //   value: themeChangesAppIcon,
-              //   onChanged: changeThemeChangesAppIcon,
-              //   secondary: Icon(Symbols.photo_prints_rounded),
-              //   activeColor: context.colorScheme.primary,
-              // ),
+              const SizedBox(height: 16.0),
+              CheckboxListTile.adaptive(
+                title: Text("preferences.theme.themeChangesAppIcon".t(context)),
+                value: themeChangesAppIcon,
+                onChanged: changeThemeChangesAppIcon,
+                secondary: Icon(Symbols.photo_prints_rounded),
+                activeColor: context.colorScheme.primary,
+              ),
               // CheckboxListTile.adaptive(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
@@ -78,13 +79,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     );
   }
 
-  void changeThemeChangesAppIcon(bool? newValue) {
+  void changeThemeChangesAppIcon(bool? newValue) async {
     if (newValue == null) return;
     if (appIconBusy) return;
 
     try {
       appIconBusy = true;
-      LocalPreferences().themeChangesAppIcon.set(newValue);
+      await LocalPreferences().themeChangesAppIcon.set(newValue);
+      trySetThemeIcon(newValue ? LocalPreferences().getCurrentTheme() : null);
     } catch (e) {
       // Silent fail. TODO @sadespresso
     } finally {
@@ -118,6 +120,9 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     try {
       await LocalPreferences().themeName.set(name);
+      if (LocalPreferences().themeChangesAppIcon.get()) {
+        trySetThemeIcon(name);
+      }
     } finally {
       busy = false;
 

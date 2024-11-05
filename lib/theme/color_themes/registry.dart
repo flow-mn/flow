@@ -1,10 +1,12 @@
 import "dart:developer";
+import "dart:io";
 
 import "package:flow/theme/color_themes/default_darks.dart";
 import "package:flow/theme/color_themes/default_lights.dart";
 import "package:flow/theme/color_themes/palenight.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flutter/material.dart";
+import "package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart";
 
 export "default_darks.dart";
 export "default_lights.dart";
@@ -46,6 +48,9 @@ final Map<String, FlowColorScheme> darkThemes = {
   "arcLight": arcLight,
   "driedLilac": driedLilac,
   "neonBoneyard": neonBoneyard,
+};
+
+final Map<String, FlowColorScheme> otherThemes = {
   "palenight": palenight,
 };
 
@@ -84,6 +89,7 @@ String? reverseThemeMode(String themeName) {
 final Map<String, FlowColorScheme> allThemes = {
   ...lightThemes,
   ...darkThemes,
+  ...otherThemes,
 };
 
 bool validateThemeName(String? themeName) {
@@ -101,12 +107,27 @@ bool isThemeDark(String? themeName) {
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {
   if (themeName == null) return null;
 
-  final light = lightThemes[themeName];
-  if (light != null) return (scheme: light, mode: ThemeMode.light);
+  final FlowColorScheme? scheme = allThemes[themeName];
 
-  final dark = darkThemes[themeName];
-  if (dark != null) return (scheme: dark, mode: ThemeMode.dark);
+  if (scheme == null) {
+    log("Unknown theme: $themeName");
+    return null;
+  }
 
-  log("Unknown theme: $themeName");
-  return null;
+  final mode = scheme.isDark ? ThemeMode.dark : ThemeMode.light;
+
+  return (scheme: scheme, mode: mode);
+}
+
+void trySetThemeIcon(String? name) async {
+  name ??= "shadeOfViolet";
+
+  if (!Platform.isIOS) return;
+  if (!lightThemes.containsKey(name) && !darkThemes.containsKey(name)) return;
+
+  try {
+    await FlutterDynamicIconPlus.setAlternateIconName(iconName: name);
+  } catch (e) {
+    log("Failed to set app icon: $e");
+  }
 }
