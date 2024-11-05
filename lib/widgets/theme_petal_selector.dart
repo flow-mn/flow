@@ -6,7 +6,6 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/theme_petal_selector/theme_petal_painter.dart";
 import "package:flutter/material.dart";
-import "package:flutter/scheduler.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class ThemePetalSelector extends StatefulWidget {
@@ -24,8 +23,8 @@ class ThemePetalSelector extends StatefulWidget {
     this.playInitialAnimation = true,
     this.updateOnHover = false,
     this.maxSize = 400.0,
-    this.animationStartDelay = const Duration(milliseconds: 1000),
-    this.animationDuration = const Duration(milliseconds: 750),
+    this.animationStartDelay = const Duration(milliseconds: 500),
+    this.animationDuration = const Duration(milliseconds: 1000),
   });
 
   @override
@@ -61,28 +60,34 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       parent: animationController,
       curve: Interval(
         0,
-        0.75,
-        curve: Curves.easeOutExpo,
+        0.8,
+        curve: Curves.easeIn,
       ),
     );
     opacityAnimation = CurvedAnimation(
       parent: animationController,
       curve: Interval(
-        0.75,
+        0.8,
         1.0,
         curve: Curves.decelerate,
       ),
     );
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(widget.animationStartDelay).then(
-        (_) {
-          if (!mounted) return;
+    Future.delayed(widget.animationStartDelay).then(
+      (_) {
+        if (!mounted) return;
 
-          animationController.forward(from: 0.0);
-        },
-      );
-    });
+        animationController.reset();
+        animationController.forward(from: 0.0);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+
+    super.dispose();
   }
 
   @override
