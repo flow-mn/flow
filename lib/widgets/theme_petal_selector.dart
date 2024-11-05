@@ -15,6 +15,7 @@ class ThemePetalSelector extends StatefulWidget {
   final double maxSize;
 
   final Duration animationDuration;
+  final Duration animationStartDelay;
 
   final bool updateOnHover;
 
@@ -23,6 +24,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.playInitialAnimation = true,
     this.updateOnHover = false,
     this.maxSize = 400.0,
+    this.animationStartDelay = const Duration(milliseconds: 1000),
     this.animationDuration = const Duration(milliseconds: 500),
   });
 
@@ -73,9 +75,13 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     );
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 2000)).then((_) {
-        animationController.forward();
-      });
+      Future.delayed(widget.animationStartDelay).then(
+        (_) {
+          if (!mounted) return;
+
+          animationController.forward(from: 0.0);
+        },
+      );
     });
   }
 
