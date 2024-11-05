@@ -4,6 +4,7 @@
 
 * Fixed account card "this month" summary
 * Added new theme selector
+* Enhanced searching
 
 ## Beta 0.7.2
 

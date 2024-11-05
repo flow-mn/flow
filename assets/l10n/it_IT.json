@@ -186,9 +186,9 @@
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",
-    "tabs.home.noTransactions.allTime": "Non hai nessuna transazione",
-    "tabs.home.noTransactions.last7Days": "Nessuna transazione negli ultimi 7 giorni",
+    "tabs.home.noTransactions": "Nessuna transazione corrisponde ai criteri di ricerca",
     "tabs.home.noTransactions.addSome": "Clicca sul pulsante (+) qui sotto per aggiungere una nuova transazione",
+    "tabs.home.noTransactions.tryChangingFilters": "Prova a modificare i filtri",
     "tabs.home.upcomingTransactions": "Prossimi ({count})",
     "tabs.home.upcomingTransactions.seeAll": "Vedi tutto",
     "tabs.home.transactionsCount": "{count} transazioni",

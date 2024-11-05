@@ -186,9 +186,9 @@
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",
-    "tabs.home.noTransactions.allTime": "Танд одоогоор гүйлгээ алга байна",
-    "tabs.home.noTransactions.last7Days": "Сүүлийн долоо хоногт хийгдсэн гүйлгээ алга байна",
+    "tabs.home.noTransactions": "Шүүлтүүрт тохирох гүйлгээ олдсонгүй",
     "tabs.home.noTransactions.addSome": "Доор байрлах (+) товч дээр дарж гүйлгээ нэмээрэй",
+    "tabs.home.noTransactions.tryChangingFilters": "Шүүлтүүрийг өөрчлөөд үзээрэй",
     "tabs.home.upcomingTransactions": "Төлөвлөсөн ({count})",
     "tabs.home.upcomingTransactions.seeAll": "Бүгд",
     "tabs.home.transactionsCount": "{count} гүйлгээ",

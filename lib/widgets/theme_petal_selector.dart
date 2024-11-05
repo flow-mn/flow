@@ -6,6 +6,7 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/theme_petal_selector/theme_petal_painter.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class ThemePetalSelector extends StatefulWidget {
@@ -22,7 +23,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.playInitialAnimation = true,
     this.updateOnHover = false,
     this.maxSize = 400.0,
-    this.animationDuration = const Duration(milliseconds: 750),
+    this.animationDuration = const Duration(milliseconds: 500),
   });
 
   @override
@@ -59,7 +60,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       curve: Interval(
         0,
         0.75,
-        curve: Curves.easeOutExpo,
+        curve: Curves.linearToEaseOut,
       ),
     );
     opacityAnimation = CurvedAnimation(
@@ -71,7 +72,11 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       ),
     );
 
-    animationController.forward(from: 0.0);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 2000)).then((_) {
+        animationController.forward();
+      });
+    });
   }
 
   @override
