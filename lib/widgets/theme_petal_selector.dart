@@ -161,7 +161,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                         builder: (context, child) => CustomPaint(
                           painter: ThemePetalPainter(
                             animationValue: flowerAnimation.value,
-                            colors: lightThemes.values
+                            colors: (isDark ? darkThemes : lightThemes)
+                                .values
                                 .map((theme) => theme.primary)
                                 .toList(),
                             selectedIndex: selectedIndex,
