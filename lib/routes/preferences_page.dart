@@ -228,6 +228,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
   void openTheme() async {
     await context.push("/preferences/theme");
 
+    final bool themeChangesAppIcon =
+        LocalPreferences().themeChangesAppIcon.get();
+
+    trySetThemeIcon(
+      themeChangesAppIcon ? LocalPreferences().themeName.get() : null,
+    );
+
     // Rebuild to update description text
     if (mounted) setState(() {});
   }

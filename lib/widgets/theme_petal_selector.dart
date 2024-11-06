@@ -159,8 +159,6 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                       },
                       child: AnimatedBuilder(
                         builder: (context, child) => CustomPaint(
-                          isComplex: true,
-                          willChange: true,
                           painter: ThemePetalPainter(
                             animationValue: flowerAnimation.value,
                             colors: lightThemes.values
