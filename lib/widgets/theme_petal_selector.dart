@@ -23,7 +23,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.playInitialAnimation = true,
     this.updateOnHover = false,
     this.maxSize = 400.0,
-    this.animationStartDelay = const Duration(milliseconds: 500),
+    this.animationStartDelay = const Duration(milliseconds: 250),
     this.animationDuration = const Duration(milliseconds: 1000),
   });
 
