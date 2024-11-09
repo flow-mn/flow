@@ -6,13 +6,14 @@ class InfoCard extends StatelessWidget {
   final String title;
   final String value;
 
-  final bool large;
+  final Widget? trailing;
 
-  const InfoCard(
-      {super.key,
-      required this.title,
-      required this.value,
-      this.large = false});
+  const InfoCard({
+    super.key,
+    required this.title,
+    required this.value,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +21,10 @@ class InfoCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       builder: (BuildContext context) => Container(
         width: double.infinity,
-        padding: large
-            ? const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 24.0,
-              )
-            : const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 12.0,
-              ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 12.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -39,11 +35,19 @@ class InfoCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            Flexible(
-              child: Text(
-                value,
-                style: context.textTheme.displaySmall,
-              ),
+            Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    value,
+                    style: context.textTheme.displaySmall,
+                  ),
+                ),
+                if (trailing != null) ...[
+                  const SizedBox(width: 8.0),
+                  trailing!,
+                ],
+              ],
             ),
           ],
         ),

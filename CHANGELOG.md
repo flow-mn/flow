@@ -1,11 +1,13 @@
 # Changelog
 
-## Beta next
+## Beta 0.8.0
 
 * Fixed account card "this month" summary
 * Added new theme selector
 * Enhanced searching
 * Added icons for each color (iOS exclusive)
+* Added total balance in the accounts tab
+* Added income/expense report in the home tab
 
 ## Beta 0.7.2
 
