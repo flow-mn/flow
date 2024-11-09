@@ -87,8 +87,6 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
       appIconBusy = true;
       await LocalPreferences().themeChangesAppIcon.set(newValue);
       trySetThemeIcon(newValue ? LocalPreferences().getCurrentTheme() : null);
-    } catch (e) {
-      // Silent fail. TODO @sadespresso
     } finally {
       appIconBusy = false;
       if (mounted) {
@@ -104,8 +102,6 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     try {
       dynamicThemeBusy = true;
       LocalPreferences().enableDynamicTheme.set(newValue);
-    } catch (e) {
-      // Silent fail. TODO @sadespresso
     } finally {
       dynamicThemeBusy = false;
       if (mounted) {

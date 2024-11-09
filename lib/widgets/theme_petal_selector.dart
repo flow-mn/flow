@@ -23,7 +23,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.playInitialAnimation = true,
     this.updateOnHover = false,
     this.maxSize = 400.0,
-    this.animationStartDelay = const Duration(milliseconds: 500),
+    this.animationStartDelay = const Duration(milliseconds: 250),
     this.animationDuration = const Duration(milliseconds: 1000),
   });
 
@@ -159,11 +159,10 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                       },
                       child: AnimatedBuilder(
                         builder: (context, child) => CustomPaint(
-                          isComplex: true,
-                          willChange: true,
                           painter: ThemePetalPainter(
                             animationValue: flowerAnimation.value,
-                            colors: lightThemes.values
+                            colors: (isDark ? darkThemes : lightThemes)
+                                .values
                                 .map((theme) => theme.primary)
                                 .toList(),
                             selectedIndex: selectedIndex,

@@ -123,10 +123,22 @@ void trySetThemeIcon(String? name) async {
   name ??= "shadeOfViolet";
 
   if (!Platform.isIOS) return;
-  if (!lightThemes.containsKey(name) && !darkThemes.containsKey(name)) return;
+
+  late final String icon;
+
+  if (lightThemes.containsKey(name)) {
+    icon = name;
+  } else if (darkThemes.containsKey(name)) {
+    icon = lightDarkThemeMapping.keys.firstWhere(
+      (key) => lightDarkThemeMapping[key] == name,
+      orElse: () => "shadeOfViolet",
+    );
+  } else {
+    icon = "shadeOfViolet";
+  }
 
   try {
-    await FlutterDynamicIconPlus.setAlternateIconName(iconName: name);
+    await FlutterDynamicIconPlus.setAlternateIconName(iconName: icon);
   } catch (e) {
     log("Failed to set app icon: $e");
   }
