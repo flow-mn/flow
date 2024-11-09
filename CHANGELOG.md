@@ -8,6 +8,7 @@
 * Added icons for each color (iOS exclusive)
 * Added total balance in the accounts tab
 * Added income/expense report in the home tab
+* Swapped icon for income/expense buttons (oof)
 
 ## Beta 0.7.2
 
