@@ -6,9 +6,9 @@ import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class NoTransactions extends StatelessWidget {
-  final bool allTime;
+  final bool isFilterModified;
 
-  const NoTransactions({super.key, this.allTime = false});
+  const NoTransactions({super.key, required this.isFilterModified});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +19,7 @@ class NoTransactions extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              allTime
-                  ? "tabs.home.noTransactions.allTime".t(context)
-                  : "tabs.home.noTransactions.last7Days".t(context),
+              "tabs.home.noTransactions".t(context),
               textAlign: TextAlign.center,
               style: context.textTheme.headlineSmall,
             ),
@@ -33,7 +31,9 @@ class NoTransactions extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              "tabs.home.noTransactions.addSome".t(context),
+              isFilterModified
+                  ? "tabs.home.noTransactions.tryChangingFilters".t(context)
+                  : "tabs.home.noTransactions.addSome".t(context),
               textAlign: TextAlign.center,
             ),
           ],

@@ -2,7 +2,6 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
@@ -67,7 +66,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    noTransactionsAtAll = ObjectBox().box<Transaction>().count(limit: 1) == 0;
     _updatePlannedTransactionDays();
     LocalPreferences()
         .homeTabPlannedTransactionsDuration
@@ -88,6 +86,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    final bool isFilterModified = currentFilter != defaultFilter;
 
     return StreamBuilder<List<Transaction>>(
       stream: currentFilterWithPlanned
@@ -124,9 +124,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
-                  child: NoTransactions(
-                    allTime: noTransactionsAtAll,
-                  ),
+                  child: NoTransactions(isFilterModified: isFilterModified),
                 ),
               (_, true) => Expanded(
                   child:

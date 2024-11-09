@@ -477,7 +477,13 @@ extension TransactionListActions on Iterable<Transaction> {
   List<Transaction> search(TransactionSearchData? data) {
     if (data == null || data.normalizedKeyword == null) return toList();
 
-    return where(data.predicate).toList();
+    final matches = where(data.predicate).toList();
+
+    if (data.smartMatch && matches.isEmpty) {
+      return search(data.copyWithOptional(smartMatch: false));
+    }
+
+    return matches;
   }
 }
 
