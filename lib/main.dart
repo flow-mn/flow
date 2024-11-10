@@ -100,6 +100,7 @@ class FlowState extends State<Flow> {
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().themeName.addListener(_reloadTheme);
+    LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
       ObjectBox().invalidateAccountsTab();
@@ -114,6 +115,7 @@ class FlowState extends State<Flow> {
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
     LocalPreferences().themeName.removeListener(_reloadTheme);
+    LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
     super.dispose();
   }
 
@@ -203,5 +205,11 @@ class FlowState extends State<Flow> {
     );
     Intl.defaultLocale = overriddenLocale.code;
     setState(() {});
+  }
+
+  void _refreshExchangeRates() {
+    ExchangeRatesService().tryFetchRates(
+      LocalPreferences().getPrimaryCurrency(),
+    );
   }
 }

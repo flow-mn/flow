@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/transaction.dart";
@@ -75,7 +76,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     } else {
       _nameTextController =
           TextEditingController(text: _currentlyEditing?.name);
-      _balance = _currentlyEditing?.balance ?? 0.0;
+      _balance = _currentlyEditing?.balance.amount ?? 0.0;
       _currency = _currentlyEditing?.currency ??
           LocalPreferences().getPrimaryCurrency();
       _iconData = _currentlyEditing?.icon;
@@ -210,7 +211,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                         Padding(
                           padding: contentPadding,
                           child: Text(
-                            _balance.formatMoney(currency: _currency),
+                            Money(_balance, _currency).formatMoney(),
                             style: context.textTheme.displayMedium,
                           ),
                         ),
@@ -301,7 +302,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     _currentlyEditing.iconCode = iconCodeOrError;
     _currentlyEditing.excludeFromTotalBalance = _excludeFromTotalBalance;
 
-    if (_balance != _currentlyEditing.balance) {
+    if (_balance != _currentlyEditing.balance.amount) {
       _currentlyEditing.updateBalanceAndSave(
         _balance,
         title: "account.updateBalance.transactionTitle".t(context),
@@ -374,7 +375,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
           _currentlyEditing.currency != _currency ||
           _currentlyEditing.excludeFromTotalBalance !=
               _excludeFromTotalBalance ||
-          _balance != _currentlyEditing.balance;
+          _balance != _currentlyEditing.balance.amount;
     }
 
     return _nameTextController.text.trim().isNotEmpty ||

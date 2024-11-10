@@ -1,65 +1,399 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>mn</string>
-		<string>it</string>
-	</array>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Flow</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>flow</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location is used if you choose to auto-attach your current location to your transactions.</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Flow uses the photo library when user updates their picture, or chooses to use image as category/account icon</string>
-</dict>
+	<dict>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>en</string>
+			<string>mn</string>
+			<string>it</string>
+		</array>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>Flow</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>flow</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true />
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true />
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Location is used if you choose to auto-attach your current location to your transactions.</string>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true />
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true />
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false />
+		<key>UIFileSharingEnabled</key>
+		<true />
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Flow uses the photo library when user updates their picture, or chooses to use image as category/account icon</string>
+		<key>CFBundleIcons</key>
+		<dict>
+			<key>CFBundleAlternateIcons</key>
+			<dict>
+				<key>blissfulBerry</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>blissfulBerry</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>bohemianBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>bohemianBlue</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>burntSienna</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>burntSienna</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>cherryPlum</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>cherryPlum</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>crispChristmasCranberries</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>crispChristmasCranberries</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>egyptianBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>egyptianBlue</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>flagGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>flagGreen</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>hydraTurquoise</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>hydraTurquoise</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>peacockBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>peacockBlue</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>shadeOfViolet</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>shadeOfViolet</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>soilOfAvagddu</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>soilOfAvagddu</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>spaceBattleBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>spaceBattleBlue</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>spreadsheetGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>spreadsheetGreen</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>tokiwaGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>tokiwaGreen</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>toyCamouflage</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>toyCamouflage</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>tropicana</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>tropicana</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+			</dict>
+			<key>CFBundlePrimaryIcon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>shadeOfViolet</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false />
+			</dict>
+		</dict>
+		<key>CFBundleIcons~ipad</key>
+		<dict>
+			<key>CFBundleAlternateIcons</key>
+			<dict>
+				<key>blissfulBerry</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>blissfulBerry-ipad</string>
+						<string>blissfulBerry-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>bohemianBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>bohemianBlue-ipad</string>
+						<string>bohemianBlue-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>burntSienna</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>burntSienna-ipad</string>
+						<string>burntSienna-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>cherryPlum</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>cherryPlum-ipad</string>
+						<string>cherryPlum-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>crispChristmasCranberries</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>crispChristmasCranberries-ipad</string>
+						<string>crispChristmasCranberries-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>egyptianBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>egyptianBlue-ipad</string>
+						<string>egyptianBlue-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>flagGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>flagGreen-ipad</string>
+						<string>flagGreen-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>hydraTurquoise</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>hydraTurquoise-ipad</string>
+						<string>hydraTurquoise-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>peacockBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>peacockBlue-ipad</string>
+						<string>peacockBlue-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>shadeOfViolet</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>shadeOfViolet-ipad</string>
+						<string>shadeOfViolet-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>soilOfAvagddu</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>soilOfAvagddu-ipad</string>
+						<string>soilOfAvagddu-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>spaceBattleBlue</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>spaceBattleBlue-ipad</string>
+						<string>spaceBattleBlue-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>spreadsheetGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>spreadsheetGreen-ipad</string>
+						<string>spreadsheetGreen-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>tokiwaGreen</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>tokiwaGreen-ipad</string>
+						<string>tokiwaGreen-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>toyCamouflage</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>toyCamouflage-ipad</string>
+						<string>toyCamouflage-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+				<key>tropicana</key>
+				<dict>
+					<key>CFBundleIconFiles</key>
+					<array>
+						<string>tropicana-ipad</string>
+						<string>tropicana-ipad-pro</string>
+					</array>
+					<key>UIPrerenderedIcon</key>
+					<false />
+				</dict>
+			</dict>
+			<key>CFBundlePrimaryIcon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>shadeOfViolet</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false />
+			</dict>
+		</dict>
+	</dict>
 </plist>

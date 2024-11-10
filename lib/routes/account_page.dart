@@ -1,3 +1,4 @@
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
@@ -87,10 +88,8 @@ class _AccountPageState extends State<AccountPage> {
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
         final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
-        final double totalIncome =
-            flow.getIncomeByCurrency(account.currency).amount;
-        final double totalExpense =
-            flow.getExpenseByCurrency(account.currency).amount;
+        final Money totalIncome = flow.getIncomeByCurrency(account.currency);
+        final Money totalExpense = flow.getExpenseByCurrency(account.currency);
 
         const double firstHeaderTopPadding = 0.0;
 

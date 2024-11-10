@@ -25,9 +25,9 @@ extension TransactionTypeWidgetData on TransactionType {
   IconData get icon {
     switch (this) {
       case TransactionType.income:
-        return Symbols.stat_2_rounded;
-      case TransactionType.expense:
         return Symbols.stat_minus_2_rounded;
+      case TransactionType.expense:
+        return Symbols.stat_2_rounded;
       case TransactionType.transfer:
         return Symbols.compare_arrows_rounded;
     }

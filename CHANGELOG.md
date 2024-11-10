@@ -1,5 +1,15 @@
 # Changelog
 
+## Beta 0.8.0
+
+* Fixed account card "this month" summary
+* Added new theme selector
+* Enhanced searching
+* Added icons for each color (iOS exclusive)
+* Added total balance in the accounts tab
+* Added income/expense report in the home tab
+* Swapped icon for income/expense buttons (oof)
+
 ## Beta 0.7.2
 
 * Added themes, closes [#105](https://github.com/flow-mn/flow/issues/105)

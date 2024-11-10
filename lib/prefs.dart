@@ -78,6 +78,8 @@ class LocalPreferences {
 
   late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
+  late final BoolSettingsEntry themeChangesAppIcon;
+  late final BoolSettingsEntry enableDynamicTheme;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -182,6 +184,16 @@ class LocalPreferences {
       key: "flow.themeName",
       preferences: _prefs,
       initialValue: lightThemes.keys.first,
+    );
+    themeChangesAppIcon = BoolSettingsEntry(
+      key: "flow.themeChangesAppIcon",
+      preferences: _prefs,
+      initialValue: true,
+    );
+    enableDynamicTheme = BoolSettingsEntry(
+      key: "flow.enableDynamicTheme",
+      preferences: _prefs,
+      initialValue: true,
     );
 
     updateTransitiveProperties();
@@ -367,6 +379,13 @@ class LocalPreferences {
     }
 
     return primaryCurrencyName;
+  }
+
+  String getCurrentTheme() {
+    final String? preferencesTheme = LocalPreferences().themeName.get();
+    return validateThemeName(preferencesTheme)
+        ? preferencesTheme!
+        : lightThemes.keys.first;
   }
 
   factory LocalPreferences() {

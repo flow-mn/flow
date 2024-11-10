@@ -2,8 +2,10 @@ import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
 import "package:flow/data/memo.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/data/transactions_filter.dart";
@@ -17,6 +19,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -25,16 +28,59 @@ import "package:uuid/uuid.dart";
 typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
-  double getTotalBalance() {
+  /// Returns the grand total of all accounts in primary currency in the primary currency
+  Money getPrimaryCurrencyGrandTotal() {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     final Query<Account> accountsQuery = box<Account>()
-        .query(Account_.excludeFromTotalBalance.equals(false))
+        .query(Account_.excludeFromTotalBalance
+            .notEquals(true)
+            .and(Account_.currency.equals(primaryCurrency)))
         .build();
 
     final List<Account> accounts = accountsQuery.find();
 
-    return accounts
-        .map((e) => e.balance)
-        .fold(0, (previousValue, element) => previousValue + element);
+    accountsQuery.close();
+
+    return accounts.map((e) => e.balance).fold(Money(0, primaryCurrency),
+        (previousValue, element) => previousValue + element);
+  }
+
+  /// Returns the grand total of all accounts (including non-primary currency accounts) in the primary currency
+  Future<Money?> getGrandTotal() async {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
+    final Query<Account> accountsQuery = box<Account>()
+        .query(Account_.excludeFromTotalBalance.notEquals(true))
+        .build();
+
+    final List<Account> accounts = accountsQuery.find();
+
+    accountsQuery.close();
+
+    Money total = accounts
+        .where((account) => account.currency == primaryCurrency)
+        .fold<Money>(
+          Money(0, primaryCurrency),
+          (previousValue, element) => previousValue + element.balance,
+        );
+
+    final List<Account> nonPrimaryCurrencyAccounts = accounts
+        .where((account) => account.currency != primaryCurrency)
+        .toList();
+
+    final ExchangeRates? rates =
+        await ExchangeRatesService().tryFetchRates(primaryCurrency);
+
+    if (rates == null) return null;
+
+    for (final Account account in nonPrimaryCurrencyAccounts) {
+      final Money converted = account.balance.convert(primaryCurrency, rates);
+
+      total += converted;
+    }
+
+    return total;
   }
 
   List<Account> getAccounts([bool sortByFrecency = true]) {
@@ -431,7 +477,13 @@ extension TransactionListActions on Iterable<Transaction> {
   List<Transaction> search(TransactionSearchData? data) {
     if (data == null || data.normalizedKeyword == null) return toList();
 
-    return where(data.predicate).toList();
+    final matches = where(data.predicate).toList();
+
+    if (data.smartMatch && matches.isEmpty) {
+      return search(data.copyWithOptional(smartMatch: false));
+    }
+
+    return matches;
   }
 }
 
@@ -467,7 +519,7 @@ extension AccountActions on Account {
     String? title,
     DateTime? transactionDate,
   }) {
-    final double delta = targetBalance - balance;
+    final double delta = targetBalance - balance.amount;
 
     return createAndSaveTransaction(
       amount: delta,

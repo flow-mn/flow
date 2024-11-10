@@ -395,6 +395,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dynamic_icon_plus:
+    dependency: "direct main"
+    description:
+      name: flutter_dynamic_icon_plus
+      sha256: a5bea99437c7b036e6047694a798930244eacd01bd9a348d771e8df84be14202
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   flutter_floating_bottom_bar:
     dependency: "direct main"
     description:
