@@ -6,13 +6,17 @@ import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
+import "package:flow/utils/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
 
 part "transaction.g.dart";
 
 @Entity()
-@JsonSerializable()
+@JsonSerializable(
+  explicitToJson: true,
+  converters: [UTCDateTimeConverter()],
+)
 class Transaction implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;

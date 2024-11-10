@@ -1,5 +1,9 @@
 # Changelog
 
+## Beta 0.8.1
+
+* Json exports now use UTC timezone
+
 ## Beta 0.8.0
 
 * Fixed account card "this month" summary

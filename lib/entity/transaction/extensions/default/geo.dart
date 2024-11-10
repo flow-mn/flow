@@ -1,4 +1,5 @@
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/utils/utc_datetime_converter.dart";
 import "package:flow/utils/utils.dart";
 import "package:geolocator/geolocator.dart";
 import "package:json_annotation/json_annotation.dart";
@@ -7,7 +8,10 @@ import "package:uuid/uuid.dart";
 
 part "geo.g.dart";
 
-@JsonSerializable()
+@JsonSerializable(
+  explicitToJson: true,
+  converters: [UTCDateTimeConverter()],
+)
 class Geo extends TransactionExtension implements Jasonable {
   static const String keyName = "@flow/default-geo";
 
