@@ -248,8 +248,10 @@ class _TransactionPageState extends State<TransactionPage> {
                                 _selectedAccount!.icon,
                                 plated: true,
                               ),
-                        title: Text(_selectedAccount?.name ??
-                            "transaction.edit.selectAccount".t(context)),
+                        title: Text(
+                          _selectedAccount?.name ??
+                              "transaction.edit.selectAccount".t(context),
+                        ),
                         subtitle: _selectedAccount == null
                             ? null
                             : Text(_selectedAccount!.balance.formatMoney()),

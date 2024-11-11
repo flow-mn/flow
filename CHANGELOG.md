@@ -3,6 +3,8 @@
 ## Beta 0.8.1
 
 * Json exports now use UTC timezone
+* Fixed iOS launcher icons having 1 pixel gap (Figma export issue *sigh*)
+* Now income/expense text on home screen no longer wraps to the next line
 
 ## Beta 0.8.0
 

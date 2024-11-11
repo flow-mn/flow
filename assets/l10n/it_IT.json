@@ -83,6 +83,7 @@
     "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile!",
     "account.noAccounts": "Non hai nessun conto!",
     "account.thisMonth": "Questo mese",
+    "account.postTransactionBalance": "Saldo dopo questa transazione",
 
     "transaction": "Transazione",
     "transaction.new": "Nuova transazione",
