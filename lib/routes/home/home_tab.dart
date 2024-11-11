@@ -149,10 +149,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     ExchangeRates? rates,
   ) {
     final Map<TimeRange, List<Transaction>> grouped = transactions
-        .where((transaction) => !transaction.transactionDate.isAfter(now))
+        .where((transaction) =>
+            !transaction.transactionDate.isAfter(now) &&
+            transaction.isPending != true)
         .groupByDate();
-    final Map<TimeRange, List<Transaction>> groupedFuture = transactions
-        .where((transaction) => transaction.transactionDate.isAfter(now))
+    final Map<TimeRange, List<Transaction>> pendingTransactions = transactions
+        .where((transaction) =>
+            transaction.transactionDate.isAfter(now) ||
+            transaction.isPending == true)
         .groupByDate();
 
     final bool shouldCombineTransferIfNeeded =
@@ -175,9 +179,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       controller: widget.scrollController,
       transactions: grouped,
-      futureTransactions: groupedFuture,
+      pendingTransactions: pendingTransactions,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
-      futureDivider: const WavyDivider(),
+      pendingDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
         top: 0,
         bottom: 80.0,

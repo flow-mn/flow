@@ -190,7 +190,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(7, 5357777579468740615),
       name: 'Transaction',
-      lastPropertyId: const obx_int.IdUid(16, 1620591330122290687),
+      lastPropertyId: const obx_int.IdUid(17, 1342886807526846841),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -267,6 +267,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(14, 1785368014330843933),
             name: 'description',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 1342886807526846841),
+            name: 'isPending',
+            type: 1,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -573,7 +578,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final descriptionOffset = object.description == null
               ? null
               : fbb.writeString(object.description!);
-          fbb.startTable(17);
+          fbb.startTable(18);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, uuidOffset);
           fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -588,6 +593,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(11, categoryUuidOffset);
           fbb.addOffset(12, accountUuidOffset);
           fbb.addOffset(13, descriptionOffset);
+          fbb.addBool(16, object.isPending);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -603,6 +609,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                   .vTableGetNullable(buffer, rootOffset, 30);
           final subtypeParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 18);
+          final isPendingParam =
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 36);
           final amountParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
           final currencyParam = const fb.StringReader(asciiOptimization: true)
@@ -618,6 +626,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               title: titleParam,
               description: descriptionParam,
               subtype: subtypeParam,
+              isPending: isPendingParam,
               amount: amountParam,
               currency: currencyParam,
               uuid: uuidParam,
@@ -811,4 +820,8 @@ class Transaction_ {
   /// See [Transaction.description].
   static final description =
       obx.QueryStringProperty<Transaction>(_entities[4].properties[13]);
+
+  /// See [Transaction.isPending].
+  static final isPending =
+      obx.QueryBooleanProperty<Transaction>(_entities[4].properties[14]);
 }

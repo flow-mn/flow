@@ -406,6 +406,49 @@ extension TransactionActions on Transaction {
 
     return ObjectBox().box<Transaction>().remove(id);
   }
+
+  bool confirm() {
+    try {
+      if (isTransfer) {
+        final Transfer? transfer = extensions.transfer;
+
+        if (transfer == null) {
+          log("Couldn't delete transfer transaction properly due to missing transfer data");
+        } else {
+          final Query<Transaction> relatedTransactionQuery = ObjectBox()
+              .box<Transaction>()
+              .query(Transaction_.uuid.equals(
+                  transfer.relatedTransactionUuid ?? Namespace.nil.value))
+              .build();
+
+          final Transaction? relatedTransaction =
+              relatedTransactionQuery.findFirst();
+
+          relatedTransactionQuery.close();
+
+          try {
+            if (relatedTransaction == null) {
+              throw Exception("Related transaction not found");
+            }
+
+            relatedTransaction.isPending = false;
+            ObjectBox()
+                .box<Transaction>()
+                .put(relatedTransaction, mode: PutMode.update);
+          } catch (e) {
+            log("Couldn't delete transfer transaction properly due to: $e");
+          }
+        }
+      }
+
+      isPending = false;
+      ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
+      return true;
+    } catch (e) {
+      log("Failed to confirm transaction: $e");
+      return false;
+    }
+  }
 }
 
 extension TransactionListActions on Iterable<Transaction> {
@@ -543,6 +586,7 @@ extension AccountActions on Account {
     double? latitude,
     double? longitude,
     List<TransactionExtension>? extensions,
+    bool? isPending,
   }) {
     if (amount <= 0) {
       return targetAccount.transferTo(
@@ -555,6 +599,7 @@ extension AccountActions on Account {
         latitude: latitude,
         longitude: longitude,
         extensions: extensions,
+        isPending: isPending,
       );
     }
 
@@ -586,6 +631,7 @@ extension AccountActions on Account {
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      isPending: isPending,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
@@ -598,6 +644,7 @@ extension AccountActions on Account {
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      isPending: isPending,
     );
 
     return (fromTransaction, toTransaction);
@@ -613,6 +660,7 @@ extension AccountActions on Account {
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
+    bool? isPending,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
 
@@ -624,6 +672,7 @@ extension AccountActions on Account {
       transactionDate: transactionDate,
       createdDate: createdDate,
       uuid: uuid,
+      isPending: isPending ?? false,
     )
       ..setCategory(category)
       ..setAccount(this);

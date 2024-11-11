@@ -55,14 +55,24 @@ class Account implements EntityBase {
     }
   }
 
-  /// Returns current balance. This is calculated by summing up every single transaction
-  ///
-  /// TODO should this be cached?
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   Money get balance => Money(
         transactions
-            .where((element) => element.transactionDate.isPast)
+            .where((element) =>
+                element.transactionDate.isPast && element.isPending != true)
+            .fold<double>(
+              0,
+              (previousValue, element) => previousValue + element.amount,
+            ),
+        currency,
+      );
+
+  Money balanceAt(DateTime anchor) => Money(
+        transactions
+            .where((element) =>
+                element.transactionDate.isPastAnchored(anchor) &&
+                element.isPending != true)
             .fold<double>(
               0,
               (previousValue, element) => previousValue + element.amount,

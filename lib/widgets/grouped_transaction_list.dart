@@ -24,18 +24,18 @@ class GroupedTransactionList extends StatelessWidget {
   final Map<TimeRange, List<Transaction>> transactions;
 
   /// Rendered in order.
-  final Map<TimeRange, List<Transaction>>? futureTransactions;
+  final Map<TimeRange, List<Transaction>>? pendingTransactions;
 
   final Widget Function(TimeRange range, List<Transaction> transactions)
       headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
-  final Widget? futureDivider;
+  final Widget? pendingDivider;
 
   /// Used to determine which transactions are considered future or past.
   ///
-  /// For now, only [futureDivider] makes use of this
+  /// For now, only [pendingDivider] makes use of this
   final DateTime? anchor;
 
   /// When set to true, displays one side of transfer transactions as empty [Container]s
@@ -53,10 +53,10 @@ class GroupedTransactionList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.headerBuilder,
-    this.futureTransactions,
+    this.pendingTransactions,
     this.controller,
     this.header,
-    this.futureDivider,
+    this.pendingDivider,
     this.anchor,
     this.headerPadding,
     this.implyHeader = true,
@@ -77,20 +77,21 @@ class GroupedTransactionList extends StatelessWidget {
 
     final Widget? header = this.header ??
         (implyHeader
-            ? _getImpliedHeader(context, futureTransactions: futureTransactions)
+            ? _getImpliedHeader(context,
+                futureTransactions: pendingTransactions)
             : null);
 
     final List<Object> flattened = [
       if (header != null) header,
-      if (futureTransactions != null)
-        for (final entry in futureTransactions!.entries) ...[
+      if (pendingTransactions != null)
+        for (final entry in pendingTransactions!.entries) ...[
           headerBuilder(entry.key, entry.value),
           ...entry.value,
         ],
-      if (futureDivider != null &&
-          futureTransactions?.isNotEmpty == true &&
+      if (pendingDivider != null &&
+          pendingTransactions?.isNotEmpty == true &&
           transactions.isNotEmpty)
-        futureDivider!,
+        pendingDivider!,
       for (final entry in transactions.entries) ...[
         headerBuilder(entry.key, entry.value),
         ...entry.value,
@@ -115,6 +116,7 @@ class GroupedTransactionList extends StatelessWidget {
             padding: itemPadding,
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
+            confirmFn: () => confirmTransaction(context, transaction),
           ),
         (_) => Container(),
       },
@@ -137,6 +139,13 @@ class GroupedTransactionList extends StatelessWidget {
     if (confirmation == true) {
       transaction.delete();
     }
+  }
+
+  Future<void> confirmTransaction(
+    BuildContext context,
+    Transaction transaction,
+  ) async {
+    transaction.confirm();
   }
 
   Widget? _getImpliedHeader(

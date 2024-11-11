@@ -40,6 +40,8 @@ class Transaction implements EntityBase {
 
   double amount;
 
+  bool? isPending;
+
   /// Currency code complying with [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
   String currency;
 
@@ -149,6 +151,7 @@ class Transaction implements EntityBase {
     this.title,
     this.description,
     this.subtype,
+    this.isPending,
     required this.amount,
     required this.currency,
     required this.uuid,

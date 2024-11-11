@@ -83,6 +83,7 @@
     "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
     "account.noAccounts": "Танд үүсгэсэн данс алга байна!",
     "account.thisMonth": "Энэ сар",
+    "account.postTransactionBalance": "Гүйлгээний дараах үлдэгдэл",
 
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",
@@ -109,6 +110,7 @@
     "transaction.location": "Байршил",
     "transaction.location.add": "Байршил нэмэх",
     "transaction.location.edit": "Газын зурган дээр товшиж байршлыг өөрчлөөрэй",
+    "transaction.pending": "Хүлээгдэж буй",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",
@@ -183,6 +185,9 @@
     "preferences.transactionGeo.auto.enabled": "Автоматаар хавсаргах идэвхжсэн",
     "preferences.transactionGeo.auto.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
     "preferences.transactionGeo.auto.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
+    "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
+    "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
+    "preferences.pendingTransactions.requireConfirmation.description": "Идэвхжүүлсэн үед баталгаажуулаагүй төлөвлөгөөт гүйлгээнүүд хүчингүй байна",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",
