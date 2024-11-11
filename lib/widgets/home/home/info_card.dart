@@ -1,3 +1,4 @@
+import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
@@ -38,9 +39,10 @@ class InfoCard extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                  child: Text(
+                  child: AutoSizeText(
                     value,
                     style: context.textTheme.displaySmall,
+                    maxLines: 1,
                   ),
                 ),
                 if (trailing != null) ...[
