@@ -72,6 +72,10 @@ class _HomePageState extends State<HomePage>
       bindings: {
         osSingleActivator(LogicalKeyboardKey.keyN): () =>
             _newTransactionPage(null),
+        osSingleActivator(LogicalKeyboardKey.digit1): () => _navigateTo(0),
+        osSingleActivator(LogicalKeyboardKey.digit2): () => _navigateTo(1),
+        osSingleActivator(LogicalKeyboardKey.digit3): () => _navigateTo(2),
+        osSingleActivator(LogicalKeyboardKey.digit4): () => _navigateTo(3),
       },
       child: Focus(
         autofocus: true,
