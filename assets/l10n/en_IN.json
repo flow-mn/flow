@@ -110,6 +110,7 @@
     "transaction.location": "Location",
     "transaction.location.add": "Add a location",
     "transaction.location.edit": "Tap on the map to edit",
+    "transaction.pending": "Pending",
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",

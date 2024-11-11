@@ -110,6 +110,7 @@
     "transaction.location": "Posizione",
     "transaction.location.add": "Aggiungi una posizione",
     "transaction.location.edit": "Tocca la mappa per modificare",
+    "transaction.pending": "In attesa",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",

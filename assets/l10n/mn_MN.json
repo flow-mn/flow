@@ -110,6 +110,7 @@
     "transaction.location": "Байршил",
     "transaction.location.add": "Байршил нэмэх",
     "transaction.location.edit": "Газын зурган дээр товшиж байршлыг өөрчлөөрэй",
+    "transaction.pending": "Хүлээгдэж буй",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",

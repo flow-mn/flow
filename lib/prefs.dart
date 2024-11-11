@@ -13,7 +13,6 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -74,12 +73,12 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final JsonSettingsEntry<LatLng> lastKnownGeo;
-
   late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
+
+  late final BoolSettingsEntry requirePendingTransactionConfrimation;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -168,13 +167,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    lastKnownGeo = JsonSettingsEntry<LatLng>(
-      key: "flow.lastKnownGeo",
-      preferences: _prefs,
-      fromJson: (json) => LatLng.fromJson(json),
-      toJson: (data) => data.toJson(),
-    );
-
     themeMode = ThemeModeSettingsEntry(
       key: "flow.themeMode",
       preferences: _prefs,
@@ -192,6 +184,12 @@ class LocalPreferences {
     );
     enableDynamicTheme = BoolSettingsEntry(
       key: "flow.enableDynamicTheme",
+      preferences: _prefs,
+      initialValue: true,
+    );
+
+    requirePendingTransactionConfrimation = BoolSettingsEntry(
+      key: "flow.requirePendingTransactionConfrimation",
       preferences: _prefs,
       initialValue: true,
     );

@@ -16,6 +16,7 @@ class TransactionListTile extends StatelessWidget {
   final EdgeInsets padding;
 
   final VoidCallback deleteFn;
+  final VoidCallback? confirmFn;
 
   final Key? dismissibleKey;
 
@@ -27,12 +28,18 @@ class TransactionListTile extends StatelessWidget {
     required this.deleteFn,
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
+    this.confirmFn,
     this.dismissibleKey,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (combineTransfers &&
+    final bool showPendingConfirmation = confirmFn != null &&
+        transaction.isPending == true &&
+        transaction.transactionDate
+            .isPastAnchored(Moment.now().endOfNextMinute());
+
+    if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
         transaction.amount.isNegative) {
       return Container();
@@ -43,50 +50,71 @@ class TransactionListTile extends StatelessWidget {
     final Transfer? transfer =
         transaction.isTransfer ? transaction.extensions.transfer : null;
 
-    final listTile = InkWell(
+    final Widget listTile = InkWell(
       onTap: () => context.push("/transaction/${transaction.id}"),
       child: Padding(
         padding: padding,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            FlowIcon(
-              transaction.isTransfer
-                  ? FlowIconData.icon(Symbols.sync_alt_rounded)
-                  : transaction.category.target?.icon ??
-                      FlowIconData.icon(Symbols.circle_rounded),
-              plated: true,
-              fill: transaction.category.target != null ? 1.0 : 0.0,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FlowIcon(
+                  transaction.isTransfer
+                      ? FlowIconData.icon(Symbols.sync_alt_rounded)
+                      : transaction.category.target?.icon ??
+                          FlowIconData.icon(Symbols.circle_rounded),
+                  plated: true,
+                  fill: transaction.category.target != null ? 1.0 : 0.0,
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (missingTitle
+                            ? "transaction.fallbackTitle".t(context)
+                            : transaction.title!),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        [
+                          (transaction.isTransfer && combineTransfers)
+                              ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
+                              : transaction.account.target?.name,
+                          transaction.transactionDate.format(payload: "LT"),
+                          if (transaction.transactionDate.isFuture ||
+                              transaction.isPending == true)
+                            "transaction.pending".t(context),
+                        ].join(" • "),
+                        style: context.textTheme.labelSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                _buildAmountText(context),
+              ],
             ),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (showPendingConfirmation) ...[
+              const SizedBox(height: 4.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    (missingTitle
-                        ? "transaction.fallbackTitle".t(context)
-                        : transaction.title!),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    [
-                      (transaction.isTransfer && combineTransfers)
-                          ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
-                          : transaction.account.target?.name,
-                      transaction.transactionDate.format(payload: "LT"),
-                    ].join(" • "),
-                    style: context.textTheme.labelSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  TextButton.icon(
+                    onPressed: () => confirmFn!(),
+                    label: Text("general.confirm".t(context)),
+                    icon: Icon(Symbols.check_rounded),
+                  )
                 ],
               ),
-            ),
-            const SizedBox(width: 8.0),
-            _buildAmountText(context),
+              const SizedBox(height: 12.0),
+            ],
           ],
         ),
       ),
@@ -97,6 +125,13 @@ class TransactionListTile extends StatelessWidget {
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [
+          if (confirmFn != null && transaction.transactionDate.isFuture ||
+              transaction.isPending == true)
+            SlidableAction(
+              onPressed: (context) => confirmFn!(),
+              icon: Symbols.check_rounded,
+              backgroundColor: context.colorScheme.primary,
+            ),
           SlidableAction(
             onPressed: (context) => deleteFn(),
             icon: Symbols.delete_forever_rounded,
@@ -109,16 +144,37 @@ class TransactionListTile extends StatelessWidget {
   }
 
   Widget _buildAmountText(BuildContext context) {
-    return Text(
-      transaction.money.formatMoney(
-        takeAbsoluteValue: transaction.isTransfer && combineTransfers,
-      ),
-      style: context.textTheme.bodyLarge?.copyWith(
-        color: transaction.type.color(context),
-        fontWeight: FontWeight.bold,
-      ),
+    return RichText(
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        style: context.textTheme.bodyLarge?.copyWith(
+          color: transaction.type.color(context),
+          fontWeight: FontWeight.bold,
+        ),
+        children: [
+          TextSpan(
+            text: transaction.money.formatMoney(
+              takeAbsoluteValue: transaction.isTransfer && combineTransfers,
+            ),
+          ),
+          if (transaction.transactionDate.isFuture ||
+              transaction.isPending == true) ...[
+            TextSpan(
+              text: " ",
+            ),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                Symbols.schedule_rounded,
+                size: context.textTheme.bodyLarge!.fontSize!,
+                fill: 0.0,
+                color: context.colorScheme.onSurface.withAlpha(0xc0),
+              ),
+            )
+          ],
+        ],
+      ),
     );
   }
 }
