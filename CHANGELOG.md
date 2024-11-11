@@ -1,6 +1,6 @@
 # Changelog
 
-## Beta 0.8.1
+## Beta next
 
 * Json exports now use UTC timezone
 * Fixed iOS launcher icons having 1 pixel gap (Figma export issue *sigh*)
