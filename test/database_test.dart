@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
@@ -102,6 +103,136 @@ void main() {
 
       expect(() => txn!.setAccount(usdAccount), throwsException);
     });
+
+    test("Creating an income should increase account balance", () async {
+      final Query<Account> accountQuery =
+          ObjectBox().box<Account>().query().build();
+
+      late Account account;
+
+      account = (await accountQuery.findFirstAsync())!;
+
+      final Money initialBalance = account.balance;
+
+      final int txnId = account.createAndSaveTransaction(
+        amount: 1000.0,
+        title: "Income",
+      );
+
+      try {
+        account = (await accountQuery.findFirstAsync())!;
+      } finally {
+        accountQuery.close();
+      }
+
+      expect(
+        account.balance,
+        equals(
+          initialBalance + Money(1000.0, initialBalance.currency),
+        ),
+      );
+
+      final Transaction txn =
+          (await ObjectBox().box<Transaction>().getAsync(txnId))!;
+
+      expect(txn.amount, equals(1000.0));
+      expect(txn.type, equals(TransactionType.income));
+      expect(txn.uuid, isNotNull);
+    });
+
+    test("Creating an expense should decrease account balance", () async {
+      final Query<Account> accountQuery =
+          ObjectBox().box<Account>().query().build();
+
+      late Account account;
+
+      account = (await accountQuery.findFirstAsync())!;
+
+      final Money initialBalance = account.balance;
+
+      final int txnId = account.createAndSaveTransaction(
+        amount: -1000.0,
+        title: "Expense",
+      );
+
+      try {
+        account = (await accountQuery.findFirstAsync())!;
+      } finally {
+        accountQuery.close();
+      }
+
+      expect(
+        account.balance,
+        equals(
+          initialBalance - Money(1000.0, initialBalance.currency),
+        ),
+      );
+
+      final Transaction txn =
+          (await ObjectBox().box<Transaction>().getAsync(txnId))!;
+
+      expect(txn.amount, equals(-1000.0));
+      expect(txn.type, equals(TransactionType.expense));
+      expect(txn.uuid, isNotNull);
+    });
+
+    test(
+      "Creating a transfer should move money from one account to another",
+      () async {
+        final Query<Account> accountQuery = ObjectBox()
+            .box<Account>()
+            .query(Account_.currency.equals("MNT"))
+            .build();
+
+        late Account mntAccount1;
+        late Account mntAccount2;
+
+        final mntAccounts = await accountQuery.findAsync();
+
+        mntAccount1 = mntAccounts[0];
+        mntAccount2 = mntAccounts[1];
+
+        final Money initialBalanceAccount1 = mntAccount1.balance;
+        final Money initialBalanceAccount2 = mntAccount2.balance;
+
+        final (fromTxnId, toTxnId) =
+            mntAccount1.transferTo(targetAccount: mntAccount2, amount: 1000.0);
+
+        final Transaction? fromTxn =
+            await ObjectBox().box<Transaction>().getAsync(fromTxnId);
+        final Transaction? toTxn =
+            await ObjectBox().box<Transaction>().getAsync(toTxnId);
+
+        expect(fromTxn!.amount, equals(-1000.0));
+        expect(fromTxn.type, equals(TransactionType.transfer));
+        expect(fromTxn.uuid, isNotNull);
+
+        expect(toTxn!.amount, equals(1000.0));
+        expect(toTxn.type, equals(TransactionType.transfer));
+        expect(toTxn.uuid, isNotNull);
+
+        expect(toTxn.amount, equals(-fromTxn.amount));
+
+        final mntAccountsUpdated = await accountQuery.findAsync();
+        accountQuery.close();
+
+        mntAccount1 = mntAccountsUpdated[0];
+        mntAccount2 = mntAccountsUpdated[1];
+
+        expect(
+          mntAccount1.balance,
+          equals(
+            initialBalanceAccount1 - Money(1000, "MNT"),
+          ),
+        );
+        expect(
+          mntAccount2.balance,
+          equals(
+            initialBalanceAccount2 + Money(1000, "MNT"),
+          ),
+        );
+      },
+    );
 
     tearDownAll(() async {
       await testCleanupObject(

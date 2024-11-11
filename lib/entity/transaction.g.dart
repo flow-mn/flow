@@ -13,12 +13,10 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       amount: (json['amount'] as num).toDouble(),
       currency: json['currency'] as String,
       uuid: json['uuid'] as String,
-      transactionDate: json['transactionDate'] == null
-          ? null
-          : DateTime.parse(json['transactionDate'] as String),
-      createdDate: json['createdDate'] == null
-          ? null
-          : DateTime.parse(json['createdDate'] as String),
+      transactionDate: _$JsonConverterFromJson<String, DateTime>(
+          json['transactionDate'], const UTCDateTimeConverter().fromJson),
+      createdDate: _$JsonConverterFromJson<String, DateTime>(
+          json['createdDate'], const UTCDateTimeConverter().fromJson),
     )
       ..extra = json['extra'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
@@ -27,8 +25,9 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
 Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
     <String, dynamic>{
       'uuid': instance.uuid,
-      'createdDate': instance.createdDate.toIso8601String(),
-      'transactionDate': instance.transactionDate.toIso8601String(),
+      'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
+      'transactionDate':
+          const UTCDateTimeConverter().toJson(instance.transactionDate),
       'title': instance.title,
       'description': instance.description,
       'amount': instance.amount,
@@ -38,3 +37,9 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'categoryUuid': instance.categoryUuid,
       'accountUuid': instance.accountUuid,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);

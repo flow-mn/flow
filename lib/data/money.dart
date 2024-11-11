@@ -133,6 +133,11 @@ class Money {
 
   @override
   int get hashCode => Object.hashAll([amount, currency]);
+
+  @override
+  toString() {
+    return "Money($currency $amount)";
+  }
 }
 
 class MoneyException implements Exception {

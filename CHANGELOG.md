@@ -1,5 +1,9 @@
 # Changelog
 
+## Beta 0.8.1
+
+* Json exports now use UTC timezone
+
 ## Beta 0.8.0
 
 * Fixed account card "this month" summary
@@ -8,6 +12,7 @@
 * Added icons for each color (iOS exclusive)
 * Added total balance in the accounts tab
 * Added income/expense report in the home tab
+* Swapped icon for income/expense buttons (oof)
 
 ## Beta 0.7.2
 
