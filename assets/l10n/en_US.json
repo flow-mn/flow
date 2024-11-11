@@ -185,6 +185,9 @@
     "preferences.transactionGeo.auto.enabled": "Auto-attach enabled",
     "preferences.transactionGeo.auto.description": "Automatically attach your current location to new transactions. Even if you have this turned off, you can still choose a location on a map to attach it.",
     "preferences.transactionGeo.auto.permissionDenied": "Location permission was denied. You can enable it from your settings if you wish.",
+    "preferences.pendingTransactions": "Pending transactions",
+    "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
+    "preferences.pendingTransactions.requireConfirmation.description": "When enabled, pending transactions will require confirmation to be effective",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",
