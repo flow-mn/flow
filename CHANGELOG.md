@@ -1,3 +1,52 @@
+# Changelog
+
+## Beta 0.8.0
+
+* Fixed account card "this month" summary
+* Added new theme selector
+* Enhanced searching
+* Added icons for each color (iOS exclusive)
+* Added total balance in the accounts tab
+* Added income/expense report in the home tab
+* Swapped icon for income/expense buttons (oof)
+
+## Beta 0.7.2
+
+* Added themes, closes [#105](https://github.com/flow-mn/flow/issues/105)
+* Add transaction description, type, and lat/long for CSV exports, closes [#203](https://github.com/flow-mn/flow/issues/203)
+
+## Beta 0.7.1
+
+* Fixed transfer transactions
+
+## Beta 0.7.0
+
+* Added an option to choose location on a map
+* Fixed iOS locale
+
+## Beta 0.6.2
+
+* Fixed upcoming transactions config wasn't getting loaded initially, closes
+  #187
+* Added this week, this month, this year, and all time options for upcoming
+  transactions, close #186
+* Fixed today's transactions made in future were included in non-future
+  transactions
+* Now it's possible to add location data to your transactions, disabled by default
+* Added automatic location data attachment, disabled by default
+* Added a map preview ([osm](https://www.openstreetmap.org/))
+* Now it's possible to set transaction extensions' transaction uuid after
+  it's initialized
+* TODO (@sadespresso) will do an option to choose a location from map even
+  if you choose to not give location permissions
+
+## Beta 0.6.1
+
+* Added the gap back in pie chart
+* Added `en_IN` locale
+* Added optional description field for transactions
+* Added little bit breathing space for dialog buttons 🥳
+
 ## Beta 0.6.0
 
 * Added exchange rates, currently only works in Stats tab
@@ -22,11 +71,13 @@
 * Now icons (Material Symbols and Simple Icons) are searchable (only in English)
 * Improved backup history empty UI
 * Fixed number format was messed up when dividing with input sheet calculator
-* When making changes, pages will now confirm to close without saving. (converted form pages -> modals)
+* When making changes, pages will now confirm to close without saving.
+(converted form pages -> modals)
 
 ## Beta 0.5.3
 
-* Fixed entering decimal amount with leading '0' decimal was impossible. (e.g., `1.02` was impossible to input)
+* Fixed entering decimal amount with leading '0' decimal was impossible.
+(e.g., `1.02` was impossible to input)
 * Calculator percent button now adds/subtracts percent of initial value when adding/subtracting
 * [iOS only] Now uses iOS system language settings for app language
 
@@ -42,8 +93,10 @@ fork's additional features have are in the new release
 
 ## Beta 0.5.1
 
-* [FEAT] Customize order of new transaction buttons by @sadespresso in https://github.com/flow-mn/flow/pull/148
-* Reform account edit page by @sadespresso in https://github.com/flow-mn/flow/pull/149
+* [FEAT] Customize order of new transaction buttons by @sadespresso in <https://github.com/flow-mn/flow/pull/148>
+* Reform account edit page by @sadespresso in <https://github.com/flow-mn/flow/pull/149>
+* [FEAT] Customize order of new transaction buttons by @sadespresso in <https://github.com/flow-mn/flow/pull/148>
+* Reform account edit page by @sadespresso in <https://github.com/flow-mn/flow/pull/149>
 
 ## Beta 0.5.0
 
@@ -54,16 +107,23 @@ fork's additional features have are in the new release
 
 ## Beta 0.4.3
 
-* Fix Category page re renders upon change in db by @sadespresso in https://github.com/flow-mn/flow/pull/140
-* Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in https://github.com/flow-mn/flow/pull/141
-* Fix Time range selector bottom sheet overflows by @sadespresso in https://github.com/flow-mn/flow/pull/142
+* Fix Category page re renders upon change in db by @sadespresso in <https://github.com/flow-mn/flow/pull/140>
+* Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in <https://github.com/flow-mn/flow/pull/141>
+* Fix Time range selector bottom sheet overflows by @sadespresso in <https://github.com/flow-mn/flow/pull/142>
+* Fix Category page re renders upon change in db by @sadespresso in <https://github.com/flow-mn/flow/pull/140>
+* Fix `CustomRange.end` goes 'til the end of the day by @sadespresso in <https://github.com/flow-mn/flow/pull/141>
+* Fix Time range selector bottom sheet overflows by @sadespresso in <https://github.com/flow-mn/flow/pull/142>
 
 ## Beta 0.4.2
 
-* Category page reform by @sadespresso in https://github.com/flow-mn/flow/pull/135
-* feat: memoize account names by @sadespresso in https://github.com/flow-mn/flow/pull/129
-* Upcoming transaction hitbox by @sadespresso in https://github.com/flow-mn/flow/pull/132
-* Title suggestion improvement by @sadespresso in https://github.com/flow-mn/flow/pull/134
+* Category page reform by @sadespresso in <https://github.com/flow-mn/flow/pull/135>
+* feat: memoize account names by @sadespresso in <https://github.com/flow-mn/flow/pull/129>
+* Upcoming transaction hitbox by @sadespresso in <https://github.com/flow-mn/flow/pull/132>
+* Title suggestion improvement by @sadespresso in <https://github.com/flow-mn/flow/pull/134>
+* Category page reform by @sadespresso in <https://github.com/flow-mn/flow/pull/135>
+* feat: memoize account names by @sadespresso in <https://github.com/flow-mn/flow/pull/129>
+* Upcoming transaction hitbox by @sadespresso in <https://github.com/flow-mn/flow/pull/132>
+* Title suggestion improvement by @sadespresso in <https://github.com/flow-mn/flow/pull/134>
 * Minor UI and l10n improvements
 
 ## Beta 0.4.1
@@ -82,28 +142,28 @@ fork's additional features have are in the new release
 
 ## Beta 0.3.4
 
-- Added year/month selector, closes [#85](https://github.com/flow-mn/flow/issues/85)
-- No longer uses `AutomiaticKeepAlive` for stats tab, but will change this later. Fixes [#94](https://github.com/flow-mn/flow/issues/94)
-- Limited stats tab's pie chart to 300px
+* Added year/month selector, closes [#85](https://github.com/flow-mn/flow/issues/85)
+* No longer uses `AutomiaticKeepAlive` for stats tab, but will change this later. Fixes [#94](https://github.com/flow-mn/flow/issues/94)
+* Limited stats tab's pie chart to 300px
 
 ## Beta 0.3.3
 
-- Fix transaction date doesn't get updated, closes [#100](https://github.com/flow-mn/flow/issues/100)
-- Improve setup by [#103](https://github.com/flow-mn/flow/pull/103)
+* Fix transaction date doesn't get updated, closes [#100](https://github.com/flow-mn/flow/issues/100)
+* Improve setup by [#103](https://github.com/flow-mn/flow/pull/103)
 
 ## Beta 0.3.2
 
-- Fixed transaction page title suggestion was behaving differently from prior
+* Fixed transaction page title suggestion was behaving differently from prior
   releases. Improved UX
 
 ## Beta 0.3.1
 
-- Transaction page now suggests title based on relevancy (category, account, etc)
-- Removed minus (`-`) sign in expense transaction input sheet, closes [#88](https://github.com/flow-mn/flow/issues/88)
-- Setup page bottom buttons are now rendered in `SafeArea` ()
-- Fixed stats tab custom range selection not updating the state (21940fd775c9c0d05e8c70da7d682b24bfa0199c)
-- Added Mongolian localization for the iOS project, closes [#72](https://github.com/flow-mn/flow/issues/72)
+* Transaction page now suggests title based on relevancy (category, account, etc)
+* Removed minus (`-`) sign in expense transaction input sheet, closes [#88](https://github.com/flow-mn/flow/issues/88)
+* Setup page bottom buttons are now rendered in `SafeArea` ()
+* Fixed stats tab custom range selection not updating the state (21940fd775c9c0d05e8c70da7d682b24bfa0199c)
+* Added Mongolian localization for the iOS project, closes [#72](https://github.com/flow-mn/flow/issues/72)
 
 ## Beta 0.3.0
 
-- Initial beta release
+* Initial beta release

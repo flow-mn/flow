@@ -15,6 +15,8 @@ import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/home_tab_preferences.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
+import "package:flow/routes/preferences/theme_preferences_page.dart";
+import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flow/routes/profile_page.dart";
@@ -28,6 +30,7 @@ import "package:flow/routes/support_page.dart";
 import "package:flow/routes/transaction_page.dart";
 import "package:flow/routes/transactions_page.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
+import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/utils/utils.dart";
@@ -163,6 +166,14 @@ final router = GoRouter(
           path: "transactionButtonOrder",
           builder: (context, state) => const ButtonOrderPreferencesPage(),
         ),
+        GoRoute(
+          path: "transactionGeo",
+          builder: (context, state) => const TransactionGeoPreferencesPage(),
+        ),
+        GoRoute(
+          path: "theme",
+          builder: (context, state) => const ThemePreferencesPage(),
+        ),
       ],
     ),
     GoRoute(
@@ -189,6 +200,28 @@ final router = GoRouter(
           _ => throw const ErrorPage(
               error:
                   "Invalid state. Pass [CropSquareImagePageProps] object to `extra` prop",
+            )
+        };
+      },
+    ),
+    GoRoute(
+      path: "/utils/editmd",
+      pageBuilder: (context, state) {
+        return switch (state.extra) {
+          null => MaterialPage(
+              child: EditMarkdownPage(),
+              fullscreenDialog: true,
+            ),
+          EditMarkdownPageProps props => MaterialPage(
+              child: EditMarkdownPage(
+                initialValue: props.initialValue,
+                maxLength: props.maxLength,
+              ),
+              fullscreenDialog: true,
+            ),
+          _ => throw const ErrorPage(
+              error:
+                  "Invalid state. Pass [EditMarkdownPageProps] object or nothing to `extra` prop",
             )
         };
       },

@@ -8,11 +8,11 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/utils/optional.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/account_card_skeleton.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/home/account/no_accounts.dart";
+import "package:flow/widgets/home/home/account/total_balance.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -89,6 +89,10 @@ class _AccountsTabState extends State<AccountsTab>
                                     : ListView(
                                         padding: const EdgeInsets.all(16.0),
                                         children: [
+                                          TotalBalance(),
+                                          const SizedBox(height: 16.0),
+                                          Divider(),
+                                          const SizedBox(height: 16.0),
                                           ...accounts.map(
                                             (account) => Padding(
                                               padding: const EdgeInsets.only(

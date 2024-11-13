@@ -1,6 +1,8 @@
+import "package:flow/data/money.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -35,7 +37,13 @@ class TransactionListDateHeader extends StatelessWidget {
       return title;
     }
 
-    final double flow = transactions.sum;
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
+    final double flow = transactions
+        .where((transaction) => transaction.currency == primaryCurrency)
+        .sum;
+    final bool containsNonPrimaryCurrency = transactions
+        .any((transaction) => transaction.currency != primaryCurrency);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +51,7 @@ class TransactionListDateHeader extends StatelessWidget {
       children: [
         title,
         Text(
-          "${flow.moneyCompact} • ${'tabs.home.transactionsCount'.t(context, transactions.renderableCount)}",
+          "${Money(flow, primaryCurrency).moneyCompact}${containsNonPrimaryCurrency ? '+' : ''} • ${'tabs.home.transactionsCount'.t(context, transactions.renderableCount)}",
           style: context.textTheme.labelMedium,
         ),
       ],

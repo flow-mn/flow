@@ -5,7 +5,7 @@ import "dart:ui" as ui;
 import "package:file_picker/file_picker.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
-import "package:flow/utils/toast.dart";
+import "package:flow/utils/extensions/toast.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";

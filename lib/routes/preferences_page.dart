@@ -2,11 +2,13 @@ import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/main.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
-import "package:flow/routes/preferences/theme_selection_sheet.dart";
+import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
@@ -20,17 +22,21 @@ class PreferencesPage extends StatefulWidget {
 }
 
 class _PreferencesPageState extends State<PreferencesPage> {
-  bool _themeBusy = false;
   bool _currencyBusy = false;
   bool _languageBusy = false;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeMode currentThemeMode = Flow.of(context).themeMode;
+    final FlowColorScheme currentTheme =
+        getTheme(LocalPreferences().themeName.get())?.scheme ?? shadeOfViolet;
 
-    final int showUpcomingTransactionDays =
-        LocalPreferences().homeTabPlannedTransactionsDays.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
+        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
+            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+
+    final bool enableGeo = LocalPreferences().enableGeo.get();
+    final bool autoAttachTransactionGeo =
+        LocalPreferences().autoAttachTransactionGeo.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -41,10 +47,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.home.upcoming".t(context)),
             subtitle: Text(
-              showUpcomingTransactionDays == 0
-                  ? "preferences.home.upcoming.none".t(context)
-                  : "preferences.home.upcoming.nextNdays"
-                      .t(context, showUpcomingTransactionDays),
+              homeTabPlannedTransactionsDuration.localizedNameContext(context),
             ),
             leading: const Icon(Symbols.hourglass_top_rounded),
             onTap: openHomeTabPrefs,
@@ -52,19 +55,12 @@ class _PreferencesPageState extends State<PreferencesPage> {
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
-            title: Text("preferences.themeMode".t(context)),
-            leading: switch (currentThemeMode) {
-              ThemeMode.system => const Icon(Symbols.routine_rounded),
-              ThemeMode.dark => const Icon(Symbols.dark_mode_rounded),
-              ThemeMode.light => const Icon(Symbols.light_mode_rounded),
-            },
-            subtitle: Text(switch (currentThemeMode) {
-              ThemeMode.system => "preferences.themeMode.system".t(context),
-              ThemeMode.dark => "preferences.themeMode.dark".t(context),
-              ThemeMode.light => "preferences.themeMode.light".t(context),
-            }),
-            onTap: () => updateTheme(),
-            onLongPress: () => updateTheme(ThemeMode.system),
+            title: Text("preferences.theme".t(context)),
+            leading: currentTheme.isDark
+                ? const Icon(Symbols.dark_mode_rounded)
+                : const Icon(Symbols.light_mode_rounded),
+            subtitle: Text(currentTheme.name),
+            onTap: openTheme,
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
@@ -114,39 +110,24 @@ class _PreferencesPageState extends State<PreferencesPage> {
             ),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
+          ListTile(
+            title: Text("preferences.transactionGeo".t(context)),
+            leading: const Icon(Symbols.location_pin_rounded),
+            onTap: openTransactionGeo,
+            subtitle: Text(
+              enableGeo
+                  ? (autoAttachTransactionGeo
+                      ? "preferences.transactionGeo.auto.enabled".t(context)
+                      : "general.enabled".t(context))
+                  : "general.disabled".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
         ]),
       ),
     );
-  }
-
-  void updateTheme([ThemeMode? force]) async {
-    if (_themeBusy) return;
-
-    setState(() {
-      _themeBusy = true;
-    });
-
-    try {
-      final ThemeMode? selected = await showModalBottomSheet<ThemeMode>(
-        context: context,
-        builder: (context) => ThemeSelectionSheet(
-          currentTheme: Flow.of(context).themeMode,
-        ),
-      );
-
-      if (selected != null) {
-        await LocalPreferences().themeMode.set(selected);
-      }
-
-      if (mounted) {
-        // Even tho the whole app state refreshes, it doesn't get refreshed
-        // if we switch from same ThemeMode as system from ThemeMode.system.
-        // So this call is necessary
-        setState(() {});
-      }
-    } finally {
-      _themeBusy = false;
-    }
   }
 
   void updateLanguage() async {
@@ -235,5 +216,26 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransactionButtonOrderPrefs() async {
     await context.push("/preferences/transactionButtonOrder");
+  }
+
+  void openTransactionGeo() async {
+    await context.push("/preferences/transactionGeo");
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
+  }
+
+  void openTheme() async {
+    await context.push("/preferences/theme");
+
+    final bool themeChangesAppIcon =
+        LocalPreferences().themeChangesAppIcon.get();
+
+    trySetThemeIcon(
+      themeChangesAppIcon ? LocalPreferences().themeName.get() : null,
+    );
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
   }
 }

@@ -1,31 +1,42 @@
 import "dart:developer";
+import "dart:io";
 
+import "package:flow/constants.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/routes/new_transaction/description_section.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
 import "package:flow/routes/new_transaction/select_category_sheet.dart";
+import "package:flow/routes/new_transaction/title_input.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/shortcut.dart";
-import "package:flow/utils/toast.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/utils/optional.dart";
 import "package:flow/widgets/delete_button.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/location_picker_sheet.dart";
+import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
-import "package:flutter_typeahead/flutter_typeahead.dart";
+import "package:flutter_map/flutter_map.dart";
+import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
+import "package:latlong2/latlong.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -56,16 +67,23 @@ class _TransactionPageState extends State<TransactionPage> {
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
   late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
   late double _amount;
 
   late final Transaction? _currentlyEditing;
 
   final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _descriptionFocusNode = FocusNode();
   final FocusNode _selectAccountFocusNode = FocusNode();
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
   late final List<Account> accounts;
   late final List<Category> categories;
+
+  Geo? _geo;
+  bool _geoHandpicked = false;
+
+  bool locationFailed = false;
 
   dynamic error;
 
@@ -77,6 +95,10 @@ class _TransactionPageState extends State<TransactionPage> {
   List<RelevanceScoredTitle>? autofillHints;
 
   late DateTime _transactionDate;
+
+  late final bool enableGeo;
+
+  late final MapController? _mapController;
 
   @override
   void initState() {
@@ -96,8 +118,12 @@ class _TransactionPageState extends State<TransactionPage> {
     if (!widget.isNewTransaction && _currentlyEditing == null) {
       error = "Transaction with id ${widget.transactionId} was not found";
     } else {
-      _titleController =
-          TextEditingController(text: _currentlyEditing?.title ?? "");
+      _titleController = TextEditingController(
+        text: _currentlyEditing?.title ?? "",
+      );
+      _descriptionController = TextEditingController(
+        text: _currentlyEditing?.description ?? "",
+      );
       _selectedAccount = _currentlyEditing?.account.target;
       _selectedCategory = _currentlyEditing?.category.target;
       _transactionDate = _currentlyEditing?.transactionDate ?? DateTime.now();
@@ -111,6 +137,15 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedAccountTransferTo = accounts.firstWhereOrNull((account) =>
           account.uuid ==
           _currentlyEditing?.extensions.transfer?.toAccountUuid);
+      _geo = _currentlyEditing?.extensions.geo;
+    }
+
+    enableGeo = LocalPreferences().enableGeo.get();
+
+    _mapController = enableGeo ? MapController() : null;
+
+    if (widget.isNewTransaction) {
+      tryFetchLocation();
     }
 
     if (widget.isNewTransaction) {
@@ -122,13 +157,20 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   void dispose() {
+    _titleFocusNode.dispose();
+    _descriptionFocusNode.dispose();
     _selectAccountFocusNode.dispose();
+    _selectAccountTransferToFocusNode.dispose();
+
+    _titleController.dispose();
+    _descriptionController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     return CallbackShortcuts(
       bindings: {
@@ -168,43 +210,14 @@ class _TransactionPageState extends State<TransactionPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 24.0),
-                    // Center(
-                    //     child: Text("Untitled transaction",
-                    //         style: context.textTheme.headlineMedium)),
-                    Padding(
-                      padding: contentPadding,
-                      child: TypeAheadField<RelevanceScoredTitle>(
-                        focusNode: _titleFocusNode,
-                        controller: _titleController,
-                        itemBuilder: (context, value) =>
-                            ListTile(title: Text(value.title)),
-                        // TODO fix laoding indicator appearing everytime i type
-                        debounceDuration: const Duration(milliseconds: 180),
-                        decorationBuilder: (context, child) => Material(
-                          clipBehavior: Clip.hardEdge,
-                          elevation: 1.0,
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: child,
-                        ),
-                        onSelected: (option) =>
-                            _titleController.text = option.title,
-                        suggestionsCallback: getAutocompleteOptions,
-                        builder: (context, controller, focusNode) {
-                          return TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            style: context.textTheme.headlineMedium,
-                            textAlign: TextAlign.center,
-                            maxLength: Transaction.maxTitleLength,
-                            onSubmitted: (_) => save(),
-                            decoration: InputDecoration(
-                              hintText: fallbackTitle,
-                              counter: const SizedBox.shrink(),
-                            ),
-                          );
-                        },
-                        hideOnEmpty: true,
-                      ),
+                    TitleInput(
+                      focusNode: _titleFocusNode,
+                      controller: _titleController,
+                      transactionType: _transactionType,
+                      selectedAccountId: _selectedAccount?.id,
+                      selectedCategoryId: _selectedCategory?.id,
+                      fallbackTitle: fallbackTitle,
+                      onSubmitted: (_) => save(),
                     ),
                     const SizedBox(height: 24.0),
                     Center(
@@ -212,123 +225,171 @@ class _TransactionPageState extends State<TransactionPage> {
                         onTap: inputAmount,
                         child: Center(
                           child: Text(
-                            _amount.formatMoney(
-                              currency: _selectedAccount?.currency,
-                            ),
+                            Money(
+                                    _amount,
+                                    _selectedAccount?.currency ??
+                                        primaryCurrency)
+                                .formatMoney(),
                             style: context.textTheme.displayMedium,
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 24.0),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: contentPadding,
-                        child: Text(
-                          isTransfer
-                              ? "transaction.transfer.from".t(context)
-                              : "account".t(context),
-                          style: context.textTheme.titleSmall?.semi(context),
-                        ),
+                    // From account
+                    Section(
+                      title: isTransfer
+                          ? "transaction.transfer.from".t(context)
+                          : "account".t(context),
+                      child: ListTile(
+                        leading: _selectedAccount == null
+                            ? null
+                            : FlowIcon(
+                                _selectedAccount!.icon,
+                                plated: true,
+                              ),
+                        title: Text(_selectedAccount?.name ??
+                            "transaction.edit.selectAccount".t(context)),
+                        subtitle: _selectedAccount == null
+                            ? null
+                            : Text(_selectedAccount!.balance.formatMoney()),
+                        onTap: () => selectAccount(),
+                        trailing: _selectedAccount == null
+                            ? const Icon(Symbols.chevron_right)
+                            : null,
+                        focusNode: _selectAccountFocusNode,
                       ),
-                    ),
-                    ListTile(
-                      leading: _selectedAccount == null
-                          ? null
-                          : FlowIcon(
-                              _selectedAccount!.icon,
-                              plated: true,
-                            ),
-                      title: Text(_selectedAccount?.name ??
-                          "transaction.edit.selectAccount".t(context)),
-                      subtitle: _selectedAccount == null
-                          ? null
-                          : Text(_selectedAccount!.balance.formatMoney(
-                              currency: _selectedAccount!.currency,
-                            )),
-                      onTap: () => selectAccount(),
-                      trailing: _selectedAccount == null
-                          ? const Icon(Symbols.chevron_right)
-                          : null,
-                      focusNode: _selectAccountFocusNode,
                     ),
                     const SizedBox(height: 16.0),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: contentPadding,
-                        child: Text(
-                          isTransfer
-                              ? "transaction.transfer.to".t(context)
-                              : "category".t(context),
-                          style: context.textTheme.titleSmall?.semi(context),
+                    // To account
+                    if (isTransfer)
+                      Section(
+                        title: "transaction.transfer.to".t(context),
+                        child: ListTile(
+                          leading: _selectedAccountTransferTo == null
+                              ? null
+                              : FlowIcon(
+                                  _selectedAccountTransferTo!.icon,
+                                  plated: true,
+                                ),
+                          title: Text(_selectedAccountTransferTo?.name ??
+                              "transaction.edit.selectAccount".t(context)),
+                          subtitle: _selectedAccountTransferTo == null
+                              ? null
+                              : Text(_selectedAccountTransferTo!.balance
+                                  .formatMoney()),
+                          onTap: () => selectAccountTransferTo(),
+                          trailing: _selectedAccountTransferTo == null
+                              ? const Icon(Symbols.chevron_right)
+                              : null,
+                          focusNode: _selectAccountTransferToFocusNode,
                         ),
                       ),
+                    // Category
+                    if (!isTransfer)
+                      Section(
+                        title: "category".t(context),
+                        child: ListTile(
+                          leading: _selectedCategory == null
+                              ? null
+                              : FlowIcon(
+                                  _selectedCategory!.icon,
+                                  plated: true,
+                                ),
+                          title: Text(_selectedCategory?.name ??
+                              "transaction.edit.selectCategory".t(context)),
+                          // subtitle: _selectedAccount == null
+                          //     ? null
+                          //     : Text(_selectedAccount!.balance.money),
+                          onTap: () => selectCategory(),
+                          trailing: _selectedCategory == null
+                              ? const Icon(Symbols.chevron_right)
+                              : null,
+                        ),
+                      ),
+                    const SizedBox(height: 16.0),
+                    DescriptionSection(
+                      controller: _descriptionController,
+                      focusNode: _descriptionFocusNode,
+                      onChanged: (_) => setState(() => {}),
                     ),
-                    isTransfer
-                        ? ListTile(
-                            leading: _selectedAccountTransferTo == null
-                                ? null
-                                : FlowIcon(
-                                    _selectedAccountTransferTo!.icon,
-                                    plated: true,
+                    // TODO @sadespresso add an option to choose a location from a map
+                    if (_geo != null || enableGeo) ...[
+                      const SizedBox(height: 16.0),
+                      Section(
+                        title: "transaction.location".t(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: _geo == null
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          "assets/images/map_square.png",
+                                        ),
+                                      ),
+                                    ),
+                                    child: AspectRatio(
+                                      aspectRatio: 1.0,
+                                      child: Center(
+                                        child: Button(
+                                          onTap: selectLocation,
+                                          trailing: const Icon(
+                                            Symbols.pin_drop_rounded,
+                                          ),
+                                          child: Text(
+                                            "transaction.location.add"
+                                                .t(context),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      InfoText(
+                                        singleLine: true,
+                                        child: Text(
+                                          "transaction.location.edit"
+                                              .t(context),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      SquareMap(
+                                        mapController: _mapController,
+                                        onTap: (_) => selectLocation(),
+                                        center: LatLng(
+                                          _geo?.latitude ??
+                                              sukhbaatarSquareCenterLat,
+                                          _geo?.longitude ??
+                                              sukhbaatarSquareCenterLong,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                            title: Text(_selectedAccountTransferTo?.name ??
-                                "transaction.edit.selectAccount".t(context)),
-                            subtitle: _selectedAccountTransferTo == null
-                                ? null
-                                : Text(_selectedAccountTransferTo!.balance
-                                    .formatMoney(
-                                    currency:
-                                        _selectedAccountTransferTo!.currency,
-                                  )),
-                            onTap: () => selectAccountTransferTo(),
-                            trailing: _selectedAccountTransferTo == null
-                                ? const Icon(Symbols.chevron_right)
-                                : null,
-                            focusNode: _selectAccountTransferToFocusNode,
-                          )
-                        : ListTile(
-                            leading: _selectedCategory == null
-                                ? null
-                                : FlowIcon(
-                                    _selectedCategory!.icon,
-                                    plated: true,
-                                  ),
-                            title: Text(_selectedCategory?.name ??
-                                "transaction.edit.selectCategory".t(context)),
-                            // subtitle: _selectedAccount == null
-                            //     ? null
-                            //     : Text(_selectedAccount!.balance.money),
-                            onTap: () => selectCategory(),
-                            trailing: _selectedCategory == null
-                                ? const Icon(Symbols.chevron_right)
-                                : null,
                           ),
-                    const SizedBox(height: 16.0),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: contentPadding,
-                        child: Text(
-                          "transaction.date".t(context),
-                          style: context.textTheme.titleSmall?.semi(context),
                         ),
                       ),
-                    ),
-                    ListTile(
-                      // leading: _transactionDate == null
-                      //     ? null
-                      //     : Icon(_selectedCategory!.icon),
-                      title: Text(_transactionDate.toMoment().LLL),
-                      // subtitle: _selectedAccount == null
-                      //     ? null
-                      //     : Text(_selectedAccount!.balance.money),
-                      onTap: () => selectTransactionDate(),
-                      trailing: _selectedCategory == null
-                          ? const Icon(Symbols.chevron_right)
-                          : null,
+                    ],
+                    const SizedBox(height: 16.0),
+                    Section(
+                      title: "transaction.date".t(context),
+                      child: ListTile(
+                        // leading: _transactionDate == null
+                        //     ? null
+                        //     : Icon(_selectedCategory!.icon),
+                        title: Text(_transactionDate.toMoment().LLL),
+                        // subtitle: _selectedAccount == null
+                        //     ? null
+                        //     : Text(_selectedAccount!.balance.money),
+                        onTap: () => selectTransactionDate(),
+                        trailing: _selectedCategory == null
+                            ? const Icon(Symbols.chevron_right)
+                            : null,
+                      ),
                     ),
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
@@ -351,6 +412,38 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
       ),
     );
+  }
+
+  void tryFetchLocation() {
+    if (Platform.isLinux) return;
+    if (LocalPreferences().enableGeo.get() != true) return;
+    if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
+
+    Geolocator.getLastKnownPosition().then((lastKnown) {
+      if (lastKnown == null) {
+        return;
+      }
+
+      if (_geo != null) {
+        // In case we already have a location, don't override with less accurate one
+        return;
+      }
+
+      _geo = Geo.fromPosition(lastKnown);
+
+      if (mounted) setState(() => {});
+    }).catchError((_) {
+      log("[Transaction Page] Failed to get last known location");
+    });
+
+    Geolocator.getCurrentPosition().then((current) {
+      _geo = Geo.fromPosition(current);
+    }).catchError((_) {
+      locationFailed = true;
+      log("[Transaction Page] Failed to get current location");
+    }).whenComplete(() {
+      if (mounted) setState(() => {});
+    });
   }
 
   void updateTransactionType(TransactionType type) {
@@ -521,6 +614,33 @@ class _TransactionPageState extends State<TransactionPage> {
     });
   }
 
+  void selectLocation() async {
+    final Optional<LatLng>? result =
+        await showModalBottomSheet<Optional<LatLng>>(
+      context: context,
+      builder: (context) => LocationPickerSheet(
+        latitude: _geo?.latitude,
+        longitude: _geo?.longitude,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (result == null) return;
+
+    final LatLng? newLatLng = result.value;
+
+    _geoHandpicked = newLatLng?.toSexagesimal() != _geo?.toSexagesimal();
+    _geo = newLatLng == null ? null : Geo.fromLatLng(newLatLng);
+
+    setState(() {});
+
+    if (newLatLng != null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _mapController?.move(newLatLng, _mapController.camera.zoom);
+      });
+    }
+  }
+
   bool _ensureAccountsSelected() {
     if (_selectedAccount == null) {
       context.showErrorToast(
@@ -541,7 +661,10 @@ class _TransactionPageState extends State<TransactionPage> {
     return true;
   }
 
-  void update({required String formattedTitle}) async {
+  void update({
+    required String formattedTitle,
+    required String? formattedDescription,
+  }) async {
     if (_currentlyEditing == null) return;
 
     if (_transactionType == TransactionType.transfer) {
@@ -549,9 +672,12 @@ class _TransactionPageState extends State<TransactionPage> {
         _selectedAccount!.transferTo(
           amount: _amount,
           title: formattedTitle,
+          description: formattedDescription,
           targetAccount: _selectedAccountTransferTo!,
           createdDate: _currentlyEditing.createdDate,
           transactionDate: _transactionDate,
+          extensions:
+              _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
         );
 
         _currentlyEditing.delete();
@@ -565,8 +691,12 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.setCategory(_selectedCategory);
     _currentlyEditing.setAccount(_selectedAccount);
     _currentlyEditing.title = formattedTitle;
+    _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
     _currentlyEditing.transactionDate = _transactionDate;
+
+    _currentlyEditing.extensions =
+        _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
     ObjectBox().box<Transaction>().put(
           _currentlyEditing,
@@ -579,12 +709,24 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
-    final String trimmed = _titleController.text.trim();
-    final String formattedTitle = trimmed.isNotEmpty ? trimmed : fallbackTitle;
+    final String trimmedTitle = _titleController.text.trim();
+    final String formattedTitle =
+        trimmedTitle.isNotEmpty ? trimmedTitle : fallbackTitle;
+
+    final String trimmedDescription = _descriptionController.text.trim();
+    final String? formattedDescription =
+        trimmedDescription.isNotEmpty ? trimmedDescription : null;
 
     if (_currentlyEditing != null) {
-      return update(formattedTitle: formattedTitle);
+      return update(
+        formattedTitle: formattedTitle,
+        formattedDescription: formattedDescription,
+      );
     }
+
+    final List<TransactionExtension> extensions = [
+      if (_geo != null) _geo!,
+    ];
 
     if (isTransfer) {
       _selectedAccount!.transferTo(
@@ -592,13 +734,17 @@ class _TransactionPageState extends State<TransactionPage> {
         amount: _amount.abs(),
         transactionDate: _transactionDate,
         title: formattedTitle,
+        description: formattedDescription,
+        extensions: extensions,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
         amount: _amount,
         title: formattedTitle,
+        description: formattedDescription,
         category: _selectedCategory,
         transactionDate: _transactionDate,
+        extensions: extensions,
       );
     }
 
@@ -616,7 +762,10 @@ class _TransactionPageState extends State<TransactionPage> {
       }
 
       return _currentlyEditing.amount != _amount ||
+          _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
+          (_currentlyEditing.description ?? "") !=
+              _descriptionController.text ||
           _currentlyEditing.type != _transactionType ||
           _currentlyEditing.accountUuid != _selectedAccount?.uuid ||
           _currentlyEditing.categoryUuid != _selectedCategory?.uuid ||
@@ -624,21 +773,13 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return _amount != 0 ||
+        _geoHandpicked ||
         _titleController.text.isNotEmpty ||
+        _descriptionController.text.isNotEmpty ||
         _selectedAccount != null ||
         _selectedAccountTransferTo != null ||
         _selectedCategory != null;
   }
-
-  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
-          String query) async =>
-      ObjectBox().transactionTitleSuggestions(
-        currentInput: query,
-        accountId: _selectedAccount?.id,
-        categoryId: _selectedCategory?.id,
-        type: _transactionType,
-        limit: 5,
-      );
 
   void _deleteTransaction() async {
     if (_currentlyEditing == null) return;

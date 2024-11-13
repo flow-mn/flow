@@ -1,5 +1,5 @@
 import "package:flow/entity/transaction/extensions/base.dart";
-import "package:flow/utils/jsonable.dart";
+import "package:flow/utils/jasonable.dart";
 import "package:json_annotation/json_annotation.dart";
 
 part "transfer.g.dart";
@@ -15,12 +15,14 @@ class Transfer extends TransactionExtension implements Jasonable {
   final String fromAccountUuid;
   final String toAccountUuid;
 
-  final String relatedTransactionUuid;
+  @override
+  String? relatedTransactionUuid;
 
-  final String uuid;
+  @override
+  setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
-  const Transfer({
-    required this.uuid,
+  Transfer({
+    required super.uuid,
     required this.fromAccountUuid,
     required this.toAccountUuid,
     required this.relatedTransactionUuid,

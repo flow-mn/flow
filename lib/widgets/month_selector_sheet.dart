@@ -1,5 +1,6 @@
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/month_selector_sheet/month_button.dart";
 import "package:flow/widgets/year_selector_bar.dart";
@@ -35,7 +36,7 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
   Widget build(BuildContext context) {
     return ModalSheet(
       title: Text("general.timeSelector.select.month".t(context)),
-      trailing: OverflowBar(
+      trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
           TextButton(

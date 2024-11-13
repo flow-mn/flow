@@ -1,5 +1,3 @@
-library iso4217_currencies;
-
 import "package:flow/utils/utils.dart";
 
 class CurrencyData {

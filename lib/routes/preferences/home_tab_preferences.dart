@@ -1,4 +1,6 @@
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -14,9 +16,9 @@ class HomeTabPreferencesPage extends StatefulWidget {
 class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
   @override
   Widget build(BuildContext context) {
-    final int homeTabPlannedTransactionsDays =
-        LocalPreferences().homeTabPlannedTransactionsDays.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDaysDefault;
+    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
+        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
+            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,21 +37,18 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
                 child: Wrap(
                   spacing: 12.0,
                   runSpacing: 8.0,
-                  children: [0, 7, 14, 30]
+                  children: UpcomingTransactionsDuration.values
                       .map(
-                        (days) => FilterChip(
+                        (value) => FilterChip(
                           showCheckmark: false,
-                          key: ValueKey(days),
+                          key: ValueKey(value.value),
                           label: Text(
-                            days == 0
-                                ? "preferences.home.upcoming.none".t(context)
-                                : "preferences.home.upcoming.nextNdays"
-                                    .t(context, days),
+                            value.localizedNameContext(context),
                           ),
-                          onSelected: (bool value) => value
-                              ? updateHomeTabPlannedTransactionsDays(days)
+                          onSelected: (bool selected) => selected
+                              ? updateHomeTabPlannedTransactionsDays(value)
                               : null,
-                          selected: days == homeTabPlannedTransactionsDays,
+                          selected: value == homeTabPlannedTransactionsDuration,
                         ),
                       )
                       .toList(),
@@ -71,10 +70,9 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
     );
   }
 
-  void updateHomeTabPlannedTransactionsDays(int days) async {
-    if (days < 0) return;
-
-    await LocalPreferences().homeTabPlannedTransactionsDays.set(days);
+  void updateHomeTabPlannedTransactionsDays(
+      UpcomingTransactionsDuration duration) async {
+    await LocalPreferences().homeTabPlannedTransactionsDuration.set(duration);
 
     if (mounted) setState(() {});
   }

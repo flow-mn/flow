@@ -1,6 +1,6 @@
-part of "theme.dart";
+import "package:flutter/material.dart";
 
-const _textTheme = TextTheme(
+const flowTextTheme = TextTheme(
   displayLarge: TextStyle(
     fontSize: 48.0,
     fontWeight: FontWeight.w500,

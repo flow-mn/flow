@@ -4,12 +4,10 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/utils/optional.dart";
 import "package:flow/widgets/add_category_card.dart";
-import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/category_card.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
-
 import "package:flow/widgets/setup/categories/category_preset_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";

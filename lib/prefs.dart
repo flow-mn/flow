@@ -4,13 +4,16 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
+import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -21,7 +24,9 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const int homeTabPlannedTransactionsDaysDefault = 7;
+  static const UpcomingTransactionsDuration
+      homeTabPlannedTransactionsDurationDefault =
+      UpcomingTransactionsDuration.thisWeek;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -50,12 +55,12 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final PrimitiveSettingsEntry<int> homeTabPlannedTransactionsDays;
+  late final JsonSettingsEntry<UpcomingTransactionsDuration>
+      homeTabPlannedTransactionsDuration;
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
 
-  late final ThemeModeSettingsEntry themeMode;
   late final LocaleSettingsEntry localeOverride;
 
   /// Whether the user uses only one currency across accounts
@@ -64,6 +69,17 @@ class LocalPreferences {
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
   late final JsonSettingsEntry<ExchangeRatesSet> exchangeRatesCache;
+
+  late final BoolSettingsEntry enableGeo;
+
+  late final BoolSettingsEntry autoAttachTransactionGeo;
+
+  late final JsonSettingsEntry<LatLng> lastKnownGeo;
+
+  late final ThemeModeSettingsEntry themeMode;
+  late final PrimitiveSettingsEntry<String> themeName;
+  late final BoolSettingsEntry themeChangesAppIcon;
+  late final BoolSettingsEntry enableDynamicTheme;
 
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
@@ -90,10 +106,15 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    homeTabPlannedTransactionsDays = PrimitiveSettingsEntry<int>(
-      key: "flow.homeTabPlannedTransactionsDays",
+    homeTabPlannedTransactionsDuration =
+        JsonSettingsEntry<UpcomingTransactionsDuration>(
+      key: "flow.homeTabPlannedTransactionsDuration",
       preferences: _prefs,
-      initialValue: homeTabPlannedTransactionsDaysDefault,
+      initialValue: homeTabPlannedTransactionsDurationDefault,
+      fromJson: (map) =>
+          UpcomingTransactionsDuration.fromJson(map) ??
+          homeTabPlannedTransactionsDurationDefault,
+      toJson: (data) => data.toJson(),
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "flow.transactionButtonOrder",
@@ -111,11 +132,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeMode = ThemeModeSettingsEntry(
-      key: "flow.themeMode",
-      preferences: _prefs,
-      initialValue: ThemeMode.system,
-    );
     localeOverride = LocaleSettingsEntry(
       key: "flow.localeOverride",
       preferences: _prefs,
@@ -138,6 +154,46 @@ class LocalPreferences {
       preferences: _prefs,
       fromJson: (json) => ExchangeRatesSet.fromJson(json),
       toJson: (data) => data.toJson(),
+    );
+
+    enableGeo = BoolSettingsEntry(
+      key: "flow.enableGeo",
+      preferences: _prefs,
+      initialValue: false,
+    );
+
+    autoAttachTransactionGeo = BoolSettingsEntry(
+      key: "flow.autoAttachTransactionGeo",
+      preferences: _prefs,
+      initialValue: false,
+    );
+
+    lastKnownGeo = JsonSettingsEntry<LatLng>(
+      key: "flow.lastKnownGeo",
+      preferences: _prefs,
+      fromJson: (json) => LatLng.fromJson(json),
+      toJson: (data) => data.toJson(),
+    );
+
+    themeMode = ThemeModeSettingsEntry(
+      key: "flow.themeMode",
+      preferences: _prefs,
+      initialValue: ThemeMode.system,
+    );
+    themeName = PrimitiveSettingsEntry<String>(
+      key: "flow.themeName",
+      preferences: _prefs,
+      initialValue: lightThemes.keys.first,
+    );
+    themeChangesAppIcon = BoolSettingsEntry(
+      key: "flow.themeChangesAppIcon",
+      preferences: _prefs,
+      initialValue: true,
+    );
+    enableDynamicTheme = BoolSettingsEntry(
+      key: "flow.enableDynamicTheme",
+      preferences: _prefs,
+      initialValue: true,
     );
 
     updateTransitiveProperties();
@@ -323,6 +379,13 @@ class LocalPreferences {
     }
 
     return primaryCurrencyName;
+  }
+
+  String getCurrentTheme() {
+    final String? preferencesTheme = LocalPreferences().themeName.get();
+    return validateThemeName(preferencesTheme)
+        ? preferencesTheme!
+        : lightThemes.keys.first;
   }
 
   factory LocalPreferences() {

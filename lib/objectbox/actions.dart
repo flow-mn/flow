@@ -2,8 +2,10 @@ import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
 import "package:flow/data/memo.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/data/transactions_filter.dart";
@@ -17,6 +19,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -25,16 +28,59 @@ import "package:uuid/uuid.dart";
 typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
-  double getTotalBalance() {
+  /// Returns the grand total of all accounts in primary currency in the primary currency
+  Money getPrimaryCurrencyGrandTotal() {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     final Query<Account> accountsQuery = box<Account>()
-        .query(Account_.excludeFromTotalBalance.equals(false))
+        .query(Account_.excludeFromTotalBalance
+            .notEquals(true)
+            .and(Account_.currency.equals(primaryCurrency)))
         .build();
 
     final List<Account> accounts = accountsQuery.find();
 
-    return accounts
-        .map((e) => e.balance)
-        .fold(0, (previousValue, element) => previousValue + element);
+    accountsQuery.close();
+
+    return accounts.map((e) => e.balance).fold(Money(0, primaryCurrency),
+        (previousValue, element) => previousValue + element);
+  }
+
+  /// Returns the grand total of all accounts (including non-primary currency accounts) in the primary currency
+  Future<Money?> getGrandTotal() async {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
+    final Query<Account> accountsQuery = box<Account>()
+        .query(Account_.excludeFromTotalBalance.notEquals(true))
+        .build();
+
+    final List<Account> accounts = accountsQuery.find();
+
+    accountsQuery.close();
+
+    Money total = accounts
+        .where((account) => account.currency == primaryCurrency)
+        .fold<Money>(
+          Money(0, primaryCurrency),
+          (previousValue, element) => previousValue + element.balance,
+        );
+
+    final List<Account> nonPrimaryCurrencyAccounts = accounts
+        .where((account) => account.currency != primaryCurrency)
+        .toList();
+
+    final ExchangeRates? rates =
+        await ExchangeRatesService().tryFetchRates(primaryCurrency);
+
+    if (rates == null) return null;
+
+    for (final Account account in nonPrimaryCurrencyAccounts) {
+      final Money converted = account.balance.convert(primaryCurrency, rates);
+
+      total += converted;
+    }
+
+    return total;
   }
 
   List<Account> getAccounts([bool sortByFrecency = true]) {
@@ -114,7 +160,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String categoryUuid =
-          transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.category.target?.uuid ?? Namespace.nil.value;
 
       flow[categoryUuid] ??= MoneyFlow(
         associatedData: transaction.category.target,
@@ -149,7 +195,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String accountUuid =
-          transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.account.target?.uuid ?? Namespace.nil.value;
 
       flow[accountUuid] ??= MoneyFlow(
         associatedData: transaction.account.target,
@@ -158,7 +204,7 @@ extension MainActions on ObjectBox {
     }
 
     assert(
-      !flow.containsKey(Uuid.NAMESPACE_NIL),
+      !flow.containsKey(Namespace.nil.value),
       "There is no way you've managed to make a transaction without an account",
     );
 
@@ -313,7 +359,8 @@ extension TransactionActions on Transaction {
 
     final Query<Transaction> query = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.uuid.equals(transfer.relatedTransactionUuid))
+        .query(Transaction_.uuid
+            .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
         .build();
 
     try {
@@ -334,7 +381,8 @@ extension TransactionActions on Transaction {
       } else {
         final Query<Transaction> relatedTransactionQuery = ObjectBox()
             .box<Transaction>()
-            .query(Transaction_.uuid.equals(transfer.relatedTransactionUuid))
+            .query(Transaction_.uuid
+                .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
             .build();
 
         final Transaction? relatedTransaction =
@@ -429,7 +477,13 @@ extension TransactionListActions on Iterable<Transaction> {
   List<Transaction> search(TransactionSearchData? data) {
     if (data == null || data.normalizedKeyword == null) return toList();
 
-    return where(data.predicate).toList();
+    final matches = where(data.predicate).toList();
+
+    if (data.smartMatch && matches.isEmpty) {
+      return search(data.copyWithOptional(smartMatch: false));
+    }
+
+    return matches;
   }
 }
 
@@ -465,7 +519,7 @@ extension AccountActions on Account {
     String? title,
     DateTime? transactionDate,
   }) {
-    final double delta = targetBalance - balance;
+    final double delta = targetBalance - balance.amount;
 
     return createAndSaveTransaction(
       amount: delta,
@@ -481,18 +535,26 @@ extension AccountActions on Account {
   /// Second transaction represents money incoming to the target account
   (int from, int to) transferTo({
     String? title,
+    String? description,
     required Account targetAccount,
     required double amount,
     DateTime? createdDate,
     DateTime? transactionDate,
+    double? latitude,
+    double? longitude,
+    List<TransactionExtension>? extensions,
   }) {
     if (amount <= 0) {
       return targetAccount.transferTo(
         targetAccount: this,
         amount: amount.abs(),
         title: title,
+        description: description,
         createdDate: createdDate,
         transactionDate: transactionDate,
+        latitude: latitude,
+        longitude: longitude,
+        extensions: extensions,
       );
     }
 
@@ -510,10 +572,17 @@ extension AccountActions on Account {
         "transaction.transfer.fromToTitle"
             .tr({"from": name, "to": targetAccount.name});
 
+    final List<TransactionExtension> filteredExtensions =
+        extensions?.where((ext) => ext is! Transfer).toList() ?? [];
+
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
-      extensions: [transferData],
+      description: description,
+      extensions: [
+        transferData,
+        ...filteredExtensions,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -521,8 +590,10 @@ extension AccountActions on Account {
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
       title: resolvedTitle,
+      description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid)
+        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
+        ...filteredExtensions,
       ],
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
@@ -538,23 +609,50 @@ extension AccountActions on Account {
     DateTime? transactionDate,
     DateTime? createdDate,
     String? title,
+    String? description,
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
   }) {
+    final String uuid = uuidOverride ?? const Uuid().v4();
+
     Transaction value = Transaction(
       amount: amount,
       currency: currency,
       title: title,
+      description: description,
       transactionDate: transactionDate,
       createdDate: createdDate,
-      uuidOverride: uuidOverride,
+      uuid: uuid,
     )
       ..setCategory(category)
       ..setAccount(this);
 
-    if (extensions != null && extensions.isNotEmpty) {
-      value.addExtensions(extensions);
+    final List<TransactionExtension>? applicableExtensions = extensions
+        ?.map((ext) {
+          log("Adding extension to Transaction($uuidOverride): ${ext.runtimeType}(${ext.uuid})");
+          log("Checking extension: ${ext.runtimeType}");
+
+          if (ext.relatedTransactionUuid == null) {
+            return ext..setRelatedTransactionUuid(uuid);
+          }
+
+          if (ext.key == Transfer.keyName) {
+            // Transfer extension is handled separately
+            return ext;
+          }
+
+          if (ext.relatedTransactionUuid == uuid) {
+            return ext;
+          }
+
+          return null;
+        })
+        .nonNulls
+        .toList();
+
+    if (applicableExtensions != null && applicableExtensions.isNotEmpty) {
+      value.addExtensions(applicableExtensions);
     }
 
     final int id = ObjectBox().box<Transaction>().put(value);
