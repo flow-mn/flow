@@ -423,12 +423,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void handlePaste(String text, [bool reportInvalid = false]) {
-    final num? parsed = num.tryParse(text);
+    final num? parsed = NumberFormat().tryParse(text) ?? num.tryParse(text);
 
     if (parsed == null) {
       if (reportInvalid) {
         context.showErrorToast(
-            error: "error.input.pasteFormatMismatch".t(context));
+          error: "error.input.pasteFormatMismatch".t(context),
+        );
       }
       return;
     }
