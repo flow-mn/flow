@@ -19,6 +19,7 @@
     "general.select": "Select",
     "general.select.all": "Select all",
     "general.delete.all": "Delete all",
+    "general.copy": "Copy",
     "general.copy.success": "Copied to clipboard",
     "general.copy.clickToCopy": "Click to copy",
     "general.paste": "Paste",

@@ -4,11 +4,14 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
 class LongPressContextMenu extends StatefulWidget {
+  /// Prepends a paste action. This requires [onPaste] to be set.
   final bool addPasteAction;
 
   final List<PopupMenuEntry<String>> actions;
 
   final ValueChanged<String?> onSelected;
+
+  /// Called when the user pastes text. This requires [addPasteAction] to be `true`.
   final void Function(String text)? onPaste;
 
   final Widget child;

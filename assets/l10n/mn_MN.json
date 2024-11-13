@@ -19,6 +19,7 @@
     "general.select": "Сонгох",
     "general.select.all": "Бүгдийг сонгох",
     "general.delete.all": "Бүгдийг устгах",
+    "general.copy": "Хуулах",
     "general.copy.success": "Амжилттай хууллаа",
     "general.copy.clickToCopy": "Дарвал бичвэрийг хуулна",
     "general.paste": "Буулгах",

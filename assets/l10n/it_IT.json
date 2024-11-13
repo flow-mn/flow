@@ -19,6 +19,7 @@
     "general.select": "Seleziona",
     "general.select.all": "Seleziona tutto",
     "general.delete.all": "Elimina tutto",
+    "general.copy": "Copia",
     "general.copy.success": "Copiato negli appunti",
     "general.copy.clickToCopy": "Clicca per copiare",
     "general.paste": "Incolla",

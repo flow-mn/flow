@@ -26,6 +26,8 @@ class AmountText extends StatefulWidget {
   /// sure which currency transaction the user is making.
   final bool hideCurrencySymbol;
 
+  final void Function(String text)? onPaste;
+
   const AmountText({
     super.key,
     required this.focusNode,
@@ -34,6 +36,7 @@ class AmountText extends StatefulWidget {
     required this.numberOfDecimals,
     required this.hideCurrencySymbol,
     this.currency,
+    this.onPaste,
   });
 
   @override
@@ -101,6 +104,8 @@ class _AmountTextState extends State<AmountText>
             child: Text("general.copy".t(context)),
           ),
         ],
+        addPasteAction: true,
+        onPaste: widget.onPaste,
         onSelected: handleContextMenuAction,
         child: Transform.scale(
           scale: _amountTextScaleAnimation.value,

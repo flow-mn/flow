@@ -143,6 +143,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                       inputtingDecimal: _inputtingDecimal,
                       numberOfDecimals: _numberOfDecimals,
                       hideCurrencySymbol: widget.hideCurrencySymbol,
+                      onPaste: (text) => handlePaste(text, true),
                     ),
                     const SizedBox(height: 16.0),
                     // Numpad
@@ -376,14 +377,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         clipboardData.text == null ||
         clipboardData.text!.trim().isEmpty) return;
 
-    final parsed = num.tryParse(clipboardData.text!);
-
-    if (parsed == null) return;
-
-    _updateAmountFromNumber(parsed);
-
-    _resetOnNextInput = true;
-    setState(() {});
+    handlePaste(clipboardData.text!);
   }
 
   void _copy() {
@@ -425,6 +419,23 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     _inputtingDecimal = false; // value.decimalLength > 0
     _currentOperation = op;
 
+    setState(() {});
+  }
+
+  void handlePaste(String text, [bool reportInvalid = false]) {
+    final num? parsed = num.tryParse(text);
+
+    if (parsed == null) {
+      if (reportInvalid) {
+        context.showErrorToast(
+            error: "error.input.pasteFormatMismatch".t(context));
+      }
+      return;
+    }
+
+    _updateAmountFromNumber(parsed);
+
+    _resetOnNextInput = true;
     setState(() {});
   }
 
