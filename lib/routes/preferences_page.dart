@@ -37,6 +37,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
+    final bool requirePendingTransactionConfrimation =
+        LocalPreferences().requirePendingTransactionConfrimation.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -51,6 +53,18 @@ class _PreferencesPageState extends State<PreferencesPage> {
             ),
             leading: const Icon(Symbols.hourglass_top_rounded),
             onTap: openHomeTabPrefs,
+            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.pendingTransactions".t(context)),
+            subtitle: Text(
+              requirePendingTransactionConfrimation
+                  ? "general.enabled".t(context)
+                  : "general.disabled".t(context),
+            ),
+            leading: const Icon(Symbols.schedule_rounded),
+            onTap: openPendingTransactionsPrefs,
             // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
@@ -220,6 +234,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
   void openTransactionGeo() async {
     await context.push("/preferences/transactionGeo");
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
+  }
+
+  void openPendingTransactionsPrefs() async {
+    await context.push("/preferences/pendingTransactions");
 
     // Rebuild to update description text
     if (mounted) setState(() {});

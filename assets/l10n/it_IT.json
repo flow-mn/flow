@@ -84,6 +84,7 @@
     "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile!",
     "account.noAccounts": "Non hai nessun conto!",
     "account.thisMonth": "Questo mese",
+    "account.postTransactionBalance": "Saldo dopo questa transazione",
 
     "transaction": "Transazione",
     "transaction.new": "Nuova transazione",
@@ -110,6 +111,7 @@
     "transaction.location": "Posizione",
     "transaction.location.add": "Aggiungi una posizione",
     "transaction.location.edit": "Tocca la mappa per modificare",
+    "transaction.pending": "In attesa",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",
@@ -184,6 +186,9 @@
     "preferences.transactionGeo.auto.enabled": "Auto-attach abilitato",
     "preferences.transactionGeo.auto.description": "Allega automaticamente la tua posizione attuale alle nuove transazioni. Anche se hai disattivato questa funzione, puoi comunque scegliere una posizione su una mappa per allegarla.",
     "preferences.transactionGeo.auto.permissionDenied": "L'autorizzazione per la posizione è stata negata. Puoi abilitarmi dalle tue impostazioni se lo desideri.",
+    "preferences.pendingTransactions": "Transazioni in sospeso",
+    "preferences.pendingTransactions.requireConfirmation": "Richiedi conferma",
+    "preferences.pendingTransactions.requireConfirmation.description": "Quando abilitato, le transazioni in sospeso richiederanno conferma per essere effettive",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",

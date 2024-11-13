@@ -9,14 +9,19 @@ part of 'category.dart';
 Category _$CategoryFromJson(Map<String, dynamic> json) => Category(
       name: json['name'] as String,
       iconCode: json['iconCode'] as String,
-      createdDate: json['createdDate'] == null
-          ? null
-          : DateTime.parse(json['createdDate'] as String),
+      createdDate: _$JsonConverterFromJson<String, DateTime>(
+          json['createdDate'], const UTCDateTimeConverter().fromJson),
     )..uuid = json['uuid'] as String;
 
 Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
       'uuid': instance.uuid,
-      'createdDate': instance.createdDate.toIso8601String(),
+      'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
       'name': instance.name,
       'iconCode': instance.iconCode,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);

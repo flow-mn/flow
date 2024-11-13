@@ -1,5 +1,12 @@
 # Changelog
 
+## Beta next
+
+* Json exports now use UTC timezone
+* Fixed iOS launcher icons having 1 pixel gap (Figma export issue *sigh*)
+* Now income/expense text on home screen no longer wraps to the next line
+* Future transactions now require user confirmation by default. Closes [#120](https://github.com/flow-mn/flow/issues/120)
+
 ## Beta 0.8.0
 
 * Fixed account card "this month" summary
