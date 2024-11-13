@@ -5,7 +5,9 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/long_press_context_menu.dart";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 
 class AmountText extends StatefulWidget {
   final FocusNode focusNode;
@@ -90,8 +92,14 @@ class _AmountTextState extends State<AmountText>
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: SelectionArea(
-        focusNode: widget.focusNode,
+      child: LongPressContextMenu(
+        actions: [
+          PopupMenuItem(
+            value: "copy",
+            child: Text("general.copy".t(context)),
+          ),
+        ],
+        onSelected: handleContextMenuAction,
         child: Transform.scale(
           scale: _amountTextScaleAnimation.value,
           child: SizedBox(
@@ -131,5 +139,13 @@ class _AmountTextState extends State<AmountText>
 
     await _amountTextAnimationController.forward().orCancel;
     await _amountTextAnimationController.reverse().orCancel;
+  }
+
+  void handleContextMenuAction(String? action) {
+    switch (action) {
+      case "copy":
+        Clipboard.setData(ClipboardData(text: amountText()));
+        break;
+    }
   }
 }
