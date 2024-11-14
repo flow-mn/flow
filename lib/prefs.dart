@@ -80,6 +80,8 @@ class LocalPreferences {
 
   late final BoolSettingsEntry requirePendingTransactionConfrimation;
 
+  late final BoolSettingsEntry privacyMode;
+
   LocalPreferences._internal(this._prefs) {
     primaryCurrency = PrimitiveSettingsEntry<String>(
       key: "flow.primaryCurrency",
@@ -190,6 +192,12 @@ class LocalPreferences {
 
     requirePendingTransactionConfrimation = BoolSettingsEntry(
       key: "flow.requirePendingTransactionConfrimation",
+      preferences: _prefs,
+      initialValue: true,
+    );
+
+    privacyMode = BoolSettingsEntry(
+      key: "flow.privacyMode",
       preferences: _prefs,
       initialValue: true,
     );

@@ -7,6 +7,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
@@ -41,18 +42,18 @@ class AccountCard extends StatelessWidget {
         ? account.transactions
             .where((x) => x.transactionDate.isAtSameMonthAs(now))
             .nonTransfers
-            .incomeSum
+            .incomeSumWithoutCurrency
         : account.transactions
             .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .incomeSum;
+            .incomeSumWithoutCurrency;
     final double expenseSum = excludeTransfersInTotal
         ? account.transactions
             .where((x) => x.transactionDate.isAtSameMonthAs(now))
             .nonTransfers
-            .expenseSum
+            .expenseSumWithoutCurrency
         : account.transactions
             .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .expenseSum;
+            .expenseSumWithoutCurrency;
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -82,8 +83,8 @@ class AccountCard extends StatelessWidget {
                         account.name,
                         style: context.textTheme.titleSmall,
                       ),
-                      Text(
-                        account.balance.formatMoney(),
+                      MoneyText(
+                        account.balance,
                         style: context.textTheme.displaySmall,
                       ),
                     ],
@@ -112,14 +113,14 @@ class AccountCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      Money(incomeSum, account.currency).formatMoney(),
+                    child: MoneyText(
+                      Money(incomeSum, account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      Money(expenseSum, account.currency).formatMoney(),
+                    child: MoneyText(
+                      Money(expenseSum, account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),

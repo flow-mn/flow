@@ -49,6 +49,8 @@ class GroupedTransactionList extends StatelessWidget {
 
   final TransactionFilter? filter;
 
+  final bool obscure;
+
   const GroupedTransactionList({
     super.key,
     required this.transactions,
@@ -59,6 +61,7 @@ class GroupedTransactionList extends StatelessWidget {
     this.pendingDivider,
     this.anchor,
     this.headerPadding,
+    this.filter,
     this.implyHeader = true,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
@@ -67,7 +70,7 @@ class GroupedTransactionList extends StatelessWidget {
     ),
     this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
-    this.filter,
+    this.obscure = false,
   });
 
   @override
@@ -117,6 +120,7 @@ class GroupedTransactionList extends StatelessWidget {
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
             confirmFn: () => confirmTransaction(context, transaction),
+            obscure: obscure,
           ),
         (_) => Container(),
       },

@@ -1,8 +1,8 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
@@ -28,20 +28,20 @@ class _FlowCardsState extends State<FlowCards> {
     final MoneyFlow? flow = widget.transactions?.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final String expensesText = switch ((flow, widget.rates)) {
-      (null, _) => "-",
+    final Money? totalExpense = switch ((flow, widget.rates)) {
+      (null, _) => null,
       (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getExpenseByCurrency(primaryCurrency).moneyCompact,
+        moneyFlow.getExpenseByCurrency(primaryCurrency),
       (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency).moneyCompact,
+        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency),
     };
 
-    final String incomesText = switch ((flow, widget.rates)) {
-      (null, _) => "-",
+    final Money? totalIncome = switch ((flow, widget.rates)) {
+      (null, _) => null,
       (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getIncomeByCurrency(primaryCurrency).moneyCompact,
+        moneyFlow.getIncomeByCurrency(primaryCurrency),
       (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency).moneyCompact,
+        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency),
     };
 
     return Row(
@@ -49,7 +49,7 @@ class _FlowCardsState extends State<FlowCards> {
         Expanded(
           child: InfoCard(
             title: TransactionType.income.localizedNameContext(context),
-            value: incomesText,
+            money: totalIncome,
             trailing: Icon(
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
@@ -61,7 +61,7 @@ class _FlowCardsState extends State<FlowCards> {
         Expanded(
           child: InfoCard(
             title: TransactionType.expense.localizedNameContext(context),
-            value: expensesText,
+            money: totalExpense,
             trailing: Icon(
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),

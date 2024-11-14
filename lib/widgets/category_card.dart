@@ -59,7 +59,9 @@ class CategoryCard extends StatelessWidget {
                 ),
                 if (showAmount)
                   Text(
-                    Money(category.transactions.sum, primaryCurrency).money,
+                    Money(category.transactions.sumWithoutCurrency,
+                            primaryCurrency)
+                        .money,
                     style: context.textTheme.bodyMedium?.semi(context),
                   ),
               ],

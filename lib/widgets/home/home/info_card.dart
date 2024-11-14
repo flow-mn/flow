@@ -1,11 +1,14 @@
 import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/money.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
 
 class InfoCard extends StatelessWidget {
   final String title;
-  final String value;
+
+  final Money? money;
 
   final Widget? trailing;
 
@@ -14,7 +17,7 @@ class InfoCard extends StatelessWidget {
   const InfoCard({
     super.key,
     required this.title,
-    required this.value,
+    required this.money,
     this.trailing,
     this.autoSizeGroup,
   });
@@ -42,11 +45,11 @@ class InfoCard extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                  child: AutoSizeText(
-                    value,
+                  child: MoneyText(
+                    money,
                     style: context.textTheme.displaySmall,
-                    maxLines: 1,
-                    group: autoSizeGroup,
+                    autoSizeGroup: autoSizeGroup,
+                    autoSize: true,
                   ),
                 ),
                 if (trailing != null) ...[

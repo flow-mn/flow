@@ -22,12 +22,15 @@ class TransactionListTile extends StatelessWidget {
 
   final bool combineTransfers;
 
+  final bool obscure;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
     required this.deleteFn,
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
+    this.obscure = false,
     this.confirmFn,
     this.dismissibleKey,
   });

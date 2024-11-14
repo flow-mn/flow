@@ -7,6 +7,7 @@
 * Now income/expense text on home screen no longer wraps to the next line
 * Future transactions now require user confirmation by default. Closes [#120](https://github.com/flow-mn/flow/issues/120)
 * Now it's possible to paste transaction amount in the numpad. Closes [#157](https://github.com/flow-mn/flow/issues/157)
+* Texts that automatically shrink to fit now synchronizes its size with siblings. If that makes sense...
 
 ## Beta 0.8.0
 
