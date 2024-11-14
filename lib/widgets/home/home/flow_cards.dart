@@ -1,3 +1,4 @@
+import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
@@ -20,6 +21,8 @@ class FlowCards extends StatefulWidget {
 }
 
 class _FlowCardsState extends State<FlowCards> {
+  final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
   @override
   Widget build(BuildContext context) {
     final MoneyFlow? flow = widget.transactions?.flow;
@@ -51,6 +54,7 @@ class _FlowCardsState extends State<FlowCards> {
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
             ),
+            autoSizeGroup: autoSizeGroup,
           ),
         ),
         const SizedBox(width: 16.0),
@@ -62,6 +66,7 @@ class _FlowCardsState extends State<FlowCards> {
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),
             ),
+            autoSizeGroup: autoSizeGroup,
           ),
         ),
       ],
