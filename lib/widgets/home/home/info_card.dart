@@ -9,11 +9,14 @@ class InfoCard extends StatelessWidget {
 
   final Widget? trailing;
 
+  final AutoSizeGroup? autoSizeGroup;
+
   const InfoCard({
     super.key,
     required this.title,
     required this.value,
     this.trailing,
+    this.autoSizeGroup,
   });
 
   @override
@@ -43,6 +46,7 @@ class InfoCard extends StatelessWidget {
                     value,
                     style: context.textTheme.displaySmall,
                     maxLines: 1,
+                    group: autoSizeGroup,
                   ),
                 ),
                 if (trailing != null) ...[
