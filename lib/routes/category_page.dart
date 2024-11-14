@@ -1,3 +1,4 @@
+import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/category.dart";
@@ -49,6 +50,8 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
   bool busy = false;
 
   QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
@@ -123,6 +126,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         ? flow.getIncomeByCurrency(primaryCurrency)
                         : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
                 const SizedBox(width: 12.0),
@@ -132,6 +136,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         ? flow.getExpenseByCurrency(primaryCurrency)
                         : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
               ],
