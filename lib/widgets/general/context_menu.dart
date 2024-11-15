@@ -3,7 +3,7 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
-class LongPressContextMenu extends StatefulWidget {
+class ContextMenu extends StatefulWidget {
   /// Prepends a paste action. This requires [onPaste] to be set.
   final bool addPasteAction;
 
@@ -16,7 +16,7 @@ class LongPressContextMenu extends StatefulWidget {
 
   final Widget child;
 
-  const LongPressContextMenu({
+  const ContextMenu({
     super.key,
     required this.child,
     required this.actions,
@@ -26,18 +26,25 @@ class LongPressContextMenu extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _LongPressContextMenuState();
+  State<StatefulWidget> createState() => _ContextMenuState();
 }
 
-class _LongPressContextMenuState extends State<LongPressContextMenu> {
+class _ContextMenuState extends State<ContextMenu> {
   Offset _lastPointerPosition = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (PointerDownEvent event) {
-        if (event.kind == PointerDeviceKind.mouse &&
-            event.buttons == kSecondaryMouseButton) {
+        final bool proceed = switch (event.kind) {
+          PointerDeviceKind.mouse when event.buttons == kSecondaryMouseButton =>
+            true,
+          PointerDeviceKind.touch => true,
+          PointerDeviceKind.stylus => true,
+          _ => false,
+        };
+
+        if (proceed) {
           _lastPointerPosition = event.position;
 
           _open();
