@@ -211,7 +211,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   }
 
   _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().privacyMode.get();
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
   }

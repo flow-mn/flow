@@ -39,12 +39,10 @@ class InfoCard extends StatelessWidget {
             if (moneyText != null)
               Row(
                 children: [
-                  Flexible(
-                    child: moneyText!,
-                  ),
+                  moneyText!,
                   if (trailing != null) ...[
                     const SizedBox(width: 8.0),
-                    trailing!,
+                    Flexible(child: trailing!),
                   ],
                 ],
               ),
