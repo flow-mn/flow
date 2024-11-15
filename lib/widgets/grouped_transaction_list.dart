@@ -89,13 +89,13 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   void initState() {
     super.initState();
 
-    globalPrivacyMode = LocalPreferences().privacyMode.get();
-    LocalPreferences().privacyMode.addListener(_privacyModeUpdate);
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
   }
 
   @override
   void dispose() {
-    LocalPreferences().privacyMode.removeListener(_privacyModeUpdate);
+    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
 
     super.dispose();
   }
@@ -130,8 +130,6 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
     final EdgeInsets headerPadding = widget.headerPadding ?? widget.itemPadding;
 
-    final bool obscure = widget.overrideObscure ?? globalPrivacyMode;
-
     return ListView.builder(
       controller: widget.controller,
       padding: widget.listPadding,
@@ -150,7 +148,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
             confirmFn: () => confirmTransaction(context, transaction),
-            obscure: obscure,
+            overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),
       },

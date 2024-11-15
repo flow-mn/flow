@@ -8,7 +8,8 @@ import "package:flutter/material.dart";
 class MoneyText extends StatefulWidget {
   final Money? money;
 
-  final String Function(Money money, ({bool abbreviate, bool obscure}) options)?
+  final String Function(Money money,
+          ({bool abbreviate, bool obscure, bool useCurrencySymbol}) options)?
       formatter;
 
   /// Defaults to [false]
@@ -19,6 +20,11 @@ class MoneyText extends StatefulWidget {
 
   final bool displayAbsoluteAmount;
   final bool omitCurrency;
+
+  /// Uses 3-letter-code instead of the currency symbol.
+  ///
+  /// e.g., '€' instead of 'EUR'
+  final bool? overrideUseCurrencySymbol;
 
   /// When true, renders [AutoSizeText]
   ///
@@ -50,6 +56,7 @@ class MoneyText extends StatefulWidget {
     this.displayAbsoluteAmount = false,
     this.omitCurrency = false,
     this.maxLines = 1,
+    this.overrideUseCurrencySymbol,
     this.overrideObscure,
     this.autoSizeGroup,
     this.style,
@@ -63,6 +70,7 @@ class MoneyText extends StatefulWidget {
 
 class _MoneyTextState extends State<MoneyText> {
   late bool globalPrivacyMode;
+  late bool globalUseCurrencySymbol;
   late bool abbreviate;
   AutoSizeGroup? autoSizeGroup;
 
@@ -70,9 +78,14 @@ class _MoneyTextState extends State<MoneyText> {
   void initState() {
     super.initState();
 
-    LocalPreferences().privacyMode.addListener(_privacyModeUpdate);
+    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
+    LocalPreferences().useCurrencySymbol.addListener(_useCurrencySymbolUpdate);
 
-    globalPrivacyMode = LocalPreferences().privacyMode.get();
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
+
+    print("globalUseCurrencySymbol: $globalUseCurrencySymbol");
+
     abbreviate = widget.initiallyAbbreviated;
     autoSizeGroup = widget.autoSizeGroup;
   }
@@ -87,7 +100,10 @@ class _MoneyTextState extends State<MoneyText> {
 
   @override
   void dispose() {
-    LocalPreferences().privacyMode.removeListener(_privacyModeUpdate);
+    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
+    LocalPreferences()
+        .useCurrencySymbol
+        .removeListener(_useCurrencySymbolUpdate);
 
     super.dispose();
   }
@@ -133,6 +149,12 @@ class _MoneyTextState extends State<MoneyText> {
     setState(() {});
   }
 
+  _useCurrencySymbolUpdate() {
+    globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
+    if (!mounted) return;
+    setState(() {});
+  }
+
   String getString() {
     final Money? money = widget.money;
 
@@ -140,15 +162,25 @@ class _MoneyTextState extends State<MoneyText> {
 
     final bool obscure = widget.overrideObscure ?? globalPrivacyMode;
 
+    final bool useCurrencySymbol =
+        widget.overrideUseCurrencySymbol ?? globalUseCurrencySymbol;
+
     if (widget.formatter != null) {
       return widget.formatter!(
-          money, (abbreviate: abbreviate, obscure: obscure));
+        money,
+        (
+          abbreviate: abbreviate,
+          obscure: obscure,
+          useCurrencySymbol: useCurrencySymbol
+        ),
+      );
     }
 
     final String text = money.formatMoney(
       compact: abbreviate,
       takeAbsoluteValue: widget.displayAbsoluteAmount,
       includeCurrency: !widget.omitCurrency,
+      useCurrencySymbol: useCurrencySymbol,
     );
 
     if (obscure) {

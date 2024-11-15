@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.8.1+75"
+version: "0.8.1+76"
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -41,7 +41,7 @@ dependencies:
   json_annotation: ^4.9.0
   latlong2: ^0.9.1
   local_hero: ^0.3.0
-  local_settings: ^0.4.0
+  local_settings: ^0.5.0
   mask_text_input_formatter: ^2.8.0
   material_symbols_icons: ^4.2719.1
   moment_dart: ^2.2.1+beta.0

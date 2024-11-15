@@ -4,8 +4,8 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:go_router/go_router.dart";
@@ -23,7 +23,7 @@ class TransactionListTile extends StatelessWidget {
 
   final bool combineTransfers;
 
-  final bool obscure;
+  final bool? overrideObscure;
 
   const TransactionListTile({
     super.key,
@@ -31,9 +31,9 @@ class TransactionListTile extends StatelessWidget {
     required this.deleteFn,
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
-    this.obscure = false,
     this.confirmFn,
     this.dismissibleKey,
+    this.overrideObscure,
   });
 
   @override
@@ -77,10 +77,32 @@ class TransactionListTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        (missingTitle
-                            ? "transaction.fallbackTitle".t(context)
-                            : transaction.title!),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            if (transaction.transactionDate.isFuture ||
+                                transaction.isPending == true) ...[
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Icon(
+                                  Symbols.schedule_rounded,
+                                  size: context.textTheme.bodyMedium!.fontSize!,
+                                  fill: 0.0,
+                                  color: context.colorScheme.onSurface
+                                      .withAlpha(0xc0),
+                                ),
+                              ),
+                              TextSpan(
+                                text: " ",
+                              ),
+                            ],
+                            TextSpan(
+                              text: (missingTitle
+                                  ? "transaction.fallbackTitle".t(context)
+                                  : transaction.title!),
+                            ),
+                          ],
+                        ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -102,7 +124,16 @@ class TransactionListTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8.0),
-                _buildAmountText(context),
+                MoneyText(
+                  transaction.money,
+                  displayAbsoluteAmount:
+                      transaction.isTransfer && combineTransfers,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: transaction.type.color(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overrideObscure: overrideObscure,
+                ),
               ],
             ),
             if (showPendingConfirmation) ...[
@@ -145,48 +176,5 @@ class TransactionListTile extends StatelessWidget {
       ),
       child: listTile,
     );
-  }
-
-  Widget _buildAmountText(BuildContext context) {
-    return RichText(
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        style: context.textTheme.bodyLarge?.copyWith(
-          color: transaction.type.color(context),
-          fontWeight: FontWeight.bold,
-        ),
-        children: [
-          TextSpan(
-            text: getAmountText(),
-          ),
-          if (transaction.transactionDate.isFuture ||
-              transaction.isPending == true) ...[
-            TextSpan(
-              text: " ",
-            ),
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Icon(
-                Symbols.schedule_rounded,
-                size: context.textTheme.bodyLarge!.fontSize!,
-                fill: 0.0,
-                color: context.colorScheme.onSurface.withAlpha(0xc0),
-              ),
-            )
-          ],
-        ],
-      ),
-    );
-  }
-
-  String getAmountText() {
-    final String text = transaction.money.formatMoney(
-      takeAbsoluteValue: transaction.isTransfer && combineTransfers,
-    );
-
-    if (obscure) return text.digitsObscured;
-
-    return text;
   }
 }

@@ -190,6 +190,8 @@
     "preferences.pendingTransactions": "Pending transactions",
     "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
     "preferences.pendingTransactions.requireConfirmation.description": "When enabled, pending transactions will require confirmation to be effective",
+    "preferences.startupPrivacyMode": "Privacy mode",
+    "preferences.startupPrivacyMode.description": "Enable privacy mode when the app start",
     "preferences.moneyFormatting": "Money formatting",
     "preferences.moneyFormatting.preferFull": "Prefer full amount",
     "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
