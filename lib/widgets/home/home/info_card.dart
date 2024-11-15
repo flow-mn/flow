@@ -7,12 +7,12 @@ class InfoCard extends StatelessWidget {
 
   final Widget? moneyText;
 
-  final Widget? trailing;
+  final Widget? icon;
 
   const InfoCard({
     super.key,
     required this.title,
-    this.trailing,
+    this.icon,
     this.moneyText,
   });
 
@@ -30,22 +30,21 @@ class InfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              title,
-              style: context.textTheme.bodyMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (moneyText != null)
-              Row(
-                children: [
-                  moneyText!,
-                  if (trailing != null) ...[
-                    const SizedBox(width: 8.0),
-                    Flexible(child: trailing!),
-                  ],
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (icon != null) ...[
+                  const SizedBox(width: 4.0),
+                  IconTheme(data: IconThemeData(size: 20.0), child: icon!),
                 ],
-              ),
+              ],
+            ),
+            if (moneyText != null) moneyText!
           ],
         ),
       ),

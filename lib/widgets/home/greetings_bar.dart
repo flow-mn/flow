@@ -1,3 +1,4 @@
+import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
@@ -31,15 +32,14 @@ class GreetingsBar extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12.0),
-            Flexible(
-              child: Text(
+            Expanded(
+              child: AutoSizeText(
                 "tabs.home.greetings".t(context, profile?.name ?? "..."),
                 style: Theme.of(context).textTheme.titleMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Spacer(),
             const SizedBox(width: 12.0),
             PrivacyToggler(),
           ],

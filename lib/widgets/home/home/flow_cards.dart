@@ -68,7 +68,7 @@ class _FlowCardsState extends State<FlowCards> {
         Expanded(
           child: InfoCard(
             title: TransactionType.income.localizedNameContext(context),
-            trailing: Icon(
+            icon: Icon(
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
             ),
@@ -86,7 +86,7 @@ class _FlowCardsState extends State<FlowCards> {
         Expanded(
           child: InfoCard(
             title: TransactionType.expense.localizedNameContext(context),
-            trailing: Icon(
+            icon: Icon(
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),
             ),
