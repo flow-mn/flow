@@ -193,7 +193,7 @@
     "preferences.startupPrivacyMode": "Privacy mode",
     "preferences.startupPrivacyMode.description": "Enable privacy mode when the app start",
     "preferences.moneyFormatting": "Money formatting",
-    "preferences.moneyFormatting.preferFull": "Prefer full amount",
+    "preferences.moneyFormatting.preferFull": "Prefer full amounts",
     "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
     "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
     "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"₹32\" instead of \"INR 32\"",

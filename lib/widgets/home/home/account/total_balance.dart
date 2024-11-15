@@ -17,11 +17,15 @@ class TotalBalance extends StatefulWidget {
 }
 
 class _TotalBalanceState extends State<TotalBalance> {
+  bool initiallyAbbreviated = true;
+
   @override
   void initState() {
     super.initState();
     LocalPreferences().primaryCurrency.addListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.addListener(_refresh);
+
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
   }
 
   @override
@@ -58,7 +62,7 @@ class _TotalBalanceState extends State<TotalBalance> {
                 child: MoneyText(
                   value,
                   style: context.textTheme.displayMedium,
-                  initiallyAbbreviated: true,
+                  initiallyAbbreviated: initiallyAbbreviated,
                   tapToToggleAbbreviation: true,
                 ),
               ),

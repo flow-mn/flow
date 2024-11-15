@@ -2,11 +2,17 @@
 
 ## Beta next
 
-* Json exports now use UTC timezone
+### New features
+
+* Privacy mode - mask digits with asterisk (*)
+* Choose between symbols or currency codes (e.g., `€` or `EUR`)
+* Enable `Prefer full amounts` to see non-abbreviated amounts in flow/balances
+
+### Changes
+
+* Json exports now use **UTC** timezone
 * Future transactions now require user confirmation by default. Closes [#120](https://github.com/flow-mn/flow/issues/120)
 * Now it's possible to paste transaction amount in the numpad. Closes [#157](https://github.com/flow-mn/flow/issues/157)
-* Privacy mode - mask digits with asterisk (*)
-* Now it's possible to use currency code instead of symbols. e.g., (`EUR 42` instead of `€42`)
 
 ### Small improvemets, fixes
 

@@ -7,6 +7,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";
 import "package:flutter/cupertino.dart";
 
@@ -22,6 +23,23 @@ class FlowCards extends StatefulWidget {
 
 class _FlowCardsState extends State<FlowCards> {
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
+  late bool abbreviate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    abbreviate = !LocalPreferences().preferFullAmounts.get();
+    LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,31 +63,52 @@ class _FlowCardsState extends State<FlowCards> {
     };
 
     return Row(
+      key: ValueKey(abbreviate),
       children: [
         Expanded(
           child: InfoCard(
             title: TransactionType.income.localizedNameContext(context),
-            money: totalIncome,
             trailing: Icon(
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
             ),
-            autoSizeGroup: autoSizeGroup,
+            moneyText: MoneyText(
+              totalIncome,
+              style: context.textTheme.displaySmall,
+              autoSizeGroup: autoSizeGroup,
+              autoSize: true,
+              initiallyAbbreviated: abbreviate,
+              onTap: handleTap,
+            ),
           ),
         ),
         const SizedBox(width: 16.0),
         Expanded(
           child: InfoCard(
             title: TransactionType.expense.localizedNameContext(context),
-            money: totalExpense,
             trailing: Icon(
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),
             ),
-            autoSizeGroup: autoSizeGroup,
+            moneyText: MoneyText(
+              totalExpense,
+              style: context.textTheme.displaySmall,
+              autoSizeGroup: autoSizeGroup,
+              autoSize: true,
+              initiallyAbbreviated: abbreviate,
+              onTap: handleTap,
+            ),
           ),
         ),
       ],
     );
+  }
+
+  void handleTap() => setState(() => abbreviate = !abbreviate);
+
+  _updateAbbreviation() {
+    abbreviate = !LocalPreferences().preferFullAmounts.get();
+
+    if (mounted) setState(() {});
   }
 }

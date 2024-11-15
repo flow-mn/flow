@@ -8,15 +8,22 @@ import "package:flutter/material.dart";
 class MoneyText extends StatefulWidget {
   final Money? money;
 
-  final String Function(Money money,
-          ({bool abbreviate, bool obscure, bool useCurrencySymbol}) options)?
-      formatter;
+  final String Function(
+      Money money,
+      ({
+        bool abbreviate,
+        bool obscure,
+        bool useCurrencySymbol,
+      }) options)? customFormatter;
 
   /// Defaults to [false]
   final bool initiallyAbbreviated;
 
   /// Defaults to [false]
   final bool tapToToggleAbbreviation;
+
+  /// This will work even if [tapToToggleAbbreviation] enabled.
+  final VoidCallback? onTap;
 
   final bool displayAbsoluteAmount;
   final bool omitCurrency;
@@ -61,7 +68,8 @@ class MoneyText extends StatefulWidget {
     this.autoSizeGroup,
     this.style,
     this.textAlign,
-    this.formatter,
+    this.customFormatter,
+    this.onTap,
   });
 
   @override
@@ -83,8 +91,6 @@ class _MoneyTextState extends State<MoneyText> {
 
     globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
     globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
-
-    print("globalUseCurrencySymbol: $globalUseCurrencySymbol");
 
     abbreviate = widget.initiallyAbbreviated;
     autoSizeGroup = widget.autoSizeGroup;
@@ -127,20 +133,26 @@ class _MoneyTextState extends State<MoneyText> {
             textAlign: widget.textAlign,
           );
 
-    if (!widget.tapToToggleAbbreviation) {
-      return child;
+    if (widget.tapToToggleAbbreviation || widget.onTap != null) {
+      return GestureDetector(
+        onTap: handleTap,
+        child: child,
+      );
     }
 
-    return GestureDetector(
-      onTap: handleTap,
-      child: child,
-    );
+    return child;
   }
 
   void handleTap() {
-    setState(() {
-      abbreviate = !abbreviate;
-    });
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
+
+    if (widget.tapToToggleAbbreviation) {
+      setState(() {
+        abbreviate = !abbreviate;
+      });
+    }
   }
 
   _privacyModeUpdate() {
@@ -165,8 +177,8 @@ class _MoneyTextState extends State<MoneyText> {
     final bool useCurrencySymbol =
         widget.overrideUseCurrencySymbol ?? globalUseCurrencySymbol;
 
-    if (widget.formatter != null) {
-      return widget.formatter!(
+    if (widget.customFormatter != null) {
+      return widget.customFormatter!(
         money,
         (
           abbreviate: abbreviate,
