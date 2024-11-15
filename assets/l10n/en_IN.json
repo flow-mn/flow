@@ -190,6 +190,11 @@
     "preferences.pendingTransactions": "Pending transactions",
     "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
     "preferences.pendingTransactions.requireConfirmation.description": "When enabled, pending transactions will require confirmation to be effective",
+    "preferences.moneyFormatting": "Money formatting",
+    "preferences.moneyFormatting.preferFull": "Prefer full amount",
+    "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
+    "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
+    "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"₹32\" instead of \"INR 32\"",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",

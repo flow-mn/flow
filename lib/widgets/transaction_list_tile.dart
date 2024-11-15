@@ -4,6 +4,7 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
@@ -157,9 +158,7 @@ class TransactionListTile extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: transaction.money.formatMoney(
-              takeAbsoluteValue: transaction.isTransfer && combineTransfers,
-            ),
+            text: getAmountText(),
           ),
           if (transaction.transactionDate.isFuture ||
               transaction.isPending == true) ...[
@@ -179,5 +178,15 @@ class TransactionListTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getAmountText() {
+    final String text = transaction.money.formatMoney(
+      takeAbsoluteValue: transaction.isTransfer && combineTransfers,
+    );
+
+    if (obscure) return text.digitsObscured;
+
+    return text;
   }
 }

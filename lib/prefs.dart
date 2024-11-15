@@ -199,7 +199,7 @@ class LocalPreferences {
     privacyMode = BoolSettingsEntry(
       key: "flow.privacyMode",
       preferences: _prefs,
-      initialValue: true,
+      initialValue: false,
     );
 
     updateTransitiveProperties();

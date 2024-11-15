@@ -2,6 +2,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class MoneyText extends StatefulWidget {
@@ -33,7 +34,7 @@ class MoneyText extends StatefulWidget {
   /// Set this to [false] to make it always obscured
   ///
   /// Set this to [null] to use the default behavior
-  final bool? overrideObscureState;
+  final bool? overrideObscure;
 
   final int maxLines;
 
@@ -49,7 +50,7 @@ class MoneyText extends StatefulWidget {
     this.displayAbsoluteAmount = false,
     this.omitCurrency = false,
     this.maxLines = 1,
-    this.overrideObscureState,
+    this.overrideObscure,
     this.autoSizeGroup,
     this.style,
     this.textAlign,
@@ -61,7 +62,7 @@ class MoneyText extends StatefulWidget {
 }
 
 class _MoneyTextState extends State<MoneyText> {
-  bool globalPrivacyMode = true;
+  late bool globalPrivacyMode;
   late bool abbreviate;
   AutoSizeGroup? autoSizeGroup;
 
@@ -71,6 +72,7 @@ class _MoneyTextState extends State<MoneyText> {
 
     LocalPreferences().privacyMode.addListener(_privacyModeUpdate);
 
+    globalPrivacyMode = LocalPreferences().privacyMode.get();
     abbreviate = widget.initiallyAbbreviated;
     autoSizeGroup = widget.autoSizeGroup;
   }
@@ -136,9 +138,7 @@ class _MoneyTextState extends State<MoneyText> {
 
     if (money == null) return "-";
 
-    final bool obscure = widget.overrideObscureState == null
-        ? globalPrivacyMode
-        : widget.overrideObscureState!;
+    final bool obscure = widget.overrideObscure ?? globalPrivacyMode;
 
     if (widget.formatter != null) {
       return widget.formatter!(
@@ -152,7 +152,7 @@ class _MoneyTextState extends State<MoneyText> {
     );
 
     if (obscure) {
-      return text.replaceAll(RegExp(r"\d"), "*");
+      return text.digitsObscured;
     }
 
     return text;

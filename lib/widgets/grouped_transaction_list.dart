@@ -10,7 +10,7 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class GroupedTransactionList extends StatelessWidget {
+class GroupedTransactionList extends StatefulWidget {
   final EdgeInsets listPadding;
   final EdgeInsets itemPadding;
 
@@ -49,7 +49,12 @@ class GroupedTransactionList extends StatelessWidget {
 
   final TransactionFilter? filter;
 
-  final bool obscure;
+  /// Set this to [true] to make it always unobscured
+  ///
+  /// Set this to [false] to make it always obscured
+  ///
+  /// Set this to [null] to use the default behavior
+  final bool? overrideObscure;
 
   const GroupedTransactionList({
     super.key,
@@ -70,53 +75,78 @@ class GroupedTransactionList extends StatelessWidget {
     ),
     this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
-    this.obscure = false,
+    this.overrideObscure,
   });
 
   @override
+  State<GroupedTransactionList> createState() => _GroupedTransactionListState();
+}
+
+class _GroupedTransactionListState extends State<GroupedTransactionList> {
+  late bool globalPrivacyMode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    globalPrivacyMode = LocalPreferences().privacyMode.get();
+    LocalPreferences().privacyMode.addListener(_privacyModeUpdate);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences().privacyMode.removeListener(_privacyModeUpdate);
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool combineTransfers = shouldCombineTransferIfNeeded &&
+    final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
-    final Widget? header = this.header ??
-        (implyHeader
+    final Widget? header = widget.header ??
+        (widget.implyHeader
             ? _getImpliedHeader(context,
-                futureTransactions: pendingTransactions)
+                futureTransactions: widget.pendingTransactions)
             : null);
 
     final List<Object> flattened = [
       if (header != null) header,
-      if (pendingTransactions != null)
-        for (final entry in pendingTransactions!.entries) ...[
-          headerBuilder(entry.key, entry.value),
+      if (widget.pendingTransactions != null)
+        for (final entry in widget.pendingTransactions!.entries) ...[
+          widget.headerBuilder(entry.key, entry.value),
           ...entry.value,
         ],
-      if (pendingDivider != null &&
-          pendingTransactions?.isNotEmpty == true &&
-          transactions.isNotEmpty)
-        pendingDivider!,
-      for (final entry in transactions.entries) ...[
-        headerBuilder(entry.key, entry.value),
+      if (widget.pendingDivider != null &&
+          widget.pendingTransactions?.isNotEmpty == true &&
+          widget.transactions.isNotEmpty)
+        widget.pendingDivider!,
+      for (final entry in widget.transactions.entries) ...[
+        widget.headerBuilder(entry.key, entry.value),
         ...entry.value,
       ],
     ];
 
-    final EdgeInsets headerPadding = this.headerPadding ?? itemPadding;
+    final EdgeInsets headerPadding = widget.headerPadding ?? widget.itemPadding;
+
+    final bool obscure = widget.overrideObscure ?? globalPrivacyMode;
 
     return ListView.builder(
-      controller: controller,
-      padding: listPadding,
+      controller: widget.controller,
+      padding: widget.listPadding,
       itemBuilder: (context, index) => switch (flattened[index]) {
         (Widget header) => Padding(
             padding: headerPadding.copyWith(
-              top: index == 0 ? firstHeaderTopPadding : headerPadding.top,
+              top:
+                  index == 0 ? widget.firstHeaderTopPadding : headerPadding.top,
             ),
             child: header,
           ),
         (Transaction transaction) => TransactionListTile(
             combineTransfers: combineTransfers,
             transaction: transaction,
-            padding: itemPadding,
+            padding: widget.itemPadding,
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
             confirmFn: () => confirmTransaction(context, transaction),
@@ -180,5 +210,11 @@ class GroupedTransactionList extends StatelessWidget {
         )
       ],
     );
+  }
+
+  _privacyModeUpdate() {
+    globalPrivacyMode = LocalPreferences().privacyMode.get();
+    if (!mounted) return;
+    setState(() {});
   }
 }
