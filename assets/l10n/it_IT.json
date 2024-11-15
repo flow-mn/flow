@@ -190,6 +190,13 @@
     "preferences.pendingTransactions": "Transazioni in sospeso",
     "preferences.pendingTransactions.requireConfirmation": "Richiedi conferma",
     "preferences.pendingTransactions.requireConfirmation.description": "Quando abilitato, le transazioni in sospeso richiederanno conferma per essere effettive",
+    "preferences.startupPrivacyMode": "Modalità privacy",
+    "preferences.startupPrivacyMode.description": "Abilita la modalità privacy all'avvio dell'app",
+    "preferences.moneyFormatting": "Formato valuta",
+    "preferences.moneyFormatting.preferFull": "Preferisci importo completo",
+    "preferences.moneyFormatting.preferFull.description": "Non abbreviare i numeri quando possibile",
+    "preferences.moneyFormatting.useCurrencySymbol": "Usa simbolo valuta",
+    "preferences.moneyFormatting.useCurrencySymbol.description": "Ad esempio, \"€5\" invece di \"5 EUR\"",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",

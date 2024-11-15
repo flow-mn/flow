@@ -1,12 +1,13 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";
 import "package:flutter/cupertino.dart";
 
@@ -23,53 +24,91 @@ class FlowCards extends StatefulWidget {
 class _FlowCardsState extends State<FlowCards> {
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
+  late bool abbreviate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    abbreviate = !LocalPreferences().preferFullAmounts.get();
+    LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final MoneyFlow? flow = widget.transactions?.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final String expensesText = switch ((flow, widget.rates)) {
-      (null, _) => "-",
+    final Money? totalExpense = switch ((flow, widget.rates)) {
+      (null, _) => null,
       (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getExpenseByCurrency(primaryCurrency).moneyCompact,
+        moneyFlow.getExpenseByCurrency(primaryCurrency),
       (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency).moneyCompact,
+        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency),
     };
 
-    final String incomesText = switch ((flow, widget.rates)) {
-      (null, _) => "-",
+    final Money? totalIncome = switch ((flow, widget.rates)) {
+      (null, _) => null,
       (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getIncomeByCurrency(primaryCurrency).moneyCompact,
+        moneyFlow.getIncomeByCurrency(primaryCurrency),
       (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency).moneyCompact,
+        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency),
     };
 
     return Row(
+      key: ValueKey(abbreviate),
       children: [
         Expanded(
           child: InfoCard(
             title: TransactionType.income.localizedNameContext(context),
-            value: incomesText,
             trailing: Icon(
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
             ),
-            autoSizeGroup: autoSizeGroup,
+            moneyText: MoneyText(
+              totalIncome,
+              style: context.textTheme.displaySmall,
+              autoSizeGroup: autoSizeGroup,
+              autoSize: true,
+              initiallyAbbreviated: abbreviate,
+              onTap: handleTap,
+            ),
           ),
         ),
         const SizedBox(width: 16.0),
         Expanded(
           child: InfoCard(
             title: TransactionType.expense.localizedNameContext(context),
-            value: expensesText,
             trailing: Icon(
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),
             ),
-            autoSizeGroup: autoSizeGroup,
+            moneyText: MoneyText(
+              totalExpense,
+              style: context.textTheme.displaySmall,
+              autoSizeGroup: autoSizeGroup,
+              autoSize: true,
+              initiallyAbbreviated: abbreviate,
+              onTap: handleTap,
+            ),
           ),
         ),
       ],
     );
+  }
+
+  void handleTap() => setState(() => abbreviate = !abbreviate);
+
+  _updateAbbreviation() {
+    abbreviate = !LocalPreferences().preferFullAmounts.get();
+
+    if (mounted) setState(() {});
   }
 }

@@ -190,6 +190,13 @@
     "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
     "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
     "preferences.pendingTransactions.requireConfirmation.description": "Идэвхжүүлсэн үед баталгаажуулаагүй төлөвлөгөөт гүйлгээнүүд хүчингүй байна",
+    "preferences.startupPrivacyMode": "Нууцлалын горим",
+    "preferences.startupPrivacyMode.description": "Апп нээх үед нууцлалын горимыг идэвхжүүлэх",
+    "preferences.moneyFormatting": "Мөнгөний хэлбэр",
+    "preferences.moneyFormatting.preferFull": "Бүтэн дүнг харуулах",
+    "preferences.moneyFormatting.preferFull.description": "Тоог хураахгүй бүтнээр нь харуулах",
+    "preferences.moneyFormatting.useCurrencySymbol": "Тэмдэгт ашиглах",
+    "preferences.moneyFormatting.useCurrencySymbol.description": "Жишээлбэл, \"MNT 3,200\" гэхийн оронд \"3,200₮\"",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

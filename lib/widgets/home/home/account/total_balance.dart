@@ -6,6 +6,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
 
 class TotalBalance extends StatefulWidget {
@@ -16,11 +17,15 @@ class TotalBalance extends StatefulWidget {
 }
 
 class _TotalBalanceState extends State<TotalBalance> {
+  bool initiallyAbbreviated = true;
+
   @override
   void initState() {
     super.initState();
     LocalPreferences().primaryCurrency.addListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.addListener(_refresh);
+
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
   }
 
   @override
@@ -39,9 +44,7 @@ class _TotalBalanceState extends State<TotalBalance> {
     return FutureBuilder<Money?>(
       future: rates == null ? null : ObjectBox().getGrandTotal(),
       builder: (context, snapshot) {
-        final String value = snapshot.hasData
-            ? snapshot.data!.moneyCompact
-            : totalBalance.moneyCompact;
+        final Money value = snapshot.hasData ? snapshot.data! : totalBalance;
 
         return Padding(
           padding: EdgeInsets.only(left: 12.0),
@@ -56,9 +59,11 @@ class _TotalBalanceState extends State<TotalBalance> {
                 overflow: TextOverflow.ellipsis,
               ),
               Flexible(
-                child: Text(
+                child: MoneyText(
                   value,
                   style: context.textTheme.displayMedium,
+                  initiallyAbbreviated: initiallyAbbreviated,
+                  tapToToggleAbbreviation: true,
                 ),
               ),
             ],

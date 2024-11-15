@@ -830,10 +830,10 @@ packages:
     dependency: "direct main"
     description:
       name: local_settings
-      sha256: "075185cd021ae0df7f8743ead77cfbad33a3a8430f39f3fe340b9bd5d6943d93"
+      sha256: dd7e5be4d8dcae7b03f4884dcdd22fdb2dd343c0a9a6e9550afddbe78bbd39ad
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.5.0"
   logger:
     dependency: transitive
     description:

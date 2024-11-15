@@ -7,7 +7,7 @@ import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/widgets/general/long_press_context_menu.dart";
+import "package:flow/widgets/general/context_menu.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
@@ -97,7 +97,7 @@ class _AmountTextState extends State<AmountText>
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: LongPressContextMenu(
+      child: ContextMenu(
         actions: [
           PopupMenuItem(
             value: "copy",

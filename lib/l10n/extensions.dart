@@ -72,7 +72,6 @@ extension MoneyFormatters on Money {
         decimalDigits: decimalDigits,
       ).format(amountToFormat);
     }
-
     return NumberFormat.currency(
       locale: Intl.defaultLocale,
       name: currencyToFormat,

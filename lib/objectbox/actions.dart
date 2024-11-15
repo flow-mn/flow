@@ -471,11 +471,21 @@ extension TransactionListActions on Iterable<Transaction> {
           ? transfers.length ~/ 2
           : 0);
 
-  double get incomeSum =>
+  double get incomeSumWithoutCurrency =>
       incomes.fold(0, (value, element) => value + element.amount);
-  double get expenseSum =>
+  double get expenseSumWithoutCurrency =>
       expenses.fold(0, (value, element) => value + element.amount);
-  double get sum => fold(0, (value, element) => value + element.amount);
+  double get sumWithoutCurrency =>
+      fold(0, (value, element) => value + element.amount);
+
+  Money get incomeSum => incomes.fold(
+      Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
+  Money get expenseSum => expenses.fold(
+      Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
+  Money get sum => fold(Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
 
   MoneyFlow get flow => MoneyFlow()
     ..addAll(

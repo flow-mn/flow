@@ -1,22 +1,19 @@
-import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
 
 class InfoCard extends StatelessWidget {
   final String title;
-  final String value;
+
+  final Widget? moneyText;
 
   final Widget? trailing;
-
-  final AutoSizeGroup? autoSizeGroup;
 
   const InfoCard({
     super.key,
     required this.title,
-    required this.value,
     this.trailing,
-    this.autoSizeGroup,
+    this.moneyText,
   });
 
   @override
@@ -39,22 +36,18 @@ class InfoCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: AutoSizeText(
-                    value,
-                    style: context.textTheme.displaySmall,
-                    maxLines: 1,
-                    group: autoSizeGroup,
+            if (moneyText != null)
+              Row(
+                children: [
+                  Flexible(
+                    child: moneyText!,
                   ),
-                ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8.0),
-                  trailing!,
+                  if (trailing != null) ...[
+                    const SizedBox(width: 8.0),
+                    trailing!,
+                  ],
                 ],
-              ],
-            ),
+              ),
           ],
         ),
       ),

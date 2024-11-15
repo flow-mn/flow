@@ -66,6 +66,16 @@ void main() async {
 
   ExchangeRatesService().init();
 
+  try {
+    LocalPreferences().privacyMode.addListener(
+          () => LocalPreferences().sessionPrivacyMode.set(
+                LocalPreferences().privacyMode.get(),
+              ),
+        );
+  } catch (e) {
+    log("Failed to add listener updates prefs.sessionPrivacyMode");
+  }
+
   runApp(const Flow());
 }
 
