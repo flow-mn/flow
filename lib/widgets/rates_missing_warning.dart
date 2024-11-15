@@ -26,7 +26,7 @@ class _RatesMissingWarningState extends State<RatesMissingWarning> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
-            Symbols.error_circle_rounded_error_rounded,
+            Symbols.error_circle_rounded,
             fill: 0,
             color: context.colorScheme.error,
             size: 24.0,
