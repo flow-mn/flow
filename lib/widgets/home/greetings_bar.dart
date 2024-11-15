@@ -3,6 +3,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/widgets/general/profile_picture.dart";
+import "package:flow/widgets/home/privacy_toggler.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
@@ -22,21 +23,25 @@ class GreetingsBar extends StatelessWidget {
 
         return Row(
           children: [
-            Text(
-              "tabs.home.greetings".t(context, profile?.name ?? "..."),
-              style: Theme.of(context).textTheme.titleMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Spacer(),
-            const SizedBox(width: 12.0),
             ProfilePicture(
               filePath: profile?.imagePath,
-              size: 40.0,
+              size: 36.0,
               onTap: profile != null
                   ? () => context.push("/profile/${profile.id}")
                   : null,
             ),
+            const SizedBox(width: 12.0),
+            Flexible(
+              child: Text(
+                "tabs.home.greetings".t(context, profile?.name ?? "..."),
+                style: Theme.of(context).textTheme.titleMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Spacer(),
+            const SizedBox(width: 12.0),
+            PrivacyToggler(),
           ],
         );
       },

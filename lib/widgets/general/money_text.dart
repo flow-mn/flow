@@ -156,7 +156,7 @@ class _MoneyTextState extends State<MoneyText> {
   }
 
   _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().privacyMode.get();
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
   }

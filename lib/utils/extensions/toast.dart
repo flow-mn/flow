@@ -31,7 +31,7 @@ extension ToastHelper on BuildContext {
         );
       } else {
         icon = Icon(
-          Symbols.error_circle_rounded_error_rounded,
+          Symbols.error_circle_rounded,
           color: colorScheme.error,
         );
       }
