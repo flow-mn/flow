@@ -12,8 +12,12 @@ class FlowCard extends StatelessWidget {
   final TransactionType type;
   final Money flow;
 
-  const FlowCard(
-      {super.key, required this.flow, required this.type, this.autoSizeGroup});
+  const FlowCard({
+    super.key,
+    required this.flow,
+    required this.type,
+    this.autoSizeGroup,
+  });
 
   @override
   Widget build(BuildContext context) {

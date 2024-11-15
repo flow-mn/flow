@@ -1,6 +1,6 @@
 # Changelog
 
-## Beta next
+## Beta 0.8.1
 
 ### New features
 
