@@ -1,4 +1,4 @@
-import "package:flow/data/money.dart";
+import "package:flow/data/money_flow.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
@@ -38,22 +38,14 @@ class AccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
 
-    final double incomeSum = excludeTransfersInTotal
-        ? account.transactions
-            .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .nonTransfers
-            .incomeSumWithoutCurrency
-        : account.transactions
-            .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .incomeSumWithoutCurrency;
-    final double expenseSum = excludeTransfersInTotal
-        ? account.transactions
-            .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .nonTransfers
-            .expenseSumWithoutCurrency
-        : account.transactions
-            .where((x) => x.transactionDate.isAtSameMonthAs(now))
-            .expenseSumWithoutCurrency;
+    final Iterable<Transaction> transactions = account.transactions.nonPending
+        .where((x) => x.transactionDate.isAtSameMonthAs(now));
+
+    final MoneyFlow flow = MoneyFlow()
+      ..addAll(
+        (excludeTransfersInTotal ? transactions.nonTransfers : transactions)
+            .map((transaction) => transaction.money),
+      );
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -114,13 +106,13 @@ class AccountCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: MoneyText(
-                      Money(incomeSum, account.currency),
+                      flow.getIncomeByCurrency(account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),
                   Expanded(
                     child: MoneyText(
-                      Money(expenseSum, account.currency),
+                      flow.getExpenseByCurrency(account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),

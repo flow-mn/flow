@@ -315,7 +315,17 @@ class _TransactionPageState extends State<TransactionPage> {
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
-                    // TODO @sadespresso add an option to choose a location from a map
+                    const SizedBox(height: 16.0),
+                    Section(
+                      title: "transaction.date".t(context),
+                      child: ListTile(
+                        title: Text(_transactionDate.toMoment().LLL),
+                        onTap: () => selectTransactionDate(),
+                        trailing: _selectedCategory == null
+                            ? const Icon(Symbols.chevron_right)
+                            : null,
+                      ),
+                    ),
                     if (_geo != null || enableGeo) ...[
                       const SizedBox(height: 16.0),
                       Section(
@@ -362,6 +372,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                       const SizedBox(height: 8.0),
                                       SquareMap(
                                         mapController: _mapController,
+                                        interactable: false,
                                         onTap: (_) => selectLocation(),
                                         center: LatLng(
                                           _geo?.latitude ??
@@ -377,22 +388,6 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ],
                     const SizedBox(height: 16.0),
-                    Section(
-                      title: "transaction.date".t(context),
-                      child: ListTile(
-                        // leading: _transactionDate == null
-                        //     ? null
-                        //     : Icon(_selectedCategory!.icon),
-                        title: Text(_transactionDate.toMoment().LLL),
-                        // subtitle: _selectedAccount == null
-                        //     ? null
-                        //     : Text(_selectedAccount!.balance.money),
-                        onTap: () => selectTransactionDate(),
-                        trailing: _selectedCategory == null
-                            ? const Icon(Symbols.chevron_right)
-                            : null,
-                      ),
-                    ),
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
                       Text(

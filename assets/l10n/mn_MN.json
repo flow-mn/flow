@@ -113,6 +113,7 @@
     "transaction.location.add": "Байршил нэмэх",
     "transaction.location.edit": "Газын зурган дээр товшиж байршлыг өөрчлөөрэй",
     "transaction.pending": "Хүлээгдэж буй",
+    "transaction.pending.preapproved": "Урьдчилан баталгаажуулсан",
 
     "transactions.all": "Бүх гүйлгээнүүд",
     "transactions.upcoming": "Төлөвлөсөн гүйлгээнүүд",
@@ -189,7 +190,7 @@
     "preferences.transactionGeo.auto.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
     "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
     "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
-    "preferences.pendingTransactions.requireConfirmation.description": "Идэвхжүүлсэн үед баталгаажуулаагүй төлөвлөгөөт гүйлгээнүүд хүчингүй байна",
+    "preferences.pendingTransactions.requireConfirmation.description": "Баталгаажуулаагүй гүйлгээнүүд орлого, зарлага, дансны үлдэгдэлд тооцогдохгүй",
     "preferences.startupPrivacyMode": "Нууцлалын горим",
     "preferences.startupPrivacyMode.description": "Апп нээх үед нууцлалын горимыг идэвхжүүлэх",
     "preferences.moneyFormatting": "Мөнгөний хэлбэр",

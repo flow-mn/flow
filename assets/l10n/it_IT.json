@@ -113,6 +113,7 @@
     "transaction.location.add": "Aggiungi una posizione",
     "transaction.location.edit": "Tocca la mappa per modificare",
     "transaction.pending": "In attesa",
+    "transaction.pending.preapproved": "Preapprovata",
 
     "transactions.all": "Tutte le transazioni",
     "transactions.upcoming": "Prossime transazioni",
@@ -189,7 +190,7 @@
     "preferences.transactionGeo.auto.permissionDenied": "L'autorizzazione per la posizione è stata negata. Puoi abilitarmi dalle tue impostazioni se lo desideri.",
     "preferences.pendingTransactions": "Transazioni in sospeso",
     "preferences.pendingTransactions.requireConfirmation": "Richiedi conferma",
-    "preferences.pendingTransactions.requireConfirmation.description": "Quando abilitato, le transazioni in sospeso richiederanno conferma per essere effettive",
+    "preferences.pendingTransactions.requireConfirmation.description": "Le transazioni in sospeso non verranno conteggiate nel reddito, nelle spese e nel saldo del conto",
     "preferences.startupPrivacyMode": "Modalità privacy",
     "preferences.startupPrivacyMode.description": "Abilita la modalità privacy all'avvio dell'app",
     "preferences.moneyFormatting": "Formato valuta",

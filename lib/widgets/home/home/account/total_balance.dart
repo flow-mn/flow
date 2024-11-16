@@ -37,14 +37,16 @@ class _TotalBalanceState extends State<TotalBalance> {
 
   @override
   Widget build(BuildContext context) {
-    final Money totalBalance = ObjectBox().getPrimaryCurrencyGrandTotal();
+    final Money primaryCurrencyTotalBalance =
+        ObjectBox().getPrimaryCurrencyGrandTotal();
     final ExchangeRates? rates =
         ExchangeRatesService().getPrimaryCurrencyRates();
 
     return FutureBuilder<Money?>(
       future: rates == null ? null : ObjectBox().getGrandTotal(),
       builder: (context, snapshot) {
-        final Money value = snapshot.hasData ? snapshot.data! : totalBalance;
+        final Money value =
+            snapshot.hasData ? snapshot.data! : primaryCurrencyTotalBalance;
 
         return Padding(
           padding: EdgeInsets.only(left: 12.0),

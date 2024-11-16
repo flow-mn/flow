@@ -53,8 +53,8 @@ class _FlowCardsState extends State<FlowCards> {
   @override
   Widget build(BuildContext context) {
     final MoneyFlow? flow = excludeTransferFromFlow
-        ? widget.transactions?.nonTransfers.flow
-        : widget.transactions?.flow;
+        ? widget.transactions?.nonPending.nonTransfers.flow
+        : widget.transactions?.nonPending.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final Money? totalExpense = switch ((flow, widget.rates)) {

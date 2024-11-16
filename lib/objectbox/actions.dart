@@ -147,8 +147,10 @@ extension MainActions on ObjectBox {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
+        .build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
@@ -182,8 +184,10 @@ extension MainActions on ObjectBox {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
+        .build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
@@ -407,7 +411,7 @@ extension TransactionActions on Transaction {
     return ObjectBox().box<Transaction>().remove(id);
   }
 
-  bool confirm() {
+  bool confirm([bool confirm = true]) {
     try {
       if (isTransfer) {
         final Transfer? transfer = extensions.transfer;
@@ -431,7 +435,7 @@ extension TransactionActions on Transaction {
               throw Exception("Related transaction not found");
             }
 
-            relatedTransaction.isPending = false;
+            relatedTransaction.isPending = !confirm;
             ObjectBox()
                 .box<Transaction>()
                 .put(relatedTransaction, mode: PutMode.update);
@@ -441,7 +445,7 @@ extension TransactionActions on Transaction {
         }
       }
 
-      isPending = false;
+      isPending = !confirm;
       ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
       return true;
     } catch (e) {
@@ -460,6 +464,8 @@ extension TransactionListActions on Iterable<Transaction> {
       where((transaction) => transaction.amount.isNegative);
   Iterable<Transaction> get incomes =>
       where((transaction) => transaction.amount > 0);
+  Iterable<Transaction> get nonPending =>
+      where((transaction) => transaction.isPending != true);
 
   /// Number of transactions that are rendered on the screen
   ///

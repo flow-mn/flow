@@ -17,7 +17,7 @@ class TransactionListTile extends StatelessWidget {
   final EdgeInsets padding;
 
   final VoidCallback deleteFn;
-  final VoidCallback? confirmFn;
+  final Function([bool confirm])? confirmFn;
 
   final Key? dismissibleKey;
 
@@ -42,6 +42,11 @@ class TransactionListTile extends StatelessWidget {
         transaction.isPending == true &&
         transaction.transactionDate
             .isPastAnchored(Moment.now().endOfNextMinute());
+
+    final bool showHoldButton = confirmFn != null &&
+        transaction.isPending != true &&
+        transaction.transactionDate
+            .isFutureAnchored(Moment.now().startOfMinute());
 
     if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
@@ -80,16 +85,17 @@ class TransactionListTile extends StatelessWidget {
                       RichText(
                         text: TextSpan(
                           children: [
-                            if (transaction.transactionDate.isFuture ||
-                                transaction.isPending == true) ...[
+                            if (transaction.transactionDate.isFuture) ...[
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: Icon(
                                   Symbols.schedule_rounded,
                                   size: context.textTheme.bodyMedium!.fontSize!,
                                   fill: 0.0,
-                                  color: context.colorScheme.onSurface
-                                      .withAlpha(0xc0),
+                                  color: transaction.isPending == true
+                                      ? context.colorScheme.onSurface
+                                          .withAlpha(0xc0)
+                                      : context.flowColors.income,
                                 ),
                               ),
                               TextSpan(
@@ -112,9 +118,10 @@ class TransactionListTile extends StatelessWidget {
                               ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
                               : transaction.account.target?.name,
                           transaction.transactionDate.format(payload: "LT"),
-                          if (transaction.transactionDate.isFuture ||
-                              transaction.isPending == true)
-                            "transaction.pending".t(context),
+                          if (transaction.transactionDate.isFuture)
+                            transaction.isPending == true
+                                ? "transaction.pending".t(context)
+                                : "transaction.pending.preapproved".t(context),
                         ].join(" • "),
                         style: context.textTheme.labelSmall,
                         maxLines: 1,
@@ -160,18 +167,24 @@ class TransactionListTile extends StatelessWidget {
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [
-          if (confirmFn != null && transaction.transactionDate.isFuture ||
-              transaction.isPending == true)
+          if (showPendingConfirmation)
             SlidableAction(
               onPressed: (context) => confirmFn!(),
               icon: Symbols.check_rounded,
               backgroundColor: context.colorScheme.primary,
             ),
-          SlidableAction(
-            onPressed: (context) => deleteFn(),
-            icon: Symbols.delete_forever_rounded,
-            backgroundColor: context.flowColors.expense,
-          )
+          if (showHoldButton)
+            SlidableAction(
+              onPressed: (context) => confirmFn!(false),
+              icon: Symbols.cancel_rounded,
+              backgroundColor: context.flowColors.expense,
+            ),
+          if (!showHoldButton)
+            SlidableAction(
+              onPressed: (context) => deleteFn(),
+              icon: Symbols.delete_forever_rounded,
+              backgroundColor: context.flowColors.expense,
+            )
         ],
       ),
       child: listTile,

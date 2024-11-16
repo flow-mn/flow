@@ -13,6 +13,8 @@
 * Json exports now use **UTC** timezone
 * Future transactions now require user confirmation by default. Closes [#120](https://github.com/flow-mn/flow/issues/120)
 * Now it's possible to paste transaction amount in the numpad. Closes [#157](https://github.com/flow-mn/flow/issues/157)
+* Map preview is no longer interactable in transaction detail page
+* Map preview has been moved below the transaction date
 
 ### Small improvemets, fixes
 

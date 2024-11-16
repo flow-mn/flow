@@ -113,6 +113,7 @@
     "transaction.location.add": "Add a location",
     "transaction.location.edit": "Tap on the map to edit",
     "transaction.pending": "Pending",
+    "transaction.pending.preapproved": "Preapproved",
 
     "transactions.all": "All transactions",
     "transactions.upcoming": "Upcoming transactions",
@@ -189,7 +190,7 @@
     "preferences.transactionGeo.auto.permissionDenied": "Location permission was denied. You can enable it from your settings if you wish.",
     "preferences.pendingTransactions": "Pending transactions",
     "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
-    "preferences.pendingTransactions.requireConfirmation.description": "When enabled, pending transactions will require confirmation to be effective",
+    "preferences.pendingTransactions.requireConfirmation.description": "Pending transactions will not be counted towards income, expenses, and account balance",
     "preferences.startupPrivacyMode": "Privacy mode",
     "preferences.startupPrivacyMode.description": "Enable privacy mode when the app start",
     "preferences.moneyFormatting": "Money formatting",

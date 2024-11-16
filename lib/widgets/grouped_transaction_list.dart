@@ -147,7 +147,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
             padding: widget.itemPadding,
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
-            confirmFn: () => confirmTransaction(context, transaction),
+            confirmFn: ([bool confirm = true]) =>
+                confirmTransaction(context, transaction, confirm),
             overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),
@@ -175,9 +176,10 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
   Future<void> confirmTransaction(
     BuildContext context,
-    Transaction transaction,
-  ) async {
-    transaction.confirm();
+    Transaction transaction, [
+    bool confirm = true,
+  ]) async {
+    transaction.confirm(confirm);
   }
 
   Widget? _getImpliedHeader(
