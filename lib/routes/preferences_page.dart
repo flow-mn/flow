@@ -37,6 +37,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
+    final bool requirePendingTransactionConfrimation =
+        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool startupPrivacy = LocalPreferences().privacyMode.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +53,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
               homeTabPlannedTransactionsDuration.localizedNameContext(context),
             ),
             leading: const Icon(Symbols.hourglass_top_rounded),
-            onTap: openHomeTabPrefs,
+            onTap: () => pushAndRefreshAfter("/preferences/home"),
+            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.pendingTransactions".t(context)),
+            subtitle: Text(
+              requirePendingTransactionConfrimation
+                  ? "general.enabled".t(context)
+                  : "general.disabled".t(context),
+            ),
+            leading: const Icon(Symbols.schedule_rounded),
+            onTap: openPendingTransactionsPrefs,
             // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
@@ -80,7 +95,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.numpad".t(context)),
             leading: const Icon(Symbols.dialpad_rounded),
-            onTap: openNumpadPrefs,
+            onTap: () => pushAndRefreshAfter("/preferences/numpad"),
             subtitle: Text(
               LocalPreferences().usePhoneNumpadLayout.get()
                   ? "preferences.numpad.layout.modern".t(context)
@@ -91,7 +106,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.transfer".t(context)),
             leading: const Icon(Symbols.sync_alt_rounded),
-            onTap: openTransferPrefs,
+            onTap: () => pushAndRefreshAfter("/preferences/transfer"),
             subtitle: Text(
               "preferences.transfer.description".t(context),
               maxLines: 1,
@@ -102,7 +117,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.transactionButtonOrder".t(context)),
             leading: const Icon(Symbols.action_key_rounded),
-            onTap: openTransactionButtonOrderPrefs,
+            onTap: () =>
+                pushAndRefreshAfter("/preferences/transactionButtonOrder"),
             subtitle: Text(
               "preferences.transactionButtonOrder.description".t(context),
               maxLines: 1,
@@ -119,6 +135,25 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   ? (autoAttachTransactionGeo
                       ? "preferences.transactionGeo.auto.enabled".t(context)
                       : "general.enabled".t(context))
+                  : "general.disabled".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.moneyFormatting".t(context)),
+            leading: const Icon(Symbols.numbers_rounded),
+            onTap: () => pushAndRefreshAfter("/preferences/moneyFormatting"),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.startupPrivacyMode".t(context)),
+            leading: const Icon(Symbols.password_rounded),
+            onTap: () => pushAndRefreshAfter("/preferences/startupPrivacy"),
+            subtitle: Text(
+              startupPrivacy
+                  ? "general.enabled".t(context)
                   : "general.disabled".t(context),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -196,30 +231,22 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
-  void openNumpadPrefs() async {
-    await context.push("/preferences/numpad");
+  void pushAndRefreshAfter(String path) async {
+    await context.push(path);
 
     // Rebuild to update description text
     if (mounted) setState(() {});
-  }
-
-  void openTransferPrefs() async {
-    await context.push("/preferences/transfer");
-  }
-
-  void openHomeTabPrefs() async {
-    await context.push("/preferences/home");
-
-    // Rebuild to update description text
-    if (mounted) setState(() {});
-  }
-
-  void openTransactionButtonOrderPrefs() async {
-    await context.push("/preferences/transactionButtonOrder");
   }
 
   void openTransactionGeo() async {
     await context.push("/preferences/transactionGeo");
+
+    // Rebuild to update description text
+    if (mounted) setState(() {});
+  }
+
+  void openPendingTransactionsPrefs() async {
+    await context.push("/preferences/pendingTransactions");
 
     // Rebuild to update description text
     if (mounted) setState(() {});

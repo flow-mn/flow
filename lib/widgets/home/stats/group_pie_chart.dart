@@ -1,6 +1,5 @@
 import "dart:math" as math;
 
-import "package:auto_size_text/auto_size_text.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flow/data/chart_data.dart";
 import "package:flow/data/exchange_rates.dart";
@@ -12,6 +11,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/main.dart";
 import "package:flow/theme/primary_colors.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/stats/pie_percent_badge.dart";
 import "package:flutter/material.dart" hide Flow;
 
@@ -76,8 +76,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
     final ChartData<T>? selectedSection =
         selectedKey == null ? null : data[selectedKey!];
 
-    final String selectedSectionTotal =
-        selectedSection?.money.abs().formatMoney() ?? "-";
+    final Money? selectedSectionTotal = selectedSection?.money;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -87,8 +86,8 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
           "tabs.stats.chart.total".t(context),
           style: context.textTheme.labelMedium,
         ),
-        Text(
-          totalAmount.formatMoney(),
+        MoneyText(
+          totalAmount,
           style: context.textTheme.headlineMedium,
         ),
         Padding(
@@ -172,8 +171,9 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  AutoSizeText(
+                                  MoneyText(
                                     selectedSectionTotal,
+                                    displayAbsoluteAmount: true,
                                     textAlign: TextAlign.center,
                                     style: context.textTheme.headlineSmall,
                                   ),

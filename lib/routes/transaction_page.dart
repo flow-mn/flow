@@ -248,8 +248,10 @@ class _TransactionPageState extends State<TransactionPage> {
                                 _selectedAccount!.icon,
                                 plated: true,
                               ),
-                        title: Text(_selectedAccount?.name ??
-                            "transaction.edit.selectAccount".t(context)),
+                        title: Text(
+                          _selectedAccount?.name ??
+                              "transaction.edit.selectAccount".t(context),
+                        ),
                         subtitle: _selectedAccount == null
                             ? null
                             : Text(_selectedAccount!.balance.formatMoney()),
@@ -313,7 +315,17 @@ class _TransactionPageState extends State<TransactionPage> {
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
-                    // TODO @sadespresso add an option to choose a location from a map
+                    const SizedBox(height: 16.0),
+                    Section(
+                      title: "transaction.date".t(context),
+                      child: ListTile(
+                        title: Text(_transactionDate.toMoment().LLL),
+                        onTap: () => selectTransactionDate(),
+                        trailing: _selectedCategory == null
+                            ? const Icon(Symbols.chevron_right)
+                            : null,
+                      ),
+                    ),
                     if (_geo != null || enableGeo) ...[
                       const SizedBox(height: 16.0),
                       Section(
@@ -360,6 +372,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                       const SizedBox(height: 8.0),
                                       SquareMap(
                                         mapController: _mapController,
+                                        interactable: false,
                                         onTap: (_) => selectLocation(),
                                         center: LatLng(
                                           _geo?.latitude ??
@@ -375,22 +388,6 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ],
                     const SizedBox(height: 16.0),
-                    Section(
-                      title: "transaction.date".t(context),
-                      child: ListTile(
-                        // leading: _transactionDate == null
-                        //     ? null
-                        //     : Icon(_selectedCategory!.icon),
-                        title: Text(_transactionDate.toMoment().LLL),
-                        // subtitle: _selectedAccount == null
-                        //     ? null
-                        //     : Text(_selectedAccount!.balance.money),
-                        onTap: () => selectTransactionDate(),
-                        trailing: _selectedCategory == null
-                            ? const Icon(Symbols.chevron_right)
-                            : null,
-                      ),
-                    ),
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
                       Text(
@@ -667,6 +664,14 @@ class _TransactionPageState extends State<TransactionPage> {
   }) async {
     if (_currentlyEditing == null) return;
 
+    final bool requirePendingTransactionConfrimation =
+        LocalPreferences().requirePendingTransactionConfrimation.get();
+
+    final bool? isPending = requirePendingTransactionConfrimation &&
+            _currentlyEditing.transactionDate.isPast
+        ? _transactionDate.isFuture
+        : _currentlyEditing.isPending;
+
     if (_transactionType == TransactionType.transfer) {
       try {
         _selectedAccount!.transferTo(
@@ -678,6 +683,7 @@ class _TransactionPageState extends State<TransactionPage> {
           transactionDate: _transactionDate,
           extensions:
               _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
+          isPending: isPending,
         );
 
         _currentlyEditing.delete();
@@ -694,6 +700,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
     _currentlyEditing.transactionDate = _transactionDate;
+    _currentlyEditing.isPending = isPending;
 
     _currentlyEditing.extensions =
         _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
@@ -708,6 +715,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void save() {
     if (!_ensureAccountsSelected()) return;
+
+    final bool requirePendingTransactionConfrimation =
+        LocalPreferences().requirePendingTransactionConfrimation.get();
 
     final String trimmedTitle = _titleController.text.trim();
     final String formattedTitle =
@@ -728,6 +738,10 @@ class _TransactionPageState extends State<TransactionPage> {
       if (_geo != null) _geo!,
     ];
 
+    final bool isPending = requirePendingTransactionConfrimation
+        ? _transactionDate.isFuture
+        : false;
+
     if (isTransfer) {
       _selectedAccount!.transferTo(
         targetAccount: _selectedAccountTransferTo!,
@@ -736,6 +750,7 @@ class _TransactionPageState extends State<TransactionPage> {
         title: formattedTitle,
         description: formattedDescription,
         extensions: extensions,
+        isPending: isPending,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -745,6 +760,7 @@ class _TransactionPageState extends State<TransactionPage> {
         category: _selectedCategory,
         transactionDate: _transactionDate,
         extensions: extensions,
+        isPending: isPending,
       );
     }
 

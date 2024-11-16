@@ -13,7 +13,6 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:latlong2/latlong.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -74,41 +73,49 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final JsonSettingsEntry<LatLng> lastKnownGeo;
-
   late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
 
+  late final BoolSettingsEntry requirePendingTransactionConfrimation;
+
+  late final BoolSettingsEntry privacyMode;
+  late final BoolSettingsEntry sessionPrivacyMode;
+
+  late final BoolSettingsEntry preferFullAmounts;
+  late final BoolSettingsEntry useCurrencySymbol;
+
   LocalPreferences._internal(this._prefs) {
+    SettingsEntry.defaultPrefix = "flow.";
+
     primaryCurrency = PrimitiveSettingsEntry<String>(
-      key: "flow.primaryCurrency",
+      key: "primaryCurrency",
       preferences: _prefs,
     );
     usePhoneNumpadLayout = BoolSettingsEntry(
-      key: "flow.usePhoneNumpadLayout",
+      key: "usePhoneNumpadLayout",
       preferences: _prefs,
       initialValue: false,
     );
     enableNumpadHapticFeedback = BoolSettingsEntry(
-      key: "flow.enableNumpadHapticFeedback",
+      key: "enableNumpadHapticFeedback",
       preferences: _prefs,
       initialValue: true,
     );
     combineTransferTransactions = BoolSettingsEntry(
-      key: "flow.combineTransferTransactions",
+      key: "combineTransferTransactions",
       preferences: _prefs,
       initialValue: true,
     );
     excludeTransferFromFlow = BoolSettingsEntry(
-      key: "flow.excludeTransferFromFlow",
+      key: "excludeTransferFromFlow",
       preferences: _prefs,
       initialValue: false,
     );
     homeTabPlannedTransactionsDuration =
         JsonSettingsEntry<UpcomingTransactionsDuration>(
-      key: "flow.homeTabPlannedTransactionsDuration",
+      key: "homeTabPlannedTransactionsDuration",
       preferences: _prefs,
       initialValue: homeTabPlannedTransactionsDurationDefault,
       fromJson: (map) =>
@@ -117,7 +124,7 @@ class LocalPreferences {
       toJson: (data) => data.toJson(),
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
-      key: "flow.transactionButtonOrder",
+      key: "transactionButtonOrder",
       preferences: _prefs,
       removeDuplicates: true,
       initialValue: TransactionType.values,
@@ -127,71 +134,91 @@ class LocalPreferences {
     );
 
     completedInitialSetup = BoolSettingsEntry(
-      key: "flow.completedInitialSetup",
+      key: "completedInitialSetup",
       preferences: _prefs,
       initialValue: false,
     );
 
     localeOverride = LocaleSettingsEntry(
-      key: "flow.localeOverride",
+      key: "localeOverride",
       preferences: _prefs,
     );
 
     transitiveUsesSingleCurrency = BoolSettingsEntry(
-      key: "flow.transitive.usesSingleCurrency",
+      key: "transitive.usesSingleCurrency",
       preferences: _prefs,
       initialValue: true,
     );
 
     transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
-      key: "flow.transitive.lastTimeFrecencyUpdated",
+      key: "transitive.lastTimeFrecencyUpdated",
       preferences: _prefs,
     );
 
     exchangeRatesCache = JsonSettingsEntry<ExchangeRatesSet>(
       initialValue: ExchangeRatesSet({}),
-      key: "flow.caches.exchangeRatesCache",
+      key: "caches.exchangeRatesCache",
       preferences: _prefs,
       fromJson: (json) => ExchangeRatesSet.fromJson(json),
       toJson: (data) => data.toJson(),
     );
 
     enableGeo = BoolSettingsEntry(
-      key: "flow.enableGeo",
+      key: "enableGeo",
       preferences: _prefs,
       initialValue: false,
     );
 
     autoAttachTransactionGeo = BoolSettingsEntry(
-      key: "flow.autoAttachTransactionGeo",
+      key: "autoAttachTransactionGeo",
       preferences: _prefs,
       initialValue: false,
     );
 
-    lastKnownGeo = JsonSettingsEntry<LatLng>(
-      key: "flow.lastKnownGeo",
-      preferences: _prefs,
-      fromJson: (json) => LatLng.fromJson(json),
-      toJson: (data) => data.toJson(),
-    );
-
     themeMode = ThemeModeSettingsEntry(
-      key: "flow.themeMode",
+      key: "themeMode",
       preferences: _prefs,
       initialValue: ThemeMode.system,
     );
     themeName = PrimitiveSettingsEntry<String>(
-      key: "flow.themeName",
+      key: "themeName",
       preferences: _prefs,
       initialValue: lightThemes.keys.first,
     );
     themeChangesAppIcon = BoolSettingsEntry(
-      key: "flow.themeChangesAppIcon",
+      key: "themeChangesAppIcon",
       preferences: _prefs,
       initialValue: true,
     );
     enableDynamicTheme = BoolSettingsEntry(
-      key: "flow.enableDynamicTheme",
+      key: "enableDynamicTheme",
+      preferences: _prefs,
+      initialValue: true,
+    );
+
+    requirePendingTransactionConfrimation = BoolSettingsEntry(
+      key: "requirePendingTransactionConfrimation",
+      preferences: _prefs,
+      initialValue: true,
+    );
+
+    privacyMode = BoolSettingsEntry(
+      key: "privacyMode",
+      preferences: _prefs,
+      initialValue: false,
+    );
+    sessionPrivacyMode = BoolSettingsEntry(
+      key: "transitive.sessionPrivacyMode",
+      preferences: _prefs,
+      initialValue: false,
+    );
+    preferFullAmounts = BoolSettingsEntry(
+      key: "preferFullAmounts",
+      preferences: _prefs,
+      initialValue: false,
+    );
+    useCurrencySymbol = BoolSettingsEntry(
+      key: "useCurrencySymbol",
       preferences: _prefs,
       initialValue: true,
     );
@@ -211,11 +238,23 @@ class LocalPreferences {
       log("[LocalPreferences] cannot update transitive properties due to: $e");
     }
 
-    if (transitiveLastTimeFrecencyUpdated.get() == null ||
-        !transitiveLastTimeFrecencyUpdated.get()!.isAtSameDayAs(Moment.now())) {
-      unawaited(_reevaluateCategoryFrecency());
-      unawaited(_reevaluateAccountFrecency());
-      unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
+    try {
+      unawaited(sessionPrivacyMode.set(privacyMode.get()));
+    } catch (e) {
+      // Silent fail
+    }
+
+    try {
+      if (transitiveLastTimeFrecencyUpdated.get() == null ||
+          !transitiveLastTimeFrecencyUpdated
+              .get()!
+              .isAtSameDayAs(Moment.now())) {
+        unawaited(_reevaluateCategoryFrecency());
+        unawaited(_reevaluateAccountFrecency());
+        unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
+      }
+    } catch (e) {
+      // Silent fail
     }
   }
 
@@ -224,7 +263,7 @@ class LocalPreferences {
     String uuid,
     FrecencyData? value,
   ) async {
-    final String prefixedKey = "flow.transitive.frecency.$type.$uuid";
+    final String prefixedKey = "transitive.frecency.$type.$uuid";
 
     if (value == null) {
       await _prefs.remove(prefixedKey);
@@ -246,7 +285,7 @@ class LocalPreferences {
   }
 
   FrecencyData? getFrecencyData(String type, String uuid) {
-    final String prefixedKey = "flow.transitive.frecency.$type.$uuid";
+    final String prefixedKey = "transitive.frecency.$type.$uuid";
 
     final raw = _prefs.getString(prefixedKey);
 

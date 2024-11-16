@@ -7,10 +7,17 @@ import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
 
 class FlowCard extends StatelessWidget {
+  final AutoSizeGroup? autoSizeGroup;
+
   final TransactionType type;
   final Money flow;
 
-  const FlowCard({super.key, required this.flow, required this.type});
+  const FlowCard({
+    super.key,
+    required this.flow,
+    required this.type,
+    this.autoSizeGroup,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +38,7 @@ class FlowCard extends StatelessWidget {
           ),
           minFontSize: 10.0,
           maxLines: 1,
+          group: autoSizeGroup,
         ),
       );
     });

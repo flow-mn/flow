@@ -41,7 +41,7 @@ class TransactionListDateHeader extends StatelessWidget {
 
     final double flow = transactions
         .where((transaction) => transaction.currency == primaryCurrency)
-        .sum;
+        .sumWithoutCurrency;
     final bool containsNonPrimaryCurrency = transactions
         .any((transaction) => transaction.currency != primaryCurrency);
 

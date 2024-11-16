@@ -38,4 +38,6 @@ extension Casings on String {
             : e.capitalize())
         .join(" ");
   }
+
+  String get digitsObscured => replaceAll(RegExp(r"\d"), "*");
 }

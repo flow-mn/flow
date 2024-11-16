@@ -14,7 +14,10 @@ import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/home_tab_preferences.dart";
+import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
+import "package:flow/routes/preferences/pending_transactions.dart";
+import "package:flow/routes/preferences/startup_privacy_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
@@ -155,6 +158,11 @@ final router = GoRouter(
           builder: (context, state) => const HomeTabPreferencesPage(),
         ),
         GoRoute(
+          path: "pendingTransactions",
+          builder: (context, state) =>
+              const PendingTransactionPreferencesPage(),
+        ),
+        GoRoute(
           path: "numpad",
           builder: (context, state) => const NumpadPreferencesPage(),
         ),
@@ -173,6 +181,14 @@ final router = GoRouter(
         GoRoute(
           path: "theme",
           builder: (context, state) => const ThemePreferencesPage(),
+        ),
+        GoRoute(
+          path: "startupPrivacy",
+          builder: (context, state) => const StartupPrivacyPreferencesPage(),
+        ),
+        GoRoute(
+          path: "moneyFormatting",
+          builder: (context, state) => const MoneyFormattingPreferencesPage(),
         ),
       ],
     ),

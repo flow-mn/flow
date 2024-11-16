@@ -99,9 +99,9 @@ bool validateThemeName(String? themeName) {
 }
 
 bool isThemeDark(String? themeName) {
-  if (themeName == null) return false;
+  final themeData = getTheme(themeName);
 
-  return darkThemes.containsKey(themeName);
+  return themeData?.mode == ThemeMode.dark;
 }
 
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {
@@ -124,6 +124,8 @@ void trySetThemeIcon(String? name) async {
 
   if (!Platform.isIOS) return;
 
+  final String? currentIcon = await FlutterDynamicIconPlus.alternateIconName;
+
   late final String icon;
 
   if (lightThemes.containsKey(name)) {
@@ -135,6 +137,11 @@ void trySetThemeIcon(String? name) async {
     );
   } else {
     icon = "shadeOfViolet";
+  }
+
+  if (currentIcon != null && currentIcon == icon) {
+    log("Cancelling changing app icon into $icon since it's the current one already");
+    return;
   }
 
   try {

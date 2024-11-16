@@ -78,7 +78,7 @@ class BackupEntryCard extends StatelessWidget {
               icon: fileSize != null
                   ? const Icon(Symbols.save_alt_rounded)
                   : Icon(
-                      Symbols.error_circle_rounded_error,
+                      Symbols.error_circle_rounded,
                       color: context.flowColors.expense,
                     ),
             ),

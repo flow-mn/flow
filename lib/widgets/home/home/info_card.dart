@@ -4,15 +4,16 @@ import "package:flutter/cupertino.dart";
 
 class InfoCard extends StatelessWidget {
   final String title;
-  final String value;
 
-  final Widget? trailing;
+  final Widget? moneyText;
+
+  final Widget? icon;
 
   const InfoCard({
     super.key,
     required this.title,
-    required this.value,
-    this.trailing,
+    this.icon,
+    this.moneyText,
   });
 
   @override
@@ -29,26 +30,21 @@ class InfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              title,
-              style: context.textTheme.bodyMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
             Row(
               children: [
-                Flexible(
-                  child: Text(
-                    value,
-                    style: context.textTheme.displaySmall,
-                  ),
+                Text(
+                  title,
+                  style: context.textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 8.0),
-                  trailing!,
+                if (icon != null) ...[
+                  const SizedBox(width: 4.0),
+                  IconTheme(data: IconThemeData(size: 20.0), child: icon!),
                 ],
               ],
             ),
+            if (moneyText != null) moneyText!
           ],
         ),
       ),
