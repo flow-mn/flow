@@ -20,6 +20,7 @@
 * Now income/expense text on home screen no longer wraps to the next line
 * Texts that automatically shrink to fit now synchronizes its size with siblings. If that makes sense...
 * Stopped re-setting app icon when it's already the current icon
+* Home tab income/expense no longer includes transfers **if exclude transfers from flow** is enabled
 
 ## Beta 0.8.0
 

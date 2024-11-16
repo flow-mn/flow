@@ -99,9 +99,9 @@ bool validateThemeName(String? themeName) {
 }
 
 bool isThemeDark(String? themeName) {
-  if (themeName == null) return false;
+  final themeData = getTheme(themeName);
 
-  return darkThemes.containsKey(themeName);
+  return themeData?.mode == ThemeMode.dark;
 }
 
 ({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {

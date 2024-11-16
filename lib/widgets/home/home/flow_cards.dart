@@ -25,6 +25,7 @@ class _FlowCardsState extends State<FlowCards> {
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
   late bool abbreviate;
+  late bool excludeTransferFromFlow;
 
   @override
   void initState() {
@@ -32,18 +33,28 @@ class _FlowCardsState extends State<FlowCards> {
 
     abbreviate = !LocalPreferences().preferFullAmounts.get();
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
+
+    excludeTransferFromFlow = LocalPreferences().excludeTransferFromFlow.get();
+    LocalPreferences()
+        .excludeTransferFromFlow
+        .addListener(_updateExcludeTransferFromFlow);
   }
 
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
+    LocalPreferences()
+        .excludeTransferFromFlow
+        .removeListener(_updateExcludeTransferFromFlow);
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow? flow = widget.transactions?.flow;
+    final MoneyFlow? flow = excludeTransferFromFlow
+        ? widget.transactions?.nonTransfers.flow
+        : widget.transactions?.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final Money? totalExpense = switch ((flow, widget.rates)) {
@@ -108,6 +119,12 @@ class _FlowCardsState extends State<FlowCards> {
 
   _updateAbbreviation() {
     abbreviate = !LocalPreferences().preferFullAmounts.get();
+
+    if (mounted) setState(() {});
+  }
+
+  _updateExcludeTransferFromFlow() {
+    excludeTransferFromFlow = !LocalPreferences().excludeTransferFromFlow.get();
 
     if (mounted) setState(() {});
   }
