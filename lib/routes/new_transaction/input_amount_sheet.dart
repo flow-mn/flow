@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/amount_text.dart";
@@ -115,90 +117,100 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         child: ModalSheet.scrollable(
           scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.8,
           topSpacing: 0.0,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 16.0),
-                if (widget.title != null) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      widget.title!,
-                      style: context.textTheme.headlineSmall,
-                    ),
-                  ),
-                  const SizedBox(height: 12.0),
-                ],
-                AmountText(
-                  value: value,
-                  currency: widget.currency,
-                  focusNode: _amountSelectionAreaFocusNode,
-                  inputtingDecimal: _inputtingDecimal,
-                  numberOfDecimals: _numberOfDecimals,
-                  hideCurrencySymbol: widget.hideCurrencySymbol,
-                ),
-                const SizedBox(height: 16.0),
-                // Numpad
-                Numpad(
+          child: LayoutBuilder(builder: (context, size) {
+            final double width = min(size.maxWidth, 400.0);
+
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints.tightFor(width: width),
+                child: Column(
                   children: [
-                    if (_calculatorMode) ...getCalculatorRow(),
-                    ..._getNumberRow(0),
-                    _calculatorMode
-                        ? CalculatorButton(
-                            operation: CalculatorOperation.multiply,
-                            onTap: setCalculatorOperation,
-                            currentOperation: _currentOperation,
-                          )
-                        : NumpadButton(
-                            onTap: () => removeDigit(),
-                            onLongPress: () => _reset(),
-                            mainAxisCellCount: widget.lockSign ? 2 : 1,
-                            child: const Icon(Symbols.backspace_rounded),
-                          ),
-                    ..._getNumberRow(1),
-                    if (!widget.lockSign && !_calculatorMode)
-                      NumpadButton(
-                        child: widget.allowNegative
-                            ? const Icon(Symbols.remove_rounded)
-                            : const Icon(Symbols.add_rounded),
-                        onTap: () => _negate(),
+                    const SizedBox(height: 16.0),
+                    if (widget.title != null) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.title!,
+                          style: context.textTheme.headlineSmall,
+                        ),
                       ),
-                    if (_calculatorMode)
-                      CalculatorButton(
-                        operation: CalculatorOperation.add,
-                        onTap: setCalculatorOperation,
-                        currentOperation: _currentOperation,
-                      ),
-                    ..._getNumberRow(2),
-                    widget.hasCalculator
-                        ? (_calculatorMode
+                      const SizedBox(height: 12.0),
+                    ],
+                    AmountText(
+                      value: value,
+                      currency: widget.currency,
+                      focusNode: _amountSelectionAreaFocusNode,
+                      inputtingDecimal: _inputtingDecimal,
+                      numberOfDecimals: _numberOfDecimals,
+                      hideCurrencySymbol: widget.hideCurrencySymbol,
+                      onPaste: (text) => handlePaste(text, true),
+                    ),
+                    const SizedBox(height: 16.0),
+                    // Numpad
+                    Numpad(
+                      width: width,
+                      children: [
+                        if (_calculatorMode) ...getCalculatorRow(),
+                        ..._getNumberRow(0),
+                        _calculatorMode
                             ? CalculatorButton(
-                                operation: CalculatorOperation.subtract,
+                                operation: CalculatorOperation.multiply,
                                 onTap: setCalculatorOperation,
                                 currentOperation: _currentOperation,
                               )
                             : NumpadButton(
-                                onTap: () => calculatorMode(),
-                                child: const Icon(Symbols.calculate_rounded),
-                              ))
-                        : _doneButton(context),
-                    NumpadButton(
-                      onTap: () => insertDigit(0),
-                      crossAxisCellCount: 2,
-                      child: const Text("0"),
+                                onTap: () => removeDigit(),
+                                onLongPress: () => _reset(),
+                                mainAxisCellCount: widget.lockSign ? 2 : 1,
+                                child: const Icon(Symbols.backspace_rounded),
+                              ),
+                        ..._getNumberRow(1),
+                        if (!widget.lockSign && !_calculatorMode)
+                          NumpadButton(
+                            child: widget.allowNegative
+                                ? const Icon(Symbols.remove_rounded)
+                                : const Icon(Symbols.add_rounded),
+                            onTap: () => _negate(),
+                          ),
+                        if (_calculatorMode)
+                          CalculatorButton(
+                            operation: CalculatorOperation.add,
+                            onTap: setCalculatorOperation,
+                            currentOperation: _currentOperation,
+                          ),
+                        ..._getNumberRow(2),
+                        widget.hasCalculator
+                            ? (_calculatorMode
+                                ? CalculatorButton(
+                                    operation: CalculatorOperation.subtract,
+                                    onTap: setCalculatorOperation,
+                                    currentOperation: _currentOperation,
+                                  )
+                                : NumpadButton(
+                                    onTap: () => calculatorMode(),
+                                    child:
+                                        const Icon(Symbols.calculate_rounded),
+                                  ))
+                            : _doneButton(context),
+                        NumpadButton(
+                          onTap: () => insertDigit(0),
+                          crossAxisCellCount: 2,
+                          child: const Text("0"),
+                        ),
+                        NumpadButton(
+                          child: Text(
+                              getDecimalSeparatorForCurrency(widget.currency)),
+                          onTap: () => decimalMode(),
+                        ),
+                        if (widget.hasCalculator) _doneButton(context),
+                      ],
                     ),
-                    NumpadButton(
-                      child:
-                          Text(getDecimalSeparatorForCurrency(widget.currency)),
-                      onTap: () => decimalMode(),
-                    ),
-                    if (widget.hasCalculator) _doneButton(context),
+                    const SizedBox(height: 16.0),
                   ],
                 ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
-          ),
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -365,14 +377,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         clipboardData.text == null ||
         clipboardData.text!.trim().isEmpty) return;
 
-    final parsed = num.tryParse(clipboardData.text!);
-
-    if (parsed == null) return;
-
-    _updateAmountFromNumber(parsed);
-
-    _resetOnNextInput = true;
-    setState(() {});
+    handlePaste(clipboardData.text!);
   }
 
   void _copy() {
@@ -414,6 +419,24 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     _inputtingDecimal = false; // value.decimalLength > 0
     _currentOperation = op;
 
+    setState(() {});
+  }
+
+  void handlePaste(String text, [bool reportInvalid = false]) {
+    final num? parsed = NumberFormat().tryParse(text) ?? num.tryParse(text);
+
+    if (parsed == null) {
+      if (reportInvalid) {
+        context.showErrorToast(
+          error: "error.input.pasteFormatMismatch".t(context),
+        );
+      }
+      return;
+    }
+
+    _updateAmountFromNumber(parsed);
+
+    _resetOnNextInput = true;
     setState(() {});
   }
 

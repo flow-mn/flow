@@ -1,4 +1,5 @@
 import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
@@ -6,10 +7,17 @@ import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
 
 class FlowCard extends StatelessWidget {
-  final TransactionType type;
-  final double flow;
+  final AutoSizeGroup? autoSizeGroup;
 
-  const FlowCard({super.key, required this.flow, required this.type});
+  final TransactionType type;
+  final Money flow;
+
+  const FlowCard({
+    super.key,
+    required this.flow,
+    required this.type,
+    this.autoSizeGroup,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +38,7 @@ class FlowCard extends StatelessWidget {
           ),
           minFontSize: 10.0,
           maxLines: 1,
+          group: autoSizeGroup,
         ),
       );
     });

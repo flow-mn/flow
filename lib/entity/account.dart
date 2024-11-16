@@ -1,6 +1,8 @@
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/money.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/utils/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -10,7 +12,10 @@ import "package:uuid/uuid.dart";
 part "account.g.dart";
 
 @Entity()
-@JsonSerializable()
+@JsonSerializable(
+  explicitToJson: true,
+  converters: [UTCDateTimeConverter()],
+)
 class Account implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -50,19 +55,30 @@ class Account implements EntityBase {
     }
   }
 
-  /// Returns current balance. This is calculated by summing up every single transaction
-  ///
-  /// TODO should this be cached?
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  double get balance {
-    return transactions
-        .where((element) => element.transactionDate.isPast)
-        .fold<double>(
-          0,
-          (previousValue, element) => previousValue + element.amount,
-        );
-  }
+  Money get balance => Money(
+        transactions
+            .where((element) =>
+                element.transactionDate.isPast && element.isPending != true)
+            .fold<double>(
+              0,
+              (previousValue, element) => previousValue + element.amount,
+            ),
+        currency,
+      );
+
+  Money balanceAt(DateTime anchor) => Money(
+        transactions
+            .where((element) =>
+                element.transactionDate.isPastAnchored(anchor) &&
+                element.isPending != true)
+            .fold<double>(
+              0,
+              (previousValue, element) => previousValue + element.amount,
+            ),
+        currency,
+      );
 
   Account({
     this.id = 0,

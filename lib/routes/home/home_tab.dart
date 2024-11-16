@@ -1,16 +1,19 @@
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
+import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
 import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -63,7 +66,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    noTransactionsAtAll = ObjectBox().box<Transaction>().count(limit: 1) == 0;
     _updatePlannedTransactionDays();
     LocalPreferences()
         .homeTabPlannedTransactionsDuration
@@ -85,6 +87,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+    final bool isFilterModified = currentFilter != defaultFilter;
+
     return StreamBuilder<List<Transaction>>(
       stream: currentFilterWithPlanned
           .queryBuilder()
@@ -94,6 +98,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           ),
       builder: (context, snapshot) {
         final DateTime now = DateTime.now().startOfNextMinute();
+        final ExchangeRates? rates =
+            ExchangeRatesService().getPrimaryCurrencyRates();
         final List<Transaction>? transactions = snapshot.data;
 
         final Widget header = DefaultTransactionsFilterHead(
@@ -118,12 +124,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
-                  child: NoTransactions(
-                    allTime: noTransactionsAtAll,
-                  ),
+                  child: NoTransactions(isFilterModified: isFilterModified),
                 ),
               (_, true) => Expanded(
-                  child: buildGroupedList(context, now, transactions ?? []),
+                  child:
+                      buildGroupedList(context, now, transactions ?? [], rates),
                 ),
               (_, false) => const Expanded(
                   child: Center(
@@ -141,23 +146,42 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     BuildContext context,
     DateTime now,
     List<Transaction> transactions,
+    ExchangeRates? rates,
   ) {
     final Map<TimeRange, List<Transaction>> grouped = transactions
-        .where((transaction) => !transaction.transactionDate.isAfter(now))
+        .where((transaction) =>
+            !transaction.transactionDate.isAfter(now) &&
+            transaction.isPending != true)
         .groupByDate();
-    final Map<TimeRange, List<Transaction>> groupedFuture = transactions
-        .where((transaction) => transaction.transactionDate.isAfter(now))
+    final Map<TimeRange, List<Transaction>> pendingTransactions = transactions
+        .where((transaction) =>
+            transaction.transactionDate.isAfter(now) ||
+            transaction.isPending == true)
         .groupByDate();
 
     final bool shouldCombineTransferIfNeeded =
         currentFilter.accounts?.isNotEmpty != true;
 
     return GroupedTransactionList(
+      header: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 12.0),
+          FlowCards(
+            transactions: transactions,
+            rates: rates,
+          ),
+          if (rates == null) ...[
+            const SizedBox(height: 12.0),
+            RatesMissingWarning(),
+          ],
+        ],
+      ),
       controller: widget.scrollController,
       transactions: grouped,
-      futureTransactions: groupedFuture,
+      pendingTransactions: pendingTransactions,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
-      futureDivider: const WavyDivider(),
+      pendingDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
         top: 0,
         bottom: 80.0,

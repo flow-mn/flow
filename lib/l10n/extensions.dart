@@ -1,7 +1,6 @@
+import "package:flow/data/money.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/prefs.dart";
 import "package:flutter/widgets.dart";
-
 import "package:intl/intl.dart";
 
 extension L10nHelper on BuildContext {
@@ -46,46 +45,39 @@ extension L10nStringHelper on String {
       FlowLocalizations.getTransalation(this, replace: replace);
 }
 
-extension MoneyFormatters on num {
+extension MoneyFormatters on Money {
   String formatMoney({
-    String? currency,
     bool includeCurrency = true,
     bool useCurrencySymbol = true,
     bool compact = false,
     bool takeAbsoluteValue = false,
     int? decimalDigits,
   }) {
-    final num amount = takeAbsoluteValue ? abs() : this;
-
-    if (!includeCurrency) {
-      currency = "";
-      useCurrencySymbol = false;
-    } else {
-      currency ??= LocalPreferences().getPrimaryCurrency();
-    }
+    final num amountToFormat = takeAbsoluteValue ? amount.abs() : amount;
+    final String currencyToFormat = !includeCurrency ? "" : currency;
+    useCurrencySymbol = useCurrencySymbol && includeCurrency;
 
     final String? symbol = useCurrencySymbol
         ? NumberFormat.simpleCurrency(
             locale: Intl.defaultLocale,
-            name: currency,
+            name: currencyToFormat,
           ).currencySymbol
         : null;
 
     if (compact) {
       return NumberFormat.compactCurrency(
         locale: Intl.defaultLocale,
-        name: currency,
+        name: currencyToFormat,
         symbol: symbol,
         decimalDigits: decimalDigits,
-      ).format(amount);
+      ).format(amountToFormat);
     }
-
     return NumberFormat.currency(
       locale: Intl.defaultLocale,
-      name: currency,
+      name: currencyToFormat,
       symbol: symbol,
       decimalDigits: decimalDigits,
-    ).format(amount);
+    ).format(amountToFormat);
   }
 
   /// Returns money-formatted string in the primary currency

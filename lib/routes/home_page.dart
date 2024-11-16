@@ -2,21 +2,20 @@ import "dart:async";
 
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/main.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
 import "package:flow/routes/home/profile_tab.dart";
 import "package:flow/routes/home/stats_tab.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/utils/shortcut.dart";
 import "package:flow/widgets/home/navbar.dart";
 import "package:flow/widgets/home/navbar/new_transaction_button.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:flutter/services.dart";
-import "package:go_router/go_router.dart";
-
 import "package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart";
+import "package:go_router/go_router.dart";
 import "package:pie_menu/pie_menu.dart";
 
 class HomePage extends StatefulWidget {
@@ -73,11 +72,15 @@ class _HomePageState extends State<HomePage>
       bindings: {
         osSingleActivator(LogicalKeyboardKey.keyN): () =>
             _newTransactionPage(null),
+        osSingleActivator(LogicalKeyboardKey.digit1): () => _navigateTo(0),
+        osSingleActivator(LogicalKeyboardKey.digit2): () => _navigateTo(1),
+        osSingleActivator(LogicalKeyboardKey.digit3): () => _navigateTo(2),
+        osSingleActivator(LogicalKeyboardKey.digit4): () => _navigateTo(3),
       },
       child: Focus(
         autofocus: true,
         child: PieCanvas(
-          theme: Flow.of(context).pieTheme,
+          theme: context.pieTheme,
           child: BottomBar(
             width: double.infinity,
             offset: 16.0,

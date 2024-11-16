@@ -1,13 +1,18 @@
+import "package:flow/data/money_flow.dart";
 import "package:flow/entity/account.dart";
+import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class AccountCard extends StatelessWidget {
   final Account account;
@@ -31,12 +36,16 @@ class AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double incomeSum = excludeTransfersInTotal
-        ? account.transactions.nonTransfers.incomeSum
-        : account.transactions.incomeSum;
-    final double expenseSum = excludeTransfersInTotal
-        ? account.transactions.nonTransfers.expenseSum
-        : account.transactions.expenseSum;
+    final DateTime now = DateTime.now();
+
+    final Iterable<Transaction> transactions = account.transactions.nonPending
+        .where((x) => x.transactionDate.isAtSameMonthAs(now));
+
+    final MoneyFlow flow = MoneyFlow()
+      ..addAll(
+        (excludeTransfersInTotal ? transactions.nonTransfers : transactions)
+            .map((transaction) => transaction.money),
+      );
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
@@ -66,8 +75,8 @@ class AccountCard extends StatelessWidget {
                         account.name,
                         style: context.textTheme.titleSmall,
                       ),
-                      Text(
-                        account.balance.formatMoney(currency: account.currency),
+                      MoneyText(
+                        account.balance,
                         style: context.textTheme.displaySmall,
                       ),
                     ],
@@ -75,18 +84,19 @@ class AccountCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24.0),
-              Text("This month", style: context.textTheme.bodyLarge),
+              Text("account.thisMonth".t(context),
+                  style: context.textTheme.bodyLarge),
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      "Income",
+                      TransactionType.income.localizedNameContext(context),
                       style: context.textTheme.labelSmall?.semi(context),
                     ),
                   ),
                   Expanded(
                     child: Text(
-                      "Expense",
+                      TransactionType.expense.localizedNameContext(context),
                       style: context.textTheme.labelSmall?.semi(context),
                     ),
                   ),
@@ -95,18 +105,14 @@ class AccountCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      incomeSum.formatMoney(
-                        currency: account.currency,
-                      ),
+                    child: MoneyText(
+                      flow.getIncomeByCurrency(account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      expenseSum.formatMoney(
-                        currency: account.currency,
-                      ),
+                    child: MoneyText(
+                      flow.getExpenseByCurrency(account.currency),
                       style: context.textTheme.bodyLarge,
                     ),
                   ),

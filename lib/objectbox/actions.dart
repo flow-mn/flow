@@ -2,8 +2,10 @@ import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
 import "package:flow/data/memo.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/data/transactions_filter.dart";
@@ -17,6 +19,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -25,16 +28,59 @@ import "package:uuid/uuid.dart";
 typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
-  double getTotalBalance() {
+  /// Returns the grand total of all accounts in primary currency in the primary currency
+  Money getPrimaryCurrencyGrandTotal() {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     final Query<Account> accountsQuery = box<Account>()
-        .query(Account_.excludeFromTotalBalance.equals(false))
+        .query(Account_.excludeFromTotalBalance
+            .notEquals(true)
+            .and(Account_.currency.equals(primaryCurrency)))
         .build();
 
     final List<Account> accounts = accountsQuery.find();
 
-    return accounts
-        .map((e) => e.balance)
-        .fold(0, (previousValue, element) => previousValue + element);
+    accountsQuery.close();
+
+    return accounts.map((e) => e.balance).fold(Money(0, primaryCurrency),
+        (previousValue, element) => previousValue + element);
+  }
+
+  /// Returns the grand total of all accounts (including non-primary currency accounts) in the primary currency
+  Future<Money?> getGrandTotal() async {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
+    final Query<Account> accountsQuery = box<Account>()
+        .query(Account_.excludeFromTotalBalance.notEquals(true))
+        .build();
+
+    final List<Account> accounts = accountsQuery.find();
+
+    accountsQuery.close();
+
+    Money total = accounts
+        .where((account) => account.currency == primaryCurrency)
+        .fold<Money>(
+          Money(0, primaryCurrency),
+          (previousValue, element) => previousValue + element.balance,
+        );
+
+    final List<Account> nonPrimaryCurrencyAccounts = accounts
+        .where((account) => account.currency != primaryCurrency)
+        .toList();
+
+    final ExchangeRates? rates =
+        await ExchangeRatesService().tryFetchRates(primaryCurrency);
+
+    if (rates == null) return null;
+
+    for (final Account account in nonPrimaryCurrencyAccounts) {
+      final Money converted = account.balance.convert(primaryCurrency, rates);
+
+      total += converted;
+    }
+
+    return total;
   }
 
   List<Account> getAccounts([bool sortByFrecency = true]) {
@@ -101,8 +147,10 @@ extension MainActions on ObjectBox {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
+        .build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
@@ -114,7 +162,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String categoryUuid =
-          transaction.category.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.category.target?.uuid ?? Namespace.nil.value;
 
       flow[categoryUuid] ??= MoneyFlow(
         associatedData: transaction.category.target,
@@ -136,8 +184,10 @@ extension MainActions on ObjectBox {
     final Condition<Transaction> dateFilter =
         Transaction_.transactionDate.betweenDate(from, to);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
+    final Query<Transaction> transactionsQuery = ObjectBox()
+        .box<Transaction>()
+        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
+        .build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
@@ -149,7 +199,7 @@ extension MainActions on ObjectBox {
       if (ignoreTransfers && transaction.isTransfer) continue;
 
       final String accountUuid =
-          transaction.account.target?.uuid ?? Uuid.NAMESPACE_NIL;
+          transaction.account.target?.uuid ?? Namespace.nil.value;
 
       flow[accountUuid] ??= MoneyFlow(
         associatedData: transaction.account.target,
@@ -158,7 +208,7 @@ extension MainActions on ObjectBox {
     }
 
     assert(
-      !flow.containsKey(Uuid.NAMESPACE_NIL),
+      !flow.containsKey(Namespace.nil.value),
       "There is no way you've managed to make a transaction without an account",
     );
 
@@ -314,7 +364,7 @@ extension TransactionActions on Transaction {
     final Query<Transaction> query = ObjectBox()
         .box<Transaction>()
         .query(Transaction_.uuid
-            .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
+            .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
         .build();
 
     try {
@@ -336,7 +386,7 @@ extension TransactionActions on Transaction {
         final Query<Transaction> relatedTransactionQuery = ObjectBox()
             .box<Transaction>()
             .query(Transaction_.uuid
-                .equals(transfer.relatedTransactionUuid ?? Uuid.NAMESPACE_NIL))
+                .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
             .build();
 
         final Transaction? relatedTransaction =
@@ -360,6 +410,49 @@ extension TransactionActions on Transaction {
 
     return ObjectBox().box<Transaction>().remove(id);
   }
+
+  bool confirm([bool confirm = true]) {
+    try {
+      if (isTransfer) {
+        final Transfer? transfer = extensions.transfer;
+
+        if (transfer == null) {
+          log("Couldn't delete transfer transaction properly due to missing transfer data");
+        } else {
+          final Query<Transaction> relatedTransactionQuery = ObjectBox()
+              .box<Transaction>()
+              .query(Transaction_.uuid.equals(
+                  transfer.relatedTransactionUuid ?? Namespace.nil.value))
+              .build();
+
+          final Transaction? relatedTransaction =
+              relatedTransactionQuery.findFirst();
+
+          relatedTransactionQuery.close();
+
+          try {
+            if (relatedTransaction == null) {
+              throw Exception("Related transaction not found");
+            }
+
+            relatedTransaction.isPending = !confirm;
+            ObjectBox()
+                .box<Transaction>()
+                .put(relatedTransaction, mode: PutMode.update);
+          } catch (e) {
+            log("Couldn't delete transfer transaction properly due to: $e");
+          }
+        }
+      }
+
+      isPending = !confirm;
+      ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
+      return true;
+    } catch (e) {
+      log("Failed to confirm transaction: $e");
+      return false;
+    }
+  }
 }
 
 extension TransactionListActions on Iterable<Transaction> {
@@ -371,6 +464,8 @@ extension TransactionListActions on Iterable<Transaction> {
       where((transaction) => transaction.amount.isNegative);
   Iterable<Transaction> get incomes =>
       where((transaction) => transaction.amount > 0);
+  Iterable<Transaction> get nonPending =>
+      where((transaction) => transaction.isPending != true);
 
   /// Number of transactions that are rendered on the screen
   ///
@@ -382,11 +477,21 @@ extension TransactionListActions on Iterable<Transaction> {
           ? transfers.length ~/ 2
           : 0);
 
-  double get incomeSum =>
+  double get incomeSumWithoutCurrency =>
       incomes.fold(0, (value, element) => value + element.amount);
-  double get expenseSum =>
+  double get expenseSumWithoutCurrency =>
       expenses.fold(0, (value, element) => value + element.amount);
-  double get sum => fold(0, (value, element) => value + element.amount);
+  double get sumWithoutCurrency =>
+      fold(0, (value, element) => value + element.amount);
+
+  Money get incomeSum => incomes.fold(
+      Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
+  Money get expenseSum => expenses.fold(
+      Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
+  Money get sum => fold(Money(0.0, firstOrNull?.currency ?? "XXX"),
+      (value, element) => value + element.money);
 
   MoneyFlow get flow => MoneyFlow()
     ..addAll(
@@ -431,7 +536,13 @@ extension TransactionListActions on Iterable<Transaction> {
   List<Transaction> search(TransactionSearchData? data) {
     if (data == null || data.normalizedKeyword == null) return toList();
 
-    return where(data.predicate).toList();
+    final matches = where(data.predicate).toList();
+
+    if (data.smartMatch && matches.isEmpty) {
+      return search(data.copyWithOptional(smartMatch: false));
+    }
+
+    return matches;
   }
 }
 
@@ -467,7 +578,7 @@ extension AccountActions on Account {
     String? title,
     DateTime? transactionDate,
   }) {
-    final double delta = targetBalance - balance;
+    final double delta = targetBalance - balance.amount;
 
     return createAndSaveTransaction(
       amount: delta,
@@ -491,6 +602,7 @@ extension AccountActions on Account {
     double? latitude,
     double? longitude,
     List<TransactionExtension>? extensions,
+    bool? isPending,
   }) {
     if (amount <= 0) {
       return targetAccount.transferTo(
@@ -503,6 +615,7 @@ extension AccountActions on Account {
         latitude: latitude,
         longitude: longitude,
         extensions: extensions,
+        isPending: isPending,
       );
     }
 
@@ -534,6 +647,7 @@ extension AccountActions on Account {
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      isPending: isPending,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount,
@@ -546,6 +660,7 @@ extension AccountActions on Account {
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
+      isPending: isPending,
     );
 
     return (fromTransaction, toTransaction);
@@ -561,6 +676,7 @@ extension AccountActions on Account {
     Category? category,
     List<TransactionExtension>? extensions,
     String? uuidOverride,
+    bool? isPending,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
 
@@ -572,6 +688,7 @@ extension AccountActions on Account {
       transactionDate: transactionDate,
       createdDate: createdDate,
       uuid: uuid,
+      isPending: isPending ?? false,
     )
       ..setCategory(category)
       ..setAccount(this);

@@ -1,3 +1,4 @@
+import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/category.dart";
@@ -15,6 +16,7 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/transactions_date_header.dart";
 import "package:flow/widgets/no_result.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -48,6 +50,8 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
   bool busy = false;
 
   QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
@@ -96,6 +100,8 @@ class _CategoryPageState extends State<CategoryPage> {
 
         const double firstHeaderTopPadding = 0.0;
 
+        final bool missingRates = rates == null;
+
         final Widget header = Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -107,8 +113,8 @@ class _CategoryPageState extends State<CategoryPage> {
             TransactionsInfo(
               count: transactions?.length,
               flow: rates == null
-                  ? flow.getFlowByCurrency(primaryCurrency).amount
-                  : flow.getTotalFlow(rates, primaryCurrency).amount,
+                  ? flow.getFlowByCurrency(primaryCurrency)
+                  : flow.getTotalFlow(rates, primaryCurrency),
               icon: category.icon,
             ),
             const SizedBox(height: 12.0),
@@ -116,23 +122,29 @@ class _CategoryPageState extends State<CategoryPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: rates == null
-                        ? flow.getIncomeByCurrency(primaryCurrency).amount
-                        : flow.getTotalIncome(rates, primaryCurrency).amount,
+                    flow: missingRates
+                        ? flow.getIncomeByCurrency(primaryCurrency)
+                        : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: rates == null
-                        ? flow.getExpenseByCurrency(primaryCurrency).amount
-                        : flow.getTotalExpense(rates, primaryCurrency).amount,
+                    flow: missingRates
+                        ? flow.getExpenseByCurrency(primaryCurrency)
+                        : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
               ],
             ),
+            if (missingRates) ...[
+              const SizedBox(height: 12.0),
+              RatesMissingWarning(),
+            ],
           ],
         );
 

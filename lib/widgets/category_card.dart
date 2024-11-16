@@ -1,6 +1,8 @@
+import "package:flow/data/money.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -30,6 +32,8 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
@@ -55,7 +59,9 @@ class CategoryCard extends StatelessWidget {
                 ),
                 if (showAmount)
                   Text(
-                    category.transactions.sum.money,
+                    Money(category.transactions.sumWithoutCurrency,
+                            primaryCurrency)
+                        .money,
                     style: context.textTheme.bodyMedium?.semi(context),
                   ),
               ],

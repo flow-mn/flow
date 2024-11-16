@@ -1,3 +1,5 @@
+import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
@@ -45,6 +47,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
   bool busy = false;
 
   QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
@@ -87,10 +91,8 @@ class _AccountPageState extends State<AccountPage> {
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
         final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
-        final double totalIncome =
-            flow.getIncomeByCurrency(account.currency).amount;
-        final double totalExpense =
-            flow.getExpenseByCurrency(account.currency).amount;
+        final Money totalIncome = flow.getIncomeByCurrency(account.currency);
+        final Money totalExpense = flow.getExpenseByCurrency(account.currency);
 
         const double firstHeaderTopPadding = 0.0;
 
@@ -114,6 +116,7 @@ class _AccountPageState extends State<AccountPage> {
                   child: FlowCard(
                     flow: totalIncome,
                     type: TransactionType.income,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
                 const SizedBox(width: 12.0),
@@ -121,6 +124,7 @@ class _AccountPageState extends State<AccountPage> {
                   child: FlowCard(
                     flow: totalExpense,
                     type: TransactionType.expense,
+                    autoSizeGroup: autoSizeGroup,
                   ),
                 ),
               ],

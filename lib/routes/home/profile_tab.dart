@@ -1,8 +1,12 @@
+import "dart:async";
+
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/sync/import.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -11,6 +15,7 @@ import "package:flow/widgets/home/prefs/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:simple_icons/simple_icons.dart";
 
 class ProfileTab extends StatefulWidget {
@@ -22,6 +27,10 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   bool _debugDbBusy = false;
+  bool _debugPrefsBusy = false;
+
+  Timer? _debugDiscoTimer;
+  int _debugDiscoIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +84,13 @@ class _ProfileTabState extends State<ProfileTab> {
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(
+              title: _debugDiscoTimer == null
+                  ? const Text("Turn on disco")
+                  : const Text("Turn off disco"),
+              leading: const Icon(Symbols.party_mode_rounded),
+              onTap: toggleDisco,
+            ),
+            ListTile(
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
               onTap: () => ObjectBox().createAndPutDebugData(),
@@ -88,6 +104,11 @@ class _ProfileTabState extends State<ProfileTab> {
               title:
                   Text(_debugDbBusy ? "Clearing database" : "Clear objectbox"),
               onTap: () => resetDatabase(),
+              leading: const Icon(Symbols.adb_rounded),
+            ),
+            ListTile(
+              title: Text("Clear Shared Preferences"),
+              onTap: () => resetPrefs(),
               leading: const Icon(Symbols.adb_rounded),
             ),
             ListTile(
@@ -123,6 +144,30 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
+  void toggleDisco() {
+    if (_debugDiscoTimer != null) {
+      _debugDiscoTimer!.cancel();
+      _debugDiscoTimer = null;
+    } else {
+      _debugDiscoTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        try {
+          final newThemeName = darkThemes.keys.elementAt(_debugDiscoIndex++);
+
+          unawaited(
+            LocalPreferences().themeName.set(newThemeName),
+          );
+        } catch (e) {
+          timer.cancel();
+          _debugDiscoTimer = null;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      });
+    }
+    setState(() {});
+  }
+
   void resetDatabase() async {
     if (_debugDbBusy) return;
 
@@ -153,6 +198,44 @@ class _ProfileTabState extends State<ProfileTab> {
       }
     } finally {
       _debugDbBusy = false;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void resetPrefs() async {
+    if (_debugPrefsBusy) return;
+
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(
+        title: const Text("[dev] Clear Shared Preferences?"),
+        actions: [
+          Button(
+            onTap: () => context.pop(true),
+            child: const Text("Confirm clear"),
+          ),
+          Button(
+            onTap: () => context.pop(false),
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
+
+    setState(() {
+      _debugPrefsBusy = true;
+    });
+
+    try {
+      if (confirm == true) {
+        final instance = await SharedPreferences.getInstance();
+        await instance.clear();
+      }
+    } finally {
+      _debugPrefsBusy = false;
 
       if (mounted) {
         setState(() {});

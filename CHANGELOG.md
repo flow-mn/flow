@@ -1,5 +1,48 @@
 # Changelog
 
+## Beta 0.8.1
+
+### New features
+
+* Privacy mode - mask digits with asterisk (*)
+* Choose between symbols or currency codes (e.g., `€` or `EUR`)
+* Enable `Prefer full amounts` to see non-abbreviated amounts in flow/balances
+
+### Changes
+
+* Json exports now use **UTC** timezone
+* Future transactions now require user confirmation by default. Closes [#120](https://github.com/flow-mn/flow/issues/120)
+* Now it's possible to paste transaction amount in the numpad. Closes [#157](https://github.com/flow-mn/flow/issues/157)
+* Map preview is no longer interactable in transaction detail page
+* Map preview has been moved below the transaction date
+
+### Small improvemets, fixes
+
+* Fixed iOS launcher icons having 1 pixel gap (Figma export issue *sigh*)
+* Now income/expense text on home screen no longer wraps to the next line
+* Texts that automatically shrink to fit now synchronizes its size with siblings. If that makes sense...
+* Stopped re-setting app icon when it's already the current icon
+* Home tab income/expense no longer includes transfers **if exclude transfers from flow** is enabled
+
+## Beta 0.8.0
+
+* Fixed account card "this month" summary
+* Added new theme selector
+* Enhanced searching
+* Added icons for each color (iOS exclusive)
+* Added total balance in the accounts tab
+* Added income/expense report in the home tab
+* Swapped icon for income/expense buttons (oof)
+
+## Beta 0.7.2
+
+* Added themes, closes [#105](https://github.com/flow-mn/flow/issues/105)
+* Add transaction description, type, and lat/long for CSV exports, closes [#203](https://github.com/flow-mn/flow/issues/203)
+
+## Beta 0.7.1
+
+* Fixed transfer transactions
+
 ## Beta 0.7.0
 
 * Added an option to choose location on a map

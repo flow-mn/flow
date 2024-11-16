@@ -59,15 +59,19 @@ Future<String> generateCSVContentV1() async {
   final headers = [
     CSVHeadersV1.uuid.localizedName,
     CSVHeadersV1.title.localizedName,
+    CSVHeadersV1.notes.localizedName,
     CSVHeadersV1.amount.localizedName,
     CSVHeadersV1.currency.localizedName,
     CSVHeadersV1.account.localizedName,
     CSVHeadersV1.accountUuid.localizedName,
     CSVHeadersV1.category.localizedName,
     CSVHeadersV1.categoryUuid.localizedName,
+    CSVHeadersV1.type.localizedName,
     CSVHeadersV1.subtype.localizedName,
     CSVHeadersV1.createdDate.localizedName,
     CSVHeadersV1.transactionDate.localizedName,
+    CSVHeadersV1.latitude.localizedName,
+    CSVHeadersV1.longitude.localizedName,
     CSVHeadersV1.extra.localizedName,
   ];
 
@@ -78,6 +82,7 @@ Future<String> generateCSVContentV1() async {
         (e) => [
           e.uuid,
           e.title ?? "",
+          e.description ?? "",
           e.amount.toStringAsFixed(
             numberOfDecimalsToKeep[e.currency] ??=
                 NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
@@ -87,6 +92,7 @@ Future<String> generateCSVContentV1() async {
           e.account.target?.uuid,
           e.category.target?.name,
           e.category.target?.uuid,
+          e.type.localizedName,
           e.transactionSubtype?.localizedName,
           e.createdDate.format(
             payload: "LLL",
@@ -96,11 +102,14 @@ Future<String> generateCSVContentV1() async {
             payload: "LLL",
             forceLocal: true,
           ),
+          e.extensions.geo?.latitude?.toString() ?? "",
+          e.extensions.geo?.longitude?.toString() ?? "",
           e.extra,
         ],
       )
       .toList()
     ..insert(0, headers);
 
-  return const ListToCsvConverter().convert(transformed);
+  return const ListToCsvConverter()
+      .convert(transformed, convertNullTo: "", eol: "\n");
 }

@@ -59,8 +59,6 @@ class Surface extends StatelessWidget {
         clipBehavior: clipBehavior,
         margin: margin,
         semanticContainer: semanticContainer,
-        // Not really sure if using builder for [Surface] is good idea
-        // since this widget is used quite often...
         child: Builder(builder: builder),
       ),
     );

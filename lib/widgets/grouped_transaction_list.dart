@@ -10,7 +10,7 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class GroupedTransactionList extends StatelessWidget {
+class GroupedTransactionList extends StatefulWidget {
   final EdgeInsets listPadding;
   final EdgeInsets itemPadding;
 
@@ -24,18 +24,18 @@ class GroupedTransactionList extends StatelessWidget {
   final Map<TimeRange, List<Transaction>> transactions;
 
   /// Rendered in order.
-  final Map<TimeRange, List<Transaction>>? futureTransactions;
+  final Map<TimeRange, List<Transaction>>? pendingTransactions;
 
   final Widget Function(TimeRange range, List<Transaction> transactions)
       headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
-  final Widget? futureDivider;
+  final Widget? pendingDivider;
 
   /// Used to determine which transactions are considered future or past.
   ///
-  /// For now, only [futureDivider] makes use of this
+  /// For now, only [pendingDivider] makes use of this
   final DateTime? anchor;
 
   /// When set to true, displays one side of transfer transactions as empty [Container]s
@@ -49,16 +49,24 @@ class GroupedTransactionList extends StatelessWidget {
 
   final TransactionFilter? filter;
 
+  /// Set this to [true] to make it always unobscured
+  ///
+  /// Set this to [false] to make it always obscured
+  ///
+  /// Set this to [null] to use the default behavior
+  final bool? overrideObscure;
+
   const GroupedTransactionList({
     super.key,
     required this.transactions,
     required this.headerBuilder,
-    this.futureTransactions,
+    this.pendingTransactions,
     this.controller,
     this.header,
-    this.futureDivider,
+    this.pendingDivider,
     this.anchor,
     this.headerPadding,
+    this.filter,
     this.implyHeader = true,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
@@ -67,54 +75,81 @@ class GroupedTransactionList extends StatelessWidget {
     ),
     this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
-    this.filter,
+    this.overrideObscure,
   });
 
   @override
+  State<GroupedTransactionList> createState() => _GroupedTransactionListState();
+}
+
+class _GroupedTransactionListState extends State<GroupedTransactionList> {
+  late bool globalPrivacyMode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool combineTransfers = shouldCombineTransferIfNeeded &&
+    final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
-    final Widget? header = this.header ??
-        (implyHeader
-            ? _getImpliedHeader(context, futureTransactions: futureTransactions)
+    final Widget? header = widget.header ??
+        (widget.implyHeader
+            ? _getImpliedHeader(context,
+                futureTransactions: widget.pendingTransactions)
             : null);
 
     final List<Object> flattened = [
       if (header != null) header,
-      if (futureTransactions != null)
-        for (final entry in futureTransactions!.entries) ...[
-          headerBuilder(entry.key, entry.value),
+      if (widget.pendingTransactions != null)
+        for (final entry in widget.pendingTransactions!.entries) ...[
+          widget.headerBuilder(entry.key, entry.value),
           ...entry.value,
         ],
-      if (futureDivider != null &&
-          futureTransactions?.isNotEmpty == true &&
-          transactions.isNotEmpty)
-        futureDivider!,
-      for (final entry in transactions.entries) ...[
-        headerBuilder(entry.key, entry.value),
+      if (widget.pendingDivider != null &&
+          widget.pendingTransactions?.isNotEmpty == true &&
+          widget.transactions.isNotEmpty)
+        widget.pendingDivider!,
+      for (final entry in widget.transactions.entries) ...[
+        widget.headerBuilder(entry.key, entry.value),
         ...entry.value,
       ],
     ];
 
-    final EdgeInsets headerPadding = this.headerPadding ?? itemPadding;
+    final EdgeInsets headerPadding = widget.headerPadding ?? widget.itemPadding;
 
     return ListView.builder(
-      controller: controller,
-      padding: listPadding,
+      controller: widget.controller,
+      padding: widget.listPadding,
       itemBuilder: (context, index) => switch (flattened[index]) {
         (Widget header) => Padding(
             padding: headerPadding.copyWith(
-              top: index == 0 ? firstHeaderTopPadding : headerPadding.top,
+              top:
+                  index == 0 ? widget.firstHeaderTopPadding : headerPadding.top,
             ),
             child: header,
           ),
         (Transaction transaction) => TransactionListTile(
             combineTransfers: combineTransfers,
             transaction: transaction,
-            padding: itemPadding,
+            padding: widget.itemPadding,
             dismissibleKey: ValueKey(transaction.id),
             deleteFn: () => deleteTransaction(context, transaction),
+            confirmFn: ([bool confirm = true]) =>
+                confirmTransaction(context, transaction, confirm),
+            overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),
       },
@@ -137,6 +172,14 @@ class GroupedTransactionList extends StatelessWidget {
     if (confirmation == true) {
       transaction.delete();
     }
+  }
+
+  Future<void> confirmTransaction(
+    BuildContext context,
+    Transaction transaction, [
+    bool confirm = true,
+  ]) async {
+    transaction.confirm(confirm);
   }
 
   Widget? _getImpliedHeader(
@@ -167,5 +210,11 @@ class GroupedTransactionList extends StatelessWidget {
         )
       ],
     );
+  }
+
+  _privacyModeUpdate() {
+    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    if (!mounted) return;
+    setState(() {});
   }
 }
