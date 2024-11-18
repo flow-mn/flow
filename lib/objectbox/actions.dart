@@ -144,13 +144,14 @@ extension MainActions on ObjectBox {
     bool ignoreTransfers = true,
     String? currencyOverride,
   }) async {
-    final Condition<Transaction> dateFilter =
-        Transaction_.transactionDate.betweenDate(from, to);
+    final Condition<Transaction> dateFilter = Transaction_.transactionDate
+        .betweenDate(from, to)
+        .and(Transaction_.isPending
+            .isNull()
+            .or(Transaction_.isPending.notEquals(true)));
 
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
-        .build();
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
@@ -181,13 +182,14 @@ extension MainActions on ObjectBox {
     bool omitZeroes = true,
     String? currencyOverride,
   }) async {
-    final Condition<Transaction> dateFilter =
-        Transaction_.transactionDate.betweenDate(from, to);
+    final Condition<Transaction> dateFilter = Transaction_.transactionDate
+        .betweenDate(from, to)
+        .and(Transaction_.isPending
+            .isNull()
+            .or(Transaction_.isPending.notEquals(true)));
 
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(dateFilter.and(Transaction_.isPending.notEquals(true)))
-        .build();
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
 
     final List<Transaction> transactions = await transactionsQuery.findAsync();
 
