@@ -3,6 +3,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/transactions_date_header.dart";
 import "package:flutter/material.dart";
@@ -91,25 +92,41 @@ class _TransactionsPageState extends State<TransactionsPage> {
           title: widget.title == null ? null : Text(widget.title!),
         ),
         body: SafeArea(
-          child: StreamBuilder<Map<TimeRange, List<Transaction>>>(
+          child: StreamBuilder<List<Transaction>>(
             stream: widget.query
                 .watch(triggerImmediately: true)
-                .map((event) => event.find().groupByDate()),
+                .map((event) => event.find()),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Spinner.center();
               }
 
-              final Map<TimeRange, List<Transaction>> grouped =
-                  snapshot.requireData;
+              final DateTime now = DateTime.now().startOfNextMinute();
+
+              final Map<TimeRange, List<Transaction>> transactions = snapshot
+                  .requireData
+                  .where((transaction) =>
+                      !transaction.transactionDate.isAfter(now) &&
+                      transaction.isPending != true)
+                  .groupByDate();
+              final Map<TimeRange, List<Transaction>> pendingTransactions =
+                  snapshot
+                      .requireData
+                      .where((transaction) =>
+                          transaction.transactionDate.isAfter(now) ||
+                          transaction.isPending == true)
+                      .groupByDate();
 
               return GroupedTransactionList(
-                transactions: grouped,
-                headerBuilder: (range, transactions) =>
+                transactions: transactions,
+                pendingTransactions: pendingTransactions,
+                headerBuilder: (pendingGroup, range, transactions) =>
                     TransactionListDateHeader(
+                  pendingGroup: pendingGroup,
                   transactions: transactions,
                   date: range.from,
                 ),
+                pendingDivider: WavyDivider(),
                 header: widget.header,
               );
             },

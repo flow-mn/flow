@@ -2,6 +2,7 @@ import "dart:developer";
 
 import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
+import "package:intl/intl.dart";
 
 class Money {
   final double amount;
@@ -137,6 +138,72 @@ class Money {
   @override
   toString() {
     return "Money($currency $amount)";
+  }
+
+  String formatMoney({
+    bool includeCurrency = true,
+    bool useCurrencySymbol = true,
+    bool compact = false,
+    bool takeAbsoluteValue = false,
+    int? decimalDigits,
+  }) {
+    final num amountToFormat = takeAbsoluteValue ? amount.abs() : amount;
+    final String currencyToFormat = !includeCurrency ? "" : currency;
+    useCurrencySymbol = useCurrencySymbol && includeCurrency;
+
+    final String? symbol = useCurrencySymbol
+        ? NumberFormat.simpleCurrency(
+            locale: Intl.defaultLocale,
+            name: currencyToFormat,
+          ).currencySymbol
+        : null;
+
+    if (compact) {
+      return NumberFormat.compactCurrency(
+        locale: Intl.defaultLocale,
+        name: currencyToFormat,
+        symbol: symbol,
+        decimalDigits: decimalDigits,
+      ).format(amountToFormat);
+    }
+    return NumberFormat.currency(
+      locale: Intl.defaultLocale,
+      name: currencyToFormat,
+      symbol: symbol,
+      decimalDigits: decimalDigits,
+    ).format(amountToFormat);
+  }
+
+  /// Returns money-formatted string in the primary currency
+  /// in the default locale
+  ///
+  /// e.g., $420.69
+  String get formatted => formatMoney();
+
+  /// Returns compact money-formatted string in the primary
+  /// currency in the default locale
+  ///
+  /// e.g., $1.2M
+  String get formattedCompact => formatMoney(compact: true);
+
+  /// Returns money-formatted string (in the default locale)
+  ///
+  /// e.g., 467,000
+  String get formattedNoMarker => formatMoney(includeCurrency: false);
+
+  /// Returns money-formatted string (in the default locale)
+  ///
+  /// e.g., 1.2M
+  String get formattedNoMarkerCompact => formatMoney(
+        includeCurrency: false,
+        compact: true,
+      );
+
+  String toSemanticLabel() {
+    final String currencyName =
+        iso4217CurrenciesGrouped[currency]?.name ?? currency;
+
+    return "$formattedNoMarker $currencyName";
   }
 }
 

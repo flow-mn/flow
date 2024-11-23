@@ -1,6 +1,5 @@
 import "package:flow/data/money.dart";
 import "package:flow/entity/category.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
@@ -61,7 +60,7 @@ class CategoryCard extends StatelessWidget {
                   Text(
                     Money(category.transactions.sumWithoutCurrency,
                             primaryCurrency)
-                        .money,
+                        .formatted,
                     style: context.textTheme.bodyMedium?.semi(context),
                   ),
               ],

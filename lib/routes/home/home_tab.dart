@@ -187,13 +187,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         bottom: 80.0,
       ),
       headerBuilder: (
-        TimeRange range,
-        List<Transaction> transactions,
+        pendingGroup,
+        range,
+        transactions,
       ) =>
           TransactionListDateHeader(
         transactions: transactions,
         date: range.from,
-        future: !range.from.isPast,
+        pendingGroup: pendingGroup == true,
       ),
     );
   }

@@ -189,10 +189,11 @@ class _CategoryPageState extends State<CategoryPage> {
                   listPadding: widget.listPadding,
                   headerPadding: widget.headerPadding,
                   firstHeaderTopPadding: firstHeaderTopPadding,
-                  headerBuilder: (range, rangeTransactions) =>
+                  headerBuilder: (pendingGroup, range, rangeTransactions) =>
                       TransactionListDateHeader(
                     transactions: rangeTransactions,
                     date: range.from,
+                    pendingGroup: pendingGroup,
                   ),
                 )
             },

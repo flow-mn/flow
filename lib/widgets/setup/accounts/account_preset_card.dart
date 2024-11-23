@@ -1,5 +1,4 @@
 import "package:flow/entity/account.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/surface.dart";
@@ -56,8 +55,7 @@ class AccountPresetCard extends StatelessWidget {
                           style: context.textTheme.titleSmall,
                         ),
                         Text(
-                          account.balance
-                              .formatMoney(),
+                          account.balance.formatMoney(),
                           style: context.textTheme.displaySmall,
                         ),
                       ],

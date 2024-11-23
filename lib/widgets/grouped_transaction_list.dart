@@ -3,11 +3,10 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/grouped_transaction_list/pending_group_header.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class GroupedTransactionList extends StatefulWidget {
@@ -26,8 +25,11 @@ class GroupedTransactionList extends StatefulWidget {
   /// Rendered in order.
   final Map<TimeRange, List<Transaction>>? pendingTransactions;
 
-  final Widget Function(TimeRange range, List<Transaction> transactions)
-      headerBuilder;
+  final Widget Function(
+    bool pendingGroup,
+    TimeRange range,
+    List<Transaction> transactions,
+  ) headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
@@ -107,15 +109,14 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
     final Widget? header = widget.header ??
         (widget.implyHeader
-            ? _getImpliedHeader(context,
-                futureTransactions: widget.pendingTransactions)
+            ? PendingGroupHeader(futureTransactions: widget.pendingTransactions)
             : null);
 
     final List<Object> flattened = [
       if (header != null) header,
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
-          widget.headerBuilder(entry.key, entry.value),
+          widget.headerBuilder(true, entry.key, entry.value),
           ...entry.value,
         ],
       if (widget.pendingDivider != null &&
@@ -123,7 +124,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
           widget.transactions.isNotEmpty)
         widget.pendingDivider!,
       for (final entry in widget.transactions.entries) ...[
-        widget.headerBuilder(entry.key, entry.value),
+        widget.headerBuilder(false, entry.key, entry.value),
         ...entry.value,
       ],
     ];
@@ -180,36 +181,6 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     bool confirm = true,
   ]) async {
     transaction.confirm(confirm);
-  }
-
-  Widget? _getImpliedHeader(
-    BuildContext context, {
-    required Map<TimeRange, List<Transaction>>? futureTransactions,
-  }) {
-    if (futureTransactions == null || futureTransactions.isEmpty) return null;
-
-    final int count = futureTransactions.values.fold<int>(
-      0,
-      (previousValue, element) => previousValue + element.renderableCount,
-    );
-
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            "tabs.home.upcomingTransactions".t(context, count),
-            style: context.textTheme.bodyLarge?.semi(context),
-          ),
-        ),
-        const SizedBox(width: 16.0),
-        TextButton(
-          onPressed: () => context.push("/transactions/upcoming"),
-          child: Text(
-            "tabs.home.upcomingTransactions.seeAll".t(context),
-          ),
-        )
-      ],
-    );
   }
 
   _privacyModeUpdate() {

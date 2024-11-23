@@ -7,54 +7,102 @@ import "package:flow/theme/theme.dart";
 import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class TransactionListDateHeader extends StatelessWidget {
+class TransactionListDateHeader extends StatefulWidget {
   final DateTime date;
   final List<Transaction> transactions;
 
+  final Widget? action;
+
   /// Hides count and flow
-  final bool future;
+  final bool pendingGroup;
 
   const TransactionListDateHeader({
     super.key,
     required this.transactions,
     required this.date,
-    this.future = false,
+    this.action,
+    this.pendingGroup = false,
   });
-  const TransactionListDateHeader.future({
+  const TransactionListDateHeader.pendingGroup({
     super.key,
     required this.date,
-  })  : future = true,
+    this.action,
+  })  : pendingGroup = true,
         transactions = const [];
+
+  @override
+  State<TransactionListDateHeader> createState() =>
+      _TransactionListDateHeaderState();
+}
+
+class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
+  bool obscure = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalPreferences().sessionPrivacyMode.addListener(_updatePrivacyMode);
+    obscure = LocalPreferences().sessionPrivacyMode.get();
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences().sessionPrivacyMode.removeListener(_updatePrivacyMode);
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final Widget title = Text(
-      date.toMoment().calendar(omitHours: true),
+      widget.date.toMoment().calendar(omitHours: true),
       style: context.textTheme.headlineSmall,
     );
 
-    if (future) {
+    if (widget.pendingGroup) {
       return title;
     }
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final double flow = transactions
+    final double flow = widget.transactions
         .where((transaction) => transaction.currency == primaryCurrency)
         .sumWithoutCurrency;
-    final bool containsNonPrimaryCurrency = transactions
+    final bool containsNonPrimaryCurrency = widget.transactions
         .any((transaction) => transaction.currency != primaryCurrency);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        title,
-        Text(
-          "${Money(flow, primaryCurrency).moneyCompact}${containsNonPrimaryCurrency ? '+' : ''} • ${'tabs.home.transactionsCount'.t(context, transactions.renderableCount)}",
-          style: context.textTheme.labelMedium,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              title,
+              Text(
+                "${Money(flow, primaryCurrency).formattedCompact}${containsNonPrimaryCurrency ? '+' : ''} • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
+                style: context.textTheme.labelMedium,
+              ),
+            ],
+          ),
         ),
+        const SizedBox(width: 16.0),
+        if (widget.action != null)
+          Flexible(
+            fit: FlexFit.tight,
+            child: widget.action!,
+          ),
       ],
     );
+  }
+
+  _updatePrivacyMode() {
+    obscure = LocalPreferences().sessionPrivacyMode.get();
+
+    if (!mounted) return;
+    setState(() {});
   }
 }

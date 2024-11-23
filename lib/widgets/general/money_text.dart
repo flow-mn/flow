@@ -1,8 +1,7 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/money.dart";
-import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/money_text_builder.dart";
+import "package:flow/widgets/general/money_text_raw.dart";
 import "package:flutter/material.dart";
 
 class MoneyText extends StatefulWidget {
@@ -77,128 +76,51 @@ class MoneyText extends StatefulWidget {
 }
 
 class _MoneyTextState extends State<MoneyText> {
-  late bool globalPrivacyMode;
-  late bool globalUseCurrencySymbol;
   late bool abbreviate;
-  AutoSizeGroup? autoSizeGroup;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
 
-    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
-    LocalPreferences().useCurrencySymbol.addListener(_useCurrencySymbolUpdate);
-
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
-    globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
-
     abbreviate = widget.initiallyAbbreviated;
-    autoSizeGroup = widget.autoSizeGroup;
-  }
-
-  @override
-  void didUpdateWidget(MoneyText oldWidget) {
-    if (widget.autoSizeGroup != autoSizeGroup) {
-      autoSizeGroup = widget.autoSizeGroup;
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
-    LocalPreferences()
-        .useCurrencySymbol
-        .removeListener(_useCurrencySymbolUpdate);
-
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final String text = getString();
+    return MoneyTextBuilder(
+      money: widget.money,
+      customFormatter: widget.customFormatter,
+      abbreviate: abbreviate,
+      overrideObscure: widget.overrideObscure,
+      overrideUseCurrencySymbol: widget.overrideUseCurrencySymbol,
+      displayAbsoluteAmount: widget.displayAbsoluteAmount,
+      omitCurrency: widget.omitCurrency,
+      builder: (context, text, money) {
+        final bool hasAction =
+            widget.onTap != null || widget.tapToToggleAbbreviation;
 
-    final Widget child = widget.autoSize
-        ? AutoSizeText(
-            text,
-            group: autoSizeGroup,
-            style: widget.style,
-            maxLines: widget.maxLines,
-            textAlign: widget.textAlign,
-          )
-        : Text(
-            text,
-            style: widget.style,
-            maxLines: widget.maxLines,
-            textAlign: widget.textAlign,
-          );
-
-    if (widget.tapToToggleAbbreviation || widget.onTap != null) {
-      return GestureDetector(
-        onTap: handleTap,
-        child: child,
-      );
-    }
-
-    return child;
+        return MoneyTextRaw(
+          text: text,
+          style: widget.style,
+          textAlign: widget.textAlign,
+          maxLines: widget.maxLines,
+          onTap: hasAction ? () => handleTap() : null,
+          autoSizeGroup: widget.autoSizeGroup,
+          autoSize: widget.autoSize,
+        );
+      },
+    );
   }
 
   void handleTap() {
+    if (widget.tapToToggleAbbreviation) {
+      abbreviate = !abbreviate;
+
+      if (mounted) setState(() => {});
+    }
+
     if (widget.onTap != null) {
       widget.onTap!();
     }
-
-    if (widget.tapToToggleAbbreviation) {
-      setState(() {
-        abbreviate = !abbreviate;
-      });
-    }
-  }
-
-  _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  _useCurrencySymbolUpdate() {
-    globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  String getString() {
-    final Money? money = widget.money;
-
-    if (money == null) return "-";
-
-    final bool obscure = widget.overrideObscure ?? globalPrivacyMode;
-
-    final bool useCurrencySymbol =
-        widget.overrideUseCurrencySymbol ?? globalUseCurrencySymbol;
-
-    if (widget.customFormatter != null) {
-      return widget.customFormatter!(
-        money,
-        (
-          abbreviate: abbreviate,
-          obscure: obscure,
-          useCurrencySymbol: useCurrencySymbol
-        ),
-      );
-    }
-
-    final String text = money.formatMoney(
-      compact: abbreviate,
-      takeAbsoluteValue: widget.displayAbsoluteAmount,
-      includeCurrency: !widget.omitCurrency,
-      useCurrencySymbol: useCurrencySymbol,
-    );
-
-    if (obscure) {
-      return text.digitsObscured;
-    }
-
-    return text;
   }
 }
