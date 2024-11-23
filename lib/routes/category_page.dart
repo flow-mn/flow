@@ -192,7 +192,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   headerBuilder: (pendingGroup, range, rangeTransactions) =>
                       TransactionListDateHeader(
                     transactions: rangeTransactions,
-                    date: range.from,
+                    range: range,
                     pendingGroup: pendingGroup,
                   ),
                 )

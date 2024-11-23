@@ -8,7 +8,7 @@ import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class TransactionListDateHeader extends StatefulWidget {
-  final DateTime date;
+  final TimeRange range;
   final List<Transaction> transactions;
 
   final Widget? action;
@@ -16,17 +16,21 @@ class TransactionListDateHeader extends StatefulWidget {
   /// Hides count and flow
   final bool pendingGroup;
 
+  final bool resolveNonPrimaryCurrencies;
+
   const TransactionListDateHeader({
     super.key,
     required this.transactions,
-    required this.date,
+    required this.range,
     this.action,
     this.pendingGroup = false,
+    this.resolveNonPrimaryCurrencies = true,
   });
   const TransactionListDateHeader.pendingGroup({
     super.key,
-    required this.date,
+    required this.range,
     this.action,
+    this.resolveNonPrimaryCurrencies = true,
   })  : pendingGroup = true,
         transactions = const [];
 
@@ -56,13 +60,11 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   @override
   Widget build(BuildContext context) {
     final Widget title = Text(
-      widget.date.toMoment().calendar(omitHours: true),
+      widget.pendingGroup
+          ? "transactions.pending".t(context)
+          : _getRangeTitle(widget.range),
       style: context.textTheme.headlineSmall,
     );
-
-    if (widget.pendingGroup) {
-      return title;
-    }
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
@@ -76,20 +78,20 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              title,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            title,
+            if (!widget.pendingGroup)
               Text(
                 "${Money(flow, primaryCurrency).formattedCompact}${containsNonPrimaryCurrency ? '+' : ''} • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
                 style: context.textTheme.labelMedium,
               ),
-            ],
-          ),
+          ],
         ),
         const SizedBox(width: 16.0),
+        Spacer(),
         if (widget.action != null)
           Flexible(
             fit: FlexFit.tight,
@@ -104,5 +106,12 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
     if (!mounted) return;
     setState(() {});
+  }
+
+  String _getRangeTitle(TimeRange range) {
+    return switch (range) {
+      DayTimeRange() => range.from.toMoment().calendar(omitHours: true),
+      _ => range.format(),
+    };
   }
 }

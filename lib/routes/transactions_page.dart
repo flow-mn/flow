@@ -123,8 +123,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 headerBuilder: (pendingGroup, range, transactions) =>
                     TransactionListDateHeader(
                   pendingGroup: pendingGroup,
+                  range: range,
                   transactions: transactions,
-                  date: range.from,
                 ),
                 pendingDivider: WavyDivider(),
                 header: widget.header,

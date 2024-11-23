@@ -5,14 +5,11 @@ import "package:moment_dart/moment_dart.dart";
 
 @JsonEnum(valueField: "value")
 enum UpcomingTransactionsDuration implements LocalizedEnum {
-  none("none"),
-  next7Days("next7Days"),
-  next14Days("next14Days"),
-  next30Days("next30Days"),
-  thisWeek("thisWeek"),
-  thisMonth("thisMonth"),
-  thisYear("thisYear"),
-  allTime("allTime");
+  next1Days("next1Days"),
+  next2Days("next2Days"),
+  next3Days("next3Days"),
+  next5Days("next5Days"),
+  next7Days("next7Days");
 
   final String value;
 
@@ -26,22 +23,16 @@ enum UpcomingTransactionsDuration implements LocalizedEnum {
   DateTime? endsAt([DateTime? anchor]) {
     final Moment now = anchor?.toMoment() ?? Moment.now();
     switch (this) {
-      case UpcomingTransactionsDuration.none:
-        return null;
+      case UpcomingTransactionsDuration.next1Days:
+        return now.add(Duration(days: 1)).endOfDay();
+      case UpcomingTransactionsDuration.next2Days:
+        return now.add(Duration(days: 2)).endOfDay();
+      case UpcomingTransactionsDuration.next3Days:
+        return now.add(Duration(days: 3)).endOfDay();
+      case UpcomingTransactionsDuration.next5Days:
+        return now.add(Duration(days: 5)).endOfDay();
       case UpcomingTransactionsDuration.next7Days:
         return now.add(Duration(days: 7)).endOfDay();
-      case UpcomingTransactionsDuration.next14Days:
-        return now.add(Duration(days: 14)).endOfDay();
-      case UpcomingTransactionsDuration.next30Days:
-        return now.add(Duration(days: 30)).endOfDay();
-      case UpcomingTransactionsDuration.thisWeek:
-        return now.endOfLocalWeek();
-      case UpcomingTransactionsDuration.thisMonth:
-        return now.endOfMonth();
-      case UpcomingTransactionsDuration.thisYear:
-        return now.endOfYear();
-      case UpcomingTransactionsDuration.allTime:
-        return Moment.maxValue;
     }
   }
 

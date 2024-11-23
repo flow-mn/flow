@@ -32,8 +32,6 @@ class Numpad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO (sadespresso) on phones with wider display, or wider phones, or tablets, come up with a different solution to make a numpad.
-
     final width = this.width ?? MediaQuery.of(context).size.width;
 
     final double totalHorizontalPadding = padding.left +

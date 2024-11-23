@@ -176,7 +176,7 @@ class _AccountPageState extends State<AccountPage> {
                   headerBuilder: (pendingGroup, range, rangeTransactions) =>
                       TransactionListDateHeader(
                     transactions: rangeTransactions,
-                    date: range.from,
+                    range: range,
                     pendingGroup: pendingGroup,
                   ),
                 )

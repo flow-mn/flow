@@ -2,6 +2,7 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
@@ -16,6 +17,8 @@ import "package:flow/widgets/home/transactions_date_header.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class HomeTab extends StatefulWidget {
@@ -94,7 +97,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           .queryBuilder()
           .watch(triggerImmediately: true)
           .map(
-            (event) => event.find().search(currentFilter.searchData),
+            (event) =>
+                event.find().filter(currentFilterWithPlanned.postPredicates),
           ),
       builder: (context, snapshot) {
         final DateTime now = DateTime.now().startOfNextMinute();
@@ -157,7 +161,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .where((transaction) =>
             transaction.transactionDate.isAfter(now) ||
             transaction.isPending == true)
-        .groupByDate();
+        .groupByRange(
+          rangeFn: (transaction) =>
+              LocalWeekTimeRange(transaction.transactionDate),
+        );
 
     final bool shouldCombineTransferIfNeeded =
         currentFilter.accounts?.isNotEmpty != true;
@@ -193,8 +200,16 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ) =>
           TransactionListDateHeader(
         transactions: transactions,
-        date: range.from,
-        pendingGroup: pendingGroup == true,
+        range: range,
+        pendingGroup: pendingGroup,
+        action: pendingGroup
+            ? TextButton.icon(
+                onPressed: () => context.push("/transactions/pending"),
+                label: Text("tabs.home.pendingTransactions.seeAll".t(context)),
+                icon: Icon(Symbols.arrow_right_alt_rounded),
+                iconAlignment: IconAlignment.end,
+              )
+            : null,
       ),
     );
   }

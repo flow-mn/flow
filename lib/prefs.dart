@@ -24,7 +24,7 @@ class LocalPreferences {
 
   static const UpcomingTransactionsDuration
       homeTabPlannedTransactionsDurationDefault =
-      UpcomingTransactionsDuration.thisWeek;
+      UpcomingTransactionsDuration.next3Days;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
