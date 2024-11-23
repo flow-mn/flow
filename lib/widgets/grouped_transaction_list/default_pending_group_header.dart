@@ -6,10 +6,10 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class PendingGroupHeader extends StatelessWidget {
+class DefaultPendingGroupHeader extends StatelessWidget {
   final Map<TimeRange, List<Transaction>>? futureTransactions;
 
-  const PendingGroupHeader({
+  const DefaultPendingGroupHeader({
     super.key,
     required this.futureTransactions,
   });

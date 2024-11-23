@@ -48,6 +48,8 @@ class FlowColorScheme {
 
   late final ColorScheme colorScheme;
 
+  ThemeMode get mode => isDark ? ThemeMode.dark : ThemeMode.light;
+
   FlowColorScheme({
     required this.isDark,
     required this.surface,

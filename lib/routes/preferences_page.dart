@@ -28,7 +28,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().themeName.get())?.scheme ?? shadeOfViolet;
+        getTheme(LocalPreferences().themeName.get());
 
     final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
         LocalPreferences().homeTabPlannedTransactionsDuration.get() ??

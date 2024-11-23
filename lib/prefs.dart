@@ -11,7 +11,6 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
-import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -73,7 +72,6 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
@@ -175,11 +173,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeMode = ThemeModeSettingsEntry(
-      key: "themeMode",
-      preferences: _prefs,
-      initialValue: ThemeMode.system,
-    );
     themeName = PrimitiveSettingsEntry<String>(
       key: "themeName",
       preferences: _prefs,

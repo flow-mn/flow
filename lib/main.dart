@@ -155,38 +155,15 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final ThemeMode legacyThemeMode =
-        LocalPreferences().themeMode.value ?? ThemeMode.system;
     final String? themeName = LocalPreferences().themeName.value;
 
     log("[Theme] Reloading theme $themeName");
 
-    ({FlowColorScheme scheme, ThemeMode mode})? experimentalTheme =
-        getTheme(themeName);
-
-    if (experimentalTheme == null) {
-      final bool fallbackToDarkTheme =
-          switch ((legacyThemeMode, useDarkTheme)) {
-        (ThemeMode.system, true) => true,
-        (ThemeMode.system, false) => true,
-        (ThemeMode.dark, _) => true,
-        (ThemeMode.light, _) => false
-      };
-
-      log("[Theme] Didn't find theme for $themeName");
-      unawaited(
-        LocalPreferences()
-            .themeName
-            .set((fallbackToDarkTheme ? darkThemes : lightThemes).keys.first),
-      );
-    }
+    FlowColorScheme theme = getTheme(themeName, useDarkTheme);
 
     setState(() {
-      _themeMode = experimentalTheme?.mode ?? legacyThemeMode;
-      _themeFactory = ThemeFactory(
-        experimentalTheme?.scheme ??
-            (useDarkTheme ? electricLavender : shadeOfViolet),
-      );
+      _themeMode = theme.mode;
+      _themeFactory = ThemeFactory(theme);
     });
   }
 
@@ -213,6 +190,7 @@ class FlowState extends State<Flow> {
       MomentLocalizations.byLocale(overriddenLocale.code) ??
           MomentLocalizations.enUS(),
     );
+
     Intl.defaultLocale = overriddenLocale.code;
     setState(() {});
   }

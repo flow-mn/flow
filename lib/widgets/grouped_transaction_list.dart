@@ -1,10 +1,8 @@
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
-import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/utils/utils.dart";
-import "package:flow/widgets/grouped_transaction_list/pending_group_header.dart";
+import "package:flow/utils/extensions/transaction_context_actions.dart";
+import "package:flow/widgets/grouped_transaction_list/default_pending_group_header.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -109,7 +107,9 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
     final Widget? header = widget.header ??
         (widget.implyHeader
-            ? PendingGroupHeader(futureTransactions: widget.pendingTransactions)
+            ? DefaultPendingGroupHeader(
+                futureTransactions: widget.pendingTransactions,
+              )
             : null);
 
     final List<Object> flattened = [
@@ -147,40 +147,15 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
             transaction: transaction,
             padding: widget.itemPadding,
             dismissibleKey: ValueKey(transaction.id),
-            deleteFn: () => deleteTransaction(context, transaction),
+            deleteFn: () => context.deleteTransaction(transaction),
             confirmFn: ([bool confirm = true]) =>
-                confirmTransaction(context, transaction, confirm),
+                context.confirmTransaction(transaction, confirm),
             overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),
       },
       itemCount: flattened.length,
     );
-  }
-
-  Future<void> deleteTransaction(
-    BuildContext context,
-    Transaction transaction,
-  ) async {
-    final String txnTitle =
-        transaction.title ?? "transaction.fallbackTitle".t(context);
-
-    final confirmation = await context.showConfirmDialog(
-      isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, txnTitle),
-    );
-
-    if (confirmation == true) {
-      transaction.delete();
-    }
-  }
-
-  Future<void> confirmTransaction(
-    BuildContext context,
-    Transaction transaction, [
-    bool confirm = true,
-  ]) async {
-    transaction.confirm(confirm);
   }
 
   _privacyModeUpdate() {

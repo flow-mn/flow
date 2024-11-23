@@ -36,11 +36,22 @@ class TransactionFilter {
   final bool sortDescending;
   final TransactionSortField sortBy;
 
+  final bool? isPending;
+
+  final double? minAmount;
+  final double? maxAmount;
+
+  final List<String>? currencies;
+
   const TransactionFilter({
     this.categories,
     this.accounts,
     this.range,
     this.types,
+    this.isPending = false,
+    this.minAmount,
+    this.maxAmount,
+    this.currencies,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
@@ -123,6 +134,28 @@ class TransactionFilter {
     if (accounts?.isNotEmpty == true) {
       conditions.add(Transaction_.accountUuid
           .oneOf(accounts!.map((account) => account.uuid).toList()));
+    }
+
+    if (minAmount != null) {
+      conditions.add(Transaction_.amount.greaterOrEqual(minAmount!));
+    }
+
+    if (maxAmount != null) {
+      conditions.add(Transaction_.amount.lessOrEqual(maxAmount!));
+    }
+
+    if (currencies?.isNotEmpty == true) {
+      conditions.add(Transaction_.currency.oneOf(currencies!));
+    }
+
+    if (isPending != null) {
+      if (isPending!) {
+        conditions.add(Transaction_.isPending.equals(true));
+      } else {
+        conditions.add(Transaction_.isPending
+            .notEquals(true)
+            .or(Transaction_.isPending.isNull()));
+      }
     }
 
     final filtered = ObjectBox()
