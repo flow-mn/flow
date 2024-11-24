@@ -26,19 +26,20 @@ class WavyDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color color = this.color ?? Theme.of(context).dividerColor;
+
     return SizedBox(
       width: double.infinity,
       height: height,
       child: ClipRect(
         child: CustomPaint(
+          key: ValueKey(color),
           painter: WavyDividerPainter(
-            color: color ?? Theme.of(context).dividerColor,
+            color: color,
             height: height,
             waveWidth: waveWidth,
             strokeWidth: strokeWidth,
           ),
-          isComplex: false,
-          willChange: false,
         ),
       ),
     );

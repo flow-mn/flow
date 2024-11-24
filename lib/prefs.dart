@@ -4,7 +4,7 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
-import "package:flow/data/upcoming_transactions.dart";
+import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -22,9 +22,9 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const UpcomingTransactionsDuration
+  static const PendingTransactionsDuration
       homeTabPlannedTransactionsDurationDefault =
-      UpcomingTransactionsDuration.next3Days;
+      PendingTransactionsDuration.next3Days;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -53,7 +53,7 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final JsonSettingsEntry<UpcomingTransactionsDuration>
+  late final JsonSettingsEntry<PendingTransactionsDuration>
       homeTabPlannedTransactionsDuration;
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
@@ -112,12 +112,12 @@ class LocalPreferences {
       initialValue: false,
     );
     homeTabPlannedTransactionsDuration =
-        JsonSettingsEntry<UpcomingTransactionsDuration>(
+        JsonSettingsEntry<PendingTransactionsDuration>(
       key: "homeTabPlannedTransactionsDuration",
       preferences: _prefs,
       initialValue: homeTabPlannedTransactionsDurationDefault,
       fromJson: (map) =>
-          UpcomingTransactionsDuration.fromJson(map) ??
+          PendingTransactionsDuration.fromJson(map) ??
           homeTabPlannedTransactionsDurationDefault,
       toJson: (data) => data.toJson(),
     );

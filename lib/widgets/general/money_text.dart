@@ -79,7 +79,7 @@ class _MoneyTextState extends State<MoneyText> {
   late bool abbreviate;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
 
     abbreviate = widget.initiallyAbbreviated;

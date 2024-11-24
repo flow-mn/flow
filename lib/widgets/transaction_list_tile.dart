@@ -4,6 +4,7 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
@@ -25,12 +26,18 @@ class TransactionListTile extends StatelessWidget {
 
   final bool? overrideObscure;
 
+  /// moment_dart format string
+  ///
+  /// Defaults to "LT"
+  final String dateFormat;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
     required this.deleteFn,
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
+    this.dateFormat = "LT",
     this.confirmFn,
     this.dismissibleKey,
     this.overrideObscure,
@@ -38,15 +45,10 @@ class TransactionListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showPendingConfirmation = confirmFn != null &&
-        transaction.isPending == true &&
-        transaction.transactionDate
-            .isPastAnchored(Moment.now().endOfNextMinute());
+    final bool showPendingConfirmation =
+        confirmFn != null && transaction.confirmable();
 
-    final bool showHoldButton = confirmFn != null &&
-        transaction.isPending != true &&
-        transaction.transactionDate
-            .isFutureAnchored(Moment.now().startOfMinute());
+    final bool showHoldButton = confirmFn != null && transaction.holdable();
 
     if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
@@ -108,6 +110,7 @@ class TransactionListTile extends StatelessWidget {
                                   : transaction.title!),
                             ),
                           ],
+                          style: context.textTheme.bodyMedium,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -117,7 +120,8 @@ class TransactionListTile extends StatelessWidget {
                           (transaction.isTransfer && combineTransfers)
                               ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
                               : transaction.account.target?.name,
-                          transaction.transactionDate.format(payload: "LT"),
+                          transaction.transactionDate
+                              .format(payload: dateFormat),
                           if (transaction.transactionDate.isFuture)
                             transaction.isPending == true
                                 ? "transaction.pending".t(context)

@@ -1,24 +1,22 @@
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
-import "package:flow/data/upcoming_transactions.dart";
+import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
-import "package:flow/utils/optional.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
 import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
-import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/home/home/pending_transactions_header.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class HomeTab extends StatefulWidget {
@@ -33,7 +31,7 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late final AppLifecycleListener _listener;
 
-  UpcomingTransactionsDuration _plannedTransactionsDuration =
+  PendingTransactionsDuration _plannedTransactionsDuration =
       LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
   final TransactionFilter defaultFilter = TransactionFilter(
@@ -157,14 +155,22 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             !transaction.transactionDate.isAfter(now) &&
             transaction.isPending != true)
         .groupByDate();
-    final Map<TimeRange, List<Transaction>> pendingTransactions = transactions
+
+    final List<Transaction> pendingTransactions = transactions
         .where((transaction) =>
             transaction.transactionDate.isAfter(now) ||
             transaction.isPending == true)
-        .groupByRange(
-          rangeFn: (transaction) =>
-              LocalWeekTimeRange(transaction.transactionDate),
-        );
+        .toList();
+
+    final int actionNeededCount = pendingTransactions
+        .where((transaction) => transaction.confirmable())
+        .length;
+
+    final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
+        pendingTransactions.groupByRange(
+      rangeFn: (transaction) =>
+          CustomTimeRange(Moment.minValue, Moment.maxValue),
+    );
 
     final bool shouldCombineTransferIfNeeded =
         currentFilter.accounts?.isNotEmpty != true;
@@ -186,7 +192,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       controller: widget.scrollController,
       transactions: grouped,
-      pendingTransactions: pendingTransactions,
+      pendingTransactions: pendingTransactionsGrouped,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       pendingDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
@@ -197,20 +203,20 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         pendingGroup,
         range,
         transactions,
-      ) =>
-          TransactionListDateHeader(
-        transactions: transactions,
-        range: range,
-        pendingGroup: pendingGroup,
-        action: pendingGroup
-            ? TextButton.icon(
-                onPressed: () => context.push("/transactions/pending"),
-                label: Text("tabs.home.pendingTransactions.seeAll".t(context)),
-                icon: Icon(Symbols.arrow_right_alt_rounded),
-                iconAlignment: IconAlignment.end,
-              )
-            : null,
-      ),
+      ) {
+        if (pendingGroup) {
+          return PendingTransactionsHeader(
+            transactions: transactions,
+            range: range,
+            badgeCount: actionNeededCount,
+          );
+        }
+
+        return TransactionListDateHeader(
+          transactions: transactions,
+          range: range,
+        );
+      },
     );
   }
 

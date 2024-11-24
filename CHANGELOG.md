@@ -1,5 +1,23 @@
 # Changelog
 
+## Beta next
+
+### New features
+
+* Title flow now converts all currencies into primary
+
+### Changes
+
+* Renamed upcoming/planned -> Pending transactions
+* Home tab pending transactions time range settings has been revised
+* Deprecated old theme system (light/dark). If you missed an update since
+  this features was introduced, you will need to set up your themes agian.
+
+### Fixes and enhancements
+
+* Transaction list tile title color is now fixed in light themes
+* Wavy divider color now follows the theme change
+
 ## Beta 0.8.1
 
 ### New features

@@ -108,7 +108,7 @@ class TransactionSearchData {
       [keyword, smartMatch, caseInsensitive, smartMatchThreshold]);
 
   @override
-  operator ==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }

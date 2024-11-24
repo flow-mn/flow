@@ -1,8 +1,11 @@
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
+import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -18,11 +21,14 @@ class TransactionListDateHeader extends StatefulWidget {
 
   final bool resolveNonPrimaryCurrencies;
 
+  final Widget? titleOverride;
+
   const TransactionListDateHeader({
     super.key,
     required this.transactions,
     required this.range,
     this.action,
+    this.titleOverride,
     this.pendingGroup = false,
     this.resolveNonPrimaryCurrencies = true,
   });
@@ -30,6 +36,7 @@ class TransactionListDateHeader extends StatefulWidget {
     super.key,
     required this.range,
     this.action,
+    this.titleOverride,
     this.resolveNonPrimaryCurrencies = true,
   })  : pendingGroup = true,
         transactions = const [];
@@ -59,45 +66,64 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget title = Text(
-      widget.pendingGroup
-          ? "transactions.pending".t(context)
-          : _getRangeTitle(widget.range),
-      style: context.textTheme.headlineSmall,
-    );
+    final Widget title =
+        widget.titleOverride ?? Text(_getRangeTitle(widget.range));
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final double flow = widget.transactions
-        .where((transaction) => transaction.currency == primaryCurrency)
-        .sumWithoutCurrency;
+    final MoneyFlow flow = MoneyFlow()
+      ..addAll(widget.transactions.map((transaction) => transaction.money));
+
     final bool containsNonPrimaryCurrency = widget.transactions
         .any((transaction) => transaction.currency != primaryCurrency);
 
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+    return ValueListenableBuilder(
+      valueListenable: ExchangeRatesService().exchangeRatesCache,
+      builder: (context, exchangeRatesCache, child) {
+        final ExchangeRates? rates = exchangeRatesCache?.get(primaryCurrency);
+
+        final bool resolve = widget.resolveNonPrimaryCurrencies &&
+            containsNonPrimaryCurrency &&
+            rates != null;
+
+        final String exclamation =
+            switch ((containsNonPrimaryCurrency, resolve)) {
+          (true, true) => "~",
+          (true, false) => "+ more",
+          _ => "",
+        };
+
+        final Money sum = resolve
+            ? flow.getTotalFlow(rates, primaryCurrency)
+            : flow.getFlowByCurrency(primaryCurrency);
+
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            title,
-            if (!widget.pendingGroup)
-              Text(
-                "${Money(flow, primaryCurrency).formattedCompact}${containsNonPrimaryCurrency ? '+' : ''} • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
-                style: context.textTheme.labelMedium,
+            Flexible(
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DefaultTextStyle(
+                    style: context.textTheme.headlineSmall!,
+                    child: title,
+                  ),
+                  if (!widget.pendingGroup)
+                    Text(
+                      "${sum.formattedCompact}$exclamation • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
+                      style: context.textTheme.labelMedium,
+                    ),
+                ],
               ),
+            ),
+            if (widget.action != null) widget.action!,
           ],
-        ),
-        const SizedBox(width: 16.0),
-        Spacer(),
-        if (widget.action != null)
-          Flexible(
-            fit: FlexFit.tight,
-            child: widget.action!,
-          ),
-      ],
+        );
+      },
     );
   }
 

@@ -78,7 +78,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: "/transactions/pending",
-      builder: (context, state) => TransactionsPage.upcoming(
+      builder: (context, state) => TransactionsPage.pending(
         title: "transactions.pending".t(context),
       ),
     ),

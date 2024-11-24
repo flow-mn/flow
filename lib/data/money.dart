@@ -136,7 +136,7 @@ class Money {
   int get hashCode => Object.hashAll([amount, currency]);
 
   @override
-  toString() {
+  String toString() {
     return "Money($currency $amount)";
   }
 

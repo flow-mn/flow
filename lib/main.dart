@@ -146,7 +146,6 @@ class FlowState extends State<Flow> {
           locale: _locale,
           routerConfig: router,
           theme: _themeFactory.materialTheme,
-          darkTheme: _themeFactory.materialTheme,
           themeMode: _themeMode,
           debugShowCheckedModeBanner: false,
         );

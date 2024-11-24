@@ -158,7 +158,8 @@ class DescriptionSection extends StatelessWidget {
     controller.text = result;
   }
 
-  void onTapLink(BuildContext context, text, href, title) {
+  void onTapLink(
+      BuildContext context, String text, String? href, String title) {
     log("[Flow] Tapped link: $text, $href, $title");
 
     if (href == null) {

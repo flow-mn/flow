@@ -4,7 +4,7 @@ import "package:json_annotation/json_annotation.dart";
 import "package:moment_dart/moment_dart.dart";
 
 @JsonEnum(valueField: "value")
-enum UpcomingTransactionsDuration implements LocalizedEnum {
+enum PendingTransactionsDuration implements LocalizedEnum {
   next1Days("next1Days"),
   next2Days("next2Days"),
   next3Days("next3Days"),
@@ -13,31 +13,31 @@ enum UpcomingTransactionsDuration implements LocalizedEnum {
 
   final String value;
 
-  const UpcomingTransactionsDuration(this.value);
+  const PendingTransactionsDuration(this.value);
 
   @override
   String get localizationEnumValue => name;
   @override
-  String get localizationEnumName => "UpcomingTransactionsDuration";
+  String get localizationEnumName => "PendingTransactionsDuration";
 
   DateTime? endsAt([DateTime? anchor]) {
     final Moment now = anchor?.toMoment() ?? Moment.now();
     switch (this) {
-      case UpcomingTransactionsDuration.next1Days:
+      case PendingTransactionsDuration.next1Days:
         return now.add(Duration(days: 1)).endOfDay();
-      case UpcomingTransactionsDuration.next2Days:
+      case PendingTransactionsDuration.next2Days:
         return now.add(Duration(days: 2)).endOfDay();
-      case UpcomingTransactionsDuration.next3Days:
+      case PendingTransactionsDuration.next3Days:
         return now.add(Duration(days: 3)).endOfDay();
-      case UpcomingTransactionsDuration.next5Days:
+      case PendingTransactionsDuration.next5Days:
         return now.add(Duration(days: 5)).endOfDay();
-      case UpcomingTransactionsDuration.next7Days:
+      case PendingTransactionsDuration.next7Days:
         return now.add(Duration(days: 7)).endOfDay();
     }
   }
 
-  static UpcomingTransactionsDuration? fromJson(Map json) {
-    return UpcomingTransactionsDuration.values
+  static PendingTransactionsDuration? fromJson(Map json) {
+    return PendingTransactionsDuration.values
         .firstWhereOrNull((element) => element.value == json["value"]);
   }
 
