@@ -1,6 +1,7 @@
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/widgets.dart";
 
@@ -23,6 +24,9 @@ extension TransactionContextActions on BuildContext {
     Transaction transaction, [
     bool confirm = true,
   ]) async {
-    transaction.confirm(confirm);
+    final bool updateTransactionDate =
+        LocalPreferences().pendingTransactionsUpdateDateUponConfirmation.get();
+
+    transaction.confirm(confirm, updateTransactionDate);
   }
 }

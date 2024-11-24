@@ -1,5 +1,6 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 
 class StartupPrivacyPreferencesPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _StartupPrivacyPreferencesPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("preferences.startupPrivacyMode".t(context)),
+        title: Text("preferences.privacyMode".t(context)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -26,10 +27,15 @@ class _StartupPrivacyPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
+              InfoText(
+                child: Text(
+                  "preferences.privacyMode.description".t(context),
+                ),
+              ),
+              const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
-                title: Text("preferences.startupPrivacyMode".t(context)),
-                subtitle: Text(
-                    "preferences.startupPrivacyMode.description".t(context)),
+                title:
+                    Text("preferences.privacyMode.enableAtStartup".t(context)),
                 value: privacyMode,
                 onChanged: updatePrivacyMode,
               ),

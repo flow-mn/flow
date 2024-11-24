@@ -4,7 +4,6 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
-import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -22,9 +21,7 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const PendingTransactionsDuration
-      homeTabPlannedTransactionsDurationDefault =
-      PendingTransactionsDuration.next3Days;
+  static const int pendingTransactionsHomeTimeframeDefault = 3;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -53,8 +50,11 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final JsonSettingsEntry<PendingTransactionsDuration>
-      homeTabPlannedTransactionsDuration;
+  late final PrimitiveSettingsEntry<int> pendingTransactionsHomeTimeframe;
+
+  /// Whether to use date of confirmation for `transactionDate` for pending transactions
+  late final BoolSettingsEntry pendingTransactionsUpdateDateUponConfirmation;
+
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -111,15 +111,15 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    homeTabPlannedTransactionsDuration =
-        JsonSettingsEntry<PendingTransactionsDuration>(
-      key: "homeTabPlannedTransactionsDuration",
+    pendingTransactionsHomeTimeframe = PrimitiveSettingsEntry<int>(
+      key: "pendingTransactions.homeTimeframe",
       preferences: _prefs,
-      initialValue: homeTabPlannedTransactionsDurationDefault,
-      fromJson: (map) =>
-          PendingTransactionsDuration.fromJson(map) ??
-          homeTabPlannedTransactionsDurationDefault,
-      toJson: (data) => data.toJson(),
+      initialValue: pendingTransactionsHomeTimeframeDefault,
+    );
+    pendingTransactionsUpdateDateUponConfirmation = BoolSettingsEntry(
+      key: "pendingTransactions.updateDateUponConfirmation",
+      preferences: _prefs,
+      initialValue: true,
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "transactionButtonOrder",

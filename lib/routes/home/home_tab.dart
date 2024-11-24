@@ -1,6 +1,5 @@
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
-import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
@@ -31,8 +30,7 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late final AppLifecycleListener _listener;
 
-  PendingTransactionsDuration _plannedTransactionsDuration =
-      LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+  late int _plannedTransactionsNextNDays;
 
   final TransactionFilter defaultFilter = TransactionFilter(
     range: last30Days(),
@@ -41,10 +39,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
 
   TransactionFilter get currentFilterWithPlanned {
-    final DateTime? plannedTransactionTo =
-        _plannedTransactionsDuration.endsAt();
-
-    if (plannedTransactionTo == null) return currentFilter;
+    final DateTime plannedTransactionTo = Moment.now()
+        .add(Duration(days: _plannedTransactionsNextNDays))
+        .startOfNextDay();
 
     if (currentFilter.range != null &&
         currentFilter.range!.contains(Moment.now()) &&
@@ -69,7 +66,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.initState();
     _updatePlannedTransactionDays();
     LocalPreferences()
-        .homeTabPlannedTransactionsDuration
+        .pendingTransactionsHomeTimeframe
         .addListener(_updatePlannedTransactionDays);
 
     _listener = AppLifecycleListener(onShow: () => setState(() {}));
@@ -79,7 +76,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void dispose() {
     _listener.dispose();
     LocalPreferences()
-        .homeTabPlannedTransactionsDuration
+        .pendingTransactionsHomeTimeframe
         .removeListener(_updatePlannedTransactionDays);
     super.dispose();
   }
@@ -99,7 +96,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 event.find().filter(currentFilterWithPlanned.postPredicates),
           ),
       builder: (context, snapshot) {
-        final DateTime now = DateTime.now().startOfNextMinute();
+        final DateTime now = Moment.now().startOfNextMinute();
         final ExchangeRates? rates =
             ExchangeRatesService().getPrimaryCurrencyRates();
         final List<Transaction>? transactions = snapshot.data;
@@ -221,9 +218,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   void _updatePlannedTransactionDays() {
-    _plannedTransactionsDuration =
-        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+    _plannedTransactionsNextNDays =
+        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
+            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
     setState(() {});
   }
 

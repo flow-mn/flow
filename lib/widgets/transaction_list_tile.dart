@@ -26,18 +26,12 @@ class TransactionListTile extends StatelessWidget {
 
   final bool? overrideObscure;
 
-  /// moment_dart format string
-  ///
-  /// Defaults to "LT"
-  final String dateFormat;
-
   const TransactionListTile({
     super.key,
     required this.transaction,
     required this.deleteFn,
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
-    this.dateFormat = "LT",
     this.confirmFn,
     this.dismissibleKey,
     this.overrideObscure,
@@ -120,8 +114,7 @@ class TransactionListTile extends StatelessWidget {
                           (transaction.isTransfer && combineTransfers)
                               ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
                               : transaction.account.target?.name,
-                          transaction.transactionDate
-                              .format(payload: dateFormat),
+                          dateString,
                           if (transaction.transactionDate.isFuture)
                             transaction.isPending == true
                                 ? "transaction.pending".t(context)
@@ -193,5 +186,16 @@ class TransactionListTile extends StatelessWidget {
       ),
       child: listTile,
     );
+  }
+
+  String get dateString {
+    final DateTime now = Moment.now().startOfNextMinute();
+
+    final bool pending = transaction.isPending == true ||
+        transaction.transactionDate.isFutureAnchored(now);
+
+    if (pending) return transaction.transactionDate.toMoment().calendar();
+
+    return transaction.transactionDate.toMoment().LT;
   }
 }

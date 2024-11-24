@@ -413,7 +413,7 @@ extension TransactionActions on Transaction {
     return ObjectBox().box<Transaction>().remove(id);
   }
 
-  bool confirm([bool confirm = true]) {
+  bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
     try {
       if (isTransfer) {
         final Transfer? transfer = extensions.transfer;
@@ -438,6 +438,9 @@ extension TransactionActions on Transaction {
             }
 
             relatedTransaction.isPending = !confirm;
+            if (updateTransactionDate && isPending != true) {
+              relatedTransaction.transactionDate = Moment.now();
+            }
             ObjectBox()
                 .box<Transaction>()
                 .put(relatedTransaction, mode: PutMode.update);
@@ -448,6 +451,9 @@ extension TransactionActions on Transaction {
       }
 
       isPending = !confirm;
+      if (updateTransactionDate && isPending != true) {
+        transactionDate = Moment.now();
+      }
       ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
       return true;
     } catch (e) {

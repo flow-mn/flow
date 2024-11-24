@@ -2,9 +2,7 @@ import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
-import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -30,9 +28,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
     final FlowColorScheme currentTheme =
         getTheme(LocalPreferences().themeName.get());
 
-    final PendingTransactionsDuration homeTabPlannedTransactionsDuration =
-        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+    final int pendingTransactionsHomeTimeframe =
+        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
+            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
@@ -50,7 +48,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ListTile(
             title: Text("preferences.home.pending".t(context)),
             subtitle: Text(
-              homeTabPlannedTransactionsDuration.localizedNameContext(context),
+              "general.nextNDays".t(context, pendingTransactionsHomeTimeframe),
             ),
             leading: const Icon(Symbols.hourglass_top_rounded),
             onTap: () => pushAndRefreshAfter("/preferences/home"),
