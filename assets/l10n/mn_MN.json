@@ -187,7 +187,7 @@
     "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
     "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
     "preferences.pendingTransactions.requireConfirmation.description": "Баталгаажуулаагүй гүйлгээнүүд орлого, зарлага, дансны үлдэгдэлд тооцогдохгүй",
-    "preferences.pendingTransactions.updateDateUponConfirmation": "Гүйлгээ баталгаажуулахад огноо шинэчлэх",
+    "preferences.pendingTransactions.updateDateUponConfirmation": "Баталгаажуулахад огноо шинэчлэх",
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Идэвхгүй болгож анхны огноог ашиглах боломжтой",
     "preferences.pendingTransactions.homeTimeframe": "Нүүр хуудсанд харуулах",
     "preferences.privacyMode": "Нууцлалын горим",

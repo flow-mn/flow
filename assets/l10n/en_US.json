@@ -188,7 +188,7 @@
     "preferences.pendingTransactions.homeTimeframe": "Show on home",
     "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
     "preferences.pendingTransactions.requireConfirmation.description": "Pending transactions will not be counted towards income, expenses, and account balance",
-    "preferences.pendingTransactions.updateDateUponConfirmation": "Update date upon confirmation",
+    "preferences.pendingTransactions.updateDateUponConfirmation": "Update date on confirm",
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Disable to retain original transaction date",
     "preferences.privacyMode": "Privacy mode",
     "preferences.privacyMode.description": "Obscures amounts. Toggle with the eye icon at the upper right corner of home screen",
