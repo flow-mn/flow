@@ -2,7 +2,7 @@ import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
-import "package:flow/data/upcoming_transactions.dart";
+import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
@@ -28,9 +28,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().themeName.get())?.scheme ?? shadeOfViolet;
+        getTheme(LocalPreferences().themeName.get());
 
-    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
+    final PendingTransactionsDuration homeTabPlannedTransactionsDuration =
         LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
             LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
@@ -48,7 +48,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
       body: SafeArea(
         child: ListView(children: [
           ListTile(
-            title: Text("preferences.home.upcoming".t(context)),
+            title: Text("preferences.home.pending".t(context)),
             subtitle: Text(
               homeTabPlannedTransactionsDuration.localizedNameContext(context),
             ),

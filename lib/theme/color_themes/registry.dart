@@ -5,7 +5,6 @@ import "package:flow/theme/color_themes/default_darks.dart";
 import "package:flow/theme/color_themes/default_lights.dart";
 import "package:flow/theme/color_themes/palenight.dart";
 import "package:flow/theme/flow_color_scheme.dart";
-import "package:flutter/material.dart";
 import "package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart";
 
 export "default_darks.dart";
@@ -98,25 +97,17 @@ bool validateThemeName(String? themeName) {
   return allThemes.containsKey(themeName);
 }
 
-bool isThemeDark(String? themeName) {
-  final themeData = getTheme(themeName);
-
-  return themeData?.mode == ThemeMode.dark;
-}
-
-({FlowColorScheme scheme, ThemeMode mode})? getTheme(String? themeName) {
-  if (themeName == null) return null;
+FlowColorScheme getTheme(String? themeName, [bool preferDark = false]) {
+  if (themeName == null) return preferDark ? electricLavender : shadeOfViolet;
 
   final FlowColorScheme? scheme = allThemes[themeName];
 
   if (scheme == null) {
     log("Unknown theme: $themeName");
-    return null;
+    return preferDark ? electricLavender : shadeOfViolet;
   }
 
-  final mode = scheme.isDark ? ThemeMode.dark : ThemeMode.light;
-
-  return (scheme: scheme, mode: mode);
+  return scheme;
 }
 
 void trySetThemeIcon(String? name) async {

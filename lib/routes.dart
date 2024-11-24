@@ -37,7 +37,6 @@ import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -78,17 +77,9 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: "/transactions/upcoming",
-      builder: (context, state) => TransactionsPage.upcoming(
-        title: "transactions.upcoming".t(context),
-        header: InfoText(
-          singleLine: true,
-          child: Text(
-            "account.balance.upcomingDescription".t(context),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+      path: "/transactions/pending",
+      builder: (context, state) => TransactionsPage.pending(
+        title: "transactions.pending".t(context),
       ),
     ),
     GoRoute(

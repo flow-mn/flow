@@ -23,7 +23,7 @@ class Geo extends TransactionExtension implements Jasonable {
   String? relatedTransactionUuid;
 
   @override
-  setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
+  void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
   final double? latitude;
   final double? longitude;

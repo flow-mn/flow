@@ -4,3 +4,5 @@ export "extensions/num.dart";
 export "extensions/string.dart";
 export "extensions/toast.dart";
 export "extensions/custom_dialogs.dart";
+export "extensions/transaction.dart";
+export "extensions/transaction_context_actions.dart";

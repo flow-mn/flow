@@ -41,7 +41,7 @@ class Profile implements EntityBase {
       _$ProfileFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
-  static createDefaultProfile() {
+  static void createDefaultProfile() {
     ObjectBox().box<Profile>().put(
           Profile(
             name: "Default Profile",

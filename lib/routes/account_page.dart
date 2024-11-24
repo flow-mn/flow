@@ -12,7 +12,7 @@ import "package:flow/widgets/category/transactions_info.dart";
 import "package:flow/widgets/flow_card.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
-import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/no_result.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
@@ -176,7 +176,7 @@ class _AccountPageState extends State<AccountPage> {
                   headerBuilder: (pendingGroup, range, rangeTransactions) =>
                       TransactionListDateHeader(
                     transactions: rangeTransactions,
-                    date: range.from,
+                    range: range,
                     pendingGroup: pendingGroup,
                   ),
                 )

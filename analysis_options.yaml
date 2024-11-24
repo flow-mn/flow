@@ -4,6 +4,7 @@ linter:
   rules:
     unawaited_futures: true
     prefer_double_quotes: true
+    type_annotate_public_apis: true
 analyzer:
   exclude:
     - "example/**"

@@ -530,8 +530,8 @@ extension TransactionListActions on Iterable<Transaction> {
     return value;
   }
 
-  List<Transaction> filter(TransactionFilter filter) =>
-      where((Transaction t) => filter.predicates
+  List<Transaction> filter(List<bool Function(Transaction)> predicates) =>
+      where((Transaction t) => predicates
           .map((predicate) => predicate(t))
           .every((element) => element)).toList();
 

@@ -11,7 +11,7 @@ bool _shouldUseMeta() => Platform.isMacOS || Platform.isIOS;
 /// * `Control` for other platforms
 ///
 /// It's also possible to pass [shift] and [alt] to the constructor.
-osSingleActivator(
+SingleActivator osSingleActivator(
   LogicalKeyboardKey key, [
   bool shift = false,
   bool alt = false,

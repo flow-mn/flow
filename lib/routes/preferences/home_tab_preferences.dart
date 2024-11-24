@@ -1,4 +1,4 @@
-import "package:flow/data/upcoming_transactions.dart";
+import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
@@ -16,7 +16,7 @@ class HomeTabPreferencesPage extends StatefulWidget {
 class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
   @override
   Widget build(BuildContext context) {
-    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
+    final PendingTransactionsDuration homeTabPlannedTransactionsDuration =
         LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
             LocalPreferences.homeTabPlannedTransactionsDurationDefault;
 
@@ -37,7 +37,7 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
                 child: Wrap(
                   spacing: 12.0,
                   runSpacing: 8.0,
-                  children: UpcomingTransactionsDuration.values
+                  children: PendingTransactionsDuration.values
                       .map(
                         (value) => FilterChip(
                           showCheckmark: false,
@@ -71,7 +71,7 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
   }
 
   void updateHomeTabPlannedTransactionsDays(
-      UpcomingTransactionsDuration duration) async {
+      PendingTransactionsDuration duration) async {
     await LocalPreferences().homeTabPlannedTransactionsDuration.set(duration);
 
     if (mounted) setState(() {});

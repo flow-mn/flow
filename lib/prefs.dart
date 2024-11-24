@@ -4,14 +4,13 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
-import "package:flow/data/upcoming_transactions.dart";
+import "package:flow/data/pending_transactions_duration.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
-import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -23,9 +22,9 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const UpcomingTransactionsDuration
+  static const PendingTransactionsDuration
       homeTabPlannedTransactionsDurationDefault =
-      UpcomingTransactionsDuration.thisWeek;
+      PendingTransactionsDuration.next3Days;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -54,7 +53,7 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final JsonSettingsEntry<UpcomingTransactionsDuration>
+  late final JsonSettingsEntry<PendingTransactionsDuration>
       homeTabPlannedTransactionsDuration;
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
@@ -73,7 +72,6 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
@@ -114,12 +112,12 @@ class LocalPreferences {
       initialValue: false,
     );
     homeTabPlannedTransactionsDuration =
-        JsonSettingsEntry<UpcomingTransactionsDuration>(
+        JsonSettingsEntry<PendingTransactionsDuration>(
       key: "homeTabPlannedTransactionsDuration",
       preferences: _prefs,
       initialValue: homeTabPlannedTransactionsDurationDefault,
       fromJson: (map) =>
-          UpcomingTransactionsDuration.fromJson(map) ??
+          PendingTransactionsDuration.fromJson(map) ??
           homeTabPlannedTransactionsDurationDefault,
       toJson: (data) => data.toJson(),
     );
@@ -175,11 +173,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeMode = ThemeModeSettingsEntry(
-      key: "themeMode",
-      preferences: _prefs,
-      initialValue: ThemeMode.system,
-    );
     themeName = PrimitiveSettingsEntry<String>(
       key: "themeName",
       preferences: _prefs,
