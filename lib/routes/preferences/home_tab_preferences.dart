@@ -30,7 +30,7 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              ListHeader("preferences.home.upcoming".t(context)),
+              ListHeader("preferences.home.pending".t(context)),
               const SizedBox(height: 8.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -59,7 +59,7 @@ class _HomeTabPreferencesPageState extends State<HomeTabPreferencesPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: InfoText(
                   child:
-                      Text("preferences.home.upcoming.description".t(context)),
+                      Text("preferences.home.pending.description".t(context)),
                 ),
               ),
               const SizedBox(height: 16.0),
