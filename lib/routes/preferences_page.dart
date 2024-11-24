@@ -28,16 +28,11 @@ class _PreferencesPageState extends State<PreferencesPage> {
     final FlowColorScheme currentTheme =
         getTheme(LocalPreferences().themeName.get());
 
-    final int pendingTransactionsHomeTimeframe =
-        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
-            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
-
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
     final bool requirePendingTransactionConfrimation =
         LocalPreferences().requirePendingTransactionConfrimation.get();
-    final bool startupPrivacy = LocalPreferences().privacyMode.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -45,16 +40,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       ),
       body: SafeArea(
         child: ListView(children: [
-          ListTile(
-            title: Text("preferences.home.pending".t(context)),
-            subtitle: Text(
-              "general.nextNDays".t(context, pendingTransactionsHomeTimeframe),
-            ),
-            leading: const Icon(Symbols.hourglass_top_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/home"),
-            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
           ListTile(
             title: Text("preferences.pendingTransactions".t(context)),
             subtitle: Text(
@@ -146,16 +131,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
-            title: Text("preferences.startupPrivacyMode".t(context)),
+            title: Text("preferences.privacyMode".t(context)),
             leading: const Icon(Symbols.password_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/startupPrivacy"),
-            subtitle: Text(
-              startupPrivacy
-                  ? "general.enabled".t(context)
-                  : "general.disabled".t(context),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            onTap: () => pushAndRefreshAfter("/preferences/privacy"),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
         ]),

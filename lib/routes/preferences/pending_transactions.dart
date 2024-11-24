@@ -34,6 +34,16 @@ class _PendingTransactionPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: InfoText(
+                  child: Text(
+                    "preferences.pendingTransactions.requireConfirmation.description"
+                        .t(context),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
               ListHeader(
                 "preferences.pendingTransactions.homeTimeframe".t(context),
               ),
@@ -60,6 +70,7 @@ class _PendingTransactionPreferencesPageState
                       .toList(),
                 ),
               ),
+              const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
                 title: Text(
                   "preferences.pendingTransactions.requireConfirmation"
@@ -67,16 +78,6 @@ class _PendingTransactionPreferencesPageState
                 ),
                 value: requirePendingTransactionConfrimation,
                 onChanged: updateRequirePendingTransactionConfrimation,
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: InfoText(
-                  child: Text(
-                    "preferences.pendingTransactions.requireConfirmation.description"
-                        .t(context),
-                  ),
-                ),
               ),
               const SizedBox(height: 16.0),
               if (requirePendingTransactionConfrimation) ...[

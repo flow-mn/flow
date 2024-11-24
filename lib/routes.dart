@@ -169,8 +169,8 @@ final router = GoRouter(
           builder: (context, state) => const ThemePreferencesPage(),
         ),
         GoRoute(
-          path: "startupPrivacy",
-          builder: (context, state) => const StartupPrivacyPreferencesPage(),
+          path: "privacy",
+          builder: (context, state) => const PrivacyPreferencesPage(),
         ),
         GoRoute(
           path: "moneyFormatting",
