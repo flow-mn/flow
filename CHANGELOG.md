@@ -1,6 +1,6 @@
 # Changelog
 
-## Beta next
+## Beta next (0.9.0)
 
 ### New features
 
