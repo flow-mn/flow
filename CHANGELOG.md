@@ -9,9 +9,12 @@
 ### Changes
 
 * Renamed upcoming/planned -> Pending transactions
-* Home tab pending transactions time range settings has been revised
+* Home tab pending transactions time range settings has been revised.
+  You will need to update your preferences again.
 * Deprecated old theme system (light/dark). If you missed an update since
   this features was introduced, you will need to set up your themes agian.
+* Now confirming pending transactions update date of transaction to the
+  date of confirmation. You can disable this in **Preferences** > **Pending transactions**
 
 ### Fixes and enhancements
 
