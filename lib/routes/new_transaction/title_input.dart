@@ -54,6 +54,7 @@ class TitleInput extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLength: Transaction.maxTitleLength,
             onSubmitted: onSubmitted,
+            autocorrect: false,
             decoration: InputDecoration(
               hintText: fallbackTitle,
               counter: const SizedBox.shrink(),

@@ -7,6 +7,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
+import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -48,6 +49,7 @@ class TransactionListDateHeader extends StatefulWidget {
 
 class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   bool obscure = false;
+  bool rangeTitleAlternative = false;
 
   @override
   void initState() {
@@ -66,8 +68,11 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget title =
-        widget.titleOverride ?? Text(_getRangeTitle(widget.range));
+    final Widget title = widget.titleOverride ??
+        GestureDetector(
+          onTap: _handleRangeTextTap,
+          child: Text(_getRangeTitle()),
+        );
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
@@ -134,10 +139,22 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     setState(() {});
   }
 
-  String _getRangeTitle(TimeRange range) {
-    return switch (range) {
-      DayTimeRange() => range.from.toMoment().calendar(omitHours: true),
-      _ => range.format(),
+  void _handleRangeTextTap() {
+    rangeTitleAlternative = !rangeTitleAlternative;
+
+    if (LocalPreferences().enableHapticFeedback.get()) {
+      HapticFeedback.lightImpact();
+    }
+
+    setState(() {});
+  }
+
+  String _getRangeTitle() {
+    return switch ((widget.range, rangeTitleAlternative)) {
+      (DayTimeRange dayTimeRange, false) =>
+        dayTimeRange.from.toMoment().calendar(omitHours: true),
+      (DayTimeRange dayTimeRange, true) => dayTimeRange.from.toMoment().ll,
+      (TimeRange other, _) => other.format(),
     };
   }
 }

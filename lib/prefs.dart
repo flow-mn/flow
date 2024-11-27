@@ -32,8 +32,8 @@ class LocalPreferences {
   /// in a modern dialpad
   late final BoolSettingsEntry usePhoneNumpadLayout;
 
-  /// Whether to enable haptic feedback on numpad touch
-  late final BoolSettingsEntry enableNumpadHapticFeedback;
+  /// Whether to enable haptic feedback upon certain actions
+  late final BoolSettingsEntry enableHapticFeedback;
 
   /// Whether to combine transfer transactions in the transaction list
   ///
@@ -96,8 +96,8 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    enableNumpadHapticFeedback = BoolSettingsEntry(
-      key: "enableNumpadHapticFeedback",
+    enableHapticFeedback = BoolSettingsEntry(
+      key: "enableHapticFeedback",
       preferences: _prefs,
       initialValue: true,
     );

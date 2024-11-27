@@ -13,6 +13,7 @@ import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
+import "package:flow/routes/preferences/haptics_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
 import "package:flow/routes/preferences/pending_transactions.dart";
@@ -175,6 +176,10 @@ final router = GoRouter(
         GoRoute(
           path: "moneyFormatting",
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
+        ),
+        GoRoute(
+          path: "haptics",
+          builder: (context, state) => const HapticsPreferencesPage(),
         ),
       ],
     ),

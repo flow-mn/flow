@@ -16,8 +16,6 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
   Widget build(BuildContext context) {
     final bool usePhoneNumpadLayout =
         LocalPreferences().usePhoneNumpadLayout.get();
-    final bool enableNumpadHapticFeedback =
-        LocalPreferences().enableNumpadHapticFeedback.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -52,14 +50,6 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
                 ),
               ),
               const SizedBox(height: 32.0),
-              CheckboxListTile.adaptive(
-                title: Text("preferences.numpad.haptics".t(context)),
-                value: enableNumpadHapticFeedback,
-                onChanged: updateHapticUsage,
-                subtitle:
-                    Text("preferences.numpad.haptics.description".t(context)),
-              ),
-              const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -70,13 +60,6 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
   void updateLayoutPreference(bool usePhoneLayout) async {
     await LocalPreferences().usePhoneNumpadLayout.set(usePhoneLayout);
 
-    if (mounted) setState(() {});
-  }
-
-  void updateHapticUsage(bool? enableHaptics) async {
-    if (enableHaptics == null) return;
-
-    await LocalPreferences().enableNumpadHapticFeedback.set(enableHaptics);
     if (mounted) setState(() {});
   }
 }

@@ -334,7 +334,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       value = value.removeDecimal();
     } else {
       if (value.wholePart.abs() == 0) {
-        HapticFeedback.heavyImpact();
+        if (LocalPreferences().enableHapticFeedback.get()) {
+          HapticFeedback.heavyImpact();
+        }
       }
       value = value.removeWhole();
     }

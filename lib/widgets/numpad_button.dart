@@ -1,7 +1,7 @@
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 
 class NumpadButton extends StatelessWidget {
@@ -58,8 +58,8 @@ class NumpadButton extends StatelessWidget {
   }
 
   void onTapHandler() {
-    if (LocalPreferences().enableNumpadHapticFeedback.get()) {
-      numpadHaptic();
+    if (LocalPreferences().enableHapticFeedback.get()) {
+      HapticFeedback.mediumImpact();
     }
 
     if (onTap != null) {

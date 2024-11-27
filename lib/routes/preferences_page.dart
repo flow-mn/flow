@@ -29,6 +29,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
         getTheme(LocalPreferences().themeName.get());
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
+    final bool enableHapticFeedback =
+        LocalPreferences().enableHapticFeedback.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
     final bool requirePendingTransactionConfrimation =
@@ -134,6 +136,19 @@ class _PreferencesPageState extends State<PreferencesPage> {
             title: Text("preferences.privacyMode".t(context)),
             leading: const Icon(Symbols.password_rounded),
             onTap: () => pushAndRefreshAfter("/preferences/privacy"),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.hapticFeedback".t(context)),
+            leading: const Icon(Symbols.vibration_rounded),
+            onTap: () => pushAndRefreshAfter("/preferences/haptics"),
+            subtitle: Text(
+              enableHapticFeedback
+                  ? "general.enabled".t(context)
+                  : "general.disabled".t(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
         ]),
