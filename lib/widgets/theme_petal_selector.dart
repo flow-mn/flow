@@ -125,10 +125,6 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                           ? SystemMouseCursors.click
                           : MouseCursor.defer;
 
-                      if (itemIndexAtPointer != null && widget.updateOnHover) {
-                        setThemeByIndex(itemIndexAtPointer, isDark);
-                      }
-
                       setState(() {
                         hoveringIndex = itemIndexAtPointer;
                       });

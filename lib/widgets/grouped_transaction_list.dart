@@ -147,6 +147,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
             deleteFn: () => context.deleteTransaction(transaction),
             confirmFn: ([bool confirm = true]) =>
                 context.confirmTransaction(transaction, confirm),
+            duplicateFn: () => context.duplicateTransaction(transaction),
             overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),

@@ -11,7 +11,7 @@ import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
 import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
-import "package:flow/widgets/home/home/pending_transactions_header.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/utils/time_and_range.dart";

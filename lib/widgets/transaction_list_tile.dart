@@ -18,6 +18,7 @@ class TransactionListTile extends StatelessWidget {
   final EdgeInsets padding;
 
   final VoidCallback deleteFn;
+  final VoidCallback? duplicateFn;
   final Function([bool confirm])? confirmFn;
 
   final Key? dismissibleKey;
@@ -33,6 +34,7 @@ class TransactionListTile extends StatelessWidget {
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
     this.confirmFn,
+    this.duplicateFn,
     this.dismissibleKey,
     this.overrideObscure,
   });
@@ -159,31 +161,50 @@ class TransactionListTile extends StatelessWidget {
       ),
     );
 
+    final List<SlidableAction> startActionsPanes = [
+      if (!transaction.isTransfer && duplicateFn != null)
+        SlidableAction(
+          onPressed: (context) => duplicateFn!(),
+          icon: Symbols.content_copy_rounded,
+          backgroundColor: context.flowColors.semi,
+        )
+    ];
+
+    final List<SlidableAction> endActionPanes = [
+      if (showPendingConfirmation)
+        SlidableAction(
+          onPressed: (context) => confirmFn!(),
+          icon: Symbols.check_rounded,
+          backgroundColor: context.colorScheme.primary,
+        ),
+      if (showHoldButton)
+        SlidableAction(
+          onPressed: (context) => confirmFn!(false),
+          icon: Symbols.cancel_rounded,
+          backgroundColor: context.flowColors.expense,
+        ),
+      if (!showHoldButton)
+        SlidableAction(
+          onPressed: (context) => deleteFn(),
+          icon: Symbols.delete_forever_rounded,
+          backgroundColor: context.flowColors.expense,
+        )
+    ];
+
     return Slidable(
       key: dismissibleKey,
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        children: [
-          if (showPendingConfirmation)
-            SlidableAction(
-              onPressed: (context) => confirmFn!(),
-              icon: Symbols.check_rounded,
-              backgroundColor: context.colorScheme.primary,
-            ),
-          if (showHoldButton)
-            SlidableAction(
-              onPressed: (context) => confirmFn!(false),
-              icon: Symbols.cancel_rounded,
-              backgroundColor: context.flowColors.expense,
-            ),
-          if (!showHoldButton)
-            SlidableAction(
-              onPressed: (context) => deleteFn(),
-              icon: Symbols.delete_forever_rounded,
-              backgroundColor: context.flowColors.expense,
+      endActionPane: endActionPanes.isNotEmpty
+          ? ActionPane(
+              motion: const DrawerMotion(),
+              children: endActionPanes,
             )
-        ],
-      ),
+          : null,
+      startActionPane: startActionsPanes.isNotEmpty
+          ? ActionPane(
+              motion: const DrawerMotion(),
+              children: startActionsPanes,
+            )
+          : null,
       child: listTile,
     );
   }

@@ -1,5 +1,5 @@
 import "package:auto_size_text/auto_size_text.dart";
-import "package:flow/data/money.dart";
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
@@ -7,14 +7,20 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs.dart";
 import "package:flow/routes/error_page.dart";
+import "package:flow/services/exchange_rates.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/category/transactions_info.dart";
 import "package:flow/widgets/flow_card.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
-import "package:flow/widgets/transactions_date_header.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/no_result.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -80,6 +86,9 @@ class _AccountPageState extends State<AccountPage> {
     if (this.account == null) return const ErrorPage();
 
     final Account account = this.account!;
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+    final ExchangeRates? rates =
+        ExchangeRatesService().getPrimaryCurrencyRates();
 
     return StreamBuilder<List<Transaction>>(
       stream: qb(range)
@@ -90,9 +99,33 @@ class _AccountPageState extends State<AccountPage> {
 
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
-        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
-        final Money totalIncome = flow.getIncomeByCurrency(account.currency);
-        final Money totalExpense = flow.getExpenseByCurrency(account.currency);
+        final DateTime now = Moment.now().startOfNextMinute();
+
+        final Map<TimeRange, List<Transaction>> grouped = transactions
+                ?.where((transaction) =>
+                    !transaction.transactionDate.isAfter(now) &&
+                    transaction.isPending != true)
+                .groupByDate() ??
+            {};
+
+        final List<Transaction> pendingTransactions = transactions
+                ?.where((transaction) =>
+                    transaction.transactionDate.isAfter(now) ||
+                    transaction.isPending == true)
+                .toList() ??
+            [];
+
+        final int actionNeededCount = pendingTransactions
+            .where((transaction) => transaction.confirmable())
+            .length;
+
+        final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
+            pendingTransactions.groupByRange(
+          rangeFn: (transaction) =>
+              CustomTimeRange(Moment.minValue, Moment.maxValue),
+        );
+
+        final MoneyFlow flow = transactions?.nonPending.flow ?? MoneyFlow();
 
         const double firstHeaderTopPadding = 0.0;
 
@@ -105,8 +138,10 @@ class _AccountPageState extends State<AccountPage> {
             ),
             const SizedBox(height: 8.0),
             TransactionsInfo(
-              count: transactions?.length,
-              flow: totalIncome + totalExpense,
+              count: transactions?.nonPending.length,
+              flow: rates == null
+                  ? flow.getFlowByCurrency(primaryCurrency)
+                  : flow.getTotalFlow(rates, primaryCurrency),
               icon: account.icon,
             ),
             const SizedBox(height: 12.0),
@@ -114,7 +149,9 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: totalIncome,
+                    flow: rates == null
+                        ? flow.getIncomeByCurrency(primaryCurrency)
+                        : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
                     autoSizeGroup: autoSizeGroup,
                   ),
@@ -122,13 +159,19 @@ class _AccountPageState extends State<AccountPage> {
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: totalExpense,
+                    flow: rates == null
+                        ? flow.getExpenseByCurrency(primaryCurrency)
+                        : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
                     autoSizeGroup: autoSizeGroup,
                   ),
                 ),
               ],
             ),
+            if (rates == null) ...[
+              const SizedBox(height: 12.0),
+              RatesMissingWarning(),
+            ],
           ],
         );
 
@@ -169,16 +212,30 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               _ => GroupedTransactionList(
                   header: header,
-                  transactions: transactions?.groupByDate() ?? {},
+                  transactions: grouped,
+                  pendingTransactions: pendingTransactionsGrouped,
+                  pendingDivider: WavyDivider(),
                   listPadding: widget.listPadding,
                   headerPadding: widget.headerPadding,
                   firstHeaderTopPadding: firstHeaderTopPadding,
-                  headerBuilder: (pendingGroup, range, rangeTransactions) =>
-                      TransactionListDateHeader(
-                    transactions: rangeTransactions,
-                    range: range,
-                    pendingGroup: pendingGroup,
-                  ),
+                  headerBuilder: (
+                    pendingGroup,
+                    range,
+                    transactions,
+                  ) {
+                    if (pendingGroup) {
+                      return PendingTransactionsHeader(
+                        transactions: transactions,
+                        range: range,
+                        badgeCount: actionNeededCount,
+                      );
+                    }
+
+                    return TransactionListDateHeader(
+                      transactions: transactions,
+                      range: range,
+                    );
+                  },
                 )
             },
           ),

@@ -29,4 +29,8 @@ extension TransactionContextActions on BuildContext {
 
     transaction.confirm(confirm, updateTransactionDate);
   }
+
+  Future<void> duplicateTransaction(Transaction transaction) async {
+    transaction.duplicate();
+  }
 }

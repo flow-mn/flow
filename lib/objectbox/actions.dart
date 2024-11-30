@@ -461,6 +461,34 @@ extension TransactionActions on Transaction {
       return false;
     }
   }
+
+  void duplicate() {
+    if (isTransfer) {
+      throw Exception("Cannot duplicate transfer transactions");
+    }
+
+    final Transaction duplicate = Transaction(
+      amount: amount,
+      currency: currency,
+      title: title,
+      description: description,
+      transactionDate: transactionDate,
+      createdDate: Moment.now(),
+      isPending: isPending,
+      uuid: Uuid().v4(),
+    )
+      ..setCategory(category.target)
+      ..setAccount(account.target);
+
+    final List<TransactionExtension> filteredExtensions =
+        extensions.data.where((ext) => ext is! Transfer).toList();
+
+    if (filteredExtensions.isNotEmpty) {
+      duplicate.addExtensions(filteredExtensions);
+    }
+
+    ObjectBox().box<Transaction>().put(duplicate);
+  }
 }
 
 extension TransactionListActions on Iterable<Transaction> {
