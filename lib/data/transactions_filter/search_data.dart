@@ -54,7 +54,7 @@ class TransactionSearchData {
 
     final double score = t.titleSuggestionScore(
       query: normalizedKeyword,
-      fuzzyPartial: false,
+      fuzzyPartial: true,
     );
 
     return score >= smartMatchThreshold;

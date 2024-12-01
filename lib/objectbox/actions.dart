@@ -323,13 +323,17 @@ extension TransactionActions on Transaction {
     int? categoryId,
     TransactionType? transactionType,
     bool fuzzyPartial = true,
+    bool caseSensitive = false,
   }) {
     double score = 10.0;
 
-    if (query?.trim().isNotEmpty == true && title?.trim().isNotEmpty == true) {
+    final String? normalizedTitle =
+        caseSensitive ? title?.trim() : title?.trim().toLowerCase();
+
+    if (query?.trim().isNotEmpty == true && normalizedTitle != null) {
       score += fuzzyPartial
-          ? partialRatio(query!, title!).toDouble()
-          : ratio(query!, title!).toDouble();
+          ? partialRatio(query!, normalizedTitle).toDouble()
+          : ratio(query!, normalizedTitle).toDouble();
     }
 
     double multipler = 1.0;

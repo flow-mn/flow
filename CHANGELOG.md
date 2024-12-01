@@ -28,6 +28,7 @@
 * Disabled Autocorrect on transaction title, so it no longer alters suggestions
 * Category and account detail page now doesn't include pending transactions in
   count and flow.
+* Home tab search should work better now
 
 ## Beta 0.8.1
 
