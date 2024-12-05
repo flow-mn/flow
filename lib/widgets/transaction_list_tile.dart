@@ -171,7 +171,7 @@ class TransactionListTile extends StatelessWidget {
     ];
 
     final List<SlidableAction> endActionPanes = [
-      if (showPendingConfirmation)
+      if (confirmFn != null && transaction.isPending == true)
         SlidableAction(
           onPressed: (context) => confirmFn!(),
           icon: Symbols.check_rounded,
