@@ -2,7 +2,7 @@ import "package:flutter/foundation.dart";
 import "package:latlong2/latlong.dart";
 
 String appVersion = "0.0.0";
-const debugBuild = false;
+const bool debugBuild = false;
 
 bool get flowDebugMode => kDebugMode || debugBuild;
 

@@ -118,7 +118,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
           scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.8,
           topSpacing: 0.0,
           child: LayoutBuilder(builder: (context, size) {
-            final double width = min(size.maxWidth, 400.0);
+            final double width = min(size.maxWidth, 440.0);
 
             return SingleChildScrollView(
               child: ConstrainedBox(
@@ -334,7 +334,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       value = value.removeDecimal();
     } else {
       if (value.wholePart.abs() == 0) {
-        HapticFeedback.heavyImpact();
+        if (LocalPreferences().enableHapticFeedback.get()) {
+          HapticFeedback.heavyImpact();
+        }
       }
       value = value.removeWhole();
     }

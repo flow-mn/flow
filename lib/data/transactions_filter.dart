@@ -36,11 +36,22 @@ class TransactionFilter {
   final bool sortDescending;
   final TransactionSortField sortBy;
 
+  final bool? isPending;
+
+  final double? minAmount;
+  final double? maxAmount;
+
+  final List<String>? currencies;
+
   const TransactionFilter({
     this.categories,
     this.accounts,
     this.range,
     this.types,
+    this.isPending,
+    this.minAmount,
+    this.maxAmount,
+    this.currencies,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
@@ -125,6 +136,28 @@ class TransactionFilter {
           .oneOf(accounts!.map((account) => account.uuid).toList()));
     }
 
+    if (minAmount != null) {
+      conditions.add(Transaction_.amount.greaterOrEqual(minAmount!));
+    }
+
+    if (maxAmount != null) {
+      conditions.add(Transaction_.amount.lessOrEqual(maxAmount!));
+    }
+
+    if (currencies?.isNotEmpty == true) {
+      conditions.add(Transaction_.currency.oneOf(currencies!));
+    }
+
+    if (isPending != null) {
+      if (isPending!) {
+        conditions.add(Transaction_.isPending.equals(true));
+      } else {
+        conditions.add(Transaction_.isPending
+            .notEquals(true)
+            .or(Transaction_.isPending.isNull()));
+      }
+    }
+
     final filtered = ObjectBox()
         .box<Transaction>()
         .query(conditions.reduce((a, b) => a & b));
@@ -153,6 +186,10 @@ class TransactionFilter {
     Optional<List<Account>>? accounts,
     bool? sortDescending,
     TransactionSortField? sortBy,
+    Optional<bool>? isPending,
+    Optional<double>? minAmount,
+    Optional<double>? maxAmount,
+    Optional<List<String>>? currencies,
   }) {
     return TransactionFilter(
       types: types == null ? this.types : types.value,
@@ -162,24 +199,12 @@ class TransactionFilter {
       accounts: accounts == null ? this.accounts : accounts.value,
       sortBy: sortBy ?? this.sortBy,
       sortDescending: sortDescending ?? this.sortDescending,
+      isPending: isPending == null ? this.isPending : isPending.value,
+      minAmount: minAmount == null ? this.minAmount : minAmount.value,
+      maxAmount: maxAmount == null ? this.maxAmount : maxAmount.value,
+      currencies: currencies == null ? this.currencies : currencies.value,
     );
   }
-
-  /// Returns a filter with planned transactions
-  ///
-  /// Overrides [to] of the TimeRange
-  TransactionFilter withPlannedTransactions(int days) => copyWithOptional(
-        range: range == null
-            ? null
-            : Optional(
-                CustomTimeRange(
-                  range!.from,
-                  Moment.startOfTomorrow()
-                      .add(Duration(days: days - 1))
-                      .endOfDay(),
-                ),
-              ),
-      );
 
   @override
   int get hashCode => Object.hashAll([
@@ -190,6 +215,10 @@ class TransactionFilter {
         accounts,
         sortDescending,
         sortBy,
+        isPending,
+        minAmount,
+        maxAmount,
+        currencies,
       ]);
 
   @override
@@ -204,6 +233,10 @@ class TransactionFilter {
         other.sortDescending == sortDescending &&
         other.sortBy == sortBy &&
         other.searchData == searchData &&
+        other.isPending == isPending &&
+        other.minAmount == minAmount &&
+        other.maxAmount == maxAmount &&
+        setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
         setEquals(other.types?.toSet(), types?.toSet()) &&
         setEquals(other.categories?.toSet(), categories?.toSet()) &&
         setEquals(other.accounts?.toSet(), accounts?.toSet());

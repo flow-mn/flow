@@ -1,5 +1,35 @@
 # Changelog
 
+## Beta next (0.9.0)
+
+### New features
+
+* Home screen day title flow now converts all currencies into primary
+* Markdown editor (transaction description) now has a preview, and minimal toolbar
+* Now you can duplicate a transaction be swiping to the right, closes [#232](https://github.com/flow-mn/flow/issues/232)
+
+### Changes
+
+* Renamed upcoming/planned -> Pending transactions
+* Home screen pending transactions time range settings has been revised.
+  You will need to update your preferences again.
+* Deprecated old theme system (light/dark). If you missed an update since
+  this features was introduced, you will need to set up your themes agian.
+* Now confirming pending transactions update date of transaction to the
+  date of confirmation. You can disable this in **Preferences** >
+  **Pending transactions**
+* Haptic feedbacks setting has been moved, and now controls all haptics.
+  (Including error feedbacks)
+
+### Fixes and enhancements
+
+* Transaction list tile title color is now fixed in light themes
+* Wavy divider color now follows the theme change
+* Disabled Autocorrect on transaction title, so it no longer alters suggestions
+* Category and account detail page now doesn't include pending transactions in
+  count and flow.
+* Home tab search should work better now
+
 ## Beta 0.8.1
 
 ### New features

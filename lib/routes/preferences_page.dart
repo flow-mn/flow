@@ -2,9 +2,7 @@ import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
-import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -28,18 +26,15 @@ class _PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().themeName.get())?.scheme ?? shadeOfViolet;
-
-    final UpcomingTransactionsDuration homeTabPlannedTransactionsDuration =
-        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+        getTheme(LocalPreferences().themeName.get());
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
+    final bool enableHapticFeedback =
+        LocalPreferences().enableHapticFeedback.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
     final bool requirePendingTransactionConfrimation =
         LocalPreferences().requirePendingTransactionConfrimation.get();
-    final bool startupPrivacy = LocalPreferences().privacyMode.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -47,16 +42,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
       ),
       body: SafeArea(
         child: ListView(children: [
-          ListTile(
-            title: Text("preferences.home.upcoming".t(context)),
-            subtitle: Text(
-              homeTabPlannedTransactionsDuration.localizedNameContext(context),
-            ),
-            leading: const Icon(Symbols.hourglass_top_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/home"),
-            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
           ListTile(
             title: Text("preferences.pendingTransactions".t(context)),
             subtitle: Text(
@@ -148,11 +133,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
             trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
-            title: Text("preferences.startupPrivacyMode".t(context)),
+            title: Text("preferences.privacyMode".t(context)),
             leading: const Icon(Symbols.password_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/startupPrivacy"),
+            onTap: () => pushAndRefreshAfter("/preferences/privacy"),
+            trailing: const Icon(Symbols.chevron_right_rounded),
+          ),
+          ListTile(
+            title: Text("preferences.hapticFeedback".t(context)),
+            leading: const Icon(Symbols.vibration_rounded),
+            onTap: () => pushAndRefreshAfter("/preferences/haptics"),
             subtitle: Text(
-              startupPrivacy
+              enableHapticFeedback
                   ? "general.enabled".t(context)
                   : "general.disabled".t(context),
               maxLines: 1,

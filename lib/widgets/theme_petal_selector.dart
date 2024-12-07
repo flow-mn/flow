@@ -93,7 +93,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
-    final bool isDark = isThemeDark(currentTheme);
+    final bool isDark = getTheme(currentTheme).isDark;
     final int selectedIndex = isDark
         ? lightDarkThemeMapping.values.toList().indexOf(currentTheme)
         : lightDarkThemeMapping.keys.toList().indexOf(currentTheme);
@@ -124,10 +124,6 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                       _cursor = itemIndexAtPointer != null
                           ? SystemMouseCursors.click
                           : MouseCursor.defer;
-
-                      if (itemIndexAtPointer != null && widget.updateOnHover) {
-                        setThemeByIndex(itemIndexAtPointer, isDark);
-                      }
 
                       setState(() {
                         hoveringIndex = itemIndexAtPointer;

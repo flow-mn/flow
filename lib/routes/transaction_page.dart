@@ -739,7 +739,7 @@ class _TransactionPageState extends State<TransactionPage> {
     ];
 
     final bool isPending = requirePendingTransactionConfrimation
-        ? _transactionDate.isFuture
+        ? _transactionDate.isFutureAnchored(Moment.now().startOfNextMinute())
         : false;
 
     if (isTransfer) {

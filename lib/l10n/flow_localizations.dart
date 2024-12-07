@@ -77,7 +77,7 @@ class FlowLocalizations {
 
   static int supportedLanguagesCount = supportedLanguages.length;
 
-  static printMissingKeys() async {
+  static void printMissingKeys() async {
     final Map<String, Map<String, String>> languages = {};
     for (Locale locale in supportedLanguages) {
       String value =

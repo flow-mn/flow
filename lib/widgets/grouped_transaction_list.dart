@@ -1,13 +1,9 @@
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
-import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/theme/helpers.dart";
-import "package:flow/utils/utils.dart";
+import "package:flow/utils/extensions/transaction_context_actions.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class GroupedTransactionList extends StatefulWidget {
@@ -26,12 +22,18 @@ class GroupedTransactionList extends StatefulWidget {
   /// Rendered in order.
   final Map<TimeRange, List<Transaction>>? pendingTransactions;
 
-  final Widget Function(TimeRange range, List<Transaction> transactions)
-      headerBuilder;
+  final Widget Function(
+    bool pendingGroup,
+    TimeRange range,
+    List<Transaction> transactions,
+  ) headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
   final Widget? pendingDivider;
+
+  /// A widget rendered after all pending transactions
+  final Widget? pendingTrailing;
 
   /// Used to determine which transactions are considered future or past.
   ///
@@ -44,8 +46,6 @@ class GroupedTransactionList extends StatefulWidget {
   final ScrollController? controller;
 
   final Widget? header;
-
-  final bool implyHeader;
 
   final TransactionFilter? filter;
 
@@ -64,10 +64,10 @@ class GroupedTransactionList extends StatefulWidget {
     this.controller,
     this.header,
     this.pendingDivider,
+    this.pendingTrailing,
     this.anchor,
     this.headerPadding,
     this.filter,
-    this.implyHeader = true,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
       horizontal: 16.0,
@@ -84,6 +84,8 @@ class GroupedTransactionList extends StatefulWidget {
 
 class _GroupedTransactionListState extends State<GroupedTransactionList> {
   late bool globalPrivacyMode;
+
+  Widget? get header => widget.header;
 
   @override
   void initState() {
@@ -105,25 +107,20 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
         LocalPreferences().combineTransferTransactions.get();
 
-    final Widget? header = widget.header ??
-        (widget.implyHeader
-            ? _getImpliedHeader(context,
-                futureTransactions: widget.pendingTransactions)
-            : null);
-
     final List<Object> flattened = [
-      if (header != null) header,
+      if (header != null) header!,
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
-          widget.headerBuilder(entry.key, entry.value),
+          widget.headerBuilder(true, entry.key, entry.value),
           ...entry.value,
         ],
+      if (widget.pendingTrailing != null) widget.pendingTrailing!,
       if (widget.pendingDivider != null &&
           widget.pendingTransactions?.isNotEmpty == true &&
           widget.transactions.isNotEmpty)
         widget.pendingDivider!,
       for (final entry in widget.transactions.entries) ...[
-        widget.headerBuilder(entry.key, entry.value),
+        widget.headerBuilder(false, entry.key, entry.value),
         ...entry.value,
       ],
     ];
@@ -134,6 +131,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
       controller: widget.controller,
       padding: widget.listPadding,
       itemBuilder: (context, index) => switch (flattened[index]) {
+        (Padding widgetWithPadding) => widgetWithPadding,
         (Widget header) => Padding(
             padding: headerPadding.copyWith(
               top:
@@ -146,69 +144,15 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
             transaction: transaction,
             padding: widget.itemPadding,
             dismissibleKey: ValueKey(transaction.id),
-            deleteFn: () => deleteTransaction(context, transaction),
+            deleteFn: () => context.deleteTransaction(transaction),
             confirmFn: ([bool confirm = true]) =>
-                confirmTransaction(context, transaction, confirm),
+                context.confirmTransaction(transaction, confirm),
+            duplicateFn: () => context.duplicateTransaction(transaction),
             overrideObscure: widget.overrideObscure,
           ),
         (_) => Container(),
       },
       itemCount: flattened.length,
-    );
-  }
-
-  Future<void> deleteTransaction(
-    BuildContext context,
-    Transaction transaction,
-  ) async {
-    final String txnTitle =
-        transaction.title ?? "transaction.fallbackTitle".t(context);
-
-    final confirmation = await context.showConfirmDialog(
-      isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, txnTitle),
-    );
-
-    if (confirmation == true) {
-      transaction.delete();
-    }
-  }
-
-  Future<void> confirmTransaction(
-    BuildContext context,
-    Transaction transaction, [
-    bool confirm = true,
-  ]) async {
-    transaction.confirm(confirm);
-  }
-
-  Widget? _getImpliedHeader(
-    BuildContext context, {
-    required Map<TimeRange, List<Transaction>>? futureTransactions,
-  }) {
-    if (futureTransactions == null || futureTransactions.isEmpty) return null;
-
-    final int count = futureTransactions.values.fold<int>(
-      0,
-      (previousValue, element) => previousValue + element.renderableCount,
-    );
-
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            "tabs.home.upcomingTransactions".t(context, count),
-            style: context.textTheme.bodyLarge?.semi(context),
-          ),
-        ),
-        const SizedBox(width: 16.0),
-        TextButton(
-          onPressed: () => context.push("/transactions/upcoming"),
-          child: Text(
-            "tabs.home.upcomingTransactions.seeAll".t(context),
-          ),
-        )
-      ],
     );
   }
 

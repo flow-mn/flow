@@ -19,7 +19,7 @@ class Transfer extends TransactionExtension implements Jasonable {
   String? relatedTransactionUuid;
 
   @override
-  setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
+  void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
   Transfer({
     required super.uuid,

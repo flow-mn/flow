@@ -7,7 +7,6 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
 import "package:url_launcher/url_launcher.dart";
@@ -25,10 +24,6 @@ Future<bool> openUrl(
     log("[Flow] Failed to launch uri ($uri) due to $e");
     return false;
   }
-}
-
-void numpadHaptic() {
-  HapticFeedback.mediumImpact();
 }
 
 Future<File?> pickFile() async {
