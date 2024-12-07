@@ -54,7 +54,7 @@ class TransactionSearchData {
 
     final double score = t.titleSuggestionScore(
       query: normalizedKeyword,
-      fuzzyPartial: false,
+      fuzzyPartial: true,
     );
 
     return score >= smartMatchThreshold;
@@ -108,7 +108,7 @@ class TransactionSearchData {
       [keyword, smartMatch, caseInsensitive, smartMatchThreshold]);
 
   @override
-  operator ==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }

@@ -10,14 +10,17 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/category/transactions_info.dart";
 import "package:flow/widgets/flow_card.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
-import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/no_result.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -96,11 +99,35 @@ class _CategoryPageState extends State<CategoryPage> {
 
         final bool noTransactions = (transactions?.length ?? 0) == 0;
 
-        final MoneyFlow flow = transactions?.flow ?? MoneyFlow();
+        final DateTime now = Moment.now().startOfNextMinute();
+
+        final Map<TimeRange, List<Transaction>> grouped = transactions
+                ?.where((transaction) =>
+                    !transaction.transactionDate.isAfter(now) &&
+                    transaction.isPending != true)
+                .groupByDate() ??
+            {};
+
+        final List<Transaction> pendingTransactions = transactions
+                ?.where((transaction) =>
+                    transaction.transactionDate.isAfter(now) ||
+                    transaction.isPending == true)
+                .toList() ??
+            [];
+
+        final int actionNeededCount = pendingTransactions
+            .where((transaction) => transaction.confirmable())
+            .length;
+
+        final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
+            pendingTransactions.groupByRange(
+          rangeFn: (transaction) =>
+              CustomTimeRange(Moment.minValue, Moment.maxValue),
+        );
+
+        final MoneyFlow flow = transactions?.nonPending.flow ?? MoneyFlow();
 
         const double firstHeaderTopPadding = 0.0;
-
-        final bool missingRates = rates == null;
 
         final Widget header = Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,7 +138,7 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
             const SizedBox(height: 8.0),
             TransactionsInfo(
-              count: transactions?.length,
+              count: transactions?.nonPending.length,
               flow: rates == null
                   ? flow.getFlowByCurrency(primaryCurrency)
                   : flow.getTotalFlow(rates, primaryCurrency),
@@ -122,7 +149,7 @@ class _CategoryPageState extends State<CategoryPage> {
               children: [
                 Expanded(
                   child: FlowCard(
-                    flow: missingRates
+                    flow: rates == null
                         ? flow.getIncomeByCurrency(primaryCurrency)
                         : flow.getTotalIncome(rates, primaryCurrency),
                     type: TransactionType.income,
@@ -132,7 +159,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 const SizedBox(width: 12.0),
                 Expanded(
                   child: FlowCard(
-                    flow: missingRates
+                    flow: rates == null
                         ? flow.getExpenseByCurrency(primaryCurrency)
                         : flow.getTotalExpense(rates, primaryCurrency),
                     type: TransactionType.expense,
@@ -141,7 +168,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               ],
             ),
-            if (missingRates) ...[
+            if (rates == null) ...[
               const SizedBox(height: 12.0),
               RatesMissingWarning(),
             ],
@@ -185,15 +212,30 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               _ => GroupedTransactionList(
                   header: header,
-                  transactions: transactions?.groupByDate() ?? {},
+                  transactions: grouped,
+                  pendingTransactions: pendingTransactionsGrouped,
+                  pendingDivider: WavyDivider(),
                   listPadding: widget.listPadding,
                   headerPadding: widget.headerPadding,
                   firstHeaderTopPadding: firstHeaderTopPadding,
-                  headerBuilder: (range, rangeTransactions) =>
-                      TransactionListDateHeader(
-                    transactions: rangeTransactions,
-                    date: range.from,
-                  ),
+                  headerBuilder: (
+                    pendingGroup,
+                    range,
+                    transactions,
+                  ) {
+                    if (pendingGroup) {
+                      return PendingTransactionsHeader(
+                        transactions: transactions,
+                        range: range,
+                        badgeCount: actionNeededCount,
+                      );
+                    }
+
+                    return TransactionListDateHeader(
+                      transactions: transactions,
+                      range: range,
+                    );
+                  },
                 )
             },
           ),

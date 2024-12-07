@@ -10,6 +10,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";
 import "package:flutter/cupertino.dart";
+import "package:flutter/services.dart";
 
 class FlowCards extends StatefulWidget {
   final List<Transaction>? transactions;
@@ -115,7 +116,13 @@ class _FlowCardsState extends State<FlowCards> {
     );
   }
 
-  void handleTap() => setState(() => abbreviate = !abbreviate);
+  void handleTap() {
+    if (LocalPreferences().enableHapticFeedback.get()) {
+      HapticFeedback.lightImpact();
+    }
+
+    setState(() => abbreviate = !abbreviate);
+  }
 
   _updateAbbreviation() {
     abbreviate = !LocalPreferences().preferFullAmounts.get();

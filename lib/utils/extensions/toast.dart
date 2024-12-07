@@ -1,4 +1,5 @@
 import "package:flow/l10n/localized_exception.dart";
+import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -38,7 +39,9 @@ extension ToastHelper on BuildContext {
     }
 
     if (type == ToastificationType.error) {
-      HapticFeedback.heavyImpact();
+      if (LocalPreferences().enableHapticFeedback.get()) {
+        HapticFeedback.heavyImpact();
+      }
     }
 
     return toastification.show(

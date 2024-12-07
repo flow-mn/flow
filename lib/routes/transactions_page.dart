@@ -3,8 +3,9 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
-import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -58,18 +59,20 @@ class TransactionsPage extends StatefulWidget {
     );
   }
 
-  factory TransactionsPage.upcoming({
+  factory TransactionsPage.pending({
     Key? key,
     DateTime? anchor,
     String? title,
     Widget? header,
   }) {
-    anchor ??= DateTime.now();
+    anchor ??= DateTime.now().startOfMinute();
 
     final QueryBuilder<Transaction> queryBuilder = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.transactionDate.greaterThanDate(anchor))
-        .order(Transaction_.transactionDate, flags: Order.descending);
+        .query(Transaction_.transactionDate
+            .greaterThanDate(anchor)
+            .or(Transaction_.isPending.equals(true)))
+        .order(Transaction_.transactionDate);
 
     return TransactionsPage(
       query: queryBuilder,
@@ -87,33 +90,49 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: widget.title == null ? null : Text(widget.title!),
+      appBar: AppBar(
+        title: widget.title == null ? null : Text(widget.title!),
+      ),
+      body: SafeArea(
+        child: StreamBuilder<List<Transaction>>(
+          stream: widget.query
+              .watch(triggerImmediately: true)
+              .map((event) => event.find()),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Spinner.center();
+            }
+
+            final DateTime now = DateTime.now().startOfNextMinute();
+
+            final Map<TimeRange, List<Transaction>> transactions = snapshot
+                .requireData
+                .where((transaction) =>
+                    !transaction.transactionDate.isAfter(now) &&
+                    transaction.isPending != true)
+                .groupByDate();
+            final Map<TimeRange, List<Transaction>> pendingTransactions =
+                snapshot.requireData
+                    .where((transaction) =>
+                        transaction.transactionDate.isAfter(now) ||
+                        transaction.isPending == true)
+                    .groupByDate();
+
+            return GroupedTransactionList(
+              transactions: transactions,
+              pendingTransactions: pendingTransactions,
+              headerBuilder: (pendingGroup, range, transactions) =>
+                  TransactionListDateHeader(
+                pendingGroup: pendingGroup,
+                range: range,
+                transactions: transactions,
+              ),
+              pendingDivider: WavyDivider(),
+              header: widget.header,
+            );
+          },
         ),
-        body: SafeArea(
-          child: StreamBuilder<Map<TimeRange, List<Transaction>>>(
-            stream: widget.query
-                .watch(triggerImmediately: true)
-                .map((event) => event.find().groupByDate()),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Spinner.center();
-              }
-
-              final Map<TimeRange, List<Transaction>> grouped =
-                  snapshot.requireData;
-
-              return GroupedTransactionList(
-                transactions: grouped,
-                headerBuilder: (range, transactions) =>
-                    TransactionListDateHeader(
-                  transactions: transactions,
-                  date: range.from,
-                ),
-                header: widget.header,
-              );
-            },
-          ),
-        ));
+      ),
+    );
   }
 }

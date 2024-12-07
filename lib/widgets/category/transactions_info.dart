@@ -34,7 +34,7 @@ class TransactionsInfo extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    flow.money,
+                    flow.formatted,
                     style: context.textTheme.displaySmall,
                   ),
                   Text(

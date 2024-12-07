@@ -4,6 +4,7 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
@@ -17,6 +18,7 @@ class TransactionListTile extends StatelessWidget {
   final EdgeInsets padding;
 
   final VoidCallback deleteFn;
+  final VoidCallback? duplicateFn;
   final Function([bool confirm])? confirmFn;
 
   final Key? dismissibleKey;
@@ -32,21 +34,17 @@ class TransactionListTile extends StatelessWidget {
     required this.combineTransfers,
     this.padding = EdgeInsets.zero,
     this.confirmFn,
+    this.duplicateFn,
     this.dismissibleKey,
     this.overrideObscure,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool showPendingConfirmation = confirmFn != null &&
-        transaction.isPending == true &&
-        transaction.transactionDate
-            .isPastAnchored(Moment.now().endOfNextMinute());
+    final bool showPendingConfirmation =
+        confirmFn != null && transaction.confirmable();
 
-    final bool showHoldButton = confirmFn != null &&
-        transaction.isPending != true &&
-        transaction.transactionDate
-            .isFutureAnchored(Moment.now().startOfMinute());
+    final bool showHoldButton = confirmFn != null && transaction.holdable();
 
     if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
@@ -108,6 +106,7 @@ class TransactionListTile extends StatelessWidget {
                                   : transaction.title!),
                             ),
                           ],
+                          style: context.textTheme.bodyMedium,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -117,7 +116,7 @@ class TransactionListTile extends StatelessWidget {
                           (transaction.isTransfer && combineTransfers)
                               ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
                               : transaction.account.target?.name,
-                          transaction.transactionDate.format(payload: "LT"),
+                          dateString,
                           if (transaction.transactionDate.isFuture)
                             transaction.isPending == true
                                 ? "transaction.pending".t(context)
@@ -162,32 +161,62 @@ class TransactionListTile extends StatelessWidget {
       ),
     );
 
+    final List<SlidableAction> startActionsPanes = [
+      if (!transaction.isTransfer && duplicateFn != null)
+        SlidableAction(
+          onPressed: (context) => duplicateFn!(),
+          icon: Symbols.content_copy_rounded,
+          backgroundColor: context.flowColors.semi,
+        )
+    ];
+
+    final List<SlidableAction> endActionPanes = [
+      if (confirmFn != null && transaction.isPending == true)
+        SlidableAction(
+          onPressed: (context) => confirmFn!(),
+          icon: Symbols.check_rounded,
+          backgroundColor: context.colorScheme.primary,
+        ),
+      if (showHoldButton)
+        SlidableAction(
+          onPressed: (context) => confirmFn!(false),
+          icon: Symbols.cancel_rounded,
+          backgroundColor: context.flowColors.expense,
+        ),
+      if (!showHoldButton)
+        SlidableAction(
+          onPressed: (context) => deleteFn(),
+          icon: Symbols.delete_forever_rounded,
+          backgroundColor: context.flowColors.expense,
+        )
+    ];
+
     return Slidable(
       key: dismissibleKey,
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        children: [
-          if (showPendingConfirmation)
-            SlidableAction(
-              onPressed: (context) => confirmFn!(),
-              icon: Symbols.check_rounded,
-              backgroundColor: context.colorScheme.primary,
-            ),
-          if (showHoldButton)
-            SlidableAction(
-              onPressed: (context) => confirmFn!(false),
-              icon: Symbols.cancel_rounded,
-              backgroundColor: context.flowColors.expense,
-            ),
-          if (!showHoldButton)
-            SlidableAction(
-              onPressed: (context) => deleteFn(),
-              icon: Symbols.delete_forever_rounded,
-              backgroundColor: context.flowColors.expense,
+      endActionPane: endActionPanes.isNotEmpty
+          ? ActionPane(
+              motion: const DrawerMotion(),
+              children: endActionPanes,
             )
-        ],
-      ),
+          : null,
+      startActionPane: startActionsPanes.isNotEmpty
+          ? ActionPane(
+              motion: const DrawerMotion(),
+              children: startActionsPanes,
+            )
+          : null,
       child: listTile,
     );
+  }
+
+  String get dateString {
+    final DateTime now = Moment.now().startOfNextMinute();
+
+    final bool pending = transaction.isPending == true ||
+        transaction.transactionDate.isFutureAnchored(now);
+
+    if (pending) return transaction.transactionDate.toMoment().calendar();
+
+    return transaction.transactionDate.toMoment().LT;
   }
 }

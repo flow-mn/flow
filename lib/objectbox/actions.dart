@@ -323,13 +323,17 @@ extension TransactionActions on Transaction {
     int? categoryId,
     TransactionType? transactionType,
     bool fuzzyPartial = true,
+    bool caseSensitive = false,
   }) {
     double score = 10.0;
 
-    if (query?.trim().isNotEmpty == true && title?.trim().isNotEmpty == true) {
+    final String? normalizedTitle =
+        caseSensitive ? title?.trim() : title?.trim().toLowerCase();
+
+    if (query?.trim().isNotEmpty == true && normalizedTitle != null) {
       score += fuzzyPartial
-          ? partialRatio(query!, title!).toDouble()
-          : ratio(query!, title!).toDouble();
+          ? partialRatio(query!, normalizedTitle).toDouble()
+          : ratio(query!, normalizedTitle).toDouble();
     }
 
     double multipler = 1.0;
@@ -413,7 +417,7 @@ extension TransactionActions on Transaction {
     return ObjectBox().box<Transaction>().remove(id);
   }
 
-  bool confirm([bool confirm = true]) {
+  bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
     try {
       if (isTransfer) {
         final Transfer? transfer = extensions.transfer;
@@ -438,6 +442,9 @@ extension TransactionActions on Transaction {
             }
 
             relatedTransaction.isPending = !confirm;
+            if (updateTransactionDate && isPending != true) {
+              relatedTransaction.transactionDate = Moment.now();
+            }
             ObjectBox()
                 .box<Transaction>()
                 .put(relatedTransaction, mode: PutMode.update);
@@ -448,12 +455,43 @@ extension TransactionActions on Transaction {
       }
 
       isPending = !confirm;
+      if (updateTransactionDate && isPending != true) {
+        transactionDate = Moment.now();
+      }
       ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
       return true;
     } catch (e) {
       log("Failed to confirm transaction: $e");
       return false;
     }
+  }
+
+  void duplicate() {
+    if (isTransfer) {
+      throw Exception("Cannot duplicate transfer transactions");
+    }
+
+    final Transaction duplicate = Transaction(
+      amount: amount,
+      currency: currency,
+      title: title,
+      description: description,
+      transactionDate: transactionDate,
+      createdDate: Moment.now(),
+      isPending: isPending,
+      uuid: Uuid().v4(),
+    )
+      ..setCategory(category.target)
+      ..setAccount(account.target);
+
+    final List<TransactionExtension> filteredExtensions =
+        extensions.data.where((ext) => ext is! Transfer).toList();
+
+    if (filteredExtensions.isNotEmpty) {
+      duplicate.addExtensions(filteredExtensions);
+    }
+
+    ObjectBox().box<Transaction>().put(duplicate);
   }
 }
 
@@ -530,8 +568,8 @@ extension TransactionListActions on Iterable<Transaction> {
     return value;
   }
 
-  List<Transaction> filter(TransactionFilter filter) =>
-      where((Transaction t) => filter.predicates
+  List<Transaction> filter(List<bool Function(Transaction)> predicates) =>
+      where((Transaction t) => predicates
           .map((predicate) => predicate(t))
           .every((element) => element)).toList();
 

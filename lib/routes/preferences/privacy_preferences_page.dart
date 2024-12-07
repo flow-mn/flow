@@ -1,24 +1,23 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 
-class StartupPrivacyPreferencesPage extends StatefulWidget {
-  const StartupPrivacyPreferencesPage({super.key});
+class PrivacyPreferencesPage extends StatefulWidget {
+  const PrivacyPreferencesPage({super.key});
 
   @override
-  State<StartupPrivacyPreferencesPage> createState() =>
-      _StartupPrivacyPreferencesPageState();
+  State<PrivacyPreferencesPage> createState() => _PrivacyPreferencesPageState();
 }
 
-class _StartupPrivacyPreferencesPageState
-    extends State<StartupPrivacyPreferencesPage> {
+class _PrivacyPreferencesPageState extends State<PrivacyPreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final bool privacyMode = LocalPreferences().privacyMode.get();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("preferences.startupPrivacyMode".t(context)),
+        title: Text("preferences.privacyMode".t(context)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -26,10 +25,18 @@ class _StartupPrivacyPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: InfoText(
+                  child: Text(
+                    "preferences.privacyMode.description".t(context),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
-                title: Text("preferences.startupPrivacyMode".t(context)),
-                subtitle: Text(
-                    "preferences.startupPrivacyMode.description".t(context)),
+                title:
+                    Text("preferences.privacyMode.enableAtStartup".t(context)),
                 value: privacyMode,
                 onChanged: updatePrivacyMode,
               ),

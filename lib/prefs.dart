@@ -4,14 +4,12 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
-import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
-import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -23,9 +21,7 @@ import "package:shared_preferences/shared_preferences.dart";
 class LocalPreferences {
   final SharedPreferences _prefs;
 
-  static const UpcomingTransactionsDuration
-      homeTabPlannedTransactionsDurationDefault =
-      UpcomingTransactionsDuration.thisWeek;
+  static const int pendingTransactionsHomeTimeframeDefault = 3;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -36,8 +32,8 @@ class LocalPreferences {
   /// in a modern dialpad
   late final BoolSettingsEntry usePhoneNumpadLayout;
 
-  /// Whether to enable haptic feedback on numpad touch
-  late final BoolSettingsEntry enableNumpadHapticFeedback;
+  /// Whether to enable haptic feedback upon certain actions
+  late final BoolSettingsEntry enableHapticFeedback;
 
   /// Whether to combine transfer transactions in the transaction list
   ///
@@ -54,8 +50,11 @@ class LocalPreferences {
   late final BoolSettingsEntry excludeTransferFromFlow;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final JsonSettingsEntry<UpcomingTransactionsDuration>
-      homeTabPlannedTransactionsDuration;
+  late final PrimitiveSettingsEntry<int> pendingTransactionsHomeTimeframe;
+
+  /// Whether to use date of confirmation for `transactionDate` for pending transactions
+  late final BoolSettingsEntry pendingTransactionsUpdateDateUponConfirmation;
+
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -73,7 +72,6 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final ThemeModeSettingsEntry themeMode;
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
@@ -98,8 +96,8 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    enableNumpadHapticFeedback = BoolSettingsEntry(
-      key: "enableNumpadHapticFeedback",
+    enableHapticFeedback = BoolSettingsEntry(
+      key: "enableHapticFeedback",
       preferences: _prefs,
       initialValue: true,
     );
@@ -113,15 +111,15 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: false,
     );
-    homeTabPlannedTransactionsDuration =
-        JsonSettingsEntry<UpcomingTransactionsDuration>(
-      key: "homeTabPlannedTransactionsDuration",
+    pendingTransactionsHomeTimeframe = PrimitiveSettingsEntry<int>(
+      key: "pendingTransactions.homeTimeframe",
       preferences: _prefs,
-      initialValue: homeTabPlannedTransactionsDurationDefault,
-      fromJson: (map) =>
-          UpcomingTransactionsDuration.fromJson(map) ??
-          homeTabPlannedTransactionsDurationDefault,
-      toJson: (data) => data.toJson(),
+      initialValue: pendingTransactionsHomeTimeframeDefault,
+    );
+    pendingTransactionsUpdateDateUponConfirmation = BoolSettingsEntry(
+      key: "pendingTransactions.updateDateUponConfirmation",
+      preferences: _prefs,
+      initialValue: true,
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "transactionButtonOrder",
@@ -175,11 +173,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeMode = ThemeModeSettingsEntry(
-      key: "themeMode",
-      preferences: _prefs,
-      initialValue: ThemeMode.system,
-    );
     themeName = PrimitiveSettingsEntry<String>(
       key: "themeName",
       preferences: _prefs,

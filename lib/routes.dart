@@ -13,11 +13,11 @@ import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
-import "package:flow/routes/preferences/home_tab_preferences.dart";
+import "package:flow/routes/preferences/haptics_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
 import "package:flow/routes/preferences/pending_transactions.dart";
-import "package:flow/routes/preferences/startup_privacy_preferences_page.dart";
+import "package:flow/routes/preferences/privacy_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
@@ -37,7 +37,6 @@ import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -78,17 +77,9 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
-      path: "/transactions/upcoming",
-      builder: (context, state) => TransactionsPage.upcoming(
-        title: "transactions.upcoming".t(context),
-        header: InfoText(
-          singleLine: true,
-          child: Text(
-            "account.balance.upcomingDescription".t(context),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+      path: "/transactions/pending",
+      builder: (context, state) => TransactionsPage.pending(
+        title: "transactions.pending".t(context),
       ),
     ),
     GoRoute(
@@ -154,10 +145,6 @@ final router = GoRouter(
       builder: (context, state) => const PreferencesPage(),
       routes: [
         GoRoute(
-          path: "home",
-          builder: (context, state) => const HomeTabPreferencesPage(),
-        ),
-        GoRoute(
           path: "pendingTransactions",
           builder: (context, state) =>
               const PendingTransactionPreferencesPage(),
@@ -183,12 +170,16 @@ final router = GoRouter(
           builder: (context, state) => const ThemePreferencesPage(),
         ),
         GoRoute(
-          path: "startupPrivacy",
-          builder: (context, state) => const StartupPrivacyPreferencesPage(),
+          path: "privacy",
+          builder: (context, state) => const PrivacyPreferencesPage(),
         ),
         GoRoute(
           path: "moneyFormatting",
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
+        ),
+        GoRoute(
+          path: "haptics",
+          builder: (context, state) => const HapticsPreferencesPage(),
         ),
       ],
     ),

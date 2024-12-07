@@ -153,11 +153,18 @@ class ThemeFactory {
     );
   }
 
-  factory ThemeFactory.fromThemeName(String? themeName) {
-    final resolved = getTheme(themeName);
+  /// Returns a [ThemeFactory] instance based on the provided [themeName].
+  ///
+  /// If [themeName] is `null`, the default theme is returned.
+  ///
+  /// Pass [preferDark] to influence the choice of default theme.
+  factory ThemeFactory.fromThemeName(String? themeName,
+      [bool preferDark = false]) {
+    final resolved = getTheme(
+      themeName,
+      preferDark,
+    );
 
-    if (resolved == null) return ThemeFactory(shadeOfViolet);
-
-    return ThemeFactory(resolved.scheme);
+    return ThemeFactory(resolved);
   }
 }

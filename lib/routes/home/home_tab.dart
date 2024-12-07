@@ -1,19 +1,19 @@
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
-import "package:flow/data/upcoming_transactions.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
-import "package:flow/utils/optional.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
 import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
-import "package:flow/widgets/home/transactions_date_header.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
+import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -30,8 +30,7 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late final AppLifecycleListener _listener;
 
-  UpcomingTransactionsDuration _plannedTransactionsDuration =
-      LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+  late int _plannedTransactionsNextNDays;
 
   final TransactionFilter defaultFilter = TransactionFilter(
     range: last30Days(),
@@ -40,10 +39,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
 
   TransactionFilter get currentFilterWithPlanned {
-    final DateTime? plannedTransactionTo =
-        _plannedTransactionsDuration.endsAt();
-
-    if (plannedTransactionTo == null) return currentFilter;
+    final DateTime plannedTransactionTo = Moment.now()
+        .add(Duration(days: _plannedTransactionsNextNDays))
+        .startOfNextDay();
 
     if (currentFilter.range != null &&
         currentFilter.range!.contains(Moment.now()) &&
@@ -68,7 +66,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.initState();
     _updatePlannedTransactionDays();
     LocalPreferences()
-        .homeTabPlannedTransactionsDuration
+        .pendingTransactionsHomeTimeframe
         .addListener(_updatePlannedTransactionDays);
 
     _listener = AppLifecycleListener(onShow: () => setState(() {}));
@@ -78,7 +76,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void dispose() {
     _listener.dispose();
     LocalPreferences()
-        .homeTabPlannedTransactionsDuration
+        .pendingTransactionsHomeTimeframe
         .removeListener(_updatePlannedTransactionDays);
     super.dispose();
   }
@@ -94,10 +92,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           .queryBuilder()
           .watch(triggerImmediately: true)
           .map(
-            (event) => event.find().search(currentFilter.searchData),
+            (event) =>
+                event.find().filter(currentFilterWithPlanned.postPredicates),
           ),
       builder: (context, snapshot) {
-        final DateTime now = DateTime.now().startOfNextMinute();
+        final DateTime now = Moment.now().startOfNextMinute();
         final ExchangeRates? rates =
             ExchangeRatesService().getPrimaryCurrencyRates();
         final List<Transaction>? transactions = snapshot.data;
@@ -153,11 +152,22 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             !transaction.transactionDate.isAfter(now) &&
             transaction.isPending != true)
         .groupByDate();
-    final Map<TimeRange, List<Transaction>> pendingTransactions = transactions
+
+    final List<Transaction> pendingTransactions = transactions
         .where((transaction) =>
             transaction.transactionDate.isAfter(now) ||
             transaction.isPending == true)
-        .groupByDate();
+        .toList();
+
+    final int actionNeededCount = pendingTransactions
+        .where((transaction) => transaction.confirmable())
+        .length;
+
+    final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
+        pendingTransactions.groupByRange(
+      rangeFn: (transaction) =>
+          CustomTimeRange(Moment.minValue, Moment.maxValue),
+    );
 
     final bool shouldCombineTransferIfNeeded =
         currentFilter.accounts?.isNotEmpty != true;
@@ -179,7 +189,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       controller: widget.scrollController,
       transactions: grouped,
-      pendingTransactions: pendingTransactions,
+      pendingTransactions: pendingTransactionsGrouped,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       pendingDivider: const WavyDivider(),
       listPadding: const EdgeInsets.only(
@@ -187,21 +197,30 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         bottom: 80.0,
       ),
       headerBuilder: (
-        TimeRange range,
-        List<Transaction> transactions,
-      ) =>
-          TransactionListDateHeader(
-        transactions: transactions,
-        date: range.from,
-        future: !range.from.isPast,
-      ),
+        pendingGroup,
+        range,
+        transactions,
+      ) {
+        if (pendingGroup) {
+          return PendingTransactionsHeader(
+            transactions: transactions,
+            range: range,
+            badgeCount: actionNeededCount,
+          );
+        }
+
+        return TransactionListDateHeader(
+          transactions: transactions,
+          range: range,
+        );
+      },
     );
   }
 
   void _updatePlannedTransactionDays() {
-    _plannedTransactionsDuration =
-        LocalPreferences().homeTabPlannedTransactionsDuration.get() ??
-            LocalPreferences.homeTabPlannedTransactionsDurationDefault;
+    _plannedTransactionsNextNDays =
+        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
+            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
     setState(() {});
   }
 
