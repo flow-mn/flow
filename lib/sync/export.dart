@@ -2,10 +2,12 @@ import "dart:async";
 import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
+import "dart:typed_data";
 
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/sync/export/export_v1.dart";
+import "package:flow/sync/export/export_v2.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/sync.dart";
 import "package:flow/utils/utils.dart";
@@ -35,6 +37,9 @@ Future<ExportStatus> export({
   final backupContent = switch ((mode, latestSyncModelVersion)) {
     (ExportMode.csv, 1) => await generateCSVContentV1(),
     (ExportMode.json, 1) => await generateBackupContentV1(),
+    (ExportMode.csv, 2) => await generateCSVContentV2(),
+    (ExportMode.json, 2) => await generateBackupJSONContentV2(),
+    (ExportMode.zip, 2) => await generateBackupJSONContentV2(),
     _ => throw UnimplementedError(),
   };
   final savedFilePath = await saveBackupFile(
@@ -71,7 +76,7 @@ Future<ExportStatus> export({
 
 /// Returns file path after successfully saving it
 Future<String> saveBackupFile(
-  String backupContent,
+  dynamic backupContent,
   bool isShareSupported, {
   required String fileExt,
   required BackupEntryType type,
@@ -91,7 +96,19 @@ Future<String> saveBackupFile(
 
   final File f = File(path.join(saveDir.path, subfolder ?? "", filename));
   f.createSync(recursive: true);
-  f.writeAsStringSync(backupContent);
+  switch (backupContent) {
+    case String utf8:
+      f.writeAsStringSync(utf8);
+      break;
+    case Uint8List bytes:
+      f.writeAsBytesSync(bytes);
+      break;
+    case File file:
+      file.copySync(f.path);
+      break;
+    default:
+      throw UnimplementedError();
+  }
 
   log("[Flow Sync] Write successful. See file at: ${f.path}");
 

@@ -20,6 +20,8 @@ class ObjectBox {
 
   static late String appDataDirectory;
 
+  static String get imagesDirectory => path.join(appDataDirectory, "images");
+
   /// A subdirectory to store app data.
   ///
   /// This is useful if you want to separate multiple user data or just

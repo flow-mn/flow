@@ -135,11 +135,9 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
 
       if (bytes == null) throw "";
 
-      final dataDirectory = ObjectBox.appDataDirectory;
       final fileName = "${const Uuid().v4()}.png";
       final file = File(path.join(
-        dataDirectory,
-        "images",
+        ObjectBox.imagesDirectory,
         fileName,
       ));
       await file.create(recursive: true);
