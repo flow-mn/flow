@@ -12,6 +12,7 @@ import "package:flow/routes/export_page.dart";
 import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/v1.dart";
+import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/haptics_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
@@ -36,6 +37,7 @@ import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
+import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -254,15 +256,26 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: "/import/wizard/v2",
+      builder: (context, state) {
+        if (state.extra case ImportV2 importV2) {
+          return ImportWizardV2Page(importer: importV2);
+        }
+
+        return ErrorPage(
+          error: "error.sync.invalidBackupFile".t(context),
+        );
+      },
+    ),
+    GoRoute(
       path: "/export/history",
       builder: (context, state) => const ExportHistoryPage(),
     ),
     GoRoute(
       path: "/export/:type",
       builder: (context, state) => ExportPage(
-        state.pathParameters["type"] == "csv"
-            ? ExportMode.csv
-            : ExportMode.json,
+        ExportMode.tryParse(state.pathParameters["type"] ?? "zip") ??
+            ExportMode.zip,
       ),
     ),
     GoRoute(
