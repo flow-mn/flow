@@ -377,7 +377,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     if (clipboardData == null ||
         clipboardData.text == null ||
-        clipboardData.text!.trim().isEmpty) return;
+        clipboardData.text!.trim().isEmpty) {
+      return;
+    }
 
     handlePaste(clipboardData.text!);
   }

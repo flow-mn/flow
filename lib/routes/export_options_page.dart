@@ -56,6 +56,37 @@ class _ExportOptionsPageState extends State<ExportOptionsPage> {
               ),
               const SizedBox(height: 16.0),
               ActionCard(
+                onTap: () => context.push("/export/zip"),
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 16.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FlowIcon(
+                        FlowIconData.icon(Symbols.folder_zip_rounded),
+                        size: 80.0,
+                        plated: true,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "sync.export.asZIP".t(context),
+                        style: context.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "sync.export.asZIP.description".t(context),
+                        style: context.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              ActionCard(
                 onTap: () => context.push("/export/json"),
                 builder: (context) => Padding(
                   padding: const EdgeInsets.symmetric(

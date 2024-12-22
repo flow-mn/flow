@@ -445,7 +445,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void updateTransactionType(TransactionType type) {
     if (type == _transactionType ||
-        (_currentlyEditing != null && _currentlyEditing.isTransfer)) return;
+        (_currentlyEditing != null && _currentlyEditing.isTransfer)) {
+      return;
+    }
 
     _transactionType = type;
 
