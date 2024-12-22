@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
@@ -56,12 +57,16 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
           }
         }
 
-        File(
+        final File oldImage = File(
           path.join(
             ObjectBox.appDataDirectory,
             initialImagePath,
           ),
-        ).deleteSync();
+        );
+
+        unawaited(oldImage.exists().then((_) {
+          unawaited(oldImage.delete());
+        }));
       };
     } else {
       cleanUpImage = null;

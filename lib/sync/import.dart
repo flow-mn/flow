@@ -85,7 +85,7 @@ Future<Importer> importBackup({
 
     await Directory(dir).create();
 
-    await extractArchiveToDiskAsync(zip, dir);
+    await extractArchiveToDisk(zip, dir);
 
     final File jsonFile = File(path.join(dir, jsonRelativePath));
 

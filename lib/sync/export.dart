@@ -25,7 +25,7 @@ typedef ExportStatus = ({bool shareDialogSucceeded, String filePath});
 /// automated backups
 Future<ExportStatus> export({
   required BackupEntryType type,
-  ExportMode mode = ExportMode.json,
+  ExportMode mode = ExportMode.zip,
   bool showShareDialog = true,
   String? subfolder,
 }) async {
@@ -39,7 +39,7 @@ Future<ExportStatus> export({
     (ExportMode.json, 1) => await generateBackupContentV1(),
     (ExportMode.csv, 2) => await generateCSVContentV2(),
     (ExportMode.json, 2) => await generateBackupJSONContentV2(),
-    (ExportMode.zip, 2) => await generateBackupJSONContentV2(),
+    (ExportMode.zip, 2) => await generateBackupZipV2(),
     _ => throw UnimplementedError(),
   };
   final savedFilePath = await saveBackupFile(
@@ -87,10 +87,7 @@ Future<String> saveBackupFile(
 
   final Directory saveDir =
       Directory(path.join(ObjectBox.appDataDirectory, "backups"));
-
-  final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
-  final String randomValue = math.Random().nextInt(536870912).toRadixString(36);
-  final String filename = "flow_backup_${dateTime}_$randomValue.$fileExt";
+  final String filename = generateBackupFileName(fileExt);
 
   log("[Flow Sync] Writing to ${path.join(saveDir.path, filename)}");
 
@@ -147,4 +144,10 @@ Future<ExportStatus> showFileSaveDialog(
   log("[Flow Sync] shareSuccess $shareSuccess $uri");
 
   return (shareDialogSucceeded: shareSuccess, filePath: savedFilePath);
+}
+
+String generateBackupFileName(String fileExt) {
+  final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
+  final String randomValue = math.Random().nextInt(536870912).toRadixString(36);
+  return "flow_backup_${dateTime}_$randomValue.$fileExt";
 }

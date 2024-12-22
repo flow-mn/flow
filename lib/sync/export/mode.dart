@@ -19,4 +19,17 @@ enum ExportMode {
   final String fileExt;
 
   const ExportMode({required this.fileExt});
+
+  static ExportMode? tryParse(String value) {
+    switch (value) {
+      case "csv":
+        return ExportMode.csv;
+      case "json":
+        return ExportMode.json;
+      case "zip":
+        return ExportMode.zip;
+      default:
+        return null;
+    }
+  }
 }

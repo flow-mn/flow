@@ -1,3 +1,5 @@
+import "dart:developer";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/sync/import/import_v2.dart";
@@ -70,6 +72,7 @@ class _ImportWizardV2PageState extends State<ImportWizardV2Page> {
       await importer.execute();
     } catch (e) {
       error = e;
+      log("[Flow Sync V2] Import failed", error: e);
     } finally {
       if (mounted) {
         setState(() {});

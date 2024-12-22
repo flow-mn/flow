@@ -22,7 +22,6 @@ import "package:flutter/widgets.dart";
 
 /// Used to report current status to user
 enum ImportV2Progress implements LocalizedEnum {
-  unzipping,
   waitingConfirmation,
   erasing,
   writingCategories,
@@ -57,7 +56,7 @@ class ImportV2 extends Importer {
 
   @override
   final ValueNotifier<ImportV2Progress> progressNotifier =
-      ValueNotifier(ImportV2Progress.unzipping);
+      ValueNotifier(ImportV2Progress.waitingConfirmation);
 
   ImportV2(
     this.data, {
@@ -157,6 +156,15 @@ class ImportV2 extends Importer {
     await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
 
     if (data.profile != null) {
+      try {
+        await ObjectBox().box<Profile>().removeAllAsync();
+      } catch (e) {
+        log(
+          "[Flow Sync Import v2] Failed to remove existing profile, ignoring",
+          error: e,
+        );
+      }
+
       progressNotifier.value = ImportV2Progress.writingProfile;
       await ObjectBox().box<Profile>().putAsync(data.profile!);
     }
