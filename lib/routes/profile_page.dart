@@ -2,16 +2,15 @@ import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
 
-import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
-import "package:path/path.dart" as path;
-
 import "package:flow/entity/profile.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/profile_picture.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:path/path.dart" as path;
 
 class ProfilePage extends StatefulWidget {
   final int? profileId;
@@ -115,10 +114,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (bytes == null) throw "";
 
-    final dataDirectory = ObjectBox.appDataDirectory;
-
     final file = File(path.join(
-      dataDirectory,
+      ObjectBox.imagesDirectory,
       _profile!.imagePath,
     ));
 

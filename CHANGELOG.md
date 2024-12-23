@@ -8,7 +8,8 @@
 
 ### Changes
 
-* N/A
+* [BREAKING] Profile pictures are now stored elsewhere. Auto-migration will be in place for few builds.
+Please reapply your profile picture if you need to.
 
 ### Fixes and enhancements
 
