@@ -107,7 +107,7 @@ class ThemeFactory {
         fillColor: WidgetStateProperty.resolveWith(
           (states) {
             if (states.contains(WidgetState.disabled)) {
-              return colorScheme.onSurface.withOpacity(0.38);
+              return colorScheme.onSurface.withAlpha(0x61);
             }
             if (states.contains(WidgetState.selected)) {
               return colorScheme.primary;
@@ -129,7 +129,7 @@ class ThemeFactory {
         fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.disabled)) {
             if (states.contains(WidgetState.selected)) {
-              return colorScheme.onSurface.withOpacity(0.38);
+              return colorScheme.onSurface.withAlpha(0x61);
             }
             return kTransparent;
           }

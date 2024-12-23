@@ -1,5 +1,20 @@
 # Changelog
 
+## Beta 0.10.0
+
+### New features
+
+* N/A
+
+### Changes
+
+* N/A
+
+### Fixes and enhancements
+
+* Now you can do ZIP backups that include account/profile photos, fixes [#173](https://github.com/flow-mn/flow/issues/173)
+  and [#204](https://github.com/flow-mn/flow/issues/204)
+
 ## Beta 0.9.0
 
 ### New features
