@@ -268,7 +268,7 @@
     "sync.import.pickFile": "Select a file",
     "sync.import.pickFile.pickOrDrop": "Select or drop a file",
     "sync.import.pickFile.dropzone.active": "Drop here",
-    "sync.import.pickFile.description": "Pick a Flow backup file to restore. Must be a JSON file",
+    "sync.import.pickFile.description": "Pick a Flow backup file to restore. Must be a JSON or a ZIP file.",
     "sync.import.syncData.olderBackupWarning": "Since this back up was made in an older version of the app, something might go wrong!",
     "sync.import.syncData.createdDate": "Back up date",
     "sync.import.syncData.parsedEstimate": "Estimated data to recover",

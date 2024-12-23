@@ -268,7 +268,7 @@
     "sync.import.pickFile": "Файл сонгох",
     "sync.import.pickFile.pickOrDrop": "Файл сонгох (эсвэл чирж авчрах)",
     "sync.import.pickFile.dropzone.active": "Надруу чир",
-    "sync.import.pickFile.description": "Өмнө нь Flow аппаас нөөцөлж авсан файлаа сонгоно уу. Зөвхөн JSON форматтай файл байх шаардлагатай",
+    "sync.import.pickFile.description": "Өмнө нь Flow аппаас нөөцөлж авсан файлаа сонгоно уу. Зөвхөн JSON эсвэл ZIP файл байх шаардлагатай",
     "sync.import.syncData.olderBackupWarning": "Энэхүү нөөц файл аппын хуучин хувилбарт үүссэн тул асуудлууд гарч болзошгүй юм!",
     "sync.import.syncData.createdDate": "Нөөцөлсөн огноо",
     "sync.import.syncData.parsedEstimate": "Сэргээгдэх өгөгдлүүд урьдчилсан байдлаар",
