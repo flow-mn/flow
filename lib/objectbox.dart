@@ -6,6 +6,7 @@ import "package:flow/data/setup/default_accounts.dart";
 import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flutter/material.dart";
@@ -214,6 +215,7 @@ class ObjectBox {
         allTransactionsQuery.removeAsync(),
         allCategorysQuery.removeAsync(),
         allAccountsQuery.removeAsync(),
+        box<Profile>().removeAllAsync(),
       ]);
     } finally {
       allTransactionsQuery.close();

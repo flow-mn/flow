@@ -156,15 +156,6 @@ class ImportV2 extends Importer {
     await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
 
     if (data.profile != null) {
-      try {
-        await ObjectBox().box<Profile>().removeAllAsync();
-      } catch (e) {
-        log(
-          "[Flow Sync Import v2] Failed to remove existing profile, ignoring",
-          error: e,
-        );
-      }
-
       progressNotifier.value = ImportV2Progress.writingProfile;
       await ObjectBox().box<Profile>().putAsync(data.profile!);
     }
