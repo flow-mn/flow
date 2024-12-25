@@ -78,7 +78,7 @@ Future<Importer> importBackup({
       );
     }
 
-    final Directory tempDir = await getTemporaryDirectory();
+    final Directory tempDir = await getApplicationCacheDirectory();
 
     final String dir = path.join(tempDir.path,
         "flow_unzipped_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}");
