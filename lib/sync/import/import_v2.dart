@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:developer";
 import "dart:io";
 
@@ -95,11 +96,12 @@ class ImportV2 extends Importer {
           break;
       }
     } catch (e) {
-      if (cleanupFolder != null) {
-        await Directory(cleanupFolder!).delete(recursive: true);
-      }
       progressNotifier.value = ImportV2Progress.error;
       rethrow;
+    } finally {
+      if (cleanupFolder != null) {
+        unawaited(_cleanup());
+      }
     }
 
     return safetyBackupFilePath;
@@ -238,6 +240,18 @@ class ImportV2 extends Importer {
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
     //     await ObjectBox().box<Transaction>().getAllAsync();
+  }
+
+  Future<void> _cleanup() async {
+    if (cleanupFolder == null) {
+      return;
+    }
+
+    try {
+      await Directory(cleanupFolder!).delete(recursive: true);
+    } catch (e) {
+      log("[Flow Sync Import v2] Failed to delete cleanup folder", error: e);
+    }
   }
 
   Transaction _resolveAccountForTransaction(Transaction transaction) {
