@@ -189,6 +189,8 @@ class ImportV2 extends Importer {
             Directory(path.join(assetsRoot!, "images"))
                 .listSync(followLinks: false);
 
+        await Directory(ObjectBox.imagesDirectory).create(recursive: true);
+
         for (final asset in assetsList) {
           if (path.extension(asset.path).toLowerCase() == ".png") {
             final String assetName = path.basename(asset.path);
