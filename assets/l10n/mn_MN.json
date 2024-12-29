@@ -151,6 +151,8 @@
     "categories": "Ангиллууд",
     "categories.noCategories": "Танд үүсгэсэн ангилал алга байна",
 
+    "profile.name": "Нэр",
+
     "currency": "Мөнгөн тэмдэгт",
     "currency.searchHint": "Хайх... (улс, тэмдэгт, код)",
 
@@ -196,7 +198,6 @@
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Идэвхгүй болгож анхны огноог ашиглах боломжтой",
     "preferences.pendingTransactions.homeTimeframe": "Нүүр хуудсанд харуулах",
     "preferences.privacyMode": "Нууцлалын горим",
-    "preferences.privacyMode.description": "Дүнг нууж харуулна. Нүүр хуудасны баруун дээр байрлах нүдэн дээр дарж асаах/унтраах боломжтой",
     "preferences.privacyMode.enableAtStartup": "Эхлэх үед идэвхжүүлэх",
     "preferences.moneyFormatting": "Мөнгөний хэлбэр",
     "preferences.moneyFormatting.preferFull": "Бүтэн дүнг харуулах",

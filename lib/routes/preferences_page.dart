@@ -5,8 +5,11 @@ import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
+import "package:flow/routes/preferences/sections/haptics.dart";
+import "package:flow/routes/preferences/sections/privacy.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
+import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
@@ -16,10 +19,14 @@ class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
 
   @override
-  State<PreferencesPage> createState() => _PreferencesPageState();
+  State<PreferencesPage> createState() => PreferencesPageState();
+
+  static PreferencesPageState of(BuildContext context) {
+    return context.findAncestorStateOfType<PreferencesPageState>()!;
+  }
 }
 
-class _PreferencesPageState extends State<PreferencesPage> {
+class PreferencesPageState extends State<PreferencesPage> {
   bool _currencyBusy = false;
   bool _languageBusy = false;
 
@@ -29,8 +36,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
         getTheme(LocalPreferences().themeName.get());
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
-    final bool enableHapticFeedback =
-        LocalPreferences().enableHapticFeedback.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
     final bool requirePendingTransactionConfrimation =
@@ -41,122 +46,113 @@ class _PreferencesPageState extends State<PreferencesPage> {
         title: Text("preferences".t(context)),
       ),
       body: SafeArea(
-        child: ListView(children: [
-          ListTile(
-            title: Text("preferences.pendingTransactions".t(context)),
-            subtitle: Text(
-              requirePendingTransactionConfrimation
-                  ? "general.enabled".t(context)
-                  : "general.disabled".t(context),
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text("preferences.pendingTransactions".t(context)),
+              subtitle: Text(
+                requirePendingTransactionConfrimation
+                    ? "general.enabled".t(context)
+                    : "general.disabled".t(context),
+              ),
+              leading: const Icon(Symbols.schedule_rounded),
+              onTap: _openPendingTransactionsPrefs,
+              // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            leading: const Icon(Symbols.schedule_rounded),
-            onTap: openPendingTransactionsPrefs,
-            // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.theme".t(context)),
-            leading: currentTheme.isDark
-                ? const Icon(Symbols.dark_mode_rounded)
-                : const Icon(Symbols.light_mode_rounded),
-            subtitle: Text(currentTheme.name),
-            onTap: openTheme,
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.language".t(context)),
-            leading: const Icon(Symbols.language_rounded),
-            onTap: () => updateLanguage(),
-            subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.primaryCurrency".t(context)),
-            leading: const Icon(Symbols.universal_currency_alt_rounded),
-            onTap: () => updatePrimaryCurrency(),
-            subtitle: Text(LocalPreferences().getPrimaryCurrency()),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.numpad".t(context)),
-            leading: const Icon(Symbols.dialpad_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/numpad"),
-            subtitle: Text(
-              LocalPreferences().usePhoneNumpadLayout.get()
-                  ? "preferences.numpad.layout.modern".t(context)
-                  : "preferences.numpad.layout.classic".t(context),
+            ListTile(
+              title: Text("preferences.theme".t(context)),
+              leading: currentTheme.isDark
+                  ? const Icon(Symbols.dark_mode_rounded)
+                  : const Icon(Symbols.light_mode_rounded),
+              subtitle: Text(currentTheme.name),
+              onTap: _openTheme,
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.transfer".t(context)),
-            leading: const Icon(Symbols.sync_alt_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/transfer"),
-            subtitle: Text(
-              "preferences.transfer.description".t(context),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ListTile(
+              title: Text("preferences.language".t(context)),
+              leading: const Icon(Symbols.language_rounded),
+              onTap: () => _updateLanguage(),
+              subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.transactionButtonOrder".t(context)),
-            leading: const Icon(Symbols.action_key_rounded),
-            onTap: () =>
-                pushAndRefreshAfter("/preferences/transactionButtonOrder"),
-            subtitle: Text(
-              "preferences.transactionButtonOrder.description".t(context),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ListTile(
+              title: Text("preferences.primaryCurrency".t(context)),
+              leading: const Icon(Symbols.universal_currency_alt_rounded),
+              onTap: () => _updatePrimaryCurrency(),
+              subtitle: Text(LocalPreferences().getPrimaryCurrency()),
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.transactionGeo".t(context)),
-            leading: const Icon(Symbols.location_pin_rounded),
-            onTap: openTransactionGeo,
-            subtitle: Text(
-              enableGeo
-                  ? (autoAttachTransactionGeo
-                      ? "preferences.transactionGeo.auto.enabled".t(context)
-                      : "general.enabled".t(context))
-                  : "general.disabled".t(context),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ListTile(
+              title: Text("preferences.numpad".t(context)),
+              leading: const Icon(Symbols.dialpad_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/numpad"),
+              subtitle: Text(
+                LocalPreferences().usePhoneNumpadLayout.get()
+                    ? "preferences.numpad.layout.modern".t(context)
+                    : "preferences.numpad.layout.classic".t(context),
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.moneyFormatting".t(context)),
-            leading: const Icon(Symbols.numbers_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/moneyFormatting"),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.privacyMode".t(context)),
-            leading: const Icon(Symbols.password_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/privacy"),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-          ListTile(
-            title: Text("preferences.hapticFeedback".t(context)),
-            leading: const Icon(Symbols.vibration_rounded),
-            onTap: () => pushAndRefreshAfter("/preferences/haptics"),
-            subtitle: Text(
-              enableHapticFeedback
-                  ? "general.enabled".t(context)
-                  : "general.disabled".t(context),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ListTile(
+              title: Text("preferences.transfer".t(context)),
+              leading: const Icon(Symbols.sync_alt_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/transfer"),
+              subtitle: Text(
+                "preferences.transfer.description".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            trailing: const Icon(Symbols.chevron_right_rounded),
-          ),
-        ]),
+            ListTile(
+              title: Text("preferences.transactionButtonOrder".t(context)),
+              leading: const Icon(Symbols.action_key_rounded),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/transactionButtonOrder"),
+              subtitle: Text(
+                "preferences.transactionButtonOrder.description".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.transactionGeo".t(context)),
+              leading: const Icon(Symbols.location_pin_rounded),
+              onTap: _openTransactionGeo,
+              subtitle: Text(
+                enableGeo
+                    ? (autoAttachTransactionGeo
+                        ? "preferences.transactionGeo.auto.enabled".t(context)
+                        : "general.enabled".t(context))
+                    : "general.disabled".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.moneyFormatting".t(context)),
+              leading: const Icon(Symbols.numbers_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.privacyMode".t(context)),
+            const SizedBox(height: 8.0),
+            const Privacy(),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.hapticFeedback".t(context)),
+            const SizedBox(height: 8.0),
+            const Haptics(),
+          ],
+        ),
       ),
     );
   }
 
-  void updateLanguage() async {
+  void _updateLanguage() async {
     if (Platform.isIOS) {
       await LocalPreferences().localeOverride.remove().catchError((e) {
         log("[PreferencesPage] failed to remove locale override: $e");
@@ -195,7 +191,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
-  void updatePrimaryCurrency() async {
+  void _updatePrimaryCurrency() async {
     if (_currencyBusy) return;
 
     setState(() {
@@ -222,28 +218,28 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
-  void pushAndRefreshAfter(String path) async {
+  void _pushAndRefreshAfter(String path) async {
     await context.push(path);
 
     // Rebuild to update description text
     if (mounted) setState(() {});
   }
 
-  void openTransactionGeo() async {
+  void _openTransactionGeo() async {
     await context.push("/preferences/transactionGeo");
 
     // Rebuild to update description text
     if (mounted) setState(() {});
   }
 
-  void openPendingTransactionsPrefs() async {
+  void _openPendingTransactionsPrefs() async {
     await context.push("/preferences/pendingTransactions");
 
     // Rebuild to update description text
     if (mounted) setState(() {});
   }
 
-  void openTheme() async {
+  void _openTheme() async {
     await context.push("/preferences/theme");
 
     final bool themeChangesAppIcon =
@@ -255,5 +251,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
 
     // Rebuild to update description text
     if (mounted) setState(() {});
+  }
+
+  void reload() {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {});
   }
 }

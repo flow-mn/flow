@@ -237,11 +237,12 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
                 ),
-                CheckboxListTile.adaptive(
-                  value: _archived,
-                  onChanged: updateArchived,
-                  title: Text("account.archive".t(context)),
-                ),
+                if (!widget.isNewAccount)
+                  CheckboxListTile.adaptive(
+                    value: _archived,
+                    onChanged: updateArchived,
+                    title: Text("account.archive".t(context)),
+                  ),
                 const SizedBox(height: 8.0),
                 Frame(
                   child: InfoText(
