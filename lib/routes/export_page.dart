@@ -25,6 +25,8 @@ class _ExportPageState extends State<ExportPage> {
   dynamic error;
   bool done = false;
 
+  double progress = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -45,19 +47,23 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   Widget buildChild(BuildContext context) {
-    return switch ((done, filePath)) {
-      (true, String()) => ExportSuccess(
-          mode: widget.mode,
-          shareFn: () => showShareSheet(),
-          filePath: filePath!,
+    if (!done) {
+      return const Spinner.center();
+    }
+
+    if (filePath == null) {
+      return Center(
+        child: Text(
+          error?.toString() ?? "error.sync.exportFailed".t(context),
         ),
-      (false, _) => const Spinner.center(),
-      (true, null) => Center(
-          child: Text(
-            error?.toString() ?? "error.sync.exportFailed".t(context),
-          ),
-        )
-    };
+      );
+    }
+
+    return ExportSuccess(
+      mode: widget.mode,
+      shareFn: () => showShareSheet(),
+      filePath: filePath!,
+    );
   }
 
   Future<void> runExport() async {

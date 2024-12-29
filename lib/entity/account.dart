@@ -44,6 +44,7 @@ class Account implements EntityBase {
   String iconCode;
 
   bool excludeFromTotalBalance;
+  bool archived;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -86,6 +87,7 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     this.excludeFromTotalBalance = false,
+    this.archived = false,
     this.sortOrder = -1,
     DateTime? createdDate,
   })  : createdDate = createdDate ?? DateTime.now(),
@@ -96,7 +98,8 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     required this.uuid,
-  })  : excludeFromTotalBalance = false,
+  })  : archived = false,
+        excludeFromTotalBalance = false,
         sortOrder = -1,
         id = -1,
         createdDate = DateTime.now();

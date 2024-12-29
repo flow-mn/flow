@@ -28,8 +28,10 @@ class _AccountsTabState extends State<AccountsTab>
     with AutomaticKeepAliveClientMixin {
   bool _reordering = false;
 
-  QueryBuilder<Account> qb() =>
-      ObjectBox().box<Account>().query().order(Account_.sortOrder);
+  QueryBuilder<Account> qb() => ObjectBox()
+      .box<Account>()
+      .query(Account_.archived.isNull().or(Account_.archived.notEquals(true)))
+      .order(Account_.sortOrder);
 
   @override
   Widget build(BuildContext context) {

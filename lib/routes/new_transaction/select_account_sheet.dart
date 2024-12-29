@@ -32,7 +32,7 @@ class SelectAccountSheet extends StatelessWidget {
               alignment: MainAxisAlignment.end,
               children: [
                 Button(
-                  onTap: () => context.pop(false),
+                  onTap: () => context.pop(),
                   child: Text(
                     "general.cancel".t(context),
                   ),

@@ -73,6 +73,8 @@
     "account.name": "Account name",
     "account.balance": "Balance",
     "account.balance.upcomingDescription": "Upcoming transactions don't affect current balance",
+    "account.archive": "Deactivate",
+    "account.archive.description": "Deactivating an account hides it from everywhere except in reports. You can permanently delete the account with its associated transactions after deactivating.",
     "account.excludeFromTotalBalance": "Exclude from balance",
     "account.excludeFromTotalBalance.description": "If you check this option, this account's balance will not be included in the total balance. Useful for savings or non-personal accounts.",
     "account.updateBalance": "Update balance",
