@@ -6,6 +6,7 @@ import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
@@ -113,14 +114,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
         return Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
+            const Frame.standalone(
               child: GreetingsBar(),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: header,
-            ),
+            Frame(child: header),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => Expanded(
                   child: NoTransactions(isFilterModified: isFilterModified),

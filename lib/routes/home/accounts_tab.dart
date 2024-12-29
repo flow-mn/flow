@@ -10,6 +10,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/account_card_skeleton.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/home/account/no_accounts.dart";
 import "package:flow/widgets/home/home/account/total_balance.dart";
@@ -55,9 +56,8 @@ class _AccountsTabState extends State<AccountsTab>
                   0 => const NoAccounts(),
                   _ => Column(
                       children: [
-                        Padding(
-                          padding:
-                              const EdgeInsets.all(16.0).copyWith(bottom: 0.0),
+                        const SizedBox(height: 16.0),
+                        Frame(
                           child: buildHeader(context),
                         ),
                         ValueListenableBuilder(

@@ -19,6 +19,7 @@ import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flow/widgets/select_flow_icon_sheet.dart";
@@ -242,8 +243,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   title: Text("account.archive".t(context)),
                 ),
                 const SizedBox(height: 8.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                Frame(
                   child: InfoText(
                       child: Text("account.archive.description".t(context))),
                 ),

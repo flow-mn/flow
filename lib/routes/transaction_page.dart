@@ -27,6 +27,7 @@ import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
 import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
@@ -172,6 +173,9 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget build(BuildContext context) {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
+    final bool showPostTransactionBalance =
+        _selectedAccount != null && !isTransfer && !widget.isNewTransaction;
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -241,28 +245,35 @@ class _TransactionPageState extends State<TransactionPage> {
                       title: isTransfer
                           ? "transaction.transfer.from".t(context)
                           : "account".t(context),
-                      child: ListTile(
-                        leading: _selectedAccount == null
-                            ? null
-                            : FlowIcon(
-                                _selectedAccount!.icon,
-                                plated: true,
-                              ),
-                        title: Text(
-                          _selectedAccount?.name ??
-                              "transaction.edit.selectAccount".t(context),
-                        ),
-                        subtitle: _selectedAccount == null
-                            ? null
-                            : Text(_selectedAccount!.balance.formatMoney()),
-                        onTap: () => selectAccount(),
-                        trailing: _selectedAccount == null
-                            ? const Icon(Symbols.chevron_right)
-                            : null,
-                        focusNode: _selectAccountFocusNode,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: _selectedAccount == null
+                                ? null
+                                : FlowIcon(
+                                    _selectedAccount!.icon,
+                                    plated: true,
+                                  ),
+                            title: Text(
+                              _selectedAccount?.name ??
+                                  "transaction.edit.selectAccount".t(context),
+                            ),
+                            subtitle: showPostTransactionBalance
+                                ? MoneyText(
+                                    _selectedAccount!
+                                        .balanceAt(_transactionDate),
+                                  )
+                                : null,
+                            onTap: () => selectAccount(),
+                            trailing: _selectedAccount == null
+                                ? const Icon(Symbols.chevron_right)
+                                : null,
+                            focusNode: _selectAccountFocusNode,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     // To account
                     if (isTransfer)
                       Section(
@@ -309,13 +320,13 @@ class _TransactionPageState extends State<TransactionPage> {
                               : null,
                         ),
                       ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     DescriptionSection(
                       controller: _descriptionController,
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     Section(
                       title: "transaction.date".t(context),
                       child: ListTile(
@@ -327,7 +338,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ),
                     if (_geo != null || enableGeo) ...[
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 24.0),
                       Section(
                         title: "transaction.location".t(context),
                         child: Padding(
@@ -387,20 +398,20 @@ class _TransactionPageState extends State<TransactionPage> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
                       Text(
                         "${"transaction.createdDate".t(context)} ${_currentlyEditing.createdDate.format(payload: "LLL", forceLocal: true)}",
                         style: context.textTheme.bodyMedium?.semi(context),
                       ),
-                      const SizedBox(height: 36.0),
+                      const SizedBox(height: 32.0),
                       DeleteButton(
                         onTap: _deleteTransaction,
                         label: Text("transaction.delete".t(context)),
                       ),
                     ],
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                   ],
                 ),
               ),
