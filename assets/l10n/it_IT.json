@@ -73,6 +73,8 @@
     "account.name": "Nome del conto",
     "account.balance": "Saldo",
     "account.balance.upcomingDescription": "Le prossime transazioni non influiscono sul saldo attuale",
+    "account.archive": "Disattiva",
+    "account.archive.description": "La disattivazione di un account lo nasconde da ogni visualizzazione, ad eccezione dei report. Puoi eliminare definitivamente l'account con le relative transazioni dopo la disattivazione.",
     "account.excludeFromTotalBalance": "Escludi dal saldo totale",
     "account.excludeFromTotalBalance.description": "Se selezioni questa opzione, il saldo di questo conto non sarà incluso nel saldo totale. Utile per risparmi o conti non personali.",
     "account.updateBalance": "Aggiorna saldo",

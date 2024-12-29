@@ -1,4 +1,3 @@
-import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
@@ -16,14 +15,19 @@ class TotalBalance extends StatefulWidget {
   State<TotalBalance> createState() => _TotalBalanceState();
 }
 
-class _TotalBalanceState extends State<TotalBalance> {
+class _TotalBalanceState extends State<TotalBalance>
+    with AutomaticKeepAliveClientMixin {
   bool initiallyAbbreviated = true;
+
+  late Future<Money?> _getGrandTotalFuture;
 
   @override
   void initState() {
     super.initState();
     LocalPreferences().primaryCurrency.addListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.addListener(_refresh);
+
+    _getGrandTotalFuture = ObjectBox().getGrandTotal();
 
     initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
   }
@@ -37,13 +41,13 @@ class _TotalBalanceState extends State<TotalBalance> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final Money primaryCurrencyTotalBalance =
         ObjectBox().getPrimaryCurrencyGrandTotal();
-    final ExchangeRates? rates =
-        ExchangeRatesService().getPrimaryCurrencyRates();
 
     return FutureBuilder<Money?>(
-      future: rates == null ? null : ObjectBox().getGrandTotal(),
+      future: _getGrandTotalFuture,
       builder: (context, snapshot) {
         final Money value =
             snapshot.hasData ? snapshot.data! : primaryCurrencyTotalBalance;
@@ -76,6 +80,11 @@ class _TotalBalanceState extends State<TotalBalance> {
   }
 
   void _refresh() {
-    setState(() {});
+    setState(() {
+      _getGrandTotalFuture = ObjectBox().getGrandTotal();
+    });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

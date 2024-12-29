@@ -12,6 +12,7 @@ Account _$AccountFromJson(Map<String, dynamic> json) => Account(
       iconCode: json['iconCode'] as String,
       excludeFromTotalBalance:
           json['excludeFromTotalBalance'] as bool? ?? false,
+      archived: json['archived'] as bool? ?? false,
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? -1,
       createdDate: _$JsonConverterFromJson<String, DateTime>(
           json['createdDate'], const UTCDateTimeConverter().fromJson),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'sortOrder': instance.sortOrder,
       'iconCode': instance.iconCode,
       'excludeFromTotalBalance': instance.excludeFromTotalBalance,
+      'archived': instance.archived,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

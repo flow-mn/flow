@@ -57,7 +57,7 @@ Future<String> generateBackupJSONContentV2() async {
   return jsonEncode(obj.toJson());
 }
 
-Future<File> generateBackupZipV2() async {
+Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
   final String jsonFileName = generateBackupFileName("json");
   final String zipFileName = generateBackupFileName("zip");
 
@@ -97,7 +97,8 @@ Future<File> generateBackupZipV2() async {
   final File result = File(path.join(Directory.systemTemp.path, zipFileName));
 
   final ZipFileEncoder encoder = ZipFileEncoder();
-  await encoder.zipDirectory(tempDir, filename: result.path);
+  await encoder.zipDirectory(tempDir,
+      filename: result.path, onProgress: onProgress);
 
   return result;
 }

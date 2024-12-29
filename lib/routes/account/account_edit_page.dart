@@ -19,6 +19,7 @@ import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flow/widgets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
@@ -56,6 +57,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
   late final Account? _currentlyEditing;
 
   bool _editingName = false;
+  bool _archived = false;
 
   String get iconCodeOrError =>
       _iconData?.toString() ??
@@ -82,6 +84,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
       _iconData = _currentlyEditing?.icon;
       _excludeFromTotalBalance =
           _currentlyEditing?.excludeFromTotalBalance ?? false;
+      _archived = _currentlyEditing?.archived ?? false;
     }
 
     _editNameFocusNode.addListener(() {
@@ -233,6 +236,17 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
                 ),
+                CheckboxListTile.adaptive(
+                  value: _archived,
+                  onChanged: updateArchived,
+                  title: Text("account.archive".t(context)),
+                ),
+                const SizedBox(height: 8.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: InfoText(
+                      child: Text("account.archive.description".t(context))),
+                ),
                 if (widget.isNewAccount)
                   ListTile(
                     title: Text("currency".t(context)),
@@ -242,7 +256,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     ),
                     onTap: selectCurrency,
                   ),
-                if (_currentlyEditing != null) ...[
+                if (_currentlyEditing != null && _archived) ...[
                   const SizedBox(height: 80.0),
                   DeleteButton(
                     onTap: _deleteAccount,
@@ -281,6 +295,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
     }
   }
 
+  void updateArchived(bool? value) {
+    if (value != null) {
+      setState(() {
+        _archived = value;
+      });
+    }
+  }
+
   void selectCurrency() async {
     final result = await showModalBottomSheet<String>(
       context: context,
@@ -301,6 +323,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     _currentlyEditing.iconCode = iconCodeOrError;
     _currentlyEditing.excludeFromTotalBalance = _excludeFromTotalBalance;
+    _currentlyEditing.archived = _archived;
 
     if (_balance != _currentlyEditing.balance.amount) {
       _currentlyEditing.updateBalanceAndSave(
@@ -332,9 +355,10 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final account = Account(
       name: trimmed,
-      iconCode: iconCodeOrError,
       currency: _currency,
+      archived: _archived,
       excludeFromTotalBalance: _excludeFromTotalBalance,
+      iconCode: iconCodeOrError,
       sortOrder: sortOrder,
     );
 

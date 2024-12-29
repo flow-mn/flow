@@ -50,9 +50,12 @@ extension MainActions on ObjectBox {
   Future<Money?> getGrandTotal() async {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final Query<Account> accountsQuery = box<Account>()
-        .query(Account_.excludeFromTotalBalance.notEquals(true))
-        .build();
+    final Condition<Account> query = Account_.excludeFromTotalBalance
+        .isNull()
+        .or(Account_.excludeFromTotalBalance.notEquals(true))
+        .and(Account_.archived.isNull().or(Account_.archived.notEquals(true)));
+
+    final Query<Account> accountsQuery = box<Account>().query(query).build();
 
     final List<Account> accounts = accountsQuery.find();
 
@@ -85,6 +88,8 @@ extension MainActions on ObjectBox {
 
   List<Account> getAccounts([bool sortByFrecency = true]) {
     final List<Account> accounts = box<Account>().getAll();
+
+    accounts.removeWhere((account) => account.archived == true);
 
     if (sortByFrecency) {
       final FrecencyGroup frecencyGroup = FrecencyGroup(accounts
