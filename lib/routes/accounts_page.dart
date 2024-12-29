@@ -35,7 +35,7 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   @override
-  dispose() {
+  void dispose() {
     LocalPreferences()
         .excludeTransferFromFlow
         .valueNotifier

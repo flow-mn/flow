@@ -4,8 +4,10 @@
 
 ### New features
 
-* Now you can deactivate accounts. Deactivated accounts will no longer show up in account selection
-sheets, and the accounts tab. It will still show up for older transactions, and reports.
+* Now you can deactivate accounts.
+  * Deactivated accounts will no longer show up in account selection
+  sheets, and the accounts tab. It will still show up for older transactions, and reports.
+  * You can find inactive accounts in Profile tab > Accounts
 
 ### Changes and improvements
 
