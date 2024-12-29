@@ -4,12 +4,14 @@
 
 ### New features
 
-* N/A
+* Now you can deactivate accounts. Deactivated accounts will no longer show up in account selection
+sheets, and the accounts tab. It will still show up for older transactions, and reports.
 
 ### Changes
 
 * [BREAKING] Profile pictures are now stored elsewhere. Auto-migration will be in place for few builds.
 Please reapply your profile picture if you need to.
+* Now you are unable to permanently delete an account until you deactivate it.
 
 ### Fixes and enhancements
 
