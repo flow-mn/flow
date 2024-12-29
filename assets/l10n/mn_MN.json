@@ -75,6 +75,7 @@
     "account.balance.upcomingDescription": "Төлөвлөсөн гүйлгээнүүд одоогийн дансны үлдэгдэлд нөлөөлөхгүй",
     "account.archive": "Идэвхгүйжүүлэх",
     "account.archive.description": "Идэвхгүй болгосон данс тайлангаас бусад газар гарч ирэхгүй. Хэрэв данс болон холбогдох гүйлгээнүүдийг устгахыг хүсвэл эхлээд дансыг идэвхгүй болгох шаардлагатай.",
+    "account.archived": "Идэвхгүй",
     "account.excludeFromTotalBalance": "Нийт үлдэгдэлд тооцохгүй",
     "account.excludeFromTotalBalance.description": "Энэ сонголтыг идэвхжүүлбэл энэ дансны үлдэгдэл нийт үлдэгдэлд бодогдохгүй. Хадгаламж, хувийн бус данс гэх мэт зүйлсд тохиромжтой.",
     "account.updateBalance": "Үлдэгдэл өөрчлөх",
@@ -89,6 +90,7 @@
     "account.noAccounts": "Танд үүсгэсэн данс алга байна!",
     "account.thisMonth": "Энэ сар",
     "account.postTransactionBalance": "Гүйлгээний дараах үлдэгдэл",
+    "accounts": "Данснууд",
 
     "transaction": "Гүйлгээ",
     "transaction.new": "Гүйлгээ нэмэх",

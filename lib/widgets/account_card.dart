@@ -72,7 +72,10 @@ class AccountCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        account.name,
+                        account.name +
+                            (account.archived
+                                ? " (${"account.archived".t(context)})"
+                                : ""),
                         style: context.textTheme.titleSmall,
                       ),
                       MoneyText(
@@ -83,41 +86,43 @@ class AccountCard extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(height: 24.0),
-              Text("account.thisMonth".t(context),
-                  style: context.textTheme.bodyLarge),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      TransactionType.income.localizedNameContext(context),
-                      style: context.textTheme.labelSmall?.semi(context),
+              if (!account.archived) ...[
+                const SizedBox(height: 24.0),
+                Text("account.thisMonth".t(context),
+                    style: context.textTheme.bodyLarge),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        TransactionType.income.localizedNameContext(context),
+                        style: context.textTheme.labelSmall?.semi(context),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      TransactionType.expense.localizedNameContext(context),
-                      style: context.textTheme.labelSmall?.semi(context),
+                    Expanded(
+                      child: Text(
+                        TransactionType.expense.localizedNameContext(context),
+                        style: context.textTheme.labelSmall?.semi(context),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: MoneyText(
-                      flow.getIncomeByCurrency(account.currency),
-                      style: context.textTheme.bodyLarge,
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: MoneyText(
+                        flow.getIncomeByCurrency(account.currency),
+                        style: context.textTheme.bodyLarge,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: MoneyText(
-                      flow.getExpenseByCurrency(account.currency),
-                      style: context.textTheme.bodyLarge,
+                    Expanded(
+                      child: MoneyText(
+                        flow.getExpenseByCurrency(account.currency),
+                        style: context.textTheme.bodyLarge,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
