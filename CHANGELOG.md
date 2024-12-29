@@ -19,6 +19,7 @@ Please reapply your profile picture if you need to.
 
 ### Fixes
 
+* Fixed home page wasn't scrolling to the top when clicking on iOS app bar
 * Now you can do ZIP backups that include account/profile photos, fixes [#173](https://github.com/flow-mn/flow/issues/173)
   and [#204](https://github.com/flow-mn/flow/issues/204)
 * Transfers no longer incorrectly ask confirmation when nothing has changed on transaction page

@@ -18,6 +18,8 @@ class DefaultTransactionsFilterHead extends StatefulWidget {
   final TransactionFilter current;
   final TransactionFilter defaultFilter;
 
+  final EdgeInsets padding;
+
   final void Function(TransactionFilter) onChanged;
 
   const DefaultTransactionsFilterHead({
@@ -25,6 +27,7 @@ class DefaultTransactionsFilterHead extends StatefulWidget {
     required this.current,
     required this.onChanged,
     this.defaultFilter = TransactionFilter.empty,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
   });
 
   @override
@@ -58,38 +61,42 @@ class _DefaultTransactionsFilterHeadState
 
   @override
   Widget build(BuildContext context) {
-    return TransactionFilterHead(filterChips: [
-      TransactionFilterChip<TransactionSearchData>(
-        translationKey: "transactions.query.filter.keyword",
-        avatar: const Icon(Symbols.search_rounded),
-        onSelect: onSearch,
-        defaultValue: widget.defaultFilter.searchData,
-        value: _filter.searchData,
-        highlightOverride: _filter.searchData.normalizedKeyword != null,
-      ),
-      TransactionFilterChip<TimeRange>(
-        translationKey: "transactions.query.filter.timeRange",
-        avatar: const Icon(Symbols.history_rounded),
-        onSelect: onSelectRange,
-        defaultValue: widget.defaultFilter.range,
-        value: _filter.range,
-      ),
-      TransactionFilterChip<List<Account>>(
-        translationKey: "transactions.query.filter.accounts",
-        avatar: const Icon(Symbols.wallet_rounded),
-        onSelect: onSelectAccounts,
-        defaultValue: widget.defaultFilter.accounts,
-        value: _filter.accounts?.isNotEmpty == true ? _filter.accounts : null,
-      ),
-      TransactionFilterChip<List<Category>>(
-        translationKey: "transactions.query.filter.categories",
-        avatar: const Icon(Symbols.category_rounded),
-        onSelect: onSelectCategories,
-        defaultValue: widget.defaultFilter.categories,
-        value:
-            _filter.categories?.isNotEmpty == true ? _filter.categories : null,
-      ),
-    ]);
+    return TransactionFilterHead(
+      padding: widget.padding,
+      filterChips: [
+        TransactionFilterChip<TransactionSearchData>(
+          translationKey: "transactions.query.filter.keyword",
+          avatar: const Icon(Symbols.search_rounded),
+          onSelect: onSearch,
+          defaultValue: widget.defaultFilter.searchData,
+          value: _filter.searchData,
+          highlightOverride: _filter.searchData.normalizedKeyword != null,
+        ),
+        TransactionFilterChip<TimeRange>(
+          translationKey: "transactions.query.filter.timeRange",
+          avatar: const Icon(Symbols.history_rounded),
+          onSelect: onSelectRange,
+          defaultValue: widget.defaultFilter.range,
+          value: _filter.range,
+        ),
+        TransactionFilterChip<List<Account>>(
+          translationKey: "transactions.query.filter.accounts",
+          avatar: const Icon(Symbols.wallet_rounded),
+          onSelect: onSelectAccounts,
+          defaultValue: widget.defaultFilter.accounts,
+          value: _filter.accounts?.isNotEmpty == true ? _filter.accounts : null,
+        ),
+        TransactionFilterChip<List<Category>>(
+          translationKey: "transactions.query.filter.categories",
+          avatar: const Icon(Symbols.category_rounded),
+          onSelect: onSelectCategories,
+          defaultValue: widget.defaultFilter.categories,
+          value: _filter.categories?.isNotEmpty == true
+              ? _filter.categories
+              : null,
+        ),
+      ],
+    );
   }
 
   void onSearch() async {
