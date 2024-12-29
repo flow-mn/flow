@@ -12,6 +12,12 @@ class Frame extends StatelessWidget {
     required this.child,
   });
 
+  const Frame.standalone({
+    super.key,
+    required this.child,
+  })  : pad = true,
+        padding = const EdgeInsets.all(16.0);
+
   @override
   Widget build(BuildContext context) {
     return Padding(

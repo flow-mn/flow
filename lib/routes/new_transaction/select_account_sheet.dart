@@ -4,6 +4,7 @@ import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -56,6 +57,13 @@ class SelectAccountSheet extends StatelessWidget {
             ...accounts.map(
               (account) => ListTile(
                 title: Text(account.name),
+                subtitle: MoneyText(
+                  account.balance,
+                  tapToToggleAbbreviation: true,
+                  initiallyAbbreviated: false,
+                  autoSize: true,
+                  overrideObscure: false,
+                ),
                 leading: FlowIcon(account.icon),
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 onTap: () => context.pop(account),
