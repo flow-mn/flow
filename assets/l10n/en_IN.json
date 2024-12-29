@@ -68,6 +68,11 @@
     "setup.categories.preset.utils": "Utils",
     "setup.categories.preset.taxes": "Taxes",
     "setup.categories.preset.paychecks": "Paycheck",
+    "setup.onboarding": "Let's start",
+    "setup.onboarding.freshStart": "Start fresh",
+    "setup.onboarding.freshStart.description": "I'm using Flow for the first time",
+    "setup.onboarding.importExisting": "Import from a backup",
+    "setup.onboarding.importExisting.description": "Restore data from a previous Flow backup",
 
     "account": "Account",
     "account.name": "Account name",

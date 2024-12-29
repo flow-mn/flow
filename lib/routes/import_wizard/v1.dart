@@ -9,8 +9,13 @@ import "package:flutter/material.dart";
 
 class ImportWizardV1Page extends StatefulWidget {
   final ImportV1 importer;
+  final bool setupMode;
 
-  const ImportWizardV1Page({super.key, required this.importer});
+  const ImportWizardV1Page({
+    super.key,
+    required this.importer,
+    this.setupMode = false,
+  });
 
   @override
   State<ImportWizardV1Page> createState() => _ImportWizardV1PageState();

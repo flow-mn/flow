@@ -56,7 +56,6 @@ class _HomePageState extends State<HomePage>
       if (LocalPreferences().completedInitialSetup.get()) return;
 
       context.pushReplacement("/setup");
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
     });
   }
 

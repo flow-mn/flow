@@ -26,6 +26,7 @@ import "package:flow/routes/profile_page.dart";
 import "package:flow/routes/setup/setup_accounts_page.dart";
 import "package:flow/routes/setup/setup_categories_page.dart";
 import "package:flow/routes/setup/setup_currency_page.dart";
+import "package:flow/routes/setup/setup_onboarding_page.dart";
 import "package:flow/routes/setup/setup_profile_page.dart";
 import "package:flow/routes/setup/setup_profile_picture_page.dart";
 import "package:flow/routes/setup_page.dart";
@@ -242,7 +243,10 @@ final router = GoRouter(
       path: "/import/wizard/v1",
       builder: (context, state) {
         if (state.extra case ImportV1 importV1) {
-          return ImportWizardV1Page(importer: importV1);
+          return ImportWizardV1Page(
+            importer: importV1,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
         }
 
         return ErrorPage(
@@ -254,7 +258,10 @@ final router = GoRouter(
       path: "/import/wizard/v2",
       builder: (context, state) {
         if (state.extra case ImportV2 importV2) {
-          return ImportWizardV2Page(importer: importV2);
+          return ImportWizardV2Page(
+            importer: importV2,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
         }
 
         return ErrorPage(
@@ -275,12 +282,18 @@ final router = GoRouter(
     ),
     GoRoute(
       path: "/import",
-      builder: (context, state) => const ImportPage(),
+      builder: (context, state) => ImportPage(
+        setupMode: state.uri.queryParameters["setupMode"] == "true",
+      ),
     ),
     GoRoute(
       path: "/setup",
       builder: (context, state) => const SetupPage(),
       routes: [
+        GoRoute(
+          path: "choose",
+          builder: (context, state) => const SetupOnboardingPage(),
+        ),
         GoRoute(
           path: "profile",
           builder: (context, state) => const SetupProfilePage(),
