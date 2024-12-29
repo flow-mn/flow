@@ -21,6 +21,8 @@ Please reapply your profile picture if you need to.
 
 * Now you can do ZIP backups that include account/profile photos, fixes [#173](https://github.com/flow-mn/flow/issues/173)
   and [#204](https://github.com/flow-mn/flow/issues/204)
+* Transfers no longer incorrectly ask confirmation when nothing has changed on transaction page
+* With updating flutter, fix of [#82](https://github.com/flow-mn/flow/issues/82) came
 
 ## Beta 0.9.0
 
