@@ -500,6 +500,12 @@ extension TransactionActions on Transaction {
   }
 }
 
+extension AccountListActions on Iterable<Account> {
+  Iterable<Account> get actives => where((account) => account.archived != true);
+  Iterable<Account> get inactives =>
+      where((account) => account.archived == true);
+}
+
 extension TransactionListActions on Iterable<Transaction> {
   Iterable<Transaction> get nonTransfers =>
       where((transaction) => !transaction.isTransfer);

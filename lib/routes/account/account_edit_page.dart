@@ -396,6 +396,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     if (_currentlyEditing != null) {
       return _currentlyEditing.name != _nameTextController.text.trim() ||
           _currentlyEditing.iconCode != iconCodeOrError ||
+          _currentlyEditing.archived != _archived ||
           _currentlyEditing.currency != _currency ||
           _currentlyEditing.excludeFromTotalBalance !=
               _excludeFromTotalBalance ||

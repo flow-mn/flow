@@ -2,6 +2,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/account/account_edit_page.dart";
 import "package:flow/routes/account_page.dart";
+import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
@@ -141,6 +142,10 @@ final router = GoRouter(
     GoRoute(
       path: "/categories",
       builder: (context, state) => const CategoriesPage(),
+    ),
+    GoRoute(
+      path: "/accounts",
+      builder: (context, state) => const AccountsPage(),
     ),
     GoRoute(
       path: "/preferences",

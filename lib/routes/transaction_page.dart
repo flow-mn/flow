@@ -287,10 +287,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                           title: Text(_selectedAccountTransferTo?.name ??
                               "transaction.edit.selectAccount".t(context)),
-                          subtitle: _selectedAccountTransferTo == null
-                              ? null
-                              : Text(_selectedAccountTransferTo!.balance
-                                  .formatMoney()),
                           onTap: () => selectAccountTransferTo(),
                           trailing: _selectedAccountTransferTo == null
                               ? const Icon(Symbols.chevron_right)
@@ -783,14 +779,18 @@ class _TransactionPageState extends State<TransactionPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       final bool transferToAccountDifferent = _currentlyEditing.isTransfer &&
-          _currentlyEditing.extensions.transfer?.fromAccountUuid !=
+          _currentlyEditing.extensions.transfer?.toAccountUuid !=
               _selectedAccountTransferTo?.uuid;
 
       if (transferToAccountDifferent) {
         return true;
       }
 
-      return _currentlyEditing.amount != _amount ||
+      final bool ammountChanged = isTransfer
+          ? _currentlyEditing.amount.abs() != _amount
+          : _currentlyEditing.amount != _amount;
+
+      return ammountChanged ||
           _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
           (_currentlyEditing.description ?? "") !=

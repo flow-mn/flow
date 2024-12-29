@@ -43,6 +43,11 @@ class _ProfileTabState extends State<ProfileTab> {
           const Center(child: ProfileCard()),
           const SizedBox(height: 24.0),
           ListTile(
+            title: Text("accounts".t(context)),
+            leading: const Icon(Symbols.wallet_rounded),
+            onTap: () => context.push("/accounts"),
+          ),
+          ListTile(
             title: Text("categories".t(context)),
             leading: const Icon(Symbols.category_rounded),
             onTap: () => context.push("/categories"),
