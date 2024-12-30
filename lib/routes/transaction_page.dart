@@ -515,6 +515,7 @@ class _TransactionPageState extends State<TransactionPage> {
               titleOverride: isTransfer
                   ? "transaction.transfer.from.select".t(context)
                   : null,
+              showBalance: true,
             ),
             isScrollControlled: true,
           );
@@ -550,6 +551,7 @@ class _TransactionPageState extends State<TransactionPage> {
               accounts: toAccounts,
               currentlySelectedAccountId: _selectedAccountTransferTo?.id,
               titleOverride: "transaction.transfer.to.select".t(context),
+              showBalance: true,
             ),
             isScrollControlled: true,
           );
