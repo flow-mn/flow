@@ -237,7 +237,11 @@ final router = GoRouter(
     ),
     GoRoute(
       path: "/import",
-      builder: (context, state) => const ImportPage(),
+      builder: (context, state) {
+        return ImportPage(
+          setupMode: state.uri.queryParameters["setupMode"] == "true",
+        );
+      },
     ),
     GoRoute(
       path: "/import/wizard/v1",

@@ -53,7 +53,7 @@ class SetupOnboardingPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               ActionCard(
-                onTap: () => context.push("/import"),
+                onTap: () => context.push("/import?setupMode=true"),
                 builder: (context) => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24.0,
