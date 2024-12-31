@@ -16,6 +16,7 @@ Please reapply your profile picture if you need to.
 * Now you are unable to permanently delete an account until you deactivate it.
 * Now account in transaction page shows post-transcation balance instead of current balance
 * Account selection sheet now shows current balance for each account
+* Now you can import an old backup at the setup
 
 ### Fixes
 
