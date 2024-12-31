@@ -151,6 +151,8 @@
     "categories": "Categorie",
     "categories.noCategories": "Non hai nessuna categoria",
 
+    "profile.name": "Nome",
+
     "currency": "Valuta",
     "currency.searchHint": "Cerca... (paese, valuta, codice)",
 
@@ -196,7 +198,6 @@
     "preferences.pendingTransactions.updateDateUponConfirmation": "Aggiorna data alla conferma",
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Disattiva per mantenere la data di transazione originale",
     "preferences.privacyMode": "Modalità privacy",
-    "preferences.privacyMode.description": "Дүнг одолж харуулна. Нүүр хуудасны баруун дээр байрлах нүдэн дээр дарж асаах/унтраах боломжтой",
     "preferences.privacyMode.enableAtStartup": "Attiva all'avvio",
     "preferences.moneyFormatting": "Formato valuta",
     "preferences.moneyFormatting.preferFull": "Preferisci importo completo",

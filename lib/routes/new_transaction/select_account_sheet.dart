@@ -16,11 +16,14 @@ class SelectAccountSheet extends StatelessWidget {
 
   final String? titleOverride;
 
+  final bool showBalance;
+
   const SelectAccountSheet({
     super.key,
     required this.accounts,
     this.currentlySelectedAccountId,
     this.titleOverride,
+    this.showBalance = false,
   });
 
   @override
@@ -57,13 +60,14 @@ class SelectAccountSheet extends StatelessWidget {
             ...accounts.map(
               (account) => ListTile(
                 title: Text(account.name),
-                subtitle: MoneyText(
-                  account.balance,
-                  tapToToggleAbbreviation: true,
-                  initiallyAbbreviated: false,
-                  autoSize: true,
-                  overrideObscure: false,
-                ),
+                subtitle: showBalance
+                    ? MoneyText(
+                        account.balance,
+                        initiallyAbbreviated: false,
+                        autoSize: true,
+                        overrideObscure: false,
+                      )
+                    : null,
                 leading: FlowIcon(account.icon),
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 onTap: () => context.pop(account),

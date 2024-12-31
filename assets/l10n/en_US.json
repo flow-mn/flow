@@ -151,6 +151,8 @@
     "categories": "Categories",
     "categories.noCategories": "You don't have any categories",
 
+    "profile.name": "Name",
+
     "currency": "Currency",
     "currency.searchHint": "Search... (country, currency, code)",
 
@@ -196,7 +198,6 @@
     "preferences.pendingTransactions.updateDateUponConfirmation": "Update date on confirm",
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Disable to retain original transaction date",
     "preferences.privacyMode": "Privacy mode",
-    "preferences.privacyMode.description": "Obscures amounts. Toggle with the eye icon at the upper right corner of home screen",
     "preferences.privacyMode.enableAtStartup": "Enable at startup",
     "preferences.moneyFormatting": "Money formatting",
     "preferences.moneyFormatting.preferFull": "Prefer full amounts",

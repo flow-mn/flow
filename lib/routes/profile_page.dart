@@ -3,6 +3,7 @@ import "dart:io";
 import "dart:ui" as ui;
 
 import "package:flow/entity/profile.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/utils.dart";
@@ -90,8 +91,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         controller: _nameController,
                         onSubmitted: (_) => save(),
                         maxLength: Profile.maxNameLength,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           counter: SizedBox.shrink(),
+                          labelText: "profile.name".t(context),
                         ),
                       ),
                     ],
