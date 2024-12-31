@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:developer";
 
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
@@ -56,7 +57,18 @@ class _HomePageState extends State<HomePage>
       if (LocalPreferences().completedInitialSetup.get()) return;
 
       context.pushReplacement("/setup");
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
+
+      unawaited(
+        LocalPreferences().completedInitialSetup.set(true).catchError(
+          (error) {
+            log(
+              "Failed to set LocalPreferences().completedInitialSetup -> true",
+              error: error,
+            );
+            return false;
+          },
+        ),
+      );
     });
   }
 

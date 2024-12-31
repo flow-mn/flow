@@ -5,7 +5,6 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
-import "package:flow/sync/import.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -43,6 +42,11 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24.0),
           const Center(child: ProfileCard()),
           const SizedBox(height: 24.0),
+          ListTile(
+            title: Text("accounts".t(context)),
+            leading: const Icon(Symbols.wallet_rounded),
+            onTap: () => context.push("/accounts"),
+          ),
           ListTile(
             title: Text("categories".t(context)),
             leading: const Icon(Symbols.category_rounded),
@@ -245,20 +249,5 @@ class _ProfileTabState extends State<ProfileTab> {
 
   void clearExchangeRatesCache() {
     ExchangeRatesService().debugClearCache();
-  }
-
-  void import() async {
-    try {
-      await importBackupV1();
-      if (mounted) {
-        context.showToast(
-          text: "sync.import.successful".t(context),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        context.showErrorToast(error: e);
-      }
-    }
   }
 }

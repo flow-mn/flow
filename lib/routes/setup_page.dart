@@ -102,7 +102,7 @@ class _SetupPageState extends State<SetupPage> {
         curve: Curves.easeOut,
       );
     } else {
-      context.push("/setup/profile");
+      context.push("/setup/choose");
     }
   }
 }

@@ -24,6 +24,7 @@ import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
@@ -118,6 +119,9 @@ class FlowState extends State<Flow> {
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
+    } else {
+      // To migrate profile image path from old to new (since 0.10.0)
+      nonImportantMigrateProfileImagePath();
     }
   }
 

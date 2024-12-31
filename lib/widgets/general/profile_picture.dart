@@ -6,7 +6,6 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
-
 import "package:path/path.dart" as path;
 
 class ProfilePicture extends StatefulWidget {
@@ -39,7 +38,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
   Widget build(BuildContext context) {
     final file = widget.filePath == null
         ? null
-        : File(path.join(ObjectBox.appDataDirectory, widget.filePath!));
+        : File(path.join(ObjectBox.imagesDirectory, widget.filePath!));
 
     final child = ClipOval(
       child: Container(

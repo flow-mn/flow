@@ -6,12 +6,13 @@ import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
+import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
 import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
-import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
@@ -111,30 +112,35 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           },
         );
 
-        return Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: GreetingsBar(),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: header,
+        return CustomScrollView(
+          primary: true,
+          slivers: [
+            PinnedHeaderSliver(
+              child: Column(
+                children: [
+                  const Frame.standalone(
+                    withSurface: true,
+                    child: GreetingsBar(),
+                  ),
+                  header,
+                ],
+              ),
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
-              (0, true) => Expanded(
+              (0, true) => SliverFillRemaining(
                   child: NoTransactions(isFilterModified: isFilterModified),
                 ),
-              (_, true) => Expanded(
-                  child:
-                      buildGroupedList(context, now, transactions ?? [], rates),
-                ),
-              (_, false) => const Expanded(
+              (_, true) =>
+                buildGroupedList(context, now, transactions ?? [], rates),
+              (_, false) => const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator.adaptive(),
                   ),
                 ),
-            }
+            },
+            SliverToBoxAdapter(
+              child: const SizedBox(height: 96.0),
+            ),
           ],
         );
       },
@@ -173,6 +179,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         currentFilter.accounts?.isNotEmpty != true;
 
     return GroupedTransactionList(
+      sliver: true,
       header: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

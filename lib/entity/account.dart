@@ -44,6 +44,7 @@ class Account implements EntityBase {
   String iconCode;
 
   bool excludeFromTotalBalance;
+  bool archived;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -69,14 +70,15 @@ class Account implements EntityBase {
       );
 
   Money balanceAt(DateTime anchor) => Money(
-        transactions
-            .where((element) =>
-                element.transactionDate.isPastAnchored(anchor) &&
-                element.isPending != true)
-            .fold<double>(
-              0,
-              (previousValue, element) => previousValue + element.amount,
-            ),
+        transactions.where((element) {
+          if (element.isPending == true) return false;
+          if (element.transactionDate == anchor) return true;
+
+          return element.transactionDate.isPastAnchored(anchor);
+        }).fold<double>(
+          0,
+          (previousValue, element) => previousValue + element.amount,
+        ),
         currency,
       );
 
@@ -86,6 +88,7 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     this.excludeFromTotalBalance = false,
+    this.archived = false,
     this.sortOrder = -1,
     DateTime? createdDate,
   })  : createdDate = createdDate ?? DateTime.now(),
@@ -96,7 +99,8 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     required this.uuid,
-  })  : excludeFromTotalBalance = false,
+  })  : archived = false,
+        excludeFromTotalBalance = false,
         sortOrder = -1,
         id = -1,
         createdDate = DateTime.now();
