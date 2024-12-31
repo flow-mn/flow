@@ -1,6 +1,32 @@
 # Changelog
 
-## Beta next (0.9.0)
+## Beta 0.10.0
+
+### New features
+
+* Now you can deactivate accounts.
+  * Deactivated accounts will no longer show up in account selection
+  sheets, and the accounts tab. It will still show up for older transactions, and reports.
+  * You can find inactive accounts in Profile tab > Accounts
+
+### Changes and improvements
+
+* [BREAKING] Profile pictures are now stored elsewhere. Auto-migration will be in place for few builds.
+Please reapply your profile picture if you need to.
+* Now you are unable to permanently delete an account until you deactivate it.
+* Now account in transaction page shows post-transcation balance instead of current balance
+* Account selection sheet now shows current balance for each account
+* Now you can import an old backup at the setup
+
+### Fixes
+
+* Fixed home page wasn't scrolling to the top when clicking on iOS app bar
+* Now you can do ZIP backups that include account/profile photos, fixes [#173](https://github.com/flow-mn/flow/issues/173)
+  and [#204](https://github.com/flow-mn/flow/issues/204)
+* Transfers no longer incorrectly ask confirmation when nothing has changed on transaction page
+* With updating flutter, fix of [#82](https://github.com/flow-mn/flow/issues/82) came
+
+## Beta 0.9.0
 
 ### New features
 

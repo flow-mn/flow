@@ -2,6 +2,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/account/account_edit_page.dart";
 import "package:flow/routes/account_page.dart";
+import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
@@ -12,12 +13,11 @@ import "package:flow/routes/export_page.dart";
 import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/v1.dart";
+import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
-import "package:flow/routes/preferences/haptics_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
 import "package:flow/routes/preferences/pending_transactions.dart";
-import "package:flow/routes/preferences/privacy_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
@@ -26,6 +26,7 @@ import "package:flow/routes/profile_page.dart";
 import "package:flow/routes/setup/setup_accounts_page.dart";
 import "package:flow/routes/setup/setup_categories_page.dart";
 import "package:flow/routes/setup/setup_currency_page.dart";
+import "package:flow/routes/setup/setup_onboarding_page.dart";
 import "package:flow/routes/setup/setup_profile_page.dart";
 import "package:flow/routes/setup/setup_profile_picture_page.dart";
 import "package:flow/routes/setup_page.dart";
@@ -36,6 +37,7 @@ import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
 import "package:flow/sync/import/import_v1.dart";
+import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -141,6 +143,10 @@ final router = GoRouter(
       builder: (context, state) => const CategoriesPage(),
     ),
     GoRoute(
+      path: "/accounts",
+      builder: (context, state) => const AccountsPage(),
+    ),
+    GoRoute(
       path: "/preferences",
       builder: (context, state) => const PreferencesPage(),
       routes: [
@@ -170,16 +176,8 @@ final router = GoRouter(
           builder: (context, state) => const ThemePreferencesPage(),
         ),
         GoRoute(
-          path: "privacy",
-          builder: (context, state) => const PrivacyPreferencesPage(),
-        ),
-        GoRoute(
           path: "moneyFormatting",
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
-        ),
-        GoRoute(
-          path: "haptics",
-          builder: (context, state) => const HapticsPreferencesPage(),
         ),
       ],
     ),
@@ -239,13 +237,35 @@ final router = GoRouter(
     ),
     GoRoute(
       path: "/import",
-      builder: (context, state) => const ImportPage(),
+      builder: (context, state) {
+        return ImportPage(
+          setupMode: state.uri.queryParameters["setupMode"] == "true",
+        );
+      },
     ),
     GoRoute(
       path: "/import/wizard/v1",
       builder: (context, state) {
         if (state.extra case ImportV1 importV1) {
-          return ImportWizardV1Page(importer: importV1);
+          return ImportWizardV1Page(
+            importer: importV1,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
+        }
+
+        return ErrorPage(
+          error: "error.sync.invalidBackupFile".t(context),
+        );
+      },
+    ),
+    GoRoute(
+      path: "/import/wizard/v2",
+      builder: (context, state) {
+        if (state.extra case ImportV2 importV2) {
+          return ImportWizardV2Page(
+            importer: importV2,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
         }
 
         return ErrorPage(
@@ -260,19 +280,24 @@ final router = GoRouter(
     GoRoute(
       path: "/export/:type",
       builder: (context, state) => ExportPage(
-        state.pathParameters["type"] == "csv"
-            ? ExportMode.csv
-            : ExportMode.json,
+        ExportMode.tryParse(state.pathParameters["type"] ?? "zip") ??
+            ExportMode.zip,
       ),
     ),
     GoRoute(
       path: "/import",
-      builder: (context, state) => const ImportPage(),
+      builder: (context, state) => ImportPage(
+        setupMode: state.uri.queryParameters["setupMode"] == "true",
+      ),
     ),
     GoRoute(
       path: "/setup",
       builder: (context, state) => const SetupPage(),
       routes: [
+        GoRoute(
+          path: "choose",
+          builder: (context, state) => const SetupOnboardingPage(),
+        ),
         GoRoute(
           path: "profile",
           builder: (context, state) => const SetupProfilePage(),

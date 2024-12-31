@@ -2,7 +2,7 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/sync/export/history/backup_entry_card.dart";
+import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";

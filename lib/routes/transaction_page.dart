@@ -27,6 +27,7 @@ import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
 import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
@@ -172,6 +173,9 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget build(BuildContext context) {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
+    final bool showPostTransactionBalance =
+        _selectedAccount != null && !isTransfer && !widget.isNewTransaction;
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () => pop(),
@@ -241,28 +245,35 @@ class _TransactionPageState extends State<TransactionPage> {
                       title: isTransfer
                           ? "transaction.transfer.from".t(context)
                           : "account".t(context),
-                      child: ListTile(
-                        leading: _selectedAccount == null
-                            ? null
-                            : FlowIcon(
-                                _selectedAccount!.icon,
-                                plated: true,
-                              ),
-                        title: Text(
-                          _selectedAccount?.name ??
-                              "transaction.edit.selectAccount".t(context),
-                        ),
-                        subtitle: _selectedAccount == null
-                            ? null
-                            : Text(_selectedAccount!.balance.formatMoney()),
-                        onTap: () => selectAccount(),
-                        trailing: _selectedAccount == null
-                            ? const Icon(Symbols.chevron_right)
-                            : null,
-                        focusNode: _selectAccountFocusNode,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: _selectedAccount == null
+                                ? null
+                                : FlowIcon(
+                                    _selectedAccount!.icon,
+                                    plated: true,
+                                  ),
+                            title: Text(
+                              _selectedAccount?.name ??
+                                  "transaction.edit.selectAccount".t(context),
+                            ),
+                            subtitle: showPostTransactionBalance
+                                ? MoneyText(
+                                    _selectedAccount!
+                                        .balanceAt(_transactionDate),
+                                  )
+                                : null,
+                            onTap: () => selectAccount(),
+                            trailing: _selectedAccount == null
+                                ? const Icon(Symbols.chevron_right)
+                                : null,
+                            focusNode: _selectAccountFocusNode,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     // To account
                     if (isTransfer)
                       Section(
@@ -276,10 +287,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                           title: Text(_selectedAccountTransferTo?.name ??
                               "transaction.edit.selectAccount".t(context)),
-                          subtitle: _selectedAccountTransferTo == null
-                              ? null
-                              : Text(_selectedAccountTransferTo!.balance
-                                  .formatMoney()),
                           onTap: () => selectAccountTransferTo(),
                           trailing: _selectedAccountTransferTo == null
                               ? const Icon(Symbols.chevron_right)
@@ -309,13 +316,13 @@ class _TransactionPageState extends State<TransactionPage> {
                               : null,
                         ),
                       ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     DescriptionSection(
                       controller: _descriptionController,
                       focusNode: _descriptionFocusNode,
                       onChanged: (_) => setState(() => {}),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     Section(
                       title: "transaction.date".t(context),
                       child: ListTile(
@@ -327,7 +334,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                     ),
                     if (_geo != null || enableGeo) ...[
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 24.0),
                       Section(
                         title: "transaction.location".t(context),
                         child: Padding(
@@ -387,20 +394,20 @@ class _TransactionPageState extends State<TransactionPage> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                     if (_currentlyEditing != null) ...[
                       const SizedBox(height: 24.0),
                       Text(
                         "${"transaction.createdDate".t(context)} ${_currentlyEditing.createdDate.format(payload: "LLL", forceLocal: true)}",
                         style: context.textTheme.bodyMedium?.semi(context),
                       ),
-                      const SizedBox(height: 36.0),
+                      const SizedBox(height: 32.0),
                       DeleteButton(
                         onTap: _deleteTransaction,
                         label: Text("transaction.delete".t(context)),
                       ),
                     ],
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 24.0),
                   ],
                 ),
               ),
@@ -445,7 +452,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void updateTransactionType(TransactionType type) {
     if (type == _transactionType ||
-        (_currentlyEditing != null && _currentlyEditing.isTransfer)) return;
+        (_currentlyEditing != null && _currentlyEditing.isTransfer)) {
+      return;
+    }
 
     _transactionType = type;
 
@@ -506,6 +515,7 @@ class _TransactionPageState extends State<TransactionPage> {
               titleOverride: isTransfer
                   ? "transaction.transfer.from.select".t(context)
                   : null,
+              showBalance: true,
             ),
             isScrollControlled: true,
           );
@@ -541,6 +551,7 @@ class _TransactionPageState extends State<TransactionPage> {
               accounts: toAccounts,
               currentlySelectedAccountId: _selectedAccountTransferTo?.id,
               titleOverride: "transaction.transfer.to.select".t(context),
+              showBalance: true,
             ),
             isScrollControlled: true,
           );
@@ -770,14 +781,18 @@ class _TransactionPageState extends State<TransactionPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       final bool transferToAccountDifferent = _currentlyEditing.isTransfer &&
-          _currentlyEditing.extensions.transfer?.fromAccountUuid !=
+          _currentlyEditing.extensions.transfer?.toAccountUuid !=
               _selectedAccountTransferTo?.uuid;
 
       if (transferToAccountDifferent) {
         return true;
       }
 
-      return _currentlyEditing.amount != _amount ||
+      final bool ammountChanged = isTransfer
+          ? _currentlyEditing.amount.abs() != _amount
+          : _currentlyEditing.amount != _amount;
+
+      return ammountChanged ||
           _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
           (_currentlyEditing.description ?? "") !=

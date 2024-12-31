@@ -4,6 +4,7 @@ import "dart:io";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
+import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import/file_select_area.dart";
@@ -12,7 +13,9 @@ import "package:cross_file/cross_file.dart";
 import "package:go_router/go_router.dart";
 
 class ImportPage extends StatefulWidget {
-  const ImportPage({super.key});
+  final bool? setupMode;
+
+  const ImportPage({this.setupMode = false, super.key});
 
   @override
   State<ImportPage> createState() => _ImportPageState();
@@ -50,14 +53,23 @@ class _ImportPageState extends State<ImportPage> {
     });
 
     try {
-      importer = await importBackupV1(
+      importer = await importBackup(
         backupFile: backupFile,
       );
 
       if (mounted) {
         switch (importer) {
           case ImportV1 importV1:
-            context.pushReplacement("/import/wizard/v1", extra: importV1);
+            context.pushReplacement(
+              "/import/wizard/v1?setupMode=${widget.setupMode}",
+              extra: importV1,
+            );
+            break;
+          case ImportV2 importV2:
+            context.pushReplacement(
+              "/import/wizard/v2?setupMode=${widget.setupMode}",
+              extra: importV2,
+            );
             break;
           case null:
             context.showErrorToast(

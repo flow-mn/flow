@@ -8,11 +8,28 @@ enum ExportMode {
   ///
   /// Intended for full backups. Will be versioned, we plan to support
   /// importing older backups to newer versions.
+  json(fileExt: "json"),
+
+  /// Can be fully recovered from
   ///
-  /// More about versioning [here]
-  json(fileExt: "json");
+  /// Includes [json] inside it, plus other files like images that cannot be
+  /// fit into a JSON file.
+  zip(fileExt: "zip");
 
   final String fileExt;
 
   const ExportMode({required this.fileExt});
+
+  static ExportMode? tryParse(String value) {
+    switch (value) {
+      case "csv":
+        return ExportMode.csv;
+      case "json":
+        return ExportMode.json;
+      case "zip":
+        return ExportMode.zip;
+      default:
+        return null;
+    }
+  }
 }
