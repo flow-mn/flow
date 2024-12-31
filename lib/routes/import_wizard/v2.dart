@@ -8,11 +8,17 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import_wizard/backup_info.dart";
 import "package:flow/widgets/import_wizard/import_success.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
 class ImportWizardV2Page extends StatefulWidget {
   final ImportV2 importer;
+  final bool setupMode;
 
-  const ImportWizardV2Page({super.key, required this.importer});
+  const ImportWizardV2Page({
+    super.key,
+    required this.importer,
+    this.setupMode = false,
+  });
 
   @override
   State<ImportWizardV2Page> createState() => _ImportWizardV2PageState();
@@ -38,7 +44,19 @@ class _ImportWizardV2PageState extends State<ImportWizardV2Page> {
                 onClickStart: _start,
               ),
             ImportV2Progress.error => Text(error.toString()),
-            ImportV2Progress.success => const ImportSuccess(),
+            ImportV2Progress.success => ImportSuccess(
+                onDone: () {
+                  if (widget.setupMode) {
+                    GoRouter.of(context).popUntil(
+                      (route) => route.path == "/setup",
+                    );
+
+                    context.pushReplacement("/");
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
             _ => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
