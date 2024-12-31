@@ -13,7 +13,9 @@ import "package:cross_file/cross_file.dart";
 import "package:go_router/go_router.dart";
 
 class ImportPage extends StatefulWidget {
-  const ImportPage({super.key});
+  final bool? setupMode;
+
+  const ImportPage({this.setupMode = false, super.key});
 
   @override
   State<ImportPage> createState() => _ImportPageState();
@@ -58,10 +60,16 @@ class _ImportPageState extends State<ImportPage> {
       if (mounted) {
         switch (importer) {
           case ImportV1 importV1:
-            context.pushReplacement("/import/wizard/v1", extra: importV1);
+            context.pushReplacement(
+              "/import/wizard/v1?setupMode=${widget.setupMode}",
+              extra: importV1,
+            );
             break;
           case ImportV2 importV2:
-            context.pushReplacement("/import/wizard/v2", extra: importV2);
+            context.pushReplacement(
+              "/import/wizard/v2?setupMode=${widget.setupMode}",
+              extra: importV2,
+            );
             break;
           case null:
             context.showErrorToast(

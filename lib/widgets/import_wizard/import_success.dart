@@ -8,8 +8,12 @@ import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class ImportSuccess extends StatelessWidget {
+  /// Defaults to `context.pop()`
+  final VoidCallback? onDone;
+
   const ImportSuccess({
     super.key,
+    this.onDone,
   });
 
   @override
@@ -52,7 +56,13 @@ class ImportSuccess extends StatelessWidget {
           ),
           const SizedBox(height: 24.0),
           Button(
-            onTap: () => context.pop(),
+            onTap: () {
+              if (onDone == null) {
+                context.pop();
+                return;
+              }
+              onDone!();
+            },
             leading: const Icon(Symbols.check_rounded),
             child: Text(
               "general.done".t(context),

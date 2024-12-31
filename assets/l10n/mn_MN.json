@@ -68,6 +68,11 @@
     "setup.categories.preset.utils": "Ус, цахилгаан",
     "setup.categories.preset.taxes": "Татвар",
     "setup.categories.preset.paychecks": "Цалин",
+    "setup.onboarding": "Эхэлцгээе",
+    "setup.onboarding.freshStart": "Шинээр эхлэх",
+    "setup.onboarding.freshStart.description": "Цоо шинээр тохируулах",
+    "setup.onboarding.importExisting": "Нөөцөөс сэргээх",
+    "setup.onboarding.importExisting.description": "Өмнө нь Flow-с нөөцөлж авсан өгөгдлийг сэргээх",
 
     "account": "Данс",
     "account.name": "Дансны нэр",
