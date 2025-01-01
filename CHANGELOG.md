@@ -1,5 +1,20 @@
 # Changelog
 
+## Next
+
+### New features
+
+* N/A
+
+### Changes and improvements
+
+* Now checking `Prefer full amounts` in Money formatting settings makes daily summaries
+  show full amounts. Closes [#255](https://github.com/flow-mn/flow/issues/255)
+
+### Fixes
+
+* N/A
+
 ## Beta 0.10.0
 
 ### New features
