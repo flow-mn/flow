@@ -14,7 +14,7 @@
 
 ### Fixes
 
-* N/A
+* Account tab "Total balance" no longer shows stale data
 
 ## Beta 0.10.0
 
