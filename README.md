@@ -27,7 +27,7 @@ Beta available on Android, iOS, and more[^1]
   * JSON for backup
   * CSV for external software use (i.e., Google Sheets)
 
-## Use Flow
+## Try Flow
 
 Flow will be available in App Store soon. In the meantime,
 please download Flow from TestFlight. Android users should
@@ -35,6 +35,8 @@ have no major issues downloading Flow, but it will be available
 on the Google Play's production track.
 
 Feedbacks and ideas are greatly appreciated 🌟
+
+Read [Frequently Asked Questions](FAQ.md)
 
 Flow in production: [Blog post](https://blog.gege.mn/publishing-flow-to-production-20250104?showSharer=true)
 

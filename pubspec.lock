@@ -886,10 +886,10 @@ packages:
     dependency: "direct main"
     description:
       name: moment_dart
-      sha256: "721f008251341578a818140afe402be827bc29951846575598426f4039a0799b"
+      sha256: "1f58f220810010441f7239f588a4b00cd0991a8408b8ce2f950f74a0d81028fa"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.1+beta.0"
+    version: "3.0.0"
   objectbox:
     dependency: "direct main"
     description:
