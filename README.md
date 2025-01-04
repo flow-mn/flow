@@ -29,17 +29,16 @@ Beta available on Android, iOS, and more[^1]
 
 ## Try Flow
 
-We've release Flow beta on March 6. You can download the
-[beta builds for iOS and Android](#download-flow-beta) right now.
-Beta version features all the basic functionality for an expense tracker app.
-JSON backups from Alpha and Beta versions are guaranteed to be supported
-by the next major releases, until Production.
+Flow will be available in App Store soon. In the meantime,
+please download Flow from TestFlight. Android users should
+have no major issues downloading Flow, but it will be available
+on the Google Play's production track.
 
 Feedbacks and ideas are greatly appreciated 🌟
 
 Read [Frequently Asked Questions](FAQ.md)
 
-See what's coming on [Flow's next release](https://github.com/flow-mn/flow/milestone/2)
+Flow in production: [Blog post](https://blog.gege.mn/publishing-flow-to-production-20250104?showSharer=true)
 
 ## Supported platforms
 
