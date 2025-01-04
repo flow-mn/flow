@@ -10,6 +10,7 @@
 
 * Now checking `Prefer full amounts` in Money formatting settings makes daily summaries
   show full amounts. Closes [#255](https://github.com/flow-mn/flow/issues/255)
+* Now importing data triggers frecency data to update.
 
 ### Fixes
 
