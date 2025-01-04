@@ -15,8 +15,7 @@ class TotalBalance extends StatefulWidget {
   State<TotalBalance> createState() => _TotalBalanceState();
 }
 
-class _TotalBalanceState extends State<TotalBalance>
-    with AutomaticKeepAliveClientMixin {
+class _TotalBalanceState extends State<TotalBalance> {
   bool initiallyAbbreviated = true;
 
   late Future<Money?> _getGrandTotalFuture;
@@ -41,8 +40,6 @@ class _TotalBalanceState extends State<TotalBalance>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     final Money primaryCurrencyTotalBalance =
         ObjectBox().getPrimaryCurrencyGrandTotal();
 
@@ -84,7 +81,4 @@ class _TotalBalanceState extends State<TotalBalance>
       _getGrandTotalFuture = ObjectBox().getGrandTotal();
     });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
