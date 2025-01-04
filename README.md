@@ -27,7 +27,7 @@ Beta available on Android, iOS, and more[^1]
   * JSON for backup
   * CSV for external software use (i.e., Google Sheets)
 
-## Try Beta version
+## Try Flow
 
 We've release Flow beta on March 6. You can download the
 [beta builds for iOS and Android](#download-flow-beta) right now.
@@ -36,6 +36,8 @@ JSON backups from Alpha and Beta versions are guaranteed to be supported
 by the next major releases, until Production.
 
 Feedbacks and ideas are greatly appreciated 🌟
+
+Read [Frequently Asked Questions](FAQ.md)
 
 See what's coming on [Flow's next release](https://github.com/flow-mn/flow/milestone/2)
 
