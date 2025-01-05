@@ -6,7 +6,7 @@
 
 ## Download Flow (beta)
 
-[![Join Play Store Open Testing](https://img.shields.io/badge/Google_Play-open_testing-f5ccff?logo=google-play&logoColor=white&style=for-the-badge)](https://play.google.com/store/apps/details?id=mn.flow.flow)
+[![Google Play Store](https://img.shields.io/badge/Google_Play-open_testing-f5ccff?logo=google-play&logoColor=white&style=for-the-badge)](https://play.google.com/store/apps/details?id=mn.flow.flow)
 [![Join TestFlight group](https://img.shields.io/badge/TestFlight-beta_testing-f5ccff?logo=appstore&logoColor=white&style=for-the-badge)](https://testflight.apple.com/join/NH4ifijS)
 [![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
 
@@ -35,8 +35,6 @@ have no major issues downloading Flow, but it will be available
 on the Google Play's production track.
 
 Feedbacks and ideas are greatly appreciated 🌟
-
-Read [Frequently Asked Questions](FAQ.md)
 
 Flow in production: [Blog post](https://blog.gege.mn/publishing-flow-to-production-20250104?showSharer=true)
 
