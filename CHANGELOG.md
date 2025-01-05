@@ -4,7 +4,7 @@
 
 ### New features
 
-* N/A
+* Added Turkish language [#259](https://github.com/flow-mn/flow/issues/259) by @winstreakers
 
 ### Changes and improvements
 
