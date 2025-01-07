@@ -68,6 +68,11 @@
     "setup.categories.preset.utils": "Utenze",
     "setup.categories.preset.taxes": "Tasse",
     "setup.categories.preset.paychecks": "Stipendio",
+    "setup.onboarding": "Cominciamo",
+    "setup.onboarding.freshStart": "Nuova installazione",
+    "setup.onboarding.freshStart.description": "È la prima volta che uso Flow",
+    "setup.onboarding.importExisting": "Importa da un backup",
+    "setup.onboarding.importExisting.description": "Ripristina i dati da un file di backup di Flow precedente",
 
     "account": "Conto",
     "account.name": "Nome del conto",

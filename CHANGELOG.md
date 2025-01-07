@@ -1,5 +1,21 @@
 # Changelog
 
+## Beta 0.10.1
+
+### New features
+
+* Added Turkish language [#259](https://github.com/flow-mn/flow/issues/259) by @winstreakers
+
+### Changes and improvements
+
+* Now checking `Prefer full amounts` in Money formatting settings makes daily summaries
+  show full amounts. Closes [#255](https://github.com/flow-mn/flow/issues/255)
+* Now importing data triggers frecency data to update.
+
+### Fixes
+
+* Account tab "Total balance" no longer shows stale data
+
 ## Beta 0.10.0
 
 ### New features
@@ -16,6 +32,7 @@ Please reapply your profile picture if you need to.
 * Now you are unable to permanently delete an account until you deactivate it.
 * Now account in transaction page shows post-transcation balance instead of current balance
 * Account selection sheet now shows current balance for each account
+* Now you can import an old backup at the setup
 
 ### Fixes
 

@@ -182,6 +182,14 @@ class ImportV2 extends Importer {
       }
     }
 
+    unawaited(
+        LocalPreferences().updateTransitiveProperties().catchError((error) {
+      log(
+        "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
+        error: error,
+      );
+    }));
+
     if (assetsRoot != null) {
       progressNotifier.value = ImportV2Progress.copyingImages;
       try {

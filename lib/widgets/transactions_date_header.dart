@@ -7,6 +7,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/money_text_builder.dart";
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -56,6 +57,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     super.initState();
 
     LocalPreferences().sessionPrivacyMode.addListener(_updatePrivacyMode);
+
     obscure = LocalPreferences().sessionPrivacyMode.get();
   }
 
@@ -94,7 +96,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
         final String exclamation =
             switch ((containsNonPrimaryCurrency, resolve)) {
           (true, true) => "~",
-          (true, false) => "+ more",
+          (true, false) => "+",
           _ => "",
         };
 
@@ -118,9 +120,12 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
                     child: title,
                   ),
                   if (!widget.pendingGroup)
-                    Text(
-                      "${sum.formattedCompact}$exclamation • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
-                      style: context.textTheme.labelMedium,
+                    MoneyTextBuilder(
+                      builder: (context, formattedSum, originalSum) => Text(
+                        "$formattedSum$exclamation • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
+                        style: context.textTheme.labelMedium,
+                      ),
+                      money: sum,
                     ),
                 ],
               ),
