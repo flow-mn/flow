@@ -39,7 +39,7 @@ class PieGraphView extends StatelessWidget {
 
           if (associatedData is Category) {
             context.push(
-                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.toString())}");
+                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.encodeShort())}");
           }
         },
       ),

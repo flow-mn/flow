@@ -14,6 +14,7 @@ final Map<String, (String, String)> _localeNames = {
   "en_US": ("English (US)", "English (US)"),
   "en_IN": ("English (India)", "English (India)"),
   "it_IT": ("Italian (Italy)", "Italiano (Italia)"),
+  "tr_TR": ("Turkish (Turkey)", "Türkçe (Türkiye)"),
 };
 
 extension Underscore on Locale {
