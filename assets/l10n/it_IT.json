@@ -252,6 +252,11 @@
     "tabs.profile.import": "Importa",
     "tabs.profile.withLoveFromTheCreator": "con 🤍 da sadespresso",
 
+    "analytics.average#day": "Media giornaliera",
+    "analytics.average#week": "Media settimanale",
+    "analytics.average#month": "Media mensile",
+    "analytics.average#year": "Media annuale",
+
     "support": "Supporto",
     "support.description": "Flow è un progetto realizzato con passione, gratuito e aperto a tutti. Se trovi Flow utile, considera di aiutare il progetto a crescere! Ecco alcuni modi per farlo:",
     "support.requestFeatures": "Dacci idee",

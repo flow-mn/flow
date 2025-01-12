@@ -252,6 +252,11 @@
     "tabs.profile.import": "Сэргээх",
     "tabs.profile.withLoveFromTheCreator": "sadespresso хайр шингээж бүтээв 🤍",
 
+    "analytics.average#day": "Daily average",
+    "analytics.average#week": "Weekly average",
+    "analytics.average#month": "Monthly average",
+    "analytics.average#year": "Yearly average",
+
     "support": "Дэмжих",
     "support.description": "Flow бол үнэгүй, хүн бүрд нээлттэй, хайр шингээж бүтээсэн төсөл юм. Хэрэв Flow танд тус болж байвал та төсөлд өөрийн хувь нэмрээ оруулах боломжтой шүү. Жишээлбэл:",
     "support.requestFeatures": "Санаагаа хуваалц",

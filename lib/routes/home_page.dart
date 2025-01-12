@@ -17,6 +17,7 @@ import "package:flutter/material.dart" hide Flow;
 import "package:flutter/services.dart";
 import "package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart";
 import "package:go_router/go_router.dart";
+import "package:moment_dart/moment_dart.dart";
 import "package:pie_menu/pie_menu.dart";
 
 class HomePage extends StatefulWidget {
@@ -30,9 +31,13 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
+  late final Timer _timer;
+
   final ScrollController _homeTabScrollController = ScrollController();
 
   late int _currentIndex;
+
+  DateTime dateKey = Moment.startOfToday();
 
   @override
   void initState() {
@@ -70,11 +75,15 @@ class _HomePageState extends State<HomePage>
         ),
       );
     });
+
+    _timer =
+        Timer.periodic(const Duration(seconds: 30), (_) => _refreshDateKey());
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -105,6 +114,7 @@ class _HomePageState extends State<HomePage>
                   children: [
                     HomeTab(
                       scrollController: _homeTabScrollController,
+                      key: ValueKey(dateKey),
                     ),
                     const StatsTab(),
                     const AccountsTab(),
@@ -156,5 +166,12 @@ class _HomePageState extends State<HomePage>
     type ??= TransactionType.expense;
 
     context.push("/transaction/new?type=${type.value}");
+  }
+
+  void _refreshDateKey() {
+    if (!mounted) return;
+    setState(() {
+      dateKey = Moment.startOfToday();
+    });
   }
 }

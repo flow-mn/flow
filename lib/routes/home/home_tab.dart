@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/transaction.dart";
@@ -32,18 +30,8 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late final AppLifecycleListener _listener;
-  late final Timer _timer;
 
   late int _plannedTransactionsNextNDays;
-
-  DateTime dateKey = Moment.startOfToday();
-
-  void refreshDateKey() {
-    if (!mounted) return;
-    setState(() {
-      dateKey = Moment.startOfToday();
-    });
-  }
 
   final TransactionFilter defaultFilter = TransactionFilter(
     range: last30Days(),
@@ -83,11 +71,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .addListener(_updatePlannedTransactionDays);
 
     _listener = AppLifecycleListener(
-      onShow: () => refreshDateKey(),
+      onShow: () => setState(() {}),
     );
-
-    _timer =
-        Timer.periodic(const Duration(seconds: 30), (_) => refreshDateKey());
   }
 
   @override
@@ -96,7 +81,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     LocalPreferences()
         .pendingTransactionsHomeTimeframe
         .removeListener(_updatePlannedTransactionDays);
-    _timer.cancel();
     super.dispose();
   }
 
@@ -107,7 +91,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     final bool isFilterModified = currentFilter != defaultFilter;
 
     return StreamBuilder<List<Transaction>>(
-      key: ValueKey(dateKey),
       stream: currentFilterWithPlanned
           .queryBuilder()
           .watch(triggerImmediately: true)

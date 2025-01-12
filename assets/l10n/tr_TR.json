@@ -1,7 +1,9 @@
 {
     "appName": "Flow",
     "appShortDesc": "Kişisel finans takipçiniz",
+
     "visitGitHubRepo": "GitHub'da depoyu ziyaret edin",
+
     "general.back": "Geri Git",
     "general.delete": "Silmek",
     "general.delete.permanentWarning": "Bu eylem geri alınamaz",
@@ -28,6 +30,7 @@
     "general.disabled": "Devredışı",
     "general.selectLocation": "Konum seçin",
     "general.nextNDays": "Sonraki {} gün",
+
     "setup.getStarted": "Başlayın",
     "setup.next": "Sonraki",
     "setup.slides.foss.title": "Ücretsiz ve açık kaynak",
@@ -70,6 +73,7 @@
     "setup.onboarding.freshStart.description": "Flow'u ilk kez kullanıyorum",
     "setup.onboarding.importExisting": "Bir yedekten içeri aktarma",
     "setup.onboarding.importExisting.description": "Önceki bir Flow yedeklemesinden verileri geri yükleme",
+
     "account": "Hesap",
     "account.name": "Hesap adı",
     "account.balance": "Bakiye",
@@ -92,6 +96,7 @@
     "account.thisMonth": "Bu ay",
     "account.postTransactionBalance": "Bu işlemden sonraki bakiye",
     "accounts": "Hesap",
+
     "transaction": "İşlem",
     "transaction.new": "Yeni işlem",
     "transaction.edit": "İşlemi düzenle",
@@ -120,6 +125,7 @@
     "transaction.location.edit": "Düzenlemek için haritaya dokunun",
     "transaction.pending": "Beklemede",
     "transaction.pending.preapproved": "Ön Onaylı",
+
     "transactions.all": "Tüm işlemler",
     "transactions.pending": "Bekleyen işlemler",
     "transactions.query.noResult": "Gösterilecek işlem yok",
@@ -139,6 +145,7 @@
     "transactions.query.filter.categories.n": "{} kategoriler",
     "transactions.query.filter.categories.all": "Tüm Kategoriler",
     "transactions.count": "{} İşlemler",
+
     "category": "Kategori",
     "category.name": "Kategori adı",
     "category.new": "Kategori ekleme",
@@ -148,9 +155,12 @@
     "category.none": "Kategori yok",
     "categories": "Kategori",
     "categories.noCategories": "Herhangi bir kategoriniz yok",
+
     "profile.name": "Ad",
+
     "currency": "Para birimi",
     "currency.searchHint": "Aramak... (ülke, para birimi, kod)",
+
     "preferences": "Tercihler",
     "preferences.primaryCurrency": "Birincil para birimi",
     "preferences.language": "Dil",
@@ -199,6 +209,7 @@
     "preferences.moneyFormatting.preferFull.description": "Mümkün olduğunca sayıları kısaltmayın",
     "preferences.moneyFormatting.useCurrencySymbol": "Para birimi simgesini kullan",
     "preferences.moneyFormatting.useCurrencySymbol.description": "örneğin, \"5$\" yerine \"5 ABD Doları\"",
+
     "tabs.home": "Ev",
     "tabs.home.greetings": "Merhaba, {name}!",
     "tabs.home.noTransactions": "Kriterlere uyan işlem yok",
@@ -211,6 +222,7 @@
     "tabs.home.last7days": "Son 7 gün",
     "tabs.home.totalBalance": "Toplam bilanço",
     "tabs.home.flow": "Flow",
+
     "tabs.stats": "İstatistik",
     "tabs.stats.timeRange.select": "Aralık seç",
     "tabs.stats.timeRange.changeMode": "Daha fazla seçenek",
@@ -239,6 +251,12 @@
     "tabs.profile.backup": "Yedek",
     "tabs.profile.import": "İçe aktarmak",
     "tabs.profile.withLoveFromTheCreator": "Sadespresso'dan 🤍",
+
+    "analytics.average#day": "Günlük ortalama",
+    "analytics.average#week": "Haftalık ortalama",
+    "analytics.average#month": "Aylık ortalama",
+    "analytics.average#year": "Yıllık ortalama",
+
     "support": "Destek",
     "support.description": "Flow, özgür ve herkese açık bir sevgi emeğidir. Flow'u değerli buluyorsanız, projenin büyümesine yardımcı olmayı düşünün! Bunu yapmanın bazı yolları şunlardır:",
     "support.requestFeatures": "Bize fikir verin",
@@ -249,6 +267,7 @@
     "support.donateDeveloper": "İçerik oluşturucuya destek verin",
     "support.donateDeveloper.description": "Flow'un tüm işlevleri ücretsiz olarak sunulur ve geliştiriciye bahşiş vermek herhangi bir ek özelliğin kilidini açmaz",
     "support.donateDeveloper.action": "Yaratıcıya bir kahve ısmarla",
+
     "flowIcon.change": "Simgeyi değiştir",
     "flowIcon.type.icon": "İkon",
     "flowIcon.type.icon.brands": "Markalar & Logolar",
@@ -259,6 +278,7 @@
     "flowIcon.type.image.description": "Simge olarak kullanmak için bir resim seçin",
     "flowIcon.type.character": "Karakter",
     "flowIcon.type.character.description": "Simge olarak kullanmak için bir emoji veya harf girin",
+
     "sync.import": "İçe aktarmak",
     "sync.import.pickFile": "Bir dosya seçin",
     "sync.import.pickFile.pickOrDrop": "Bir dosyayı seçin veya bırakın",
@@ -276,6 +296,7 @@
     "sync.import.start": "İçe aktarmaya başla",
     "sync.import.zipWarning": "Flow uygulaması tarafından üretilen ZIP dosyasını içe aktardığınızdan emin olun!",
     "sync.import.success": "İçe aktarma başarılı!",
+
     "sync.export": "Dışa aktarma",
     "sync.export.type": "Dışa aktarma ({type})",
     "sync.export.asCSV": "CSV olarak",
@@ -292,10 +313,12 @@
     "sync.export.history.empty.description": "Manuel ve otomatik olarak yapılan yedeklemeler burada listelenecektir",
     "sync.export.history.description": "Sizin tarafınızdan yapılan ve otomatik olarak oluşturulan yedeklemeleri görün",
     "sync.export.success": "Dışa aktarma başarılı!",
-    "sync.export.success.filePath[0]": "Kaydedildiği yer ",
+    "sync.export.success.filePath[0]": "Dosya ",
+    "sync.export.success.filePath[1]": " konumuna kaydedildi",
     "sync.export.save": "Yedeklemeyi kaydet",
     "sync.export.save.shareTitle": "Flow yedekleme ({type}, {date})",
     "sync.export.fileDeleted": "Dosya bulunamadı",
+
     "enum.TransactionSubtype": "Tür",
     "enum.TransactionSubtype#null": "Varsayılan",
     "enum.TransactionSubtype@transactionFee": "İşlem ücreti",
@@ -305,6 +328,7 @@
     "enum.TransactionType@income": "Gelir",
     "enum.TransactionType@expense": "Gider",
     "enum.TransactionType@transfer": "Aktarmak",
+
     "enum.CSVHeadersV1": "CSV Başlıkları",
     "enum.CSVHeadersV1@uuid": "ID",
     "enum.CSVHeadersV1@title": "Başlık",
@@ -322,6 +346,7 @@
     "enum.CSVHeadersV1@latitude": "Enlem",
     "enum.CSVHeadersV1@longitude": "Boylam",
     "enum.CSVHeadersV1@extra": "Ekstra (JSON)",
+
     "enum.ImportV1Progress@waitingConfirmation": "Onay bekleniyor",
     "enum.ImportV1Progress@erasing": "Mevcut verilerin silinmesi",
     "enum.ImportV1Progress@writingCategories": "Yazma kategorileri",
@@ -330,6 +355,7 @@
     "enum.ImportV1Progress@writingTransactions": "İşlemlerin yazılması",
     "enum.ImportV1Progress@success": "Başarılı",
     "enum.ImportV1Progress@error": "Bir şeyler ters gitti ({error})",
+
     "enum.ImportV2Progress@waitingConfirmation": "Onay bekleniyor",
     "enum.ImportV2Progress@erasing": "Mevcut verilerin silinmesi",
     "enum.ImportV2Progress@writingCategories": "Yazma kategorileri",
@@ -341,6 +367,7 @@
     "enum.ImportV2Progress@copyingImages": "Görüntüleri kopyalama",
     "enum.ImportV2Progress@success": "Başarılı",
     "enum.ImportV2Progress@error": "Bir şeyler ters gitti ({error})",
+
     "enum.BackupEntryType@manual": "El ile",
     "enum.BackupEntryType@manual.description": "Kullanıcı tarafından oluşturulan yedekleme",
     "enum.BackupEntryType@automated": "Otomatik yedekleme",
@@ -351,6 +378,7 @@
     "enum.BackupEntryType@preImport.description": "Önceki yedeklemeden içe aktarmadan önce önlem olarak oluşturulan yedekleme",
     "enum.BackupEntryType@other": "Diğer yedekleme",
     "enum.BackupEntryType@other.description": "Diğer yedekleme",
+
     "error.route.404": "Sayfa bulunamadı",
     "error.route.400": "Sayfa yüklenemedi",
     "error.input.mustBeNotEmpty": "Lütfen bu alanı doldurun",

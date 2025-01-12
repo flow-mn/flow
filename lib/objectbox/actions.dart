@@ -20,6 +20,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/utils/duration_unit_to_range.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -140,6 +141,45 @@ extension MainActions on ObjectBox {
     }
 
     await ObjectBox().box<Account>().putManyAsync(accounts);
+  }
+
+  Future<FlowAnalytics<TimeRange>> flowByTimeRange({
+    required DateTime from,
+    required DateTime to,
+    required DurationUnit unit,
+    bool ignoreTransfers = true,
+    String? currencyOverride,
+  }) async {
+    final Condition<Transaction> dateFilter = Transaction_.transactionDate
+        .betweenDate(from, to)
+        .and(Transaction_.isPending
+            .isNull()
+            .or(Transaction_.isPending.notEquals(true)));
+
+    final Query<Transaction> transactionsQuery =
+        ObjectBox().box<Transaction>().query(dateFilter).build();
+
+    final List<Transaction> transactions = await transactionsQuery.findAsync();
+
+    transactionsQuery.close();
+
+    final Map<String, MoneyFlow<TimeRange>> flow = {};
+
+    for (final transaction in transactions) {
+      if (ignoreTransfers && transaction.isTransfer) continue;
+
+      final TimeRange? range =
+          durationUnitToRange(transaction.transactionDate, unit);
+
+      if (range == null) continue;
+
+      flow[range.encodeShort()] ??= MoneyFlow(
+        associatedData: range,
+      );
+      flow[range.encodeShort()]!.add(transaction.money);
+    }
+
+    return FlowAnalytics(flow: flow, from: from, to: to);
   }
 
   /// Returns a map of category uuid -> [MoneyFlow]
