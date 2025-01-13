@@ -1,3 +1,4 @@
+import "package:fl_chart/fl_chart.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/flow_analytics.dart";
@@ -51,6 +52,35 @@ class DailyAverage extends StatelessWidget {
       children: [
         Text("Daily average: ${dailyAverage.formattedCompact}"),
         Text("Total: ${convertedSum.formattedCompact}"),
+        SizedBox(
+          height: 200.0,
+          child: LineChart(
+            LineChartData(
+              gridData: FlGridData(
+                show: true,
+                verticalInterval: Duration(days: 1).inMilliseconds.toDouble(),
+                horizontalInterval: dailyAverage.amount,
+              ),
+              lineBarsData: data
+                  .relevantFlow(primaryCurrency, exchangeRates)
+                  .entries
+                  .map(
+                    (entry) => LineChartBarData(
+                      spots: [
+                        FlSpot(
+                          TimeRange.parse(entry.key)
+                              .from
+                              .millisecondsSinceEpoch
+                              .toDouble(),
+                          entry.value.expense.abs(),
+                        )
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        )
       ],
     );
   }

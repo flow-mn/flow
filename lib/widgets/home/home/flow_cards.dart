@@ -53,24 +53,24 @@ class _FlowCardsState extends State<FlowCards> {
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow? flow = excludeTransferFromFlow
+    final MultiCurrencyMoneyFlow? flow = excludeTransferFromFlow
         ? widget.transactions?.nonPending.nonTransfers.flow
         : widget.transactions?.nonPending.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final Money? totalExpense = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
+      (MultiCurrencyMoneyFlow moneyFlow, null) =>
         moneyFlow.getExpenseByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
+      (MultiCurrencyMoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
         moneyFlow.getTotalExpense(exchangeRates, primaryCurrency),
     };
 
     final Money? totalIncome = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
+      (MultiCurrencyMoneyFlow moneyFlow, null) =>
         moneyFlow.getIncomeByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
+      (MultiCurrencyMoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
         moneyFlow.getTotalIncome(exchangeRates, primaryCurrency),
     };
 

@@ -6,7 +6,7 @@ import "package:flow/data/money.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/prefs.dart";
 
-class MoneyFlow<T> {
+class MultiCurrencyMoneyFlow<T> {
   final T? associatedData;
 
   final Map<String, double> _totalExpenseByCurrency = {};
@@ -15,7 +15,14 @@ class MoneyFlow<T> {
   int expenseCount = 0;
   int incomeCount = 0;
 
-  MoneyFlow({this.associatedData});
+  String? get singleCurrency {
+    if (_totalExpenseByCurrency.keys.length != 1) return null;
+    if (_totalIncomeByCurrency.keys.length != 1) return null;
+
+    return _totalExpenseByCurrency.keys.single;
+  }
+
+  MultiCurrencyMoneyFlow({this.associatedData});
 
   void add(Money money) {
     final double amount = money.amount;
@@ -65,8 +72,23 @@ class MoneyFlow<T> {
     return getIncomeByCurrency(currency) + getExpenseByCurrency(currency);
   }
 
-  /// Calls [getExpenseByCurrency] or [getIncomeByCurrency] based on [type]
-  ///
+  SingleCurrencyMoneyFlow<T> extractByCurrency(String currency) {
+    currency = currency.trim().toUpperCase();
+
+    return SingleCurrencyMoneyFlow<T>._internal(
+      singleCurrency!,
+      associatedData: associatedData,
+      expense: getExpenseByCurrency(currency).amount,
+      income: getIncomeByCurrency(currency).amount,
+
+      /// TODO @sadespresso fix lost data
+      expenseCount: expenseCount,
+
+      /// TODO @sadespresso fix lost data
+      incomeCount: incomeCount,
+    );
+  }
+
   /// If type is transfer, returns `Money(0.0, currency)`
   Money getByTypeAndCurrency(String currency, TransactionType type) {
     return switch (type) {
@@ -112,6 +134,7 @@ class MoneyFlow<T> {
     return Money(amount, currency);
   }
 
+  /// If type is transfer, returns `Money(0.0, currency)`
   Money getTotalByType(
     TransactionType type,
     ExchangeRates rates,
@@ -126,9 +149,105 @@ class MoneyFlow<T> {
     };
   }
 
+  /// Returns the converted flow of all transactions in given [currency],
+  /// or rates.baseCurrency if null
   Money getTotalFlow(ExchangeRates rates, String? currency) {
     currency ??= LocalPreferences().getPrimaryCurrency();
 
     return getTotalIncome(rates, currency) + getTotalExpense(rates, currency);
+  }
+
+  /// Merge all currencies into a single currency
+  ///
+  /// If [currency] is null, uses [rates.baseCurrency]
+  SingleCurrencyMoneyFlow<T> merge(
+    ExchangeRates rates,
+    String? currency,
+  ) {
+    currency ??= rates.baseCurrency;
+
+    final double expense = getTotalExpense(rates, currency).amount;
+    final double income = getTotalIncome(rates, currency).amount;
+
+    return SingleCurrencyMoneyFlow<T>._internal(
+      currency,
+      associatedData: associatedData,
+      expense: expense,
+      income: income,
+      expenseCount: expenseCount,
+      incomeCount: incomeCount,
+    );
+  }
+}
+
+class SingleCurrencyMoneyFlow<T> {
+  final T? associatedData;
+  final String currency;
+
+  double _expense = 0.0;
+  double get expense => _expense;
+
+  double _income = 0.0;
+  double get income => _income;
+
+  int _expenseCount = 0;
+  int get expenseCount => _expenseCount;
+
+  int _incomeCount = 0;
+  int get incomeCount => _incomeCount;
+
+  SingleCurrencyMoneyFlow(this.currency, {this.associatedData});
+  SingleCurrencyMoneyFlow._internal(
+    this.currency, {
+    this.associatedData,
+    double expense = 0.0,
+    double income = 0.0,
+    int expenseCount = 0,
+    int incomeCount = 0,
+  })  : _expense = expense,
+        _income = income,
+        _expenseCount = expenseCount,
+        _incomeCount = incomeCount;
+
+  void add(double amount) {
+    if (amount.abs() == 0.0) {
+      return;
+    }
+
+    if (amount.isNegative) {
+      _expense += amount;
+      _expenseCount++;
+    } else {
+      _income += amount;
+      _incomeCount++;
+    }
+  }
+
+  /// Adds the [Money.amount] IF the [Money.currency] matches [currency]
+  void addMoney(Money money) {
+    if (money.currency == currency) {
+      add(money.amount);
+    }
+  }
+
+  /// Converts the amount to [rates.baseCurrency], or [currency] if given
+  SingleCurrencyMoneyFlow<T> convert(ExchangeRates rates, String? currency) {
+    currency ??= rates.baseCurrency;
+
+    if (currency == this.currency) return this;
+
+    final double convertedExpense =
+        Money.convertDouble(this.currency, currency, _expense, rates);
+    final double convertedIncome =
+        Money.convertDouble(this.currency, currency, _income, rates);
+
+    return SingleCurrencyMoneyFlow<T>._internal(
+      currency,
+      associatedData: associatedData,
+      expense: convertedExpense,
+      income: convertedIncome,
+      expenseCount: expenseCount,
+      incomeCount: incomeCount,
+    );
   }
 }

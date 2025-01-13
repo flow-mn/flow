@@ -41,7 +41,7 @@ class AccountCard extends StatelessWidget {
     final Iterable<Transaction> transactions = account.transactions.nonPending
         .where((x) => x.transactionDate.isAtSameMonthAs(now));
 
-    final MoneyFlow flow = MoneyFlow()
+    final MultiCurrencyMoneyFlow flow = MultiCurrencyMoneyFlow()
       ..addAll(
         (excludeTransfersInTotal ? transactions.nonTransfers : transactions)
             .map((transaction) => transaction.money),

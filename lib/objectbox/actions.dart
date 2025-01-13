@@ -163,7 +163,7 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow<TimeRange>> flow = {};
+    final Map<String, MultiCurrencyMoneyFlow<TimeRange>> flow = {};
 
     for (final transaction in transactions) {
       if (ignoreTransfers && transaction.isTransfer) continue;
@@ -173,7 +173,7 @@ extension MainActions on ObjectBox {
 
       if (range == null) continue;
 
-      flow[range.encodeShort()] ??= MoneyFlow(
+      flow[range.encodeShort()] ??= MultiCurrencyMoneyFlow(
         associatedData: range,
       );
       flow[range.encodeShort()]!.add(transaction.money);
@@ -182,7 +182,7 @@ extension MainActions on ObjectBox {
     return FlowAnalytics(flow: flow, from: from, to: to);
   }
 
-  /// Returns a map of category uuid -> [MoneyFlow]
+  /// Returns a map of category uuid -> [MultiCurrencyMoneyFlow]
   Future<FlowAnalytics<Category>> flowByCategories({
     required DateTime from,
     required DateTime to,
@@ -202,7 +202,7 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow<Category>> flow = {};
+    final Map<String, MultiCurrencyMoneyFlow<Category>> flow = {};
 
     for (final transaction in transactions) {
       if (ignoreTransfers && transaction.isTransfer) continue;
@@ -210,7 +210,7 @@ extension MainActions on ObjectBox {
       final String categoryUuid =
           transaction.category.target?.uuid ?? Namespace.nil.value;
 
-      flow[categoryUuid] ??= MoneyFlow(
+      flow[categoryUuid] ??= MultiCurrencyMoneyFlow(
         associatedData: transaction.category.target,
       );
       flow[categoryUuid]!.add(transaction.money);
@@ -219,7 +219,7 @@ extension MainActions on ObjectBox {
     return FlowAnalytics(flow: flow, from: from, to: to);
   }
 
-  /// Returns a map of category uuid -> [MoneyFlow]
+  /// Returns a map of category uuid -> [MultiCurrencyMoneyFlow]
   Future<FlowAnalytics<Account>> flowByAccounts({
     required DateTime from,
     required DateTime to,
@@ -240,7 +240,7 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow<Account>> flow = {};
+    final Map<String, MultiCurrencyMoneyFlow<Account>> flow = {};
 
     for (final transaction in transactions) {
       if (ignoreTransfers && transaction.isTransfer) continue;
@@ -248,7 +248,7 @@ extension MainActions on ObjectBox {
       final String accountUuid =
           transaction.account.target?.uuid ?? Namespace.nil.value;
 
-      flow[accountUuid] ??= MoneyFlow(
+      flow[accountUuid] ??= MultiCurrencyMoneyFlow(
         associatedData: transaction.account.target,
       );
       flow[accountUuid]!.add(transaction.money);
@@ -584,7 +584,7 @@ extension TransactionListActions on Iterable<Transaction> {
   Money get sum => fold(Money(0.0, firstOrNull?.currency ?? "XXX"),
       (value, element) => value + element.money);
 
-  MoneyFlow get flow => MoneyFlow()
+  MultiCurrencyMoneyFlow get flow => MultiCurrencyMoneyFlow()
     ..addAll(
       map((transaction) => transaction.money),
     );

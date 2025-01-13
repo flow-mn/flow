@@ -52,11 +52,13 @@ class _StatsTabState extends State<StatsTab> {
       return Spinner.center();
     }
 
-    if (ready && (data == null || data!.flow.isEmpty)) {
+    if (ready && data == null) {
       return Center(
         child: Text("No data available"),
       );
     }
+
+    final bool empty = data!.flow.isEmpty;
 
     return ValueListenableBuilder(
       valueListenable: ExchangeRatesService().exchangeRatesCache,
@@ -74,18 +76,23 @@ class _StatsTabState extends State<StatsTab> {
                 ),
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    DailyAverage(
-                      data: data!,
-                      exchangeRatesSet: exchangeRatesSet,
-                    )
-                  ],
+            if (empty)
+              Center(
+                child: Text("No data available"),
+              ),
+            if (!empty)
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      DailyAverage(
+                        data: data!,
+                        exchangeRatesSet: exchangeRatesSet,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
           ],
         );
       },

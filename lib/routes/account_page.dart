@@ -125,7 +125,8 @@ class _AccountPageState extends State<AccountPage> {
               CustomTimeRange(Moment.minValue, Moment.maxValue),
         );
 
-        final MoneyFlow flow = transactions?.nonPending.flow ?? MoneyFlow();
+        final MultiCurrencyMoneyFlow flow =
+            transactions?.nonPending.flow ?? MultiCurrencyMoneyFlow();
 
         const double firstHeaderTopPadding = 0.0;
 
