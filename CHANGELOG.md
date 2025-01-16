@@ -4,7 +4,7 @@
 
 ### Improvements
 
-* Date, time translations now support Turkish, fixes [#259](https://github.com/flow-mn/flow/issues/259)
+* Date, time translations now support Turkish, fixes [#266](https://github.com/flow-mn/flow/issues/266)
 
 ## Beta 0.10.1
 
