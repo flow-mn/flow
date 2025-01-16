@@ -1,5 +1,11 @@
 # Changelog
 
+## Beta 0.10.2
+
+### Improvements
+
+* Date, time translations now support Turkish, fixes [#259](https://github.com/flow-mn/flow/issues/259)
+
 ## Beta 0.10.1
 
 ### New features
