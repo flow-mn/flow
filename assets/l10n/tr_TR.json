@@ -293,6 +293,7 @@
     "sync.export.history.description": "Sizin tarafınızdan yapılan ve otomatik olarak oluşturulan yedeklemeleri görün",
     "sync.export.success": "Dışa aktarma başarılı!",
     "sync.export.success.filePath[0]": "Kaydedildiği yer ",
+    "sync.export.success.filePath[1]": "",
     "sync.export.save": "Yedeklemeyi kaydet",
     "sync.export.save.shareTitle": "Flow yedekleme ({type}, {date})",
     "sync.export.fileDeleted": "Dosya bulunamadı",
