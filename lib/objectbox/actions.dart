@@ -4,6 +4,7 @@ import "dart:math" as math;
 
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
+import "package:flow/data/flow_report.dart";
 import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
@@ -142,15 +143,10 @@ extension MainActions on ObjectBox {
     await ObjectBox().box<Account>().putManyAsync(accounts);
   }
 
-  /// Returns a map of category uuid -> [MoneyFlow]
-  Future<FlowAnalytics<Category>> flowByCategories({
-    required DateTime from,
-    required DateTime to,
-    bool ignoreTransfers = true,
-    String? currencyOverride,
-  }) async {
+  /// Returns all non-pending transactions in given [range]
+  Future<List<Transaction>> transcationsByRange(TimeRange range) async {
     final Condition<Transaction> dateFilter = Transaction_.transactionDate
-        .betweenDate(from, to)
+        .betweenDate(range.from, range.to)
         .and(Transaction_.isPending
             .isNull()
             .or(Transaction_.isPending.notEquals(true)));
@@ -162,64 +158,113 @@ extension MainActions on ObjectBox {
 
     transactionsQuery.close();
 
-    final Map<String, MoneyFlow<Category>> flow = {};
+    return transactions;
+  }
+
+  Future<Map<T, MoneyFlow<K>>> flowBy<T, K>(
+      List<Transaction> transactions,
+      T? Function(Transaction t) keyBy,
+      K Function(Transaction t)? associateBy) async {
+    final Map<T, MoneyFlow<K>> flow = {};
 
     for (final transaction in transactions) {
-      if (ignoreTransfers && transaction.isTransfer) continue;
+      final T? key = keyBy(transaction);
 
-      final String categoryUuid =
-          transaction.category.target?.uuid ?? Namespace.nil.value;
+      if (key == null) continue;
 
-      flow[categoryUuid] ??= MoneyFlow(
-        associatedData: transaction.category.target,
-      );
-      flow[categoryUuid]!.add(transaction.money);
+      final K? associatedData = associateBy?.call(transaction);
+
+      flow[key] ??= MoneyFlow<K>(associatedData: associatedData);
+      flow[key]!.add(transaction.money);
     }
 
-    return FlowAnalytics(flow: flow, from: from, to: to);
+    return flow;
+  }
+
+  /// Returns a map of category uuid -> [MoneyFlow]
+  Future<FlowAnalytics<Category?>> flowByCategories({
+    required TimeRange range,
+    bool ignoreTransfers = true,
+    String? currencyOverride,
+  }) async {
+    final List<Transaction> transactions = await transcationsByRange(range);
+
+    final flow = await flowBy(transactions, (t) {
+      if (ignoreTransfers && t.isTransfer) return null;
+
+      return t.category.target?.uuid ?? Namespace.nil.value;
+    }, (t) => t.category.target);
+
+    return FlowAnalytics(flow: flow, range: range);
   }
 
   /// Returns a map of category uuid -> [MoneyFlow]
   Future<FlowAnalytics<Account>> flowByAccounts({
-    required DateTime from,
-    required DateTime to,
+    required TimeRange range,
     bool ignoreTransfers = true,
     bool omitZeroes = true,
     String? currencyOverride,
   }) async {
-    final Condition<Transaction> dateFilter = Transaction_.transactionDate
-        .betweenDate(from, to)
-        .and(Transaction_.isPending
-            .isNull()
-            .or(Transaction_.isPending.notEquals(true)));
+    final List<Transaction> transactions = await transcationsByRange(range);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
+    final Map<String, MoneyFlow<Account>> flow =
+        await flowBy(transactions, (t) {
+      if (ignoreTransfers && t.isTransfer) return null;
 
-    final List<Transaction> transactions = await transactionsQuery.findAsync();
-
-    transactionsQuery.close();
-
-    final Map<String, MoneyFlow<Account>> flow = {};
-
-    for (final transaction in transactions) {
-      if (ignoreTransfers && transaction.isTransfer) continue;
-
-      final String accountUuid =
-          transaction.account.target?.uuid ?? Namespace.nil.value;
-
-      flow[accountUuid] ??= MoneyFlow(
-        associatedData: transaction.account.target,
-      );
-      flow[accountUuid]!.add(transaction.money);
-    }
+      return t.account.target?.uuid ?? Namespace.nil.value;
+    }, (t) => t.account.target!);
 
     assert(
       !flow.containsKey(Namespace.nil.value),
       "There is no way you've managed to make a transaction without an account",
     );
 
-    return FlowAnalytics(from: from, to: to, flow: flow);
+    return FlowAnalytics(flow: flow, range: range);
+  }
+
+  Future<Map<int, MoneyFlow<DayTimeRange>>>
+      _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(TimeRange range) async {
+    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
+    final ExchangeRates? rates =
+        ExchangeRatesService().getPrimaryCurrencyRates();
+
+    final List<Transaction> transactions = await transcationsByRange(range);
+
+    final Map<int, MoneyFlow<DayTimeRange>> result = {};
+
+    for (final Transaction transaction in transactions) {
+      if (transaction.isTransfer) continue;
+
+      final DayTimeRange day =
+          DayTimeRange.fromDateTime(transaction.transactionDate);
+
+      result[day.day] ??= MoneyFlow(associatedData: day);
+
+      if (transaction.currency == primaryCurrency) {
+        result[day.day]!.add(transaction.money);
+      } else if (rates != null) {
+        result[day.day]!.add(transaction.money.convert(primaryCurrency, rates));
+      }
+    }
+
+    return result;
+  }
+
+  Future<FlowStandardReport> generateReport() async {
+    final MonthTimeRange current = TimeRange.thisMonth();
+    final MonthTimeRange previous = TimeRange.lastMonth();
+
+    final Map<int, MoneyFlow<DayTimeRange>> currentFlowByDay =
+        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(current);
+    final Map<int, MoneyFlow<DayTimeRange>> previousFlowByDay =
+        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(previous);
+
+    return FlowStandardReport(
+      current: current,
+      previous: previous,
+      currentFlowByDay: currentFlowByDay,
+      previousFlowByDay: previousFlowByDay,
+    );
   }
 
   Future<List<RelevanceScoredTitle>> transactionTitleSuggestions({
