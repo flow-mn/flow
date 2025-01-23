@@ -2,10 +2,11 @@ import "dart:ui";
 
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/flow_report.dart";
+import "package:flow/prefs.dart";
+import "package:flow/routes/home/stats_tab/info_card_with_delta.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
-import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
-import "package:flow/widgets/home/home/info_card.dart";
 import "package:flow/widgets/home/stats/range_daily_chart.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
@@ -24,6 +25,9 @@ class _StatsTabState extends State<StatsTab>
   FlowStandardReport? report;
 
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
+
+  late final bool initiallyAbbreviated =
+      !LocalPreferences().preferFullAmounts.get();
 
   bool busy = false;
 
@@ -75,63 +79,71 @@ class _StatsTabState extends State<StatsTab>
                           ],
                         ),
                       ),
+                      const SizedBox(height: 24.0),
+                      DefaultTextStyle(
+                        style: context.textTheme.displaySmall!,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Frame(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: InfoCardWithDelta(
+                                      title: "Avg. daily expense",
+                                      autoSizeGroup: autoSizeGroup,
+                                      money: report!.dailyAvgExpenditure,
+                                      previousMoney:
+                                          report!.previousDailyAvgExpenditure,
+                                      invertDelta: true,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16.0),
+                                  Expanded(
+                                    child: InfoCardWithDelta(
+                                      title: "Avg. daily income",
+                                      autoSizeGroup: autoSizeGroup,
+                                      money: report!.dailyAvgIncome,
+                                      previousMoney:
+                                          report!.previousDailyAvgIncome,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16.0),
+                            Frame(
+                              child: Row(
+                                children: [
+                                  if (report!.currentExpenseSumForecast != null)
+                                    Expanded(
+                                      child: InfoCardWithDelta(
+                                        title:
+                                            "Forecast for ${report!.current.format()}",
+                                        autoSizeGroup: autoSizeGroup,
+                                        money:
+                                            report!.currentExpenseSumForecast!,
+                                        previousMoney:
+                                            report!.previousExpenseSum,
+                                      ),
+                                    ),
+                                  const SizedBox(width: 16.0),
+                                  Expanded(
+                                    child: InfoCardWithDelta(
+                                      title: "Avg. daily flow",
+                                      autoSizeGroup: autoSizeGroup,
+                                      money: report!.dailyAvgFlow,
+                                      previousMoney:
+                                          report!.previousDailyAvgFlow,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 96.0),
-                      Frame(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: InfoCard(
-                                title: "Avg. daily expense",
-                                moneyText: MoneyText(
-                                  report!.dailyAvgExpenditure,
-                                  tapToToggleAbbreviation: true,
-                                  autoSizeGroup: autoSizeGroup,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              child: InfoCard(
-                                title: "Avg. daily income",
-                                moneyText: MoneyText(
-                                  report!.dailyAvgIncome,
-                                  tapToToggleAbbreviation: true,
-                                  autoSizeGroup: autoSizeGroup,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      Frame(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: InfoCard(
-                                title:
-                                    "Forecast for ${report!.current.format()}",
-                                moneyText: MoneyText(
-                                  report!.currentExpenseSumForecast,
-                                  tapToToggleAbbreviation: true,
-                                  autoSizeGroup: autoSizeGroup,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              child: InfoCard(
-                                title: "Avg. daily flow",
-                                moneyText: MoneyText(
-                                  report!.dailyAvgFlow,
-                                  tapToToggleAbbreviation: true,
-                                  autoSizeGroup: autoSizeGroup,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 )

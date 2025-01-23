@@ -6,6 +6,7 @@ class InfoCard extends StatelessWidget {
   final String title;
 
   final Widget? moneyText;
+  final Widget? delta;
 
   final Widget? icon;
 
@@ -14,6 +15,7 @@ class InfoCard extends StatelessWidget {
     required this.title,
     this.icon,
     this.moneyText,
+    this.delta,
   });
 
   @override
@@ -44,7 +46,8 @@ class InfoCard extends StatelessWidget {
                 ],
               ],
             ),
-            if (moneyText != null) moneyText!
+            if (moneyText != null) moneyText!,
+            if (delta != null) delta!
           ],
         ),
       ),
