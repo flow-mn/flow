@@ -1,20 +1,13 @@
-import "package:flow/data/chart_data.dart";
-import "package:flow/data/exchange_rates.dart";
-import "package:flow/data/flow_analytics.dart";
-import "package:flow/data/money.dart";
-import "package:flow/data/money_flow.dart";
-import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/l10n/named_enum.dart";
-import "package:flow/objectbox.dart";
-import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/routes/home/stats_tab/pie_graph_view.dart";
-import "package:flow/services/exchange_rates.dart";
+import "dart:ui";
+
+import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/flow_report.dart";
+import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
-import "package:flow/widgets/home/stats/exchange_missing_notice.dart";
+import "package:flow/widgets/home/home/info_card.dart";
+import "package:flow/widgets/home/stats/range_daily_chart.dart";
 import "package:flow/widgets/time_range_selector.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -26,12 +19,11 @@ class StatsTab extends StatefulWidget {
 }
 
 class _StatsTabState extends State<StatsTab>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
+    with AutomaticKeepAliveClientMixin {
   TimeRange range = TimeRange.thisMonth();
+  FlowStandardReport? report;
 
-  FlowAnalytics? analytics;
+  final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
   bool busy = false;
 
@@ -39,95 +31,125 @@ class _StatsTabState extends State<StatsTab>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 2, vsync: this);
-
-    fetch(true);
+    fetch();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-        valueListenable: ExchangeRatesService().exchangeRatesCache,
-        builder: (context, exchangeRatesCache, child) {
-          final ExchangeRates? rates = exchangeRatesCache?.get(
-            LocalPreferences().getPrimaryCurrency(),
-          );
+    super.build(context);
 
-          final Map<String, ChartData> expenses = _prepareChartData(
-            analytics?.flow,
-            TransactionType.expense,
-            rates,
-          );
+    if (busy && report == null) {
+      return Spinner.center();
+    }
 
-          final Map<String, ChartData> incomes = _prepareChartData(
-            analytics?.flow,
-            TransactionType.income,
-            rates,
-          );
+    final bool hasData = report != null && report!.currentFlowByDay.isNotEmpty;
 
-          return Column(
-            children: [
-              Material(
-                elevation: 1.0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
-                  width: double.infinity,
-                  child: TimeRangeSelector(
-                    initialValue: range,
-                    onChanged: updateRange,
-                  ),
-                ),
-              ),
-              if (busy)
-                const Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Spinner(),
-                )
-              else ...[
-                TabBar(
-                  controller: _tabController,
-                  tabs: [
-                    Tab(
-                      text: TransactionType.expense.localizedTextKey.t(context),
-                    ),
-                    Tab(
-                      text: TransactionType.income.localizedTextKey.t(context),
-                    ),
-                  ],
-                ),
-                if (rates == null) const ExchangeMissingNotice(),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
+    return Column(
+      children: [
+        Frame.standalone(
+          child: TimeRangeSelector(
+            initialValue: range,
+            onChanged: updateRange,
+          ),
+        ),
+        Expanded(
+          child: hasData
+              ? SingleChildScrollView(
+                  primary: true,
+                  child: Column(
                     children: [
-                      PieGraphView(
-                        data: expenses,
-                        changeMode: changeMode,
-                        range: range,
+                      ClipRect(
+                        child: Stack(
+                          children: [
+                            RangeDailyChart(report: report!),
+                            if (busy)
+                              Positioned.fill(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                    sigmaX: 2.0,
+                                    sigmaY: 2.0,
+                                  ),
+                                  child: Container(),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                      PieGraphView(
-                        data: incomes,
-                        changeMode: changeMode,
-                        range: range,
+                      const SizedBox(height: 96.0),
+                      Frame(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InfoCard(
+                                title: "Avg. daily expense",
+                                moneyText: MoneyText(
+                                  report!.dailyAvgExpenditure,
+                                  tapToToggleAbbreviation: true,
+                                  autoSizeGroup: autoSizeGroup,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: InfoCard(
+                                title: "Avg. daily income",
+                                moneyText: MoneyText(
+                                  report!.dailyAvgIncome,
+                                  tapToToggleAbbreviation: true,
+                                  autoSizeGroup: autoSizeGroup,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Frame(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InfoCard(
+                                title:
+                                    "Forecast for ${report!.current.format()}",
+                                moneyText: MoneyText(
+                                  report!.currentExpenseSumForecast,
+                                  tapToToggleAbbreviation: true,
+                                  autoSizeGroup: autoSizeGroup,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: InfoCard(
+                                title: "Avg. daily flow",
+                                moneyText: MoneyText(
+                                  report!.dailyAvgFlow,
+                                  tapToToggleAbbreviation: true,
+                                  autoSizeGroup: autoSizeGroup,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 )
-              ],
-            ],
-          );
-        });
+              : Text("No data to show"),
+        ),
+      ],
+    );
   }
 
-  void updateRange(TimeRange newRange) {
-    setState(() {
-      range = newRange;
-    });
+  void updateRange(TimeRange value) {
+    range = value;
+    fetch();
 
-    fetch(true);
+    if (!mounted) return;
+    setState(() {});
   }
 
-  Future<void> fetch(bool byCategory) async {
+  Future<void> fetch() async {
     if (busy) return;
 
     setState(() {
@@ -135,17 +157,7 @@ class _StatsTabState extends State<StatsTab>
     });
 
     try {
-      analytics = byCategory
-          ? await ObjectBox().flowByCategories(
-              from: range.from,
-              to: range.to,
-              currencyOverride: LocalPreferences().getPrimaryCurrency(),
-            )
-          : await ObjectBox().flowByAccounts(
-              from: range.from,
-              to: range.to,
-              currencyOverride: LocalPreferences().getPrimaryCurrency(),
-            );
+      report = await FlowStandardReport.generate(range);
     } finally {
       busy = false;
 
@@ -155,63 +167,6 @@ class _StatsTabState extends State<StatsTab>
     }
   }
 
-  Future<void> changeMode() async {
-    final TimeRange? newRange = await showTimeRangePickerSheet(
-      context,
-      initialValue: range,
-    );
-
-    if (!mounted || newRange == null) return;
-
-    setState(() {
-      range = newRange;
-    });
-  }
-
-  Map<String, ChartData<T>> _prepareChartData<T>(
-    Map<String, MoneyFlow<T>>? raw,
-    TransactionType type,
-    ExchangeRates? rates,
-  ) {
-    if (raw == null || raw.isEmpty) return {};
-
-    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-
-    final Map<String, Money> cache = {};
-
-    final List<MapEntry<String, MoneyFlow<T>>> filtered =
-        raw.entries.where((entry) {
-      if (rates != null) {
-        cache[entry.key] =
-            entry.value.getTotalByType(type, rates, primaryCurrency);
-      } else {
-        cache[entry.key] =
-            entry.value.getByTypeAndCurrency(primaryCurrency, type);
-      }
-
-      if (type == TransactionType.expense) {
-        return cache[entry.key]!.amount < 0.0;
-      } else {
-        return cache[entry.key]!.amount > 0.0;
-      }
-    }).toList();
-
-    filtered.sort(
-      (a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!),
-    );
-
-    return Map.fromEntries(
-      filtered.map(
-        (entry) => MapEntry<String, ChartData<T>>(
-          entry.key,
-          ChartData<T>(
-            key: entry.key,
-            money: cache[entry.key]!,
-            currency: primaryCurrency,
-            associatedData: entry.value.associatedData,
-          ),
-        ),
-      ),
-    );
-  }
+  @override
+  bool get wantKeepAlive => true;
 }

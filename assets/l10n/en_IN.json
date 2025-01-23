@@ -261,7 +261,7 @@
     "support.contribute.description": "If you're a developer, you can get involved in the development of Flow. The contributors list awaits your name to be added.",
     "support.donateDeveloper": "Tip the creator",
     "support.donateDeveloper.description": "All of Flow's functionality is offered for free, and tipping the developer will not unlock any additional features",
-    "support.donateDeveloper.action": "Visit creator's Ko-fi page",
+    "support.donateDeveloper.action": "Buy creator a coffee",
 
     "flowIcon.change": "Change icon",
     "flowIcon.type.icon": "Icon",

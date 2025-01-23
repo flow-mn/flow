@@ -1,5 +1,15 @@
 # Changelog
 
+## Beta 0.11.0 (next)
+
+* Reworked stats tab (ongoing)
+
+## Beta 0.10.2
+
+### Improvements
+
+* Date, time translations now support Turkish, fixes [#266](https://github.com/flow-mn/flow/issues/266)
+
 ## Beta 0.10.1
 
 ### New features

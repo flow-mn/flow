@@ -7,7 +7,7 @@ everyone. Here are few:
 * [Proposing a feature](https://github.com/flow-mn/flow/issues/new?assignees=&labels=&projects=&template=feature_request.yaml&title=%5BFEAT%5D+)
 * Submitting [fixes, feature implementations](#developing)
 * [Translating Flow](#translating) to your own language
-* [Tipping the maintainer](https://ko-fi.com/sadespresso). Flow is a
+* [Tipping the maintainer](https://buymeacoffee.com/sadespresso). Flow is a
 free and open-source software, and will stay this way. Please understand
 that by giving tip, you will NOT unlock any new or additional features.
 As of now, publishing fees have been paid by the maintainer.
