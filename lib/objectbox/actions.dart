@@ -4,7 +4,6 @@ import "dart:math" as math;
 
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
-import "package:flow/data/flow_report.dart";
 import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
@@ -220,51 +219,6 @@ extension MainActions on ObjectBox {
     );
 
     return FlowAnalytics(flow: flow, range: range);
-  }
-
-  Future<Map<int, MoneyFlow<DayTimeRange>>>
-      _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(TimeRange range) async {
-    final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-    final ExchangeRates? rates =
-        ExchangeRatesService().getPrimaryCurrencyRates();
-
-    final List<Transaction> transactions = await transcationsByRange(range);
-
-    final Map<int, MoneyFlow<DayTimeRange>> result = {};
-
-    for (final Transaction transaction in transactions) {
-      if (transaction.isTransfer) continue;
-
-      final DayTimeRange day =
-          DayTimeRange.fromDateTime(transaction.transactionDate);
-
-      result[day.day] ??= MoneyFlow(associatedData: day);
-
-      if (transaction.currency == primaryCurrency) {
-        result[day.day]!.add(transaction.money);
-      } else if (rates != null) {
-        result[day.day]!.add(transaction.money.convert(primaryCurrency, rates));
-      }
-    }
-
-    return result;
-  }
-
-  Future<FlowStandardReport> generateReport() async {
-    final MonthTimeRange current = TimeRange.thisMonth();
-    final MonthTimeRange previous = TimeRange.lastMonth();
-
-    final Map<int, MoneyFlow<DayTimeRange>> currentFlowByDay =
-        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(current);
-    final Map<int, MoneyFlow<DayTimeRange>> previousFlowByDay =
-        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(previous);
-
-    return FlowStandardReport(
-      current: current,
-      previous: previous,
-      currentFlowByDay: currentFlowByDay,
-      previousFlowByDay: previousFlowByDay,
-    );
   }
 
   Future<List<RelevanceScoredTitle>> transactionTitleSuggestions({
