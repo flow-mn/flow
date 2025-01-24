@@ -7,9 +7,9 @@ import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class NoData extends StatelessWidget {
-  final VoidCallback onTap;
+  final VoidCallback? selectTimeRange;
 
-  const NoData({super.key, required this.onTap});
+  const NoData({super.key, this.selectTimeRange});
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +31,15 @@ class NoData extends StatelessWidget {
               color: context.colorScheme.primary,
             ),
             const SizedBox(height: 8.0),
-            Button(
-              trailing: const Icon(
-                Symbols.history_rounded,
-                weight: 600.0,
+            if (selectTimeRange != null)
+              Button(
+                trailing: const Icon(
+                  Symbols.history_rounded,
+                  weight: 600.0,
+                ),
+                onTap: selectTimeRange,
+                child: Text("tabs.stats.timeRange.select".t(context)),
               ),
-              onTap: onTap,
-              child: Text("tabs.stats.timeRange.select".t(context)),
-            ),
           ],
         ),
       ),
