@@ -126,9 +126,10 @@ class _StatsTabState extends State<StatsTab>
                                       child: InfoCardWithDelta(
                                         title:
                                             "tabs.stats.dailyReport.forecastFor"
-                                                .t(context, [
+                                                .t(
+                                          context,
                                           report!.current.format(),
-                                        ]),
+                                        ),
                                         autoSizeGroup: autoSizeGroup,
                                         money:
                                             report!.currentExpenseSumForecast!,
