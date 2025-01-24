@@ -113,8 +113,7 @@ class FlowStandardReport {
         .map((flow) => flow.getExpenseByCurrency(primaryCurrency))
         .fold(Money(0, primaryCurrency), (a, b) => a.amount > b.amount ? a : b);
 
-    final int daysLeft = current.duration.inDays -
-        current.from.difference(DateTime.now()).inDays;
+    final int daysLeft = current.duration.inDays - countableDays;
 
     currentExpenseSumForecast =
         expenseSum + (dailyAvgExpenditure * daysLeft.toDouble());

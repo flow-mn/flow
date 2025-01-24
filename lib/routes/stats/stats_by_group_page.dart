@@ -9,7 +9,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/routes/home/stats_tab/pie_graph_view.dart";
+import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/exchange_missing_notice.dart";

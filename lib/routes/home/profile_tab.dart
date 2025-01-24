@@ -10,7 +10,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/list_header.dart";
-import "package:flow/widgets/home/prefs/profile_card.dart";
+import "package:flow/widgets/home/preferences/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";

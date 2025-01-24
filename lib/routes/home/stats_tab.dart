@@ -2,11 +2,13 @@ import "dart:ui";
 
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/flow_report.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/routes/home/stats_tab/info_card_with_delta.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/info_card_with_delta.dart";
+import "package:flow/widgets/home/stats/no_data.dart";
 import "package:flow/widgets/home/stats/range_daily_chart.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
@@ -90,7 +92,9 @@ class _StatsTabState extends State<StatsTab>
                                 children: [
                                   Expanded(
                                     child: InfoCardWithDelta(
-                                      title: "Avg. daily expense",
+                                      title:
+                                          "tabs.stats.dailyReport.dailyAvgExpense"
+                                              .t(context),
                                       autoSizeGroup: autoSizeGroup,
                                       money: report!.dailyAvgExpenditure,
                                       previousMoney:
@@ -101,7 +105,9 @@ class _StatsTabState extends State<StatsTab>
                                   const SizedBox(width: 16.0),
                                   Expanded(
                                     child: InfoCardWithDelta(
-                                      title: "Avg. daily income",
+                                      title:
+                                          "tabs.stats.dailyReport.dailyAvgIncome"
+                                              .t(context),
                                       autoSizeGroup: autoSizeGroup,
                                       money: report!.dailyAvgIncome,
                                       previousMoney:
@@ -119,7 +125,10 @@ class _StatsTabState extends State<StatsTab>
                                     Expanded(
                                       child: InfoCardWithDelta(
                                         title:
-                                            "Forecast for ${report!.current.format()}",
+                                            "tabs.stats.dailyReport.forecastFor"
+                                                .t(context, [
+                                          report!.current.format(),
+                                        ]),
                                         autoSizeGroup: autoSizeGroup,
                                         money:
                                             report!.currentExpenseSumForecast!,
@@ -130,7 +139,9 @@ class _StatsTabState extends State<StatsTab>
                                   const SizedBox(width: 16.0),
                                   Expanded(
                                     child: InfoCardWithDelta(
-                                      title: "Avg. daily flow",
+                                      title:
+                                          "tabs.stats.dailyReport.dailyAvgFlow"
+                                              .t(context),
                                       autoSizeGroup: autoSizeGroup,
                                       money: report!.dailyAvgFlow,
                                       previousMoney:
@@ -147,7 +158,7 @@ class _StatsTabState extends State<StatsTab>
                     ],
                   ),
                 )
-              : Text("No data to show"),
+              : NoData(),
         ),
       ],
     );
