@@ -137,6 +137,7 @@
     "transactions.query.filter.keyword.all": "Хайх",
     "transactions.query.filter.keyword.hint": "Гарчгаар хайх...",
     "transactions.query.filter.keyword.clear": "Цэвэрлэх",
+    "transactions.query.filter.keyword.includeDescription": "Тэмдэглэлээс хайх",
     "transactions.query.filter.timeRange": "Хугацаа",
     "transactions.query.filter.timeRange.all": "Бүх цаг үе",
     "transactions.query.filter.accounts": "Данс",
@@ -380,6 +381,11 @@
     "enum.BackupEntryType@preImport.description": "Файлаас өгөгдөл сэргээхээс өмнө сэргийлж автоматаар нөөц үүсгэв",
     "enum.BackupEntryType@other": "Бусад нөөц",
     "enum.BackupEntryType@other.description": "Бусад нөөц",
+
+    "enum.TransactionSearchMode": "Хайх горим",
+    "enum.TransactionSearchMode@smart": "Ухаалаг",
+    "enum.TransactionSearchMode@substring": "Хэсэгчлэн таарах",
+    "enum.TransactionSearchMode@exact": "Яг таарах",
 
     "error.route.404": "Хуудас олдсонгүй",
     "error.route.400": "Хуудас ачаалахад алдаа гарлаа",

@@ -137,6 +137,7 @@
     "transactions.query.filter.keyword.all": "Aramak",
     "transactions.query.filter.keyword.hint": "Başlığa göre ara...",
     "transactions.query.filter.keyword.clear": "Temiz",
+    "transactions.query.filter.keyword.includeDescription": "Notlar ekle",
     "transactions.query.filter.timeRange": "Zaman aralığı",
     "transactions.query.filter.timeRange.all": "Tüm Zamanlar",
     "transactions.query.filter.accounts": "Hesap",
@@ -380,6 +381,11 @@
     "enum.BackupEntryType@preImport.description": "Önceki yedeklemeden içe aktarmadan önce önlem olarak oluşturulan yedekleme",
     "enum.BackupEntryType@other": "Diğer yedekleme",
     "enum.BackupEntryType@other.description": "Diğer yedekleme",
+
+    "enum.TransactionSearchMode": "Arama modu",
+    "enum.TransactionSearchMode@smart": "Akıllı",
+    "enum.TransactionSearchMode@substring": "Kısmi eşleşme",
+    "enum.TransactionSearchMode@exact": "Tam eşleşme",
 
     "error.route.404": "Sayfa bulunamadı",
     "error.route.400": "Sayfa yüklenemedi",
