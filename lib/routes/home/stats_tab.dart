@@ -73,6 +73,42 @@ class _StatsTabState extends State<StatsTab>
               ? SingleChildScrollView(
                   child: Column(
                     children: [
+                      Frame(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              showForecast
+                                  ? "tabs.stats.dailyReport.forecastFor"
+                                      .t(context, report!.current.format())
+                                  : "tabs.stats.dailyReport.totalExpenseFor"
+                                      .t(context, report!.current.format()),
+                              style:
+                                  context.textTheme.titleSmall?.semi(context),
+                            ),
+                            Row(
+                              children: [
+                                MoneyText(
+                                  showForecast
+                                      ? report!.currentExpenseSumForecast
+                                      : report!.expenseSum,
+                                  style: context.textTheme.displaySmall,
+                                ),
+                                const SizedBox(width: 8.0),
+                                Trend.fromMoney(
+                                  current: showForecast
+                                      ? report!.currentExpenseSumForecast
+                                      : report!.expenseSum,
+                                  previous: report!.previousExpenseSum,
+                                  invertDelta: true,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
                       ClipRect(
                         child: Stack(
                           children: [
@@ -118,57 +154,20 @@ class _StatsTabState extends State<StatsTab>
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16.0),
-                      Frame(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              showForecast
-                                  ? "tabs.stats.dailyReport.forecastFor"
-                                      .t(context)
-                                  : "tabs.stats.dailyReport.totalExpenseFor"
-                                      .t(context),
-                              style: context.textTheme.titleMedium,
-                            ),
-                            Row(
-                              children: [
-                                MoneyText(
-                                  showForecast
-                                      ? report!.currentExpenseSumForecast
-                                      : report!.expenseSum,
-                                  style: context.textTheme.displaySmall,
-                                ),
-                                Trend.fromMoney(
-                                  current: showForecast
-                                      ? report!.currentExpenseSumForecast
-                                      : report!.expenseSum,
-                                  previous: report!.previousExpenseSum,
-                                  invertDelta: true,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(height: 24.0),
                       Frame(
-                        child: Expanded(
-                          child: ActionCard(
-                            icon: FlowIconData.icon(Symbols.category_rounded),
-                            title: "tabs.stats.seeStatsByCategory".t(context),
-                            onTap: () => context.push("/stats/category"),
-                          ),
+                        child: ActionCard(
+                          icon: FlowIconData.icon(Symbols.category_rounded),
+                          title: "tabs.stats.summaryByCategory".t(context),
+                          onTap: () => context.push("/stats/category"),
                         ),
                       ),
                       const SizedBox(height: 16.0),
                       Frame(
-                        child: Expanded(
-                          child: ActionCard(
-                            icon: FlowIconData.icon(Symbols.wallet_rounded),
-                            title: "tabs.stats.seeStatsByAccount".t(context),
-                            onTap: () => context.push("/stats/account"),
-                          ),
+                        child: ActionCard(
+                          icon: FlowIconData.icon(Symbols.wallet_rounded),
+                          title: "tabs.stats.summaryByAccount".t(context),
+                          onTap: () => context.push("/stats/account"),
                         ),
                       ),
                       const SizedBox(height: 96.0),
