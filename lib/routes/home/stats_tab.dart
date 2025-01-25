@@ -34,8 +34,7 @@ class _StatsTabState extends State<StatsTab>
 
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
-  late final bool initiallyAbbreviated =
-      !LocalPreferences().preferFullAmounts.get();
+  late bool initiallyAbbreviated;
 
   bool busy = false;
 
@@ -44,6 +43,19 @@ class _StatsTabState extends State<StatsTab>
     super.initState();
 
     fetch();
+
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
+    LocalPreferences()
+        .preferFullAmounts
+        .addListener(_updateInitiallyAbbreviated);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences()
+        .preferFullAmounts
+        .removeListener(_updateInitiallyAbbreviated);
+    super.dispose();
   }
 
   @override
@@ -94,6 +106,9 @@ class _StatsTabState extends State<StatsTab>
                                       ? report!.currentExpenseSumForecast
                                       : report!.expenseSum,
                                   style: context.textTheme.displaySmall,
+                                  autoSize: true,
+                                  tapToToggleAbbreviation: true,
+                                  initiallyAbbreviated: initiallyAbbreviated,
                                 ),
                                 const SizedBox(width: 8.0),
                                 Trend.fromMoney(
@@ -203,6 +218,13 @@ class _StatsTabState extends State<StatsTab>
       if (mounted) {
         setState(() {});
       }
+    }
+  }
+
+  void _updateInitiallyAbbreviated() {
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
+    if (mounted) {
+      setState(() {});
     }
   }
 
