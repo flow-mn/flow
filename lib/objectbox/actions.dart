@@ -588,8 +588,9 @@ extension TransactionListActions on Iterable<Transaction> {
 
     final matches = where(data.predicate).toList();
 
-    if (data.smartMatch && matches.isEmpty) {
-      return search(data.copyWithOptional(smartMatch: false));
+    if (data.mode == TransactionSearchMode.smart && matches.isEmpty) {
+      return search(
+          data.copyWithOptional(mode: TransactionSearchMode.substring));
     }
 
     return matches;

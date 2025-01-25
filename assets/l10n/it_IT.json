@@ -137,6 +137,7 @@
     "transactions.query.filter.keyword.all": "Cerca",
     "transactions.query.filter.keyword.hint": "Cerca per titolo...",
     "transactions.query.filter.keyword.clear": "Cancella cerca",
+    "transactions.query.filter.keyword.includeDescription": "Includi note",
     "transactions.query.filter.timeRange": "Periodo",
     "transactions.query.filter.timeRange.all": "Tutto il tempo",
     "transactions.query.filter.accounts": "Conti",
@@ -380,6 +381,11 @@
     "enum.BackupEntryType@preImport.description": "Backup creato come precauzione prima di importare da un backup precedente",
     "enum.BackupEntryType@other": "Altro",
     "enum.BackupEntryType@other.description": "Altro tipo di backup",
+
+    "enum.TransactionSearchMode": "Modalità di ricerca",
+    "enum.TransactionSearchMode@smart": "Intelligente",
+    "enum.TransactionSearchMode@substring": "Corrispondenza parziale",
+    "enum.TransactionSearchMode@exact": "Corrispondenza esatta",
 
     "error.route.404": "Pagina non trovata",
     "error.route.400": "Impossibile caricare la pagina",
