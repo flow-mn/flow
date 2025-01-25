@@ -53,77 +53,82 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-        valueListenable: ExchangeRatesService().exchangeRatesCache,
-        builder: (context, exchangeRatesCache, child) {
-          final ExchangeRates? rates = exchangeRatesCache?.get(
-            LocalPreferences().getPrimaryCurrency(),
-          );
+    return Scaffold(
+      appBar: AppBar(),
+      body: ValueListenableBuilder(
+          valueListenable: ExchangeRatesService().exchangeRatesCache,
+          builder: (context, exchangeRatesCache, child) {
+            final ExchangeRates? rates = exchangeRatesCache?.get(
+              LocalPreferences().getPrimaryCurrency(),
+            );
 
-          final Map<String, ChartData> expenses = _prepareChartData(
-            analytics?.flow,
-            TransactionType.expense,
-            rates,
-          );
+            final Map<String, ChartData> expenses = _prepareChartData(
+              analytics?.flow,
+              TransactionType.expense,
+              rates,
+            );
 
-          final Map<String, ChartData> incomes = _prepareChartData(
-            analytics?.flow,
-            TransactionType.income,
-            rates,
-          );
+            final Map<String, ChartData> incomes = _prepareChartData(
+              analytics?.flow,
+              TransactionType.income,
+              rates,
+            );
 
-          return Column(
-            children: [
-              Material(
-                elevation: 1.0,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
-                  width: double.infinity,
-                  child: TimeRangeSelector(
-                    initialValue: range,
-                    onChanged: updateRange,
+            return Column(
+              children: [
+                Material(
+                  elevation: 1.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+                    width: double.infinity,
+                    child: TimeRangeSelector(
+                      initialValue: range,
+                      onChanged: updateRange,
+                    ),
                   ),
                 ),
-              ),
-              if (busy)
-                const Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Spinner(),
-                )
-              else ...[
-                TabBar(
-                  controller: _tabController,
-                  tabs: [
-                    Tab(
-                      text: TransactionType.expense.localizedTextKey.t(context),
-                    ),
-                    Tab(
-                      text: TransactionType.income.localizedTextKey.t(context),
-                    ),
-                  ],
-                ),
-                if (rates == null) const ExchangeMissingNotice(),
-                Expanded(
-                  child: TabBarView(
+                if (busy)
+                  const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Spinner(),
+                  )
+                else ...[
+                  TabBar(
                     controller: _tabController,
-                    children: [
-                      PieGraphView(
-                        data: expenses,
-                        changeMode: changeMode,
-                        range: range,
+                    tabs: [
+                      Tab(
+                        text:
+                            TransactionType.expense.localizedTextKey.t(context),
                       ),
-                      PieGraphView(
-                        data: incomes,
-                        changeMode: changeMode,
-                        range: range,
+                      Tab(
+                        text:
+                            TransactionType.income.localizedTextKey.t(context),
                       ),
                     ],
                   ),
-                )
+                  if (rates == null) const ExchangeMissingNotice(),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        PieGraphView(
+                          data: expenses,
+                          changeMode: changeMode,
+                          range: range,
+                        ),
+                        PieGraphView(
+                          data: incomes,
+                          changeMode: changeMode,
+                          range: range,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ],
-            ],
-          );
-        });
+            );
+          }),
+    );
   }
 
   void updateRange(TimeRange newRange) {

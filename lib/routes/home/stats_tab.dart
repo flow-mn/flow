@@ -1,17 +1,23 @@
 import "dart:ui";
 
 import "package:auto_size_text/auto_size_text.dart";
-import "package:flow/data/flow_report.dart";
+import "package:flow/data/flow_icon.dart";
+import "package:flow/data/flow_standard_report.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/theme/theme.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/action_card.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/info_card_with_delta.dart";
 import "package:flow/widgets/home/stats/no_data.dart";
 import "package:flow/widgets/home/stats/range_daily_chart.dart";
 import "package:flow/widgets/time_range_selector.dart";
+import "package:flow/widgets/trend.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class StatsTab extends StatefulWidget {
@@ -28,8 +34,7 @@ class _StatsTabState extends State<StatsTab>
 
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
-  late final bool initiallyAbbreviated =
-      !LocalPreferences().preferFullAmounts.get();
+  late bool initiallyAbbreviated;
 
   bool busy = false;
 
@@ -38,6 +43,19 @@ class _StatsTabState extends State<StatsTab>
     super.initState();
 
     fetch();
+
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
+    LocalPreferences()
+        .preferFullAmounts
+        .addListener(_updateInitiallyAbbreviated);
+  }
+
+  @override
+  void dispose() {
+    LocalPreferences()
+        .preferFullAmounts
+        .removeListener(_updateInitiallyAbbreviated);
+    super.dispose();
   }
 
   @override
@@ -50,6 +68,10 @@ class _StatsTabState extends State<StatsTab>
 
     final bool hasData = report != null && report!.currentFlowByDay.isNotEmpty;
 
+    final bool showForecast =
+        report?.current.contains(DateTime.now()) == true &&
+            report!.currentExpenseSumForecast != null;
+
     return Column(
       children: [
         Frame.standalone(
@@ -61,9 +83,47 @@ class _StatsTabState extends State<StatsTab>
         Expanded(
           child: hasData
               ? SingleChildScrollView(
-                  primary: true,
                   child: Column(
                     children: [
+                      Frame(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              showForecast
+                                  ? "tabs.stats.dailyReport.forecastFor"
+                                      .t(context, report!.current.format())
+                                  : "tabs.stats.dailyReport.totalExpenseFor"
+                                      .t(context, report!.current.format()),
+                              style:
+                                  context.textTheme.titleSmall?.semi(context),
+                            ),
+                            Row(
+                              children: [
+                                MoneyText(
+                                  showForecast
+                                      ? report!.currentExpenseSumForecast
+                                      : report!.expenseSum,
+                                  style: context.textTheme.displaySmall,
+                                  autoSize: true,
+                                  tapToToggleAbbreviation: true,
+                                  initiallyAbbreviated: initiallyAbbreviated,
+                                ),
+                                const SizedBox(width: 8.0),
+                                Trend.fromMoney(
+                                  current: showForecast
+                                      ? report!.currentExpenseSumForecast
+                                      : report!.expenseSum,
+                                  previous: report!.previousExpenseSum,
+                                  invertDelta: true,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
                       ClipRect(
                         child: Stack(
                           children: [
@@ -82,76 +142,47 @@ class _StatsTabState extends State<StatsTab>
                         ),
                       ),
                       const SizedBox(height: 24.0),
-                      DefaultTextStyle(
-                        style: context.textTheme.displaySmall!,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                      Frame(
+                        child: Row(
                           children: [
-                            Frame(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: InfoCardWithDelta(
-                                      title:
-                                          "tabs.stats.dailyReport.dailyAvgExpense"
-                                              .t(context),
-                                      autoSizeGroup: autoSizeGroup,
-                                      money: report!.dailyAvgExpenditure,
-                                      previousMoney:
-                                          report!.previousDailyAvgExpenditure,
-                                      invertDelta: true,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16.0),
-                                  Expanded(
-                                    child: InfoCardWithDelta(
-                                      title:
-                                          "tabs.stats.dailyReport.dailyAvgIncome"
-                                              .t(context),
-                                      autoSizeGroup: autoSizeGroup,
-                                      money: report!.dailyAvgIncome,
-                                      previousMoney:
-                                          report!.previousDailyAvgIncome,
-                                    ),
-                                  ),
-                                ],
+                            Expanded(
+                              child: InfoCardWithDelta(
+                                title: "tabs.stats.dailyReport.dailyAvgExpense"
+                                    .t(context),
+                                autoSizeGroup: autoSizeGroup,
+                                money: report!.dailyAvgExpenditure,
+                                previousMoney:
+                                    report!.previousDailyAvgExpenditure,
+                                invertDelta: true,
                               ),
                             ),
-                            const SizedBox(height: 16.0),
-                            Frame(
-                              child: Row(
-                                children: [
-                                  if (report!.currentExpenseSumForecast != null)
-                                    Expanded(
-                                      child: InfoCardWithDelta(
-                                        title:
-                                            "tabs.stats.dailyReport.forecastFor"
-                                                .t(context, [
-                                          report!.current.format(),
-                                        ]),
-                                        autoSizeGroup: autoSizeGroup,
-                                        money:
-                                            report!.currentExpenseSumForecast!,
-                                        previousMoney:
-                                            report!.previousExpenseSum,
-                                      ),
-                                    ),
-                                  const SizedBox(width: 16.0),
-                                  Expanded(
-                                    child: InfoCardWithDelta(
-                                      title:
-                                          "tabs.stats.dailyReport.dailyAvgFlow"
-                                              .t(context),
-                                      autoSizeGroup: autoSizeGroup,
-                                      money: report!.dailyAvgFlow,
-                                      previousMoney:
-                                          report!.previousDailyAvgFlow,
-                                    ),
-                                  ),
-                                ],
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: InfoCardWithDelta(
+                                title: "tabs.stats.dailyReport.dailyAvgIncome"
+                                    .t(context),
+                                autoSizeGroup: autoSizeGroup,
+                                money: report!.dailyAvgIncome,
+                                previousMoney: report!.previousDailyAvgIncome,
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(height: 24.0),
+                      Frame(
+                        child: ActionCard(
+                          icon: FlowIconData.icon(Symbols.category_rounded),
+                          title: "tabs.stats.summaryByCategory".t(context),
+                          onTap: () => context.push("/stats/category"),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Frame(
+                        child: ActionCard(
+                          icon: FlowIconData.icon(Symbols.wallet_rounded),
+                          title: "tabs.stats.summaryByAccount".t(context),
+                          onTap: () => context.push("/stats/account"),
                         ),
                       ),
                       const SizedBox(height: 96.0),
@@ -187,6 +218,13 @@ class _StatsTabState extends State<StatsTab>
       if (mounted) {
         setState(() {});
       }
+    }
+  }
+
+  void _updateInitiallyAbbreviated() {
+    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
+    if (mounted) {
+      setState(() {});
     }
   }
 
