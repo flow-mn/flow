@@ -1,5 +1,9 @@
 # Changelog
 
+## Beta 0.11.0 (next)
+
+* Reworked stats tab (ongoing)
+
 ## Beta 0.10.2
 
 ### Improvements
