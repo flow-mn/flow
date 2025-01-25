@@ -88,6 +88,14 @@ class _MoneyTextState extends State<MoneyText> {
   }
 
   @override
+  void didUpdateWidget(covariant MoneyText oldWidget) {
+    if (widget.initiallyAbbreviated != oldWidget.initiallyAbbreviated) {
+      abbreviate = widget.initiallyAbbreviated;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MoneyTextBuilder(
       money: widget.money,

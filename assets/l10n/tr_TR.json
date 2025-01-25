@@ -30,6 +30,7 @@
     "general.disabled": "Devredışı",
     "general.selectLocation": "Konum seçin",
     "general.nextNDays": "Sonraki {} gün",
+    "general.flow": "Akış",
 
     "setup.getStarted": "Başlayın",
     "setup.next": "Sonraki",
@@ -247,6 +248,8 @@
     "tabs.stats.dailyReport.dailyAvgFlow.negative": "Günlük ~{} kaybediyorsunuz",
     "tabs.stats.dailyReport.forecastFor": "{} için gider tahmini",
     "tabs.stats.dailyReport.comparedTo": "{} ile karşılaştırıldığında",
+    "tabs.stats.summaryByAccount": "Hesaba göre özet",
+    "tabs.stats.summaryByCategory": "Kategoriye göre özet",
     "tabs.accounts": "Hesap",
     "tabs.accounts.reorder": "Hesapları yeniden sıralama",
     "tabs.accounts.reorder.guide": "Uzun basın ve sürükleyin",

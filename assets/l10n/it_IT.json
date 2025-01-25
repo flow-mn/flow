@@ -30,6 +30,7 @@
     "general.disabled": "Disabilitato",
     "general.selectLocation": "Scegli la posizione",
     "general.nextNDays": "Prossimi {} giorni",
+    "general.flow": "Flusso",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",
@@ -247,6 +248,8 @@
     "tabs.stats.dailyReport.dailyAvgFlow.negative": "Perdi ~{} al giorno",
     "tabs.stats.dailyReport.forecastFor": "Previsione di spesa per {}",
     "tabs.stats.dailyReport.comparedTo": "Rispetto a {}",
+    "tabs.stats.summaryByAccount": "Riepilogo per conto",
+    "tabs.stats.summaryByCategory": "Riepilogo per categoria",
     "tabs.accounts": "Conti",
     "tabs.accounts.reorder": "Riordina i conti",
     "tabs.accounts.reorder.guide": "Premi a lungo e trascina",

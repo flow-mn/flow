@@ -2,7 +2,7 @@ import "dart:math" as math;
 
 import "package:auto_size_text/auto_size_text.dart";
 import "package:fl_chart/fl_chart.dart";
-import "package:flow/data/flow_report.dart";
+import "package:flow/data/flow_standard_report.dart";
 import "package:flow/data/money.dart";
 import "package:flow/prefs.dart";
 import "package:flow/theme/theme.dart";
