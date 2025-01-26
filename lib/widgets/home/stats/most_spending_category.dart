@@ -9,6 +9,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/blur_on_busy.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
@@ -22,10 +23,11 @@ class MostSpendingCategory extends StatefulWidget {
 
   final BorderRadius? borderRadius;
 
-  const MostSpendingCategory(
-      {super.key,
-      required this.range,
-      this.borderRadius = const BorderRadius.all(Radius.circular(16.0))});
+  const MostSpendingCategory({
+    super.key,
+    required this.range,
+    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+  });
 
   @override
   State<MostSpendingCategory> createState() => _MostSpendingCategoryState();
@@ -61,43 +63,46 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: widget.borderRadius,
-      onTap: category == null
+      onTap: (busy || category == null)
           ? null
           : (() => context.push(
               "/category/${category?.id}?range=${Uri.encodeQueryComponent(range.encodeShort())}")),
-      child: Surface(
-        shape: RoundedRectangleBorder(
-          borderRadius: widget.borderRadius as BorderRadiusGeometry,
-        ),
-        builder: (context) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            spacing: 16.0,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      spacing: 8.0,
-                      children: [
-                        FlowIcon(
-                          category?.icon ??
-                              FlowIconData.icon(Symbols.category_rounded),
-                        ),
-                        Text(category?.name ?? "category.none".t(context))
-                      ],
-                    ),
-                    MoneyText(
-                      expense,
-                      autoSize: true,
-                      style: context.textTheme.displaySmall,
-                    ),
-                  ],
+      child: BlurOnBusy(
+        busy: busy,
+        child: Surface(
+          shape: RoundedRectangleBorder(
+            borderRadius: widget.borderRadius as BorderRadiusGeometry,
+          ),
+          builder: (context) => Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              spacing: 16.0,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        spacing: 8.0,
+                        children: [
+                          FlowIcon(
+                            category?.icon ??
+                                FlowIconData.icon(Symbols.category_rounded),
+                          ),
+                          Text(category?.name ?? "category.none".t(context))
+                        ],
+                      ),
+                      MoneyText(
+                        expense,
+                        autoSize: true,
+                        style: context.textTheme.displaySmall,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Icon(Symbols.chevron_right_rounded),
-            ],
+                Icon(Symbols.chevron_right_rounded),
+              ],
+            ),
           ),
         ),
       ),

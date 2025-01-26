@@ -1,5 +1,3 @@
-import "dart:ui";
-
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_icon.dart";
@@ -7,6 +5,7 @@ import "package:flow/data/flow_standard_report.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/blur_on_busy.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -88,87 +87,81 @@ class _StatsTabState extends State<StatsTab>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Frame(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              showForecast
-                                  ? "tabs.stats.dailyReport.forecastFor"
-                                      .t(context, report!.current.format())
-                                  : "tabs.stats.dailyReport.totalExpenseFor"
-                                      .t(context, report!.current.format()),
-                              style:
-                                  context.textTheme.titleSmall?.semi(context),
-                            ),
-                            Row(
-                              children: [
-                                MoneyText(
-                                  showForecast
-                                      ? report!.currentExpenseSumForecast
-                                      : report!.expenseSum,
-                                  style: context.textTheme.displaySmall,
-                                  autoSize: true,
-                                  tapToToggleAbbreviation: true,
-                                ),
-                                const SizedBox(width: 8.0),
-                                Trend.fromMoney(
-                                  current: showForecast
-                                      ? report!.currentExpenseSumForecast
-                                      : report!.expenseSum,
-                                  previous: report!.previousExpenseSum,
-                                  invertDelta: true,
-                                ),
-                              ],
-                            ),
-                          ],
+                      BlurOnBusy(
+                        busy: busy,
+                        child: Frame(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                showForecast
+                                    ? "tabs.stats.dailyReport.forecastFor"
+                                        .t(context, report!.current.format())
+                                    : "tabs.stats.dailyReport.totalExpenseFor"
+                                        .t(context, report!.current.format()),
+                                style:
+                                    context.textTheme.titleSmall?.semi(context),
+                              ),
+                              Row(
+                                children: [
+                                  MoneyText(
+                                    showForecast
+                                        ? report!.currentExpenseSumForecast
+                                        : report!.expenseSum,
+                                    style: context.textTheme.displaySmall,
+                                    autoSize: true,
+                                    tapToToggleAbbreviation: true,
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  Trend.fromMoney(
+                                    current: showForecast
+                                        ? report!.currentExpenseSumForecast
+                                        : report!.expenseSum,
+                                    previous: report!.previousExpenseSum,
+                                    invertDelta: true,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      ClipRect(
-                        child: Stack(
-                          children: [
-                            RangeDailyChart(report: report!),
-                            if (busy)
-                              Positioned.fill(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 2.0,
-                                    sigmaY: 2.0,
-                                  ),
-                                  child: Container(),
-                                ),
-                              ),
-                          ],
-                        ),
+                      BlurOnBusy(
+                        busy: busy,
+                        child: RangeDailyChart(report: report!),
                       ),
                       const SizedBox(height: 24.0),
-                      Frame(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: InfoCardWithDelta(
-                                title: "tabs.stats.dailyReport.dailyAvgExpense"
-                                    .t(context),
-                                autoSizeGroup: autoSizeGroup,
-                                money: report!.dailyAvgExpenditure,
-                                previousMoney:
-                                    report!.previousDailyAvgExpenditure,
-                                invertDelta: true,
+                      BlurOnBusy(
+                        busy: busy,
+                        child: Frame(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InfoCardWithDelta(
+                                  title:
+                                      "tabs.stats.dailyReport.dailyAvgExpense"
+                                          .t(context),
+                                  autoSizeGroup: autoSizeGroup,
+                                  money: report!.dailyAvgExpenditure,
+                                  previousMoney:
+                                      report!.previousDailyAvgExpenditure,
+                                  invertDelta: true,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              child: InfoCardWithDelta(
-                                title: "tabs.stats.dailyReport.dailyAvgIncome"
-                                    .t(context),
-                                autoSizeGroup: autoSizeGroup,
-                                money: report!.dailyAvgIncome,
-                                previousMoney: report!.previousDailyAvgIncome,
+                              const SizedBox(width: 16.0),
+                              Expanded(
+                                child: InfoCardWithDelta(
+                                  title: "tabs.stats.dailyReport.dailyAvgIncome"
+                                      .t(context),
+                                  autoSizeGroup: autoSizeGroup,
+                                  money: report!.dailyAvgIncome,
+                                  previousMoney: report!.previousDailyAvgIncome,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24.0),
