@@ -1,11 +1,13 @@
 # Changelog
 
-## Beta 0.11.0 (next)
+## Beta 0.11.0
 
 * Reworked stats tab (ongoing)
 * Enhanced search options (ongoing)
   * Added partial and exact match mode
   * Added option to include description, closes [#269](https://github.com/flow-mn/flow/issues/269)
+    At the time, it will only do substring (partial) matching.
+* Now you can group transcations by hour, day, week, month, and year, closes [#256](https://github.com/flow-mn/flow/issues/256)
 
 ## Beta 0.10.2
 
