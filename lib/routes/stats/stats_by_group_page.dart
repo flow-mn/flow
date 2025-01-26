@@ -12,7 +12,7 @@ import "package:flow/prefs.dart";
 import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/general/spinner.dart";
-import "package:flow/widgets/home/stats/exchange_missing_notice.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
@@ -54,7 +54,13 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          widget.byCategory
+              ? "tabs.stats.summaryByCategory".t(context)
+              : "tabs.stats.summaryByAccount".t(context),
+        ),
+      ),
       body: ValueListenableBuilder(
           valueListenable: ExchangeRatesService().exchangeRatesCache,
           builder: (context, exchangeRatesCache, child) {
@@ -106,7 +112,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                       ),
                     ],
                   ),
-                  if (rates == null) const ExchangeMissingNotice(),
+                  if (rates == null) const RatesMissingWarning(),
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,
@@ -148,14 +154,8 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
 
     try {
       analytics = widget.byCategory
-          ? await ObjectBox().flowByCategories(
-              range: range,
-              currencyOverride: LocalPreferences().getPrimaryCurrency(),
-            )
-          : await ObjectBox().flowByAccounts(
-              range: range,
-              currencyOverride: LocalPreferences().getPrimaryCurrency(),
-            );
+          ? await ObjectBox().flowByCategories(range: range)
+          : await ObjectBox().flowByAccounts(range: range);
     } finally {
       busy = false;
 

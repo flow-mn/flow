@@ -11,7 +11,7 @@ class ListHeader extends StatelessWidget {
     this.title, {
     super.key,
     this.style,
-    this.padding = const EdgeInsets.symmetric(horizontal: 12.0),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
   });
 
   @override

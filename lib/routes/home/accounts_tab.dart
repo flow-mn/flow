@@ -67,26 +67,29 @@ class _AccountsTabState extends State<AccountsTab>
                             builder: (context, excludeTransfersInTotal, child) {
                               return Expanded(
                                 child: _reordering
-                                    ? ReorderableListView.builder(
-                                        padding: const EdgeInsets.all(16.0)
-                                            .copyWith(bottom: 96.0),
-                                        itemBuilder: (context, index) =>
-                                            Padding(
-                                          key: ValueKey(accounts[index].uuid),
+                                    ? Frame(
+                                        child: ReorderableListView.builder(
                                           padding: const EdgeInsets.only(
-                                              bottom: 16.0),
-                                          child: AccountCard(
-                                            account: accounts[index],
-                                            useCupertinoContextMenu: false,
-                                            excludeTransfersInTotal:
-                                                excludeTransfersInTotal == true,
+                                              bottom: 96.0),
+                                          itemBuilder: (context, index) =>
+                                              Padding(
+                                            key: ValueKey(accounts[index].uuid),
+                                            padding: const EdgeInsets.only(
+                                                bottom: 16.0),
+                                            child: AccountCard(
+                                              account: accounts[index],
+                                              useCupertinoContextMenu: false,
+                                              excludeTransfersInTotal:
+                                                  excludeTransfersInTotal ==
+                                                      true,
+                                            ),
                                           ),
+                                          proxyDecorator: proxyDecorator,
+                                          itemCount: accounts.length,
+                                          onReorder: (oldIndex, newIndex) =>
+                                              onReorder(
+                                                  accounts, oldIndex, newIndex),
                                         ),
-                                        proxyDecorator: proxyDecorator,
-                                        itemCount: accounts.length,
-                                        onReorder: (oldIndex, newIndex) =>
-                                            onReorder(
-                                                accounts, oldIndex, newIndex),
                                       )
                                     : ListView(
                                         padding: const EdgeInsets.all(16.0),

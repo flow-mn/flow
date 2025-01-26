@@ -146,6 +146,8 @@
     "transactions.query.filter.categories": "Categories",
     "transactions.query.filter.categories.n": "{} categories",
     "transactions.query.filter.categories.all": "All Categories",
+    "transactions.query.filter.groupBy": "Group by",
+    "transactions.query.filter.sort": "Sort",
     "transactions.count": "{} transactions",
 
     "category": "Category",
@@ -248,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "{} total expense",
     "tabs.stats.summaryByAccount": "Summary by account",
     "tabs.stats.summaryByCategory": "Summary by category",
+    "tabs.stats.topSpendingCategory": "Top spending category",
+    "tabs.stats.otherStats": "Other stats",
     "tabs.accounts": "Accounts",
     "tabs.accounts.reorder": "Reorder accounts",
     "tabs.accounts.reorder.guide": "Long press and drag",
@@ -386,6 +390,13 @@
     "enum.TransactionSearchMode@smart": "Smart",
     "enum.TransactionSearchMode@substring": "Partial match",
     "enum.TransactionSearchMode@exact": "Exact match",
+
+    "enum.TransactionGroupRange": "Group unit",
+    "enum.TransactionGroupRange@hour": "Hour",
+    "enum.TransactionGroupRange@day": "Day",
+    "enum.TransactionGroupRange@week": "Week",
+    "enum.TransactionGroupRange@month": "Month",
+    "enum.TransactionGroupRange@year": "Year",
 
     "error.route.404": "Page not found",
     "error.route.400": "Failed to load the page",

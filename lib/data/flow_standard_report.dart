@@ -7,7 +7,6 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
-import "package:flow/services/exchange_rates.dart";
 import "package:moment_dart/moment_dart.dart";
 
 /// Only capable of working with the primary currency
@@ -182,13 +181,20 @@ class FlowStandardReport {
         previousDailyAvgExpenditure! + previousDailyAvgIncome!;
   }
 
-  static Future<FlowStandardReport> generate(TimeRange range) async {
+  /// When [rates] is not available, ignores all other currencies.
+  ///
+  /// It's a good idea to show a notice to the user that the report is not accurate.
+  static Future<FlowStandardReport> generate(
+    TimeRange range,
+    ExchangeRates? rates,
+  ) async {
     final Map<int, MoneyFlow<DayTimeRange>> currentFlowByDay =
-        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(range);
+        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(range, rates);
     final Map<int, MoneyFlow<DayTimeRange>>? previousFlowByDay =
         switch (range) {
       PageableRange pageable =>
-        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(pageable.last),
+        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
+            pageable.last, rates),
       _ => null,
     };
 
@@ -200,10 +206,9 @@ class FlowStandardReport {
   }
 
   static Future<Map<int, MoneyFlow<DayTimeRange>>>
-      _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(TimeRange range) async {
+      _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
+          TimeRange range, ExchangeRates? rates) async {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
-    final ExchangeRates? rates =
-        ExchangeRatesService().getPrimaryCurrencyRates();
 
     final List<Transaction> transactions =
         await ObjectBox().transcationsByRange(range);

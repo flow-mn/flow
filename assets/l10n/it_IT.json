@@ -146,6 +146,8 @@
     "transactions.query.filter.categories": "Categorie",
     "transactions.query.filter.categories.n": "{} categorie",
     "transactions.query.filter.categories.all": "Tutte le categorie",
+    "transactions.query.filter.groupBy": "Raggruppa per",
+    "transactions.query.filter.sort": "Ordina",
     "transactions.count": "{count} transazioni",
 
     "category": "Categoria",
@@ -248,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "Spesa totale {}",
     "tabs.stats.summaryByAccount": "Riepilogo per conto",
     "tabs.stats.summaryByCategory": "Riepilogo per categoria",
+    "tabs.stats.topSpendingCategory": "Categoria di spesa principale",
+    "tabs.stats.otherStats": "Altre statistiche",
     "tabs.accounts": "Conti",
     "tabs.accounts.reorder": "Riordina i conti",
     "tabs.accounts.reorder.guide": "Premi a lungo e trascina",
@@ -386,6 +390,13 @@
     "enum.TransactionSearchMode@smart": "Intelligente",
     "enum.TransactionSearchMode@substring": "Corrispondenza parziale",
     "enum.TransactionSearchMode@exact": "Corrispondenza esatta",
+
+    "enum.TransactionGroupRange": "Unità di gruppo",
+    "enum.TransactionGroupRange@hour": "Ora",
+    "enum.TransactionGroupRange@day": "Giorno",
+    "enum.TransactionGroupRange@week": "Settimana",
+    "enum.TransactionGroupRange@month": "Mese",
+    "enum.TransactionGroupRange@year": "Anno",
 
     "error.route.404": "Pagina non trovata",
     "error.route.400": "Impossibile caricare la pagina",

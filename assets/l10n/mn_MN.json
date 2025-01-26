@@ -146,6 +146,8 @@
     "transactions.query.filter.categories": "Ангилал",
     "transactions.query.filter.categories.n": "{} ангилал",
     "transactions.query.filter.categories.all": "Бүх ангилал",
+    "transactions.query.filter.groupBy": "Бүлэглэх нэгж",
+    "transactions.query.filter.sort": "Эрэмбэ",
     "transactions.count": "{} гүйлгээ",
 
     "category": "Ангилал",
@@ -248,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "{}-н нийт зарлага",
     "tabs.stats.summaryByAccount": "Данс бүрээр харах",
     "tabs.stats.summaryByCategory": "Ангилал бүрээр харах",
+    "tabs.stats.topSpendingCategory": "Хамгийн зарлагатай ангилал",
+    "tabs.stats.otherStats": "Бусад тоо",
     "tabs.accounts": "Данснууд",
     "tabs.accounts.reorder": "Дараалал өөрчлөх",
     "tabs.accounts.reorder.guide": "Удаан дарж чирнэ үү",
@@ -386,6 +390,13 @@
     "enum.TransactionSearchMode@smart": "Ухаалаг",
     "enum.TransactionSearchMode@substring": "Хэсэгчлэн таарах",
     "enum.TransactionSearchMode@exact": "Яг таарах",
+
+    "enum.TransactionGroupRange": "Бүлэглэх нэгж",
+    "enum.TransactionGroupRange@hour": "Цаг",
+    "enum.TransactionGroupRange@day": "Өдөр",
+    "enum.TransactionGroupRange@week": "Долоо хоног",
+    "enum.TransactionGroupRange@month": "Сар",
+    "enum.TransactionGroupRange@year": "Жил",
 
     "error.route.404": "Хуудас олдсонгүй",
     "error.route.400": "Хуудас ачаалахад алдаа гарлаа",
