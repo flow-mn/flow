@@ -1,4 +1,5 @@
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
@@ -27,11 +28,23 @@ class TransactionListTile extends StatelessWidget {
 
   final bool? overrideObscure;
 
+  /// Determines what date/time to show. i.e.:
+  ///
+  /// * [TransactionGroupRange.hour] - Hour and minute
+  /// * [TransactionGroupRange.day] - Hour and minute
+  /// * [TransactionGroupRange.week] - Calendar date with hour and minute
+  /// * [TransactionGroupRange.month] - Calendar date with hour and minute
+  /// * [TransactionGroupRange.year] - Calendar date with hour and minute
+  ///
+  /// Defaults to [TransactionGroupRange.day]
+  final TransactionGroupRange? groupRange;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
     required this.deleteFn,
     required this.combineTransfers,
+    this.groupRange = TransactionGroupRange.day,
     this.padding = EdgeInsets.zero,
     this.confirmFn,
     this.duplicateFn,
@@ -217,6 +230,11 @@ class TransactionListTile extends StatelessWidget {
 
     if (pending) return transaction.transactionDate.toMoment().calendar();
 
-    return transaction.transactionDate.toMoment().LT;
+    return switch (groupRange) {
+      TransactionGroupRange.hour ||
+      TransactionGroupRange.day =>
+        transaction.transactionDate.toMoment().LT,
+      _ => transaction.transactionDate.toMoment().lll
+    };
   }
 }

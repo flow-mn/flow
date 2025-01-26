@@ -207,6 +207,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       controller: widget.scrollController,
       transactions: grouped,
+      groupBy: currentFilter.groupBy,
       pendingTransactions: pendingTransactionsGrouped,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       pendingDivider: const WavyDivider(),
