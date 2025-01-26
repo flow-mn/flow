@@ -47,8 +47,6 @@ class GroupedTransactionList extends StatefulWidget {
 
   final Widget? header;
 
-  final TransactionFilter? filter;
-
   final TransactionGroupRange? groupBy;
 
   /// Set this to [true] to make it always unobscured
@@ -71,7 +69,6 @@ class GroupedTransactionList extends StatefulWidget {
     this.pendingTrailing,
     this.anchor,
     this.headerPadding,
-    this.filter,
     this.groupBy,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
