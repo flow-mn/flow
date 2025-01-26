@@ -145,6 +145,8 @@
     "transactions.query.filter.categories": "Ангилал",
     "transactions.query.filter.categories.n": "{} ангилал",
     "transactions.query.filter.categories.all": "Бүх ангилал",
+    "transactions.query.filter.groupBy": "Бүлэглэх нэгж",
+    "transactions.query.filter.sort": "Эрэмбэ",
     "transactions.count": "{} гүйлгээ",
 
     "category": "Ангилал",
@@ -380,6 +382,13 @@
     "enum.BackupEntryType@preImport.description": "Файлаас өгөгдөл сэргээхээс өмнө сэргийлж автоматаар нөөц үүсгэв",
     "enum.BackupEntryType@other": "Бусад нөөц",
     "enum.BackupEntryType@other.description": "Бусад нөөц",
+
+    "enum.TransactionGroupRange": "Бүлэглэх нэгж",
+    "enum.TransactionGroupRange@hour": "Цаг",
+    "enum.TransactionGroupRange@day": "Өдөр",
+    "enum.TransactionGroupRange@week": "Долоо хоног",
+    "enum.TransactionGroupRange@month": "Сар",
+    "enum.TransactionGroupRange@year": "Жил",
 
     "error.route.404": "Хуудас олдсонгүй",
     "error.route.400": "Хуудас ачаалахад алдаа гарлаа",

@@ -145,6 +145,8 @@
     "transactions.query.filter.categories": "Categorie",
     "transactions.query.filter.categories.n": "{} categorie",
     "transactions.query.filter.categories.all": "Tutte le categorie",
+    "transactions.query.filter.groupBy": "Raggruppa per",
+    "transactions.query.filter.sort": "Ordina",
     "transactions.count": "{count} transazioni",
 
     "category": "Categoria",
@@ -380,6 +382,13 @@
     "enum.BackupEntryType@preImport.description": "Backup creato come precauzione prima di importare da un backup precedente",
     "enum.BackupEntryType@other": "Altro",
     "enum.BackupEntryType@other.description": "Altro tipo di backup",
+
+    "enum.TransactionGroupRange": "Unità di gruppo",
+    "enum.TransactionGroupRange@hour": "Ora",
+    "enum.TransactionGroupRange@day": "Giorno",
+    "enum.TransactionGroupRange@week": "Settimana",
+    "enum.TransactionGroupRange@month": "Mese",
+    "enum.TransactionGroupRange@year": "Anno",
 
     "error.route.404": "Pagina non trovata",
     "error.route.400": "Impossibile caricare la pagina",
