@@ -137,6 +137,7 @@
     "transactions.query.filter.keyword.all": "Search",
     "transactions.query.filter.keyword.hint": "Search by title...",
     "transactions.query.filter.keyword.clear": "Clear",
+    "transactions.query.filter.keyword.includeDescription": "Include description",
     "transactions.query.filter.timeRange": "Time Range",
     "transactions.query.filter.timeRange.all": "All Time",
     "transactions.query.filter.accounts": "Accounts",
@@ -382,6 +383,11 @@
     "enum.BackupEntryType@preImport.description": "Backup created as precaution before importing from previous backup",
     "enum.BackupEntryType@other": "Other backup",
     "enum.BackupEntryType@other.description": "Other backup",
+
+    "enum.TransactionSearchMode": "Search mode",
+    "enum.TransactionSearchMode@smart": "Smart",
+    "enum.TransactionSearchMode@substring": "Partial match",
+    "enum.TransactionSearchMode@exact": "Exact match",
 
     "enum.TransactionGroupRange": "Group unit",
     "enum.TransactionGroupRange@hour": "Hour",

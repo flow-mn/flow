@@ -3,6 +3,9 @@
 ## Beta 0.11.0 (next)
 
 * Reworked stats tab (ongoing)
+* Enhanced search options (ongoing)
+  * Added partial and exact match mode
+  * Added option to include description, closes [#269](https://github.com/flow-mn/flow/issues/269)
 
 ## Beta 0.10.2
 
