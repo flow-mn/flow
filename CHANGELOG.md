@@ -8,6 +8,7 @@
   * Added option to include description, closes [#269](https://github.com/flow-mn/flow/issues/269)
     At the time, it will only do substring (partial) matching.
 * Now you can group transcations by hour, day, week, month, and year, closes [#256](https://github.com/flow-mn/flow/issues/256)
+* Fixed that the default filters weren't updating when the day changes (at 00:00)
 
 ## Beta 0.10.2
 
