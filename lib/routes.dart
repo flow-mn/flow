@@ -30,6 +30,7 @@ import "package:flow/routes/setup/setup_onboarding_page.dart";
 import "package:flow/routes/setup/setup_profile_page.dart";
 import "package:flow/routes/setup/setup_profile_picture_page.dart";
 import "package:flow/routes/setup_page.dart";
+import "package:flow/routes/stats/stats_by_group_page.dart";
 import "package:flow/routes/support_page.dart";
 import "package:flow/routes/transaction_page.dart";
 import "package:flow/routes/transactions_page.dart";
@@ -325,6 +326,24 @@ final router = GoRouter(
     GoRoute(
       path: "/support",
       builder: (context, state) => const SupportPage(),
+    ),
+    GoRoute(
+      path: "/stats/category",
+      builder: (context, state) {
+        final TimeRange? initialRange =
+            TimeRange.tryParse(state.uri.queryParameters["range"] ?? "");
+
+        return StatsByGroupPage(byCategory: true, initialRange: initialRange);
+      },
+    ),
+    GoRoute(
+      path: "/stats/account",
+      builder: (context, state) {
+        final TimeRange? initialRange =
+            TimeRange.tryParse(state.uri.queryParameters["range"] ?? "");
+
+        return StatsByGroupPage(byCategory: false, initialRange: initialRange);
+      },
     ),
   ],
 );

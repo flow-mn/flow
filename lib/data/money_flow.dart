@@ -78,7 +78,7 @@ class MoneyFlow<T> {
 
   /// Returns the converted sum of all expenses in given [currency],
   /// or rates.baseCurrency if null
-  Money getTotalExpense(ExchangeRates rates, String? currency) {
+  Money getTotalExpense(ExchangeRates rates, [String? currency]) {
     currency ??= rates.baseCurrency;
 
     double amount = 0.0;

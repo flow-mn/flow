@@ -23,7 +23,7 @@ class PieGraphView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (data.isEmpty) {
       return NoData(
-        onTap: changeMode,
+        selectTimeRange: changeMode,
       );
     }
 

@@ -2,6 +2,7 @@ import "package:flow/data/transactions_filter/search_data.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/optional.dart";
@@ -17,6 +18,34 @@ enum TransactionSortField {
   transactionDate,
   amount,
   createdDate;
+}
+
+enum TransactionGroupRange implements LocalizedEnum {
+  hour,
+
+  /// Default
+  day,
+  week,
+  month,
+  year;
+
+  @override
+  String get localizationEnumName => "TransactionGroupRange";
+
+  @override
+  String get localizationEnumValue => name;
+
+  TimeRange fromTransaction(Transaction t) => switch (this) {
+        TransactionGroupRange.hour =>
+          HourTimeRange.fromDateTime(t.transactionDate),
+        TransactionGroupRange.day =>
+          DayTimeRange.fromDateTime(t.transactionDate),
+        TransactionGroupRange.week => LocalWeekTimeRange(t.transactionDate),
+        TransactionGroupRange.month =>
+          MonthTimeRange.fromDateTime(t.transactionDate),
+        TransactionGroupRange.year =>
+          YearTimeRange.fromDateTime(t.transactionDate),
+      };
 }
 
 /// For all fields, disabled if it's null.
@@ -35,6 +64,8 @@ class TransactionFilter {
 
   final bool sortDescending;
   final TransactionSortField sortBy;
+
+  final TransactionGroupRange groupBy;
 
   final bool? isPending;
 
@@ -55,6 +86,7 @@ class TransactionFilter {
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
+    this.groupBy = TransactionGroupRange.day,
   });
 
   static const empty = TransactionFilter();
@@ -186,6 +218,7 @@ class TransactionFilter {
     Optional<List<Account>>? accounts,
     bool? sortDescending,
     TransactionSortField? sortBy,
+    Optional<TransactionGroupRange>? groupBy,
     Optional<bool>? isPending,
     Optional<double>? minAmount,
     Optional<double>? maxAmount,
@@ -198,6 +231,9 @@ class TransactionFilter {
       categories: categories == null ? this.categories : categories.value,
       accounts: accounts == null ? this.accounts : accounts.value,
       sortBy: sortBy ?? this.sortBy,
+      groupBy: (groupBy == null || groupBy.value == null)
+          ? this.groupBy
+          : groupBy.value!,
       sortDescending: sortDescending ?? this.sortDescending,
       isPending: isPending == null ? this.isPending : isPending.value,
       minAmount: minAmount == null ? this.minAmount : minAmount.value,
@@ -215,6 +251,7 @@ class TransactionFilter {
         accounts,
         sortDescending,
         sortBy,
+        groupBy,
         isPending,
         minAmount,
         maxAmount,
@@ -232,6 +269,7 @@ class TransactionFilter {
     return other.range == range &&
         other.sortDescending == sortDescending &&
         other.sortBy == sortBy &&
+        other.groupBy == groupBy &&
         other.searchData == searchData &&
         other.isPending == isPending &&
         other.minAmount == minAmount &&
