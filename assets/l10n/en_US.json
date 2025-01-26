@@ -250,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "{} total expense",
     "tabs.stats.summaryByAccount": "Summary by account",
     "tabs.stats.summaryByCategory": "Summary by category",
+    "tabs.stats.topSpendingCategory": "Top spending category",
+    "tabs.stats.otherStats": "Other stats",
     "tabs.accounts": "Accounts",
     "tabs.accounts.reorder": "Reorder accounts",
     "tabs.accounts.reorder.guide": "Long press and drag",

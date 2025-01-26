@@ -184,7 +184,6 @@ extension MainActions on ObjectBox {
   Future<FlowAnalytics<Category?>> flowByCategories({
     required TimeRange range,
     bool ignoreTransfers = true,
-    String? currencyOverride,
   }) async {
     final List<Transaction> transactions = await transcationsByRange(range);
 
@@ -201,8 +200,6 @@ extension MainActions on ObjectBox {
   Future<FlowAnalytics<Account>> flowByAccounts({
     required TimeRange range,
     bool ignoreTransfers = true,
-    bool omitZeroes = true,
-    String? currencyOverride,
   }) async {
     final List<Transaction> transactions = await transcationsByRange(range);
 

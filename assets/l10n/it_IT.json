@@ -250,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "Spesa totale {}",
     "tabs.stats.summaryByAccount": "Riepilogo per conto",
     "tabs.stats.summaryByCategory": "Riepilogo per categoria",
+    "tabs.stats.topSpendingCategory": "Categoria di spesa principale",
+    "tabs.stats.otherStats": "Altre statistiche",
     "tabs.accounts": "Conti",
     "tabs.accounts.reorder": "Riordina i conti",
     "tabs.accounts.reorder.guide": "Premi a lungo e trascina",

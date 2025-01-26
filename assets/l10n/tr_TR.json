@@ -250,6 +250,8 @@
     "tabs.stats.dailyReport.totalExpenseFor": "{} toplam gider",
     "tabs.stats.summaryByAccount": "Hesaba göre özet",
     "tabs.stats.summaryByCategory": "Kategoriye göre özet",
+    "tabs.stats.topSpendingCategory": "En çok harcama yapılan kategori",
+    "tabs.stats.otherStats": "Diğer istatistikler",
     "tabs.accounts": "Hesap",
     "tabs.accounts.reorder": "Hesapları yeniden sıralama",
     "tabs.accounts.reorder.guide": "Uzun basın ve sürükleyin",

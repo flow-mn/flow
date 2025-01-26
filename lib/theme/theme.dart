@@ -100,9 +100,10 @@ class ThemeFactory {
       highlightColor: colorScheme.onSurface.withAlpha(0x16),
       splashColor: colorScheme.onSurface.withAlpha(0x12),
       listTileTheme: ListTileThemeData(
-          iconColor: colorScheme.primary,
-          selectedTileColor: colorScheme.secondary,
-          selectedColor: isDark ? colorScheme.primary : null),
+        iconColor: colorScheme.primary,
+        selectedTileColor: colorScheme.secondary,
+        selectedColor: isDark ? colorScheme.primary : null,
+      ),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith(
           (states) {

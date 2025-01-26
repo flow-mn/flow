@@ -1,18 +1,22 @@
 import "dart:ui";
 
 import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/flow_standard_report.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
-import "package:flow/widgets/action_card.dart";
+import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/info_card_with_delta.dart";
+import "package:flow/widgets/home/stats/most_spending_category.dart";
 import "package:flow/widgets/home/stats/no_data.dart";
 import "package:flow/widgets/home/stats/range_daily_chart.dart";
+import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/trend.dart";
 import "package:flutter/material.dart";
@@ -34,9 +38,9 @@ class _StatsTabState extends State<StatsTab>
 
   final AutoSizeGroup autoSizeGroup = AutoSizeGroup();
 
-  late bool initiallyAbbreviated;
-
   bool busy = false;
+
+  ExchangeRates? rates;
 
   @override
   void initState() {
@@ -44,17 +48,13 @@ class _StatsTabState extends State<StatsTab>
 
     fetch();
 
-    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
-    LocalPreferences()
-        .preferFullAmounts
-        .addListener(_updateInitiallyAbbreviated);
+    rates = ExchangeRatesService().getPrimaryCurrencyRates();
+    ExchangeRatesService().exchangeRatesCache.addListener(_updateRates);
   }
 
   @override
   void dispose() {
-    LocalPreferences()
-        .preferFullAmounts
-        .removeListener(_updateInitiallyAbbreviated);
+    ExchangeRatesService().exchangeRatesCache.removeListener(_updateRates);
     super.dispose();
   }
 
@@ -80,10 +80,13 @@ class _StatsTabState extends State<StatsTab>
             onChanged: updateRange,
           ),
         ),
+        if (rates == null) RatesMissingWarning(),
+        if (rates == null) const SizedBox(height: 12.0),
         Expanded(
           child: hasData
               ? SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Frame(
                         child: Column(
@@ -108,7 +111,6 @@ class _StatsTabState extends State<StatsTab>
                                   style: context.textTheme.displaySmall,
                                   autoSize: true,
                                   tapToToggleAbbreviation: true,
-                                  initiallyAbbreviated: initiallyAbbreviated,
                                 ),
                                 const SizedBox(width: 8.0),
                                 Trend.fromMoney(
@@ -170,20 +172,32 @@ class _StatsTabState extends State<StatsTab>
                         ),
                       ),
                       const SizedBox(height: 24.0),
-                      Frame(
-                        child: ActionCard(
-                          icon: FlowIconData.icon(Symbols.category_rounded),
-                          title: "tabs.stats.summaryByCategory".t(context),
-                          onTap: () => context.push("/stats/category"),
+                      ListHeader("tabs.stats.topSpendingCategory".t(context)),
+                      const SizedBox(height: 8.0),
+                      Frame(child: MostSpendingCategory(range: range)),
+                      const SizedBox(height: 24.0),
+                      ListHeader("tabs.stats.otherStats".t(context)),
+                      ListTile(
+                        title: Text("tabs.stats.summaryByCategory".t(context)),
+                        onTap: () => context.push(
+                          "/stats/category?range=${Uri.encodeQueryComponent(range.encodeShort())}",
                         ),
+                        leading: FlowIcon(
+                          FlowIconData.icon(Symbols.category_rounded),
+                          size: 24.0,
+                        ),
+                        trailing: Icon(Symbols.chevron_right_rounded),
                       ),
-                      const SizedBox(height: 16.0),
-                      Frame(
-                        child: ActionCard(
-                          icon: FlowIconData.icon(Symbols.wallet_rounded),
-                          title: "tabs.stats.summaryByAccount".t(context),
-                          onTap: () => context.push("/stats/account"),
+                      ListTile(
+                        title: Text("tabs.stats.summaryByAccount".t(context)),
+                        onTap: () => context.push(
+                          "/stats/account?range=${Uri.encodeQueryComponent(range.encodeShort())}",
                         ),
+                        leading: FlowIcon(
+                          FlowIconData.icon(Symbols.wallet_rounded),
+                          size: 24.0,
+                        ),
+                        trailing: Icon(Symbols.chevron_right_rounded),
                       ),
                       const SizedBox(height: 96.0),
                     ],
@@ -204,14 +218,12 @@ class _StatsTabState extends State<StatsTab>
   }
 
   Future<void> fetch() async {
-    if (busy) return;
-
     setState(() {
       busy = true;
     });
 
     try {
-      report = await FlowStandardReport.generate(range);
+      report = await FlowStandardReport.generate(range, rates);
     } finally {
       busy = false;
 
@@ -221,8 +233,8 @@ class _StatsTabState extends State<StatsTab>
     }
   }
 
-  void _updateInitiallyAbbreviated() {
-    initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
+  void _updateRates() {
+    rates = ExchangeRatesService().getPrimaryCurrencyRates();
     if (mounted) {
       setState(() {});
     }
