@@ -36,18 +36,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late int _plannedTransactionsNextNDays;
 
-  DateTime dateKey = Moment.startOfToday();
-
-  void refreshDateKey() {
-    if (!mounted) return;
-    setState(() {
-      dateKey = Moment.startOfToday();
-    });
-  }
-
-  final TransactionFilter defaultFilter = TransactionFilter(
+  TransactionFilter defaultFilter = TransactionFilter(
     range: last30Days(),
   );
+  DateTime dateKey = Moment.startOfToday();
 
   late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
 
@@ -83,11 +75,11 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .addListener(_updatePlannedTransactionDays);
 
     _listener = AppLifecycleListener(
-      onShow: () => refreshDateKey(),
+      onShow: () => refreshDateKeyAndDefaultFilter(),
     );
 
-    _timer =
-        Timer.periodic(const Duration(seconds: 30), (_) => refreshDateKey());
+    _timer = Timer.periodic(
+        const Duration(seconds: 30), (_) => refreshDateKeyAndDefaultFilter());
   }
 
   @override
@@ -176,7 +168,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .where((transaction) =>
             !transaction.transactionDate.isAfter(now) &&
             transaction.isPending != true)
-        .groupByDate();
+        .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
 
     final List<Transaction> pendingTransactions = transactions
         .where((transaction) =>
@@ -215,6 +207,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       controller: widget.scrollController,
       transactions: grouped,
+      groupBy: currentFilter.groupBy,
       pendingTransactions: pendingTransactionsGrouped,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       pendingDivider: const WavyDivider(),
@@ -248,6 +241,16 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
             LocalPreferences.pendingTransactionsHomeTimeframeDefault;
     setState(() {});
+  }
+
+  void refreshDateKeyAndDefaultFilter() {
+    if (!mounted) return;
+    setState(() {
+      dateKey = Moment.startOfToday();
+      defaultFilter = TransactionFilter(
+        range: last30Days(),
+      );
+    });
   }
 
   @override

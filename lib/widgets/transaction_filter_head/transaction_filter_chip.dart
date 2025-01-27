@@ -2,6 +2,7 @@ import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -95,6 +96,10 @@ class TransactionFilterChip<T> extends StatelessWidget {
       } else {
         return "transactions.query.filter.keyword".t(context);
       }
+    }
+
+    if (value case LocalizedEnum localizedEnum) {
+      return localizedEnum.localizedNameContext(context);
     }
 
     if (value case List<dynamic> list) {

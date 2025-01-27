@@ -5,6 +5,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/transaction_filter_head.dart";
+import "package:flow/widgets/transaction_filter_head/select_group_range_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_category_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/transaction_filter_chip.dart";
@@ -95,6 +96,13 @@ class _DefaultTransactionsFilterHeadState
               ? _filter.categories
               : null,
         ),
+        TransactionFilterChip<TransactionGroupRange>(
+          translationKey: "transactions.query.filter.groupBy",
+          avatar: const Icon(Symbols.atr_rounded),
+          onSelect: onSelectGroupBy,
+          defaultValue: widget.defaultFilter.groupBy,
+          value: _filter.groupBy,
+        ),
       ],
     );
   }
@@ -148,6 +156,23 @@ class _DefaultTransactionsFilterHeadState
     if (categories != null) {
       setState(() {
         filter = filter.copyWithOptional(categories: Optional(categories));
+      });
+    }
+  }
+
+  void onSelectGroupBy() async {
+    final TransactionGroupRange? newGroupBy =
+        await showModalBottomSheet<TransactionGroupRange>(
+      context: context,
+      builder: (context) => SelectGroupRangeSheet(
+        selected: filter.groupBy,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (newGroupBy != null) {
+      setState(() {
+        filter = filter.copyWithOptional(groupBy: Optional(newGroupBy));
       });
     }
   }
