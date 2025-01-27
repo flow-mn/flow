@@ -1,4 +1,4 @@
-name: Deploy Beta build for Android
+name: Add Fat APK for Beta build
 on:
   push:
     branches:
