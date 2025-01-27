@@ -1,0 +1,36 @@
+name: Add Fat APK for Beta build
+on:
+  push:
+    branches:
+      - "beta"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    environment: Android release
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: "zulu"
+          java-version: "17"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - name: Run tests
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
+          flutter test
+      - name: Setup secrets
+        run: |
+          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
+          echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
+      - name: Build fat APK
+        run: flutter build apk --release --no-tree-shake-icons
+      - name: Upload file to release
+        run: |
+          gh release upload $(grep "version: " pubspec.yaml | sed 's/[^0-9.+]*//g') build/app/outputs/flutter-apk/app-release.apk
