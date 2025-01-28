@@ -37,3 +37,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk
+          gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk.sha1
