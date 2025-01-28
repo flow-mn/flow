@@ -5,6 +5,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -98,6 +99,16 @@ class _ProfileTabState extends State<ProfileTab> {
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
               onTap: () => ObjectBox().createAndPutDebugData(),
+            ),
+            ListTile(
+              title: const Text("Schedule debug notification"),
+              leading: const Icon(Symbols.notification_add_rounded),
+              onTap: () => NotificationsService().debugSchedule(),
+            ),
+            ListTile(
+              title: const Text("Show debug notification"),
+              leading: const Icon(Symbols.notifications_rounded),
+              onTap: () => NotificationsService().debugShow(),
             ),
             ListTile(
               title: const Text("Clear exchange rates cache"),

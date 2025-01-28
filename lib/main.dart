@@ -31,11 +31,15 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
+import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
+import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
@@ -61,6 +65,7 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
+  unawaited(NotificationsService().initialize());
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
@@ -123,6 +128,10 @@ class FlowState extends State<Flow> {
       // To migrate profile image path from old to new (since 0.10.0)
       nonImportantMigrateProfileImagePath();
     }
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      NotificationsService().addCallback(_pushNotificationPath);
+    });
   }
 
   @override
@@ -207,5 +216,15 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       LocalPreferences().getPrimaryCurrency(),
     );
+  }
+
+  void _pushNotificationPath(NotificationResponse response) {
+    try {
+      if (response.payload == null) throw "Payload is null";
+
+      context.push(response.payload!);
+    } catch (e) {
+      log("Failed to push notification path", error: e);
+    }
   }
 }
