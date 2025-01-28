@@ -176,6 +176,7 @@
     "preferences.theme.other": "Other themes",
     "preferences.theme.themeChangesAppIcon": "App icon follows theme",
     "preferences.theme.enableDynamicTheme": "Dynamic theme",
+    "preferences.theme.enableOledTheme": "Use OLED theme",
     "preferences.numpad": "Numpad",
     "preferences.numpad.layout": "Numpad layout",
     "preferences.numpad.layout.classic": "Classic",

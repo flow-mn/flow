@@ -75,6 +75,7 @@ class LocalPreferences {
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
+  late final BoolSettingsEntry enableOledTheme;
 
   late final BoolSettingsEntry requirePendingTransactionConfrimation;
 
@@ -187,6 +188,11 @@ class LocalPreferences {
       key: "enableDynamicTheme",
       preferences: _prefs,
       initialValue: true,
+    );
+    enableOledTheme = BoolSettingsEntry(
+      key: "enableOledTheme",
+      preferences: _prefs,
+      initialValue: false,
     );
 
     requirePendingTransactionConfrimation = BoolSettingsEntry(
