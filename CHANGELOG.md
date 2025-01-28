@@ -1,5 +1,11 @@
 # Changelog
 
+## Next
+
+### New fetures
+
+* Now you can use OLED themes, close [#288](https://github.com/flow-mn/flow/issues/288)
+
 ## Beta 0.11.0
 
 * Reworked stats tab (ongoing)

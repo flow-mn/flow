@@ -176,6 +176,7 @@
     "preferences.theme.other": "Бусад үзэмжүүд",
     "preferences.theme.themeChangesAppIcon": "Аппын дүрс дагаж өөрчлөх",
     "preferences.theme.enableDynamicTheme": "Динамик үзэмж",
+    "preferences.theme.enableOledTheme": "OLED горим",
     "preferences.numpad": "Тоон товчлуур",
     "preferences.numpad.layout": "Тооны байрлал",
     "preferences.numpad.layout.classic": "Хуучны",

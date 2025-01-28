@@ -19,6 +19,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   bool busy = false;
   bool appIconBusy = false;
   bool dynamicThemeBusy = false;
+  bool oledThemeBusy = false;
 
   @override
   void initState() {
@@ -28,8 +29,11 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
+    final bool isDark = getTheme(currentTheme).isDark;
+
     final bool themeChangesAppIcon =
         LocalPreferences().themeChangesAppIcon.get();
+    final bool enableOledTheme = LocalPreferences().enableOledTheme.get();
     // final bool enableDynamicTheme = LocalPreferences().enableDynamicTheme.get();
 
     return Scaffold(
@@ -54,6 +58,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 secondary: Icon(Symbols.photo_prints_rounded),
                 activeColor: context.colorScheme.primary,
               ),
+              CheckboxListTile.adaptive(
+                title: Text("preferences.theme.enableOledTheme".t(context)),
+                value: enableOledTheme,
+                onChanged: changeEnableOledTheme,
+                secondary: Icon(Symbols.brightness_4),
+                activeColor: context.colorScheme.primary,
+                enabled: isDark,
+              ),
               // CheckboxListTile.adaptive(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
@@ -65,12 +77,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               ListHeader(
                 "preferences.theme.other".t(context),
               ),
-              RadioListTile.adaptive(
-                title: Text(palenight.name),
-                value: "palenight",
-                groupValue: currentTheme,
-                onChanged: (value) => handleChange(value),
-                activeColor: context.colorScheme.primary,
+              ...otherThemes.entries.map(
+                (entry) => RadioListTile.adaptive(
+                  title: Text(entry.value.name),
+                  value: entry.key,
+                  groupValue: currentTheme,
+                  onChanged: (value) => handleChange(value),
+                  activeColor: context.colorScheme.primary,
+                ),
               ),
             ],
           ),
@@ -95,15 +109,30 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     }
   }
 
-  void changeEnableDynamicTheme(bool? newValue) {
+  void changeEnableDynamicTheme(bool? newValue) async {
     if (newValue == null) return;
     if (dynamicThemeBusy) return;
 
     try {
       dynamicThemeBusy = true;
-      LocalPreferences().enableDynamicTheme.set(newValue);
+      await LocalPreferences().enableDynamicTheme.set(newValue);
     } finally {
       dynamicThemeBusy = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void changeEnableOledTheme(bool? newValue) async {
+    if (newValue == null) return;
+    if (oledThemeBusy) return;
+
+    try {
+      oledThemeBusy = true;
+      await LocalPreferences().enableOledTheme.set(newValue);
+    } finally {
+      oledThemeBusy = false;
       if (mounted) {
         setState(() {});
       }

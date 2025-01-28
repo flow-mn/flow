@@ -176,6 +176,7 @@
     "preferences.theme.other": "Diğer temalar",
     "preferences.theme.themeChangesAppIcon": "Uygulama simgesi temayı takip eder",
     "preferences.theme.enableDynamicTheme": "Dinamik tema",
+    "preferences.theme.enableOledTheme": "OLED temasını kullan",
     "preferences.numpad": "Sayısal tuş takımı",
     "preferences.numpad.layout": "Sayısal tuş takımı düzeni",
     "preferences.numpad.layout.classic": "Klasik",

