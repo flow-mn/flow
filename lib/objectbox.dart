@@ -80,9 +80,10 @@ class ObjectBox {
     }
 
     final store = await openStore(
-        directory: appDataDirectory,
-        macosApplicationGroup:
-            Platform.isMacOS ? "macosApplicationGroup" : null);
+      directory: appDataDirectory,
+      // @TODO @sadespresso set correct macos app group
+      macosApplicationGroup: Platform.isMacOS ? "macosApplicationGroup" : null,
+    );
 
     return _instance = ObjectBox._internal(store);
   }
