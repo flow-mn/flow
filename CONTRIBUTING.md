@@ -17,7 +17,7 @@ As of now, publishing fees have been paid by the maintainer.
 NOTE: A quick discussion upfront can highlight any potential issues, streamline
 the merge process, and ensure you're on the right track to avoid rework.
 
-TIP: Look for issues with `ready` label to get contributing immediately
+TIP: Look for issues with `ready` label to get started without any friction
 
 1. Fork the repository
 2. Pick an issue. If the fix/feature you're gonna work doesn't have an issue,
@@ -39,6 +39,8 @@ implementing a new feature
 * Any new dependency must support the all the platforms except for Web
 * It is not necessary to change the version unless you're in charge of
 publishing a release
+* Update [CHANGELOG.md](./CHANGELOG.md) with your change description. (Use
+version name `Next`)
 
 ## Translating
 
