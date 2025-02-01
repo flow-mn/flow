@@ -1,5 +1,6 @@
 import "dart:developer";
 import "dart:io";
+import "dart:math" as math;
 import "dart:ui" as ui;
 
 import "package:flow/l10n/extensions.dart";
@@ -29,6 +30,9 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double pfpSize =
+        math.min(MediaQuery.of(context).size.width * 0.5, 200.0);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("setup.profile.addPhoto".t(context)),
@@ -53,7 +57,7 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
                   filePath: widget.profileImagePath,
                   onTap: changeProfilePicture,
                   showOverlayUponHover: true,
-                  size: MediaQuery.of(context).size.width * 0.5,
+                  size: pfpSize,
                 ),
               ],
             ),
