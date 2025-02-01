@@ -341,6 +341,7 @@
     "enum.TransactionSubtype@transactionFee": "Commissione transazione",
     "enum.TransactionSubtype@givenLoan": "Prestito (dato)",
     "enum.TransactionSubtype@receivedLoan": "Prestito (ricevuto)",
+    "enum.TransactionSubtype@updateBalance": "Aggiorna saldo",
     "enum.TransactionType": "Tipo di transazione",
     "enum.TransactionType@income": "Entrata",
     "enum.TransactionType@expense": "Spesa",
