@@ -39,12 +39,17 @@ personal expense tracking app.
 ## Support Flow
 
 Flow is a personal project developed during my free time, and it generates no
-income.  Maintaining Flow on the App Store requires a substantial annual fee
-(see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
-which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
-continued existence and future development, your support is greatly appreciated.
+income. Consider helping Flow! Here are some suggestions:
 
-[Buy me a coffee](https://buymeacoffee.com/sadespresso)
+* Give a star on [GitHub](https://github.com/flow-mn/flow)
+* Leave a review on [Google Play](https://play.google.com/store/apps/details?id=mn.flow.flow) and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
+* Tell a friend
+* [Buy me a coffee](https://buymeacoffee.com/sadespresso)
+  
+  Maintaining Flow on the App Store requires a substantial annual fee
+  (see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
+  which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
+  continued existence and future development, your support is greatly appreciated.
 
 ## Development
 
