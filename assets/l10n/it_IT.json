@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "Tutte le categorie",
     "transactions.query.filter.groupBy": "Raggruppa per",
     "transactions.query.filter.sort": "Ordina",
+    "transactions.query.filter.currency": "Valuta",
     "transactions.count": "{count} transazioni",
 
     "category": "Categoria",

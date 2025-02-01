@@ -523,6 +523,8 @@ class _AccountEditPageState extends State<AccountEditPage> {
       child: Text("account.delete.warning".t(context, txnCount)),
     );
 
+    if (!mounted) return;
+
     if (confirmation == true) {
       await export(
         showShareDialog: false,
@@ -542,11 +544,10 @@ class _AccountEditPageState extends State<AccountEditPage> {
         await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
       } catch (e) {
         log("[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
-      } finally {
-        if (mounted) {
-          context.pop();
-        }
       }
     }
+
+    if (!mounted) return;
+    context.pop();
   }
 }

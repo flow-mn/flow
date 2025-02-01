@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "All Categories",
     "transactions.query.filter.groupBy": "Group by",
     "transactions.query.filter.sort": "Sort",
+    "transactions.query.filter.currency": "Currency",
     "transactions.count": "{} transactions",
 
     "category": "Category",
