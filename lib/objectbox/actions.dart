@@ -626,7 +626,10 @@ extension AccountActions on Account {
     String? title,
     DateTime? transactionDate,
   }) {
-    final double delta = targetBalance - balance.amount;
+    final double delta = targetBalance -
+        (transactionDate == null
+            ? balance.amount
+            : balanceAt(transactionDate).amount);
 
     return createAndSaveTransaction(
       amount: delta,
