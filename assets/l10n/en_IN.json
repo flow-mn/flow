@@ -271,6 +271,11 @@
 
     "support": "Support",
     "support.description": "Flow is a labor of love, built free, and open for all. If you find Flow valuable, consider helping the project grow! Here are some ways to do so:",
+    "support.leaveAReview": "Leave a review",
+    "support.leaveAReview.description": "You can rate Flow and leave a review on {appStore}",
+    "support.leaveAReview.action": "Rate Flow",
+    "support.starOnGitHub": "Star on GitHub",
+    "support.starOnGitHub.description": "Starring Flow on GitHub helps people discover Flow",
     "support.requestFeatures": "Give us ideas",
     "support.requestFeatures.description": "You can also support us by giving feedback, and suggestion ideas to make Flow better.",
     "support.requestFeatures.action": "Visit issue tracker",

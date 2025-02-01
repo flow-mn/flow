@@ -271,6 +271,11 @@
 
     "support": "Supporto",
     "support.description": "Flow è un progetto realizzato con passione, gratuito e aperto a tutti. Se trovi Flow utile, considera di aiutare il progetto a crescere! Ecco alcuni modi per farlo:",
+    "support.leaveAReview": "Lascia una recensione",
+    "support.leaveAReview.description": "Puoi valutare Flow e lasciare una recensione su {appStore}",
+    "support.leaveAReview.action": "Valuta Flow",
+    "support.starOnGitHub": "Metti una stella su GitHub",
+    "support.starOnGitHub.description": "Mettere una stella a Flow su GitHub aiuta le persone a scoprire Flow",
     "support.requestFeatures": "Dacci idee",
     "support.requestFeatures.description": "Puoi anche supportarci dando feedback e suggerendo idee per migliorare Flow.",
     "support.requestFeatures.action": "Visita il tracker di problemi",

@@ -271,6 +271,11 @@
 
     "support": "Дэмжих",
     "support.description": "Flow бол үнэгүй, хүн бүрд нээлттэй, хайр шингээж бүтээсэн төсөл юм. Хэрэв Flow танд тус болж байвал та төсөлд өөрийн хувь нэмрээ оруулах боломжтой шүү. Жишээлбэл:",
+    "support.leaveAReview": "Үнэлгээ өгөх",
+    "support.leaveAReview.description": "Та {appStore}-д үнэлгээ өгч, сэтгэгдэл үлдээх боломжтой",
+    "support.leaveAReview.action": "Flow-г үнэлэх",
+    "support.starOnGitHub": "GitHub од өгөх",
+    "support.starOnGitHub.description": "Од нь Flow-г илүү олон хүнд хүрэхэд туслана",
     "support.requestFeatures": "Санаагаа хуваалц",
     "support.requestFeatures.description": "Та өөрийн санал хүсэлтээ бидэнд хэлснээр Flow-г сайжруулахад туслах боломжтой.",
     "support.requestFeatures.action": "Төлөвлөгөө/асуудлууд харах",
