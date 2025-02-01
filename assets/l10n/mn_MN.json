@@ -341,6 +341,7 @@
     "enum.TransactionSubtype@transactionFee": "Гүйлгээний шимтгэл",
     "enum.TransactionSubtype@givenLoan": "Өгсөн зээл",
     "enum.TransactionSubtype@receivedLoan": "Авсан зээл",
+    "enum.TransactionSubtype@updateBalance": "Үлдэгдэл өөрчлөх",
     "enum.TransactionType": "Гүйлгээний төрөл",
     "enum.TransactionType@income": "Орлого",
     "enum.TransactionType@expense": "Зарлага",

@@ -635,6 +635,7 @@ extension AccountActions on Account {
       amount: delta,
       title: title,
       transactionDate: transactionDate,
+      subtype: TransactionSubtype.updateBalance,
     );
   }
 
@@ -728,6 +729,7 @@ extension AccountActions on Account {
     List<TransactionExtension>? extensions,
     String? uuidOverride,
     bool? isPending,
+    TransactionSubtype? subtype,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
 
@@ -740,6 +742,7 @@ extension AccountActions on Account {
       createdDate: createdDate,
       uuid: uuid,
       isPending: isPending ?? false,
+      subtype: subtype?.value,
     )
       ..setCategory(category)
       ..setAccount(this);

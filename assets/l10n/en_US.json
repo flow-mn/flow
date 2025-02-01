@@ -341,6 +341,7 @@
     "enum.TransactionSubtype@transactionFee": "Transaction fee",
     "enum.TransactionSubtype@givenLoan": "Loan (given)",
     "enum.TransactionSubtype@receivedLoan": "Loan (taken)",
+    "enum.TransactionSubtype@updateBalance": "Update balance",
     "enum.TransactionType": "Transaction type",
     "enum.TransactionType@income": "Income",
     "enum.TransactionType@expense": "Expense",

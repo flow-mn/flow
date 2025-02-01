@@ -341,6 +341,7 @@
     "enum.TransactionSubtype@transactionFee": "İşlem ücreti",
     "enum.TransactionSubtype@givenLoan": "Kredi (verilen)",
     "enum.TransactionSubtype@receivedLoan": "Kredi (alınmış)",
+    "enum.TransactionSubtype@updateBalance": "Bakiyeyi güncelle",
     "enum.TransactionType": "İşlem türü",
     "enum.TransactionType@income": "Gelir",
     "enum.TransactionType@expense": "Gider",
