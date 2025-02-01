@@ -34,6 +34,16 @@ Feedbacks and ideas are greatly appreciated 🌟
 
 Flow in production: [Blog post](https://blog.gege.mn/publishing-flow-to-production-20250104?showSharer=true)
 
+## Support Flow
+
+Flow is a personal project developed during my free time, and it generates no
+income.  Maintaining Flow on the App Store requires a substantial annual fee
+(see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
+which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
+continued existence and future development, your support is greatly appreciated.
+
+[Buy me a coffee](https://buymeacoffee.com/sadespresso)
+
 ## Supported platforms
 
 * Android
@@ -82,3 +92,21 @@ to enhance the UI for desktop experience for now.
 [^2]: Please double-check from the official website, may be outdated. Visit
 <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
 (make sure to choose Flutter to see the script).
+
+### Build artifacts
+
+Flow's build logs are freely available for anyone examine.
+
+#### Android
+
+GitHub Actions script is used to build both Fat-APK (multi-architecture), and
+appbundles (for Google Play).
+
+* Build scripts: <https://github.com/flow-mn/flow/tree/main/.github/workflows>
+* Build logs: <https://github.com/flow-mn/flow/actions>
+
+#### iOS
+
+Due to my skill issues, I couldn't manage to build archives through GitHub
+Actions. Currently, [Codemagic](https://codemagic.io) is used to build the
+iOS releases.

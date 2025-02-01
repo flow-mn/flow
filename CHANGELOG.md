@@ -1,5 +1,12 @@
 # Changelog
 
+## Next
+
+### New fetures
+
+* Now you can use OLED themes, closes [#288](https://github.com/flow-mn/flow/issues/288)
+* Now you can sync your balance at an exact date, clses [#293](https://github.com/flow-mn/flow/issues/293)
+
 ## Beta 0.11.0
 
 * Reworked stats tab (ongoing)

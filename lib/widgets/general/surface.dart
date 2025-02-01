@@ -37,9 +37,6 @@ class Surface extends StatelessWidget {
 
     return Theme(
       data: parentTheme.copyWith(
-        cardTheme: CardTheme(
-          color: parentTheme.colorScheme.secondary,
-        ),
         textTheme: parentTheme.textTheme.apply(
           bodyColor: parentTheme.colorScheme.onSecondary,
           displayColor: parentTheme.colorScheme.onSecondary,

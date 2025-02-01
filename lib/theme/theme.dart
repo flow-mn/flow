@@ -61,7 +61,7 @@ class ThemeFactory {
       brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       cardTheme: CardTheme(
-        color: colorScheme.surface,
+        color: colorScheme.secondary,
         surfaceTintColor: colorScheme.primary,
       ),
       extensions: [
@@ -159,11 +159,15 @@ class ThemeFactory {
   /// If [themeName] is `null`, the default theme is returned.
   ///
   /// Pass [preferDark] to influence the choice of default theme.
-  factory ThemeFactory.fromThemeName(String? themeName,
-      [bool preferDark = false]) {
+  factory ThemeFactory.fromThemeName(
+    String? themeName, {
+    bool preferDark = false,
+    bool preferOled = false,
+  }) {
     final resolved = getTheme(
       themeName,
-      preferDark,
+      preferDark: preferDark,
+      preferOled: preferOled,
     );
 
     return ThemeFactory(resolved);
