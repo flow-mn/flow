@@ -61,7 +61,7 @@ class ThemeFactory {
       brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       cardTheme: CardTheme(
-        color: colorScheme.surface,
+        color: colorScheme.secondary,
         surfaceTintColor: colorScheme.primary,
       ),
       extensions: [
