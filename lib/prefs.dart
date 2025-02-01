@@ -59,6 +59,8 @@ class LocalPreferences {
 
   late final BoolSettingsEntry completedInitialSetup;
 
+  late final DateTimeSettingsEntry lastRequestedAppStoreReview;
+
   late final LocaleSettingsEntry localeOverride;
 
   /// Whether the user uses only one currency across accounts
@@ -220,6 +222,12 @@ class LocalPreferences {
       key: "useCurrencySymbol",
       preferences: _prefs,
       initialValue: true,
+    );
+
+    lastRequestedAppStoreReview = DateTimeSettingsEntry(
+      key: "lastRequestedAppStoreReview",
+      preferences: _prefs,
+      initialValue: null,
     );
 
     updateTransitiveProperties();
