@@ -1,9 +1,13 @@
+import "dart:developer";
+
+import "package:flow/data/currencies.dart";
 import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/utils/optional.dart";
+import "package:flow/widgets/select_multi_currency_sheet.dart";
 import "package:flow/widgets/transaction_filter_head.dart";
 import "package:flow/widgets/transaction_filter_head/select_group_range_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
@@ -96,6 +100,15 @@ class _DefaultTransactionsFilterHeadState
               ? _filter.categories
               : null,
         ),
+        TransactionFilterChip<List<String>>(
+          translationKey: "transactions.query.filter.currency",
+          avatar: const Icon(Symbols.universal_currency_alt_rounded),
+          onSelect: onSelectCurrency,
+          defaultValue: widget.defaultFilter.currencies,
+          value: _filter.currencies?.isNotEmpty == true
+              ? _filter.currencies
+              : null,
+        ),
         TransactionFilterChip<TransactionGroupRange>(
           translationKey: "transactions.query.filter.groupBy",
           avatar: const Icon(Symbols.atr_rounded),
@@ -156,6 +169,32 @@ class _DefaultTransactionsFilterHeadState
     if (categories != null) {
       setState(() {
         filter = filter.copyWithOptional(categories: Optional(categories));
+      });
+    }
+  }
+
+  void onSelectCurrency() async {
+    final Set<String> possibleCurrencies =
+        ObjectBox().getAccounts().map((account) => account.currency).toSet();
+
+    final List<String>? newCurrencies =
+        await showModalBottomSheet<List<String>>(
+      context: context,
+      builder: (context) => SelectMultiCurrencySheet(
+        currencies: possibleCurrencies
+            .map((code) => iso4217CurrenciesGrouped[code])
+            .nonNulls
+            .toList(),
+        currentlySelected: filter.currencies,
+      ),
+      isScrollControlled: true,
+    );
+
+    log("newCurrencies $newCurrencies");
+
+    if (newCurrencies != null) {
+      setState(() {
+        filter = filter.copyWithOptional(currencies: Optional(newCurrencies));
       });
     }
   }

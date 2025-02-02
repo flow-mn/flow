@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "Бүх ангилал",
     "transactions.query.filter.groupBy": "Бүлэглэх нэгж",
     "transactions.query.filter.sort": "Эрэмбэ",
+    "transactions.query.filter.currency": "Валют",
     "transactions.count": "{} гүйлгээ",
 
     "category": "Ангилал",

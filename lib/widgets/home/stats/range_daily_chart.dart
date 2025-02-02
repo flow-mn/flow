@@ -185,7 +185,7 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
             (index) {
               return FlSpot(
                 index.toDouble(),
-                report.dailyExpenditure[index + 1]?.abs() ?? 0.0,
+                report.dailyExpenditure[index]?.abs() ?? 0.0,
               );
             },
           ),
@@ -200,7 +200,7 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
               maxDays,
               (index) => FlSpot(
                 index.toDouble(),
-                report.previousDailyExpenditure?[index + 1]?.abs() ?? 0,
+                report.previousDailyExpenditure?[index]?.abs() ?? 0,
               ),
             ),
           ),
