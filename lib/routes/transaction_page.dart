@@ -713,6 +713,11 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.transactionDate = _transactionDate;
     _currentlyEditing.isPending = isPending;
 
+    /// When user edits a balance amendment transaction, it is no longer a balance amendment.
+    if (_currentlyEditing.subtype == TransactionSubtype.updateBalance.value) {
+      _currentlyEditing.subtype = null;
+    }
+
     _currentlyEditing.extensions =
         _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
