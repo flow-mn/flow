@@ -59,6 +59,8 @@ class LocalPreferences {
 
   late final BoolSettingsEntry completedInitialSetup;
 
+  late final DateTimeSettingsEntry lastRequestedAppStoreReview;
+
   late final LocaleSettingsEntry localeOverride;
 
   /// Whether the user uses only one currency across accounts
@@ -75,6 +77,7 @@ class LocalPreferences {
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
   late final BoolSettingsEntry enableDynamicTheme;
+  late final BoolSettingsEntry enableOledTheme;
 
   late final BoolSettingsEntry requirePendingTransactionConfrimation;
 
@@ -188,6 +191,11 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: true,
     );
+    enableOledTheme = BoolSettingsEntry(
+      key: "enableOledTheme",
+      preferences: _prefs,
+      initialValue: false,
+    );
 
     requirePendingTransactionConfrimation = BoolSettingsEntry(
       key: "requirePendingTransactionConfrimation",
@@ -214,6 +222,12 @@ class LocalPreferences {
       key: "useCurrencySymbol",
       preferences: _prefs,
       initialValue: true,
+    );
+
+    lastRequestedAppStoreReview = DateTimeSettingsEntry(
+      key: "lastRequestedAppStoreReview",
+      preferences: _prefs,
+      initialValue: null,
     );
 
     updateTransitiveProperties();

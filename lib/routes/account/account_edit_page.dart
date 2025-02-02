@@ -16,6 +16,7 @@ import "package:flow/routes/new_transaction/input_amount_sheet.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/account/update_balance_options_sheet.dart";
 import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
@@ -55,7 +56,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
   late double _balance;
 
-  late final Account? _currentlyEditing;
+  /// Transaction date of the diff transaction is to be inserted with [_balance]
+  ///
+  /// If null, the transaction will be inserted with the current date
+  ///
+  /// This allows users to update their balance at a specific date
+  DateTime? _updateBalanceAt;
+
+  late Account? _currentlyEditing;
 
   bool _editingName = false;
   bool _archived = false;
@@ -274,6 +282,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
   }
 
   void updateBalance() async {
+    final Optional<DateTime>? updateAtResult =
+        await showModalBottomSheet<Optional<DateTime>>(
+      context: context,
+      builder: (context) => UpdateBalanceOptionsSheet(),
+    );
+
+    if (updateAtResult == null || !mounted) {
+      _updateBalanceAt = null;
+      return;
+    }
+
+    _updateBalanceAt = updateAtResult.value;
+
     final result = await showModalBottomSheet<double>(
       context: context,
       builder: (context) => InputAmountSheet(
@@ -283,9 +304,23 @@ class _AccountEditPageState extends State<AccountEditPage> {
       isScrollControlled: true,
     );
 
-    setState(() {
-      _balance = result ?? _balance;
-    });
+    if (result == null) return;
+    if (!mounted) return;
+
+    _balance = result;
+
+    if (_currentlyEditing == null) {
+      setState(() {});
+      return;
+    }
+
+    _currentlyEditing!.updateBalanceAndSave(
+      _balance,
+      title: "account.updateBalance.transactionTitle".t(context),
+      transactionDate: _updateBalanceAt,
+    );
+
+    _refetch();
   }
 
   void updateBalanceExclusion(bool? value) {
@@ -319,22 +354,15 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void update({required String formattedName}) async {
     if (_currentlyEditing == null) return;
 
-    _currentlyEditing.name = formattedName;
-    _currentlyEditing.currency = _currency;
+    _currentlyEditing!.name = formattedName;
+    _currentlyEditing!.currency = _currency;
 
-    _currentlyEditing.iconCode = iconCodeOrError;
-    _currentlyEditing.excludeFromTotalBalance = _excludeFromTotalBalance;
-    _currentlyEditing.archived = _archived;
-
-    if (_balance != _currentlyEditing.balance.amount) {
-      _currentlyEditing.updateBalanceAndSave(
-        _balance,
-        title: "account.updateBalance.transactionTitle".t(context),
-      );
-    }
+    _currentlyEditing!.iconCode = iconCodeOrError;
+    _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
+    _currentlyEditing!.archived = _archived;
 
     ObjectBox().box<Account>().put(
-          _currentlyEditing,
+          _currentlyEditing!,
           mode: PutMode.update,
         );
 
@@ -376,6 +404,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
             value.updateBalanceAndSave(
               _balance,
               title: "account.updateBalance.transactionTitle".tr(),
+              transactionDate: _updateBalanceAt,
             );
             ObjectBox().box<Account>().putAsync(value);
           },
@@ -395,19 +424,29 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
   bool hasChanged() {
     if (_currentlyEditing != null) {
-      return _currentlyEditing.name != _nameTextController.text.trim() ||
-          _currentlyEditing.iconCode != iconCodeOrError ||
-          _currentlyEditing.archived != _archived ||
-          _currentlyEditing.currency != _currency ||
-          _currentlyEditing.excludeFromTotalBalance !=
+      return _currentlyEditing!.name != _nameTextController.text.trim() ||
+          _currentlyEditing!.iconCode != iconCodeOrError ||
+          _currentlyEditing!.archived != _archived ||
+          _currentlyEditing!.currency != _currency ||
+          _currentlyEditing!.excludeFromTotalBalance !=
               _excludeFromTotalBalance ||
-          _balance != _currentlyEditing.balance.amount;
+          _balance != _currentlyEditing!.balance.amount ||
+          _updateBalanceAt != null;
     }
 
     return _nameTextController.text.trim().isNotEmpty ||
         _iconData != null ||
         _currency != LocalPreferences().getPrimaryCurrency() ||
-        _balance != 0.0;
+        _balance != 0.0 ||
+        _updateBalanceAt != null;
+  }
+
+  void _refetch() {
+    if (_currentlyEditing == null) return;
+
+    _currentlyEditing = ObjectBox().box<Account>().get(_currentlyEditing!.id);
+
+    if (mounted) setState(() {});
   }
 
   void toggleEditName([bool? force]) {
@@ -473,16 +512,18 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final Query<Transaction> associatedTransactionsQuery = ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing.id))
+        .query(Transaction_.account.equals(_currentlyEditing!.id))
         .build();
 
     final int txnCount = associatedTransactionsQuery.count();
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
-      title: "general.delete.confirmName".t(context, _currentlyEditing.name),
+      title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
       child: Text("account.delete.warning".t(context, txnCount)),
     );
+
+    if (!mounted) return;
 
     if (confirmation == true) {
       await export(
@@ -494,20 +535,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
       try {
         await associatedTransactionsQuery.removeAsync();
       } catch (e) {
-        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing.name} (${_currentlyEditing.uuid}) due to:\n$e");
+        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
       } finally {
         associatedTransactionsQuery.close();
       }
 
       try {
-        await ObjectBox().box<Account>().removeAsync(_currentlyEditing.id);
+        await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
       } catch (e) {
-        log("[Account Page] Failed to delete account ${_currentlyEditing.name} (${_currentlyEditing.uuid}) due to:\n$e");
-      } finally {
-        if (mounted) {
-          context.pop();
-        }
+        log("[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
       }
     }
+
+    if (!mounted) return;
+    context.pop();
   }
 }

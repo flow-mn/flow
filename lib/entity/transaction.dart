@@ -192,7 +192,8 @@ enum TransactionType implements LocalizedEnum {
 enum TransactionSubtype implements LocalizedEnum {
   transactionFee("transactionFee"),
   givenLoan("loan.given"),
-  receivedLoan("loan.received");
+  receivedLoan("loan.received"),
+  updateBalance("updateBalance");
 
   final String value;
 

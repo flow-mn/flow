@@ -43,6 +43,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
   bool busy = false;
 
+  late bool oled;
+
   static const double petalRadiusProc = 0.05;
   static const double centerSpaceRadiusProc = 0.3;
   static const double angleOffset = math.pi / -2;
@@ -81,11 +83,15 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         animationController.forward(from: 0.0);
       },
     );
+
+    _updateOled();
+    LocalPreferences().enableOledTheme.addListener(_updateOled);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    LocalPreferences().enableOledTheme.removeListener(_updateOled);
 
     super.dispose();
   }
@@ -94,9 +100,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
     final bool isDark = getTheme(currentTheme).isDark;
-    final int selectedIndex = isDark
-        ? lightDarkThemeMapping.values.toList().indexOf(currentTheme)
-        : lightDarkThemeMapping.keys.toList().indexOf(currentTheme);
+    final (ThemePetal? petals, int? selectedIndex) =
+        getThemePetal(currentTheme);
 
     return ConstrainedBox(
       constraints: BoxConstraints.tightForFinite(
@@ -182,7 +187,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                       opacity: opacityAnimation.value,
                       child: Center(
                         child: InkWell(
-                          onTap: () => switchThemeMode(currentTheme),
+                          onTap: () =>
+                              setThemeByIndex(selectedIndex ?? 0, !isDark),
                           borderRadius: BorderRadius.circular(999.0),
                           child: Container(
                             width: middleButtonSize,
@@ -222,35 +228,10 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         busy = true;
       });
 
-      final String themeName = dark
-          ? lightDarkThemeMapping.values.elementAt(index)
-          : lightDarkThemeMapping.keys.elementAt(index);
+      final ThemePetal petal = themePetalMapping[index];
 
-      await LocalPreferences().themeName.set(themeName);
-    } catch (e) {
-      log("[Theme Petal Selector] Something went wrong with the theme petal selector.",
-          error: e);
-    } finally {
-      busy = false;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  void switchThemeMode(String currentTheme) async {
-    if (busy) return;
-
-    try {
-      setState(() {
-        busy = true;
-      });
-
-      final String? themeName = reverseThemeMode(currentTheme);
-
-      if (themeName == null) {
-        return;
-      }
+      final String themeName =
+          dark ? (oled ? petal.oled : petal.dark) : petal.light;
 
       await LocalPreferences().themeName.set(themeName);
     } catch (e) {
@@ -283,5 +264,24 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         (math.pi * 2);
 
     return (angle / (math.pi / 8.0)).round();
+  }
+
+  void _updateOled() {
+    oled = LocalPreferences().enableOledTheme.get();
+
+    try {
+      final String currentTheme = LocalPreferences().getCurrentTheme();
+      final bool isDark = getTheme(currentTheme).isDark;
+      final int? index = getThemePetal(currentTheme).$2;
+      if (index != null) {
+        setThemeByIndex(index, isDark);
+      }
+    } catch (e) {
+      // Silent fail
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

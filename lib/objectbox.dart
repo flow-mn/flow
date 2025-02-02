@@ -79,7 +79,10 @@ class ObjectBox {
       await dir.create(recursive: true);
     }
 
-    final store = await openStore(directory: appDataDirectory);
+    final store = await openStore(
+      directory: appDataDirectory,
+      macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
+    );
 
     return _instance = ObjectBox._internal(store);
   }

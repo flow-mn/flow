@@ -1,5 +1,17 @@
 # Changelog
 
+## Beta 0.11.1
+
+### Fixes
+
+* [IMPORTANT] Fixed Stats tab first day of month (or any range) was missing
+This led to incorrect avg. daily expense/income, which, now, is fixed.
+
+### New fetures
+
+* Now you can use OLED themes, closes [#288](https://github.com/flow-mn/flow/issues/288)
+* Now you can sync your balance at an exact date, closes [#293](https://github.com/flow-mn/flow/issues/293)
+
 ## Beta 0.11.0
 
 * Reworked stats tab (ongoing)

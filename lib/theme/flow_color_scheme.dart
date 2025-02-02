@@ -79,3 +79,5 @@ class FlowColorScheme {
         );
   }
 }
+
+enum FlowThemeMode { light, dark, oled }
