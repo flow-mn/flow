@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "Tutte le categorie",
     "transactions.query.filter.groupBy": "Raggruppa per",
     "transactions.query.filter.sort": "Ordina",
+    "transactions.query.filter.currency": "Valuta",
     "transactions.count": "{count} transazioni",
 
     "category": "Categoria",
@@ -341,6 +342,7 @@
     "enum.TransactionSubtype@transactionFee": "Commissione transazione",
     "enum.TransactionSubtype@givenLoan": "Prestito (dato)",
     "enum.TransactionSubtype@receivedLoan": "Prestito (ricevuto)",
+    "enum.TransactionSubtype@updateBalance": "Aggiorna saldo",
     "enum.TransactionType": "Tipo di transazione",
     "enum.TransactionType@income": "Entrata",
     "enum.TransactionType@expense": "Spesa",

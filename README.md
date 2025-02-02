@@ -5,50 +5,51 @@
 [![Flow's GitHub repo](https://img.shields.io/badge/GitHub-flow--mn/flow-f5ccff?logo=github&logoColor=white&style=for-the-badge)](https://github.com/flow-mn/flow)&nbsp;
 [![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
 
+## Preface
+
+![Flow logo](logo@16.png) Flow is a
+
+* Free
+* Open-Source
+* Simple
+* UX-Focused
+* Fully-offline[^1]
+* Cross-platform[^2]
+
+personal expense tracking app.
+
 ## Download Flow (beta)
 
 [![Google Play Store](https://img.shields.io/badge/Google_Play_Store-beta-f5ccff?logo=google-play&logoColor=white&style=for-the-badge)](https://play.google.com/store/apps/details?id=mn.flow.flow)
 [![App Store](https://img.shields.io/badge/App_Store-beta-f5ccff?logo=appstore&logoColor=white&style=for-the-badge)](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
-[![See Codemagic builds](https://img.shields.io/badge/CodeMagic-see_builds-f5ccff?logo=codemagic&logoColor=white&style=for-the-badge)](https://codemagic.io/apps/65950ed30591c25df05b5613/65950ed30591c25df05b5612/latest_build)
+[![Other build files](https://img.shields.io/badge/releases-other_build_files-f5ccff?logo=github&logoColor=white&style=for-the-badge)](https://github.com/flow-mn/flow/releases/latest)
 
-> Backuping up before updating is highly recommended!
+> You can build and run for Linux and macOS. Haven't tested Windows yet[^2]
 
-## Preface
+## Features
 
-Flow is a free, open-source, cross-platform personal finance tracking app.
-
-Beta available on Android, iOS, and more[^1]
-
-### Features
-
+* Simple & seamless UX
 * Multiple accounts
 * Multiple currencies
-* Fully-offline
+* Fully-offline[^1]
 * Full export/backup
-  * JSON for backup
-  * CSV for external software use (i.e., Google Sheets)
-
-## Try Flow
-
-Feedbacks and ideas are greatly appreciated 🌟
-
-Flow in production: [Blog post](https://blog.gege.mn/publishing-flow-to-production-20250104?showSharer=true)
+  * Fully recoverable backups (ZIP/JSON)
+  * Export CSV for external software use (i.e., Google Sheets)
 
 ## Support Flow
 
 Flow is a personal project developed during my free time, and it generates no
-income.  Maintaining Flow on the App Store requires a substantial annual fee
-(see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
-which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
-continued existence and future development, your support is greatly appreciated.
+income. Consider helping Flow! Here are some suggestions:
 
-[Buy me a coffee](https://buymeacoffee.com/sadespresso)
-
-## Supported platforms
-
-* Android
-* iOS
-* and more[^1]
+* Give a star on [GitHub](https://github.com/flow-mn/flow)
+* Leave a review on [Google Play](https://play.google.com/store/apps/details?id=mn.flow.flow) and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
+* Tell a friend
+* [Buy me a coffee](https://buymeacoffee.com/sadespresso)
+  
+  Maintaining Flow on the App Store requires a substantial annual fee
+  (see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
+  which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
+  continued existence and future development, your support is greatly appreciated.
 
 ## Development
 
@@ -56,29 +57,23 @@ Please read [Contribuition guide](./CONTRIBUTING.md) before contributing.
 
 ### Prerequisites
 
-* [Flutter](https://flutter.dev/) (stable)
+* [Flutter](https://flutter.dev/) (latest stable)
 
 Other:
 
-* JDK 17 if you're gonna build for Android
+* JDK 1.8 or 17 if you're gonna build for Android
 * [XCode](https://developer.apple.com/xcode/) if you're gonna build for iOS/macOS
 * To run tests on your machine, see [Testing](#testing)
 
-Building for Windows, and Linux-based systems requires the same dependencies
-as Flutter. Read more on <https://docs.flutter.dev/platform-integration>
-
-### Running
-
-`flutter run`
-
-See more on <https://flutter.dev/>
+Building for Windows, macOS, and Linux-based systems requires the same
+dependencies as Flutter. Read more on <https://docs.flutter.dev/platform-integration>
 
 ### Testing
 
 If you plan to run tests on your machine, ensure you've installed ObjectBox
 dynamic libraries.
 
-Install ObjectBox dynamic libraries[^2]:
+Install ObjectBox dynamic libraries[^3]:
 
 `bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
 
@@ -86,27 +81,12 @@ Testing:
 
 `flutter test`
 
-[^1]: Will be available on macOS, Windows, and Linux-based systems, but no plan
+[^1]: Flow requires internet to download currency exchage rates. Only necessary
+if you use more than one currencies
+
+[^2]: Will be available on macOS, Windows, and Linux-based systems, but no plan
 to enhance the UI for desktop experience for now.
 
-[^2]: Please double-check from the official website, may be outdated. Visit
+[^3]: Please double-check from the official website, may be outdated. Visit
 <https://docs.objectbox.io/getting-started#add-objectbox-to-your-project>
 (make sure to choose Flutter to see the script).
-
-### Build artifacts
-
-Flow's build logs are freely available for anyone examine.
-
-#### Android
-
-GitHub Actions script is used to build both Fat-APK (multi-architecture), and
-appbundles (for Google Play).
-
-* Build scripts: <https://github.com/flow-mn/flow/tree/main/.github/workflows>
-* Build logs: <https://github.com/flow-mn/flow/actions>
-
-#### iOS
-
-Due to my skill issues, I couldn't manage to build archives through GitHub
-Actions. Currently, [Codemagic](https://codemagic.io) is used to build the
-iOS releases.

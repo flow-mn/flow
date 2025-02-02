@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "Бүх ангилал",
     "transactions.query.filter.groupBy": "Бүлэглэх нэгж",
     "transactions.query.filter.sort": "Эрэмбэ",
+    "transactions.query.filter.currency": "Валют",
     "transactions.count": "{} гүйлгээ",
 
     "category": "Ангилал",
@@ -341,6 +342,7 @@
     "enum.TransactionSubtype@transactionFee": "Гүйлгээний шимтгэл",
     "enum.TransactionSubtype@givenLoan": "Өгсөн зээл",
     "enum.TransactionSubtype@receivedLoan": "Авсан зээл",
+    "enum.TransactionSubtype@updateBalance": "Үлдэгдэл өөрчлөх",
     "enum.TransactionType": "Гүйлгээний төрөл",
     "enum.TransactionType@income": "Орлого",
     "enum.TransactionType@expense": "Зарлага",
