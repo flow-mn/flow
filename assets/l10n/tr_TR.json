@@ -152,6 +152,7 @@
     "transactions.query.filter.categories.all": "Tüm Kategoriler",
     "transactions.query.filter.groupBy": "Şuna göre grupla",
     "transactions.query.filter.sort": "Sırala",
+    "transactions.query.filter.currency": "Para birimi",
     "transactions.count": "{} İşlemler",
 
     "category": "Kategori",
