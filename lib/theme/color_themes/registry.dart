@@ -72,7 +72,6 @@ final Map<String, FlowColorScheme> oledThemes = {
 
 final Map<String, FlowColorScheme> otherThemes = {
   "palenight": palenight,
-  "electricLavenderOled": electricLavenderOled
 };
 
 typedef ThemePetal = ({String light, String dark, String oled});

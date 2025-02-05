@@ -3,21 +3,19 @@
 Thank you for stopping by here! There are many ways to make Flow better for
 everyone. Here are few:
 
-* [Reporting a bug](https://github.com/flow-mn/flow/issues/new/choose)
-* [Proposing a feature](https://github.com/flow-mn/flow/issues/new?assignees=&labels=&projects=&template=feature_request.yaml&title=%5BFEAT%5D+)
-* Submitting [fixes, feature implementations](#developing)
+* [Report a bug](https://github.com/flow-mn/flow/issues/new/choose)
+* [Propos a feature](https://github.com/flow-mn/flow/issues/new?assignees=&labels=&projects=&template=feature_request.yaml&title=%5BFEAT%5D+)
+* [Contribute code](#developing)
 * [Translating Flow](#translating) to your own language
-* [Tipping the maintainer](https://buymeacoffee.com/sadespresso). Flow is a
-free and open-source software, and will stay this way. Please understand
-that by giving tip, you will NOT unlock any new or additional features.
-As of now, publishing fees have been paid by the maintainer.
+* [Buy maintainer a coffee](https://buymeacoffee.com/sadespresso). Flow is a
+free and open-source software, and will stay this way.
 
 ## Developing
 
 NOTE: A quick discussion upfront can highlight any potential issues, streamline
 the merge process, and ensure you're on the right track to avoid rework.
 
-TIP: Look for issues with `ready` label to get contributing immediately
+TIP: Look for issues with `ready` label to get started without any friction
 
 1. Fork the repository
 2. Pick an issue. If the fix/feature you're gonna work doesn't have an issue,
@@ -39,6 +37,8 @@ implementing a new feature
 * Any new dependency must support the all the platforms except for Web
 * It is not necessary to change the version unless you're in charge of
 publishing a release
+* Update [CHANGELOG.md](./CHANGELOG.md) with your change description. (Use
+version name `Next`)
 
 ## Translating
 

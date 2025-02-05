@@ -15,7 +15,6 @@ class Button extends StatelessWidget {
   final BorderRadius borderRadius;
 
   final Color? backgroundColor;
-  final Color? foregroundColor;
 
   const Button({
     super.key,
@@ -25,7 +24,6 @@ class Button extends StatelessWidget {
     this.leading,
     this.trailing,
     this.backgroundColor,
-    this.foregroundColor,
     this.padding = const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
   });
@@ -63,7 +61,7 @@ class Button extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       color: onTap == null && onLongPress == null
           ? context.colorScheme.onSurface.withAlpha(0x61)
-          : null,
+          : backgroundColor,
       builder: (context) => InkWell(
         onTap: onTap,
         onLongPress: onLongPress,

@@ -6,6 +6,7 @@ import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
+import "package:flow/routes/debug/debug_theme_page.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/routes/export/export_history_page.dart";
 import "package:flow/routes/export_options_page.dart";
@@ -344,6 +345,10 @@ final router = GoRouter(
 
         return StatsByGroupPage(byCategory: false, initialRange: initialRange);
       },
+    ),
+    GoRoute(
+      path: "/_debug/theme",
+      builder: (context, state) => DebugThemePage(),
     ),
   ],
 );

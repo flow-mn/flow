@@ -79,9 +79,6 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
             ...widget.accounts.map(
               (account) => CheckboxListTile.adaptive(
                 title: Text(account.name),
-                // leading: FlowIcon(account.icon),
-                // trailing: const Icon(Symbols.chevron_right_rounded),
-                // onTap: () => context.pop(account),
                 value: selectedUuids.contains(account.uuid),
                 onChanged: (value) => select(account.uuid, value),
               ),

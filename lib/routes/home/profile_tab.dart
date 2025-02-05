@@ -96,6 +96,11 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: toggleDisco,
             ),
             ListTile(
+              title: const Text("Theme test page"),
+              leading: const Icon(Symbols.palette_rounded),
+              onTap: () => context.push("/_debug/theme"),
+            ),
+            ListTile(
               title: const Text("Populate objectbox"),
               leading: const Icon(Symbols.adb_rounded),
               onTap: () => ObjectBox().createAndPutDebugData(),
