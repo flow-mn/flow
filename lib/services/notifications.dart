@@ -1,8 +1,9 @@
-import "dart:math" as math;
 import "dart:developer";
 import "dart:io";
+import "dart:math" as math;
 
 import "package:flow/entity/transaction.dart";
+import "package:flow/prefs/pending_transactions.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -109,6 +110,25 @@ class NotificationsService {
       }
     } finally {
       _ready = true;
+    }
+
+    if (_available != true) return;
+
+    if (PendingTransactionsLocalPreferences().notify.get()) {
+      try {
+        final bool? permissionGranted = await hasPermissions();
+
+        if (permissionGranted == null) return;
+
+        if (!permissionGranted) {
+          requestPermissions();
+        }
+      } catch (e) {
+        log(
+          "[NotificationsService] Failed to check or request permissions",
+          error: e,
+        );
+      }
     }
   }
 
@@ -313,5 +333,50 @@ class NotificationsService {
             sound: true,
           );
     }
+  }
+
+  Future<bool?> hasPermissions() async {
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          pluginInstance.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      try {
+        final bool? enabled =
+            await androidImplementation?.areNotificationsEnabled();
+        if (enabled != true) {
+          return false;
+        }
+        final bool? canSchedule =
+            await androidImplementation?.canScheduleExactNotifications();
+
+        return canSchedule == true;
+      } catch (e) {
+        return false;
+      }
+    }
+    if (Platform.isIOS) {
+      final NotificationsEnabledOptions? permissions = await pluginInstance
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.checkPermissions();
+
+      if (permissions == null || !permissions.isEnabled) {
+        return false;
+      }
+      return true;
+    }
+    if (Platform.isMacOS) {
+      final NotificationsEnabledOptions? permissions = await pluginInstance
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.checkPermissions();
+
+      if (permissions == null || !permissions.isEnabled) {
+        return false;
+      }
+      return true;
+    }
+    return null;
   }
 }

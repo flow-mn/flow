@@ -1,8 +1,11 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/material.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class PendingTransactionPreferencesPage extends StatefulWidget {
   const PendingTransactionPreferencesPage({super.key});
@@ -14,15 +17,27 @@ class PendingTransactionPreferencesPage extends StatefulWidget {
 
 class _PendingTransactionPreferencesPageState
     extends State<PendingTransactionPreferencesPage> {
+  late final Future<bool?> _notificationsPermissionGranted;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _notificationsPermissionGranted = NotificationsService().hasPermissions();
+  }
+
   @override
   Widget build(BuildContext context) {
     final int pendingTransactionsHomeTimeframe =
-        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
-            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
+        LocalPreferences().pendingTransactions.homeTimeframe.get() ??
+            PendingTransactionsLocalPreferences.homeTimeframeDefault;
     final bool requirePendingTransactionConfrimation =
         LocalPreferences().requirePendingTransactionConfrimation.get();
     final bool pendingTransactionsUpdateDateUponConfirmation =
-        LocalPreferences().pendingTransactionsUpdateDateUponConfirmation.get();
+        LocalPreferences().pendingTransactions.updateDateUponConfirmation.get();
+    final bool notify = LocalPreferences().pendingTransactions.notify.get();
+    final int? earlyReminderInSeconds =
+        LocalPreferences().pendingTransactions.earlyReminderInSeconds.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +94,6 @@ class _PendingTransactionPreferencesPageState
                 value: requirePendingTransactionConfrimation,
                 onChanged: updateRequirePendingTransactionConfrimation,
               ),
-              const SizedBox(height: 16.0),
               if (requirePendingTransactionConfrimation) ...[
                 CheckboxListTile.adaptive(
                   title: Text(
@@ -93,6 +107,84 @@ class _PendingTransactionPreferencesPageState
                   value: pendingTransactionsUpdateDateUponConfirmation,
                   onChanged: updatePendingTransactionsConfirmationDate,
                 ),
+                FutureBuilder(
+                  future: _notificationsPermissionGranted,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.none ||
+                        snapshot.connectionState == ConnectionState.waiting ||
+                        snapshot.error != null) {
+                      return const SizedBox();
+                    }
+
+                    final bool notificationsPermissionGranted =
+                        snapshot.data != false;
+
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CheckboxListTile.adaptive(
+                          title: Text(
+                            "preferences.pendingTransactions.notify".t(context),
+                          ),
+                          enabled: notificationsPermissionGranted,
+                          value: notify,
+                          onChanged: updateNotify,
+                        ),
+                        const SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
+                        if (notificationsPermissionGranted) ...[
+                          ListHeader(
+                            "preferences.pendingTransactions.notify.earlyReminder"
+                                .t(context),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: Wrap(
+                              spacing: 12.0,
+                              runSpacing: 8.0,
+                              children: [
+                                null,
+                                Duration(minutes: 5),
+                                Duration(minutes: 15),
+                                Duration(minutes: 30),
+                                Duration(hours: 1),
+                                Duration(hours: 2),
+                                Duration(hours: 6),
+                                Duration(hours: 12),
+                                Duration(days: 1),
+                                Duration(days: 2),
+                                Duration(days: 3),
+                                Duration(days: 7),
+                              ]
+                                  .map(
+                                    (value) => FilterChip(
+                                      showCheckmark: false,
+                                      key: ValueKey(value),
+                                      label: Text(
+                                        value?.toDurationString(
+                                              dropPrefixOrSuffix: true,
+                                            ) ??
+                                            "preferences.pendingTransactions.notify.earlyReminder.none"
+                                                .t(context),
+                                      ),
+                                      onSelected: (bool selected) => selected
+                                          ? updateEarlyReminderInSeconds(value)
+                                          : null,
+                                      selected: (value?.inSeconds ?? 0) ==
+                                          (earlyReminderInSeconds ?? 0),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
               ],
             ],
           ),
@@ -102,7 +194,25 @@ class _PendingTransactionPreferencesPageState
   }
 
   void updatePendingTransactionsHomeTimeframe(int days) async {
-    await LocalPreferences().pendingTransactionsHomeTimeframe.set(days);
+    await LocalPreferences().pendingTransactions.homeTimeframe.set(days);
+
+    if (mounted) setState(() {});
+  }
+
+  void updateEarlyReminderInSeconds(Duration? duration) async {
+    final int? value = duration?.inSeconds;
+
+    if (value == null) {
+      await LocalPreferences()
+          .pendingTransactions
+          .earlyReminderInSeconds
+          .remove();
+    } else {
+      await LocalPreferences()
+          .pendingTransactions
+          .earlyReminderInSeconds
+          .set(value);
+    }
 
     if (mounted) setState(() {});
   }
@@ -125,8 +235,19 @@ class _PendingTransactionPreferencesPageState
     if (newValue == null) return;
 
     await LocalPreferences()
-        .pendingTransactionsUpdateDateUponConfirmation
+        .pendingTransactions
+        .updateDateUponConfirmation
         .set(newValue);
+
+    if (mounted) setState(() {});
+  }
+
+  void updateNotify(
+    bool? newValue,
+  ) async {
+    if (newValue == null) return;
+
+    await LocalPreferences().pendingTransactions.notify.set(newValue);
 
     if (mounted) setState(() {});
   }

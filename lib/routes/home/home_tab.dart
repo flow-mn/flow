@@ -5,6 +5,7 @@ import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
+import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
@@ -71,7 +72,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.initState();
     _updatePlannedTransactionDays();
     LocalPreferences()
-        .pendingTransactionsHomeTimeframe
+        .pendingTransactions
+        .homeTimeframe
         .addListener(_updatePlannedTransactionDays);
 
     _listener = AppLifecycleListener(
@@ -86,7 +88,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void dispose() {
     _listener.dispose();
     LocalPreferences()
-        .pendingTransactionsHomeTimeframe
+        .pendingTransactions
+        .homeTimeframe
         .removeListener(_updatePlannedTransactionDays);
     _timer.cancel();
     super.dispose();
@@ -238,8 +241,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   void _updatePlannedTransactionDays() {
     _plannedTransactionsNextNDays =
-        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
-            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
+        LocalPreferences().pendingTransactions.homeTimeframe.get() ??
+            PendingTransactionsLocalPreferences.homeTimeframeDefault;
     setState(() {});
   }
 

@@ -178,7 +178,7 @@ class _ProfileTabState extends State<ProfileTab> {
           final newThemeName = darkThemes.keys.elementAt(_debugDiscoIndex++);
 
           unawaited(
-            LocalPreferences().themeName.set(newThemeName),
+            LocalPreferences().theme.themeName.set(newThemeName),
           );
         } catch (e) {
           timer.cancel();

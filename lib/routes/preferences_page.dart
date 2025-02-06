@@ -33,7 +33,7 @@ class PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().themeName.get());
+        getTheme(LocalPreferences().theme.themeName.get());
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
@@ -243,10 +243,10 @@ class PreferencesPageState extends State<PreferencesPage> {
     await context.push("/preferences/theme");
 
     final bool themeChangesAppIcon =
-        LocalPreferences().themeChangesAppIcon.get();
+        LocalPreferences().theme.themeChangesAppIcon.get();
 
     trySetThemeIcon(
-      themeChangesAppIcon ? LocalPreferences().themeName.get() : null,
+      themeChangesAppIcon ? LocalPreferences().theme.themeName.get() : null,
     );
 
     // Rebuild to update description text

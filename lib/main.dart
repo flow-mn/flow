@@ -117,7 +117,7 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeName.addListener(_reloadTheme);
+    LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
@@ -135,7 +135,7 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeName.removeListener(_reloadTheme);
+    LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
     super.dispose();
   }
@@ -165,8 +165,8 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().themeName.value;
-    final bool oled = LocalPreferences().enableOledTheme.get();
+    final String? themeName = LocalPreferences().theme.themeName.value;
+    final bool oled = LocalPreferences().theme.enableOledTheme.get();
 
     log("[Theme] Reloading theme $themeName");
 
