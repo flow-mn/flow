@@ -117,7 +117,7 @@ class _PendingTransactionPreferencesPageState
                     }
 
                     final bool notificationsPermissionGranted =
-                        snapshot.data != false;
+                        snapshot.data == true;
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -133,7 +133,7 @@ class _PendingTransactionPreferencesPageState
                         ),
                         const SizedBox(height: 8.0),
                         const SizedBox(height: 8.0),
-                        if (notificationsPermissionGranted) ...[
+                        if (notify && notificationsPermissionGranted) ...[
                           ListHeader(
                             "preferences.pendingTransactions.notify.earlyReminder"
                                 .t(context),

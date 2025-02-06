@@ -17,7 +17,8 @@ class PendingTransactionsLocalPreferences {
   }
 
   static const int homeTimeframeDefault = 3;
-  static const int earlyReminderInSecondsDefault = 86400; // a day
+  static final int earlyReminderInSecondsDefault =
+      const Duration(days: 1).inSeconds;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
   late final PrimitiveSettingsEntry<int> homeTimeframe;
