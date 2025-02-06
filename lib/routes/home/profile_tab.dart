@@ -114,6 +114,10 @@ class _ProfileTabState extends State<ProfileTab> {
               title: const Text("Show debug notification"),
               leading: const Icon(Symbols.notifications_rounded),
               onTap: () => NotificationsService().debugShow(),
+              onLongPress: () => Future.delayed(
+                const Duration(seconds: 3),
+                () => NotificationsService().debugShow(),
+              ),
             ),
             ListTile(
               title: const Text("Clear exchange rates cache"),

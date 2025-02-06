@@ -87,5 +87,5 @@ configurations {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-    debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.0.3")
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.1.0")
 }

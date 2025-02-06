@@ -1,3 +1,4 @@
+import "dart:math" as math;
 import "dart:developer";
 import "dart:io";
 
@@ -146,9 +147,11 @@ class NotificationsService {
         android: AndroidNotificationDetails(
           "planned-transaction-reminder",
           "Planned Transaction Reminder",
+          channelDescription: "Reminds you about a planned transaction",
           importance: Importance.max,
           priority: Priority.high,
           category: AndroidNotificationCategory.reminder,
+          styleInformation: DefaultStyleInformation(false, false),
         ),
         iOS: DarwinNotificationDetails(
           interruptionLevel: InterruptionLevel.timeSensitive,
@@ -191,11 +194,16 @@ class NotificationsService {
 
     try {
       await pluginInstance.zonedSchedule(
-        51,
+        math.Random().nextInt(10000) + 1,
         "Test 1",
         null,
         dateTime,
         NotificationDetails(
+          android: AndroidNotificationDetails(
+            "debug",
+            "Debug",
+            importance: Importance.max,
+          ),
           linux: LinuxNotificationDetails(
             icon: AssetsLinuxIcon("assets/images/flow.png"),
             urgency: LinuxNotificationUrgency.normal,
@@ -224,8 +232,8 @@ class NotificationsService {
         null,
         NotificationDetails(
           android: AndroidNotificationDetails(
-            "default",
-            "default",
+            "debug",
+            "Debug",
             importance: Importance.max,
           ),
         ),
