@@ -9,13 +9,16 @@ import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
 import "package:flow/routes/home/profile_tab.dart";
 import "package:flow/routes/home/stats_tab.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/shortcut.dart";
 import "package:flow/widgets/home/navbar.dart";
 import "package:flow/widgets/home/navbar/new_transaction_button.dart";
 import "package:flutter/material.dart" hide Flow;
+import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
 import "package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart";
+import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:go_router/go_router.dart";
 import "package:pie_menu/pie_menu.dart";
 
@@ -70,11 +73,16 @@ class _HomePageState extends State<HomePage>
         ),
       );
     });
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      NotificationsService().addCallback(_pushNotificationPath);
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    NotificationsService().removeCallback(_pushNotificationPath);
     super.dispose();
   }
 
@@ -156,5 +164,15 @@ class _HomePageState extends State<HomePage>
     type ??= TransactionType.expense;
 
     context.push("/transaction/new?type=${type.value}");
+  }
+
+  void _pushNotificationPath(NotificationResponse response) {
+    try {
+      if (response.payload == null) throw "Payload is null";
+
+      context.push(response.payload!);
+    } catch (e) {
+      log("Failed to push notification path", error: e);
+    }
   }
 }

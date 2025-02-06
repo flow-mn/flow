@@ -25,7 +25,7 @@ extension TransactionContextActions on BuildContext {
     bool confirm = true,
   ]) async {
     final bool updateTransactionDate =
-        LocalPreferences().pendingTransactionsUpdateDateUponConfirmation.get();
+        LocalPreferences().pendingTransactions.updateDateUponConfirmation.get();
 
     transaction.confirm(confirm, updateTransactionDate);
   }

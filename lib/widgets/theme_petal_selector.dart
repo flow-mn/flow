@@ -85,13 +85,13 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     );
 
     _updateOled();
-    LocalPreferences().enableOledTheme.addListener(_updateOled);
+    LocalPreferences().theme.enableOledTheme.addListener(_updateOled);
   }
 
   @override
   void dispose() {
     animationController.dispose();
-    LocalPreferences().enableOledTheme.removeListener(_updateOled);
+    LocalPreferences().theme.enableOledTheme.removeListener(_updateOled);
 
     super.dispose();
   }
@@ -233,7 +233,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       final String themeName =
           dark ? (oled ? petal.oled : petal.dark) : petal.light;
 
-      await LocalPreferences().themeName.set(themeName);
+      await LocalPreferences().theme.themeName.set(themeName);
     } catch (e) {
       log("[Theme Petal Selector] Something went wrong with the theme petal selector.",
           error: e);
@@ -267,7 +267,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
   }
 
   void _updateOled() {
-    oled = LocalPreferences().enableOledTheme.get();
+    oled = LocalPreferences().theme.enableOledTheme.get();
 
     try {
       final String currentTheme = LocalPreferences().getCurrentTheme();

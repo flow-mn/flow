@@ -31,6 +31,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -39,9 +40,14 @@ import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:window_manager/window_manager.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+  }
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
@@ -61,6 +67,7 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
+  unawaited(NotificationsService().initialize());
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
@@ -110,7 +117,7 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeName.addListener(_reloadTheme);
+    LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
     ObjectBox().box<Transaction>().query().watch().listen((event) {
@@ -128,7 +135,7 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeName.removeListener(_reloadTheme);
+    LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
     super.dispose();
   }
@@ -158,8 +165,8 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().themeName.value;
-    final bool oled = LocalPreferences().enableOledTheme.get();
+    final String? themeName = LocalPreferences().theme.themeName.value;
+    final bool oled = LocalPreferences().theme.enableOledTheme.get();
 
     log("[Theme] Reloading theme $themeName");
 

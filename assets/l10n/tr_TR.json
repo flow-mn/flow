@@ -212,6 +212,11 @@
     "preferences.pendingTransactions.requireConfirmation.description": "Bekleyen işlemler gelir, gider ve hesap bakiyesi için sayılmayacaktır",
     "preferences.pendingTransactions.updateDateUponConfirmation": "Onaylama tarihini güncelle",
     "preferences.pendingTransactions.updateDateUponConfirmation.description": "Orijinal işlem tarihini korumak için devre dışı bırak",
+    "preferences.pendingTransactions.notify": "Bildirim",
+    "preferences.pendingTransactions.notify.earlyReminder": "Erken hatırlatma",
+    "preferences.pendingTransactions.notify.earlyReminder.none": "Hiçbiri",
+    "preferences.pendingTransactions.notify.schedulingUnsupported": "Flow açık olmadığında bildirimler çalışmaz",
+    "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Zamanlanmış bildirimler yalnızca Android, iOS ve macOS'ta kullanılabilir",
     "preferences.privacyMode": "Gizlilik modu",
     "preferences.privacyMode.enableAtStartup": "Başlangıçta etkinleştir",
     "preferences.moneyFormatting": "Para biçimlendirme",
@@ -296,6 +301,9 @@
     "flowIcon.type.image.description": "Simge olarak kullanmak için bir resim seçin",
     "flowIcon.type.character": "Karakter",
     "flowIcon.type.character.description": "Simge olarak kullanmak için bir emoji veya harf girin",
+
+    "notifications.permissionNotGranted": "Bildirim izni verilmedi",
+    "notifications.openSettingsToGrantPermission": "Bildirim iznini sistem ayarlarından verin",
 
     "sync.import": "İçe aktarmak",
     "sync.import.pickFile": "Bir dosya seçin",

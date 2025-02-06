@@ -32,8 +32,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     final bool isDark = getTheme(currentTheme).isDark;
 
     final bool themeChangesAppIcon =
-        LocalPreferences().themeChangesAppIcon.get();
-    final bool enableOledTheme = LocalPreferences().enableOledTheme.get();
+        LocalPreferences().theme.themeChangesAppIcon.get();
+    final bool enableOledTheme = LocalPreferences().theme.enableOledTheme.get();
     // final bool enableDynamicTheme = LocalPreferences().enableDynamicTheme.get();
 
     return Scaffold(
@@ -99,7 +99,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     try {
       appIconBusy = true;
-      await LocalPreferences().themeChangesAppIcon.set(newValue);
+      await LocalPreferences().theme.themeChangesAppIcon.set(newValue);
       trySetThemeIcon(newValue ? LocalPreferences().getCurrentTheme() : null);
     } finally {
       appIconBusy = false;
@@ -115,7 +115,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     try {
       dynamicThemeBusy = true;
-      await LocalPreferences().enableDynamicTheme.set(newValue);
+      await LocalPreferences().theme.enableDynamicTheme.set(newValue);
     } finally {
       dynamicThemeBusy = false;
       if (mounted) {
@@ -130,7 +130,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     try {
       oledThemeBusy = true;
-      await LocalPreferences().enableOledTheme.set(newValue);
+      await LocalPreferences().theme.enableOledTheme.set(newValue);
     } finally {
       oledThemeBusy = false;
       if (mounted) {
@@ -144,8 +144,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     if (busy) return;
 
     try {
-      await LocalPreferences().themeName.set(name);
-      if (LocalPreferences().themeChangesAppIcon.get()) {
+      await LocalPreferences().theme.themeName.set(name);
+      if (LocalPreferences().theme.themeChangesAppIcon.get()) {
         trySetThemeIcon(name);
       }
     } finally {

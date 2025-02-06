@@ -9,6 +9,8 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/prefs/theme.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
@@ -20,8 +22,6 @@ import "package:shared_preferences/shared_preferences.dart";
 /// settings
 class LocalPreferences {
   final SharedPreferences _prefs;
-
-  static const int pendingTransactionsHomeTimeframeDefault = 3;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -49,12 +49,6 @@ class LocalPreferences {
   /// to total income/expense for a given context
   late final BoolSettingsEntry excludeTransferFromFlow;
 
-  /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
-  late final PrimitiveSettingsEntry<int> pendingTransactionsHomeTimeframe;
-
-  /// Whether to use date of confirmation for `transactionDate` for pending transactions
-  late final BoolSettingsEntry pendingTransactionsUpdateDateUponConfirmation;
-
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -74,11 +68,6 @@ class LocalPreferences {
 
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
-  late final PrimitiveSettingsEntry<String> themeName;
-  late final BoolSettingsEntry themeChangesAppIcon;
-  late final BoolSettingsEntry enableDynamicTheme;
-  late final BoolSettingsEntry enableOledTheme;
-
   late final BoolSettingsEntry requirePendingTransactionConfrimation;
 
   late final BoolSettingsEntry privacyMode;
@@ -86,6 +75,9 @@ class LocalPreferences {
 
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
+
+  late final PendingTransactionsLocalPreferences pendingTransactions;
+  late final ThemeLocalPreferences theme;
 
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
@@ -113,16 +105,6 @@ class LocalPreferences {
       key: "excludeTransferFromFlow",
       preferences: _prefs,
       initialValue: false,
-    );
-    pendingTransactionsHomeTimeframe = PrimitiveSettingsEntry<int>(
-      key: "pendingTransactions.homeTimeframe",
-      preferences: _prefs,
-      initialValue: pendingTransactionsHomeTimeframeDefault,
-    );
-    pendingTransactionsUpdateDateUponConfirmation = BoolSettingsEntry(
-      key: "pendingTransactions.updateDateUponConfirmation",
-      preferences: _prefs,
-      initialValue: true,
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "transactionButtonOrder",
@@ -176,27 +158,6 @@ class LocalPreferences {
       initialValue: false,
     );
 
-    themeName = PrimitiveSettingsEntry<String>(
-      key: "themeName",
-      preferences: _prefs,
-      initialValue: lightThemes.keys.first,
-    );
-    themeChangesAppIcon = BoolSettingsEntry(
-      key: "themeChangesAppIcon",
-      preferences: _prefs,
-      initialValue: true,
-    );
-    enableDynamicTheme = BoolSettingsEntry(
-      key: "enableDynamicTheme",
-      preferences: _prefs,
-      initialValue: true,
-    );
-    enableOledTheme = BoolSettingsEntry(
-      key: "enableOledTheme",
-      preferences: _prefs,
-      initialValue: false,
-    );
-
     requirePendingTransactionConfrimation = BoolSettingsEntry(
       key: "requirePendingTransactionConfrimation",
       preferences: _prefs,
@@ -231,6 +192,10 @@ class LocalPreferences {
     );
 
     updateTransitiveProperties();
+
+    pendingTransactions =
+        PendingTransactionsLocalPreferences.initialize(_prefs);
+    theme = ThemeLocalPreferences.initialize(_prefs);
   }
 
   Future<void> updateTransitiveProperties() async {
@@ -428,7 +393,7 @@ class LocalPreferences {
   }
 
   String getCurrentTheme() {
-    final String? preferencesTheme = LocalPreferences().themeName.get();
+    final String? preferencesTheme = theme.themeName.get();
     return validateThemeName(preferencesTheme)
         ? preferencesTheme!
         : lightThemes.keys.first;
