@@ -215,6 +215,8 @@
     "preferences.pendingTransactions.notify": "Мэдэгдэл илгээх",
     "preferences.pendingTransactions.notify.earlyReminder": "Эрт сануулга",
     "preferences.pendingTransactions.notify.earlyReminder.none": "Байхгүй",
+    "preferences.pendingTransactions.notify.schedulingUnsupported": "Flow-г нээээгүй үед мэдэгдэл илгээх боломжгүй",
+    "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Мэдэгдэл товлох нь зөвхөн Android, iOS, macOS системд боломжтой",
     "preferences.privacyMode": "Нууцлалын горим",
     "preferences.privacyMode.enableAtStartup": "Эхлэх үед идэвхжүүлэх",
     "preferences.moneyFormatting": "Мөнгөний хэлбэр",
@@ -299,6 +301,9 @@
     "flowIcon.type.image.description": "Зураг сонгож дүрс болгон ашиглаарай",
     "flowIcon.type.character": "Тэмдэгт",
     "flowIcon.type.character.description": "Эможи эсвэл үсэг оруулж дүрс болгож ашиглаарай",
+
+    "notifications.permissionNotGranted": "Мэдэгдэл илгээх зөвшөөрөл олгоогүй байна",
+    "notifications.openSettingsToGrantPermission": "Системийн тохиргооны хэсэгт орж мэдэгдэл илгээх зөвшөөрлийг олгоно уу",
 
     "sync.import": "Сэргээх",
     "sync.import.pickFile": "Файл сонгох",

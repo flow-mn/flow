@@ -215,6 +215,8 @@
     "preferences.pendingTransactions.notify": "Notify",
     "preferences.pendingTransactions.notify.earlyReminder": "Early reminder",
     "preferences.pendingTransactions.notify.earlyReminder.none": "None",
+    "preferences.pendingTransactions.notify.schedulingUnsupported": "Notifications won't work when Flow isn't open",
+    "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Scheduled notifications are only available on Android, iOS, and macOS",
     "preferences.privacyMode": "Privacy mode",
     "preferences.privacyMode.enableAtStartup": "Enable at startup",
     "preferences.moneyFormatting": "Money formatting",
@@ -299,6 +301,9 @@
     "flowIcon.type.image.description": "Pick an image to use as an icon",
     "flowIcon.type.character": "Character",
     "flowIcon.type.character.description": "Enter an emoji or a letter to use as an icon",
+
+    "notifications.permissionNotGranted": "Notifications permission not granted",
+    "notifications.openSettingsToGrantPermission": "Grant notification permission from system settings",
 
     "sync.import": "Import",
     "sync.import.pickFile": "Select a file",

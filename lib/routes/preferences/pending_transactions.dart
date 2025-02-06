@@ -2,9 +2,11 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class PendingTransactionPreferencesPage extends StatefulWidget {
@@ -117,7 +119,9 @@ class _PendingTransactionPreferencesPageState
                     }
 
                     final bool notificationsPermissionGranted =
-                        snapshot.data == true;
+                        snapshot.data != false;
+                    final bool showSchedulingUnsupportedNotice =
+                        snapshot.data == null;
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -128,12 +132,35 @@ class _PendingTransactionPreferencesPageState
                             "preferences.pendingTransactions.notify".t(context),
                           ),
                           enabled: notificationsPermissionGranted,
-                          value: notify,
+                          value: notificationsPermissionGranted && notify,
                           onChanged: updateNotify,
                         ),
-                        const SizedBox(height: 8.0),
-                        const SizedBox(height: 8.0),
-                        if (notify && notificationsPermissionGranted) ...[
+                        if (!notificationsPermissionGranted) ...[
+                          const SizedBox(height: 8.8),
+                          Frame(
+                            child: InfoText(
+                              icon: Symbols.warning_rounded,
+                              child: Text(
+                                "notifications.permissionNotGranted".t(context),
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (!showSchedulingUnsupportedNotice) ...[
+                          const SizedBox(height: 8.8),
+                          Frame(
+                            child: InfoText(
+                              child: Text(
+                                "preferences.pendingTransactions.notify.schedulingUnsupported"
+                                    .t(context),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 16.0),
+                        if (!showSchedulingUnsupportedNotice &&
+                            notify &&
+                            notificationsPermissionGranted) ...[
                           ListHeader(
                             "preferences.pendingTransactions.notify.earlyReminder"
                                 .t(context),

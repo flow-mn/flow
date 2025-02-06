@@ -215,6 +215,8 @@
     "preferences.pendingTransactions.notify": "Notifica",
     "preferences.pendingTransactions.notify.earlyReminder": "Promemoria anticipato",
     "preferences.pendingTransactions.notify.earlyReminder.none": "Nessuno",
+    "preferences.pendingTransactions.notify.schedulingUnsupported": "Le notifiche non funzioneranno quando Flow non è aperto",
+    "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Le notifiche programmate sono disponibili solo su Android, iOS e macOS",
     "preferences.privacyMode": "Modalità privacy",
     "preferences.privacyMode.enableAtStartup": "Attiva all'avvio",
     "preferences.moneyFormatting": "Formato valuta",
@@ -299,6 +301,9 @@
     "flowIcon.type.image.description": "Scegli un'immagine da usare come icona",
     "flowIcon.type.character": "Carattere",
     "flowIcon.type.character.description": "Inserisci un emoji o una lettera da usare come icona",
+
+    "notifications.permissionNotGranted": "Permesso di notifica non concesso",
+    "notifications.openSettingsToGrantPermission": "Concedi il permesso di notifica dalle impostazioni di sistema",
 
     "sync.import": "Importa",
     "sync.import.pickFile": "Seleziona un file",

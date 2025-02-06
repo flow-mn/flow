@@ -254,7 +254,10 @@ class _AccountEditPageState extends State<AccountEditPage> {
                 const SizedBox(height: 8.0),
                 Frame(
                   child: InfoText(
-                      child: Text("account.archive.description".t(context))),
+                    child: Text(
+                      "account.archive.description".t(context),
+                    ),
+                  ),
                 ),
                 if (widget.isNewAccount)
                   ListTile(
