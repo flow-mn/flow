@@ -23,7 +23,6 @@ import "dart:ui";
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
@@ -119,10 +118,6 @@ class FlowState extends State<Flow> {
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
-
-    ObjectBox().box<Transaction>().query().watch().listen((event) {
-      ObjectBox().invalidateAccountsTab();
-    });
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();

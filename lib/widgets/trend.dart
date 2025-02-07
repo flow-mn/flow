@@ -3,6 +3,7 @@ import "package:flow/theme/helpers.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
+/// A widget with little up/down arrow at the end
 class Trend extends StatelessWidget {
   final TextStyle? style;
 
