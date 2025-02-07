@@ -3,6 +3,7 @@ import "dart:io";
 import "dart:math" as math;
 
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
@@ -23,6 +24,8 @@ class NotificationsService {
 
   bool? _available;
   bool get available => _available == true;
+
+  int _count = 0;
 
   String? _timezone;
 
@@ -130,6 +133,10 @@ class NotificationsService {
         );
       }
     }
+
+    _count = await fetchAllNotification()
+        .then((x) => x.length)
+        .catchError((error) => 0);
   }
 
   /// Upon failure, returns an empty list
@@ -141,26 +148,39 @@ class NotificationsService {
     }
   }
 
-  Future<void> purgeNotificationsByIds(List<int> ids) async {
-    for (final int id in ids) {
-      try {
-        await pluginInstance.cancel(id);
-      } catch (e) {
-        log(
-          "[NotificationsService] Failed to cancel notification ($id)",
-          error: e,
-        );
-      }
+  /// Upon failure, does nothing
+  Future<void> cancelAllNotifications() async {
+    try {
+      return await pluginInstance.cancelAll();
+    } catch (e) {
+      // Silent fail
     }
   }
 
-  Future<void> scheduleForPlannedTransaction(Transaction transaction) async {
-    if (transaction.transactionDate.isBefore(DateTime.now())) {
+  Future<List<PendingNotificationRequest>> getSchedules() async {
+    try {
+      return await pluginInstance.pendingNotificationRequests();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<void> scheduleForPlannedTransaction(
+    Transaction transaction, [
+    Duration? earlyReminder,
+  ]) async {
+    final Moment now = Moment.now();
+
+    if (transaction.transactionDate.isBefore(now)) {
       log("[NotificationsService] ignoring scheduling for past date");
       return;
     }
 
-    final TZDateTime dateTime = _getTZDateTime(transaction.transactionDate);
+    final TZDateTime dateTime = _getTZDateTime(
+      earlyReminder == null
+          ? transaction.transactionDate
+          : transaction.transactionDate.subtract(earlyReminder),
+    );
 
     try {
       final NotificationDetails details = NotificationDetails(
@@ -196,9 +216,9 @@ class NotificationsService {
       );
 
       await pluginInstance.zonedSchedule(
-        transaction.id,
-        transaction.title ?? "🚨",
-        transaction.money.formatMoney(),
+        _count++,
+        transaction.title ?? "transaction.fallbackTitle".tr(),
+        "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
         details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

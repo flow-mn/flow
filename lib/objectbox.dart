@@ -9,12 +9,11 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flutter/material.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart";
-import "package:flow/objectbox/objectbox.g.dart";
 
 class ObjectBox {
   static ObjectBox? _instance;
@@ -36,10 +35,6 @@ class ObjectBox {
   /// By default, it uses [getApplicationSupportDirectory] (from path_provider)
   static late final String? customDirectory;
 
-  /// Update this count to trigger a re-fetch in all the widgets that subscribe
-  /// to this [ValueNotifier].
-  final ValueNotifier<int> invalidateAccounts = ValueNotifier(0);
-
   /// The Store of this app.
   late final Store store;
 
@@ -56,10 +51,6 @@ class ObjectBox {
   Box<T> box<T>() => store.box<T>();
 
   ObjectBox._internal(this.store);
-
-  void invalidateAccountsTab() {
-    invalidateAccounts.value++;
-  }
 
   static Future<ObjectBox> initialize({
     String? customDirectory,

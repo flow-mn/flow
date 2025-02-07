@@ -2,6 +2,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
@@ -65,14 +66,8 @@ class TransactionsPage extends StatefulWidget {
     String? title,
     Widget? header,
   }) {
-    anchor ??= DateTime.now().startOfMinute();
-
-    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.transactionDate
-            .greaterThanDate(anchor)
-            .or(Transaction_.isPending.equals(true)))
-        .order(Transaction_.transactionDate);
+    final QueryBuilder<Transaction> queryBuilder =
+        TransactionsService().pendingTransactionsQb(anchor);
 
     return TransactionsPage(
       query: queryBuilder,
