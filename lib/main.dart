@@ -124,6 +124,8 @@ class FlowState extends State<Flow> {
     LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
+    TransactionsService().addListener(_synchronizePlannedNotifications);
+
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
     } else {
@@ -137,6 +139,9 @@ class FlowState extends State<Flow> {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
     LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+
+    TransactionsService().removeListener(_synchronizePlannedNotifications);
+
     super.dispose();
   }
 
@@ -214,5 +219,11 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       LocalPreferences().getPrimaryCurrency(),
     );
+  }
+
+  void _synchronizePlannedNotifications() {
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      log("[Flow Startup] Failed to synchronize notifications", error: error);
+    });
   }
 }
