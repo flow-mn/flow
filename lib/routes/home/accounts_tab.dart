@@ -5,7 +5,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/account_card.dart";
@@ -40,7 +40,7 @@ class _AccountsTabState extends State<AccountsTab>
     super.build(context);
 
     return TransactionWatcher(
-      child: StreamBuilder<List<Account>>(
+      builder: (context, _, __) => StreamBuilder<List<Account>>(
           stream:
               qb().watch(triggerImmediately: true).map((event) => event.find()),
           builder: (context, snapshot) {

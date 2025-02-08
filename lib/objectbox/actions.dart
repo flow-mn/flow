@@ -8,7 +8,7 @@ import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
@@ -18,7 +18,7 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/utils/utils.dart";
@@ -94,8 +94,8 @@ extension MainActions on ObjectBox {
 
     if (sortByFrecency) {
       final FrecencyGroup frecencyGroup = FrecencyGroup(accounts
-          .map((account) =>
-              LocalPreferences().getFrecencyData("account", account.uuid))
+          .map((account) => TransitiveLocalPreferences()
+              .getFrecencyData("account", account.uuid))
           .nonNulls
           .toList());
 
@@ -112,8 +112,8 @@ extension MainActions on ObjectBox {
 
     if (sortByFrecency) {
       final FrecencyGroup frecencyGroup = FrecencyGroup(categories
-          .map((category) =>
-              LocalPreferences().getFrecencyData("category", category.uuid))
+          .map((category) => TransitiveLocalPreferences()
+              .getFrecencyData("category", category.uuid))
           .nonNulls
           .toList());
 
@@ -764,9 +764,10 @@ extension AccountActions on Account {
     final int id = TransactionsService().upsertOneSync(value);
 
     try {
-      LocalPreferences().updateFrecencyData("account", uuid);
+      TransitiveLocalPreferences().updateFrecencyData("account", uuid);
       if (category != null) {
-        LocalPreferences().updateFrecencyData("category", category.uuid);
+        TransitiveLocalPreferences()
+            .updateFrecencyData("category", category.uuid);
       }
     } catch (e) {
       log("Failed to update frecency data for transaction ($id)");

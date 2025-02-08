@@ -1,7 +1,7 @@
 import "dart:math";
 
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/amount_text.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";

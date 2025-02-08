@@ -100,8 +100,13 @@ class NotificationsService {
       );
 
       try {
-        notificationAppLaunchDetails =
+        final NotificationAppLaunchDetails? launchDetails =
             await pluginInstance.getNotificationAppLaunchDetails();
+
+        notificationAppLaunchDetails =
+            launchDetails?.didNotificationLaunchApp == true
+                ? launchDetails
+                : null;
 
         log("[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails");
       } catch (e) {

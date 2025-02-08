@@ -3,7 +3,7 @@ import "dart:async";
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";

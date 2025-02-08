@@ -1,10 +1,11 @@
 import "dart:async";
 import "dart:developer";
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
 import "package:flow/routes/home/profile_tab.dart";
@@ -23,6 +24,8 @@ import "package:go_router/go_router.dart";
 import "package:pie_menu/pie_menu.dart";
 
 class HomePage extends StatefulWidget {
+  static bool initialized = false;
+
   const HomePage({super.key});
 
   @override
@@ -73,6 +76,35 @@ class _HomePageState extends State<HomePage>
         ),
       );
     });
+
+    if (!HomePage.initialized) {
+      HomePage.initialized = true;
+
+      try {
+        if (NotificationsService().ready &&
+            NotificationsService().notificationAppLaunchDetails != null) {
+          final NotificationResponse? response = NotificationsService()
+              .notificationAppLaunchDetails!
+              .notificationResponse;
+
+          if (response == null || response.payload == null) {
+            throw "No notification payload";
+          }
+
+          final FlowNotificationPayload parsed =
+              FlowNotificationPayload.parse(response.payload!);
+
+          if (parsed.itemType == FlowNotificationPayloadItemType.transaction) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              context.push("/transaction/${parsed.id}");
+            });
+          }
+        }
+      } catch (e) {
+        log("[Flow Startup] Failed to get notificationAppLaunchDetails",
+            error: e);
+      }
+    }
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       NotificationsService().addCallback(_pushNotificationPath);
@@ -170,7 +202,16 @@ class _HomePageState extends State<HomePage>
     try {
       if (response.payload == null) throw "Payload is null";
 
-      context.push(response.payload!);
+      final FlowNotificationPayload parsed =
+          FlowNotificationPayload.parse(response.payload!);
+
+      switch (parsed.itemType) {
+        case FlowNotificationPayloadItemType.transaction:
+          context.push("/transaction/${parsed.id}");
+          return;
+        case FlowNotificationPayloadItemType.reminder:
+          return;
+      }
     } catch (e) {
       log("Failed to push notification path", error: e);
     }

@@ -1,7 +1,7 @@
 import "dart:developer" show log;
 import "dart:math" as math;
 
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/theme_petal_selector/theme_petal_painter.dart";

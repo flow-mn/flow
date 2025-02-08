@@ -5,7 +5,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/home/account/no_accounts.dart";

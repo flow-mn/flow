@@ -76,6 +76,9 @@ class TransactionFilter {
 
   final List<String>? currencies;
 
+  /// Defaults to false
+  final bool? includeDeleted;
+
   const TransactionFilter({
     this.uuids,
     this.categories,
@@ -86,6 +89,7 @@ class TransactionFilter {
     this.minAmount,
     this.maxAmount,
     this.currencies,
+    this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
@@ -168,6 +172,13 @@ class TransactionFilter {
       });
     }
 
+    if (includeDeleted == true) {
+      predicates.add((Transaction t) => t.isDeleted == true);
+    } else {
+      predicates
+          .add((Transaction t) => t.isDeleted == null || t.isDeleted == false);
+    }
+
     return predicates;
   }
 
@@ -223,6 +234,14 @@ class TransactionFilter {
             .notEquals(true)
             .or(Transaction_.isPending.isNull()));
       }
+    }
+
+    if (includeDeleted == true) {
+      conditions.add(Transaction_.isDeleted.equals(true));
+    } else {
+      conditions.add(Transaction_.isDeleted
+          .notEquals(true)
+          .or(Transaction_.isDeleted.isNull()));
     }
 
     final filtered = ObjectBox()

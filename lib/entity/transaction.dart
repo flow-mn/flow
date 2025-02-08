@@ -31,6 +31,11 @@ class Transaction implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime transactionDate;
 
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   static const int maxTitleLength = 256;
 
   String? title;

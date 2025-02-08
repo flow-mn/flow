@@ -1,7 +1,7 @@
 import "package:flow/data/money.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";

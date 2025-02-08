@@ -5,20 +5,24 @@ import "package:flutter/material.dart";
 ///
 /// The updates come from database layer, so it includes every change.
 class TransactionWatcher extends StatefulWidget {
-  final Widget child;
+  final Widget Function(BuildContext context, int updateCount, Widget? child)
+      builder;
 
-  const TransactionWatcher({super.key, required this.child});
+  /// Cached child for performance, see [ValueListenableBuilder.child]
+  final Widget? child;
+
+  const TransactionWatcher({super.key, required this.builder, this.child});
 
   @override
   State<TransactionWatcher> createState() => _TransactionWatcherState();
 }
 
 class _TransactionWatcherState extends State<TransactionWatcher> {
-  int _updateTracker = 0;
+  final ValueNotifier<int> _updateTracker = ValueNotifier(0);
 
   void _invalidateData() {
     setState(() {
-      _updateTracker++;
+      _updateTracker.value++;
     });
   }
 
@@ -38,8 +42,9 @@ class _TransactionWatcherState extends State<TransactionWatcher> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: ValueKey(_updateTracker),
+    return ValueListenableBuilder<int>(
+      valueListenable: _updateTracker,
+      builder: widget.builder,
       child: widget.child,
     );
   }

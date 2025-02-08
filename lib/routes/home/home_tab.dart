@@ -1,11 +1,10 @@
 import "dart:async";
 
 import "package:flow/data/exchange_rates.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
@@ -167,6 +166,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     List<Transaction> transactions,
     ExchangeRates? rates,
   ) {
+    final bool showMissingExchangeRatesWarning = rates == null &&
+        TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
+
     final Map<TimeRange, List<Transaction>> grouped = transactions
         .where((transaction) =>
             !transaction.transactionDate.isAfter(now) &&
@@ -202,7 +204,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             transactions: transactions,
             rates: rates,
           ),
-          if (rates == null) ...[
+          if (showMissingExchangeRatesWarning) ...[
             const SizedBox(height: 12.0),
             RatesMissingWarning(),
           ],

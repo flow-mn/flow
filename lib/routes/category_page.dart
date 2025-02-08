@@ -1,14 +1,14 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
@@ -85,6 +85,8 @@ class _CategoryPageState extends State<CategoryPage> {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
     final ExchangeRates? rates =
         ExchangeRatesService().getPrimaryCurrencyRates();
+    final bool showMissingExchangeRatesWarning = rates == null &&
+        TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
 
     return StreamBuilder<List<Transaction>>(
       stream: qb(range)
@@ -164,7 +166,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               ],
             ),
-            if (rates == null) ...[
+            if (showMissingExchangeRatesWarning) ...[
               const SizedBox(height: 12.0),
               RatesMissingWarning(),
             ],

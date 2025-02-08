@@ -1,7 +1,7 @@
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/navbar_theme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart" hide Flow;

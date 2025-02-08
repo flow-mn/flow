@@ -2,7 +2,7 @@ import "dart:async";
 import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";

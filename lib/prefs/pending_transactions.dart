@@ -9,7 +9,7 @@ class PendingTransactionsLocalPreferences {
   factory PendingTransactionsLocalPreferences() {
     if (_instance == null) {
       throw Exception(
-        "You must initialize ThemeLocalPreferences by calling initialize().",
+        "You must initialize PendingTransactionsLocalPreferences by calling initialize().",
       );
     }
 
@@ -19,6 +19,8 @@ class PendingTransactionsLocalPreferences {
   static const int homeTimeframeDefault = 3;
   static final int earlyReminderInSecondsDefault =
       const Duration(days: 1).inSeconds;
+
+  late final BoolSettingsEntry requireConfrimation;
 
   /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
   late final PrimitiveSettingsEntry<int> homeTimeframe;
@@ -35,6 +37,12 @@ class PendingTransactionsLocalPreferences {
 
   PendingTransactionsLocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.pendingTransactions.";
+
+    requireConfrimation = BoolSettingsEntry(
+      key: "requireConfrimation",
+      preferences: _prefs,
+      initialValue: true,
+    );
 
     homeTimeframe = PrimitiveSettingsEntry<int>(
       key: "homeTimeframe",

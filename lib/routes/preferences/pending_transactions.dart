@@ -1,6 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -33,8 +32,8 @@ class _PendingTransactionPreferencesPageState
     final int pendingTransactionsHomeTimeframe =
         LocalPreferences().pendingTransactions.homeTimeframe.get() ??
             PendingTransactionsLocalPreferences.homeTimeframeDefault;
-    final bool requirePendingTransactionConfrimation =
-        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
     final bool pendingTransactionsUpdateDateUponConfirmation =
         LocalPreferences().pendingTransactions.updateDateUponConfirmation.get();
     final bool notify = LocalPreferences().pendingTransactions.notify.get();
@@ -93,10 +92,10 @@ class _PendingTransactionPreferencesPageState
                   "preferences.pendingTransactions.requireConfirmation"
                       .t(context),
                 ),
-                value: requirePendingTransactionConfrimation,
-                onChanged: updateRequirePendingTransactionConfrimation,
+                value: pendingTransactionsRequireConfrimation,
+                onChanged: updatePendingTransactionsRequireConfrimation,
               ),
-              if (requirePendingTransactionConfrimation) ...[
+              if (pendingTransactionsRequireConfrimation) ...[
                 CheckboxListTile.adaptive(
                   title: Text(
                     "preferences.pendingTransactions.updateDateUponConfirmation"
@@ -146,7 +145,7 @@ class _PendingTransactionPreferencesPageState
                             ),
                           ),
                         ],
-                        if (!showSchedulingUnsupportedNotice) ...[
+                        if (showSchedulingUnsupportedNotice) ...[
                           const SizedBox(height: 8.8),
                           Frame(
                             child: InfoText(
@@ -244,13 +243,14 @@ class _PendingTransactionPreferencesPageState
     if (mounted) setState(() {});
   }
 
-  void updateRequirePendingTransactionConfrimation(
+  void updatePendingTransactionsRequireConfrimation(
     bool? requirePendingTransactionConfrimation,
   ) async {
     if (requirePendingTransactionConfrimation == null) return;
 
     await LocalPreferences()
-        .requirePendingTransactionConfrimation
+        .pendingTransactions
+        .requireConfrimation
         .set(requirePendingTransactionConfrimation);
 
     if (mounted) setState(() {});

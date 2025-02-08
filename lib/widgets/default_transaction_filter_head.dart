@@ -1,7 +1,7 @@
 import "dart:developer";
 
 import "package:flow/data/currencies.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";

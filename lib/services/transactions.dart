@@ -1,6 +1,6 @@
 import "dart:developer";
 
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -26,6 +26,8 @@ class TransactionsService {
   }
 
   _onChange() {
+    if (disableUpdates) return;
+
     for (final listener in _listeners) {
       listener();
     }
@@ -61,11 +63,8 @@ class TransactionsService {
   /// Returns how many items were deleted
   Future<int> deleteMany(TransactionFilter filter) async {
     final Query<Transaction> condition = filter.queryBuilder().build();
-    final List<int> transactionIds = await condition.findIdsAsync();
+    final int deletedCount = await condition.removeAsync();
     condition.close();
-
-    final int deletedCount =
-        await ObjectBox().box<Transaction>().removeManyAsync(transactionIds);
 
     return deletedCount;
   }
@@ -146,6 +145,10 @@ class TransactionsService {
 
   Future<Transaction?> getOne(int id) async {
     return ObjectBox().box<Transaction>().getAsync(id);
+  }
+
+  Transaction? getOneSync(int id) {
+    return ObjectBox().box<Transaction>().get(id);
   }
 
   Future<List<Transaction>> getAll() async {

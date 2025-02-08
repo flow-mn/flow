@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/list_header.dart";

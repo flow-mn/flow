@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
