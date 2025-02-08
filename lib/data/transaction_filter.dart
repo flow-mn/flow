@@ -1,7 +1,7 @@
 import "package:flow/data/transactions_filter/group_range.dart";
-import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/data/transactions_filter/search_data.dart";
 import "package:flow/data/transactions_filter/sort_field.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -178,6 +178,19 @@ class TransactionFilter {
     if (range case TimeRange filterTimeRange) {
       conditions.add(Transaction_.transactionDate
           .betweenDate(filterTimeRange.from, filterTimeRange.to));
+    }
+
+    if (range case TransactionFilterTimeRange transactionFilterTimeRange) {
+      final TimeRange? range = transactionFilterTimeRange.range;
+
+      if (range != null) {
+        conditions.add(
+          Transaction_.transactionDate.betweenDate(
+            range.from,
+            range.to,
+          ),
+        );
+      }
     }
 
     final searchFilter = searchData.filter;

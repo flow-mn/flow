@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -102,11 +101,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    inspect(defaultFilter.toJson());
-    inspect(TransactionFilter.fromJson(defaultFilter.toJson()));
-    inspect(
-        TransactionFilter.fromJson(defaultFilter.toJson()) == defaultFilter);
 
     final bool isFilterModified = currentFilter != defaultFilter;
 

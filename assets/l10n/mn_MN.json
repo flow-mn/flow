@@ -245,6 +245,7 @@
     "tabs.stats.timeRange.thisWeek": "Энэ долоо хоног",
     "tabs.stats.timeRange.thisMonth": "Энэ сар",
     "tabs.stats.timeRange.thisYear": "Энэ жил",
+    "tabs.stats.timeRange.allTime": "Бүх цаг үе",
     "tabs.stats.timeRange.mode.custom": "Эхлэх дуусах огноо",
     "tabs.stats.timeRange.mode.byWeek": "Долоо хоногоор",
     "tabs.stats.timeRange.mode.byMonth": "Сараар",

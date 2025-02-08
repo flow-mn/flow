@@ -245,6 +245,7 @@
     "tabs.stats.timeRange.thisWeek": "This week",
     "tabs.stats.timeRange.thisMonth": "This month",
     "tabs.stats.timeRange.thisYear": "This year",
+    "tabs.stats.timeRange.allTime": "All time",
     "tabs.stats.timeRange.mode.custom": "Custom range",
     "tabs.stats.timeRange.mode.byWeek": "By week",
     "tabs.stats.timeRange.mode.byMonth": "By month",

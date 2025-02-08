@@ -245,6 +245,7 @@
     "tabs.stats.timeRange.thisWeek": "Bu hafta",
     "tabs.stats.timeRange.thisMonth": "Bu ay",
     "tabs.stats.timeRange.thisYear": "Bu yıl",
+    "tabs.stats.timeRange.allTime": "Tüm zamanlar",
     "tabs.stats.timeRange.mode.custom": "Özel aralık",
     "tabs.stats.timeRange.mode.byWeek": "Haftaya göre",
     "tabs.stats.timeRange.mode.byMonth": "Aylara göre",

@@ -245,6 +245,7 @@
     "tabs.stats.timeRange.thisWeek": "Questa settimana",
     "tabs.stats.timeRange.thisMonth": "Questo mese",
     "tabs.stats.timeRange.thisYear": "Quest'anno",
+    "tabs.stats.timeRange.allTime": "Tutto il tempo",
     "tabs.stats.timeRange.mode.custom": "Intervallo personalizzato",
     "tabs.stats.timeRange.mode.byWeek": "Per settimana",
     "tabs.stats.timeRange.mode.byMonth": "Per mese",
