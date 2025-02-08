@@ -4,6 +4,7 @@ import "dart:developer";
 
 import "package:flow/data/prefs/frecency.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
@@ -143,7 +144,8 @@ class TransitiveLocalPreferences {
       try {
         final TransactionFilter filter = TransactionFilter(
           categories: [category],
-          range: Moment.minValue.rangeTo(Moment.now()),
+          range: TransactionFilterTimeRange.fromTimeRange(
+              Moment.minValue.rangeTo(Moment.now())),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
         );
@@ -181,7 +183,8 @@ class TransitiveLocalPreferences {
       try {
         final TransactionFilter filter = TransactionFilter(
           accounts: [account],
-          range: Moment.minValue.rangeTo(Moment.now()),
+          range: TransactionFilterTimeRange.fromTimeRange(
+              Moment.minValue.rangeTo(Moment.now())),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
         );

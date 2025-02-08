@@ -1,4 +1,5 @@
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
@@ -74,8 +75,14 @@ class TransactionFilterChip<T> extends StatelessWidget {
       return "$translationKey.all".t(context);
     }
 
+    if (value case TransactionFilterTimeRange filterTimeRange) {
+      return filterTimeRange.preset?.localizedNameContext(context) ??
+          filterTimeRange.range?.format() ??
+          "-";
+    }
+
     if (value case TimeRange timeRange) {
-      if (timeRange == last30Days()) {
+      if (timeRange == last30DaysRange()) {
         return "tabs.stats.timeRange.last30days".t(context);
       }
 

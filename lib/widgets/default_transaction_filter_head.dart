@@ -2,6 +2,7 @@ import "dart:developer";
 
 import "package:flow/data/currencies.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
@@ -12,12 +13,11 @@ import "package:flow/widgets/transaction_filter_head.dart";
 import "package:flow/widgets/transaction_filter_head/select_group_range_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_category_sheet.dart";
+import "package:flow/widgets/transaction_filter_head/select_transaction_filter_time_range_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/transaction_filter_chip.dart";
 import "package:flow/widgets/transaction_filter_head/transaction_search_sheet.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
-import "package:moment_dart/moment_dart.dart";
 
 class DefaultTransactionsFilterHead extends StatefulWidget {
   final TransactionFilter current;
@@ -77,7 +77,7 @@ class _DefaultTransactionsFilterHeadState
           value: _filter.searchData,
           highlightOverride: _filter.searchData.normalizedKeyword != null,
         ),
-        TransactionFilterChip<TimeRange>(
+        TransactionFilterChip<TransactionFilterTimeRange>(
           translationKey: "transactions.query.filter.timeRange",
           avatar: const Icon(Symbols.history_rounded),
           onSelect: onSelectRange,
@@ -217,13 +217,20 @@ class _DefaultTransactionsFilterHeadState
   }
 
   void onSelectRange() async {
-    final TimeRange? newRange =
-        await showTimeRangePickerSheet(context, initialValue: _filter.range);
+    final TransactionFilterTimeRange? newTransactionFilterTimeRange =
+        await showTransactionFilterTimeRangeSelectorSheet(
+      context,
+      initialValue: _filter.range,
+    );
 
-    if (!mounted || newRange == null) return;
+    if (!mounted || newTransactionFilterTimeRange == null) return;
 
     setState(() {
-      filter = filter.copyWithOptional(range: Optional(newRange));
+      filter = filter.copyWithOptional(
+        range: Optional(
+          newTransactionFilterTimeRange,
+        ),
+      );
     });
   }
 }

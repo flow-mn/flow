@@ -143,7 +143,6 @@
     "transactions.query.filter.keyword.clear": "Temiz",
     "transactions.query.filter.keyword.includeDescription": "Notlar ekle",
     "transactions.query.filter.timeRange": "Zaman aralığı",
-    "transactions.query.filter.timeRange.all": "Tüm Zamanlar",
     "transactions.query.filter.accounts": "Hesap",
     "transactions.query.filter.accounts.n": "{} hesaplar",
     "transactions.query.filter.accounts.all": "Tüm Hesaplar",
@@ -246,6 +245,7 @@
     "tabs.stats.timeRange.thisWeek": "Bu hafta",
     "tabs.stats.timeRange.thisMonth": "Bu ay",
     "tabs.stats.timeRange.thisYear": "Bu yıl",
+    "tabs.stats.timeRange.allTime": "Tüm zamanlar",
     "tabs.stats.timeRange.mode.custom": "Özel aralık",
     "tabs.stats.timeRange.mode.byWeek": "Haftaya göre",
     "tabs.stats.timeRange.mode.byMonth": "Aylara göre",
@@ -417,6 +417,12 @@
     "enum.TransactionGroupRange@week": "Hafta",
     "enum.TransactionGroupRange@month": "Ay",
     "enum.TransactionGroupRange@year": "Yıl",
+
+    "enum.TransactionFilterRangePreset@last30Days": "Son 30 gün",
+    "enum.TransactionFilterRangePreset@thisWeek": "Bu hafta",
+    "enum.TransactionFilterRangePreset@thisMonth": "Bu ay",
+    "enum.TransactionFilterRangePreset@thisYear": "Bu yıl",
+    "enum.TransactionFilterRangePreset@allTime": "Tüm zamanlar",
 
     "error.route.404": "Sayfa bulunamadı",
     "error.route.400": "Sayfa yüklenemedi",
