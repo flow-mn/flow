@@ -144,7 +144,7 @@ class ImportV1 extends Importer {
         .toList();
 
     progressNotifier.value = ImportV1Progress.writingTransactions;
-    await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
+    await TransactionsService().upsertMany(transformedTransactions);
 
     unawaited(
         LocalPreferences().updateTransitiveProperties().catchError((error) {
@@ -183,7 +183,7 @@ class ImportV1 extends Importer {
     // // 3. Resurrect [Transaction]s
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
-    //     await ObjectBox().box<Transaction>().getAllAsync();
+    //     await TransactionsService().getAll();
   }
 
   Transaction _resolveAccountForTransaction(Transaction transaction) {

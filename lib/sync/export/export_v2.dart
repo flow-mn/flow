@@ -11,6 +11,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/sync/export/export_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
@@ -20,8 +21,7 @@ Future<String> generateBackupJSONContentV2() async {
   const int versionCode = 2;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions =
-      await ObjectBox().box<Transaction>().getAllAsync();
+  final List<Transaction> transactions = await TransactionsService().getAll();
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();

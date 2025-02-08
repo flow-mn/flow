@@ -159,7 +159,7 @@ class ImportV2 extends Importer {
         .toList();
 
     progressNotifier.value = ImportV2Progress.writingTransactions;
-    await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
+    await TransactionsService().upsertMany(transformedTransactions);
 
     if (data.profile != null) {
       try {
@@ -253,7 +253,7 @@ class ImportV2 extends Importer {
     // // 3. Resurrect [Transaction]s
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
-    //     await ObjectBox().box<Transaction>().getAllAsync();
+    //     await TransactionsService().getAll();
   }
 
   Future<void> _cleanup() async {

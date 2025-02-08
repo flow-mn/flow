@@ -4,6 +4,7 @@ import "dart:developer";
 
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/data/prefs/frecency.dart";
+import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -11,6 +12,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/prefs/theme.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
@@ -280,20 +282,17 @@ class LocalPreferences {
 
     for (final category in categories) {
       try {
-        final Query<Transaction> categoryTransactionsQuery = ObjectBox()
-            .box<Transaction>()
-            .query(Transaction_.categoryUuid.equals(category.uuid).and(
-                Transaction_.transactionDate
-                    .lessThan(DateTime.now().millisecondsSinceEpoch)))
-            .order(Transaction_.transactionDate, flags: Order.descending)
-            .build();
+        final TransactionFilter filter = TransactionFilter(
+          categories: [category],
+          range: Moment.minValue.rangeTo(Moment.now()),
+          sortBy: TransactionSortField.transactionDate,
+          sortDescending: true,
+        );
 
-        final int useCount = categoryTransactionsQuery.count();
+        final int useCount = TransactionsService().countMany(filter);
         final DateTime lastUsed =
-            categoryTransactionsQuery.findFirst()?.transactionDate ??
+            TransactionsService().findFirstSync(filter)?.transactionDate ??
                 DateTime.fromMillisecondsSinceEpoch(0);
-
-        categoryTransactionsQuery.close();
 
         unawaited(
           setFrecencyData(
@@ -322,20 +321,17 @@ class LocalPreferences {
 
     for (final account in accounts) {
       try {
-        final Query<Transaction> accountTransactionsQuery = ObjectBox()
-            .box<Transaction>()
-            .query(Transaction_.accountUuid.equals(account.uuid).and(
-                Transaction_.transactionDate
-                    .lessThan(DateTime.now().millisecondsSinceEpoch)))
-            .order(Transaction_.transactionDate, flags: Order.descending)
-            .build();
+        final TransactionFilter filter = TransactionFilter(
+          accounts: [account],
+          range: Moment.minValue.rangeTo(Moment.now()),
+          sortBy: TransactionSortField.transactionDate,
+          sortDescending: true,
+        );
 
-        final int useCount = accountTransactionsQuery.count();
+        final int useCount = TransactionsService().countMany(filter);
         final DateTime lastUsed =
-            accountTransactionsQuery.findFirst()?.transactionDate ??
+            TransactionsService().findFirstSync(filter)?.transactionDate ??
                 DateTime.fromMillisecondsSinceEpoch(0);
-
-        accountTransactionsQuery.close();
 
         unawaited(
           setFrecencyData(

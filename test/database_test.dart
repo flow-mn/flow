@@ -6,6 +6,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flutter_test/flutter_test.dart";
 
 import "package:path/path.dart" as path;
@@ -132,8 +133,7 @@ void main() {
         ),
       );
 
-      final Transaction txn =
-          (await ObjectBox().box<Transaction>().getAsync(txnId))!;
+      final Transaction txn = (await TransactionsService().getOne(txnId))!;
 
       expect(txn.amount, equals(1000.0));
       expect(txn.type, equals(TransactionType.income));
@@ -168,8 +168,7 @@ void main() {
         ),
       );
 
-      final Transaction txn =
-          (await ObjectBox().box<Transaction>().getAsync(txnId))!;
+      final Transaction txn = (await TransactionsService().getOne(txnId))!;
 
       expect(txn.amount, equals(-1000.0));
       expect(txn.type, equals(TransactionType.expense));
@@ -199,9 +198,8 @@ void main() {
             mntAccount1.transferTo(targetAccount: mntAccount2, amount: 1000.0);
 
         final Transaction? fromTxn =
-            await ObjectBox().box<Transaction>().getAsync(fromTxnId);
-        final Transaction? toTxn =
-            await ObjectBox().box<Transaction>().getAsync(toTxnId);
+            await TransactionsService().getOne(fromTxnId);
+        final Transaction? toTxn = await TransactionsService().getOne(toTxnId);
 
         expect(fromTxn!.amount, equals(-1000.0));
         expect(fromTxn.type, equals(TransactionType.transfer));

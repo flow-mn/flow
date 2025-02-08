@@ -55,6 +55,8 @@ class TransactionFilter {
   /// If null, all-time
   final TimeRange? range;
 
+  final List<String>? uuids;
+
   final TransactionSearchData searchData;
 
   final List<TransactionType>? types;
@@ -75,6 +77,7 @@ class TransactionFilter {
   final List<String>? currencies;
 
   const TransactionFilter({
+    this.uuids,
     this.categories,
     this.accounts,
     this.range,
@@ -108,6 +111,12 @@ class TransactionFilter {
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
 
+    if (uuids?.isNotEmpty == true) {
+      predicates.add(
+        (Transaction t) => uuids!.any((uuid) => t.uuid == uuid),
+      );
+    }
+
     if (range case TimeRange filterTimeRange) {
       predicates
           .add((Transaction t) => filterTimeRange.contains(t.transactionDate));
@@ -137,6 +146,28 @@ class TransactionFilter {
       );
     }
 
+    if (minAmount != null) {
+      predicates.add((Transaction t) => t.amount >= minAmount!);
+    }
+
+    if (maxAmount != null) {
+      predicates.add((Transaction t) => t.amount <= maxAmount!);
+    }
+
+    if (currencies?.isNotEmpty == true) {
+      predicates.add((Transaction t) => currencies!.contains(t.currency));
+    }
+
+    if (isPending != null) {
+      predicates.add((Transaction t) {
+        if (isPending!) {
+          return t.isPending == true;
+        } else {
+          return t.isPending == null || !t.isPending!;
+        }
+      });
+    }
+
     return predicates;
   }
 
@@ -147,6 +178,10 @@ class TransactionFilter {
   /// into memory
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
+
+    if (uuids?.isNotEmpty == true) {
+      conditions.add(Transaction_.uuid.oneOf(uuids!));
+    }
 
     if (range case TimeRange filterTimeRange) {
       conditions.add(Transaction_.transactionDate

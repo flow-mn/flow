@@ -12,7 +12,6 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes/new_transaction/description_section.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
@@ -20,6 +19,7 @@ import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
 import "package:flow/routes/new_transaction/select_category_sheet.dart";
 import "package:flow/routes/new_transaction/title_input.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
@@ -721,10 +721,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.extensions =
         _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
-    ObjectBox().box<Transaction>().put(
-          _currentlyEditing,
-          mode: PutMode.update,
-        );
+    TransactionsService().updateOneSync(_currentlyEditing);
 
     context.pop();
   }

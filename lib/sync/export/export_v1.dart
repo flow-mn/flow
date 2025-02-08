@@ -10,6 +10,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/export/headers/header_v1.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:intl/intl.dart";
@@ -19,8 +20,7 @@ Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions =
-      await ObjectBox().box<Transaction>().getAllAsync();
+  final List<Transaction> transactions = await TransactionsService().getAll();
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
@@ -54,7 +54,7 @@ Future<String> generateBackupContentV1() async {
 }
 
 Future<String> generateCSVContentV1() async {
-  final transaction = await ObjectBox().box<Transaction>().getAllAsync();
+  final transactions = await TransactionsService().getAll();
 
   final headers = [
     CSVHeadersV1.uuid.localizedName,
@@ -77,7 +77,7 @@ Future<String> generateCSVContentV1() async {
 
   final Map<String, int> numberOfDecimalsToKeep = {};
 
-  final transformed = transaction
+  final transformed = transactions
       .map(
         (e) => [
           e.uuid,

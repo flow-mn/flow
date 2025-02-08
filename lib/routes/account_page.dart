@@ -1,6 +1,7 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
+import "package:flow/data/transactions_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
@@ -13,10 +14,10 @@ import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/category/transactions_info.dart";
 import "package:flow/widgets/flow_card.dart";
+import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
-import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/no_result.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
@@ -57,17 +58,12 @@ class _AccountPageState extends State<AccountPage> {
 
   bool busy = false;
 
-  QueryBuilder<Transaction> qb(TimeRange range) => ObjectBox()
-      .box<Transaction>()
-      .query(
-        Transaction_.account.equals(account!.id).and(
-              Transaction_.transactionDate.betweenDate(
-                range.from,
-                range.to,
-              ),
-            ),
-      )
-      .order(Transaction_.transactionDate, flags: Order.descending);
+  QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
+        accounts: [account!],
+        range: range,
+        sortBy: TransactionSortField.transactionDate,
+        sortDescending: true,
+      ).queryBuilder();
 
   late Account? account;
 
