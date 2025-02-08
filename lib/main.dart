@@ -31,6 +31,7 @@ import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -54,7 +55,7 @@ void main() async {
       .then((value) =>
           appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
-    log("An error was occured while fetching app version: $e");
+    log("[Flow Startup] An error was occured while fetching app version: $e");
     return appVersion = "<unknown>+<0>$debugBuildSuffix";
   }));
 
@@ -71,6 +72,10 @@ void main() async {
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
+  unawaited(
+      TransactionsService().synchronizeNotifications().catchError((error) {
+    log("[Flow Startup] Failed to synchronize notifications", error: error);
+  }));
   ExchangeRatesService().init();
 
   try {
@@ -80,7 +85,7 @@ void main() async {
               ),
         );
   } catch (e) {
-    log("Failed to add listener updates prefs.sessionPrivacyMode");
+    log("[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode");
   }
 
   runApp(const Flow());
