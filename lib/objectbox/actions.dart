@@ -9,6 +9,7 @@ import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
@@ -145,8 +146,10 @@ extension MainActions on ObjectBox {
 
   /// Returns all non-pending transactions in given [range]
   Future<List<Transaction>> transcationsByRange(TimeRange range) async {
-    final TransactionFilter filter =
-        TransactionFilter(range: range, isPending: false);
+    final TransactionFilter filter = TransactionFilter(
+      range: TransactionFilterTimeRange.fromTimeRange(range),
+      isPending: false,
+    );
 
     final List<Transaction> transactions =
         await TransactionsService().findMany(filter);

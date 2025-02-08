@@ -2,6 +2,7 @@ import "dart:developer";
 
 import "package:flow/data/currencies.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
@@ -77,7 +78,7 @@ class _DefaultTransactionsFilterHeadState
           value: _filter.searchData,
           highlightOverride: _filter.searchData.normalizedKeyword != null,
         ),
-        TransactionFilterChip<TimeRange>(
+        TransactionFilterChip<TransactionFilterTimeRange>(
           translationKey: "transactions.query.filter.timeRange",
           avatar: const Icon(Symbols.history_rounded),
           onSelect: onSelectRange,
@@ -217,13 +218,19 @@ class _DefaultTransactionsFilterHeadState
   }
 
   void onSelectRange() async {
-    final TimeRange? newRange =
-        await showTimeRangePickerSheet(context, initialValue: _filter.range);
+    final TimeRange? newRange = await showTimeRangePickerSheet(
+      context,
+      initialValue: _filter.range?.range,
+    );
 
     if (!mounted || newRange == null) return;
 
     setState(() {
-      filter = filter.copyWithOptional(range: Optional(newRange));
+      filter = filter.copyWithOptional(
+        range: Optional(
+          TransactionFilterTimeRange.fromTimeRange(newRange),
+        ),
+      );
     });
   }
 }

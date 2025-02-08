@@ -143,7 +143,6 @@
     "transactions.query.filter.keyword.clear": "Цэвэрлэх",
     "transactions.query.filter.keyword.includeDescription": "Тэмдэглэлээс хайх",
     "transactions.query.filter.timeRange": "Хугацаа",
-    "transactions.query.filter.timeRange.all": "Бүх цаг үе",
     "transactions.query.filter.accounts": "Данс",
     "transactions.query.filter.accounts.n": "{} данс",
     "transactions.query.filter.accounts.all": "Бүх данс",
@@ -417,6 +416,12 @@
     "enum.TransactionGroupRange@week": "Долоо хоног",
     "enum.TransactionGroupRange@month": "Сар",
     "enum.TransactionGroupRange@year": "Жил",
+
+    "enum.TransactionFilterRangePreset@last30Days": "Сүүлийн 30 хоног",
+    "enum.TransactionFilterRangePreset@thisWeek": "Энэ долоо хоног",
+    "enum.TransactionFilterRangePreset@thisMonth": "Энэ сар",
+    "enum.TransactionFilterRangePreset@thisYear": "Энэ жил",
+    "enum.TransactionFilterRangePreset@allTime": "Бүх цаг үе",
 
     "error.route.404": "Хуудас олдсонгүй",
     "error.route.400": "Хуудас ачаалахад алдаа гарлаа",

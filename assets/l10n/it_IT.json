@@ -143,7 +143,6 @@
     "transactions.query.filter.keyword.clear": "Cancella cerca",
     "transactions.query.filter.keyword.includeDescription": "Includi note",
     "transactions.query.filter.timeRange": "Periodo",
-    "transactions.query.filter.timeRange.all": "Tutto il tempo",
     "transactions.query.filter.accounts": "Conti",
     "transactions.query.filter.accounts.n": "{} conti",
     "transactions.query.filter.accounts.all": "Tutti i conti",
@@ -417,6 +416,12 @@
     "enum.TransactionGroupRange@week": "Settimana",
     "enum.TransactionGroupRange@month": "Mese",
     "enum.TransactionGroupRange@year": "Anno",
+
+    "enum.TransactionFilterRangePreset@last30Days": "Ultimi 30 giorni",
+    "enum.TransactionFilterRangePreset@thisWeek": "Questa settimana",
+    "enum.TransactionFilterRangePreset@thisMonth": "Questo mese",
+    "enum.TransactionFilterRangePreset@thisYear": "Quest'anno",
+    "enum.TransactionFilterRangePreset@allTime": "Tutto il tempo",
 
     "error.route.404": "Pagina non trovata",
     "error.route.400": "Impossibile caricare la pagina",

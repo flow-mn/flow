@@ -2,6 +2,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
@@ -60,7 +61,7 @@ class _AccountPageState extends State<AccountPage> {
 
   QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
         accounts: [account!],
-        range: range,
+        range: TransactionFilterTimeRange.fromTimeRange(range),
         sortBy: TransactionSortField.transactionDate,
         sortDescending: true,
       ).queryBuilder();
