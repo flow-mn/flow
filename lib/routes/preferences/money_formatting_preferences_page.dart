@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flutter/material.dart";
 
 class MoneyFormattingPreferencesPage extends StatefulWidget {

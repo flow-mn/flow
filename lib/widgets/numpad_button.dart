@@ -1,4 +1,4 @@
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";

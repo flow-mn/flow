@@ -3,6 +3,7 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/flow_standard_report.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/blur_on_busy.dart";
@@ -71,6 +72,9 @@ class _StatsTabState extends State<StatsTab>
         report?.current.contains(DateTime.now()) == true &&
             report!.currentExpenseSumForecast != null;
 
+    final bool showMissingExchangeRatesWarning = rates == null &&
+        TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
+
     return Column(
       children: [
         Frame.standalone(
@@ -79,8 +83,10 @@ class _StatsTabState extends State<StatsTab>
             onChanged: updateRange,
           ),
         ),
-        if (rates == null) RatesMissingWarning(),
-        if (rates == null) const SizedBox(height: 12.0),
+        if (showMissingExchangeRatesWarning) ...[
+          RatesMissingWarning(),
+          const SizedBox(height: 12.0),
+        ],
         Expanded(
           child: hasData
               ? SingleChildScrollView(

@@ -55,6 +55,8 @@ class TransactionFilter {
   /// If null, all-time
   final TimeRange? range;
 
+  final List<String>? uuids;
+
   final TransactionSearchData searchData;
 
   final List<TransactionType>? types;
@@ -74,7 +76,11 @@ class TransactionFilter {
 
   final List<String>? currencies;
 
+  /// Defaults to false
+  final bool? includeDeleted;
+
   const TransactionFilter({
+    this.uuids,
     this.categories,
     this.accounts,
     this.range,
@@ -83,6 +89,7 @@ class TransactionFilter {
     this.minAmount,
     this.maxAmount,
     this.currencies,
+    this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
@@ -107,6 +114,12 @@ class TransactionFilter {
 
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
+
+    if (uuids?.isNotEmpty == true) {
+      predicates.add(
+        (Transaction t) => uuids!.any((uuid) => t.uuid == uuid),
+      );
+    }
 
     if (range case TimeRange filterTimeRange) {
       predicates
@@ -137,6 +150,35 @@ class TransactionFilter {
       );
     }
 
+    if (minAmount != null) {
+      predicates.add((Transaction t) => t.amount >= minAmount!);
+    }
+
+    if (maxAmount != null) {
+      predicates.add((Transaction t) => t.amount <= maxAmount!);
+    }
+
+    if (currencies?.isNotEmpty == true) {
+      predicates.add((Transaction t) => currencies!.contains(t.currency));
+    }
+
+    if (isPending != null) {
+      predicates.add((Transaction t) {
+        if (isPending!) {
+          return t.isPending == true;
+        } else {
+          return t.isPending == null || !t.isPending!;
+        }
+      });
+    }
+
+    if (includeDeleted == true) {
+      predicates.add((Transaction t) => t.isDeleted == true);
+    } else {
+      predicates
+          .add((Transaction t) => t.isDeleted == null || t.isDeleted == false);
+    }
+
     return predicates;
   }
 
@@ -147,6 +189,10 @@ class TransactionFilter {
   /// into memory
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
+
+    if (uuids?.isNotEmpty == true) {
+      conditions.add(Transaction_.uuid.oneOf(uuids!));
+    }
 
     if (range case TimeRange filterTimeRange) {
       conditions.add(Transaction_.transactionDate
@@ -188,6 +234,14 @@ class TransactionFilter {
             .notEquals(true)
             .or(Transaction_.isPending.isNull()));
       }
+    }
+
+    if (includeDeleted == true) {
+      conditions.add(Transaction_.isDeleted.equals(true));
+    } else {
+      conditions.add(Transaction_.isDeleted
+          .notEquals(true)
+          .or(Transaction_.isDeleted.isNull()));
     }
 
     final filtered = ObjectBox()

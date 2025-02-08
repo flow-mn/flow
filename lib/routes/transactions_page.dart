@@ -1,3 +1,4 @@
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
@@ -47,10 +48,9 @@ class TransactionsPage extends StatefulWidget {
     String? title,
     Widget? header,
   }) {
-    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
-        .box<Transaction>()
-        .query()
-        .order(Transaction_.transactionDate, flags: Order.descending);
+    final QueryBuilder<Transaction> queryBuilder = TransactionFilter(
+            sortBy: TransactionSortField.transactionDate, sortDescending: true)
+        .queryBuilder();
 
     return TransactionsPage(
       query: queryBuilder,

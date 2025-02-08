@@ -2,12 +2,13 @@ import "dart:async";
 import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/category.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
@@ -239,14 +240,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   Future<void> _deleteCategory() async {
     if (_currentlyEditing == null) return;
 
-    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.category.equals(_currentlyEditing.id))
-        .build();
+    final TransactionFilter filter =
+        TransactionFilter(categories: [_currentlyEditing]);
 
-    final int txnCount = associatedTransactionsQuery.count();
-
-    associatedTransactionsQuery.close();
+    final int txnCount = TransactionsService().countMany(filter);
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,

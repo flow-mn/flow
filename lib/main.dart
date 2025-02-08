@@ -27,7 +27,7 @@ import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
@@ -80,7 +80,7 @@ void main() async {
 
   try {
     LocalPreferences().privacyMode.addListener(
-          () => LocalPreferences().sessionPrivacyMode.set(
+          () => TransitiveLocalPreferences().sessionPrivacyMode.set(
                 LocalPreferences().privacyMode.get(),
               ),
         );
@@ -132,6 +132,8 @@ class FlowState extends State<Flow> {
       // To migrate profile image path from old to new (since 0.10.0)
       nonImportantMigrateProfileImagePath();
     }
+
+    migrateLocalPrefsRequirePendingTransactionConfrimation();
   }
 
   @override

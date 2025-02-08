@@ -8,7 +8,7 @@ import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
@@ -18,8 +18,9 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -93,8 +94,8 @@ extension MainActions on ObjectBox {
 
     if (sortByFrecency) {
       final FrecencyGroup frecencyGroup = FrecencyGroup(accounts
-          .map((account) =>
-              LocalPreferences().getFrecencyData("account", account.uuid))
+          .map((account) => TransitiveLocalPreferences()
+              .getFrecencyData("account", account.uuid))
           .nonNulls
           .toList());
 
@@ -111,8 +112,8 @@ extension MainActions on ObjectBox {
 
     if (sortByFrecency) {
       final FrecencyGroup frecencyGroup = FrecencyGroup(categories
-          .map((category) =>
-              LocalPreferences().getFrecencyData("category", category.uuid))
+          .map((category) => TransitiveLocalPreferences()
+              .getFrecencyData("category", category.uuid))
           .nonNulls
           .toList());
 
@@ -144,18 +145,11 @@ extension MainActions on ObjectBox {
 
   /// Returns all non-pending transactions in given [range]
   Future<List<Transaction>> transcationsByRange(TimeRange range) async {
-    final Condition<Transaction> dateFilter = Transaction_.transactionDate
-        .betweenDate(range.from, range.to)
-        .and(Transaction_.isPending
-            .isNull()
-            .or(Transaction_.isPending.notEquals(true)));
+    final TransactionFilter filter =
+        TransactionFilter(range: range, isPending: false);
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
-
-    final List<Transaction> transactions = await transactionsQuery.findAsync();
-
-    transactionsQuery.close();
+    final List<Transaction> transactions =
+        await TransactionsService().findMany(filter);
 
     return transactions;
   }
@@ -225,16 +219,14 @@ extension MainActions on ObjectBox {
     TransactionType? type,
     int? limit,
   }) async {
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.title.contains(
-          currentInput?.trim() ?? "",
-          caseSensitive: false,
-        ))
-        .build();
+    final TransactionFilter filter = TransactionFilter(
+        searchData: TransactionSearchData(
+      includeDescription: false,
+      keyword: currentInput?.trim() ?? "",
+    ));
 
-    final List<Transaction> transactions = await transactionsQuery
-        .findAsync()
+    final List<Transaction> transactions = await TransactionsService()
+        .findMany(filter)
         .then((value) => value.where((element) {
               if (element.title?.trim().isNotEmpty != true) {
                 return false;
@@ -251,8 +243,6 @@ extension MainActions on ObjectBox {
         return <Transaction>[];
       },
     );
-
-    transactionsQuery.close();
 
     final List<RelevanceScoredTitle> relevanceCalculatedList = transactions
         .map((e) => (
@@ -390,16 +380,11 @@ extension TransactionActions on Transaction {
       if (transfer == null) {
         log("Couldn't delete transfer transaction properly due to missing transfer data");
       } else {
-        final Query<Transaction> relatedTransactionQuery = ObjectBox()
-            .box<Transaction>()
-            .query(Transaction_.uuid
-                .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
-            .build();
+        final TransactionFilter filter = TransactionFilter(
+            uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value]);
 
         final Transaction? relatedTransaction =
-            relatedTransactionQuery.findFirst();
-
-        relatedTransactionQuery.close();
+            TransactionsService().findFirstSync(filter);
 
         try {
           final bool removedRelated = ObjectBox()
@@ -415,7 +400,7 @@ extension TransactionActions on Transaction {
       }
     }
 
-    return ObjectBox().box<Transaction>().remove(id);
+    return TransactionsService().deleteSync(id);
   }
 
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
@@ -459,7 +444,8 @@ extension TransactionActions on Transaction {
       if (updateTransactionDate && isPending != true) {
         transactionDate = Moment.now();
       }
-      ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
+
+      TransactionsService().updateOne(this);
       return true;
     } catch (e) {
       log("Failed to confirm transaction: $e");
@@ -467,7 +453,8 @@ extension TransactionActions on Transaction {
     }
   }
 
-  void duplicate() {
+  /// Returns the ObjectBox ID for the newly created transaction
+  int duplicate() {
     if (isTransfer) {
       throw Exception("Cannot duplicate transfer transactions");
     }
@@ -492,7 +479,7 @@ extension TransactionActions on Transaction {
       duplicate.addExtensions(filteredExtensions);
     }
 
-    ObjectBox().box<Transaction>().put(duplicate);
+    return TransactionsService().upsertOneSync(duplicate);
   }
 }
 
@@ -774,12 +761,13 @@ extension AccountActions on Account {
       value.addExtensions(applicableExtensions);
     }
 
-    final int id = ObjectBox().box<Transaction>().put(value);
+    final int id = TransactionsService().upsertOneSync(value);
 
     try {
-      LocalPreferences().updateFrecencyData("account", uuid);
+      TransitiveLocalPreferences().updateFrecencyData("account", uuid);
       if (category != null) {
-        LocalPreferences().updateFrecencyData("category", category.uuid);
+        TransitiveLocalPreferences()
+            .updateFrecencyData("category", category.uuid);
       }
     } catch (e) {
       log("Failed to update frecency data for transaction ($id)");

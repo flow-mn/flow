@@ -171,7 +171,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "17:1342886807526846841",
+      "lastPropertyId": "19:8440919020610534632",
       "name": "Transaction",
       "properties": [
         {
@@ -257,6 +257,16 @@
           "id": "17:1342886807526846841",
           "name": "isPending",
           "type": 1
+        },
+        {
+          "id": "18:6446498779494394629",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "19:8440919020610534632",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []

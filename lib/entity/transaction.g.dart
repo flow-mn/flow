@@ -19,6 +19,9 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       createdDate: _$JsonConverterFromJson<String, DateTime>(
           json['createdDate'], const UTCDateTimeConverter().fromJson),
     )
+      ..isDeleted = json['isDeleted'] as bool?
+      ..deletedDate = _$JsonConverterFromJson<String, DateTime>(
+          json['deletedDate'], const UTCDateTimeConverter().fromJson)
       ..extra = json['extra'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
       ..accountUuid = json['accountUuid'] as String?;
@@ -29,6 +32,9 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
       'transactionDate':
           const UTCDateTimeConverter().toJson(instance.transactionDate),
+      'isDeleted': instance.isDeleted,
+      'deletedDate': _$JsonConverterToJson<String, DateTime>(
+          instance.deletedDate, const UTCDateTimeConverter().toJson),
       'title': instance.title,
       'description': instance.description,
       'amount': instance.amount,
@@ -45,3 +51,9 @@ Value? _$JsonConverterFromJson<Json, Value>(
   Value? Function(Json json) fromJson,
 ) =>
     json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

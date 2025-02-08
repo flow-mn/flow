@@ -4,7 +4,7 @@ import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text_builder.dart";
@@ -56,14 +56,18 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   void initState() {
     super.initState();
 
-    LocalPreferences().sessionPrivacyMode.addListener(_updatePrivacyMode);
+    TransitiveLocalPreferences()
+        .sessionPrivacyMode
+        .addListener(_updatePrivacyMode);
 
-    obscure = LocalPreferences().sessionPrivacyMode.get();
+    obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
   }
 
   @override
   void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_updatePrivacyMode);
+    TransitiveLocalPreferences()
+        .sessionPrivacyMode
+        .removeListener(_updatePrivacyMode);
 
     super.dispose();
   }
@@ -138,7 +142,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   }
 
   _updatePrivacyMode() {
-    obscure = LocalPreferences().sessionPrivacyMode.get();
+    obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
 
     if (!mounted) return;
     setState(() {});

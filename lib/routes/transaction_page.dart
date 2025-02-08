@@ -12,14 +12,14 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/description_section.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
 import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
 import "package:flow/routes/new_transaction/select_category_sheet.dart";
 import "package:flow/routes/new_transaction/title_input.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
@@ -111,9 +111,8 @@ class _TransactionPageState extends State<TransactionPage> {
     /// Transaction we're editing.
     _currentlyEditing = widget.isNewTransaction
         ? null
-        : ObjectBox()
-            .box<Transaction>()
-            .get(widget.transactionId)
+        : TransactionsService()
+            .getOneSync(widget.transactionId)
             ?.findTransferOriginalOrThis();
 
     if (!widget.isNewTransaction && _currentlyEditing == null) {
@@ -469,9 +468,9 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void inputAmount() async {
-    await LocalPreferences().updateTransitiveProperties();
+    await TransitiveLocalPreferences().updateTransitiveProperties();
     final hideCurrencySymbol =
-        !LocalPreferences().transitiveUsesSingleCurrency.get();
+        !TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
 
     if (!mounted) return;
 
@@ -675,10 +674,10 @@ class _TransactionPageState extends State<TransactionPage> {
   }) async {
     if (_currentlyEditing == null) return;
 
-    final bool requirePendingTransactionConfrimation =
-        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
 
-    final bool? isPending = requirePendingTransactionConfrimation &&
+    final bool? isPending = pendingTransactionsRequireConfrimation &&
             _currentlyEditing.transactionDate.isPast
         ? _transactionDate.isFuture
         : _currentlyEditing.isPending;
@@ -721,10 +720,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.extensions =
         _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName);
 
-    ObjectBox().box<Transaction>().put(
-          _currentlyEditing,
-          mode: PutMode.update,
-        );
+    TransactionsService().updateOneSync(_currentlyEditing);
 
     context.pop();
   }
@@ -732,8 +728,8 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
-    final bool requirePendingTransactionConfrimation =
-        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     final String trimmedTitle = _titleController.text.trim();
     final String formattedTitle =
@@ -754,7 +750,7 @@ class _TransactionPageState extends State<TransactionPage> {
       if (_geo != null) _geo!,
     ];
 
-    final bool isPending = requirePendingTransactionConfrimation
+    final bool isPending = pendingTransactionsRequireConfrimation
         ? _transactionDate.isFutureAnchored(Moment.now().startOfNextMinute())
         : false;
 
