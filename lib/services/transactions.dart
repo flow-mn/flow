@@ -7,8 +7,12 @@ import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/notifications.dart";
 import "package:moment_dart/moment_dart.dart";
 
+/// Call [disableUpdates] to pause listeners and [enableUpdates] to resume them.
 class TransactionsService {
   static TransactionsService? _instance;
+
+  bool _disableUpdates = false;
+  bool get disableUpdates => _disableUpdates;
 
   factory TransactionsService() =>
       _instance ??= TransactionsService._internal();
@@ -80,5 +84,15 @@ class TransactionsService {
         return [];
       });
     }
+  }
+
+  /// Has no effect if it's already paused
+  void pauseListeners() {
+    _disableUpdates = true;
+  }
+
+  /// Has no effect if it's already resumed
+  void resumeListeners() {
+    _disableUpdates = false;
   }
 }

@@ -2,8 +2,6 @@ import "dart:async";
 import "dart:developer";
 import "dart:io";
 
-import "package:path/path.dart" as path;
-
 import "package:flow/data/currencies.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
@@ -14,12 +12,14 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
+import "package:path/path.dart" as path;
 
 /// Used to report current status to user
 enum ImportV2Progress implements LocalizedEnum {
@@ -87,6 +87,8 @@ class ImportV2 extends Importer {
     }
 
     try {
+      TransactionsService().pauseListeners();
+
       switch (mode) {
         case ImportMode.eraseAndWrite:
           await _eraseAndWrite();
@@ -102,6 +104,8 @@ class ImportV2 extends Importer {
       if (cleanupFolder != null) {
         unawaited(_cleanup());
       }
+
+      TransactionsService().resumeListeners();
     }
 
     return safetyBackupFilePath;
