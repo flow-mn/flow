@@ -9,6 +9,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/mode.dart";
@@ -75,6 +76,8 @@ class ImportV1 extends Importer {
     }
 
     try {
+      TransactionsService().pauseListeners();
+
       switch (mode) {
         case ImportMode.eraseAndWrite:
           await _eraseAndWrite();
@@ -86,6 +89,8 @@ class ImportV1 extends Importer {
     } catch (e) {
       progressNotifier.value = ImportV1Progress.error;
       rethrow;
+    } finally {
+      TransactionsService().resumeListeners();
     }
 
     return safetyBackupFilePath;

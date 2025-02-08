@@ -23,7 +23,6 @@ import "dart:ui";
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
@@ -31,6 +30,8 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -39,9 +40,14 @@ import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:window_manager/window_manager.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+  }
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
@@ -49,7 +55,7 @@ void main() async {
       .then((value) =>
           appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
-    log("An error was occured while fetching app version: $e");
+    log("[Flow Startup] An error was occured while fetching app version: $e");
     return appVersion = "<unknown>+<0>$debugBuildSuffix";
   }));
 
@@ -61,10 +67,15 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
+  unawaited(NotificationsService().initialize());
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
+  unawaited(
+      TransactionsService().synchronizeNotifications().catchError((error) {
+    log("[Flow Startup] Failed to synchronize notifications", error: error);
+  }));
   ExchangeRatesService().init();
 
   try {
@@ -74,7 +85,7 @@ void main() async {
               ),
         );
   } catch (e) {
-    log("Failed to add listener updates prefs.sessionPrivacyMode");
+    log("[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode");
   }
 
   runApp(const Flow());
@@ -110,12 +121,10 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeName.addListener(_reloadTheme);
+    LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
-    ObjectBox().box<Transaction>().query().watch().listen((event) {
-      ObjectBox().invalidateAccountsTab();
-    });
+    TransactionsService().addListener(_synchronizePlannedNotifications);
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
@@ -128,8 +137,11 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeName.removeListener(_reloadTheme);
+    LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+
+    TransactionsService().removeListener(_synchronizePlannedNotifications);
+
     super.dispose();
   }
 
@@ -158,8 +170,8 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().themeName.value;
-    final bool oled = LocalPreferences().enableOledTheme.get();
+    final String? themeName = LocalPreferences().theme.themeName.value;
+    final bool oled = LocalPreferences().theme.enableOledTheme.get();
 
     log("[Theme] Reloading theme $themeName");
 
@@ -207,5 +219,11 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       LocalPreferences().getPrimaryCurrency(),
     );
+  }
+
+  void _synchronizePlannedNotifications() {
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      log("[Flow Startup] Failed to synchronize notifications", error: error);
+    });
   }
 }

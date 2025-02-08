@@ -4,6 +4,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
@@ -26,6 +27,8 @@ class _TotalBalanceState extends State<TotalBalance> {
     LocalPreferences().primaryCurrency.addListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.addListener(_refresh);
 
+    TransactionsService().addListener(_refresh);
+
     _getGrandTotalFuture = ObjectBox().getGrandTotal();
 
     initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
@@ -35,6 +38,9 @@ class _TotalBalanceState extends State<TotalBalance> {
   void dispose() {
     LocalPreferences().primaryCurrency.removeListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.removeListener(_refresh);
+
+    TransactionsService().removeListener(_refresh);
+
     super.dispose();
   }
 

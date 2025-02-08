@@ -1,5 +1,16 @@
 # Changelog
 
+## Next
+
+### Fixes
+
+* Fixed total balance not updating in the account tab
+
+### New features
+
+* Now you can receive notifications for pending transactions on iOS and Android.
+It may support macOS in the future.
+
 ## Beta 0.11.1
 
 ### Fixes
