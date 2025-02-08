@@ -31,6 +31,7 @@ import "package:flow/prefs.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -54,7 +55,7 @@ void main() async {
       .then((value) =>
           appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
       .catchError((e) {
-    log("An error was occured while fetching app version: $e");
+    log("[Flow Startup] An error was occured while fetching app version: $e");
     return appVersion = "<unknown>+<0>$debugBuildSuffix";
   }));
 
@@ -71,6 +72,10 @@ void main() async {
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
+  unawaited(
+      TransactionsService().synchronizeNotifications().catchError((error) {
+    log("[Flow Startup] Failed to synchronize notifications", error: error);
+  }));
   ExchangeRatesService().init();
 
   try {
@@ -80,7 +85,7 @@ void main() async {
               ),
         );
   } catch (e) {
-    log("Failed to add listener updates prefs.sessionPrivacyMode");
+    log("[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode");
   }
 
   runApp(const Flow());
@@ -119,6 +124,8 @@ class FlowState extends State<Flow> {
     LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
+    TransactionsService().addListener(_synchronizePlannedNotifications);
+
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
     } else {
@@ -132,6 +139,9 @@ class FlowState extends State<Flow> {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
     LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+
+    TransactionsService().removeListener(_synchronizePlannedNotifications);
+
     super.dispose();
   }
 
@@ -209,5 +219,11 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       LocalPreferences().getPrimaryCurrency(),
     );
+  }
+
+  void _synchronizePlannedNotifications() {
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      log("[Flow Startup] Failed to synchronize notifications", error: error);
+    });
   }
 }
