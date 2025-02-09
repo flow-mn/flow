@@ -96,7 +96,7 @@
     "account.transactions": "İşlemler",
     "account.transactions.title": "\"{account}\" İşlemleri",
     "account.delete": "Hesabı sil",
-    "account.delete.warning": "Bu hesap silindiğinde, ilişkili işlemler de silinir {transactionCount} . Bu eylem geri alınamaz!",
+    "account.delete.warning": "Bu hesabı silmek, {transactionCount} ilişkili işlemi de silecektir. Bu eylem geri alınamaz ve çöp kutusunu atlar!",
     "account.noAccounts": "Hiç hesabınız yok!",
     "account.thisMonth": "Bu ay",
     "account.postTransactionBalance": "Bu işlemden sonraki bakiye",

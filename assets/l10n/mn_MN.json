@@ -96,7 +96,7 @@
     "account.transactions": "Гүйлгээнүүд",
     "account.transactions.title": "\"{account}\"-н гүйлгээнүүд",
     "account.delete": "Дансыг устгах",
-    "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Энэ үйлдлийг буцаах боломжгүй юм!",
+    "account.delete.warning": "Энэ дансыг устгавал холбоотой {transactionCount} гүйлгээг хамт устгах болно. Гүйлгээнүүд хогийн саванд орохгүй бөгөөд энэ үйлдлийг буцаах боломжгүй юм!",
     "account.noAccounts": "Танд үүсгэсэн данс алга байна!",
     "account.thisMonth": "Энэ сар",
     "account.postTransactionBalance": "Гүйлгээний дараах үлдэгдэл",

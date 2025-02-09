@@ -400,20 +400,17 @@ class _TransactionPageState extends State<TransactionPage> {
                         style: context.textTheme.bodyMedium?.semi(context),
                       ),
                       const SizedBox(height: 32.0),
-                      // DeleteButton(
-                      //   onTap: _deleteTransaction,
-                      //   label: Text("transaction.delete".t(context)),
-                      // ),
                       Section(
                         title: "transaction.actions".t(context),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ListTile(
-                              leading: Icon(Symbols.content_copy_rounded),
-                              title: Text("transaction.duplicate".t(context)),
-                              onTap: () => _duplicate(),
-                            ),
+                            if (!isTransfer)
+                              ListTile(
+                                leading: Icon(Symbols.content_copy_rounded),
+                                title: Text("transaction.duplicate".t(context)),
+                                onTap: () => _duplicate(),
+                              ),
                             if (_currentlyEditing.isDeleted == true)
                               ListTile(
                                 leading: Icon(Symbols.restore_page_rounded),
@@ -425,7 +422,9 @@ class _TransactionPageState extends State<TransactionPage> {
                             if (_currentlyEditing.isDeleted == true)
                               ListTile(
                                 leading: Icon(Symbols.delete_forever_rounded),
-                                title: Text("transaction.delete".t(context)),
+                                title: Text(
+                                  "transaction.delete".t(context),
+                                ),
                                 onTap: () => _deleteTransaction(),
                                 iconColor: context.flowColors.expense,
                                 textColor: context.flowColors.expense,
@@ -433,8 +432,9 @@ class _TransactionPageState extends State<TransactionPage> {
                             if (_currentlyEditing.isDeleted != true)
                               ListTile(
                                 leading: Icon(Symbols.delete_forever_rounded),
-                                title:
-                                    Text("transaction.moveToTrash".t(context)),
+                                title: Text(
+                                  "transaction.moveToTrashBin".t(context),
+                                ),
                                 onTap: () => _moveToTrash(),
                               ),
                           ],
@@ -905,7 +905,7 @@ class _TransactionPageState extends State<TransactionPage> {
     context.showToast(
       text: "transaction.duplicate.success".t(context),
     );
-    await context.push("/transactions/$duplicate");
+    await context.push("/transaction/$duplicate");
   }
 
   void pop() {
