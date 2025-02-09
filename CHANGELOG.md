@@ -13,6 +13,8 @@
 * Fixed total balance not updating in the account tab
 * Deleting accounts and categories no longer leave you stranded in a "not found"
   page in some cases
+* Fixed toggling `Transfers > Exclude from totals` would cause home tab flow to
+  show incorrect data
 
 ### New features
 
