@@ -378,7 +378,13 @@ extension TransactionActions on Transaction {
     }
   }
 
-  bool delete() {
+  bool permanentlyDelete([bool skipBinCheck = false]) {
+    if (!skipBinCheck && isDeleted != true) {
+      throw StateError(
+        "Transaction must be moved to trash bin before deletion, or set [skipBinCheck] to true",
+      );
+    }
+
     if (isTransfer) {
       final Transfer? transfer = extensions.transfer;
 
@@ -406,6 +412,76 @@ extension TransactionActions on Transaction {
     }
 
     return TransactionsService().deleteSync(id);
+  }
+
+  void moveToTrashBin() {
+    if (isTransfer) {
+      final Transfer? transfer = extensions.transfer;
+
+      if (transfer == null) {
+        log("Couldn't delete transfer transaction properly due to missing transfer data");
+      } else {
+        final TransactionFilter filter = TransactionFilter(
+            uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value]);
+
+        try {
+          final Transaction? relatedTransaction =
+              TransactionsService().findFirstSync(filter);
+
+          if (relatedTransaction != null) {
+            relatedTransaction.deletedDate = DateTime.now();
+            relatedTransaction.isDeleted = true;
+
+            TransactionsService().updateOne(relatedTransaction);
+          }
+        } catch (e) {
+          log("Couldn't move transfer transaction to trash bin properly due to: $e");
+        }
+      }
+    }
+
+    try {
+      deletedDate = DateTime.now();
+      isDeleted = true;
+
+      TransactionsService().updateOne(this);
+    } catch (e) {
+      log("Failed to move transaction to trash bin: $e");
+    }
+  }
+
+  void recoverFromTrashBin() {
+    if (isTransfer) {
+      final Transfer? transfer = extensions.transfer;
+
+      if (transfer == null) {
+        log("Couldn't delete transfer transaction properly due to missing transfer data");
+      } else {
+        final TransactionFilter filter = TransactionFilter(
+            uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value]);
+
+        try {
+          final Transaction? relatedTransaction =
+              TransactionsService().findFirstSync(filter);
+
+          if (relatedTransaction != null) {
+            relatedTransaction.isDeleted = false;
+
+            TransactionsService().updateOne(relatedTransaction);
+          }
+        } catch (e) {
+          log("Couldn't move transfer transaction to trash bin properly due to: $e");
+        }
+      }
+    }
+
+    try {
+      isDeleted = false;
+
+      TransactionsService().updateOne(this);
+    } catch (e) {
+      log("Failed to move transaction to trash bin: $e");
+    }
   }
 
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {

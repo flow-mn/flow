@@ -68,6 +68,8 @@ class LocalPreferences {
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
+  late final PrimitiveSettingsEntry<int> trashBinRetentionDays;
+
   late final PendingTransactionsLocalPreferences pendingTransactions;
   late final ThemeLocalPreferences theme;
   late final TransitiveLocalPreferences transitive;
@@ -161,6 +163,12 @@ class LocalPreferences {
       key: "lastRequestedAppStoreReview",
       preferences: _prefs,
       initialValue: null,
+    );
+
+    trashBinRetentionDays = PrimitiveSettingsEntry<int>(
+      key: "trashBinRetentionDays",
+      preferences: _prefs,
+      initialValue: 30,
     );
 
     pendingTransactions =

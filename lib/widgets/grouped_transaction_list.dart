@@ -1,7 +1,7 @@
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
-import "package:flow/utils/extensions/transaction_context_actions.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -150,10 +150,17 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
               transaction: transaction,
               padding: widget.itemPadding,
               dismissibleKey: ValueKey(transaction.id),
-              deleteFn: () => context.deleteTransaction(transaction),
-              confirmFn: ([bool confirm = true]) =>
-                  context.confirmTransaction(transaction, confirm),
-              duplicateFn: () => context.duplicateTransaction(transaction),
+              moveToTrashFn: () => transaction.moveToTrashBin(),
+              recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
+              confirmFn: ([bool confirm = true]) {
+                final bool updateTransactionDate = LocalPreferences()
+                    .pendingTransactions
+                    .updateDateUponConfirmation
+                    .get();
+
+                transaction.confirm(confirm, updateTransactionDate);
+              },
+              duplicateFn: () => transaction.duplicate(),
               overrideObscure: widget.overrideObscure,
               groupRange: widget.groupBy,
             ),

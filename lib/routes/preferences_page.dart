@@ -61,15 +61,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.theme".t(context)),
-              leading: currentTheme.isDark
-                  ? const Icon(Symbols.dark_mode_rounded)
-                  : const Icon(Symbols.light_mode_rounded),
-              subtitle: Text(currentTheme.name),
-              onTap: _openTheme,
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
-            ListTile(
               title: Text("preferences.language".t(context)),
               leading: const Icon(Symbols.language_rounded),
               onTap: () => _updateLanguage(),
@@ -84,17 +75,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.numpad".t(context)),
-              leading: const Icon(Symbols.dialpad_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/numpad"),
-              subtitle: Text(
-                LocalPreferences().usePhoneNumpadLayout.get()
-                    ? "preferences.numpad.layout.modern".t(context)
-                    : "preferences.numpad.layout.classic".t(context),
-              ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
-            ListTile(
               title: Text("preferences.transfer".t(context)),
               leading: const Icon(Symbols.sync_alt_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/transfer"),
@@ -106,15 +86,9 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.transactionButtonOrder".t(context)),
-              leading: const Icon(Symbols.action_key_rounded),
-              onTap: () =>
-                  _pushAndRefreshAfter("/preferences/transactionButtonOrder"),
-              subtitle: Text(
-                "preferences.transactionButtonOrder.description".t(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              title: Text("preferences.trashBin".t(context)),
+              leading: const Icon(Symbols.delete_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
@@ -136,6 +110,41 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.appearance".t(context)),
+            const SizedBox(height: 8.0),
+            ListTile(
+              title: Text("preferences.theme".t(context)),
+              leading: currentTheme.isDark
+                  ? const Icon(Symbols.dark_mode_rounded)
+                  : const Icon(Symbols.light_mode_rounded),
+              subtitle: Text(currentTheme.name),
+              onTap: _openTheme,
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.numpad".t(context)),
+              leading: const Icon(Symbols.dialpad_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/numpad"),
+              subtitle: Text(
+                LocalPreferences().usePhoneNumpadLayout.get()
+                    ? "preferences.numpad.layout.modern".t(context)
+                    : "preferences.numpad.layout.classic".t(context),
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.transactionButtonOrder".t(context)),
+              leading: const Icon(Symbols.action_key_rounded),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/transactionButtonOrder"),
+              subtitle: Text(
+                "preferences.transactionButtonOrder.description".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             const SizedBox(height: 24.0),

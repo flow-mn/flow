@@ -22,7 +22,6 @@ import "package:flow/routes/new_transaction/title_input.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
@@ -401,9 +400,45 @@ class _TransactionPageState extends State<TransactionPage> {
                         style: context.textTheme.bodyMedium?.semi(context),
                       ),
                       const SizedBox(height: 32.0),
-                      DeleteButton(
-                        onTap: _deleteTransaction,
-                        label: Text("transaction.delete".t(context)),
+                      // DeleteButton(
+                      //   onTap: _deleteTransaction,
+                      //   label: Text("transaction.delete".t(context)),
+                      // ),
+                      Section(
+                        title: "transaction.actions".t(context),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Symbols.content_copy_rounded),
+                              title: Text("transaction.duplicate".t(context)),
+                              onTap: () => _duplicate(),
+                            ),
+                            if (_currentlyEditing.isDeleted == true)
+                              ListTile(
+                                leading: Icon(Symbols.restore_page_rounded),
+                                title: Text(
+                                  "transaction.moveToTrash.restore".t(context),
+                                ),
+                                onTap: () => _restoreTransaction(),
+                              ),
+                            if (_currentlyEditing.isDeleted == true)
+                              ListTile(
+                                leading: Icon(Symbols.delete_forever_rounded),
+                                title: Text("transaction.delete".t(context)),
+                                onTap: () => _deleteTransaction(),
+                                iconColor: context.flowColors.expense,
+                                textColor: context.flowColors.expense,
+                              ),
+                            if (_currentlyEditing.isDeleted != true)
+                              ListTile(
+                                leading: Icon(Symbols.delete_forever_rounded),
+                                title:
+                                    Text("transaction.moveToTrash".t(context)),
+                                onTap: () => _moveToTrash(),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                     const SizedBox(height: 24.0),
@@ -696,7 +731,7 @@ class _TransactionPageState extends State<TransactionPage> {
           isPending: isPending,
         );
 
-        _currentlyEditing.delete();
+        _currentlyEditing.permanentlyDelete(true);
         context.pop();
       } catch (e) {
         log("[Transaction Page] Failed to update transfer transaction due to: $e");
@@ -813,8 +848,37 @@ class _TransactionPageState extends State<TransactionPage> {
         _selectedCategory != null;
   }
 
+  void _moveToTrash() async {
+    if (_currentlyEditing == null || _currentlyEditing.isDeleted == true) {
+      return;
+    }
+
+    _currentlyEditing.moveToTrashBin();
+
+    if (mounted) {
+      context.showToast(text: "transaction.moveToTrashBin.success".t(context));
+      pop();
+    }
+  }
+
+  void _restoreTransaction() async {
+    if (_currentlyEditing == null || _currentlyEditing.isDeleted != true) {
+      return;
+    }
+
+    _currentlyEditing.recoverFromTrashBin();
+
+    if (mounted) {
+      context.showToast(
+          text: "transaction.moveToTrashBin.recover.success".t(context));
+      pop();
+    }
+  }
+
   void _deleteTransaction() async {
-    if (_currentlyEditing == null) return;
+    if (_currentlyEditing == null || _currentlyEditing.isDeleted != true) {
+      return;
+    }
 
     final String txnTitle =
         _currentlyEditing.title ?? "transaction.fallbackTitle".t(context);
@@ -825,12 +889,23 @@ class _TransactionPageState extends State<TransactionPage> {
     );
 
     if (confirmation == true) {
-      _currentlyEditing.delete();
+      _currentlyEditing.permanentlyDelete();
 
       if (mounted) {
         pop();
       }
     }
+  }
+
+  void _duplicate() async {
+    if (_currentlyEditing == null) return;
+
+    final int duplicate = _currentlyEditing.duplicate();
+
+    context.showToast(
+      text: "transaction.duplicate.success".t(context),
+    );
+    await context.push("/transactions/$duplicate");
   }
 
   void pop() {
