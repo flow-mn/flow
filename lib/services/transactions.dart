@@ -42,14 +42,27 @@ class TransactionsService {
     });
   }
 
+  final Condition<Transaction> nonDeletedCondition =
+      Transaction_.isDeleted.equals(false) | Transaction_.isDeleted.isNull();
+
   QueryBuilder<Transaction> pendingTransactionsQb([DateTime? anchor]) {
     anchor = DateTime.now();
 
+    final Condition<Transaction> condition = nonDeletedCondition &
+        (Transaction_.transactionDate
+                .greaterThanDate(anchor.startOfNextMinute()) |
+            Transaction_.isPending.equals(true));
+
     return ObjectBox()
         .box<Transaction>()
-        .query(Transaction_.transactionDate
-            .greaterThanDate(anchor.startOfNextMinute())
-            .or(Transaction_.isPending.equals(true)))
+        .query(condition)
+        .order(Transaction_.transactionDate);
+  }
+
+  QueryBuilder<Transaction> deletedTransactionsQb() {
+    return ObjectBox()
+        .box<Transaction>()
+        .query(Transaction_.isDeleted.equals(true))
         .order(Transaction_.transactionDate);
   }
 
@@ -63,6 +76,14 @@ class TransactionsService {
   /// Returns how many items were deleted
   Future<int> deleteMany(TransactionFilter filter) async {
     final Query<Transaction> condition = filter.queryBuilder().build();
+    final int deletedCount = await condition.removeAsync();
+    condition.close();
+
+    return deletedCount;
+  }
+
+  Future<int> emptyTrashBin() async {
+    final Query<Transaction> condition = deletedTransactionsQb().build();
     final int deletedCount = await condition.removeAsync();
     condition.close();
 

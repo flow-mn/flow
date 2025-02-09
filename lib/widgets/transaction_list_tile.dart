@@ -18,7 +18,8 @@ class TransactionListTile extends StatelessWidget {
   final Transaction transaction;
   final EdgeInsets padding;
 
-  final VoidCallback deleteFn;
+  final VoidCallback? recoverFromTrashFn;
+  final VoidCallback? moveToTrashFn;
   final VoidCallback? duplicateFn;
   final Function([bool confirm])? confirmFn;
 
@@ -42,7 +43,8 @@ class TransactionListTile extends StatelessWidget {
   const TransactionListTile({
     super.key,
     required this.transaction,
-    required this.deleteFn,
+    required this.recoverFromTrashFn,
+    required this.moveToTrashFn,
     required this.combineTransfers,
     this.groupRange = TransactionGroupRange.day,
     this.padding = EdgeInsets.zero,
@@ -196,11 +198,21 @@ class TransactionListTile extends StatelessWidget {
           icon: Symbols.cancel_rounded,
           backgroundColor: context.flowColors.expense,
         ),
-      if (!showHoldButton)
+      if (moveToTrashFn != null &&
+          !showHoldButton &&
+          transaction.isDeleted != true)
         SlidableAction(
-          onPressed: (context) => deleteFn(),
+          onPressed: (context) => moveToTrashFn!(),
           icon: Symbols.delete_forever_rounded,
           backgroundColor: context.flowColors.expense,
+        ),
+      if (recoverFromTrashFn != null &&
+          !showHoldButton &&
+          transaction.isDeleted == true)
+        SlidableAction(
+          onPressed: (context) => recoverFromTrashFn!(),
+          icon: Symbols.restore_page_rounded,
+          backgroundColor: context.flowColors.income,
         )
     ];
 
