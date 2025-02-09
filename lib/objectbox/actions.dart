@@ -223,10 +223,12 @@ extension MainActions on ObjectBox {
     int? limit,
   }) async {
     final TransactionFilter filter = TransactionFilter(
-        searchData: TransactionSearchData(
-      includeDescription: false,
-      keyword: currentInput?.trim() ?? "",
-    ));
+      searchData: TransactionSearchData(
+        includeDescription: false,
+        keyword: currentInput?.trim() ?? "",
+        mode: TransactionSearchMode.substring,
+      ),
+    );
 
     final List<Transaction> transactions = await TransactionsService()
         .findMany(filter)
