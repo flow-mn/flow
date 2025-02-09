@@ -86,6 +86,7 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
                       ),
                       onSelected: (bool selected) =>
                           selected ? updateTrashBinRetentionDays(null) : null,
+                      selected: trashBinRetentionDays == null,
                     ),
                   ],
                 ),
@@ -112,11 +113,15 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
     );
   }
 
-  void updateTrashBinRetentionDays(int? days) {
+  void updateTrashBinRetentionDays(int? days) async {
     if (days == null) {
-      LocalPreferences().trashBinRetentionDays.remove();
+      await LocalPreferences().trashBinRetentionDays.remove();
     } else {
-      LocalPreferences().trashBinRetentionDays.set(days);
+      await LocalPreferences().trashBinRetentionDays.set(days);
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
