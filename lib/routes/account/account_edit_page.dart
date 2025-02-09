@@ -3,16 +3,17 @@ import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -513,12 +514,10 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void _deleteAccount() async {
     if (_currentlyEditing == null) return;
 
-    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing!.id))
-        .build();
+    final TransactionFilter filter =
+        TransactionFilter(accounts: [_currentlyEditing!]);
 
-    final int txnCount = associatedTransactionsQuery.count();
+    final int txnCount = TransactionsService().countMany(filter);
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
@@ -536,11 +535,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
       );
 
       try {
-        await associatedTransactionsQuery.removeAsync();
+        await TransactionsService().deleteMany(filter);
       } catch (e) {
         log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
-      } finally {
-        associatedTransactionsQuery.close();
       }
 
       try {

@@ -11,7 +11,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
@@ -159,7 +159,7 @@ class ImportV2 extends Importer {
         .toList();
 
     progressNotifier.value = ImportV2Progress.writingTransactions;
-    await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
+    await TransactionsService().upsertMany(transformedTransactions);
 
     if (data.profile != null) {
       try {
@@ -186,8 +186,9 @@ class ImportV2 extends Importer {
       }
     }
 
-    unawaited(
-        LocalPreferences().updateTransitiveProperties().catchError((error) {
+    unawaited(TransitiveLocalPreferences()
+        .updateTransitiveProperties()
+        .catchError((error) {
       log(
         "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
         error: error,
@@ -253,7 +254,7 @@ class ImportV2 extends Importer {
     // // 3. Resurrect [Transaction]s
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
-    //     await ObjectBox().box<Transaction>().getAllAsync();
+    //     await TransactionsService().getAll();
   }
 
   Future<void> _cleanup() async {

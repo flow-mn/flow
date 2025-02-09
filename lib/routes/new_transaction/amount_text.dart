@@ -3,7 +3,7 @@ import "dart:math" as math;
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";

@@ -1,6 +1,6 @@
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/extensions/transaction_context_actions.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
@@ -94,13 +94,17 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   void initState() {
     super.initState();
 
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
-    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
+    TransitiveLocalPreferences()
+        .sessionPrivacyMode
+        .addListener(_privacyModeUpdate);
   }
 
   @override
   void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
+    TransitiveLocalPreferences()
+        .sessionPrivacyMode
+        .removeListener(_privacyModeUpdate);
 
     super.dispose();
   }
@@ -172,7 +176,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   }
 
   _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
   }

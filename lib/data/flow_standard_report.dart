@@ -6,7 +6,7 @@ import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:moment_dart/moment_dart.dart";
 
 /// Only capable of working with the primary currency

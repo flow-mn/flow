@@ -1,65 +1,48 @@
+import "package:flow/data/transactions_filter/group_range.dart";
 import "package:flow/data/transactions_filter/search_data.dart";
+import "package:flow/data/transactions_filter/sort_field.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/utils/extensions.dart";
+import "package:flow/utils/json/time_range_converter.dart";
 import "package:flow/utils/optional.dart";
 import "package:flutter/foundation.dart" hide Category;
+import "package:json_annotation/json_annotation.dart";
 import "package:moment_dart/moment_dart.dart";
 
-export "package:flow/data/transactions_filter/search_data.dart";
+export "./transactions_filter/group_range.dart";
+export "./transactions_filter/search_data.dart";
+export "./transactions_filter/sort_field.dart";
+
+part "transaction_filter.g.dart";
 
 typedef TransactionPredicate = bool Function(Transaction);
-
-enum TransactionSortField {
-  /// Default
-  transactionDate,
-  amount,
-  createdDate;
-}
-
-enum TransactionGroupRange implements LocalizedEnum {
-  hour,
-
-  /// Default
-  day,
-  week,
-  month,
-  year;
-
-  @override
-  String get localizationEnumName => "TransactionGroupRange";
-
-  @override
-  String get localizationEnumValue => name;
-
-  TimeRange fromTransaction(Transaction t) => switch (this) {
-        TransactionGroupRange.hour =>
-          HourTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.day =>
-          DayTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.week => LocalWeekTimeRange(t.transactionDate),
-        TransactionGroupRange.month =>
-          MonthTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.year =>
-          YearTimeRange.fromDateTime(t.transactionDate),
-      };
-}
 
 /// For all fields, disabled if it's null.
 ///
 /// All values must be wrapped by [Optional]
+@JsonSerializable(
+  explicitToJson: true,
+  converters: [
+    TimeRangeConverter(),
+  ],
+)
 class TransactionFilter {
-  /// If null, all-time
-  final TimeRange? range;
+  final TransactionFilterTimeRange? range;
+
+  final List<String>? uuids;
 
   final TransactionSearchData searchData;
 
   final List<TransactionType>? types;
 
+  @JsonKey(fromJson: categoriesFromJson, toJson: categoriesToJson)
   final List<Category>? categories;
+  @JsonKey(fromJson: accountsFromJson, toJson: accountsToJson)
   final List<Account>? accounts;
 
   final bool sortDescending;
@@ -74,7 +57,11 @@ class TransactionFilter {
 
   final List<String>? currencies;
 
+  /// Defaults to false
+  final bool? includeDeleted;
+
   const TransactionFilter({
+    this.uuids,
     this.categories,
     this.accounts,
     this.range,
@@ -83,6 +70,7 @@ class TransactionFilter {
     this.minAmount,
     this.maxAmount,
     this.currencies,
+    this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
     this.sortBy = TransactionSortField.transactionDate,
@@ -107,6 +95,12 @@ class TransactionFilter {
 
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
+
+    if (uuids?.isNotEmpty == true) {
+      predicates.add(
+        (Transaction t) => uuids!.any((uuid) => t.uuid == uuid),
+      );
+    }
 
     if (range case TimeRange filterTimeRange) {
       predicates
@@ -137,6 +131,35 @@ class TransactionFilter {
       );
     }
 
+    if (minAmount != null) {
+      predicates.add((Transaction t) => t.amount >= minAmount!);
+    }
+
+    if (maxAmount != null) {
+      predicates.add((Transaction t) => t.amount <= maxAmount!);
+    }
+
+    if (currencies?.isNotEmpty == true) {
+      predicates.add((Transaction t) => currencies!.contains(t.currency));
+    }
+
+    if (isPending != null) {
+      predicates.add((Transaction t) {
+        if (isPending!) {
+          return t.isPending == true;
+        } else {
+          return t.isPending == null || !t.isPending!;
+        }
+      });
+    }
+
+    if (includeDeleted == true) {
+      predicates.add((Transaction t) => t.isDeleted == true);
+    } else {
+      predicates
+          .add((Transaction t) => t.isDeleted == null || t.isDeleted == false);
+    }
+
     return predicates;
   }
 
@@ -148,9 +171,26 @@ class TransactionFilter {
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
 
+    if (uuids?.isNotEmpty == true) {
+      conditions.add(Transaction_.uuid.oneOf(uuids!));
+    }
+
     if (range case TimeRange filterTimeRange) {
       conditions.add(Transaction_.transactionDate
           .betweenDate(filterTimeRange.from, filterTimeRange.to));
+    }
+
+    if (range case TransactionFilterTimeRange transactionFilterTimeRange) {
+      final TimeRange? range = transactionFilterTimeRange.range;
+
+      if (range != null) {
+        conditions.add(
+          Transaction_.transactionDate.betweenDate(
+            range.from,
+            range.to,
+          ),
+        );
+      }
     }
 
     final searchFilter = searchData.filter;
@@ -190,6 +230,14 @@ class TransactionFilter {
       }
     }
 
+    if (includeDeleted == true) {
+      conditions.add(Transaction_.isDeleted.equals(true));
+    } else {
+      conditions.add(Transaction_.isDeleted
+          .notEquals(true)
+          .or(Transaction_.isDeleted.isNull()));
+    }
+
     final filtered = ObjectBox()
         .box<Transaction>()
         .query(conditions.reduce((a, b) => a & b));
@@ -212,7 +260,7 @@ class TransactionFilter {
 
   TransactionFilter copyWithOptional({
     Optional<List<TransactionType>>? types,
-    Optional<TimeRange>? range,
+    Optional<TransactionFilterTimeRange>? range,
     TransactionSearchData? searchData,
     Optional<List<Category>>? categories,
     Optional<List<Account>>? accounts,
@@ -279,4 +327,58 @@ class TransactionFilter {
         setEquals(other.categories?.toSet(), categories?.toSet()) &&
         setEquals(other.accounts?.toSet(), accounts?.toSet());
   }
+
+  factory TransactionFilter.fromJson(Map<String, dynamic> json) =>
+      _$TransactionFilterFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionFilterToJson(this);
+}
+
+String? typesToJson(List<TransactionType>? items) {
+  if (items == null || items.isEmpty) return null;
+
+  return items.map((item) => item.value).join(";");
+}
+
+TransactionType? typesFromJson(String? json) {
+  if (json == null || json.isEmpty) return null;
+
+  return TransactionType.values.firstWhereOrNull((type) => type.value == json);
+}
+
+List<String>? categoriesToJson(List<Category>? items) {
+  if (items == null || items.isEmpty) return null;
+
+  return items.map((item) => item.uuid).toList();
+}
+
+List<Category>? categoriesFromJson(List<String>? json) {
+  if (json == null || json.isEmpty) return null;
+
+  final Query<Category> query =
+      ObjectBox().box<Category>().query(Category_.uuid.oneOf(json)).build();
+
+  final List<Category> categories = query.find();
+
+  query.close();
+
+  return categories;
+}
+
+List<String>? accountsToJson(List<Account>? items) {
+  if (items == null || items.isEmpty) return null;
+
+  return items.map((item) => item.uuid).toList();
+}
+
+List<Account>? accountsFromJson(List<String>? json) {
+  if (json == null || json.isEmpty) return null;
+
+  final Query<Account> query =
+      ObjectBox().box<Account>().query(Account_.uuid.oneOf(json)).build();
+
+  final List<Account> accounts = query.find();
+
+  query.close();
+
+  return accounts;
 }

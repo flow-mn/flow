@@ -3,7 +3,7 @@ import "dart:io";
 
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
@@ -38,8 +38,8 @@ class PreferencesPageState extends State<PreferencesPage> {
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
-    final bool requirePendingTransactionConfrimation =
-        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +51,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ListTile(
               title: Text("preferences.pendingTransactions".t(context)),
               subtitle: Text(
-                requirePendingTransactionConfrimation
+                pendingTransactionsRequireConfrimation
                     ? "general.enabled".t(context)
                     : "general.disabled".t(context),
               ),

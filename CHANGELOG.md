@@ -2,6 +2,11 @@
 
 ## Next
 
+### Changes and improvements
+
+* Missing exchange rates warning no longer shows if you use only one currency
+across Flow
+
 ### Fixes
 
 * Fixed total balance not updating in the account tab

@@ -4,7 +4,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flow/data/flow_standard_report.dart";
 import "package:flow/data/money.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/chart_legend.dart";
 import "package:flow/widgets/general/money_text.dart";

@@ -8,10 +8,10 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/widgets/home/stats/pie_graph_view.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
@@ -68,6 +68,9 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
               LocalPreferences().getPrimaryCurrency(),
             );
 
+            final bool showMissingExchangeRatesWarning = rates == null &&
+                TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
+
             final Map<String, ChartData> expenses = _prepareChartData(
               analytics?.flow,
               TransactionType.expense,
@@ -112,7 +115,8 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                       ),
                     ],
                   ),
-                  if (rates == null) const RatesMissingWarning(),
+                  if (showMissingExchangeRatesWarning)
+                    const RatesMissingWarning(),
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,

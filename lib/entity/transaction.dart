@@ -6,7 +6,7 @@ import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
-import "package:flow/utils/utc_datetime_converter.dart";
+import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
 
@@ -30,6 +30,11 @@ class Transaction implements EntityBase {
 
   @Property(type: PropertyType.date)
   DateTime transactionDate;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
 
   static const int maxTitleLength = 256;
 

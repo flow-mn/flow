@@ -3,7 +3,9 @@ import "dart:io";
 
 import "package:flow/entity/profile.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:path/path.dart" as path;
+import "package:shared_preferences/shared_preferences.dart";
 
 void nonImportantMigrateProfileImagePath() async {
   try {
@@ -31,5 +33,22 @@ void nonImportantMigrateProfileImagePath() async {
     await old.delete();
   } catch (e) {
     log("[Flow] Failed to migrate profile image path due to:\n$e");
+  }
+}
+
+void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool? oldValue =
+        prefs.getBool("flow.requirePendingTransactionConfrimation");
+
+    if (oldValue == null) return;
+
+    await LocalPreferences()
+        .pendingTransactions
+        .requireConfrimation
+        .set(oldValue);
+  } catch (e) {
+    log("[Flow] Failed to migrate requirePendingTransactionConfrimation due to:\n$e");
   }
 }
