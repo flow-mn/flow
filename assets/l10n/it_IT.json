@@ -96,7 +96,7 @@
     "account.transactions": "Transazioni",
     "account.transactions.title": "Transazioni di \"{account}\"",
     "account.delete": "Elimina conto",
-    "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile!",
+    "account.delete.warning": "Eliminando questo conto verranno eliminati anche {transactionCount} transazioni associate. Questa azione è irreversibile e salta il cestino!",
     "account.noAccounts": "Non hai nessun conto!",
     "account.thisMonth": "Questo mese",
     "account.postTransactionBalance": "Saldo dopo questa transazione",

@@ -5,18 +5,21 @@
 ### Changes and improvements
 
 * Missing exchange rates warning no longer shows if you use only one currency
-across Flow
+  across Flow
+* Currency filter now longer shows when you only use single currency
 
 ### Fixes
 
 * Fixed total balance not updating in the account tab
+* Deleting accounts and categories no longer leave you stranded in a "not found"
+  page in some cases
 
 ### New features
 
 * Now you can receive notifications for pending transactions on iOS and Android.
-It may support macOS in the future.
+  It may support macOS in the future.
 * Deleted transaction now go to "Trash bin". You can recover recently deleted
-items, closes [#294](https://github.com/flow-mn/flow/issues/294)
+  items, closes [#294](https://github.com/flow-mn/flow/issues/294)
 
 ## Beta 0.11.1
 

@@ -96,7 +96,7 @@
     "account.transactions": "Transactions",
     "account.transactions.title": "\"{account}\" transactions",
     "account.delete": "Delete account",
-    "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible!",
+    "account.delete.warning": "Deleting this account will also delete {transactionCount} transactions associated. This action is irreversible and skips trash bin!",
     "account.noAccounts": "You don't have any accounts!",
     "account.thisMonth": "This month",
     "account.postTransactionBalance": "Balance after this transaction",

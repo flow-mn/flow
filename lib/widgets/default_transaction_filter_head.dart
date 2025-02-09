@@ -7,6 +7,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/select_multi_currency_sheet.dart";
 import "package:flow/widgets/transaction_filter_head.dart";
@@ -44,6 +45,8 @@ class _DefaultTransactionsFilterHeadState
     extends State<DefaultTransactionsFilterHead> {
   late TransactionFilter _filter;
 
+  late bool showCurrencyFilterChip;
+
   TransactionFilter get filter => _filter;
   set filter(TransactionFilter value) {
     _filter = value;
@@ -54,6 +57,12 @@ class _DefaultTransactionsFilterHeadState
   void initState() {
     super.initState();
     _filter = widget.current;
+
+    TransitiveLocalPreferences()
+        .transitiveUsesSingleCurrency
+        .addListener(_updateShowCurrencyFilterChip);
+    showCurrencyFilterChip =
+        !TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
   }
 
   @override
@@ -62,6 +71,14 @@ class _DefaultTransactionsFilterHeadState
       _filter = widget.current;
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    TransitiveLocalPreferences()
+        .transitiveUsesSingleCurrency
+        .removeListener(_updateShowCurrencyFilterChip);
+    super.dispose();
   }
 
   @override
@@ -100,15 +117,16 @@ class _DefaultTransactionsFilterHeadState
               ? _filter.categories
               : null,
         ),
-        TransactionFilterChip<List<String>>(
-          translationKey: "transactions.query.filter.currency",
-          avatar: const Icon(Symbols.universal_currency_alt_rounded),
-          onSelect: onSelectCurrency,
-          defaultValue: widget.defaultFilter.currencies,
-          value: _filter.currencies?.isNotEmpty == true
-              ? _filter.currencies
-              : null,
-        ),
+        if (showCurrencyFilterChip)
+          TransactionFilterChip<List<String>>(
+            translationKey: "transactions.query.filter.currency",
+            avatar: const Icon(Symbols.universal_currency_alt_rounded),
+            onSelect: onSelectCurrency,
+            defaultValue: widget.defaultFilter.currencies,
+            value: _filter.currencies?.isNotEmpty == true
+                ? _filter.currencies
+                : null,
+          ),
         TransactionFilterChip<TransactionGroupRange>(
           translationKey: "transactions.query.filter.groupBy",
           avatar: const Icon(Symbols.atr_rounded),
@@ -231,6 +249,13 @@ class _DefaultTransactionsFilterHeadState
           newTransactionFilterTimeRange,
         ),
       );
+    });
+  }
+
+  void _updateShowCurrencyFilterChip() {
+    setState(() {
+      showCurrencyFilterChip =
+          !TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
     });
   }
 }

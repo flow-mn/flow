@@ -258,6 +258,12 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
       if (mounted) {
         context.pop();
+        GoRouter.of(context).popUntil(
+          (route) {
+            inspect(route);
+            return route.path != "/category/:id";
+          },
+        );
       }
     }
   }
