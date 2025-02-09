@@ -553,7 +553,6 @@ class _AccountEditPageState extends State<AccountEditPage> {
     context.pop();
     GoRouter.of(context).popUntil(
       (route) {
-        inspect(route);
         return route.path != "/account/:id";
       },
     );

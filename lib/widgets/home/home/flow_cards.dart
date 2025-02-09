@@ -58,8 +58,6 @@ class _FlowCardsState extends State<FlowCards> {
         : widget.transactions?.nonPending.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    print("excludeTransferFromFlow: $excludeTransferFromFlow");
-
     final Money? totalExpense = switch ((flow, widget.rates)) {
       (null, _) => null,
       (MoneyFlow moneyFlow, null) =>
