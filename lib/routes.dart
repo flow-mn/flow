@@ -22,6 +22,7 @@ import "package:flow/routes/preferences/pending_transactions.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
+import "package:flow/routes/preferences/trash_bin_preferences_page.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flow/routes/profile_page.dart";
 import "package:flow/routes/setup/setup_accounts_page.dart";
@@ -84,6 +85,12 @@ final router = GoRouter(
       path: "/transactions/pending",
       builder: (context, state) => TransactionsPage.pending(
         title: "transactions.pending".t(context),
+      ),
+    ),
+    GoRoute(
+      path: "/transactions/deleted",
+      builder: (context, state) => TransactionsPage.deleted(
+        title: "transaction.deleted".t(context),
       ),
     ),
     GoRoute(
@@ -160,6 +167,10 @@ final router = GoRouter(
         GoRoute(
           path: "numpad",
           builder: (context, state) => const NumpadPreferencesPage(),
+        ),
+        GoRoute(
+          path: "trashBin",
+          builder: (context, state) => const TrashBinPreferencesPage(),
         ),
         GoRoute(
           path: "transfer",

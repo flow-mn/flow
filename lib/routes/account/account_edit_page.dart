@@ -119,7 +119,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40.0,
-        leading: FormCloseButton(canPop: () => !hasChanged()),
+        leading: FormCloseButton(
+          canPop: () => !hasChanged(),
+        ),
         actions: [
           IconButton(
             onPressed: () => save(),
@@ -549,5 +551,11 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     if (!mounted) return;
     context.pop();
+    GoRouter.of(context).popUntil(
+      (route) {
+        inspect(route);
+        return route.path != "/account/:id";
+      },
+    );
   }
 }

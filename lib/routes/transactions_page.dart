@@ -1,14 +1,19 @@
+import "package:flow/data/flow_icon.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class TransactionsPage extends StatefulWidget {
@@ -77,6 +82,23 @@ class TransactionsPage extends StatefulWidget {
     );
   }
 
+  factory TransactionsPage.deleted({
+    Key? key,
+    DateTime? anchor,
+    String? title,
+    Widget? header,
+  }) {
+    final QueryBuilder<Transaction> queryBuilder =
+        TransactionsService().deletedTransactionsQb();
+
+    return TransactionsPage(
+      query: queryBuilder,
+      key: key,
+      title: title,
+      header: header,
+    );
+  }
+
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();
 }
@@ -96,6 +118,31 @@ class _TransactionsPageState extends State<TransactionsPage> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Spinner.center();
+            }
+
+            if (snapshot.requireData.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "transactions.query.noResult".t(context),
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8.0),
+                      FlowIcon(
+                        FlowIconData.icon(Symbols.family_star_rounded),
+                        size: 128.0,
+                        color: context.colorScheme.primary,
+                      ),
+                      const SizedBox(height: 8.0),
+                    ],
+                  ),
+                ),
+              );
             }
 
             final DateTime now = DateTime.now().startOfNextMinute();

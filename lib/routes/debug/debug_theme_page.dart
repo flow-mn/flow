@@ -84,7 +84,8 @@ class DebugThemePage extends StatelessWidget {
             TransactionListTile(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               transaction: demoPendingTransaction,
-              deleteFn: () => {},
+              moveToTrashFn: null,
+              recoverFromTrashFn: null,
               combineTransfers: false,
             ),
             WavyDivider(),
@@ -96,7 +97,8 @@ class DebugThemePage extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                       transaction: transaction,
-                      deleteFn: () => {},
+                      moveToTrashFn: null,
+                      recoverFromTrashFn: null,
                       combineTransfers: false,
                     ),
                   )
