@@ -1,15 +1,13 @@
+import "package:flow/data/transaction_filter_interface.dart";
 import "package:flow/data/transactions_filter/group_range.dart";
 import "package:flow/data/transactions_filter/search_data.dart";
 import "package:flow/data/transactions_filter/sort_field.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
-import "package:flow/entity/account.dart";
-import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/utils/extensions.dart";
 import "package:flow/utils/json/time_range_converter.dart";
-import "package:flow/utils/optional.dart";
+import "package:flow/utils/utils.dart";
 import "package:flutter/foundation.dart" hide Category;
 import "package:json_annotation/json_annotation.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -20,8 +18,6 @@ export "./transactions_filter/sort_field.dart";
 
 part "transaction_filter.g.dart";
 
-typedef TransactionPredicate = bool Function(Transaction);
-
 /// For all fields, disabled if it's null.
 ///
 /// All values must be wrapped by [Optional]
@@ -31,33 +27,45 @@ typedef TransactionPredicate = bool Function(Transaction);
     TimeRangeConverter(),
   ],
 )
-class TransactionFilter {
+class TransactionFilter implements TransactionFilterInterface, Jasonable {
+  @override
   final TransactionFilterTimeRange? range;
 
+  @override
   final List<String>? uuids;
 
+  @override
   final TransactionSearchData searchData;
 
+  @override
   final List<TransactionType>? types;
 
-  @JsonKey(fromJson: categoriesFromJson, toJson: categoriesToJson)
-  final List<Category>? categories;
-  @JsonKey(fromJson: accountsFromJson, toJson: accountsToJson)
-  final List<Account>? accounts;
+  @override
+  final List<String>? categories;
+  @override
+  final List<String>? accounts;
 
+  @override
   final bool sortDescending;
+  @override
   final TransactionSortField sortBy;
 
+  @override
   final TransactionGroupRange groupBy;
 
+  @override
   final bool? isPending;
 
+  @override
   final double? minAmount;
+  @override
   final double? maxAmount;
 
+  @override
   final List<String>? currencies;
 
   /// Defaults to false
+  @override
   final bool? includeDeleted;
 
   const TransactionFilter({
@@ -78,7 +86,9 @@ class TransactionFilter {
   });
 
   static const empty = TransactionFilter();
+  static const all = TransactionFilter(includeDeleted: true);
 
+  @override
   List<TransactionPredicate> get postPredicates {
     final List<TransactionPredicate> predicates = [];
 
@@ -93,6 +103,7 @@ class TransactionFilter {
     return predicates;
   }
 
+  @override
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
 
@@ -118,7 +129,7 @@ class TransactionFilter {
     if (categories?.isNotEmpty == true) {
       predicates.add(
         (Transaction t) => categories!.any(
-          (category) => t.categoryUuid == category.uuid,
+          (category) => t.categoryUuid == category,
         ),
       );
     }
@@ -126,7 +137,7 @@ class TransactionFilter {
     if (accounts?.isNotEmpty == true) {
       predicates.add(
         (Transaction t) => accounts!.any(
-          (account) => t.accountUuid == account.uuid,
+          (account) => t.accountUuid == account,
         ),
       );
     }
@@ -168,6 +179,7 @@ class TransactionFilter {
   ///
   /// For now, let's do fuzzywuzzy after we fetch the objects
   /// into memory
+  @override
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
 
@@ -199,13 +211,11 @@ class TransactionFilter {
     }
 
     if (categories?.isNotEmpty == true) {
-      conditions.add(Transaction_.categoryUuid
-          .oneOf(categories!.map((category) => category.uuid).toList()));
+      conditions.add(Transaction_.categoryUuid.oneOf(categories!));
     }
 
     if (accounts?.isNotEmpty == true) {
-      conditions.add(Transaction_.accountUuid
-          .oneOf(accounts!.map((account) => account.uuid).toList()));
+      conditions.add(Transaction_.accountUuid.oneOf(accounts!));
     }
 
     if (minAmount != null) {
@@ -262,8 +272,8 @@ class TransactionFilter {
     Optional<List<TransactionType>>? types,
     Optional<TransactionFilterTimeRange>? range,
     TransactionSearchData? searchData,
-    Optional<List<Category>>? categories,
-    Optional<List<Account>>? accounts,
+    Optional<List<String>>? categories,
+    Optional<List<String>>? accounts,
     bool? sortDescending,
     TransactionSortField? sortBy,
     Optional<TransactionGroupRange>? groupBy,
@@ -292,18 +302,20 @@ class TransactionFilter {
 
   @override
   int get hashCode => Object.hashAll([
-        types,
-        range,
-        searchData,
+        uuids,
         categories,
         accounts,
-        sortDescending,
-        sortBy,
-        groupBy,
+        range,
+        types,
         isPending,
         minAmount,
         maxAmount,
         currencies,
+        includeDeleted,
+        sortDescending,
+        searchData,
+        sortBy,
+        groupBy,
       ]);
 
   @override
@@ -322,6 +334,9 @@ class TransactionFilter {
         other.isPending == isPending &&
         other.minAmount == minAmount &&
         other.maxAmount == maxAmount &&
+        other.includeDeleted == includeDeleted &&
+        other.isPending == isPending &&
+        setEquals(other.uuids?.toSet(), uuids?.toSet()) &&
         setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
         setEquals(other.types?.toSet(), types?.toSet()) &&
         setEquals(other.categories?.toSet(), categories?.toSet()) &&
@@ -330,6 +345,7 @@ class TransactionFilter {
 
   factory TransactionFilter.fromJson(Map<String, dynamic> json) =>
       _$TransactionFilterFromJson(json);
+  @override
   Map<String, dynamic> toJson() => _$TransactionFilterToJson(this);
 }
 
@@ -343,42 +359,4 @@ TransactionType? typesFromJson(String? json) {
   if (json == null || json.isEmpty) return null;
 
   return TransactionType.values.firstWhereOrNull((type) => type.value == json);
-}
-
-List<String>? categoriesToJson(List<Category>? items) {
-  if (items == null || items.isEmpty) return null;
-
-  return items.map((item) => item.uuid).toList();
-}
-
-List<Category>? categoriesFromJson(List<String>? json) {
-  if (json == null || json.isEmpty) return null;
-
-  final Query<Category> query =
-      ObjectBox().box<Category>().query(Category_.uuid.oneOf(json)).build();
-
-  final List<Category> categories = query.find();
-
-  query.close();
-
-  return categories;
-}
-
-List<String>? accountsToJson(List<Account>? items) {
-  if (items == null || items.isEmpty) return null;
-
-  return items.map((item) => item.uuid).toList();
-}
-
-List<Account>? accountsFromJson(List<String>? json) {
-  if (json == null || json.isEmpty) return null;
-
-  final Query<Account> query =
-      ObjectBox().box<Account>().query(Account_.uuid.oneOf(json)).build();
-
-  final List<Account> accounts = query.find();
-
-  query.close();
-
-  return accounts;
 }

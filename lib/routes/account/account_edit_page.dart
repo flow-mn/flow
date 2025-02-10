@@ -517,7 +517,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     if (_currentlyEditing == null) return;
 
     final TransactionFilter filter =
-        TransactionFilter(accounts: [_currentlyEditing!]);
+        TransactionFilter(accounts: [_currentlyEditing!.uuid]);
 
     final int txnCount = TransactionsService().countMany(filter);
 

@@ -4,6 +4,7 @@ import "dart:io";
 
 import "package:archive/archive_io.dart";
 import "package:flow/constants.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
@@ -21,7 +22,9 @@ Future<String> generateBackupJSONContentV2() async {
   const int versionCode = 2;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions = await TransactionsService().getAll();
+  final List<Transaction> transactions = await TransactionsService().findMany(
+    TransactionFilter.all,
+  );
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();

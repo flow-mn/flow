@@ -241,7 +241,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     if (_currentlyEditing == null) return;
 
     final TransactionFilter filter =
-        TransactionFilter(categories: [_currentlyEditing]);
+        TransactionFilter(categories: [_currentlyEditing.uuid]);
 
     final int txnCount = TransactionsService().countMany(filter);
 
