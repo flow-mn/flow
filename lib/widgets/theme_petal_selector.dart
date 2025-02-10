@@ -277,6 +277,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       return null;
     }
 
+    // TODO @sadespresso - Make it more precise when I'm not as sleepy
+
     final double angle = (math.atan2(adjustedPosition.dy, adjustedPosition.dx) +
             (math.pi * 3) +
             angleOffset) %
