@@ -1,12 +1,13 @@
 import "dart:developer" show log;
 import "dart:math" as math;
 
+import "package:flow/data/flow_icon.dart";
 import "package:flow/prefs/local_preferences.dart";
-import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/flow_theme_group.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/theme_petal_selector/theme_petal_painter.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
 
 class ThemePetalSelector extends StatefulWidget {
   final bool playInitialAnimation;
@@ -18,6 +19,8 @@ class ThemePetalSelector extends StatefulWidget {
 
   final bool updateOnHover;
 
+  final List<FlowThemeGroup> groups;
+
   const ThemePetalSelector({
     super.key,
     this.playInitialAnimation = true,
@@ -25,6 +28,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.maxSize = 400.0,
     this.animationStartDelay = const Duration(milliseconds: 250),
     this.animationDuration = const Duration(milliseconds: 1000),
+    required this.groups,
   });
 
   @override
@@ -83,15 +87,11 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         animationController.forward(from: 0.0);
       },
     );
-
-    _updateOled();
-    LocalPreferences().theme.enableOledTheme.addListener(_updateOled);
   }
 
   @override
   void dispose() {
     animationController.dispose();
-    LocalPreferences().theme.enableOledTheme.removeListener(_updateOled);
 
     super.dispose();
   }
@@ -99,9 +99,20 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
-    final bool isDark = getTheme(currentTheme).isDark;
-    final (ThemePetal? petals, int? selectedIndex) =
-        getThemePetal(currentTheme);
+    int groupIndex = 0;
+    int themeIndex = -1;
+
+    for (int i = 0; i < widget.groups.length; i++) {
+      final index = widget.groups[i].schemes
+          .indexWhere((scheme) => scheme.name == currentTheme);
+      if (index != -1) {
+        groupIndex = i;
+        themeIndex = index;
+        break;
+      }
+    }
+
+    final int itemCount = widget.groups[groupIndex].schemes.length;
 
     return ConstrainedBox(
       constraints: BoxConstraints.tightForFinite(
@@ -123,8 +134,11 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                   child: MouseRegion(
                     cursor: _cursor,
                     onHover: (event) {
-                      final int? itemIndexAtPointer =
-                          getItemAtPointer(event.localPosition, constraints);
+                      final int? itemIndexAtPointer = getItemAtPointer(
+                        event.localPosition,
+                        constraints,
+                        itemCount,
+                      );
 
                       _cursor = itemIndexAtPointer != null
                           ? SystemMouseCursors.click
@@ -141,32 +155,33 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                               final int? itemIndexAtPointer = getItemAtPointer(
                                 details.localPosition,
                                 constraints,
+                                itemCount,
                               );
 
                               if (itemIndexAtPointer == null) return;
 
-                              setThemeByIndex(itemIndexAtPointer, isDark);
+                              setThemeByIndex(itemIndexAtPointer, groupIndex);
                             })
                           : null,
                       onTapUp: (details) {
                         final int? itemIndexAtPointer = getItemAtPointer(
                           details.localPosition,
                           constraints,
+                          itemCount,
                         );
 
                         if (itemIndexAtPointer == null) return;
 
-                        setThemeByIndex(itemIndexAtPointer, isDark);
+                        setThemeByIndex(itemIndexAtPointer, groupIndex);
                       },
                       child: AnimatedBuilder(
                         builder: (context, child) => CustomPaint(
                           painter: ThemePetalPainter(
                             animationValue: flowerAnimation.value,
-                            colors: (isDark ? darkThemes : lightThemes)
-                                .values
+                            colors: widget.groups[groupIndex].schemes
                                 .map((theme) => theme.primary)
                                 .toList(),
-                            selectedIndex: selectedIndex,
+                            selectedIndex: themeIndex,
                             hoveringIndex: hoveringIndex,
                             petalRadiusProc: petalRadiusProc,
                             centerSpaceRadiusProc: centerSpaceRadiusProc,
@@ -179,39 +194,41 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                     ),
                   ),
                 ),
-                AnimatedBuilder(
-                  builder: (context, child) => SizedBox(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    child: Opacity(
-                      opacity: opacityAnimation.value,
-                      child: Center(
-                        child: InkWell(
-                          onTap: () =>
-                              setThemeByIndex(selectedIndex ?? 0, !isDark),
-                          borderRadius: BorderRadius.circular(999.0),
-                          child: Container(
-                            width: middleButtonSize,
-                            height: middleButtonSize,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: context.colorScheme.primary,
+                if (widget.groups.length > 1)
+                  AnimatedBuilder(
+                    builder: (context, child) => SizedBox(
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight,
+                      child: Opacity(
+                        opacity: opacityAnimation.value,
+                        child: Center(
+                          child: InkWell(
+                            onTap: () => setThemeByIndex(
+                              themeIndex,
+                              (groupIndex + 1),
                             ),
-                            alignment: Alignment.center,
-                            child: Icon(
-                              isDark
-                                  ? Symbols.dark_mode_rounded
-                                  : Symbols.light_mode_rounded,
-                              size: middleButtonSize * 0.67,
-                              color: context.colorScheme.onPrimary,
+                            borderRadius: BorderRadius.circular(999.0),
+                            child: Container(
+                              width: middleButtonSize,
+                              height: middleButtonSize,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: context.colorScheme.primary,
+                              ),
+                              alignment: Alignment.center,
+                              child: FlowIcon(
+                                widget.groups[groupIndex].icon ??
+                                    FlowIconData.emoji(groupIndex.toString()),
+                                size: middleButtonSize * 0.67,
+                                color: context.colorScheme.onPrimary,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
+                    animation: animationController,
                   ),
-                  animation: animationController,
-                ),
               ],
             );
           },
@@ -220,7 +237,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     );
   }
 
-  void setThemeByIndex(int index, bool dark) async {
+  void setThemeByIndex(int themeIndex, int groupIndex) async {
     if (busy) return;
 
     try {
@@ -228,10 +245,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         busy = true;
       });
 
-      final ThemePetal petal = themePetalMapping[index];
-
-      final String themeName =
-          dark ? (oled ? petal.oled : petal.dark) : petal.light;
+      final String themeName = widget
+          .groups[(groupIndex % widget.groups.length)].schemes[themeIndex].name;
 
       await LocalPreferences().theme.themeName.set(themeName);
     } catch (e) {
@@ -245,7 +260,11 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     }
   }
 
-  int? getItemAtPointer(Offset localPosition, BoxConstraints constraints) {
+  int? getItemAtPointer(
+    Offset localPosition,
+    BoxConstraints constraints,
+    int itemCount,
+  ) {
     final Offset adjustedPosition = localPosition -
         Offset(constraints.maxWidth / 2, constraints.maxHeight / 2);
     final double r = adjustedPosition.distance;
@@ -263,25 +282,26 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
             angleOffset) %
         (math.pi * 2);
 
-    return (angle / (math.pi / 8.0)).round();
-  }
+    final double itemAngle =
+        math.tan(innerRadius / (constraints.maxWidth - innerRadius));
+    final double sectorAngle = math.pi * 2 / itemCount;
 
-  void _updateOled() {
-    oled = LocalPreferences().theme.enableOledTheme.get();
+    final double allowedError = itemAngle * 0.5;
 
-    try {
-      final String currentTheme = LocalPreferences().getCurrentTheme();
-      final bool isDark = getTheme(currentTheme).isDark;
-      final int? index = getThemePetal(currentTheme).$2;
-      if (index != null) {
-        setThemeByIndex(index, isDark);
-      }
-    } catch (e) {
-      // Silent fail
+    final int closestIndex =
+        (((angle - angleOffset) / sectorAngle).round()) % itemCount;
+
+    print("angle: $angle");
+    print("itemAngle: $itemAngle");
+    print("closestIndex: $closestIndex");
+    print("delta: ${(angle - (closestIndex * itemAngle))}");
+    print("allowedError: $allowedError");
+
+    final double delta = (angle - (closestIndex * itemAngle)).abs();
+
+    if (delta > allowedError && math.pi * 2 - delta > allowedError) {
+      return null;
     }
-
-    if (mounted) {
-      setState(() {});
-    }
+    return closestIndex;
   }
 }

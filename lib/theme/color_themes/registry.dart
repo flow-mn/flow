@@ -1,188 +1,53 @@
 import "dart:developer";
 import "dart:io";
 
-import "package:flow/theme/color_themes/default_darks.dart";
-import "package:flow/theme/color_themes/default_lights.dart";
-import "package:flow/theme/color_themes/default_oleds.dart";
+import "package:flow/theme/color_themes/catppuccin/frappe.dart";
+import "package:flow/theme/color_themes/catppuccin/latte.dart";
+import "package:flow/theme/color_themes/catppuccin/macchiato.dart";
+import "package:flow/theme/color_themes/catppuccin/mocha.dart";
+import "package:flow/theme/color_themes/flow/flow_darks.dart";
+import "package:flow/theme/color_themes/flow/flow_lights.dart";
+import "package:flow/theme/color_themes/flow/flow_oleds.dart";
 import "package:flow/theme/color_themes/palenight.dart";
 import "package:flow/theme/flow_color_scheme.dart";
+import "package:flow/theme/flow_theme_group.dart";
 import "package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart";
 
-export "default_darks.dart";
-export "default_lights.dart";
-export "default_oleds.dart";
+export "flow/flow_darks.dart";
+export "flow/flow_lights.dart";
+export "flow/flow_oleds.dart";
 export "palenight.dart";
 
-final Map<String, FlowColorScheme> lightThemes = {
-  "shadeOfViolet": shadeOfViolet, // default
-  "blissfulBerry": blissfulBerry,
-  "cherryPlum": cherryPlum,
-  "crispChristmasCranberries": crispChristmasCranberries,
-  "burntSienna": burntSienna,
-  "soilOfAvagddu": soilOfAvagddu,
-  "flagGreen": flagGreen,
-  "tropicana": tropicana,
-  "toyCamouflage": toyCamouflage,
-  "spreadsheetGreen": spreadsheetGreen,
-  "tokiwaGreen": tokiwaGreen,
-  "hydraTurquoise": hydraTurquoise,
-  "peacockBlue": peacockBlue,
-  "egyptianBlue": egyptianBlue,
-  "bohemianBlue": bohemianBlue,
-  "spaceBattleBlue": spaceBattleBlue,
-};
-
-final Map<String, FlowColorScheme> darkThemes = {
-  "electricLavender": electricLavender,
-  "pinkQuartz": pinkQuartz,
-  "cottonCandy": cottonCandy,
-  "piglet": piglet,
-  "simplyDelicious": simplyDelicious,
-  "creamyApricot": creamyApricot,
-  "yellYellow": yellYellow,
-  "fallGreen": fallGreen,
-  "frostedMintHills": frostedMintHills,
-  "coastalTrim": coastalTrim,
-  "seafairGreen": seafairGreen,
-  "crushedIce": crushedIce,
-  "iceEffect": iceEffect,
-  "arcLight": arcLight,
-  "driedLilac": driedLilac,
-  "neonBoneyard": neonBoneyard,
-};
-
-final Map<String, FlowColorScheme> oledThemes = {
-  "electricLavenderOled": electricLavenderOled,
-  "pinkQuartzOled": pinkQuartzOled,
-  "cottonCandyOled": cottonCandyOled,
-  "pigletOled": pigletOled,
-  "simplyDeliciousOled": simplyDeliciousOled,
-  "creamyApricotOled": creamyApricotOled,
-  "yellYellowOled": yellYellowOled,
-  "fallGreenOled": fallGreenOled,
-  "frostedMintHillsOled": frostedMintHillsOled,
-  "coastalTrimOled": coastalTrimOled,
-  "seafairGreenOled": seafairGreenOled,
-  "crushedIceOled": crushedIceOled,
-  "iceEffectOled": iceEffectOled,
-  "arcLightOled": arcLightOled,
-  "driedLilacOled": driedLilacOled,
-  "neonBoneyardOled": neonBoneyardOled,
-};
-
-final Map<String, FlowColorScheme> otherThemes = {
+final Map<String, FlowColorScheme> standaloneThemes = {
   "palenight": palenight,
 };
 
-typedef ThemePetal = ({String light, String dark, String oled});
-
-final List<ThemePetal> themePetalMapping = [
-  (
-    light: "shadeOfViolet",
-    dark: "electricLavender",
-    oled: "electricLavenderOled",
-  ),
-  (
-    light: "blissfulBerry",
-    dark: "pinkQuartz",
-    oled: "pinkQuartzOled",
-  ),
-  (
-    light: "cherryPlum",
-    dark: "cottonCandy",
-    oled: "cottonCandyOled",
-  ),
-  (
-    light: "crispChristmasCranberries",
-    dark: "piglet",
-    oled: "pigletOled",
-  ),
-  (
-    light: "burntSienna",
-    dark: "simplyDelicious",
-    oled: "simplyDeliciousOled",
-  ),
-  (
-    light: "soilOfAvagddu",
-    dark: "creamyApricot",
-    oled: "creamyApricotOled",
-  ),
-  (
-    light: "flagGreen",
-    dark: "yellYellow",
-    oled: "yellYellowOled",
-  ),
-  (
-    light: "tropicana",
-    dark: "fallGreen",
-    oled: "fallGreenOled",
-  ),
-  (
-    light: "toyCamouflage",
-    dark: "frostedMintHills",
-    oled: "frostedMintHillsOled",
-  ),
-  (
-    light: "spreadsheetGreen",
-    dark: "coastalTrim",
-    oled: "coastalTrimOled",
-  ),
-  (
-    light: "tokiwaGreen",
-    dark: "seafairGreen",
-    oled: "seafairGreenOled",
-  ),
-  (
-    light: "hydraTurquoise",
-    dark: "crushedIce",
-    oled: "crushedIceOled",
-  ),
-  (
-    light: "peacockBlue",
-    dark: "iceEffect",
-    oled: "iceEffectOled",
-  ),
-  (
-    light: "egyptianBlue",
-    dark: "arcLight",
-    oled: "arcLightOled",
-  ),
-  (
-    light: "bohemianBlue",
-    dark: "driedLilac",
-    oled: "driedLilacOled",
-  ),
-  (
-    light: "spaceBattleBlue",
-    dark: "neonBoneyard",
-    oled: "neonBoneyardOled",
-  ),
-];
-
-(ThemePetal?, int?) getThemePetal(String? themeName) {
-  if (themeName == null) return (null, null);
-
-  try {
-    final int index = themePetalMapping.indexWhere(
-      (petal) =>
-          petal.light == themeName ||
-          petal.dark == themeName ||
-          petal.oled == themeName,
-    );
-
-    if (index < 0) throw StateError("Theme not found");
-
-    return (themePetalMapping[index], index);
-  } catch (e) {
-    return (null, null);
-  }
-}
+final Map<String, List<FlowThemeGroup>> groups = {
+  "Flow": [
+    flowLights,
+    flowDarks,
+    flowOleds,
+  ],
+  "Catppuccin": [
+    catppuccinoLatte,
+    catppuccinoFrappe,
+    catppuccinoMacchiato,
+    catppuccinoMocha,
+  ],
+};
 
 final Map<String, FlowColorScheme> allThemes = {
-  ...lightThemes,
-  ...darkThemes,
-  ...oledThemes,
-  ...otherThemes,
+  ...groups.values.fold(<String, FlowColorScheme>{}, (
+    Map<String, FlowColorScheme> acc,
+    List<FlowThemeGroup> groups,
+  ) {
+    for (final FlowThemeGroup group in groups) {
+      acc.addAll(group.schemesMap);
+    }
+
+    return acc;
+  }),
+  ...standaloneThemes,
 };
 
 bool validateThemeName(String? themeName) {
@@ -194,37 +59,32 @@ bool validateThemeName(String? themeName) {
 FlowColorScheme getTheme(
   String? themeName, {
   bool preferDark = false,
-  bool preferOled = false,
 }) {
-  if (themeName == null) return preferDark ? electricLavender : shadeOfViolet;
-
-  final FlowColorScheme? scheme = allThemes[themeName];
+  final FlowColorScheme? scheme = allThemes[themeName ?? ""];
 
   if (scheme == null) {
     log("Unknown theme: $themeName");
-    return preferDark ? electricLavender : shadeOfViolet;
+    return preferDark ? flowDarks.schemes.first : flowDarks.schemes.first;
   }
 
   return scheme;
 }
 
-void trySetThemeIcon(String? name) async {
-  name ??= "shadeOfViolet";
-
+/// Exclusive to iOS
+void trySetAppIcon(String? iconName) async {
   if (!Platform.isIOS) return;
+
+  iconName ??= "shadeOfViolet";
 
   final String? currentIcon = await FlutterDynamicIconPlus.alternateIconName;
 
-  final (ThemePetal? petal, _) = getThemePetal(name);
-  final String icon = petal?.light ?? "shadeOfViolet";
-
-  if (currentIcon != null && currentIcon == icon) {
-    log("Cancelling changing app icon into $icon since it's the current one already");
+  if (currentIcon != null && currentIcon == iconName) {
+    log("Cancelling changing app icon into $iconName since it's the current one already");
     return;
   }
 
   try {
-    await FlutterDynamicIconPlus.setAlternateIconName(iconName: icon);
+    await FlutterDynamicIconPlus.setAlternateIconName(iconName: iconName);
   } catch (e) {
     log("Failed to set app icon: $e");
   }

@@ -19,8 +19,6 @@ class ThemeLocalPreferences {
 
   late final PrimitiveSettingsEntry<String> themeName;
   late final BoolSettingsEntry themeChangesAppIcon;
-  late final BoolSettingsEntry enableDynamicTheme;
-  late final BoolSettingsEntry enableOledTheme;
 
   ThemeLocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
@@ -28,22 +26,12 @@ class ThemeLocalPreferences {
     themeName = PrimitiveSettingsEntry<String>(
       key: "themeName",
       preferences: _prefs,
-      initialValue: lightThemes.keys.first,
+      initialValue: flowLights.schemes.first.name,
     );
     themeChangesAppIcon = BoolSettingsEntry(
       key: "themeChangesAppIcon",
       preferences: _prefs,
       initialValue: true,
-    );
-    enableDynamicTheme = BoolSettingsEntry(
-      key: "enableDynamicTheme",
-      preferences: _prefs,
-      initialValue: true,
-    );
-    enableOledTheme = BoolSettingsEntry(
-      key: "enableOledTheme",
-      preferences: _prefs,
-      initialValue: false,
     );
   }
 
