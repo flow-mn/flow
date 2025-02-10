@@ -190,6 +190,7 @@ class PreferencesPageState extends State<PreferencesPage> {
         builder: (context) => LanguageSelectionSheet(
           currentLocale: current,
         ),
+        isScrollControlled: true,
       );
 
       if (selected != null) {
