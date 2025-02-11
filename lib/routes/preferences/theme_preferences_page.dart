@@ -2,11 +2,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
+import "package:flow/theme/names.dart";
+import "package:flow/utils/extensions.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/theme_petal_selector.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
-// import "package:material_symbols_icons/symbols.dart";
 
 class ThemePreferencesPage extends StatefulWidget {
   const ThemePreferencesPage({super.key});
@@ -18,23 +20,31 @@ class ThemePreferencesPage extends StatefulWidget {
 class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   bool busy = false;
   bool appIconBusy = false;
-  bool dynamicThemeBusy = false;
-  bool oledThemeBusy = false;
+
+  String selectedGroup = groups.keys.first;
 
   @override
   void initState() {
     super.initState();
+
+    final String currentTheme = LocalPreferences().getCurrentTheme();
+
+    groups.entries
+            .firstWhereOrNull(
+              (entry) => entry.value.any(
+                (group) => group.name == currentTheme,
+              ),
+            )
+            ?.key ??
+        groups.keys.first;
   }
 
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
-    final bool isDark = getTheme(currentTheme).isDark;
 
     final bool themeChangesAppIcon =
         LocalPreferences().theme.themeChangesAppIcon.get();
-    final bool enableOledTheme = LocalPreferences().theme.enableOledTheme.get();
-    // final bool enableDynamicTheme = LocalPreferences().enableDynamicTheme.get();
 
     return Scaffold(
       appBar: AppBar(
@@ -45,26 +55,42 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: MediaQuery.of(context).textScaler.scale(36.0),
+                child: Frame(
+                  child: SingleChildScrollView(
+                    child: Row(
+                      spacing: 12.0,
+                      children: groups.keys
+                          .map(
+                            (group) => ChoiceChip(
+                              label: Text(group),
+                              selected: group == selectedGroup,
+                              onSelected: (selected) {
+                                if (!selected) return;
+                                setState(() {
+                                  selectedGroup = group;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ),
               Center(
                 child: ThemePetalSelector(
+                  groups: groups[selectedGroup]!,
                   updateOnHover: true,
                 ),
               ),
-              const SizedBox(height: 16.0),
               CheckboxListTile.adaptive(
                 title: Text("preferences.theme.themeChangesAppIcon".t(context)),
                 value: themeChangesAppIcon,
                 onChanged: changeThemeChangesAppIcon,
                 secondary: Icon(Symbols.photo_prints_rounded),
                 activeColor: context.colorScheme.primary,
-              ),
-              CheckboxListTile.adaptive(
-                title: Text("preferences.theme.enableOledTheme".t(context)),
-                value: enableOledTheme,
-                onChanged: changeEnableOledTheme,
-                secondary: Icon(Symbols.brightness_4),
-                activeColor: context.colorScheme.primary,
-                enabled: isDark,
               ),
               // CheckboxListTile.adaptive(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
@@ -77,9 +103,10 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               ListHeader(
                 "preferences.theme.other".t(context),
               ),
-              ...otherThemes.entries.map(
+              const SizedBox(height: 8.0),
+              ...standaloneThemes.entries.map(
                 (entry) => RadioListTile.adaptive(
-                  title: Text(entry.value.name),
+                  title: Text(themeNames[entry.value.name] ?? entry.value.name),
                   value: entry.key,
                   groupValue: currentTheme,
                   onChanged: (value) => handleChange(value),
@@ -100,39 +127,11 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     try {
       appIconBusy = true;
       await LocalPreferences().theme.themeChangesAppIcon.set(newValue);
-      trySetThemeIcon(newValue ? LocalPreferences().getCurrentTheme() : null);
+      trySetAppIcon(newValue
+          ? allThemes[LocalPreferences().getCurrentTheme()]?.iconName
+          : null);
     } finally {
       appIconBusy = false;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  void changeEnableDynamicTheme(bool? newValue) async {
-    if (newValue == null) return;
-    if (dynamicThemeBusy) return;
-
-    try {
-      dynamicThemeBusy = true;
-      await LocalPreferences().theme.enableDynamicTheme.set(newValue);
-    } finally {
-      dynamicThemeBusy = false;
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  void changeEnableOledTheme(bool? newValue) async {
-    if (newValue == null) return;
-    if (oledThemeBusy) return;
-
-    try {
-      oledThemeBusy = true;
-      await LocalPreferences().theme.enableOledTheme.set(newValue);
-    } finally {
-      oledThemeBusy = false;
       if (mounted) {
         setState(() {});
       }
@@ -146,7 +145,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     try {
       await LocalPreferences().theme.themeName.set(name);
       if (LocalPreferences().theme.themeChangesAppIcon.get()) {
-        trySetThemeIcon(name);
+        trySetAppIcon(allThemes[name]?.iconName);
       }
     } finally {
       busy = false;

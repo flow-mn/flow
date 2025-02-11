@@ -219,7 +219,7 @@ class LocalPreferences {
     final String? preferencesTheme = theme.themeName.get();
     return validateThemeName(preferencesTheme)
         ? preferencesTheme!
-        : lightThemes.keys.first;
+        : flowLights.schemes.first.name;
   }
 
   factory LocalPreferences() {

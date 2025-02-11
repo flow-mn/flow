@@ -7,6 +7,7 @@
 * Missing exchange rates warning no longer shows if you use only one currency
   across Flow
 * Currency filter now longer shows when you only use single currency
+* Added [catppuccin](https://github.com/catppuccin/catppuccin) themes
 
 ### Fixes
 

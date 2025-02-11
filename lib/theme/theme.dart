@@ -167,7 +167,6 @@ class ThemeFactory {
     final resolved = getTheme(
       themeName,
       preferDark: preferDark,
-      preferOled: preferOled,
     );
 
     return ThemeFactory(resolved);
