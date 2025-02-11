@@ -42,6 +42,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final String currentTheme = LocalPreferences().getCurrentTheme();
+    final String? currentThemeName = themeNames[currentTheme];
 
     final bool themeChangesAppIcon =
         LocalPreferences().theme.themeChangesAppIcon.get();
@@ -85,6 +86,12 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                   updateOnHover: true,
                 ),
               ),
+              if (currentThemeName != null) ...[
+                Center(
+                  child: Text(currentThemeName),
+                ),
+                const SizedBox(height: 12.0),
+              ],
               CheckboxListTile.adaptive(
                 title: Text("preferences.theme.themeChangesAppIcon".t(context)),
                 value: themeChangesAppIcon,
