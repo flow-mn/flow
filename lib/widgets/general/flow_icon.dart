@@ -106,7 +106,7 @@ class FlowIcon extends StatelessWidget {
                   overflow: TextOverflow.visible,
                   fontWeight: FontWeight.w500,
                   fontFamily: "Poppins",
-                  fontSize: size,
+                  fontSize: size * 0.75,
                   height: 1.0,
                   inherit: false,
                   color: color,

@@ -64,6 +64,13 @@ class ThemeFactory {
         color: colorScheme.secondary,
         surfaceTintColor: colorScheme.primary,
       ),
+      // chipTheme: ChipThemeData.fromDefaults(
+      //   primaryColor: colorScheme.primary,
+      //   secondaryColor: colorScheme.secondary,
+      //   labelStyle: flowTextTheme.labelMedium!.copyWith(
+      //     color: colorScheme.onSurface,
+      //   ),
+      // ),
       extensions: [
         flowColorScheme.customColors,
         PieThemeExtension(pieTheme: pieTheme),

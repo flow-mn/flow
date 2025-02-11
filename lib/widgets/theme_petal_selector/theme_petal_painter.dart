@@ -35,10 +35,6 @@ class ThemePetalPainter extends CustomPainter {
 
     final Paint paint = Paint()..style = PaintingStyle.fill;
 
-    paint.color = Colors.white10;
-
-    canvas.drawRect(-size.center(Offset.zero) & size, paint);
-
     final double r = size.width * 0.5;
 
     final Paint ringPaint = Paint()

@@ -45,6 +45,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
   int? hoveringIndex;
 
+  int selectedGroupIndex = 0;
+
   bool busy = false;
 
   late bool oled;
@@ -110,6 +112,10 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         themeIndex = index;
         break;
       }
+    }
+
+    if (themeIndex < 0) {
+      groupIndex = selectedGroupIndex;
     }
 
     final int itemCount = widget.groups[groupIndex].schemes.length;
@@ -203,10 +209,20 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                         opacity: opacityAnimation.value,
                         child: Center(
                           child: InkWell(
-                            onTap: () => setThemeByIndex(
-                              themeIndex,
-                              (groupIndex + 1),
-                            ),
+                            onTap: () {
+                              if (themeIndex >= 0) {
+                                setThemeByIndex(
+                                  themeIndex,
+                                  (groupIndex + 1),
+                                );
+                              } else {
+                                setState(() {
+                                  selectedGroupIndex =
+                                      (selectedGroupIndex + 1) %
+                                          widget.groups.length;
+                                });
+                              }
+                            },
                             borderRadius: BorderRadius.circular(999.0),
                             child: Container(
                               width: middleButtonSize,
