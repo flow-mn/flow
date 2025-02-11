@@ -3,7 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 
-final FlowColorScheme _catppuccinoFrappeBase = FlowColorScheme(
+final FlowColorScheme _catppuccinFrappeBase = FlowColorScheme(
   name: "catppuccinFrappeBase",
   isDark: true,
   surface: const Color(0xff303446),
@@ -19,41 +19,41 @@ final FlowColorScheme _catppuccinoFrappeBase = FlowColorScheme(
   ),
 );
 
-final FlowThemeGroup catppuccinoFrappe = FlowThemeGroup(
-  name: "Catppuccino Frappé",
+final FlowThemeGroup catppuccinFrappe = FlowThemeGroup(
+  name: "Catppuccin Frappé",
   schemes: [
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoFlamingoFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinFlamingoFrappe",
       primary: Color(0xffeebebe),
       secondary: Color(0xfff2d5cf),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoMauveFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinMauveFrappe",
       primary: Color(0xffca9ee6),
       secondary: Color(0xfff4b8e4),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoRedFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinRedFrappe",
       primary: Color(0xffe78284),
       secondary: Color(0xffea999c),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoPeachFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinPeachFrappe",
       primary: Color(0xffef9f76),
       secondary: Color(0xffe5c890),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoGreenFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinGreenFrappe",
       primary: Color(0xffa6d189),
       secondary: Color(0xff81c8be),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoSkyFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinSkyFrappe",
       primary: Color(0xff99d1db),
       secondary: Color(0xff85c1dc),
     ),
-    _catppuccinoFrappeBase.copyWith(
-      name: "catppuccinoBlueFrappe",
+    _catppuccinFrappeBase.copyWith(
+      name: "catppuccinBlueFrappe",
       primary: Color(0xff8caaee),
       secondary: Color(0xffbabbf1),
     ),

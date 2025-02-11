@@ -49,8 +49,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
   late bool oled;
 
-  static const double petalRadiusProc = 0.05;
-  static const double centerSpaceRadiusProc = 0.3;
+  static const double petalRadiusProc = 0.1;
+  static const double centerSpaceRadiusProc = 0.6;
   static const double angleOffset = math.pi / -2;
 
   @override
@@ -124,7 +124,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             final double middleButtonSize =
-                constraints.maxWidth * petalRadiusProc * 3.0;
+                constraints.maxWidth * petalRadiusProc * 1.5;
 
             return Stack(
               children: [
@@ -269,41 +269,37 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         Offset(constraints.maxWidth / 2, constraints.maxHeight / 2);
     final double r = adjustedPosition.distance;
 
-    final double innerRadius = constraints.maxWidth * centerSpaceRadiusProc;
-    final double outerRadius =
-        innerRadius + (constraints.maxWidth * 2 * petalRadiusProc);
+    final double totalR = constraints.maxWidth * 0.5;
+
+    final double innerRadius = totalR * centerSpaceRadiusProc;
+    final double outerRadius = innerRadius + (totalR * petalRadiusProc * 2);
 
     if (r < innerRadius || r > outerRadius) {
       return null;
     }
-
-    // TODO @sadespresso - Make it more precise when I'm not as sleepy
 
     final double angle = (math.atan2(adjustedPosition.dy, adjustedPosition.dx) +
             (math.pi * 3) +
             angleOffset) %
         (math.pi * 2);
 
-    final double itemAngle =
-        math.tan(innerRadius / (constraints.maxWidth - innerRadius));
+    final double halfItemAngle =
+        math.tan((totalR * petalRadiusProc) / innerRadius);
     final double sectorAngle = math.pi * 2 / itemCount;
 
-    final double allowedError = itemAngle * 0.5;
+    final double allowedError = halfItemAngle;
 
-    final int closestIndex =
-        (((angle - angleOffset) / sectorAngle).round()) % itemCount;
+    final int closestIndex = ((angle / sectorAngle).round()) % itemCount;
 
-    print("angle: $angle");
-    print("itemAngle: $itemAngle");
-    print("closestIndex: $closestIndex");
-    print("delta: ${(angle - (closestIndex * itemAngle))}");
-    print("allowedError: $allowedError");
+    final double closestAngle =
+        ((math.pi * 2) + (closestIndex * (math.pi * 2 / itemCount))) %
+            (math.pi * 2);
 
-    final double delta = (angle - (closestIndex * itemAngle)).abs();
+    final double delta = (angle - (closestAngle)).abs();
 
-    if (delta > allowedError && math.pi * 2 - delta > allowedError) {
-      return null;
-    }
-    return closestIndex;
+    if (delta < allowedError) return closestIndex;
+    if (math.pi * 2 - delta < allowedError) return closestIndex;
+
+    return null;
   }
 }

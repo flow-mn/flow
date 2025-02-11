@@ -3,7 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 
-final FlowColorScheme _catppuccinoMochaBase = FlowColorScheme(
+final FlowColorScheme _catppuccinMochaBase = FlowColorScheme(
   name: "catppuccinMochaBase",
   isDark: true,
   surface: const Color(0xff1e1e2e),
@@ -19,40 +19,40 @@ final FlowColorScheme _catppuccinoMochaBase = FlowColorScheme(
   ),
 );
 
-final FlowThemeGroup catppuccinoMocha = FlowThemeGroup(
-  name: "Catppuccino Mocha",
+final FlowThemeGroup catppuccinMocha = FlowThemeGroup(
+  name: "Catppuccin Mocha",
   schemes: [
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinFlamingoMocha",
       primary: Color(0xfff2cdcd),
       secondary: Color(0xfff5e0dc),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinMauveMocha",
       primary: Color(0xffcba6f7),
       secondary: Color(0xfff5c2e7),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinRedMocha",
       primary: Color(0xfff38ba8),
       secondary: Color(0xffeba0ac),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinPeachMocha",
       primary: Color(0xfffab387),
       secondary: Color(0xfff9e2af),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinGreenMocha",
       primary: Color(0xffa6e3a1),
       secondary: Color(0xff94e2d5),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinSkyMocha",
       primary: Color(0xff89dceb),
       secondary: Color(0xff74c7ec),
     ),
-    _catppuccinoMochaBase.copyWith(
+    _catppuccinMochaBase.copyWith(
       name: "catppuccinBlueMocha",
       primary: Color(0xff89b4fa),
       secondary: Color(0xffb4befe),

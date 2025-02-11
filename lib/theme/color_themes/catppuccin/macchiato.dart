@@ -3,7 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 
-final FlowColorScheme _catppuccinoMacchiatoBase = FlowColorScheme(
+final FlowColorScheme _catppuccinMacchiatoBase = FlowColorScheme(
   name: "catppuccinMacchiatoBase",
   isDark: true,
   surface: const Color(0xff24273a),
@@ -19,40 +19,40 @@ final FlowColorScheme _catppuccinoMacchiatoBase = FlowColorScheme(
   ),
 );
 
-final FlowThemeGroup catppuccinoMacchiato = FlowThemeGroup(
-  name: "Catppuccino Macchiato",
+final FlowThemeGroup catppuccinMacchiato = FlowThemeGroup(
+  name: "Catppuccin Macchiato",
   schemes: [
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinFlamingoMacchiato",
       primary: Color(0xfff0c6c6),
       secondary: Color(0xfff4dbd6),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinMauveMacchiato",
       primary: Color(0xffc6a0f6),
       secondary: Color(0xfff5bde6),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinRedMacchiato",
       primary: Color(0xffed8796),
       secondary: Color(0xffee99a0),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinPeachMacchiato",
       primary: Color(0xfff5a97f),
       secondary: Color(0xffeed49f),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinGreenMacchiato",
       primary: Color(0xffa6da95),
       secondary: Color(0xff8bd5ca),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinSkyMacchiato",
       primary: Color(0xff91d7e3),
       secondary: Color(0xff7dc4e4),
     ),
-    _catppuccinoMacchiatoBase.copyWith(
+    _catppuccinMacchiatoBase.copyWith(
       name: "catppuccinBlueMacchiato",
       primary: Color(0xff8aadf4),
       secondary: Color(0xffb7bdf8),

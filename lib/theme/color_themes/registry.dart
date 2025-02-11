@@ -13,6 +13,10 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 import "package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart";
 
+export "catppuccin/frappe.dart";
+export "catppuccin/latte.dart";
+export "catppuccin/macchiato.dart";
+export "catppuccin/mocha.dart";
 export "flow/flow_darks.dart";
 export "flow/flow_lights.dart";
 export "flow/flow_oleds.dart";
@@ -29,10 +33,10 @@ final Map<String, List<FlowThemeGroup>> groups = {
     flowOleds,
   ],
   "Catppuccin": [
-    catppuccinoLatte,
-    catppuccinoFrappe,
-    catppuccinoMacchiato,
-    catppuccinoMocha,
+    catppuccinLatte,
+    catppuccinFrappe,
+    catppuccinMacchiato,
+    catppuccinMocha,
   ],
 };
 

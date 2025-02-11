@@ -3,7 +3,7 @@ import "dart:ui";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 
-final FlowColorScheme _catppuccinoLatteBase = FlowColorScheme(
+final FlowColorScheme _catppuccinLatteBase = FlowColorScheme(
   name: "Catppuccin Latte Base",
   isDark: false,
   surface: const Color(0xffeff1f5),
@@ -19,41 +19,41 @@ final FlowColorScheme _catppuccinoLatteBase = FlowColorScheme(
   ),
 );
 
-final FlowThemeGroup catppuccinoLatte = FlowThemeGroup(
-  name: "Catppuccino Latte",
+final FlowThemeGroup catppuccinLatte = FlowThemeGroup(
+  name: "Catppuccin Latte",
   schemes: [
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoFlamingoLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinFlamingoLatte",
       primary: Color(0xffdd7878),
       secondary: Color(0xffdc8a78),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoMauveLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinMauveLatte",
       primary: Color(0xff8839ef),
       secondary: Color(0xffea76cb),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoRedLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinRedLatte",
       primary: Color(0xffd20f39),
       secondary: Color(0xffe64553),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoPeachLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinPeachLatte",
       primary: Color(0xfffe640b),
       secondary: Color(0xffdf8e1d),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoGreenLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinGreenLatte",
       primary: Color(0xff40a02b),
       secondary: Color(0xff179299),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoSkyLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinSkyLatte",
       primary: Color(0xff04a5e5),
       secondary: Color(0xff209fb5),
     ),
-    _catppuccinoLatteBase.copyWith(
-      name: "catppuccinoBlueLatte",
+    _catppuccinLatteBase.copyWith(
+      name: "catppuccinBlueLatte",
       primary: Color(0xff1e66f5),
       secondary: Color(0xff7287fd),
     ),
