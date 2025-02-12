@@ -173,14 +173,12 @@ class FlowState extends State<Flow> {
 
   void _reloadTheme() {
     final String? themeName = LocalPreferences().theme.themeName.value;
-    final bool oled = LocalPreferences().theme.enableOledTheme.get();
 
     log("[Theme] Reloading theme $themeName");
 
     FlowColorScheme theme = getTheme(
       themeName,
       preferDark: useDarkTheme,
-      preferOled: oled,
     );
 
     setState(() {

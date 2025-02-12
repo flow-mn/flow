@@ -9,6 +9,7 @@ import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
+import "package:flow/theme/names.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
@@ -120,7 +121,8 @@ class PreferencesPageState extends State<PreferencesPage> {
               leading: currentTheme.isDark
                   ? const Icon(Symbols.dark_mode_rounded)
                   : const Icon(Symbols.light_mode_rounded),
-              subtitle: Text(currentTheme.name),
+              subtitle:
+                  Text(themeNames[currentTheme.name] ?? currentTheme.name),
               onTap: _openTheme,
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
@@ -255,8 +257,10 @@ class PreferencesPageState extends State<PreferencesPage> {
     final bool themeChangesAppIcon =
         LocalPreferences().theme.themeChangesAppIcon.get();
 
-    trySetThemeIcon(
-      themeChangesAppIcon ? LocalPreferences().theme.themeName.get() : null,
+    trySetAppIcon(
+      themeChangesAppIcon
+          ? allThemes[LocalPreferences().theme.themeName.get()]?.iconName
+          : null,
     );
 
     // Rebuild to update description text
