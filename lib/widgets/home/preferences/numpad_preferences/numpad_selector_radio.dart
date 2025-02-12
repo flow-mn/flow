@@ -48,7 +48,7 @@ class NumpadSelectorRadio extends StatelessWidget {
                         : "preferences.numpad.layout.classic".t(context)),
                     const SizedBox(height: 8.0),
                     IgnorePointer(
-                      child: Radio.adaptive(
+                      child: Radio /*.adaptive*/ (
                         value: isPhoneLayout,
                         groupValue: currentlyUsingPhoneLayout,
                         onChanged: (_) {},

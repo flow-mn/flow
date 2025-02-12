@@ -12,7 +12,7 @@ class Spinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const child = CircularProgressIndicator.adaptive();
+    const child = CircularProgressIndicator /*.adaptive*/ ();
 
     if (center) {
       return const Center(

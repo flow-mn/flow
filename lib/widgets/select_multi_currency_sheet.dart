@@ -69,7 +69,7 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
             final CurrencyData transformedCurrencyData =
                 iso4217CurrenciesGrouped[currency.code]!;
 
-            return CheckboxListTile.adaptive(
+            return CheckboxListTile /*.adaptive*/ (
               value: selectedUuids.contains(transformedCurrencyData.code),
               title: Text(
                 transformedCurrencyData.name,

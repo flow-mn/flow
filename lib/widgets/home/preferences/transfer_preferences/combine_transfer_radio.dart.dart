@@ -48,7 +48,7 @@ class CombineTransferRadio extends StatelessWidget {
                         .t(context)),
                 const SizedBox(height: 8.0),
                 IgnorePointer(
-                  child: Radio.adaptive(
+                  child: Radio /*.adaptive*/ (
                     value: combine,
                     groupValue: currentlyUsingCombineMode,
                     onChanged: (_) {},

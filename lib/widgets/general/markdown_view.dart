@@ -42,7 +42,7 @@ class MarkdownView extends StatelessWidget {
           checkboxBuilder: (value) {
             final int index = checkboxCounter++;
 
-            return Checkbox.adaptive(
+            return Checkbox /*.adaptive*/ (
               value: value,
               onChanged: (newValue) => {
                 tryFlipCheckbox(index, newValue ?? !value),
