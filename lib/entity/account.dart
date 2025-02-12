@@ -2,6 +2,7 @@ import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -58,27 +59,18 @@ class Account implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Money get balance => Money(
+  Money get balance => balanceAt(DateTime.now());
+
+  Money balanceAt(DateTime anchor) => Money(
         transactions
-            .where((element) =>
-                element.transactionDate.isPast && element.isPending != true)
+            .where(
+                (element) => !element.transactionDate.isFutureAnchored(anchor))
+            .nonPending
+            .nonDeleted
             .fold<double>(
               0,
               (previousValue, element) => previousValue + element.amount,
             ),
-        currency,
-      );
-
-  Money balanceAt(DateTime anchor) => Money(
-        transactions.where((element) {
-          if (element.isPending == true) return false;
-          if (element.transactionDate == anchor) return true;
-
-          return element.transactionDate.isPastAnchored(anchor);
-        }).fold<double>(
-          0,
-          (previousValue, element) => previousValue + element.amount,
-        ),
         currency,
       );
 
