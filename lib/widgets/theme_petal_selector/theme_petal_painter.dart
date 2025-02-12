@@ -35,6 +35,8 @@ class ThemePetalPainter extends CustomPainter {
 
     final Paint paint = Paint()..style = PaintingStyle.fill;
 
+    final double r = size.width * 0.5;
+
     final Paint ringPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -43,8 +45,8 @@ class ThemePetalPainter extends CustomPainter {
       ..color = selectedColor;
 
     final double petalCenterDistance =
-        size.width * (petalRadiusProc + centerSpaceRadiusProc);
-    final double petalRadius = size.width * petalRadiusProc;
+        r * (petalRadiusProc + centerSpaceRadiusProc);
+    final double petalRadius = r * petalRadiusProc;
     final double ringRadius = petalRadius + 4.0;
 
     final double angleDelta = math.pi * 2 / colors.length;

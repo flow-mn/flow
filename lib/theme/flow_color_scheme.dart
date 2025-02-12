@@ -30,8 +30,9 @@ const _defaultDarkBase = ColorScheme(
 class FlowColorScheme {
   final String name;
 
+  final String? iconName;
+
   final bool isDark;
-  final ColorScheme? baseScheme;
 
   final Color surface;
   final Color onSurface;
@@ -61,22 +62,50 @@ class FlowColorScheme {
     required this.name,
     this.error,
     this.onError,
-    this.baseScheme,
     this.onPrimary,
+    this.iconName,
   }) {
     final defaultBase = (isDark ? _defaultDarkBase : _defaultLightBase);
 
-    colorScheme = baseScheme ??
-        defaultBase.copyWith(
-          surface: surface,
-          onSurface: onSurface,
-          primary: primary,
-          onPrimary: onPrimary,
-          secondary: secondary,
-          onSecondary: onSecondary,
-          error: error ?? defaultBase.error,
-          onError: onError ?? defaultBase.onError,
-        );
+    colorScheme = defaultBase.copyWith(
+      surface: surface,
+      onSurface: onSurface,
+      primary: primary,
+      onPrimary: onPrimary,
+      secondary: secondary,
+      onSecondary: onSecondary,
+      error: error ?? defaultBase.error,
+      onError: onError ?? defaultBase.onError,
+    );
+  }
+
+  FlowColorScheme copyWith({
+    Color? surface,
+    Color? onSurface,
+    Color? primary,
+    Color? onPrimary,
+    Color? secondary,
+    Color? onSecondary,
+    Color? error,
+    Color? onError,
+    FlowCustomColors? customColors,
+    String? name,
+    String? iconName,
+  }) {
+    return FlowColorScheme(
+      isDark: isDark,
+      surface: surface ?? this.surface,
+      onSurface: onSurface ?? this.onSurface,
+      primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
+      secondary: secondary ?? this.secondary,
+      onSecondary: onSecondary ?? this.onSecondary,
+      error: error ?? this.error,
+      onError: onError ?? this.onError,
+      customColors: customColors ?? this.customColors,
+      name: name ?? this.name,
+      iconName: iconName ?? this.iconName,
+    );
   }
 }
 

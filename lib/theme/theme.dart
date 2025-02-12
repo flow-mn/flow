@@ -53,6 +53,14 @@ class ThemeFactory {
     final Color bottomNavigationBarItemColor =
         isDark ? colorScheme.onSurface : colorScheme.primary;
 
+    final TextTheme textTheme = flowTextTheme.apply(
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+      decorationColor: colorScheme.onSurface,
+    );
+
     materialTheme = ThemeData(
       useMaterial3: true,
       fontFamily: fontFamily,
@@ -63,6 +71,11 @@ class ThemeFactory {
       cardTheme: CardTheme(
         color: colorScheme.secondary,
         surfaceTintColor: colorScheme.primary,
+      ),
+      chipTheme: ChipThemeData(
+        labelStyle:
+            textTheme.labelLarge!.copyWith(color: colorScheme.onSurface),
+        selectedColor: colorScheme.secondary,
       ),
       extensions: [
         flowColorScheme.customColors,
@@ -88,21 +101,15 @@ class ThemeFactory {
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: colorScheme.surface,
       ),
-      textTheme: flowTextTheme
-          .apply(
-            fontFamily: fontFamily,
-            fontFamilyFallback: fontFamilyFallback,
-            bodyColor: colorScheme.onSurface,
-            displayColor: colorScheme.onSurface,
-            decorationColor: colorScheme.onSurface,
-          )
-          .copyWith(),
+      textTheme: textTheme,
       highlightColor: colorScheme.onSurface.withAlpha(0x16),
       splashColor: colorScheme.onSurface.withAlpha(0x12),
       listTileTheme: ListTileThemeData(
         iconColor: colorScheme.primary,
         selectedTileColor: colorScheme.secondary,
         selectedColor: isDark ? colorScheme.primary : null,
+        subtitleTextStyle:
+            textTheme.bodyMedium!.copyWith(color: colorScheme.onSurface),
       ),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith(
@@ -167,7 +174,6 @@ class ThemeFactory {
     final resolved = getTheme(
       themeName,
       preferDark: preferDark,
-      preferOled: preferOled,
     );
 
     return ThemeFactory(resolved);
