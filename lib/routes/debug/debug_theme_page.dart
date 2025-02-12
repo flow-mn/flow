@@ -37,6 +37,21 @@ class DebugThemePage extends StatelessWidget {
               onTap: () => context.push("/preferences/theme"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
+            Frame(
+              child: Wrap(
+                spacing: 12.0,
+                runSpacing: 12.0,
+                children: [
+                  FilterChip(label: Text("FilterChip"), onSelected: (_) {}),
+                  FilterChip(
+                    label: Text("Selected FilterChip"),
+                    onSelected: (_) {},
+                    selected: true,
+                  ),
+                  ActionChip(label: Text("ActionChip"), onPressed: () {}),
+                ],
+              ),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("Cards"),
             const SizedBox(height: 12.0),
@@ -117,6 +132,13 @@ class DebugThemePage extends StatelessWidget {
               leading: const Icon(Symbols.settings_rounded),
               onTap: () {},
               trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: const Text("Selected"),
+              leading: const Icon(Symbols.settings_rounded),
+              onTap: () {},
+              trailing: const Icon(Symbols.chevron_right_rounded),
+              selected: true,
             ),
             ListTile(
               title: const Text("With subtitle"),

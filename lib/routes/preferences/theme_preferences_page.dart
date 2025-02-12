@@ -64,7 +64,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                       spacing: 12.0,
                       children: groups.keys
                           .map(
-                            (group) => ChoiceChip(
+                            (group) => FilterChip(
                               label: Text(group),
                               selected: group == selectedGroup,
                               onSelected: (selected) {
