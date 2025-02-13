@@ -53,7 +53,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],

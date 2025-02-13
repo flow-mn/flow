@@ -1,4 +1,5 @@
-import "package:flow/data/transaction_filter_interface.dart";
+import "dart:convert";
+
 import "package:flow/data/transactions_filter/group_range.dart";
 import "package:flow/data/transactions_filter/search_data.dart";
 import "package:flow/data/transactions_filter/sort_field.dart";
@@ -18,6 +19,8 @@ export "./transactions_filter/sort_field.dart";
 
 part "transaction_filter.g.dart";
 
+typedef TransactionPredicate = bool Function(Transaction);
+
 /// For all fields, disabled if it's null.
 ///
 /// All values must be wrapped by [Optional]
@@ -27,45 +30,31 @@ part "transaction_filter.g.dart";
     TimeRangeConverter(),
   ],
 )
-class TransactionFilter implements TransactionFilterInterface, Jasonable {
-  @override
+class TransactionFilter implements Jasonable {
   final TransactionFilterTimeRange? range;
 
-  @override
   final List<String>? uuids;
 
-  @override
   final TransactionSearchData searchData;
 
-  @override
   final List<TransactionType>? types;
 
-  @override
   final List<String>? categories;
-  @override
   final List<String>? accounts;
 
-  @override
   final bool sortDescending;
-  @override
   final TransactionSortField sortBy;
 
-  @override
   final TransactionGroupRange groupBy;
 
-  @override
   final bool? isPending;
 
-  @override
   final double? minAmount;
-  @override
   final double? maxAmount;
 
-  @override
   final List<String>? currencies;
 
   /// Defaults to false
-  @override
   final bool? includeDeleted;
 
   const TransactionFilter({
@@ -88,7 +77,6 @@ class TransactionFilter implements TransactionFilterInterface, Jasonable {
   static const empty = TransactionFilter();
   static const all = TransactionFilter(includeDeleted: true);
 
-  @override
   List<TransactionPredicate> get postPredicates {
     final List<TransactionPredicate> predicates = [];
 
@@ -103,7 +91,6 @@ class TransactionFilter implements TransactionFilterInterface, Jasonable {
     return predicates;
   }
 
-  @override
   List<TransactionPredicate> get predicates {
     final List<TransactionPredicate> predicates = [];
 
@@ -179,7 +166,6 @@ class TransactionFilter implements TransactionFilterInterface, Jasonable {
   ///
   /// For now, let's do fuzzywuzzy after we fetch the objects
   /// into memory
-  @override
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
 
@@ -268,6 +254,68 @@ class TransactionFilter implements TransactionFilterInterface, Jasonable {
     };
   }
 
+  int calculateDifferentFieldCount(TransactionFilter other) {
+    int count = 0;
+
+    if (range != other.range) {
+      count++;
+    }
+
+    if (sortDescending != other.sortDescending) {
+      count++;
+    }
+
+    if (sortBy != other.sortBy) {
+      count++;
+    }
+
+    if (groupBy != other.groupBy) {
+      count++;
+    }
+
+    if (searchData != other.searchData) {
+      count++;
+    }
+
+    if (isPending != other.isPending) {
+      count++;
+    }
+
+    if (minAmount != other.minAmount) {
+      count++;
+    }
+
+    if (maxAmount != other.maxAmount) {
+      count++;
+    }
+
+    if (includeDeleted != other.includeDeleted) {
+      count++;
+    }
+
+    if (!setEquals(uuids?.toSet(), other.uuids?.toSet())) {
+      count++;
+    }
+
+    if (!setEquals(currencies?.toSet(), other.currencies?.toSet())) {
+      count++;
+    }
+
+    if (!setEquals(types?.toSet(), other.types?.toSet())) {
+      count++;
+    }
+
+    if (!setEquals(categories?.toSet(), other.categories?.toSet())) {
+      count++;
+    }
+
+    if (!setEquals(accounts?.toSet(), other.accounts?.toSet())) {
+      count++;
+    }
+
+    return count;
+  }
+
   TransactionFilter copyWithOptional({
     Optional<List<TransactionType>>? types,
     Optional<TransactionFilterTimeRange>? range,
@@ -347,6 +395,9 @@ class TransactionFilter implements TransactionFilterInterface, Jasonable {
       _$TransactionFilterFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$TransactionFilterToJson(this);
+
+  String serialize() => jsonEncode(toJson());
+  String deserialize(String json) => jsonDecode(json);
 }
 
 String? typesToJson(List<TransactionType>? items) {

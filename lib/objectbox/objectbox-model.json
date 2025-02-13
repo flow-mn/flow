@@ -270,10 +270,46 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "9:292195687144521768",
+      "lastPropertyId": "5:6338065131616428464",
+      "name": "TransactionFilterPreset",
+      "properties": [
+        {
+          "id": "1:7325981580084262187",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1400002030370846430",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "17:1831520455871768337"
+        },
+        {
+          "id": "3:7489529238954087887",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "4:7319274947084664022",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "5:6338065131616428464",
+          "name": "jsonTransactionFilter",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "8:268813570801700112",
-  "lastIndexId": "16:5568811184102450942",
+  "lastEntityId": "9:292195687144521768",
+  "lastIndexId": "17:1831520455871768337",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

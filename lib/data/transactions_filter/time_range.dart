@@ -71,6 +71,17 @@ class TransactionFilterTimeRange {
     return TimeRange.tryParse(value);
   }
 
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TransactionFilterTimeRange) return false;
+
+    return value == other.value;
+  }
+
   TransactionFilterTimeRangePreset? get preset =>
       TransactionFilterTimeRangePreset.values
           .firstWhereOrNull((preset) => preset.value == value);

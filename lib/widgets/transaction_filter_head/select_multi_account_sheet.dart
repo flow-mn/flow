@@ -58,7 +58,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],

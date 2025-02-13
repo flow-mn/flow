@@ -249,7 +249,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing.name),
       child: Text(
-        "category.delete.warning".t(context, txnCount),
+        "category.delete.description".t(context, txnCount),
       ),
     );
 

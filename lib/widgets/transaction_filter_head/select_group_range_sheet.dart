@@ -36,7 +36,7 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
         children: [
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],

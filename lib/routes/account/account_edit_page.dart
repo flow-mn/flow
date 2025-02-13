@@ -524,7 +524,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
-      child: Text("account.delete.warning".t(context, txnCount)),
+      child: Text("account.delete.description".t(context, txnCount)),
     );
 
     if (!mounted) return;
