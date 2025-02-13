@@ -71,6 +71,11 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
             final List<Account> accounts = ObjectBox().getAccounts(false);
             final List<Category> categories = ObjectBox().getCategories(false);
 
+            final bool defaultSelected = widget.selected
+                    ?.calculateDifferentFieldCount(widget.defaultFilter) ==
+                0;
+            bool hasSelected = defaultSelected;
+
             return SlidableAutoCloseBehavior(
               child: SingleChildScrollView(
                 child: Column(
@@ -83,9 +88,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                                 ?.localizedNameContext(context) ??
                             "Default filter",
                       ),
-                      selected: widget.selected?.calculateDifferentFieldCount(
-                              widget.defaultFilter) ==
-                          0,
+                      selected: defaultSelected,
                       subtitle: Text(
                         "transactionFilterPreset.default".t(context),
                       ),
@@ -94,10 +97,14 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                       final int? differenceCount = widget.selected
                           ?.calculateDifferentFieldCount(preset.filter);
 
-                      final bool valid = preset.validate(
+                      final bool valid = preset.filter.validate(
                         accounts: accounts.map((x) => x.uuid).toList(),
                         categories: categories.map((x) => x.uuid).toList(),
                       );
+
+                      if (differenceCount == 0) {
+                        hasSelected = true;
+                      }
 
                       return FilterPresetListTile(
                         onTap: () => context.pop(Optional(preset.filter)),
@@ -107,7 +114,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                         selected: differenceCount == 0,
                       );
                     }),
-                    if (widget.onSaveAsNew != null)
+                    if (!hasSelected && widget.onSaveAsNew != null)
                       ListTile(
                         onTap: () => widget.onSaveAsNew!(),
                         title: Text(

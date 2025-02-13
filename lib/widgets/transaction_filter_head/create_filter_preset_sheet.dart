@@ -1,7 +1,10 @@
+import "dart:developer";
+
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/utils/extensions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
@@ -70,7 +73,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
                 autofocus: true,
                 controller: _controller,
                 maxLength: TransactionFilterPreset.maxNameLength,
-                onSubmitted: (_) => pop(),
+                onSubmitted: (_) => saveAndPop(),
                 decoration: InputDecoration(
                   hintText: "transactionFilterPreset.saveAsNew.name".t(context),
                 ),
@@ -82,16 +85,25 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
     );
   }
 
-  int saveAndPop() {
+  void saveAndPop() {
     try {
-      return ObjectBox().box<TransactionFilterPreset>().put(
+      final String trimmed = _controller.text.trim();
+
+      if (trimmed.isEmpty) {
+        context.showErrorToast(error: "error.input.mustBeNotEmpty".t(context));
+        return;
+      }
+
+      ObjectBox().box<TransactionFilterPreset>().put(
             TransactionFilterPreset(
               name: _controller.text,
               jsonTransactionFilter: widget.filter.serialize(),
             ),
           );
-    } finally {
+
       pop();
+    } catch (e) {
+      log("Failed to save filter preset", error: e);
     }
   }
 

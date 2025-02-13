@@ -77,6 +77,29 @@ class TransactionFilter implements Jasonable {
   static const empty = TransactionFilter();
   static const all = TransactionFilter(includeDeleted: true);
 
+  /// Returns whether this [filter] contains any references that isn't
+  /// resolvable to existing [Account] and/or [Category].
+  bool validate({
+    required List<String> accounts,
+    required List<String> categories,
+  }) {
+    if (this.accounts?.isNotEmpty == true &&
+        this.accounts!.any(
+              (accountUuid) => !accounts.contains(accountUuid),
+            )) {
+      return false;
+    }
+
+    if (this.categories?.isNotEmpty == true &&
+        this.categories!.any(
+              (categoryUuid) => !categories.contains(categoryUuid),
+            )) {
+      return false;
+    }
+
+    return true;
+  }
+
   List<TransactionPredicate> get postPredicates {
     final List<TransactionPredicate> predicates = [];
 
