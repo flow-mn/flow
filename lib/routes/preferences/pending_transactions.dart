@@ -87,7 +87,7 @@ class _PendingTransactionPreferencesPageState
                 ),
               ),
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text(
                   "preferences.pendingTransactions.requireConfirmation"
                       .t(context),
@@ -96,7 +96,7 @@ class _PendingTransactionPreferencesPageState
                 onChanged: updatePendingTransactionsRequireConfrimation,
               ),
               if (pendingTransactionsRequireConfrimation) ...[
-                CheckboxListTile.adaptive(
+                CheckboxListTile /*.adaptive*/ (
                   title: Text(
                     "preferences.pendingTransactions.updateDateUponConfirmation"
                         .t(context),
@@ -126,7 +126,7 @@ class _PendingTransactionPreferencesPageState
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CheckboxListTile.adaptive(
+                        CheckboxListTile /*.adaptive*/ (
                           title: Text(
                             "preferences.pendingTransactions.notify".t(context),
                           ),

@@ -19,6 +19,7 @@ import '../entity/backup_entry.dart';
 import '../entity/category.dart';
 import '../entity/profile.dart';
 import '../entity/transaction.dart';
+import '../entity/transaction_filter_preset.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -290,6 +291,41 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(9, 292195687144521768),
+      name: 'TransactionFilterPreset',
+      lastPropertyId: const obx_int.IdUid(5, 6338065131616428464),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 7325981580084262187),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 1400002030370846430),
+            name: 'uuid',
+            type: 9,
+            flags: 2080,
+            indexId: const obx_int.IdUid(17, 1831520455871768337)),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 7489529238954087887),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7319274947084664022),
+            name: 'createdDate',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 6338065131616428464),
+            name: 'jsonTransactionFilter',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -328,11 +364,15 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(7, 5357777579468740615),
-      lastIndexId: const obx_int.IdUid(14, 1594637005857043935),
+      lastEntityId: const obx_int.IdUid(9, 292195687144521768),
+      lastIndexId: const obx_int.IdUid(17, 1831520455871768337),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [3796819593314794683, 2857566645668229410],
+      retiredEntityUids: const [
+        3796819593314794683,
+        2857566645668229410,
+        268813570801700112
+      ],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
         620570223027064518,
@@ -363,7 +403,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         2675470948342446870,
         2832069050067036408,
         7884365526573124998,
-        1620591330122290687
+        1620591330122290687,
+        6855816521444032675,
+        6426832099320622373,
+        4688691313482515602,
+        8178664360494427777,
+        9181400211872351108
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -673,6 +718,50 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
           object.account.attach(store);
           return object;
+        }),
+    TransactionFilterPreset: obx_int.EntityDefinition<TransactionFilterPreset>(
+        model: _entities[5],
+        toOneRelations: (TransactionFilterPreset object) => [],
+        toManyRelations: (TransactionFilterPreset object) => {},
+        getId: (TransactionFilterPreset object) => object.id,
+        setId: (TransactionFilterPreset object, int id) {
+          object.id = id;
+        },
+        objectToFB: (TransactionFilterPreset object, fb.Builder fbb) {
+          final uuidOffset = fbb.writeString(object.uuid);
+          final nameOffset = fbb.writeString(object.name);
+          final jsonTransactionFilterOffset =
+              fbb.writeString(object.jsonTransactionFilter);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, uuidOffset);
+          fbb.addOffset(2, nameOffset);
+          fbb.addInt64(3, object.createdDate.millisecondsSinceEpoch);
+          fbb.addOffset(4, jsonTransactionFilterOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final jsonTransactionFilterParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, '');
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final object = TransactionFilterPreset(
+              id: idParam,
+              createdDate: createdDateParam,
+              jsonTransactionFilter: jsonTransactionFilterParam,
+              name: nameParam)
+            ..uuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '');
+
+          return object;
         })
   };
 
@@ -864,4 +953,28 @@ class Transaction_ {
   /// See [Transaction.deletedDate].
   static final deletedDate =
       obx.QueryDateProperty<Transaction>(_entities[4].properties[16]);
+}
+
+/// [TransactionFilterPreset] entity fields to define ObjectBox queries.
+class TransactionFilterPreset_ {
+  /// See [TransactionFilterPreset.id].
+  static final id = obx.QueryIntegerProperty<TransactionFilterPreset>(
+      _entities[5].properties[0]);
+
+  /// See [TransactionFilterPreset.uuid].
+  static final uuid = obx.QueryStringProperty<TransactionFilterPreset>(
+      _entities[5].properties[1]);
+
+  /// See [TransactionFilterPreset.name].
+  static final name = obx.QueryStringProperty<TransactionFilterPreset>(
+      _entities[5].properties[2]);
+
+  /// See [TransactionFilterPreset.createdDate].
+  static final createdDate = obx.QueryDateProperty<TransactionFilterPreset>(
+      _entities[5].properties[3]);
+
+  /// See [TransactionFilterPreset.jsonTransactionFilter].
+  static final jsonTransactionFilter =
+      obx.QueryStringProperty<TransactionFilterPreset>(
+          _entities[5].properties[4]);
 }

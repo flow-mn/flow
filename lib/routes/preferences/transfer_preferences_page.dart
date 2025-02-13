@@ -65,7 +65,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
                 ),
               ),
               const SizedBox(height: 24.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text(
                     "preferences.transfer.excludeTransferFromFlow".t(context)),
                 value: excludeTransferFromFlow,

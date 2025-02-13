@@ -50,7 +50,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -89,7 +89,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
               ),
             ),
             const SizedBox(height: 16.0),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: Text(
                 "transactions.query.filter.keyword.includeDescription"
                     .t(context),

@@ -6,6 +6,7 @@ import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
 
 class ExportHistoryPage extends StatefulWidget {
   const ExportHistoryPage({super.key});
@@ -36,13 +37,15 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
 
             return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
               (0, true) => const NoBackups(),
-              (_, true) => ListView.separated(
-                  itemBuilder: (context, index) => BackupEntryCard(
-                    entry: backupEntires[index],
-                    dismissibleKey: ValueKey(backupEntires[index].id),
+              (_, true) => SlidableAutoCloseBehavior(
+                  child: ListView.separated(
+                    itemBuilder: (context, index) => BackupEntryCard(
+                      entry: backupEntires[index],
+                      dismissibleKey: ValueKey(backupEntires[index].id),
+                    ),
+                    separatorBuilder: (context, index) => separator,
+                    itemCount: backupEntires!.length,
                   ),
-                  separatorBuilder: (context, index) => separator,
-                  itemCount: backupEntires!.length,
                 ),
               (_, false) => const Spinner.center(),
             };

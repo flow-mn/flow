@@ -90,6 +90,7 @@ class BackupEntryCard extends StatelessWidget {
 
     return Slidable(
       key: dismissibleKey,
+      groupTag: "backup_entry_card",
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [

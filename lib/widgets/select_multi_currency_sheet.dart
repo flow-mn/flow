@@ -57,7 +57,7 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -69,7 +69,7 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
             final CurrencyData transformedCurrencyData =
                 iso4217CurrenciesGrouped[currency.code]!;
 
-            return CheckboxListTile.adaptive(
+            return CheckboxListTile /*.adaptive*/ (
               value: selectedUuids.contains(transformedCurrencyData.code),
               title: Text(
                 transformedCurrencyData.name,
