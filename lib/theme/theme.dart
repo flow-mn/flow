@@ -2,9 +2,11 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/navbar_theme.dart";
 import "package:flow/theme/pie_theme_extension.dart";
+import "package:flow/theme/super_editor_stylesheet_theme_extension.dart";
 import "package:flow/theme/text_theme.dart";
 import "package:flutter/material.dart";
 import "package:pie_menu/pie_menu.dart";
+import "package:super_editor/super_editor.dart" as super_editor;
 
 export "helpers.dart";
 
@@ -29,6 +31,8 @@ class ThemeFactory {
 
   late final PieTheme pieTheme;
   late final ThemeData materialTheme;
+  late final super_editor.Stylesheet superEditorStylesheet;
+  late final super_editor.SelectionStyles superEditorSelectionStyles;
 
   ThemeFactory(this.flowColorScheme) {
     pieTheme = PieTheme(
@@ -49,6 +53,25 @@ class ThemeFactory {
       rightClickShowsMenu: true,
       menuAlignment: Alignment.center,
     );
+
+    superEditorStylesheet = super_editor.defaultStylesheet.copyWith(
+      addRulesAfter: [
+        // Make all text a very light gray.
+        super_editor.StyleRule(
+          super_editor.BlockSelector.all,
+          (doc, docNode) {
+            return {
+              "textStyle": TextStyle(
+                color: colorScheme.onSurface,
+              ),
+            };
+          },
+        ),
+      ],
+    );
+
+    superEditorSelectionStyles = super_editor.SelectionStyles(
+        selectionColor: colorScheme.primary.withAlpha(0x60));
 
     final Color bottomNavigationBarItemColor =
         isDark ? colorScheme.onSurface : colorScheme.primary;
@@ -80,6 +103,10 @@ class ThemeFactory {
       extensions: [
         flowColorScheme.customColors,
         PieThemeExtension(pieTheme: pieTheme),
+        SuperEditorThemeExtension(
+          stylesheet: superEditorStylesheet,
+          selectionStyles: superEditorSelectionStyles,
+        ),
         NavbarTheme(
           backgroundColor: colorScheme.secondary,
           activeIconColor: colorScheme.primary,

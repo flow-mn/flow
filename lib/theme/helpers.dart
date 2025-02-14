@@ -1,6 +1,7 @@
 import "package:flow/entity/transaction.dart";
 import "package:flow/theme/flow_custom_colors.dart";
 import "package:flow/theme/pie_theme_extension.dart";
+import "package:flow/theme/super_editor_stylesheet_theme_extension.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:pie_menu/pie_menu.dart";
@@ -12,6 +13,8 @@ extension ThemeAccessor on BuildContext {
       Theme.of(this).extension<FlowCustomColors>()!;
   PieTheme get pieTheme =>
       Theme.of(this).extension<PieThemeExtension>()!.pieTheme;
+  SuperEditorThemeExtension get superEditorTheme =>
+      Theme.of(this).extension<SuperEditorThemeExtension>()!;
 }
 
 extension TextStyleHelper on TextStyle {

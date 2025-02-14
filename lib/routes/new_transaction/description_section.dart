@@ -10,7 +10,6 @@ import "package:flow/utils/open_url.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/markdown_view.dart";
 import "package:flutter/material.dart";
-import "package:flutter_markdown/flutter_markdown.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:simple_icons/simple_icons.dart";
@@ -64,7 +63,7 @@ class DescriptionSection extends StatelessWidget {
           : Stack(
               children: [
                 MarkdownView(
-                  controller: controller,
+                  value: controller.text,
                   onChanged: onChanged,
                   focusNode: focusNode,
                   allowTogglingCheckboxes: true,
@@ -159,43 +158,5 @@ class DescriptionSection extends StatelessWidget {
         );
       }
     });
-  }
-
-  MarkdownStyleSheet getStyleSheet(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle p = textTheme.bodyLarge!;
-
-    return MarkdownStyleSheet(
-      h1: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.4),
-      h2: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.28),
-      h3: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.14),
-      h4: textTheme.headlineLarge,
-      h5: textTheme.headlineMedium,
-      h6: textTheme.headlineSmall,
-      p: p,
-      a: p.copyWith(color: context.colorScheme.primary),
-      strong: p.copyWith(fontWeight: FontWeight.bold),
-      em: p.copyWith(fontStyle: FontStyle.italic),
-      code: p.copyWith(fontFamily: "monospace"),
-      img: p.copyWith(fontStyle: FontStyle.italic),
-      checkbox: p.copyWith(fontFamily: "monospace"),
-      del: p.copyWith(decoration: TextDecoration.lineThrough),
-      blockquoteDecoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(
-            color: context.colorScheme.onSurface.withAlpha(0x80),
-            width: 4.0,
-          ),
-        ),
-      ),
-      blockquotePadding: const EdgeInsets.only(left: 24.0),
-      codeblockDecoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-    );
   }
 }

@@ -28,6 +28,7 @@ class Section extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 8.0),
         child,
       ],
     );
