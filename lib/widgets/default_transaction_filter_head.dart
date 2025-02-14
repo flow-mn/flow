@@ -11,6 +11,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/utils/extensions.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/select_multi_currency_sheet.dart";
 import "package:flow/widgets/transaction_filter_head.dart";
@@ -23,6 +24,7 @@ import "package:flow/widgets/transaction_filter_head/select_transaction_filter_t
 import "package:flow/widgets/transaction_filter_head/transaction_filter_chip.dart";
 import "package:flow/widgets/transaction_filter_head/transaction_search_sheet.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class DefaultTransactionsFilterHead extends StatefulWidget {
@@ -116,6 +118,24 @@ class _DefaultTransactionsFilterHeadState
                     final int differentFieldCount = widget.defaultFilter
                         .calculateDifferentFieldCount(_filter);
 
+                    if (accountsSnapshot.hasData &&
+                        categoriesSnapshot.hasData &&
+                        !_filter.validate(
+                          accounts: accountsSnapshot.requireData
+                              .map((account) => account.uuid)
+                              .toList(),
+                          categories: categoriesSnapshot.requireData
+                              .map((category) => category.uuid)
+                              .toList(),
+                        )) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        filter = widget.defaultFilter;
+                        if (mounted) {
+                          setState(() {});
+                        }
+                      });
+                    }
+
                     return TransactionFilterHead(
                       padding: widget.padding,
                       filterChips: [
@@ -158,9 +178,13 @@ class _DefaultTransactionsFilterHeadState
                                 .toSet(),
                             value: _filter.accounts?.isNotEmpty == true
                                 ? _filter.accounts
-                                    ?.map((uuid) => accountsSnapshot.requireData
-                                        .firstWhere(
-                                            (account) => account.uuid == uuid))
+                                    ?.map(
+                                      (uuid) => accountsSnapshot.requireData
+                                          .firstWhereOrNull(
+                                        (account) => account.uuid == uuid,
+                                      ),
+                                    )
+                                    .nonNulls
                                     .toSet()
                                 : null,
                             // value: _filter.accounts?.isNotEmpty == true ? _filter.accounts : null,
@@ -177,9 +201,13 @@ class _DefaultTransactionsFilterHeadState
                               .toSet(),
                           value: _filter.categories?.isNotEmpty == true
                               ? _filter.categories
-                                  ?.map((uuid) => categoriesSnapshot.requireData
-                                      .firstWhere(
-                                          (category) => category.uuid == uuid))
+                                  ?.map(
+                                    (uuid) => categoriesSnapshot.requireData
+                                        .firstWhereOrNull(
+                                      (category) => category.uuid == uuid,
+                                    ),
+                                  )
+                                  .nonNulls
                                   .toSet()
                               : null,
                         ),

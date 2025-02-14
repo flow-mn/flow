@@ -32,31 +32,6 @@ class TransactionFilterPreset implements EntityBase {
   TransactionFilter get filter =>
       TransactionFilter.fromJson(jsonDecode(jsonTransactionFilter));
 
-  /// Returns whether this [filter] contains any references that isn't
-  /// resolvable to existing [Account] and/or [Category].
-  bool validate({
-    required List<String> accounts,
-    required List<String> categories,
-  }) {
-    final TransactionFilter filter = this.filter;
-
-    if (filter.accounts?.isNotEmpty == true &&
-        filter.accounts!.any(
-          (accountUuid) => !accounts.contains(accountUuid),
-        )) {
-      return false;
-    }
-
-    if (filter.categories?.isNotEmpty == true &&
-        filter.categories!.any(
-          (categoryUuid) => !categories.contains(categoryUuid),
-        )) {
-      return false;
-    }
-
-    return true;
-  }
-
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
