@@ -6,98 +6,76 @@ import "package:flow/utils/extensions/toast.dart";
 import "package:flow/utils/open_url.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
-import "package:flutter_markdown/flutter_markdown.dart";
+import "package:super_editor/super_editor.dart";
+import "package:super_editor_markdown/super_editor_markdown.dart";
 
-class MarkdownView extends StatelessWidget {
-  final TextEditingController controller;
+class MarkdownView extends StatefulWidget {
+  final String value;
   final FocusNode? focusNode;
 
   final Function(String)? onChanged;
 
   final bool allowTogglingCheckboxes;
 
+  final bool shrinkWrap;
+
   const MarkdownView({
     super.key,
-    required this.controller,
+    required this.value,
     this.focusNode,
     this.onChanged,
     this.allowTogglingCheckboxes = false,
+    this.shrinkWrap = true,
   });
 
   @override
-  Widget build(BuildContext context) {
-    int checkboxCounter = 0;
+  State<MarkdownView> createState() => _MarkdownViewState();
+}
 
+class _MarkdownViewState extends State<MarkdownView> {
+  late Document _document;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _document = deserializeMarkdownToDocument(
+      widget.value,
+    );
+  }
+
+  @override
+  void didUpdateWidget(MarkdownView oldWidget) {
+    if (oldWidget.value != widget.value) {
+      _document = deserializeMarkdownToDocument(
+        widget.value,
+      );
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Frame(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           color: context.colorScheme.secondary,
         ),
-        child: Markdown(
-          data: controller.text,
-          selectable: false,
+        child: CustomScrollView(
           shrinkWrap: true,
-          styleSheet: getStyleSheet(context),
-          checkboxBuilder: (value) {
-            final int index = checkboxCounter++;
-
-            return Checkbox /*.adaptive*/ (
-              value: value,
-              onChanged: (newValue) => {
-                tryFlipCheckbox(index, newValue ?? !value),
-              },
-            );
-          },
-          onTapLink: (text, href, title) => onTapLink(
-            context,
-            text,
-            href,
-            title,
-          ),
+          slivers: [
+            SuperReader(
+              document: _document,
+              shrinkWrap: widget.shrinkWrap,
+              stylesheet: context.superEditorTheme.stylesheet,
+              selectionStyle: context.superEditorTheme.selectionStyles,
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  void tryFlipCheckbox(int index, bool value) {
-    if (!allowTogglingCheckboxes) {
-      log("[Flow] Cannot flip checkbox when toggling is disabled");
-      return;
-    }
-
-    if (controller.text.contains("```")) {
-      log("[Flow] Cannot flip checkbox when markdown contains a code block");
-      return;
-    }
-
-    log("[Flow] Flipping checkbox at [$index] to $value");
-
-    try {
-      final RegExpMatch match = RegExp(r"-\s\[(\s|x)\]", multiLine: true)
-          .allMatches(controller.text)
-          .elementAt(index);
-
-      final String replacement = value ? "- [x]" : "- [ ]";
-
-      final String newText = controller.text.replaceRange(
-        match.start,
-        match.end,
-        replacement,
-      );
-
-      if (newText.length != controller.text.length) {
-        throw Exception("Length mismatch");
-      }
-
-      controller.text = newText;
-
-      if (onChanged != null) {
-        onChanged!(newText);
-      }
-    } catch (e) {
-      log("[Flow] Failed to flip checkbox at [$index]", error: e);
-    }
   }
 
   void onTapLink(
@@ -130,43 +108,5 @@ class MarkdownView extends StatelessWidget {
         );
       }
     });
-  }
-
-  MarkdownStyleSheet getStyleSheet(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle p = textTheme.bodyLarge!;
-
-    return MarkdownStyleSheet(
-      h1: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.4),
-      h2: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.28),
-      h3: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.14),
-      h4: textTheme.headlineLarge,
-      h5: textTheme.headlineMedium,
-      h6: textTheme.headlineSmall,
-      p: p,
-      a: p.copyWith(color: context.colorScheme.primary),
-      strong: p.copyWith(fontWeight: FontWeight.bold),
-      em: p.copyWith(fontStyle: FontStyle.italic),
-      code: p.copyWith(fontFamily: "monospace"),
-      img: p.copyWith(fontStyle: FontStyle.italic),
-      checkbox: p.copyWith(fontFamily: "monospace"),
-      del: p.copyWith(decoration: TextDecoration.lineThrough),
-      blockquoteDecoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(
-            color: context.colorScheme.onSurface.withAlpha(0x80),
-            width: 4.0,
-          ),
-        ),
-      ),
-      blockquotePadding: const EdgeInsets.only(left: 24.0),
-      codeblockDecoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-    );
   }
 }

@@ -206,9 +206,9 @@ class _TransactionPageState extends State<TransactionPage> {
             backgroundColor: context.colorScheme.surface,
           ),
           body: SafeArea(
-            child: SingleChildScrollView(
-              child: Form(
-                canPop: !hasChanged(),
+            child: Form(
+              canPop: !hasChanged(),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
                     const SizedBox(height: 24.0),
