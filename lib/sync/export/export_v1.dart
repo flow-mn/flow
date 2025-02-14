@@ -3,6 +3,7 @@ import "dart:developer";
 
 import "package:csv/csv.dart";
 import "package:flow/constants.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
@@ -20,7 +21,8 @@ Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions = await TransactionsService().getAll();
+  final List<Transaction> transactions =
+      await TransactionsService().findMany(TransactionFilter.all);
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
@@ -54,7 +56,8 @@ Future<String> generateBackupContentV1() async {
 }
 
 Future<String> generateCSVContentV1() async {
-  final transactions = await TransactionsService().getAll();
+  final transactions =
+      await TransactionsService().findMany(TransactionFilter.all);
 
   final headers = [
     CSVHeadersV1.uuid.localizedName,

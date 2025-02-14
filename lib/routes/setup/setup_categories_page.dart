@@ -91,7 +91,7 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
                               Text("general.select.all".t(context)),
                               const SizedBox(width: 8.0),
                               IgnorePointer(
-                                child: Checkbox.adaptive(
+                                child: Checkbox /*.adaptive*/ (
                                   value: presetSelectedAll,
                                   onChanged: (value) => (),
                                   tristate: true,

@@ -17,8 +17,4 @@ class AccountsService {
   Future<List<Account>> getAll() async {
     return ObjectBox().box<Account>().getAllAsync();
   }
-
-  int countAll() {
-    return ObjectBox().box<Account>().count();
-  }
 }

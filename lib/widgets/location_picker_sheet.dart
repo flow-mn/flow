@@ -66,7 +66,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           ),
           TextButton.icon(
             onPressed: () => context.pop(Optional<LatLng>(center)),
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],

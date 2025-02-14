@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
@@ -27,7 +29,8 @@ class ExportSuccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showFilePath = flowDebugMode || isDesktop();
+    final bool showFilePath =
+        flowDebugMode || Platform.isWindows || Platform.isLinux;
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
