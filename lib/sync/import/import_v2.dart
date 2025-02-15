@@ -8,6 +8,8 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/user_preferences.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -29,7 +31,9 @@ enum ImportV2Progress implements LocalizedEnum {
   writingAccounts,
   resolvingTransactions,
   writingTransactions,
+  writingTranscationFilterPresets,
   writingProfile,
+  writingUserPreferences,
   settingPrimaryCurrency,
   copyingImages,
   success,
@@ -161,6 +165,13 @@ class ImportV2 extends Importer {
     progressNotifier.value = ImportV2Progress.writingTransactions;
     await TransactionsService().upsertMany(transformedTransactions);
 
+    if (data.transactionFilterPresets?.isNotEmpty == true) {
+      progressNotifier.value = ImportV2Progress.writingTranscationFilterPresets;
+      await ObjectBox()
+          .box<TransactionFilterPreset>()
+          .putManyAsync(data.transactionFilterPresets!);
+    }
+
     if (data.profile != null) {
       try {
         await ObjectBox().box<Profile>().removeAllAsync();
@@ -173,6 +184,20 @@ class ImportV2 extends Importer {
 
       progressNotifier.value = ImportV2Progress.writingProfile;
       await ObjectBox().box<Profile>().putAsync(data.profile!);
+    }
+
+    if (data.userPreferences != null) {
+      try {
+        await ObjectBox().box<UserPreferences>().removeAllAsync();
+      } catch (e) {
+        log(
+          "[Flow Sync Import v2] Failed to remove existing user preferences, ignoring",
+          error: e,
+        );
+      }
+
+      progressNotifier.value = ImportV2Progress.writingUserPreferences;
+      await ObjectBox().box<UserPreferences>().putAsync(data.userPreferences!);
     }
 
     if (data.primaryCurrency != null &&

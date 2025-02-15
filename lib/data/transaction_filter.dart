@@ -174,9 +174,7 @@ class TransactionFilter implements Jasonable {
       });
     }
 
-    if (includeDeleted == true) {
-      predicates.add((Transaction t) => t.isDeleted == true);
-    } else {
+    if (includeDeleted != true) {
       predicates
           .add((Transaction t) => t.isDeleted == null || t.isDeleted == false);
     }
@@ -249,17 +247,15 @@ class TransactionFilter implements Jasonable {
       }
     }
 
-    if (includeDeleted == true) {
-      conditions.add(Transaction_.isDeleted.equals(true));
-    } else {
+    if (includeDeleted != true) {
       conditions.add(Transaction_.isDeleted
-          .notEquals(true)
-          .or(Transaction_.isDeleted.isNull()));
+          .isNull()
+          .or(Transaction_.isDeleted.notEquals(true)));
     }
 
-    final filtered = ObjectBox()
-        .box<Transaction>()
-        .query(conditions.reduce((a, b) => a & b));
+    final filtered = ObjectBox().box<Transaction>().query(
+          conditions.isNotEmpty ? conditions.reduce((a, b) => a & b) : null,
+        );
 
     return switch (sortBy) {
       TransactionSortField.amount => filtered.order(

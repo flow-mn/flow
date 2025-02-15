@@ -2,6 +2,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
@@ -113,7 +114,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   @override
   Widget build(BuildContext context) {
     final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
-        LocalPreferences().combineTransferTransactions.get();
+        UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
       if (header != null) header!,

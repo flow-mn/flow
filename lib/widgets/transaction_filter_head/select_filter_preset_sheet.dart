@@ -8,6 +8,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/spinner.dart";
@@ -114,14 +115,23 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                         selected: differenceCount == 0,
                       );
                     }),
-                    if (!hasSelected && widget.onSaveAsNew != null)
-                      ListTile(
-                        onTap: () => widget.onSaveAsNew!(),
-                        title: Text(
-                          "transactionFilterPreset.saveAsNew".t(context),
-                        ),
-                        trailing: Icon(Symbols.add_rounded),
-                      ),
+                    if (widget.onSaveAsNew != null)
+                      (hasSelected
+                          ? Frame.standalone(
+                              child: InfoText(
+                                child: Text(
+                                  "transactionFilterPreset.saveAsNew.guide"
+                                      .t(context),
+                                ),
+                              ),
+                            )
+                          : ListTile(
+                              onTap: () => widget.onSaveAsNew!(),
+                              title: Text(
+                                "transactionFilterPreset.saveAsNew".t(context),
+                              ),
+                              trailing: Icon(Symbols.add_rounded),
+                            )),
                   ],
                 ),
               ),

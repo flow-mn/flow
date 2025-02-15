@@ -20,6 +20,7 @@ import '../entity/category.dart';
 import '../entity/profile.dart';
 import '../entity/transaction.dart';
 import '../entity/transaction_filter_preset.dart';
+import '../entity/user_preferences.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -326,6 +327,41 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(10, 7829328581176695647),
+      name: 'UserPreferences',
+      lastPropertyId: const obx_int.IdUid(5, 4865088217867740277),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5219039721355467640),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 4955595750704416462),
+            name: 'uuid',
+            type: 9,
+            flags: 2080,
+            indexId: const obx_int.IdUid(18, 256441942731857355)),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 7963585470530325390),
+            name: 'combineTransfers',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 317897902492658580),
+            name: 'excludeTransfersFromFlow',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 4865088217867740277),
+            name: 'defaultFilterPreset',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -364,8 +400,8 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(9, 292195687144521768),
-      lastIndexId: const obx_int.IdUid(17, 1831520455871768337),
+      lastEntityId: const obx_int.IdUid(10, 7829328581176695647),
+      lastIndexId: const obx_int.IdUid(18, 256441942731857355),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [
@@ -762,6 +798,50 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 .vTableGet(buffer, rootOffset, 6, '');
 
           return object;
+        }),
+    UserPreferences: obx_int.EntityDefinition<UserPreferences>(
+        model: _entities[6],
+        toOneRelations: (UserPreferences object) => [],
+        toManyRelations: (UserPreferences object) => {},
+        getId: (UserPreferences object) => object.id,
+        setId: (UserPreferences object, int id) {
+          object.id = id;
+        },
+        objectToFB: (UserPreferences object, fb.Builder fbb) {
+          final uuidOffset = fbb.writeString(object.uuid);
+          final defaultFilterPresetOffset = object.defaultFilterPreset == null
+              ? null
+              : fbb.writeString(object.defaultFilterPreset!);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, uuidOffset);
+          fbb.addBool(2, object.combineTransfers);
+          fbb.addBool(3, object.excludeTransfersFromFlow);
+          fbb.addOffset(4, defaultFilterPresetOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final combineTransfersParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 8, false);
+          final excludeTransfersFromFlowParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false);
+          final defaultFilterPresetParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 12);
+          final object = UserPreferences(
+              id: idParam,
+              combineTransfers: combineTransfersParam,
+              excludeTransfersFromFlow: excludeTransfersFromFlowParam,
+              defaultFilterPreset: defaultFilterPresetParam)
+            ..uuid = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '');
+
+          return object;
         })
   };
 
@@ -977,4 +1057,27 @@ class TransactionFilterPreset_ {
   static final jsonTransactionFilter =
       obx.QueryStringProperty<TransactionFilterPreset>(
           _entities[5].properties[4]);
+}
+
+/// [UserPreferences] entity fields to define ObjectBox queries.
+class UserPreferences_ {
+  /// See [UserPreferences.id].
+  static final id =
+      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[0]);
+
+  /// See [UserPreferences.uuid].
+  static final uuid =
+      obx.QueryStringProperty<UserPreferences>(_entities[6].properties[1]);
+
+  /// See [UserPreferences.combineTransfers].
+  static final combineTransfers =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[2]);
+
+  /// See [UserPreferences.excludeTransfersFromFlow].
+  static final excludeTransfersFromFlow =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[3]);
+
+  /// See [UserPreferences.defaultFilterPreset].
+  static final defaultFilterPreset =
+      obx.QueryStringProperty<UserPreferences>(_entities[6].properties[4]);
 }

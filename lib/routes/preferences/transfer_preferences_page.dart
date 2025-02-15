@@ -1,8 +1,8 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
-import "package:flow/widgets/home/preferences/transfer_preferences/combine_transfer_radio.dart.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/home/preferences/transfer_preferences/combine_transfer_radio.dart.dart";
 import "package:flutter/material.dart";
 
 class TransferPreferencesPage extends StatefulWidget {
@@ -17,9 +17,9 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final bool excludeTransferFromFlow =
-        LocalPreferences().excludeTransferFromFlow.get();
+        UserPreferencesService().excludeTransfersFromFlow;
     final bool combineTransferTransactions =
-        LocalPreferences().combineTransferTransactions.get();
+        UserPreferencesService().combineTransfers;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +85,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
   void updateExcludeTransferFromFlow(bool? excludeFromFlow) async {
     if (excludeFromFlow == null) return;
 
-    await LocalPreferences().excludeTransferFromFlow.set(excludeFromFlow);
+    UserPreferencesService().excludeTransfersFromFlow = excludeFromFlow;
 
     if (mounted) setState(() {});
   }
@@ -93,7 +93,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
   void updateCombineTransferTransactions(bool? combine) async {
     if (combine == null) return;
 
-    await LocalPreferences().combineTransferTransactions.set(combine);
+    UserPreferencesService().combineTransfers = combine;
 
     if (mounted) setState(() {});
   }

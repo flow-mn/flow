@@ -306,10 +306,46 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "10:7829328581176695647",
+      "lastPropertyId": "5:4865088217867740277",
+      "name": "UserPreferences",
+      "properties": [
+        {
+          "id": "1:5219039721355467640",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4955595750704416462",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "18:256441942731857355"
+        },
+        {
+          "id": "3:7963585470530325390",
+          "name": "combineTransfers",
+          "type": 1
+        },
+        {
+          "id": "4:317897902492658580",
+          "name": "excludeTransfersFromFlow",
+          "type": 1
+        },
+        {
+          "id": "5:4865088217867740277",
+          "name": "defaultFilterPreset",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "9:292195687144521768",
-  "lastIndexId": "17:1831520455871768337",
+  "lastEntityId": "10:7829328581176695647",
+  "lastIndexId": "18:256441942731857355",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
