@@ -6,6 +6,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";
@@ -35,17 +36,17 @@ class _FlowCardsState extends State<FlowCards> {
     abbreviate = !LocalPreferences().preferFullAmounts.get();
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
 
-    excludeTransferFromFlow = LocalPreferences().excludeTransferFromFlow.get();
-    LocalPreferences()
-        .excludeTransferFromFlow
+    excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
+    UserPreferencesService()
+        .valueNotiifer
         .addListener(_updateExcludeTransferFromFlow);
   }
 
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
-    LocalPreferences()
-        .excludeTransferFromFlow
+    UserPreferencesService()
+        .valueNotiifer
         .removeListener(_updateExcludeTransferFromFlow);
 
     super.dispose();
@@ -131,7 +132,7 @@ class _FlowCardsState extends State<FlowCards> {
   }
 
   _updateExcludeTransferFromFlow() {
-    excludeTransferFromFlow = LocalPreferences().excludeTransferFromFlow.get();
+    excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
 
     if (mounted) setState(() {});
   }

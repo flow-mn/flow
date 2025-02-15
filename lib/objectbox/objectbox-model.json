@@ -270,17 +270,90 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "9:292195687144521768",
+      "lastPropertyId": "5:6338065131616428464",
+      "name": "TransactionFilterPreset",
+      "properties": [
+        {
+          "id": "1:7325981580084262187",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1400002030370846430",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "17:1831520455871768337"
+        },
+        {
+          "id": "3:7489529238954087887",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "4:7319274947084664022",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "5:6338065131616428464",
+          "name": "jsonTransactionFilter",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "10:7829328581176695647",
+      "lastPropertyId": "5:4865088217867740277",
+      "name": "UserPreferences",
+      "properties": [
+        {
+          "id": "1:5219039721355467640",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4955595750704416462",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "18:256441942731857355"
+        },
+        {
+          "id": "3:7963585470530325390",
+          "name": "combineTransfers",
+          "type": 1
+        },
+        {
+          "id": "4:317897902492658580",
+          "name": "excludeTransfersFromFlow",
+          "type": 1
+        },
+        {
+          "id": "5:4865088217867740277",
+          "name": "defaultFilterPreset",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "7:5357777579468740615",
-  "lastIndexId": "14:1594637005857043935",
+  "lastEntityId": "10:7829328581176695647",
+  "lastIndexId": "18:256441942731857355",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [
     3796819593314794683,
-    2857566645668229410
+    2857566645668229410,
+    268813570801700112
   ],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
@@ -312,7 +385,12 @@
     2675470948342446870,
     2832069050067036408,
     7884365526573124998,
-    1620591330122290687
+    1620591330122290687,
+    6855816521444032675,
+    6426832099320622373,
+    4688691313482515602,
+    8178664360494427777,
+    9181400211872351108
   ],
   "retiredRelationUids": [],
   "version": 1

@@ -61,7 +61,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
   QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
         range: TransactionFilterTimeRange.fromTimeRange(range),
-        categories: [category!],
+        categories: [category!.uuid],
         sortBy: TransactionSortField.transactionDate,
         sortDescending: true,
       ).queryBuilder();

@@ -32,6 +32,7 @@ import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -88,6 +89,12 @@ void main() async {
     log("[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode");
   }
 
+  try {
+    UserPreferencesService().initialize();
+  } catch (e) {
+    log("[Flow Startup] Failed to initialize UserPreferencesService", error: e);
+  }
+
   runApp(const Flow());
 }
 
@@ -132,7 +139,7 @@ class FlowState extends State<Flow> {
       // To migrate profile image path from old to new (since 0.10.0)
       nonImportantMigrateProfileImagePath();
     }
-
+    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
     migrateLocalPrefsRequirePendingTransactionConfrimation();
   }
 

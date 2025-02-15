@@ -90,11 +90,7 @@ class TransactionsService {
     return deletedCount;
   }
 
-  Future<List<Transaction>> findMany(TransactionFilter? filter) async {
-    if (filter == null) {
-      return await getAll();
-    }
-
+  Future<List<Transaction>> findMany(TransactionFilter filter) async {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
     final List<Transaction> transactions = await condition.findAsync();
@@ -132,11 +128,7 @@ class TransactionsService {
     return transaction;
   }
 
-  int countMany(TransactionFilter? filter) {
-    if (filter == null) {
-      return countAll();
-    }
-
+  int countMany(TransactionFilter filter) {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
     final int count = condition.count();
@@ -170,10 +162,6 @@ class TransactionsService {
 
   Transaction? getOneSync(int id) {
     return ObjectBox().box<Transaction>().get(id);
-  }
-
-  Future<List<Transaction>> getAll() async {
-    return ObjectBox().box<Transaction>().getAllAsync();
   }
 
   int countAll() {

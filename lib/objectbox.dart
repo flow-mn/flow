@@ -8,6 +8,8 @@ import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -199,22 +201,15 @@ class ObjectBox {
   /// * Profile
   /// * BackupEntry
   Future<void> eraseMainData() async {
-    final Query<Transaction> allTransactionsQuery =
-        box<Transaction>().query().build();
-    final Query<Category> allCategorysQuery = box<Category>().query().build();
-    final Query<Account> allAccountsQuery = box<Account>().query().build();
-
     try {
       await Future.wait([
-        allTransactionsQuery.removeAsync(),
-        allCategorysQuery.removeAsync(),
-        allAccountsQuery.removeAsync(),
+        box<Transaction>().removeAllAsync(),
+        box<Category>().removeAllAsync(),
+        box<Account>().removeAllAsync(),
         box<Profile>().removeAllAsync(),
+        box<UserPreferences>().removeAllAsync(),
+        box<TransactionFilterPreset>().removeAllAsync(),
       ]);
-    } finally {
-      allTransactionsQuery.close();
-      allCategorysQuery.close();
-      allAccountsQuery.close();
-    }
+    } finally {}
   }
 }

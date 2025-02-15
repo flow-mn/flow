@@ -243,13 +243,13 @@ class _AccountEditPageState extends State<AccountEditPage> {
                   ),
                 ),
                 const SizedBox(height: 24.0),
-                CheckboxListTile.adaptive(
+                CheckboxListTile /*.adaptive*/ (
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
                 ),
                 if (!widget.isNewAccount)
-                  CheckboxListTile.adaptive(
+                  CheckboxListTile /*.adaptive*/ (
                     value: _archived,
                     onChanged: updateArchived,
                     title: Text("account.archive".t(context)),
@@ -517,14 +517,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
     if (_currentlyEditing == null) return;
 
     final TransactionFilter filter =
-        TransactionFilter(accounts: [_currentlyEditing!]);
+        TransactionFilter(accounts: [_currentlyEditing!.uuid]);
 
     final int txnCount = TransactionsService().countMany(filter);
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
-      child: Text("account.delete.warning".t(context, txnCount)),
+      child: Text("account.delete.description".t(context, txnCount)),
     );
 
     if (!mounted) return;

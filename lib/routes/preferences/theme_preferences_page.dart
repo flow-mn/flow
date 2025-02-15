@@ -56,27 +56,25 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).textScaler.scale(36.0),
-                child: Frame(
-                  child: SingleChildScrollView(
-                    child: Row(
-                      spacing: 12.0,
-                      children: groups.keys
-                          .map(
-                            (group) => FilterChip(
-                              label: Text(group),
-                              selected: group == selectedGroup,
-                              onSelected: (selected) {
-                                if (!selected) return;
-                                setState(() {
-                                  selectedGroup = group;
-                                });
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
+              Frame(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12.0,
+                    children: groups.keys
+                        .map(
+                          (group) => FilterChip(
+                            label: Text(group),
+                            selected: group == selectedGroup,
+                            onSelected: (selected) {
+                              if (!selected) return;
+                              setState(() {
+                                selectedGroup = group;
+                              });
+                            },
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
               ),
@@ -92,14 +90,14 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 ),
                 const SizedBox(height: 12.0),
               ],
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text("preferences.theme.themeChangesAppIcon".t(context)),
                 value: themeChangesAppIcon,
                 onChanged: changeThemeChangesAppIcon,
                 secondary: Icon(Symbols.photo_prints_rounded),
                 activeColor: context.colorScheme.primary,
               ),
-              // CheckboxListTile.adaptive(
+              // CheckboxListTile/*.adaptive*/(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
               //   onChanged: changeEnableDynamicTheme,
@@ -112,7 +110,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               ),
               const SizedBox(height: 8.0),
               ...standaloneThemes.entries.map(
-                (entry) => RadioListTile.adaptive(
+                (entry) => RadioListTile /*.adaptive*/ (
                   title: Text(themeNames[entry.value.name] ?? entry.value.name),
                   value: entry.key,
                   groupValue: currentTheme,

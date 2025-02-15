@@ -53,7 +53,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -64,7 +64,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ...widget.categories.map(
-              (category) => CheckboxListTile.adaptive(
+              (category) => CheckboxListTile /*.adaptive*/ (
                 title: Text(category.name),
                 value: selectedUuids.contains(category.uuid),
                 onChanged: (value) => select(category.uuid, value),

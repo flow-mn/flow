@@ -176,7 +176,7 @@ class TransactionListTile extends StatelessWidget {
       ),
     );
 
-    final List<SlidableAction> startActionsPanes = [
+    final List<SlidableAction> startActionPanes = [
       if (!transaction.isTransfer && duplicateFn != null)
         SlidableAction(
           onPressed: (context) => duplicateFn!(),
@@ -218,16 +218,17 @@ class TransactionListTile extends StatelessWidget {
 
     return Slidable(
       key: dismissibleKey,
+      groupTag: "transaction_list_tile",
       endActionPane: endActionPanes.isNotEmpty
           ? ActionPane(
               motion: const DrawerMotion(),
               children: endActionPanes,
             )
           : null,
-      startActionPane: startActionsPanes.isNotEmpty
+      startActionPane: startActionPanes.isNotEmpty
           ? ActionPane(
               motion: const DrawerMotion(),
-              children: startActionsPanes,
+              children: startActionPanes,
             )
           : null,
       child: listTile,
