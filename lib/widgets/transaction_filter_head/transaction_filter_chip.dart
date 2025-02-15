@@ -1,5 +1,8 @@
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/extensions/transaction_filter.dart";
+import "package:flutter/foundation.dart" hide Category;
 import "package:flutter/material.dart";
 
 class TransactionFilterChip<T> extends StatelessWidget {
@@ -16,7 +19,38 @@ class TransactionFilterChip<T> extends StatelessWidget {
   final T? value;
   final T? defaultValue;
 
-  bool get highlight => highlightOverride ?? value != defaultValue;
+  bool get highlight {
+    if (highlightOverride != null) {
+      return highlightOverride!;
+    }
+
+    if (defaultValue == null && value == null) {
+      return false;
+    }
+
+    if (defaultValue.runtimeType == value.runtimeType) {
+      if (value is Set<Account>) {
+        final Set<String> defaultValueSet = (defaultValue as Set<Account>)
+            .map((account) => account.uuid)
+            .toSet();
+        final Set<String> valueSet =
+            (value as Set<Account>).map((account) => account.uuid).toSet();
+
+        return !setEquals(defaultValueSet, valueSet);
+      }
+      if (value is Set<Category>) {
+        final Set<String> defaultValueSet = (defaultValue as Set<Category>)
+            .map((category) => category.uuid)
+            .toSet();
+        final Set<String> valueSet =
+            (value as Set<Category>).map((category) => category.uuid).toSet();
+
+        return !setEquals(defaultValueSet, valueSet);
+      }
+    }
+
+    return value != defaultValue;
+  }
 
   /// * If [defaultValue] and [value] are null, displays translated [translationKey]
   /// * If [defaultValue] isn't null, but [value] is null, displays translated `$translationKey.all`

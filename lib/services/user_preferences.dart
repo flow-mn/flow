@@ -27,6 +27,13 @@ class UserPreferencesService {
   }
 
   String? get defaultFilterPresetUuid => value.defaultFilterPreset;
+  set defaultFilterPresetUuid(String? uuid) {
+    if (value.id == 0) return;
+    if (uuid == null) return;
+
+    value.defaultFilterPreset = uuid;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
 
   TransactionFilterPreset? get defaultFilterPreset {
     if (defaultFilterPresetUuid == null) {

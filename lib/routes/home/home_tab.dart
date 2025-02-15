@@ -4,9 +4,11 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -36,12 +38,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late int _plannedTransactionsNextNDays;
 
-  TransactionFilter defaultFilter = TransactionFilter(
-    range: TransactionFilterTimeRange.last30Days,
-  );
+  late TransactionFilter defaultFilter;
   DateTime dateKey = Moment.startOfToday();
 
-  late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
+  late TransactionFilter currentFilter;
 
   TransactionFilter get currentFilterWithPlanned {
     final DateTime plannedTransactionTo = Moment.now()
@@ -78,6 +78,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .pendingTransactions
         .homeTimeframe
         .addListener(_updatePlannedTransactionDays);
+
+    _rawUpdateDefaultFilter();
+
+    currentFilter = defaultFilter.copyWithOptional();
 
     _listener = AppLifecycleListener(
       onShow: () => refreshDateKeyAndDefaultFilter(),
@@ -254,12 +258,18 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   void refreshDateKeyAndDefaultFilter() {
     if (!mounted) return;
+    _rawUpdateDefaultFilter();
     setState(() {
       dateKey = Moment.startOfToday();
-      defaultFilter = TransactionFilter(
-        range: TransactionFilterTimeRange.last30Days,
-      );
     });
+  }
+
+  void _rawUpdateDefaultFilter() {
+    defaultFilter = UserPreferencesService()
+            .defaultFilterPreset
+            ?.filter
+            .copyWithOptional() ??
+        TransactionFilterPreset.defaultFilter;
   }
 
   @override

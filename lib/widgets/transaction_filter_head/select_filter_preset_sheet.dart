@@ -6,6 +6,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -21,7 +22,6 @@ import "package:objectbox/objectbox.dart";
 
 /// Pops with an [Optional<TransactionFilter>] when a preset is selected.
 class SelectFilterPresetSheet extends StatefulWidget {
-  final TransactionFilter defaultFilter;
   final TransactionFilter? selected;
 
   final VoidCallback? onSaveAsNew;
@@ -29,7 +29,6 @@ class SelectFilterPresetSheet extends StatefulWidget {
   const SelectFilterPresetSheet({
     super.key,
     this.selected,
-    required this.defaultFilter,
     this.onSaveAsNew,
   });
 
@@ -57,85 +56,103 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
           ),
         ],
       ),
-      child: StreamBuilder<List<TransactionFilterPreset>>(
-          stream: transactionFilterPresetsQb()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, presetsSnapshot) {
-            if (!presetsSnapshot.hasData) {
-              return Frame.standalone(child: Spinner.center());
-            }
+      child: ValueListenableBuilder(
+          valueListenable: UserPreferencesService().valueNotiifer,
+          builder: (context, userPreferencesSnapshot, _) {
+            final String? defaultPreset =
+                userPreferencesSnapshot.defaultFilterPreset;
 
-            final List<TransactionFilterPreset> presets =
-                presetsSnapshot.requireData;
+            return StreamBuilder<List<TransactionFilterPreset>>(
+                stream: transactionFilterPresetsQb()
+                    .watch(triggerImmediately: true)
+                    .map((event) => event.find()),
+                builder: (context, presetsSnapshot) {
+                  if (!presetsSnapshot.hasData) {
+                    return Frame.standalone(child: Spinner.center());
+                  }
 
-            final List<Account> accounts = ObjectBox().getAccounts(false);
-            final List<Category> categories = ObjectBox().getCategories(false);
+                  final List<TransactionFilterPreset> presets =
+                      presetsSnapshot.requireData;
 
-            final bool defaultSelected = widget.selected
-                    ?.calculateDifferentFieldCount(widget.defaultFilter) ==
-                0;
-            bool hasSelected = defaultSelected;
+                  final List<Account> accounts = ObjectBox().getAccounts(false);
+                  final List<Category> categories =
+                      ObjectBox().getCategories(false);
 
-            return SlidableAutoCloseBehavior(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      onTap: () => context.pop(Optional(widget.defaultFilter)),
-                      title: Text(
-                        widget.defaultFilter.range?.preset
-                                ?.localizedNameContext(context) ??
-                            "Default filter",
-                      ),
-                      selected: defaultSelected,
-                      subtitle: Text(
-                        "transactionFilterPreset.default".t(context),
+                  final bool defaultSelected = widget.selected
+                          ?.calculateDifferentFieldCount(
+                              TransactionFilterPreset.defaultFilter) ==
+                      0;
+                  bool hasSelected = defaultSelected;
+
+                  return SlidableAutoCloseBehavior(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            onTap: () => context.pop(Optional(
+                                TransactionFilterPreset.defaultFilter)),
+                            title: Text(
+                              TransactionFilterPreset
+                                      .defaultFilter.range?.preset
+                                      ?.localizedNameContext(context) ??
+                                  "Default filter",
+                            ),
+                            selected: defaultSelected,
+                            subtitle: Text(
+                              "transactionFilterPreset.default".t(context),
+                            ),
+                            trailing: defaultPreset == null
+                                ? Icon(Symbols.star_rounded)
+                                : null,
+                          ),
+                          ...presets.map((preset) {
+                            final int? differenceCount = widget.selected
+                                ?.calculateDifferentFieldCount(preset.filter);
+
+                            final bool valid = preset.filter.validate(
+                              accounts: accounts.map((x) => x.uuid).toList(),
+                              categories:
+                                  categories.map((x) => x.uuid).toList(),
+                            );
+
+                            if (differenceCount == 0) {
+                              hasSelected = true;
+                            }
+
+                            return FilterPresetListTile(
+                              onTap: () => context.pop(Optional(preset.filter)),
+                              delete: () => delete(preset),
+                              makeDefault: () => makeDefault(preset),
+                              valid: valid,
+                              preset: preset,
+                              isDefault: preset.uuid == defaultPreset,
+                              selected: differenceCount == 0,
+                            );
+                          }),
+                          if (widget.onSaveAsNew != null)
+                            (hasSelected
+                                ? Frame.standalone(
+                                    child: InfoText(
+                                      child: Text(
+                                        "transactionFilterPreset.saveAsNew.guide"
+                                            .t(context),
+                                      ),
+                                    ),
+                                  )
+                                : ListTile(
+                                    onTap: () => widget.onSaveAsNew!(),
+                                    title: Text(
+                                      "transactionFilterPreset.saveAsNew"
+                                          .t(context),
+                                    ),
+                                    trailing: Icon(Symbols.add_rounded),
+                                  )),
+                        ],
                       ),
                     ),
-                    ...presets.map((preset) {
-                      final int? differenceCount = widget.selected
-                          ?.calculateDifferentFieldCount(preset.filter);
-
-                      final bool valid = preset.filter.validate(
-                        accounts: accounts.map((x) => x.uuid).toList(),
-                        categories: categories.map((x) => x.uuid).toList(),
-                      );
-
-                      if (differenceCount == 0) {
-                        hasSelected = true;
-                      }
-
-                      return FilterPresetListTile(
-                        onTap: () => context.pop(Optional(preset.filter)),
-                        delete: () => delete(preset),
-                        valid: valid,
-                        preset: preset,
-                        selected: differenceCount == 0,
-                      );
-                    }),
-                    if (widget.onSaveAsNew != null)
-                      (hasSelected
-                          ? Frame.standalone(
-                              child: InfoText(
-                                child: Text(
-                                  "transactionFilterPreset.saveAsNew.guide"
-                                      .t(context),
-                                ),
-                              ),
-                            )
-                          : ListTile(
-                              onTap: () => widget.onSaveAsNew!(),
-                              title: Text(
-                                "transactionFilterPreset.saveAsNew".t(context),
-                              ),
-                              trailing: Icon(Symbols.add_rounded),
-                            )),
-                  ],
-                ),
-              ),
-            );
+                  );
+                });
           }),
     );
   }
@@ -153,6 +170,10 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
     if (confirmation != true || !mounted) return false;
 
     return ObjectBox().box<TransactionFilterPreset>().remove(preset.id);
+  }
+
+  void makeDefault(TransactionFilterPreset preset) {
+    UserPreferencesService().defaultFilterPresetUuid = preset.uuid;
   }
 
   void pop() => context.pop();

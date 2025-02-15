@@ -187,7 +187,6 @@ class _DefaultTransactionsFilterHeadState
                                     .nonNulls
                                     .toSet()
                                 : null,
-                            // value: _filter.accounts?.isNotEmpty == true ? _filter.accounts : null,
                           ),
                         TransactionFilterChip<Set<Category>>(
                           translationKey:
@@ -382,7 +381,6 @@ class _DefaultTransactionsFilterHeadState
         await showModalBottomSheet<Optional<TransactionFilter>>(
       context: context,
       builder: (context) => SelectFilterPresetSheet(
-        defaultFilter: widget.defaultFilter,
         selected: _filter,
         onSaveAsNew: _saveNewFilterPreset,
       ),

@@ -9,6 +9,7 @@ import "package:material_symbols_icons/symbols.dart";
 class FilterPresetListTile extends StatefulWidget {
   final TransactionFilterPreset preset;
   final bool selected;
+  final bool isDefault;
   final bool valid;
 
   final VoidCallback? onTap;
@@ -22,6 +23,7 @@ class FilterPresetListTile extends StatefulWidget {
     required this.preset,
     required this.selected,
     required this.valid,
+    this.isDefault = false,
     this.onTap,
     this.delete,
     this.makeDefault,
@@ -48,7 +50,7 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
           ? (filterSummary == null ? null : Text(filterSummary))
           : Text("transactionFilterPreset.invalid".t(context)),
       trailing: widget.valid
-          ? null
+          ? (widget.isDefault ? Icon(Symbols.star_rounded) : null)
           : Tooltip(
               message: "transactionFilterPreset.invalid.description".t(context),
               child: Icon(Symbols.error_circle_rounded),
@@ -65,6 +67,15 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
         )
     ];
 
+    final List<SlidableAction> startActionPanes = [
+      if (!widget.isDefault && widget.makeDefault != null)
+        SlidableAction(
+          onPressed: (context) => widget.makeDefault!(),
+          icon: Symbols.star_rounded,
+          backgroundColor: context.colorScheme.secondary,
+        )
+    ];
+
     return Slidable(
       key: widget.dismissibleKey,
       groupTag: "filter_preset_list_tile",
@@ -72,6 +83,12 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
           ? ActionPane(
               motion: const DrawerMotion(),
               children: endActionPanes,
+            )
+          : null,
+      startActionPane: startActionPanes.isNotEmpty
+          ? ActionPane(
+              motion: const DrawerMotion(),
+              children: startActionPanes,
             )
           : null,
       child: listTile,

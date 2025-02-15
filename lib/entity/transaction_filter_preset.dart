@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
@@ -34,6 +35,10 @@ class TransactionFilterPreset implements EntityBase {
 
   @Property(type: PropertyType.date)
   DateTime createdDate;
+
+  static TransactionFilter defaultFilter = TransactionFilter(
+    range: TransactionFilterTimeRange.last30Days,
+  );
 
   TransactionFilterPreset({
     this.id = 0,
