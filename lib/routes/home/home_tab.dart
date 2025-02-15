@@ -89,6 +89,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
     _timer = Timer.periodic(
         const Duration(seconds: 30), (_) => refreshDateKeyAndDefaultFilter());
+
+    UserPreferencesService().valueNotiifer.addListener(_rawUpdateDefaultFilter);
   }
 
   @override
@@ -99,6 +101,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         .homeTimeframe
         .removeListener(_updatePlannedTransactionDays);
     _timer.cancel();
+    UserPreferencesService()
+        .valueNotiifer
+        .removeListener(_rawUpdateDefaultFilter);
     super.dispose();
   }
 

@@ -3,7 +3,6 @@ import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -13,6 +12,7 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/transaction_filter_head/select_filter_preset_sheet/default_filter_preset_list_tile.dart";
 import "package:flow/widgets/transaction_filter_head/select_filter_preset_sheet/filter_preset_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
@@ -78,33 +78,24 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                   final List<Category> categories =
                       ObjectBox().getCategories(false);
 
-                  final bool defaultSelected = widget.selected
+                  final bool flowDefaultSelected = widget.selected
                           ?.calculateDifferentFieldCount(
                               TransactionFilterPreset.defaultFilter) ==
                       0;
-                  bool hasSelected = defaultSelected;
+                  bool hasSelected = flowDefaultSelected;
 
                   return SlidableAutoCloseBehavior(
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ListTile(
-                            onTap: () => context.pop(Optional(
-                                TransactionFilterPreset.defaultFilter)),
-                            title: Text(
-                              TransactionFilterPreset
-                                      .defaultFilter.range?.preset
-                                      ?.localizedNameContext(context) ??
-                                  "Default filter",
+                          DefaultFilterPresetListTile(
+                            selected: flowDefaultSelected,
+                            makeDefault: () => makeDefault(null),
+                            isDefault: defaultPreset == null,
+                            onTap: () => context.pop(
+                              Optional(TransactionFilterPreset.defaultFilter),
                             ),
-                            selected: defaultSelected,
-                            subtitle: Text(
-                              "transactionFilterPreset.default".t(context),
-                            ),
-                            trailing: defaultPreset == null
-                                ? Icon(Symbols.star_rounded)
-                                : null,
                           ),
                           ...presets.map((preset) {
                             final int? differenceCount = widget.selected
@@ -172,8 +163,8 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
     return ObjectBox().box<TransactionFilterPreset>().remove(preset.id);
   }
 
-  void makeDefault(TransactionFilterPreset preset) {
-    UserPreferencesService().defaultFilterPresetUuid = preset.uuid;
+  void makeDefault(TransactionFilterPreset? preset) {
+    UserPreferencesService().defaultFilterPresetUuid = preset?.uuid;
   }
 
   void pop() => context.pop();
