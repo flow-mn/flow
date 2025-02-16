@@ -31,7 +31,7 @@ extension TransactionFilterHelpers on TransactionFilter {
 
     if (categories?.isNotEmpty == true) {
       parts.add(
-        "transactions.query.filter.categories.n".t(context, accounts!.length),
+        "transactions.query.filter.categories.n".t(context, categories!.length),
       );
     }
 
