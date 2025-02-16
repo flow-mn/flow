@@ -8,10 +8,7 @@ import "package:uuid/uuid.dart";
 part "profile.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class Profile implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -30,22 +27,15 @@ class Profile implements EntityBase {
   @Transient()
   String get imagePath => "$uuid.png";
 
-  Profile({
-    this.id = 0,
-    DateTime? createdDate,
-    required this.name,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+  Profile({this.id = 0, DateTime? createdDate, required this.name})
+    : createdDate = createdDate ?? DateTime.now(),
+      uuid = const Uuid().v4();
 
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
   static void createDefaultProfile() {
-    ObjectBox().box<Profile>().put(
-          Profile(
-            name: "Default Profile",
-          ),
-        );
+    ObjectBox().box<Profile>().put(Profile(name: "Default Profile"));
   }
 }

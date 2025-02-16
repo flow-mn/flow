@@ -54,17 +54,17 @@ Future<ExportStatus> export({
   unawaited(
     ObjectBox()
         .box<BackupEntry>()
-        .putAsync(BackupEntry(
-          filePath: savedFilePath,
-          type: type.value,
-          fileExt: mode.fileExt,
-        ))
-        .catchError(
-      (error) {
-        log("[Export] Failed to add BackupEntry due to: $error");
-        return -1;
-      },
-    ),
+        .putAsync(
+          BackupEntry(
+            filePath: savedFilePath,
+            type: type.value,
+            fileExt: mode.fileExt,
+          ),
+        )
+        .catchError((error) {
+          log("[Export] Failed to add BackupEntry due to: $error");
+          return -1;
+        }),
   );
 
   if (!showShareDialog) {
@@ -85,8 +85,9 @@ Future<String> saveBackupFile(
   // Save to cache if it's possible to share later.
   // Otherwise, save to documents directory, and reveal the file on system.
 
-  final Directory saveDir =
-      Directory(path.join(ObjectBox.appDataDirectory, "backups"));
+  final Directory saveDir = Directory(
+    path.join(ObjectBox.appDataDirectory, "backups"),
+  );
   final String filename = generateBackupFileName(fileExt);
 
   log("[Flow Sync] Writing to ${path.join(saveDir.path, filename)}");
@@ -129,17 +130,11 @@ Future<ExportStatus> showFileSaveDialog(
     shareSuccess = shareResult.status == ShareResultStatus.success;
   } else {
     shareSuccess = await openUrl(
-      Uri(
-        scheme: "file",
-        path: path.dirname(savedFilePath),
-      ),
+      Uri(scheme: "file", path: path.dirname(savedFilePath)),
     );
   }
 
-  final uri = Uri(
-    scheme: "file",
-    path: path.dirname(savedFilePath),
-  );
+  final uri = Uri(scheme: "file", path: path.dirname(savedFilePath));
 
   log("[Flow Sync] shareSuccess $shareSuccess $uri");
 

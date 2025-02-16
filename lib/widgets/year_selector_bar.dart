@@ -37,10 +37,7 @@ class YearSelectorBar extends StatelessWidget {
         const SizedBox(width: 8.0),
         Expanded(
           child: Button(
-            child: Text(
-              year.toString(),
-              textAlign: TextAlign.center,
-            ),
+            child: Text(year.toString(), textAlign: TextAlign.center),
             onTap: () => select(context),
           ),
         ),

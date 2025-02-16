@@ -31,9 +31,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     groups.entries
             .firstWhereOrNull(
-              (entry) => entry.value.any(
-                (group) => group.name == currentTheme,
-              ),
+              (entry) => entry.value.any((group) => group.name == currentTheme),
             )
             ?.key ??
         groups.keys.first;
@@ -48,9 +46,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
         LocalPreferences().theme.themeChangesAppIcon.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.theme.choose".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.theme.choose".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -61,20 +57,21 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     spacing: 12.0,
-                    children: groups.keys
-                        .map(
-                          (group) => FilterChip(
-                            label: Text(group),
-                            selected: group == selectedGroup,
-                            onSelected: (selected) {
-                              if (!selected) return;
-                              setState(() {
-                                selectedGroup = group;
-                              });
-                            },
-                          ),
-                        )
-                        .toList(),
+                    children:
+                        groups.keys
+                            .map(
+                              (group) => FilterChip(
+                                label: Text(group),
+                                selected: group == selectedGroup,
+                                onSelected: (selected) {
+                                  if (!selected) return;
+                                  setState(() {
+                                    selectedGroup = group;
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
               ),
@@ -85,9 +82,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 ),
               ),
               if (currentThemeName != null) ...[
-                Center(
-                  child: Text(currentThemeName),
-                ),
+                Center(child: Text(currentThemeName)),
                 const SizedBox(height: 12.0),
               ],
               CheckboxListTile /*.adaptive*/ (
@@ -105,9 +100,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               //   activeColor: context.colorScheme.primary,
               // ),
               const SizedBox(height: 16.0),
-              ListHeader(
-                "preferences.theme.other".t(context),
-              ),
+              ListHeader("preferences.theme.other".t(context)),
               const SizedBox(height: 8.0),
               ...standaloneThemes.entries.map(
                 (entry) => RadioListTile /*.adaptive*/ (
@@ -132,9 +125,11 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     try {
       appIconBusy = true;
       await LocalPreferences().theme.themeChangesAppIcon.set(newValue);
-      trySetAppIcon(newValue
-          ? allThemes[LocalPreferences().getCurrentTheme()]?.iconName
-          : null);
+      trySetAppIcon(
+        newValue
+            ? allThemes[LocalPreferences().getCurrentTheme()]?.iconName
+            : null,
+      );
     } finally {
       appIconBusy = false;
       if (mounted) {

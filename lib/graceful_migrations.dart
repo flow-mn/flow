@@ -17,19 +17,15 @@ void nonImportantMigrateProfileImagePath() async {
       throw "Profile UUID is null";
     }
 
-    final File old = File(path.join(
-      ObjectBox.appDataDirectory,
-      "$profileUuid.png",
-    ));
+    final File old = File(
+      path.join(ObjectBox.appDataDirectory, "$profileUuid.png"),
+    );
 
     if (!old.existsSync()) {
       throw "Old profile image path doesn't exist";
     }
 
-    await old.copy(path.join(
-      ObjectBox.imagesDirectory,
-      "$profileUuid.png",
-    ));
+    await old.copy(path.join(ObjectBox.imagesDirectory, "$profileUuid.png"));
 
     await old.delete();
   } catch (e) {
@@ -40,17 +36,19 @@ void nonImportantMigrateProfileImagePath() async {
 void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
   try {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool? oldValue =
-        prefs.getBool("flow.requirePendingTransactionConfrimation");
+    final bool? oldValue = prefs.getBool(
+      "flow.requirePendingTransactionConfrimation",
+    );
 
     if (oldValue == null) return;
 
-    await LocalPreferences()
-        .pendingTransactions
-        .requireConfrimation
-        .set(oldValue);
+    await LocalPreferences().pendingTransactions.requireConfrimation.set(
+      oldValue,
+    );
   } catch (e) {
-    log("[Flow] Failed to migrate requirePendingTransactionConfrimation due to:\n$e");
+    log(
+      "[Flow] Failed to migrate requirePendingTransactionConfrimation due to:\n$e",
+    );
   }
 }
 
@@ -58,14 +56,16 @@ void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
   try {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    final bool? combineTransfers =
-        prefs.getBool("flow.combineTransferTransactions");
-    final bool? excludeTransfersFromFlow =
-        prefs.getBool("flow.excludeTransferFromFlow");
+    final bool? combineTransfers = prefs.getBool(
+      "flow.combineTransferTransactions",
+    );
+    final bool? excludeTransfersFromFlow = prefs.getBool(
+      "flow.excludeTransferFromFlow",
+    );
 
     final UserPreferences userPreferences =
         ObjectBox().box<UserPreferences>().getAll().firstOrNull ??
-            UserPreferences();
+        UserPreferences();
 
     if (combineTransfers != null) {
       userPreferences.combineTransfers = combineTransfers;
@@ -76,6 +76,8 @@ void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
 
     ObjectBox().box<UserPreferences>().put(userPreferences);
   } catch (e) {
-    log("[Flow] Failed to migrate user preferences regarding transfer stuff due to:\n$e");
+    log(
+      "[Flow] Failed to migrate user preferences regarding transfer stuff due to:\n$e",
+    );
   }
 }

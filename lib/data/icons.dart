@@ -9,11 +9,12 @@ List<IconData> querySimpleIcons(String query) {
 
   if (trimmed.isEmpty) return SimpleIcons.values.values.toList();
 
-  final List<String> queryResults = extractTop<String>(
-    query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
-    choices: SimpleIcons.values.keys.toList(),
-    limit: 50,
-  ).map((extractedResult) => extractedResult.choice).toList();
+  final List<String> queryResults =
+      extractTop<String>(
+        query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
+        choices: SimpleIcons.values.keys.toList(),
+        limit: 50,
+      ).map((extractedResult) => extractedResult.choice).toList();
 
   return queryResults.map((key) => SimpleIcons.values[key]!).toList();
 }
@@ -30,15 +31,19 @@ List<IconData> queryMaterialSymbols(String query) {
         .toList();
   }
 
-  final List<String> queryResults = extractTop<String>(
-    query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
-    choices: materialSymbolsIconNameToUnicodeMap.keys.toList(),
-    limit: 50,
-  ).map((extractedResult) => extractedResult.choice).toList();
+  final List<String> queryResults =
+      extractTop<String>(
+        query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
+        choices: materialSymbolsIconNameToUnicodeMap.keys.toList(),
+        limit: 50,
+      ).map((extractedResult) => extractedResult.choice).toList();
 
   return queryResults
-      .map((key) => _getMaterialSymbolsForCodepoint(
-          materialSymbolsIconNameToUnicodeMap[key]!))
+      .map(
+        (key) => _getMaterialSymbolsForCodepoint(
+          materialSymbolsIconNameToUnicodeMap[key]!,
+        ),
+      )
       .toList();
 }
 

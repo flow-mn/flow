@@ -35,17 +35,20 @@ class NumpadSelectorRadio extends StatelessWidget {
                   width: constraints.maxWidth,
                   mainAxisSpacing: 3.0,
                   crossAxisSpacing: 3.0,
-                  children: isPhoneLayout
-                      ? buildPhoneNumpad(context)
-                      : buildClassicNumpad(context),
+                  children:
+                      isPhoneLayout
+                          ? buildPhoneNumpad(context)
+                          : buildClassicNumpad(context),
                 ),
                 const SizedBox(height: 8.0),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(isPhoneLayout
-                        ? "preferences.numpad.layout.modern".t(context)
-                        : "preferences.numpad.layout.classic".t(context)),
+                    Text(
+                      isPhoneLayout
+                          ? "preferences.numpad.layout.modern".t(context)
+                          : "preferences.numpad.layout.classic".t(context),
+                    ),
                     const SizedBox(height: 8.0),
                     IgnorePointer(
                       child: Radio /*.adaptive*/ (
@@ -71,8 +74,7 @@ class NumpadSelectorRadio extends StatelessWidget {
   /// 1 2 3
   ///   0
   List<Widget> buildClassicNumpad(BuildContext context) {
-    return "789 456 123 0  "
-        .characters
+    return "789 456 123 0  ".characters
         .map(
           (char) => NumpadButton(
             crossAxisCellCount: char == "0" ? 2 : 1,
@@ -90,8 +92,7 @@ class NumpadSelectorRadio extends StatelessWidget {
   /// 7 8 9
   ///   0
   List<Widget> buildPhoneNumpad(BuildContext context) {
-    return "123 456 789 0  "
-        .characters
+    return "123 456 789 0  ".characters
         .map(
           (char) => NumpadButton(
             crossAxisCellCount: char == "0" ? 2 : 1,

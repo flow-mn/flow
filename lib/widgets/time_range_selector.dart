@@ -53,8 +53,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
       MonthTimeRange() => "tabs.stats.timeRange.mode.byMonth",
       YearTimeRange() => "tabs.stats.timeRange.mode.byYear",
       _ => "tabs.stats.timeRange.mode.custom",
-    }
-        .t(context);
+    }.t(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -94,38 +93,38 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                   },
                   child: switch (_timeRange) {
                     LocalWeekTimeRange localWeekTimeRange => Button(
-                        onTap: selectRange,
-                        child: Text(
-                          "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
-                          textAlign: TextAlign.center,
-                        ),
+                      onTap: selectRange,
+                      child: Text(
+                        "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
+                        textAlign: TextAlign.center,
                       ),
+                    ),
                     MonthTimeRange monthTimeRange => Button(
-                        onTap: pickMonth,
-                        child: Text(
-                          monthTimeRange.from.format(
-                            payload: monthTimeRange.from
-                                    .isAtSameYearAs(DateTime.now())
-                                ? "MMMM"
-                                : "MMMM YYYY",
-                          ),
-                          textAlign: TextAlign.center,
+                      onTap: pickMonth,
+                      child: Text(
+                        monthTimeRange.from.format(
+                          payload:
+                              monthTimeRange.from.isAtSameYearAs(DateTime.now())
+                                  ? "MMMM"
+                                  : "MMMM YYYY",
                         ),
+                        textAlign: TextAlign.center,
                       ),
+                    ),
                     YearTimeRange yearTimeRange => Button(
-                        onTap: selectRange,
-                        child: Text(
-                          yearTimeRange.year.toString(),
-                          textAlign: TextAlign.center,
-                        ),
+                      onTap: selectRange,
+                      child: Text(
+                        yearTimeRange.year.toString(),
+                        textAlign: TextAlign.center,
                       ),
+                    ),
                     _ => Button(
-                        onTap: pickRange,
-                        child: Text(
-                          "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
-                          textAlign: TextAlign.center,
-                        ),
+                      onTap: pickRange,
+                      child: Text(
+                        "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
+                        textAlign: TextAlign.center,
                       ),
+                    ),
                   },
                 ),
               ),
@@ -174,11 +173,13 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
       lastDate: DateTime.now().startOfNextYear(),
-      initialDateRange: _timeRange is CustomTimeRange
-          ? DateTimeRange(
-              start: (_timeRange as CustomTimeRange).from,
-              end: (_timeRange as CustomTimeRange).to)
-          : null,
+      initialDateRange:
+          _timeRange is CustomTimeRange
+              ? DateTimeRange(
+                start: (_timeRange as CustomTimeRange).from,
+                end: (_timeRange as CustomTimeRange).to,
+              )
+              : null,
     );
 
     if (range != null) {
@@ -200,8 +201,10 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
   }
 
   Future<void> changeMode() async {
-    final TimeRange? newRange =
-        await showTimeRangePickerSheet(context, initialValue: _timeRange);
+    final TimeRange? newRange = await showTimeRangePickerSheet(
+      context,
+      initialValue: _timeRange,
+    );
 
     if (!mounted || newRange == null) return;
 

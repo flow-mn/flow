@@ -80,9 +80,9 @@ class TransitiveLocalPreferences {
 
     try {
       if (transitiveLastTimeFrecencyUpdated.get() == null ||
-          !transitiveLastTimeFrecencyUpdated
-              .get()!
-              .isAtSameDayAs(Moment.now())) {
+          !transitiveLastTimeFrecencyUpdated.get()!.isAtSameDayAs(
+            Moment.now(),
+          )) {
         unawaited(_reevaluateCategoryFrecency());
         unawaited(_reevaluateAccountFrecency());
         unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
@@ -108,11 +108,9 @@ class TransitiveLocalPreferences {
     }
   }
 
-  Future<FrecencyData?> updateFrecencyData(
-    String type,
-    String uuid,
-  ) async {
-    final FrecencyData current = getFrecencyData(type, uuid) ??
+  Future<FrecencyData?> updateFrecencyData(String type, String uuid) async {
+    final FrecencyData current =
+        getFrecencyData(type, uuid) ??
         FrecencyData(lastUsed: DateTime.now(), useCount: 0, uuid: uuid);
 
     return await setFrecencyData(type, uuid, current.incremented());
@@ -145,7 +143,8 @@ class TransitiveLocalPreferences {
         final TransactionFilter filter = TransactionFilter(
           categories: [category.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
-              Moment.minValue.rangeTo(Moment.now())),
+            Moment.minValue.rangeTo(Moment.now()),
+          ),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
         );
@@ -153,7 +152,7 @@ class TransitiveLocalPreferences {
         final int useCount = TransactionsService().countMany(filter);
         final DateTime lastUsed =
             TransactionsService().findFirstSync(filter)?.transactionDate ??
-                DateTime.fromMillisecondsSinceEpoch(0);
+            DateTime.fromMillisecondsSinceEpoch(0);
 
         unawaited(
           setFrecencyData(
@@ -184,7 +183,8 @@ class TransitiveLocalPreferences {
         final TransactionFilter filter = TransactionFilter(
           accounts: [account.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
-              Moment.minValue.rangeTo(Moment.now())),
+            Moment.minValue.rangeTo(Moment.now()),
+          ),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
         );
@@ -192,7 +192,7 @@ class TransitiveLocalPreferences {
         final int useCount = TransactionsService().countMany(filter);
         final DateTime lastUsed =
             TransactionsService().findFirstSync(filter)?.transactionDate ??
-                DateTime.fromMillisecondsSinceEpoch(0);
+            DateTime.fromMillisecondsSinceEpoch(0);
 
         unawaited(
           setFrecencyData(
@@ -211,8 +211,6 @@ class TransitiveLocalPreferences {
     }
   }
 
-  static TransitiveLocalPreferences initialize(
-    SharedPreferences instance,
-  ) =>
+  static TransitiveLocalPreferences initialize(SharedPreferences instance) =>
       _instance ??= TransitiveLocalPreferences._internal(instance);
 }

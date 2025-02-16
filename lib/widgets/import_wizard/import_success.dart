@@ -11,10 +11,7 @@ class ImportSuccess extends StatelessWidget {
   /// Defaults to `context.pop()`
   final VoidCallback? onDone;
 
-  const ImportSuccess({
-    super.key,
-    this.onDone,
-  });
+  const ImportSuccess({super.key, this.onDone});
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +61,8 @@ class ImportSuccess extends StatelessWidget {
               onDone!();
             },
             leading: const Icon(Symbols.check_rounded),
-            child: Text(
-              "general.done".t(context),
-            ),
-          )
+            child: Text("general.done".t(context)),
+          ),
         ],
       ),
     );

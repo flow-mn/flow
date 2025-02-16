@@ -24,9 +24,7 @@ class CategoryEditPage extends StatefulWidget {
 
   bool get isNewCategory => categoryId == 0;
 
-  const CategoryEditPage.create({
-    super.key,
-  }) : categoryId = 0;
+  const CategoryEditPage.create({super.key}) : categoryId = 0;
   const CategoryEditPage({super.key, required this.categoryId});
 
   @override
@@ -52,15 +50,17 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewCategory
-        ? null
-        : ObjectBox().box<Category>().get(widget.categoryId);
+    _currentlyEditing =
+        widget.isNewCategory
+            ? null
+            : ObjectBox().box<Category>().get(widget.categoryId);
 
     if (!widget.isNewCategory && _currentlyEditing == null) {
       error = "Category with id ${widget.categoryId} was not found";
     } else {
-      _nameTextController =
-          TextEditingController(text: _currentlyEditing?.name);
+      _nameTextController = TextEditingController(
+        text: _currentlyEditing?.name,
+      );
       _iconData = _currentlyEditing?.icon;
     }
   }
@@ -78,9 +78,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40.0,
-        leading: FormCloseButton(
-          canPop: () => !hasChanged(),
-        ),
+        leading: FormCloseButton(canPop: () => !hasChanged()),
         actions: [
           IconButton(
             onPressed: () => save(),
@@ -115,9 +113,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                     controller: _nameTextController,
                     maxLength: Category.maxNameLength,
                     decoration: InputDecoration(
-                      label: Text(
-                        "category.name".t(context),
-                      ),
+                      label: Text("category.name".t(context)),
                       focusColor: context.colorScheme.secondary,
                       counter: const SizedBox.shrink(),
                     ),
@@ -146,10 +142,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     _currentlyEditing.name = formattedName;
     _currentlyEditing.iconCode = iconCodeOrError;
 
-    ObjectBox().box<Category>().put(
-          _currentlyEditing,
-          mode: PutMode.update,
-        );
+    ObjectBox().box<Category>().put(_currentlyEditing, mode: PutMode.update);
 
     context.pop();
   }
@@ -169,10 +162,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     );
 
     unawaited(
-      ObjectBox().box<Category>().putAsync(
-            category,
-            mode: PutMode.insert,
-          ),
+      ObjectBox().box<Category>().putAsync(category, mode: PutMode.insert),
     );
 
     context.pop();
@@ -195,14 +185,15 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final String trimmed = value!.trim();
 
-    final Query<Category> otherCategoriesWithSameNameQuery = ObjectBox()
-        .box<Category>()
-        .query(
-          Category_.name
-              .equals(trimmed)
-              .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
-        )
-        .build();
+    final Query<Category> otherCategoriesWithSameNameQuery =
+        ObjectBox()
+            .box<Category>()
+            .query(
+              Category_.name
+                  .equals(trimmed)
+                  .and(Category_.id.notEquals(_currentlyEditing?.id ?? 0)),
+            )
+            .build();
 
     final bool isNameUnique = otherCategoriesWithSameNameQuery.count() == 0;
 
@@ -224,9 +215,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   Future<void> selectIcon() async {
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
-      builder: (context) => SelectFlowIconSheet(
-        current: _iconData,
-      ),
+      builder: (context) => SelectFlowIconSheet(current: _iconData),
       isScrollControlled: true,
     );
 
@@ -240,17 +229,16 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   Future<void> _deleteCategory() async {
     if (_currentlyEditing == null) return;
 
-    final TransactionFilter filter =
-        TransactionFilter(categories: [_currentlyEditing.uuid]);
+    final TransactionFilter filter = TransactionFilter(
+      categories: [_currentlyEditing.uuid],
+    );
 
     final int txnCount = TransactionsService().countMany(filter);
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing.name),
-      child: Text(
-        "category.delete.description".t(context, txnCount),
-      ),
+      child: Text("category.delete.description".t(context, txnCount)),
     );
 
     if (confirmation == true) {
@@ -258,11 +246,9 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
       if (mounted) {
         context.pop();
-        GoRouter.of(context).popUntil(
-          (route) {
-            return route.path != "/category/:id";
-          },
-        );
+        GoRouter.of(context).popUntil((route) {
+          return route.path != "/category/:id";
+        });
       }
     }
   }

@@ -65,15 +65,13 @@ class _HomePageState extends State<HomePage>
       context.pushReplacement("/setup");
 
       unawaited(
-        LocalPreferences().completedInitialSetup.set(true).catchError(
-          (error) {
-            log(
-              "Failed to set LocalPreferences().completedInitialSetup -> true",
-              error: error,
-            );
-            return false;
-          },
-        ),
+        LocalPreferences().completedInitialSetup.set(true).catchError((error) {
+          log(
+            "Failed to set LocalPreferences().completedInitialSetup -> true",
+            error: error,
+          );
+          return false;
+        }),
       );
     });
 
@@ -83,16 +81,18 @@ class _HomePageState extends State<HomePage>
       try {
         if (NotificationsService().ready &&
             NotificationsService().notificationAppLaunchDetails != null) {
-          final NotificationResponse? response = NotificationsService()
-              .notificationAppLaunchDetails!
-              .notificationResponse;
+          final NotificationResponse? response =
+              NotificationsService()
+                  .notificationAppLaunchDetails!
+                  .notificationResponse;
 
           if (response == null || response.payload == null) {
             throw "No notification payload";
           }
 
-          final FlowNotificationPayload parsed =
-              FlowNotificationPayload.parse(response.payload!);
+          final FlowNotificationPayload parsed = FlowNotificationPayload.parse(
+            response.payload!,
+          );
 
           if (parsed.itemType == FlowNotificationPayloadItemType.transaction) {
             SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -101,8 +101,10 @@ class _HomePageState extends State<HomePage>
           }
         }
       } catch (e) {
-        log("[Flow Startup] Failed to get notificationAppLaunchDetails",
-            error: e);
+        log(
+          "[Flow Startup] Failed to get notificationAppLaunchDetails",
+          error: e,
+        );
       }
     }
 
@@ -122,8 +124,8 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: {
-        osSingleActivator(LogicalKeyboardKey.keyN): () =>
-            _newTransactionPage(null),
+        osSingleActivator(LogicalKeyboardKey.keyN):
+            () => _newTransactionPage(null),
         osSingleActivator(LogicalKeyboardKey.digit1): () => _navigateTo(0),
         osSingleActivator(LogicalKeyboardKey.digit2): () => _navigateTo(1),
         osSingleActivator(LogicalKeyboardKey.digit3): () => _navigateTo(2),
@@ -138,21 +140,20 @@ class _HomePageState extends State<HomePage>
             offset: 16.0,
             barColor: const Color.fromARGB(0, 86, 75, 75),
             borderRadius: BorderRadius.circular(32.0),
-            body: (context, scrollControler) => Scaffold(
-              body: SafeArea(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    HomeTab(
-                      scrollController: _homeTabScrollController,
+            body:
+                (context, scrollControler) => Scaffold(
+                  body: SafeArea(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        HomeTab(scrollController: _homeTabScrollController),
+                        const StatsTab(),
+                        const AccountsTab(),
+                        const ProfileTab(),
+                      ],
                     ),
-                    const StatsTab(),
-                    const AccountsTab(),
-                    const ProfileTab(),
-                  ],
+                  ),
                 ),
-              ),
-            ),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -162,7 +163,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 NewTransactionButton(
                   onActionTap: (type) => _newTransactionPage(type),
-                )
+                ),
               ],
             ),
           ),
@@ -202,8 +203,9 @@ class _HomePageState extends State<HomePage>
     try {
       if (response.payload == null) throw "Payload is null";
 
-      final FlowNotificationPayload parsed =
-          FlowNotificationPayload.parse(response.payload!);
+      final FlowNotificationPayload parsed = FlowNotificationPayload.parse(
+        response.payload!,
+      );
 
       switch (parsed.itemType) {
         case FlowNotificationPayloadItemType.transaction:

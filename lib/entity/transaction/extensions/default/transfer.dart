@@ -33,14 +33,13 @@ class Transfer extends TransactionExtension implements Jasonable {
     String? fromAccountUuid,
     String? toAccountUuid,
     String? relatedTransactionUuid,
-  }) =>
-      Transfer(
-        uuid: uuid ?? this.uuid,
-        fromAccountUuid: fromAccountUuid ?? this.fromAccountUuid,
-        toAccountUuid: toAccountUuid ?? this.toAccountUuid,
-        relatedTransactionUuid:
-            relatedTransactionUuid ?? this.relatedTransactionUuid,
-      );
+  }) => Transfer(
+    uuid: uuid ?? this.uuid,
+    fromAccountUuid: fromAccountUuid ?? this.fromAccountUuid,
+    toAccountUuid: toAccountUuid ?? this.toAccountUuid,
+    relatedTransactionUuid:
+        relatedTransactionUuid ?? this.relatedTransactionUuid,
+  );
 
   factory Transfer.fromJson(Map<String, dynamic> json) =>
       _$TransferFromJson(json);

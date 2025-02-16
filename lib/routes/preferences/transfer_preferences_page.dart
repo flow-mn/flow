@@ -22,9 +22,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
         UserPreferencesService().combineTransfers;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.transfer".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.transfer".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -67,12 +65,15 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
               const SizedBox(height: 24.0),
               CheckboxListTile /*.adaptive*/ (
                 title: Text(
-                    "preferences.transfer.excludeTransferFromFlow".t(context)),
+                  "preferences.transfer.excludeTransferFromFlow".t(context),
+                ),
                 value: excludeTransferFromFlow,
                 onChanged: updateExcludeTransferFromFlow,
                 subtitle: Text(
-                    "preferences.transfer.excludeTransferFromFlow.description"
-                        .t(context)),
+                  "preferences.transfer.excludeTransferFromFlow.description".t(
+                    context,
+                  ),
+                ),
               ),
               const SizedBox(height: 16.0),
             ],

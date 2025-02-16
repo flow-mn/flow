@@ -30,48 +30,48 @@ class AccountPresetCard extends StatelessWidget {
       opacity: selected ? 1.0 : 0.46,
       child: Surface(
         shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        builder: (context) => InkWell(
-          onTap: onSelect == null ? null : () => onSelect!(!selected),
-          borderRadius: borderRadius,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
+        builder:
+            (context) => InkWell(
+              onTap: onSelect == null ? null : () => onSelect!(!selected),
+              borderRadius: borderRadius,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    FlowIcon(
-                      account.icon,
-                      size: 60.0,
-                    ),
-                    const SizedBox(width: 8.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                    Row(
                       children: [
-                        Text(
-                          account.name,
-                          style: context.textTheme.titleSmall,
+                        FlowIcon(account.icon, size: 60.0),
+                        const SizedBox(width: 8.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              account.name,
+                              style: context.textTheme.titleSmall,
+                            ),
+                            Text(
+                              account.balance.formatMoney(),
+                              style: context.textTheme.displaySmall,
+                            ),
+                          ],
                         ),
-                        Text(
-                          account.balance.formatMoney(),
-                          style: context.textTheme.displaySmall,
-                        ),
+                        if (!preexisting) ...[
+                          const Spacer(),
+                          Icon(
+                            selected
+                                ? Symbols.remove_rounded
+                                : Symbols.add_rounded,
+                          ),
+                        ],
                       ],
                     ),
-                    if (!preexisting) ...[
-                      const Spacer(),
-                      Icon(
-                        selected ? Symbols.remove_rounded : Symbols.add_rounded,
-                      ),
-                    ],
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

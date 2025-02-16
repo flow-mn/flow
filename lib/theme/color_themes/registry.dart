@@ -20,21 +20,11 @@ export "flow/flow_lights.dart";
 export "flow/flow_oleds.dart";
 export "palenight.dart";
 
-final Map<String, FlowColorScheme> standaloneThemes = {
-  "palenight": palenight,
-};
+final Map<String, FlowColorScheme> standaloneThemes = {"palenight": palenight};
 
 final Map<String, List<FlowThemeGroup>> groups = {
-  "Flow": [
-    flowLights,
-    flowDarks,
-    flowOleds,
-  ],
-  "Catppuccin": [
-    catppuccinFrappe,
-    catppuccinMacchiato,
-    catppuccinMocha,
-  ],
+  "Flow": [flowLights, flowDarks, flowOleds],
+  "Catppuccin": [catppuccinFrappe, catppuccinMacchiato, catppuccinMocha],
 };
 
 final Map<String, FlowColorScheme> allThemes = {
@@ -57,10 +47,7 @@ bool validateThemeName(String? themeName) {
   return allThemes.containsKey(themeName);
 }
 
-FlowColorScheme getTheme(
-  String? themeName, {
-  bool preferDark = false,
-}) {
+FlowColorScheme getTheme(String? themeName, {bool preferDark = false}) {
   final FlowColorScheme? scheme = allThemes[themeName ?? ""];
 
   if (scheme == null) {
@@ -80,7 +67,9 @@ void trySetAppIcon(String? iconName) async {
   final String? currentIcon = await FlutterDynamicIconPlus.alternateIconName;
 
   if (currentIcon != null && currentIcon == iconName) {
-    log("Cancelling changing app icon into $iconName since it's the current one already");
+    log(
+      "Cancelling changing app icon into $iconName since it's the current one already",
+    );
     return;
   }
 

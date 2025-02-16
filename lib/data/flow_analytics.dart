@@ -6,8 +6,5 @@ class FlowAnalytics<T> {
 
   final Map<String, MoneyFlow<T>> flow;
 
-  const FlowAnalytics({
-    required this.range,
-    required this.flow,
-  });
+  const FlowAnalytics({required this.range, required this.flow});
 }

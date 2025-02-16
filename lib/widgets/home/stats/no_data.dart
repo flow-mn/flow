@@ -33,10 +33,7 @@ class NoData extends StatelessWidget {
             const SizedBox(height: 8.0),
             if (selectTimeRange != null)
               Button(
-                trailing: const Icon(
-                  Symbols.history_rounded,
-                  weight: 600.0,
-                ),
+                trailing: const Icon(Symbols.history_rounded, weight: 600.0),
                 onTap: selectTimeRange,
                 child: Text("tabs.stats.timeRange.select".t(context)),
               ),

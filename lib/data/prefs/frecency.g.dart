@@ -7,10 +7,10 @@ part of 'frecency.dart';
 // **************************************************************************
 
 FrecencyData _$FrecencyDataFromJson(Map<String, dynamic> json) => FrecencyData(
-      uuid: json['uuid'] as String,
-      lastUsed: DateTime.parse(json['lastUsed'] as String),
-      useCount: (json['useCount'] as num).toInt(),
-    );
+  uuid: json['uuid'] as String,
+  lastUsed: DateTime.parse(json['lastUsed'] as String),
+  useCount: (json['useCount'] as num).toInt(),
+);
 
 Map<String, dynamic> _$FrecencyDataToJson(FrecencyData instance) =>
     <String, dynamic>{

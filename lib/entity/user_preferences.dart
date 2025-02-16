@@ -7,10 +7,7 @@ import "package:uuid/uuid.dart";
 part "user_preferences.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class UserPreferences implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;

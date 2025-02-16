@@ -21,32 +21,31 @@ class TransactionsInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Surface(builder: (context) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(width: 4.0),
-          FlowIcon(icon, size: 48.0, plated: true),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    flow.formatted,
-                    style: context.textTheme.displaySmall,
-                  ),
-                  Text(
-                    "transactions.count".t(context, count ?? 0),
-                    style: context.textTheme.bodySmall,
-                  ),
-                ],
+    return Surface(
+      builder: (context) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(width: 4.0),
+            FlowIcon(icon, size: 48.0, plated: true),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(flow.formatted, style: context.textTheme.displaySmall),
+                    Text(
+                      "transactions.count".t(context, count ?? 0),
+                      style: context.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 }

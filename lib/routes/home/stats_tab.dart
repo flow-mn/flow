@@ -70,139 +70,149 @@ class _StatsTabState extends State<StatsTab>
 
     final bool showForecast =
         report?.current.contains(DateTime.now()) == true &&
-            report!.currentExpenseSumForecast != null;
+        report!.currentExpenseSumForecast != null;
 
-    final bool showMissingExchangeRatesWarning = rates == null &&
+    final bool showMissingExchangeRatesWarning =
+        rates == null &&
         TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
 
     return Column(
       children: [
         Frame.standalone(
-          child: TimeRangeSelector(
-            initialValue: range,
-            onChanged: updateRange,
-          ),
+          child: TimeRangeSelector(initialValue: range, onChanged: updateRange),
         ),
         if (showMissingExchangeRatesWarning) ...[
           RatesMissingWarning(),
           const SizedBox(height: 12.0),
         ],
         Expanded(
-          child: hasData
-              ? SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlurOnBusy(
-                        busy: busy,
-                        child: Frame(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                showForecast
-                                    ? "tabs.stats.dailyReport.forecastFor"
-                                        .t(context, report!.current.format())
-                                    : "tabs.stats.dailyReport.totalExpenseFor"
-                                        .t(context, report!.current.format()),
-                                style:
-                                    context.textTheme.titleSmall?.semi(context),
-                              ),
-                              Row(
-                                children: [
-                                  MoneyText(
-                                    showForecast
-                                        ? report!.currentExpenseSumForecast
-                                        : report!.expenseSum,
-                                    style: context.textTheme.displaySmall,
-                                    autoSize: true,
-                                    tapToToggleAbbreviation: true,
+          child:
+              hasData
+                  ? SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BlurOnBusy(
+                          busy: busy,
+                          child: Frame(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  showForecast
+                                      ? "tabs.stats.dailyReport.forecastFor".t(
+                                        context,
+                                        report!.current.format(),
+                                      )
+                                      : "tabs.stats.dailyReport.totalExpenseFor"
+                                          .t(context, report!.current.format()),
+                                  style: context.textTheme.titleSmall?.semi(
+                                    context,
                                   ),
-                                  const SizedBox(width: 8.0),
-                                  Trend.fromMoney(
-                                    current: showForecast
-                                        ? report!.currentExpenseSumForecast
-                                        : report!.expenseSum,
-                                    previous: report!.previousExpenseSum,
+                                ),
+                                Row(
+                                  children: [
+                                    MoneyText(
+                                      showForecast
+                                          ? report!.currentExpenseSumForecast
+                                          : report!.expenseSum,
+                                      style: context.textTheme.displaySmall,
+                                      autoSize: true,
+                                      tapToToggleAbbreviation: true,
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Trend.fromMoney(
+                                      current:
+                                          showForecast
+                                              ? report!
+                                                  .currentExpenseSumForecast
+                                              : report!.expenseSum,
+                                      previous: report!.previousExpenseSum,
+                                      invertDelta: true,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        BlurOnBusy(
+                          busy: busy,
+                          child: RangeDailyChart(report: report!),
+                        ),
+                        const SizedBox(height: 24.0),
+                        BlurOnBusy(
+                          busy: busy,
+                          child: Frame(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: InfoCardWithDelta(
+                                    title:
+                                        "tabs.stats.dailyReport.dailyAvgExpense"
+                                            .t(context),
+                                    autoSizeGroup: autoSizeGroup,
+                                    money: report!.dailyAvgExpenditure,
+                                    previousMoney:
+                                        report!.previousDailyAvgExpenditure,
                                     invertDelta: true,
                                   ),
-                                ],
-                              ),
-                            ],
+                                ),
+                                const SizedBox(width: 16.0),
+                                Expanded(
+                                  child: InfoCardWithDelta(
+                                    title:
+                                        "tabs.stats.dailyReport.dailyAvgIncome"
+                                            .t(context),
+                                    autoSizeGroup: autoSizeGroup,
+                                    money: report!.dailyAvgIncome,
+                                    previousMoney:
+                                        report!.previousDailyAvgIncome,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      BlurOnBusy(
-                        busy: busy,
-                        child: RangeDailyChart(report: report!),
-                      ),
-                      const SizedBox(height: 24.0),
-                      BlurOnBusy(
-                        busy: busy,
-                        child: Frame(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InfoCardWithDelta(
-                                  title:
-                                      "tabs.stats.dailyReport.dailyAvgExpense"
-                                          .t(context),
-                                  autoSizeGroup: autoSizeGroup,
-                                  money: report!.dailyAvgExpenditure,
-                                  previousMoney:
-                                      report!.previousDailyAvgExpenditure,
-                                  invertDelta: true,
-                                ),
-                              ),
-                              const SizedBox(width: 16.0),
-                              Expanded(
-                                child: InfoCardWithDelta(
-                                  title: "tabs.stats.dailyReport.dailyAvgIncome"
-                                      .t(context),
-                                  autoSizeGroup: autoSizeGroup,
-                                  money: report!.dailyAvgIncome,
-                                  previousMoney: report!.previousDailyAvgIncome,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 24.0),
+                        ListHeader("tabs.stats.topSpendingCategory".t(context)),
+                        const SizedBox(height: 8.0),
+                        Frame(child: MostSpendingCategory(range: range)),
+                        const SizedBox(height: 24.0),
+                        ListHeader("tabs.stats.otherStats".t(context)),
+                        ListTile(
+                          title: Text(
+                            "tabs.stats.summaryByCategory".t(context),
                           ),
+                          onTap:
+                              () => context.push(
+                                "/stats/category?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+                              ),
+                          leading: FlowIcon(
+                            FlowIconData.icon(Symbols.category_rounded),
+                            size: 24.0,
+                          ),
+                          trailing: Icon(Symbols.chevron_right_rounded),
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      ListHeader("tabs.stats.topSpendingCategory".t(context)),
-                      const SizedBox(height: 8.0),
-                      Frame(child: MostSpendingCategory(range: range)),
-                      const SizedBox(height: 24.0),
-                      ListHeader("tabs.stats.otherStats".t(context)),
-                      ListTile(
-                        title: Text("tabs.stats.summaryByCategory".t(context)),
-                        onTap: () => context.push(
-                          "/stats/category?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+                        ListTile(
+                          title: Text("tabs.stats.summaryByAccount".t(context)),
+                          onTap:
+                              () => context.push(
+                                "/stats/account?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+                              ),
+                          leading: FlowIcon(
+                            FlowIconData.icon(Symbols.wallet_rounded),
+                            size: 24.0,
+                          ),
+                          trailing: Icon(Symbols.chevron_right_rounded),
                         ),
-                        leading: FlowIcon(
-                          FlowIconData.icon(Symbols.category_rounded),
-                          size: 24.0,
-                        ),
-                        trailing: Icon(Symbols.chevron_right_rounded),
-                      ),
-                      ListTile(
-                        title: Text("tabs.stats.summaryByAccount".t(context)),
-                        onTap: () => context.push(
-                          "/stats/account?range=${Uri.encodeQueryComponent(range.encodeShort())}",
-                        ),
-                        leading: FlowIcon(
-                          FlowIconData.icon(Symbols.wallet_rounded),
-                          size: 24.0,
-                        ),
-                        trailing: Icon(Symbols.chevron_right_rounded),
-                      ),
-                      const SizedBox(height: 96.0),
-                    ],
-                  ),
-                )
-              : NoData(),
+                        const SizedBox(height: 96.0),
+                      ],
+                    ),
+                  )
+                  : NoData(),
         ),
       ],
     );

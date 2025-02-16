@@ -40,9 +40,9 @@ class CalculatorButton extends StatelessWidget {
   }
 
   IconData get iconData => switch (operation) {
-        CalculatorOperation.add => Symbols.add_rounded,
-        CalculatorOperation.subtract => Symbols.remove_rounded,
-        CalculatorOperation.multiply => Symbols.close_small_rounded,
-        CalculatorOperation.divide => Symbols.percent_rounded,
-      };
+    CalculatorOperation.add => Symbols.add_rounded,
+    CalculatorOperation.subtract => Symbols.remove_rounded,
+    CalculatorOperation.multiply => Symbols.close_small_rounded,
+    CalculatorOperation.divide => Symbols.percent_rounded,
+  };
 }

@@ -40,18 +40,12 @@ class PiePercentBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FlowIcon(
-            icon,
-            size: 24.0,
-            color: color,
-          ),
+          FlowIcon(icon, size: 24.0, color: color),
           const SizedBox(width: 4.0),
           Text(
             "${(100 * percent).toStringAsFixed(1)}%",
-            style: context.textTheme.bodyMedium!.copyWith(
-              color: color,
-            ),
-          )
+            style: context.textTheme.bodyMedium!.copyWith(color: color),
+          ),
         ],
       ),
     );

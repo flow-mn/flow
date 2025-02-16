@@ -35,57 +35,65 @@ class _FileSelectAreaState extends State<FileSelectArea> {
       onDragEntered: (detail) => setState(() => _dragging = true),
       onDragExited: (detail) => setState(() => _dragging = false),
       child: SizedBox.expand(
-        child: _dragging
-            ? Container(
-                color: context.colorScheme.primary,
-                child: Center(
-                  child: Text(
-                    "sync.import.pickFile.dropzone.active".t(context),
-                    style: context.textTheme.headlineMedium
-                        ?.copyWith(color: context.colorScheme.onPrimary),
+        child:
+            _dragging
+                ? Container(
+                  color: context.colorScheme.primary,
+                  child: Center(
+                    child: Text(
+                      "sync.import.pickFile.dropzone.active".t(context),
+                      style: context.textTheme.headlineMedium?.copyWith(
+                        color: context.colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
-                ),
-              )
-            : Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: InkWell(
-                    onTap: widget.onTap,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Surface(
-                      builder: (context) => Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FlowIcon(
-                              FlowIconData.icon(
-                                Symbols.cloud_upload_rounded,
+                )
+                : Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: InkWell(
+                      onTap: widget.onTap,
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Surface(
+                        builder:
+                            (context) => Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FlowIcon(
+                                    FlowIconData.icon(
+                                      Symbols.cloud_upload_rounded,
+                                    ),
+                                    size: 80.0,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Text(
+                                    showDropText
+                                        ? "sync.import.pickFile.pickOrDrop".t(
+                                          context,
+                                        )
+                                        : "sync.import.pickFile".t(context),
+                                    style: context.textTheme.headlineSmall,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    "sync.import.pickFile.description".t(
+                                      context,
+                                    ),
+                                    style: context.textTheme.bodyMedium?.semi(
+                                      context,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                              size: 80.0,
                             ),
-                            const SizedBox(height: 8.0),
-                            Text(
-                              showDropText
-                                  ? "sync.import.pickFile.pickOrDrop".t(context)
-                                  : "sync.import.pickFile".t(context),
-                              style: context.textTheme.headlineSmall,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              "sync.import.pickFile.description".t(context),
-                              style:
-                                  context.textTheme.bodyMedium?.semi(context),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
       ),
     );
   }

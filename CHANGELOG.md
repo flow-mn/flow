@@ -18,6 +18,8 @@
 * Now you can group by "All time" - have your transactions in one big group...?
 * Currency filter now longer shows when you only use single currency
 * Slidable actions no longer preserve open panes when another opens in the same group
+* Backup history entry now shows file size with extra decimal precision (e.g., 1mb -> 1.2mb)
+* Modal pages will now respond to back buttons/gestures
 
 ### Fixes
 

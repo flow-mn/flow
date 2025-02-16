@@ -26,11 +26,7 @@ class SelectFilterPresetSheet extends StatefulWidget {
 
   final VoidCallback? onSaveAsNew;
 
-  const SelectFilterPresetSheet({
-    super.key,
-    this.selected,
-    this.onSaveAsNew,
-  });
+  const SelectFilterPresetSheet({super.key, this.selected, this.onSaveAsNew});
 
   @override
   State<SelectFilterPresetSheet> createState() =>
@@ -57,106 +53,107 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
         ],
       ),
       child: ValueListenableBuilder(
-          valueListenable: UserPreferencesService().valueNotiifer,
-          builder: (context, userPreferencesSnapshot, _) {
-            final String? defaultPreset =
-                userPreferencesSnapshot.defaultFilterPreset;
+        valueListenable: UserPreferencesService().valueNotiifer,
+        builder: (context, userPreferencesSnapshot, _) {
+          final String? defaultPreset =
+              userPreferencesSnapshot.defaultFilterPreset;
 
-            return StreamBuilder<List<TransactionFilterPreset>>(
-                stream: transactionFilterPresetsQb()
-                    .watch(triggerImmediately: true)
-                    .map((event) => event.find()),
-                builder: (context, presetsSnapshot) {
-                  if (!presetsSnapshot.hasData) {
-                    return Frame.standalone(child: Spinner.center());
-                  }
+          return StreamBuilder<List<TransactionFilterPreset>>(
+            stream: transactionFilterPresetsQb()
+                .watch(triggerImmediately: true)
+                .map((event) => event.find()),
+            builder: (context, presetsSnapshot) {
+              if (!presetsSnapshot.hasData) {
+                return Frame.standalone(child: Spinner.center());
+              }
 
-                  final List<TransactionFilterPreset> presets =
-                      presetsSnapshot.requireData;
+              final List<TransactionFilterPreset> presets =
+                  presetsSnapshot.requireData;
 
-                  final List<Account> accounts = ObjectBox().getAccounts(false);
-                  final List<Category> categories =
-                      ObjectBox().getCategories(false);
+              final List<Account> accounts = ObjectBox().getAccounts(false);
+              final List<Category> categories = ObjectBox().getCategories(
+                false,
+              );
 
-                  final bool flowDefaultSelected = widget.selected
-                          ?.calculateDifferentFieldCount(
-                              TransactionFilterPreset.defaultFilter) ==
-                      0;
-                  bool hasSelected = flowDefaultSelected;
+              final bool flowDefaultSelected =
+                  widget.selected?.calculateDifferentFieldCount(
+                    TransactionFilterPreset.defaultFilter,
+                  ) ==
+                  0;
+              bool hasSelected = flowDefaultSelected;
 
-                  return SlidableAutoCloseBehavior(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          DefaultFilterPresetListTile(
-                            selected: flowDefaultSelected,
-                            makeDefault: () => makeDefault(null),
-                            isDefault: defaultPreset == null,
-                            onTap: () => context.pop(
+              return SlidableAutoCloseBehavior(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DefaultFilterPresetListTile(
+                        selected: flowDefaultSelected,
+                        makeDefault: () => makeDefault(null),
+                        isDefault: defaultPreset == null,
+                        onTap:
+                            () => context.pop(
                               Optional(TransactionFilterPreset.defaultFilter),
                             ),
-                          ),
-                          ...presets.map((preset) {
-                            final int? differenceCount = widget.selected
-                                ?.calculateDifferentFieldCount(preset.filter);
-
-                            final bool valid = preset.filter.validate(
-                              accounts: accounts.map((x) => x.uuid).toList(),
-                              categories:
-                                  categories.map((x) => x.uuid).toList(),
-                            );
-
-                            if (differenceCount == 0) {
-                              hasSelected = true;
-                            }
-
-                            return FilterPresetListTile(
-                              onTap: () => context.pop(Optional(preset.filter)),
-                              delete: () => delete(preset),
-                              makeDefault: () => makeDefault(preset),
-                              valid: valid,
-                              preset: preset,
-                              isDefault: preset.uuid == defaultPreset,
-                              selected: differenceCount == 0,
-                            );
-                          }),
-                          if (widget.onSaveAsNew != null)
-                            (hasSelected
-                                ? Frame.standalone(
-                                    child: InfoText(
-                                      child: Text(
-                                        "transactionFilterPreset.saveAsNew.guide"
-                                            .t(context),
-                                      ),
-                                    ),
-                                  )
-                                : ListTile(
-                                    onTap: () => widget.onSaveAsNew!(),
-                                    title: Text(
-                                      "transactionFilterPreset.saveAsNew"
-                                          .t(context),
-                                    ),
-                                    trailing: Icon(Symbols.add_rounded),
-                                  )),
-                        ],
                       ),
-                    ),
-                  );
-                });
-          }),
+                      ...presets.map((preset) {
+                        final int? differenceCount = widget.selected
+                            ?.calculateDifferentFieldCount(preset.filter);
+
+                        final bool valid = preset.filter.validate(
+                          accounts: accounts.map((x) => x.uuid).toList(),
+                          categories: categories.map((x) => x.uuid).toList(),
+                        );
+
+                        if (differenceCount == 0) {
+                          hasSelected = true;
+                        }
+
+                        return FilterPresetListTile(
+                          onTap: () => context.pop(Optional(preset.filter)),
+                          delete: () => delete(preset),
+                          makeDefault: () => makeDefault(preset),
+                          valid: valid,
+                          preset: preset,
+                          isDefault: preset.uuid == defaultPreset,
+                          selected: differenceCount == 0,
+                        );
+                      }),
+                      if (widget.onSaveAsNew != null)
+                        (hasSelected
+                            ? Frame.standalone(
+                              child: InfoText(
+                                child: Text(
+                                  "transactionFilterPreset.saveAsNew.guide".t(
+                                    context,
+                                  ),
+                                ),
+                              ),
+                            )
+                            : ListTile(
+                              onTap: () => widget.onSaveAsNew!(),
+                              title: Text(
+                                "transactionFilterPreset.saveAsNew".t(context),
+                              ),
+                              trailing: Icon(Symbols.add_rounded),
+                            )),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
   Future<bool> delete(TransactionFilterPreset preset) async {
     final bool? confirmation = await context.showConfirmDialog(
-        isDeletionConfirmation: true,
-        title: "transactionFilterPreset.delete".t(context),
-        child: Text(
-          "general.delete.permanentWarning".t(
-            context,
-          ),
-        ));
+      isDeletionConfirmation: true,
+      title: "transactionFilterPreset.delete".t(context),
+      child: Text("general.delete.permanentWarning".t(context)),
+    );
 
     if (confirmation != true || !mounted) return false;
 

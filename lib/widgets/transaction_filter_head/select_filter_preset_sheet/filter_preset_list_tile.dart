@@ -46,15 +46,19 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
       onTap: widget.onTap,
       title: Text(preset.name),
       enabled: widget.valid,
-      subtitle: widget.valid
-          ? (filterSummary == null ? null : Text(filterSummary))
-          : Text("transactionFilterPreset.invalid".t(context)),
-      trailing: widget.valid
-          ? (widget.isDefault ? Icon(Symbols.star_rounded) : null)
-          : Tooltip(
-              message: "transactionFilterPreset.invalid.description".t(context),
-              child: Icon(Symbols.error_circle_rounded),
-            ),
+      subtitle:
+          widget.valid
+              ? (filterSummary == null ? null : Text(filterSummary))
+              : Text("transactionFilterPreset.invalid".t(context)),
+      trailing:
+          widget.valid
+              ? (widget.isDefault ? Icon(Symbols.star_rounded) : null)
+              : Tooltip(
+                message: "transactionFilterPreset.invalid.description".t(
+                  context,
+                ),
+                child: Icon(Symbols.error_circle_rounded),
+              ),
       selected: widget.selected,
     );
 
@@ -64,7 +68,7 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
           onPressed: (context) => widget.delete!(),
           icon: Symbols.delete_forever_rounded,
           backgroundColor: context.flowColors.expense,
-        )
+        ),
     ];
 
     final List<SlidableAction> startActionPanes = [
@@ -73,24 +77,26 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
           onPressed: (context) => widget.makeDefault!(),
           icon: Symbols.star_rounded,
           backgroundColor: context.colorScheme.secondary,
-        )
+        ),
     ];
 
     return Slidable(
       key: widget.dismissibleKey,
       groupTag: "filter_preset_list_tile",
-      endActionPane: endActionPanes.isNotEmpty
-          ? ActionPane(
-              motion: const DrawerMotion(),
-              children: endActionPanes,
-            )
-          : null,
-      startActionPane: startActionPanes.isNotEmpty
-          ? ActionPane(
-              motion: const DrawerMotion(),
-              children: startActionPanes,
-            )
-          : null,
+      endActionPane:
+          endActionPanes.isNotEmpty
+              ? ActionPane(
+                motion: const DrawerMotion(),
+                children: endActionPanes,
+              )
+              : null,
+      startActionPane:
+          startActionPanes.isNotEmpty
+              ? ActionPane(
+                motion: const DrawerMotion(),
+                children: startActionPanes,
+              )
+              : null,
       child: listTile,
     );
   }

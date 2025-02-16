@@ -35,9 +35,9 @@ class ModalSheet extends StatelessWidget {
     this.titleSpacing = 16.0,
     this.leadingSpacing = 8.0,
     this.trailingSpacing = 8.0,
-  })  : scrollable = false,
-        scrollableContentMaxHeight = 0,
-        minScrollableContentHeight = 0;
+  }) : scrollable = false,
+       scrollableContentMaxHeight = 0,
+       minScrollableContentHeight = 0;
 
   const ModalSheet.scrollable({
     super.key,
@@ -55,38 +55,42 @@ class ModalSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget? title = this.title == null
-        ? null
-        : DefaultTextStyle(
-            style: context.textTheme.headlineSmall!,
-            textAlign: TextAlign.center,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: this.title!,
-            ),
-          );
+    final Widget? title =
+        this.title == null
+            ? null
+            : DefaultTextStyle(
+              style: context.textTheme.headlineSmall!,
+              textAlign: TextAlign.center,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: this.title!,
+              ),
+            );
 
     final Widget? content = switch ((child, scrollable)) {
       (null, _) => null,
       (Widget child, false) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: child,
-        ),
-      (Widget scrollableChild, true) =>
-        LayoutBuilder(builder: (context, constraints) {
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: child,
+      ),
+      (Widget scrollableChild, true) => LayoutBuilder(
+        builder: (context, constraints) {
           return AnimatedContainer(
             constraints: BoxConstraints.loose(
               Size(
                 double.infinity,
                 // TODO move this to the parent widget (down below)
-                min(max(minScrollableContentHeight, scrollableContentMaxHeight),
-                    constraints.maxHeight),
+                min(
+                  max(minScrollableContentHeight, scrollableContentMaxHeight),
+                  constraints.maxHeight,
+                ),
               ),
             ),
             duration: const Duration(milliseconds: 200),
             child: scrollableChild,
           );
-        }),
+        },
+      ),
     };
 
     return Padding(

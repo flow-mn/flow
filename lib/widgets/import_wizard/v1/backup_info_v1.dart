@@ -22,9 +22,7 @@ class BackupInfoV1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(
-        16.0,
-      ),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Align(
@@ -62,18 +60,12 @@ class BackupInfoV1 extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          InfoText(
-            child: Text("sync.import.emergencyBackup".t(context)),
-          ),
+          InfoText(child: Text("sync.import.emergencyBackup".t(context))),
           const SizedBox(height: 16.0),
           Button(
             onTap: onClickStart,
-            leading: FlowIcon(
-              FlowIconData.icon(Symbols.download_rounded),
-            ),
-            child: Text(
-              "sync.import.start".t(context),
-            ),
+            leading: FlowIcon(FlowIconData.icon(Symbols.download_rounded)),
+            child: Text("sync.import.start".t(context)),
           ),
           const SizedBox(height: 24.0),
         ],

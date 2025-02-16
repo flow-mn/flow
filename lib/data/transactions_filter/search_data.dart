@@ -88,11 +88,8 @@ class TransactionSearchData {
       return _titleFilter;
     }
 
-    final Condition<Transaction> descriptionFilter =
-        Transaction_.description.contains(
-      normalizedKeyword!,
-      caseSensitive: false,
-    );
+    final Condition<Transaction> descriptionFilter = Transaction_.description
+        .contains(normalizedKeyword!, caseSensitive: false);
 
     if (_titleFilter != null) {
       return _titleFilter!.or(descriptionFilter);
@@ -171,9 +168,7 @@ class TransactionSearchData {
 
     if (normalizedTitle == null) return false;
 
-    return normalizedTitle.contains(
-      normalizedKeyword!,
-    );
+    return normalizedTitle.contains(normalizedKeyword!);
   }
 
   bool _exactMatching(Transaction t) {

@@ -45,9 +45,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("setup.profile.setup".t(context)),
-      ),
+      appBar: AppBar(title: Text("setup.profile.setup".t(context))),
       body: SafeArea(
         child: Form(
           key: formKey,
@@ -91,7 +89,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                 onTap: save,
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 child: Text("setup.next".t(context)),
-              )
+              ),
             ],
           ),
         ),
@@ -118,8 +116,9 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
         _currentlyEditing = Profile(name: trimmed);
       }
 
-      final updatedProfile =
-          await ObjectBox().box<Profile>().putAndGetAsync(_currentlyEditing!);
+      final updatedProfile = await ObjectBox().box<Profile>().putAndGetAsync(
+        _currentlyEditing!,
+      );
 
       if (testMode) {
         unawaited(LocalPreferences().primaryCurrency.set("USD"));

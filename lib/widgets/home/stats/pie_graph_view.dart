@@ -22,9 +22,7 @@ class PieGraphView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) {
-      return NoData(
-        selectTimeRange: changeMode,
-      );
+      return NoData(selectTimeRange: changeMode);
     }
 
     return SingleChildScrollView(
@@ -39,7 +37,8 @@ class PieGraphView extends StatelessWidget {
 
           if (associatedData is Category) {
             context.push(
-                "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.encodeShort())}");
+              "/category/${associatedData.id}?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+            );
           }
         },
       ),

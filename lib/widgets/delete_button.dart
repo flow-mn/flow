@@ -28,10 +28,7 @@ class DeleteButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: borderRadius,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12.0,
-            vertical: 8.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           child: DefaultTextStyle(
             style: TextStyle(
               color: context.colorScheme.onSurface,

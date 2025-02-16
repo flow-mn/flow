@@ -10,10 +10,7 @@ import "package:go_router/go_router.dart";
 class MonthSelectorSheet extends StatefulWidget {
   final DateTime? initialDate;
 
-  const MonthSelectorSheet({
-    super.key,
-    this.initialDate,
-  });
+  const MonthSelectorSheet({super.key, this.initialDate});
 
   @override
   State<MonthSelectorSheet> createState() => _MonthSelectorSheetState();
@@ -40,29 +37,20 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
         alignment: MainAxisAlignment.end,
         children: [
           TextButton(
-            onPressed: () => setState(() {
-              final DateTime now = DateTime.now();
-              year = now.year;
-              month = now.month;
-            }),
-            child: Text(
-              "general.timeSelector.now".t(context),
-            ),
+            onPressed:
+                () => setState(() {
+                  final DateTime now = DateTime.now();
+                  year = now.year;
+                  month = now.month;
+                }),
+            child: Text("general.timeSelector.now".t(context)),
           ),
-          Button(
-            onTap: pop,
-            child: Text(
-              "general.done".t(context),
-            ),
-          ),
+          Button(onTap: pop, child: Text("general.done".t(context))),
         ],
       ),
       child: Column(
         children: [
-          YearSelectorBar(
-            year: year,
-            onUpdate: updateYear,
-          ),
+          YearSelectorBar(year: year, onUpdate: updateYear),
           const SizedBox(height: 16.0),
           MonthsGrid(
             onTap: updateMonth,

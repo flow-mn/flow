@@ -20,20 +20,13 @@ class TransactionTypeButton extends StatelessWidget {
         color: type.actionBackgroundColor(context),
       ),
       padding: const EdgeInsets.all(16.0),
-      child: Icon(
-        type.icon,
-        color: type.actionColor(context),
-        weight: 800.0,
-      ),
+      child: Icon(type.icon, color: type.actionColor(context), weight: 800.0),
     );
 
     if (opacity == 1.0) {
       return child;
     }
 
-    return Opacity(
-      opacity: opacity,
-      child: child,
-    );
+    return Opacity(opacity: opacity, child: child);
   }
 }

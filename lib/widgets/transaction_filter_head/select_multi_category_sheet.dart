@@ -89,9 +89,10 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
   }
 
   void pop() {
-    final List<Category> selectedCategories = widget.categories
-        .where((category) => selectedUuids.contains(category.uuid))
-        .toList();
+    final List<Category> selectedCategories =
+        widget.categories
+            .where((category) => selectedUuids.contains(category.uuid))
+            .toList();
 
     context.pop(selectedCategories);
   }

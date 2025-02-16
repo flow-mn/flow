@@ -77,10 +77,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           borderRadius: BorderRadius.circular(8.0),
           child: SquareMap(
             center: center,
-            onTap: (pos) => setState(() {
-              useCurrentLocationWhenAvailable = false;
-              center = pos;
-            }),
+            onTap:
+                (pos) => setState(() {
+                  useCurrentLocationWhenAvailable = false;
+                  center = pos;
+                }),
           ),
         ),
       ),
@@ -92,34 +93,39 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
     if (LocalPreferences().enableGeo.get() != true) return;
     if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
 
-    Geolocator.getLastKnownPosition().then((lastKnown) {
-      if (lastKnown == null) {
-        return;
-      }
+    Geolocator.getLastKnownPosition()
+        .then((lastKnown) {
+          if (lastKnown == null) {
+            return;
+          }
 
-      if (!useCurrentLocationWhenAvailable) return;
+          if (!useCurrentLocationWhenAvailable) return;
 
-      if (mounted) {
-        setState(() {
-          center = LatLng(lastKnown.latitude, lastKnown.longitude);
+          if (mounted) {
+            setState(() {
+              center = LatLng(lastKnown.latitude, lastKnown.longitude);
+            });
+          }
+        })
+        .catchError((_) {
+          log("[Location Picker Sheet] Failed to get last known location");
         });
-      }
-    }).catchError((_) {
-      log("[Location Picker Sheet] Failed to get last known location");
-    });
 
-    Geolocator.getCurrentPosition().then((current) {
-      if (!useCurrentLocationWhenAvailable) return;
+    Geolocator.getCurrentPosition()
+        .then((current) {
+          if (!useCurrentLocationWhenAvailable) return;
 
-      center = LatLng(current.latitude, current.longitude);
-    }).catchError((_) {
-      log("[Location Picker Sheet] Failed to get current location");
-    }).whenComplete(() {
-      if (mounted) {
-        setState(() {
-          useCurrentLocationWhenAvailable = false;
+          center = LatLng(current.latitude, current.longitude);
+        })
+        .catchError((_) {
+          log("[Location Picker Sheet] Failed to get current location");
+        })
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              useCurrentLocationWhenAvailable = false;
+            });
+          }
         });
-      }
-    });
   }
 }
