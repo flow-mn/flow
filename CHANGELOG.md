@@ -1,11 +1,11 @@
 # Changelog
 
-## Next
+## Beta 0.12.0
 
 ### New features
 
 * Now you can create and delete (except the default one) filter presets
-* Now you can receive notifications for pending transactions on iOS and Android.
+* **[Experimental]** Now you can receive notifications for pending transactions on iOS and Android.
   It may support macOS in the future.
 * Deleted transaction now go to "Trash bin". You can recover recently deleted
   items, closes [#294](https://github.com/flow-mn/flow/issues/294)
