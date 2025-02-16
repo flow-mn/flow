@@ -166,7 +166,7 @@
     "transactionFilterPreset": "Filter preset",
     "transactionFilterPreset.saveAsNew": "Save as new",
     "transactionFilterPreset.saveAsNew.name": "Preset name",
-    "transactionFilterPreset.saveAsNew.guide": "You can change the filters and save as a new preset",
+    "transactionFilterPreset.saveAsNew.guide": "To save a new preset, change the filters, and come back here",
     "transactionFilterPreset.delete": "Delete preset",
     "transactionFilterPreset.invalid": "Invalid",
     "transactionFilterPreset.invalid.description": "Some account/category in this preset is missing. Please recreate or delete the preset",

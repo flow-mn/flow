@@ -166,7 +166,7 @@
     "transactionFilterPreset": "Filtre önayarı",
     "transactionFilterPreset.saveAsNew": "Yeni olarak kaydet",
     "transactionFilterPreset.saveAsNew.name": "Ön ayar adı",
-    "transactionFilterPreset.saveAsNew.guide": "Filtreleri değiştirebilir ve yeni bir önayar olarak kaydedebilirsiniz",
+    "transactionFilterPreset.saveAsNew.guide": "Yeni bir önayar kaydetmek için filtreleri değiştirin ve buraya geri dönün",
     "transactionFilterPreset.delete": "Önayarı sil",
     "transactionFilterPreset.invalid": "Geçersiz",
     "transactionFilterPreset.invalid.description": "Bu önayardaki bazı hesap/kategori eksik. Lütfen önayarı yeniden oluşturun veya silin",

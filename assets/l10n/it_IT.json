@@ -166,7 +166,7 @@
     "transactionFilterPreset": "Filtro salvato",
     "transactionFilterPreset.saveAsNew": "Salva come nuovo",
     "transactionFilterPreset.saveAsNew.name": "Nome del preset",
-    "transactionFilterPreset.saveAsNew.guide": "Puoi modificare i filtri e salvare come nuovo preset",
+    "transactionFilterPreset.saveAsNew.guide": "Per salvare un nuovo preset, modifica i filtri e torna qui",
     "transactionFilterPreset.delete": "Elimina filtro",
     "transactionFilterPreset.invalid": "Non valido",
     "transactionFilterPreset.invalid.description": "Alcuni conti/categorie in questo filtro sono mancanti. Per favore ricrea o elimina il filtro",

@@ -166,7 +166,7 @@
     "transactionFilterPreset": "Шүүлтүүрийн загвар",
     "transactionFilterPreset.saveAsNew": "Шинэ загвар хадгалах",
     "transactionFilterPreset.saveAsNew.name": "Загварын нэр",
-    "transactionFilterPreset.saveAsNew.guide": "Шүүлтүүрийг өөрчилж, загвар болгон хадгалах боломжтой",
+    "transactionFilterPreset.saveAsNew.guide": "Шүүлтүүрийг өөрчилсний дараа загвар болгон хадгалах боломжтой",
     "transactionFilterPreset.delete": "Загварыг устгах",
     "transactionFilterPreset.invalid": "Ашиглах боломжгүй",
     "transactionFilterPreset.invalid.description": "Энэ загвар дахь зарим данс/ангилал олдсонгүй. Дахин үүсгэх, эсвэл устгана уу",
