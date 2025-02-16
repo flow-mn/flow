@@ -35,20 +35,6 @@ class LocalPreferences {
   /// Whether to enable haptic feedback upon certain actions
   late final BoolSettingsEntry enableHapticFeedback;
 
-  /// Whether to combine transfer transactions in the transaction list
-  ///
-  /// Doesn't necessarily combine the transactions, but rather
-  /// shows them as a single transaction in the transaction list
-  ///
-  /// It will not work in transactions list where a filter has applied
-  late final BoolSettingsEntry combineTransferTransactions;
-
-  /// Whether to exclude transfer transactions from the flow
-  ///
-  /// When set to true, transfer transactions will not contribute
-  /// to total income/expense for a given context
-  late final BoolSettingsEntry excludeTransferFromFlow;
-
   late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
 
   late final BoolSettingsEntry completedInitialSetup;
@@ -90,16 +76,6 @@ class LocalPreferences {
       key: "enableHapticFeedback",
       preferences: _prefs,
       initialValue: true,
-    );
-    combineTransferTransactions = BoolSettingsEntry(
-      key: "combineTransferTransactions",
-      preferences: _prefs,
-      initialValue: true,
-    );
-    excludeTransferFromFlow = BoolSettingsEntry(
-      key: "excludeTransferFromFlow",
-      preferences: _prefs,
-      initialValue: false,
     );
     transactionButtonOrder = JsonListSettingsEntry<TransactionType>(
       key: "transactionButtonOrder",

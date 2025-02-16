@@ -10,8 +10,12 @@ TransactionFilter _$TransactionFilterFromJson(Map<String, dynamic> json) =>
     TransactionFilter(
       uuids:
           (json['uuids'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      categories: categoriesFromJson(json['categories'] as List<String>?),
-      accounts: accountsFromJson(json['accounts'] as List<String>?),
+      categories: (json['categories'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      accounts: (json['accounts'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       range: json['range'] == null
           ? null
           : TransactionFilterTimeRange.fromJson(json['range'] as String),
@@ -44,8 +48,8 @@ Map<String, dynamic> _$TransactionFilterToJson(TransactionFilter instance) =>
       'uuids': instance.uuids,
       'searchData': instance.searchData.toJson(),
       'types': instance.types?.map((e) => e.toJson()).toList(),
-      'categories': categoriesToJson(instance.categories),
-      'accounts': accountsToJson(instance.accounts),
+      'categories': instance.categories,
+      'accounts': instance.accounts,
       'sortDescending': instance.sortDescending,
       'sortBy': _$TransactionSortFieldEnumMap[instance.sortBy]!,
       'groupBy': _$TransactionGroupRangeEnumMap[instance.groupBy]!,
@@ -74,4 +78,5 @@ const _$TransactionGroupRangeEnumMap = {
   TransactionGroupRange.week: 'week',
   TransactionGroupRange.month: 'month',
   TransactionGroupRange.year: 'year',
+  TransactionGroupRange.allTime: 'allTime',
 };

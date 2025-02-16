@@ -146,23 +146,23 @@ class DebugThemePage extends StatelessWidget {
               subtitle: Text("bla bla bla disclaimer yara yara"),
               onTap: () {},
             ),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: const Text("With Checkbox Selected"),
               value: true,
               onChanged: (_) => {},
             ),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: const Text("With Checkbox Unselected"),
               value: false,
               onChanged: (_) => {},
             ),
-            RadioListTile.adaptive(
+            RadioListTile /*.adaptive*/ (
               title: const Text("With Radio Selected"),
               value: "a",
               groupValue: "a",
               onChanged: (_) {},
             ),
-            RadioListTile.adaptive(
+            RadioListTile /*.adaptive*/ (
               title: const Text("With Radio Unselected"),
               value: "b",
               groupValue: "a",

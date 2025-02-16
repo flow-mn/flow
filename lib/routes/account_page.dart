@@ -60,7 +60,7 @@ class _AccountPageState extends State<AccountPage> {
   bool busy = false;
 
   QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
-        accounts: [account!],
+        accounts: [account!.uuid],
         range: TransactionFilterTimeRange.fromTimeRange(range),
         sortBy: TransactionSortField.transactionDate,
         sortDescending: true,

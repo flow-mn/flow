@@ -67,7 +67,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                 ),
                 const SizedBox(height: 16.0),
                 if (_textEditingController.text.trim().toLowerCase() == "test")
-                  CheckboxListTile.adaptive(
+                  CheckboxListTile /*.adaptive*/ (
                     title: Text("Enable demo mode"),
                     value: testMode,
                     onChanged: (value) {

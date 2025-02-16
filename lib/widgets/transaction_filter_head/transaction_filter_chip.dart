@@ -1,12 +1,9 @@
-import "package:flow/data/transaction_filter.dart";
-import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/l10n/named_enum.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flow/utils/extensions/transaction_filter.dart";
+import "package:flutter/foundation.dart" hide Category;
 import "package:flutter/material.dart";
-import "package:moment_dart/moment_dart.dart";
 
 class TransactionFilterChip<T> extends StatelessWidget {
   final Widget? avatar;
@@ -22,7 +19,38 @@ class TransactionFilterChip<T> extends StatelessWidget {
   final T? value;
   final T? defaultValue;
 
-  bool get highlight => highlightOverride ?? value != defaultValue;
+  bool get highlight {
+    if (highlightOverride != null) {
+      return highlightOverride!;
+    }
+
+    if (defaultValue == null && value == null) {
+      return false;
+    }
+
+    if (defaultValue.runtimeType == value.runtimeType) {
+      if (value is Set<Account>) {
+        final Set<String> defaultValueSet = (defaultValue as Set<Account>)
+            .map((account) => account.uuid)
+            .toSet();
+        final Set<String> valueSet =
+            (value as Set<Account>).map((account) => account.uuid).toSet();
+
+        return !setEquals(defaultValueSet, valueSet);
+      }
+      if (value is Set<Category>) {
+        final Set<String> defaultValueSet = (defaultValue as Set<Category>)
+            .map((category) => category.uuid)
+            .toSet();
+        final Set<String> valueSet =
+            (value as Set<Category>).map((category) => category.uuid).toSet();
+
+        return !setEquals(defaultValueSet, valueSet);
+      }
+    }
+
+    return value != defaultValue;
+  }
 
   /// * If [defaultValue] and [value] are null, displays translated [translationKey]
   /// * If [defaultValue] isn't null, but [value] is null, displays translated `$translationKey.all`
@@ -63,87 +91,18 @@ class TransactionFilterChip<T> extends StatelessWidget {
     );
   }
 
-  String getValueLabel(BuildContext context, dynamic value) {
-    if (valueLabelOverride != null) {
-      final String? overriden = valueLabelOverride!(value);
-      if (overriden != null) {
-        return overriden;
-      }
-    }
-
-    if (value == null) {
-      return "$translationKey.all".t(context);
-    }
-
-    if (value case TransactionFilterTimeRange filterTimeRange) {
-      return filterTimeRange.preset?.localizedNameContext(context) ??
-          filterTimeRange.range?.format() ??
-          "-";
-    }
-
-    if (value case TimeRange timeRange) {
-      if (timeRange == last30DaysRange()) {
-        return "tabs.stats.timeRange.last30days".t(context);
-      }
-
-      return timeRange.format();
-    }
-
-    if (value case Account account) {
-      return account.name;
-    }
-
-    if (value case Category category) {
-      return category.name;
-    }
-
-    if (value case TransactionSearchData searchData) {
-      if (searchData.normalizedKeyword != null) {
-        return searchData.keyword ?? "";
-      } else {
-        return "transactions.query.filter.keyword".t(context);
-      }
-    }
-
-    if (value case LocalizedEnum localizedEnum) {
-      return localizedEnum.localizedNameContext(context);
-    }
-
-    if (value case List<dynamic> list) {
-      if (list.length > 2) {
-        if (list.first is Account) {
-          return "transactions.query.filter.accounts.n".t(
-            context,
-            list.length,
-          );
-        } else if (list.first is Category) {
-          return "transactions.query.filter.categories.n".t(
-            context,
-            list.length,
-          );
-        }
-      }
-
-      final String items =
-          list.map((item) => getValueLabel(context, item)).join(", ");
-
-      if (list.length == 1) {
-        return items;
-      }
-
-      return "(${list.length}) $items";
-    }
-
-    return value.toString();
-  }
-
   String getLabel(BuildContext context) {
     if (displayLabelOverride != null) {
       return displayLabelOverride!(value, defaultValue);
     }
 
     if (value != null) {
-      return getValueLabel(context, value);
+      return TransactionFilterHelpers.getValueLabel(
+        context,
+        value: value,
+        translationKey: translationKey,
+        valueLabelOverride: valueLabelOverride,
+      );
     }
 
     if (defaultValue == null) {

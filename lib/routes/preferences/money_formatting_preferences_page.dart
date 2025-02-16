@@ -27,7 +27,7 @@ class _MoneyFormattingPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title:
                     Text("preferences.moneyFormatting.preferFull".t(context)),
                 subtitle: Text(
@@ -37,7 +37,7 @@ class _MoneyFormattingPreferencesPageState
                 onChanged: updatePreferFullAmounts,
               ),
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text(
                     "preferences.moneyFormatting.useCurrencySymbol".t(context)),
                 subtitle: Text(

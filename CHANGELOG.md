@@ -1,13 +1,23 @@
 # Changelog
 
-## Next
+## Beta 0.12.0
+
+### New features
+
+* Now you can create and delete (except the default one) filter presets
+* **[Experimental]** Now you can receive notifications for pending transactions on iOS and Android.
+  It may support macOS in the future.
+* Deleted transaction now go to "Trash bin". You can recover recently deleted
+  items, closes [#294](https://github.com/flow-mn/flow/issues/294)
+* Added [catppuccin](https://github.com/catppuccin/catppuccin) themes
 
 ### Changes and improvements
 
 * Missing exchange rates warning no longer shows if you use only one currency
   across Flow
+* Now you can group by "All time" - have your transactions in one big group...?
 * Currency filter now longer shows when you only use single currency
-* Added [catppuccin](https://github.com/catppuccin/catppuccin) themes
+* Slidable actions no longer preserve open panes when another opens in the same group
 
 ### Fixes
 
@@ -16,13 +26,6 @@
   page in some cases
 * Fixed toggling `Transfers > Exclude from totals` would cause home tab flow to
   show incorrect data
-
-### New features
-
-* Now you can receive notifications for pending transactions on iOS and Android.
-  It may support macOS in the future.
-* Deleted transaction now go to "Trash bin". You can recover recently deleted
-  items, closes [#294](https://github.com/flow-mn/flow/issues/294)
 
 ## Beta 0.11.1
 

@@ -5,7 +5,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/home/account/no_accounts.dart";
@@ -28,17 +28,16 @@ class _AccountsPageState extends State<AccountsPage> {
   @override
   void initState() {
     super.initState();
-    LocalPreferences()
-        .excludeTransferFromFlow
-        .valueNotifier
+
+    UserPreferencesService()
+        .valueNotiifer
         .addListener(_updateExcludeTransfersInTotal);
   }
 
   @override
   void dispose() {
-    LocalPreferences()
-        .excludeTransferFromFlow
-        .valueNotifier
+    UserPreferencesService()
+        .valueNotiifer
         .removeListener(_updateExcludeTransfersInTotal);
     super.dispose();
   }
@@ -104,7 +103,7 @@ class _AccountsPageState extends State<AccountsPage> {
   void _updateExcludeTransfersInTotal() {
     setState(() {
       excludeTransfersInTotal =
-          LocalPreferences().excludeTransferFromFlow.get();
+          UserPreferencesService().excludeTransfersFromFlow;
     });
   }
 }

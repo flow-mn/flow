@@ -5,7 +5,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/account_card.dart";
@@ -59,10 +59,11 @@ class _AccountsTabState extends State<AccountsTab>
                       child: buildHeader(context),
                     ),
                     ValueListenableBuilder(
-                        valueListenable: LocalPreferences()
-                            .excludeTransferFromFlow
-                            .valueNotifier,
-                        builder: (context, excludeTransfersInTotal, child) {
+                        valueListenable: UserPreferencesService().valueNotiifer,
+                        builder: (context, userPreferences, child) {
+                          final bool excludeTransfersInTotal =
+                              userPreferences.excludeTransfersFromFlow;
+
                           return Expanded(
                             child: _reordering
                                 ? Frame(

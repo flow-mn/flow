@@ -22,6 +22,7 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -590,9 +591,7 @@ extension TransactionListActions on Iterable<Transaction> {
   /// and current list of transactions
   int get renderableCount =>
       length -
-      (LocalPreferences().combineTransferTransactions.get()
-          ? transfers.length ~/ 2
-          : 0);
+      (UserPreferencesService().combineTransfers ? transfers.length ~/ 2 : 0);
 
   double get incomeSumWithoutCurrency =>
       incomes.fold(0, (value, element) => value + element.amount);

@@ -20,9 +20,18 @@ SyncModelV2 _$SyncModelV2FromJson(Map<String, dynamic> json) => SyncModelV2(
       categories: (json['categories'] as List<dynamic>)
           .map((e) => Category.fromJson(e as Map<String, dynamic>))
           .toList(),
+      transactionFilterPresets:
+          (json['transactionFilterPresets'] as List<dynamic>?)
+              ?.map((e) =>
+                  TransactionFilterPreset.fromJson(e as Map<String, dynamic>))
+              .toList(),
       profile: json['profile'] == null
           ? null
           : Profile.fromJson(json['profile'] as Map<String, dynamic>),
+      userPreferences: json['userPreferences'] == null
+          ? null
+          : UserPreferences.fromJson(
+              json['userPreferences'] as Map<String, dynamic>),
       primaryCurrency: json['primaryCurrency'] as String?,
     );
 
@@ -35,6 +44,8 @@ Map<String, dynamic> _$SyncModelV2ToJson(SyncModelV2 instance) =>
       'transactions': instance.transactions,
       'accounts': instance.accounts,
       'categories': instance.categories,
+      'transactionFilterPresets': instance.transactionFilterPresets,
       'profile': instance.profile,
+      'userPreferences': instance.userPreferences,
       'primaryCurrency': instance.primaryCurrency,
     };

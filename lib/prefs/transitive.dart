@@ -143,7 +143,7 @@ class TransitiveLocalPreferences {
     for (final category in categories) {
       try {
         final TransactionFilter filter = TransactionFilter(
-          categories: [category],
+          categories: [category.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
               Moment.minValue.rangeTo(Moment.now())),
           sortBy: TransactionSortField.transactionDate,
@@ -182,7 +182,7 @@ class TransitiveLocalPreferences {
     for (final account in accounts) {
       try {
         final TransactionFilter filter = TransactionFilter(
-          accounts: [account],
+          accounts: [account.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
               Moment.minValue.rangeTo(Moment.now())),
           sortBy: TransactionSortField.transactionDate,

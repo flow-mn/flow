@@ -2,8 +2,10 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class GroupedTransactionList extends StatefulWidget {
@@ -112,7 +114,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   @override
   Widget build(BuildContext context) {
     final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
-        LocalPreferences().combineTransferTransactions.get();
+        UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -168,17 +170,21 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
         };
 
     if (widget.sliver == true) {
-      return SliverList.builder(
-        itemBuilder: itemBuilder,
-        itemCount: flattened.length,
+      return SlidableAutoCloseBehavior(
+        child: SliverList.builder(
+          itemBuilder: itemBuilder,
+          itemCount: flattened.length,
+        ),
       );
     }
 
-    return ListView.builder(
-      controller: widget.controller,
-      padding: widget.listPadding,
-      itemBuilder: itemBuilder,
-      itemCount: flattened.length,
+    return SlidableAutoCloseBehavior(
+      child: ListView.builder(
+        controller: widget.controller,
+        padding: widget.listPadding,
+        itemBuilder: itemBuilder,
+        itemCount: flattened.length,
+      ),
     );
   }
 
