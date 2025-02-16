@@ -26,30 +26,31 @@ class TransactionFilterTimeRange {
 
   const TransactionFilterTimeRange(this.value);
   factory TransactionFilterTimeRange._fromPreset(
-          TransactionFilterTimeRangePreset preset) =>
-      TransactionFilterTimeRange(preset.value);
+    TransactionFilterTimeRangePreset preset,
+  ) => TransactionFilterTimeRange(preset.value);
   factory TransactionFilterTimeRange.fromTimeRange(TimeRange range) =>
       TransactionFilterTimeRange(range.encodeShort());
 
   static TransactionFilterTimeRange last30Days =
       TransactionFilterTimeRange._fromPreset(
-    TransactionFilterTimeRangePreset.last30Days,
-  );
+        TransactionFilterTimeRangePreset.last30Days,
+      );
   static TransactionFilterTimeRange thisWeek =
       TransactionFilterTimeRange._fromPreset(
-    TransactionFilterTimeRangePreset.thisWeek,
-  );
+        TransactionFilterTimeRangePreset.thisWeek,
+      );
   static TransactionFilterTimeRange thisMonth =
       TransactionFilterTimeRange._fromPreset(
-    TransactionFilterTimeRangePreset.thisMonth,
-  );
+        TransactionFilterTimeRangePreset.thisMonth,
+      );
   static TransactionFilterTimeRange thisYear =
       TransactionFilterTimeRange._fromPreset(
-    TransactionFilterTimeRangePreset.thisYear,
-  );
+        TransactionFilterTimeRangePreset.thisYear,
+      );
   static TransactionFilterTimeRange allTime =
       TransactionFilterTimeRange._fromPreset(
-          TransactionFilterTimeRangePreset.allTime);
+        TransactionFilterTimeRangePreset.allTime,
+      );
 
   TimeRange? get range {
     if (TransactionFilterTimeRangePreset.last30Days.value == value) {
@@ -83,8 +84,9 @@ class TransactionFilterTimeRange {
   }
 
   TransactionFilterTimeRangePreset? get preset =>
-      TransactionFilterTimeRangePreset.values
-          .firstWhereOrNull((preset) => preset.value == value);
+      TransactionFilterTimeRangePreset.values.firstWhereOrNull(
+        (preset) => preset.value == value,
+      );
 
   String toJson() => value;
   factory TransactionFilterTimeRange.fromJson(String value) =>

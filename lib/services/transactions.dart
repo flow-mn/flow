@@ -48,9 +48,11 @@ class TransactionsService {
   QueryBuilder<Transaction> pendingTransactionsQb([DateTime? anchor]) {
     anchor = DateTime.now();
 
-    final Condition<Transaction> condition = nonDeletedCondition &
-        (Transaction_.transactionDate
-                .greaterThanDate(anchor.startOfNextMinute()) |
+    final Condition<Transaction> condition =
+        nonDeletedCondition &
+        (Transaction_.transactionDate.greaterThanDate(
+              anchor.startOfNextMinute(),
+            ) |
             Transaction_.isPending.equals(true));
 
     return ObjectBox()
@@ -67,8 +69,9 @@ class TransactionsService {
   }
 
   Future<List<int>> upsertMany(List<Transaction> transactions) async {
-    final List<int> ids =
-        await ObjectBox().box<Transaction>().putManyAsync(transactions);
+    final List<int> ids = await ObjectBox().box<Transaction>().putManyAsync(
+      transactions,
+    );
 
     return ids;
   }
@@ -145,15 +148,17 @@ class TransactionsService {
   }
 
   Future<int> updateOne(Transaction updateTransaction) async {
-    return await ObjectBox()
-        .box<Transaction>()
-        .putAsync(updateTransaction, mode: PutMode.update);
+    return await ObjectBox().box<Transaction>().putAsync(
+      updateTransaction,
+      mode: PutMode.update,
+    );
   }
 
   int updateOneSync(Transaction updateTransaction) {
-    return ObjectBox()
-        .box<Transaction>()
-        .put(updateTransaction, mode: PutMode.update);
+    return ObjectBox().box<Transaction>().put(
+      updateTransaction,
+      mode: PutMode.update,
+    );
   }
 
   Future<Transaction?> getOne(int id) async {
@@ -204,7 +209,7 @@ class TransactionsService {
     final Duration earlyReminder = Duration(
       seconds:
           PendingTransactionsLocalPreferences().earlyReminderInSeconds.get() ??
-              0,
+          0,
     );
 
     if (earlyReminder.inSeconds > 0) {

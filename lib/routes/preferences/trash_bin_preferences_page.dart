@@ -36,19 +36,19 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
     final int? trashBinRetentionDays =
         LocalPreferences().trashBinRetentionDays.get();
 
-    final bool isCustomPeriod = trashBinRetentionDays != null &&
-        !TrashBinPreferencesPage.choices
-            .any((preset) => trashBinRetentionDays == preset.inDays);
+    final bool isCustomPeriod =
+        trashBinRetentionDays != null &&
+        !TrashBinPreferencesPage.choices.any(
+          (preset) => trashBinRetentionDays == preset.inDays,
+        );
 
     final List<Duration> choices = [
       ...TrashBinPreferencesPage.choices,
-      if (isCustomPeriod) Duration(days: trashBinRetentionDays)
+      if (isCustomPeriod) Duration(days: trashBinRetentionDays),
     ]..sort((a, b) => a.inDays.compareTo(b.inDays));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.trashBin".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.trashBin".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -68,15 +68,15 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
                         key: ValueKey(value),
                         label: Text(
                           value.toDurationString(
-                            format: DurationFormat(
-                              [DurationUnit.day],
-                            ),
+                            format: DurationFormat([DurationUnit.day]),
                             dropPrefixOrSuffix: true,
                           ),
                         ),
-                        onSelected: (bool selected) => selected
-                            ? updateTrashBinRetentionDays(value.inDays)
-                            : null,
+                        onSelected:
+                            (bool selected) =>
+                                selected
+                                    ? updateTrashBinRetentionDays(value.inDays)
+                                    : null,
                         selected: value.inDays == trashBinRetentionDays,
                       ),
                     ),
@@ -84,8 +84,11 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
                       label: Text(
                         "preferences.trashBin.retention.forever".t(context),
                       ),
-                      onSelected: (bool selected) =>
-                          selected ? updateTrashBinRetentionDays(null) : null,
+                      onSelected:
+                          (bool selected) =>
+                              selected
+                                  ? updateTrashBinRetentionDays(null)
+                                  : null,
                       selected: trashBinRetentionDays == null,
                     ),
                   ],

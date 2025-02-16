@@ -49,9 +49,7 @@ class NumpadButton extends StatelessWidget {
           onTap: onTap == null ? null : onTapHandler,
           onDoubleTap: onDoubleTap,
           onLongPress: onLongPress,
-          child: Center(
-            child: child,
-          ),
+          child: Center(child: child),
         ),
       ),
     );

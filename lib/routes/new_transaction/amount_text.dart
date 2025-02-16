@@ -61,8 +61,8 @@ class _AmountTextState extends State<AmountText>
       vsync: this,
       duration: const Duration(milliseconds: 60),
     )..addListener(() {
-        setState(() {});
-      });
+      setState(() {});
+    });
 
     _amountTextScaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(
@@ -91,18 +91,15 @@ class _AmountTextState extends State<AmountText>
   Widget build(BuildContext context) {
     final TextStyle style = context.textTheme.displayMedium!;
 
-    final double amountFieldMaxHeight = MediaQuery.of(context)
-        .textScaler
-        .scale(style.fontSize! * style.height!);
+    final double amountFieldMaxHeight = MediaQuery.of(
+      context,
+    ).textScaler.scale(style.fontSize! * style.height!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: ContextMenu(
         actions: [
-          PopupMenuItem(
-            value: "copy",
-            child: Text("general.copy".t(context)),
-          ),
+          PopupMenuItem(value: "copy", child: Text("general.copy".t(context))),
         ],
         addPasteAction: true,
         onPaste: widget.onPaste,
@@ -127,16 +124,21 @@ class _AmountTextState extends State<AmountText>
     final String currency =
         widget.currency ?? LocalPreferences().getPrimaryCurrency();
 
-    final String formatted =
-        Money(currentValue.currentAmount, currency).formatMoney(
-      decimalDigits:
-          math.max(currentValue.decimalLength, _inputtingDecimal ? 1 : 0),
+    final String formatted = Money(
+      currentValue.currentAmount,
+      currency,
+    ).formatMoney(
+      decimalDigits: math.max(
+        currentValue.decimalLength,
+        _inputtingDecimal ? 1 : 0,
+      ),
       includeCurrency: !widget.hideCurrencySymbol,
     );
 
     if (currentValue.decimalLength == 0) {
-      final String decimalSeparator =
-          getDecimalSeparatorForCurrency(widget.currency);
+      final String decimalSeparator = getDecimalSeparatorForCurrency(
+        widget.currency,
+      );
 
       return formatted.replaceAll("${decimalSeparator}0", decimalSeparator);
     }

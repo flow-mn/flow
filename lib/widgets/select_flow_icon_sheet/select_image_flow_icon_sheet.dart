@@ -42,9 +42,10 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
   @override
   void initState() {
     super.initState();
-    value = widget.initialValue is ImageFlowIcon
-        ? widget.initialValue as ImageFlowIcon
-        : null;
+    value =
+        widget.initialValue is ImageFlowIcon
+            ? widget.initialValue as ImageFlowIcon
+            : null;
 
     if (value != null) {
       final String initialImagePath = value!.imagePath;
@@ -58,15 +59,14 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         }
 
         final File oldImage = File(
-          path.join(
-            ObjectBox.appDataDirectory,
-            initialImagePath,
-          ),
+          path.join(ObjectBox.appDataDirectory, initialImagePath),
         );
 
-        unawaited(oldImage.exists().then((_) {
-          unawaited(oldImage.delete());
-        }));
+        unawaited(
+          oldImage.exists().then((_) {
+            unawaited(oldImage.delete());
+          }),
+        );
       };
     } else {
       cleanUpImage = null;
@@ -91,9 +91,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
           TextButton.icon(
             onPressed: () => context.pop(value),
             icon: const Icon(Symbols.check_rounded),
-            label: Text(
-              "general.done".t(context),
-            ),
+            label: Text("general.done".t(context)),
           ),
         ],
       ),
@@ -111,9 +109,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
           TextButton.icon(
             onPressed: updatePicture,
             icon: const Icon(Symbols.add_photo_alternate_rounded),
-            label: Text(
-              "flowIcon.type.image.pick".t(context),
-            ),
+            label: Text("flowIcon.type.image.pick".t(context)),
           ),
           const SizedBox(height: 24.0),
         ],
@@ -141,10 +137,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
       if (bytes == null) throw "";
 
       final fileName = "${const Uuid().v4()}.png";
-      final file = File(path.join(
-        ObjectBox.imagesDirectory,
-        fileName,
-      ));
+      final file = File(path.join(ObjectBox.imagesDirectory, fileName));
       await file.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
 

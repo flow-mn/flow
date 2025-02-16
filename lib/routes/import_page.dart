@@ -31,16 +31,15 @@ class _ImportPageState extends State<ImportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("sync.import".t(context)),
-      ),
+      appBar: AppBar(title: Text("sync.import".t(context))),
       body: SafeArea(
-        child: busy
-            ? const Spinner.center()
-            : FileSelectArea(
-                onFileDropped: initiateImportFromDroppedFile,
-                onTap: initiateImport,
-              ),
+        child:
+            busy
+                ? const Spinner.center()
+                : FileSelectArea(
+                  onFileDropped: initiateImportFromDroppedFile,
+                  onTap: initiateImport,
+                ),
       ),
     );
   }
@@ -53,9 +52,7 @@ class _ImportPageState extends State<ImportPage> {
     });
 
     try {
-      importer = await importBackup(
-        backupFile: backupFile,
-      );
+      importer = await importBackup(backupFile: backupFile);
 
       if (mounted) {
         switch (importer) {

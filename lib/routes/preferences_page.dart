@@ -33,8 +33,9 @@ class PreferencesPageState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().theme.themeName.get());
+    final FlowColorScheme currentTheme = getTheme(
+      LocalPreferences().theme.themeName.get(),
+    );
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
@@ -43,9 +44,7 @@ class PreferencesPageState extends State<PreferencesPage> {
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences".t(context))),
       body: SafeArea(
         child: ListView(
           children: [
@@ -118,11 +117,13 @@ class PreferencesPageState extends State<PreferencesPage> {
             const SizedBox(height: 8.0),
             ListTile(
               title: Text("preferences.theme".t(context)),
-              leading: currentTheme.isDark
-                  ? const Icon(Symbols.dark_mode_rounded)
-                  : const Icon(Symbols.light_mode_rounded),
-              subtitle:
-                  Text(themeNames[currentTheme.name] ?? currentTheme.name),
+              leading:
+                  currentTheme.isDark
+                      ? const Icon(Symbols.dark_mode_rounded)
+                      : const Icon(Symbols.light_mode_rounded),
+              subtitle: Text(
+                themeNames[currentTheme.name] ?? currentTheme.name,
+              ),
               onTap: _openTheme,
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
@@ -140,8 +141,10 @@ class PreferencesPageState extends State<PreferencesPage> {
             ListTile(
               title: Text("preferences.transactionButtonOrder".t(context)),
               leading: const Icon(Symbols.action_key_rounded),
-              onTap: () =>
-                  _pushAndRefreshAfter("/preferences/transactionButtonOrder"),
+              onTap:
+                  () => _pushAndRefreshAfter(
+                    "/preferences/transactionButtonOrder",
+                  ),
               subtitle: Text(
                 "preferences.transactionButtonOrder.description".t(context),
                 maxLines: 1,
@@ -184,14 +187,13 @@ class PreferencesPageState extends State<PreferencesPage> {
     });
 
     try {
-      Locale current = LocalPreferences().localeOverride.get() ??
+      Locale current =
+          LocalPreferences().localeOverride.get() ??
           FlowLocalizations.supportedLanguages.first;
 
       final selected = await showModalBottomSheet<Locale>(
         context: context,
-        builder: (context) => LanguageSelectionSheet(
-          currentLocale: current,
-        ),
+        builder: (context) => LanguageSelectionSheet(currentLocale: current),
         isScrollControlled: true,
       );
 

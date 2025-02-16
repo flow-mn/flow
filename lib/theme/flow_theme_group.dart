@@ -7,11 +7,7 @@ class FlowThemeGroup {
 
   final List<FlowColorScheme> schemes;
 
-  const FlowThemeGroup({
-    required this.schemes,
-    required this.name,
-    this.icon,
-  });
+  const FlowThemeGroup({required this.schemes, required this.name, this.icon});
 
   Map<String, FlowColorScheme> get schemesMap {
     final Map<String, FlowColorScheme> map = {};

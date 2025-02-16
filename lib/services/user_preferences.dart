@@ -5,8 +5,9 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
-  final ValueNotifier<UserPreferences> valueNotiifer =
-      ValueNotifier(UserPreferences());
+  final ValueNotifier<UserPreferences> valueNotiifer = ValueNotifier(
+    UserPreferences(),
+  );
 
   UserPreferences get value => valueNotiifer.value;
 
@@ -39,10 +40,13 @@ class UserPreferencesService {
       return null;
     }
 
-    final Query<TransactionFilterPreset> query = ObjectBox()
-        .box<TransactionFilterPreset>()
-        .query(TransactionFilterPreset_.uuid.equals(defaultFilterPresetUuid!))
-        .build();
+    final Query<TransactionFilterPreset> query =
+        ObjectBox()
+            .box<TransactionFilterPreset>()
+            .query(
+              TransactionFilterPreset_.uuid.equals(defaultFilterPresetUuid!),
+            )
+            .build();
 
     final TransactionFilterPreset? preset = query.findFirst();
 
@@ -64,13 +68,13 @@ class UserPreferencesService {
         .query()
         .watch(triggerImmediately: true)
         .listen((event) {
-      final UserPreferences? userPreferences = event.findFirst();
+          final UserPreferences? userPreferences = event.findFirst();
 
-      if (userPreferences == null) {
-        return;
-      }
+          if (userPreferences == null) {
+            return;
+          }
 
-      valueNotiifer.value = userPreferences;
-    });
+          valueNotiifer.value = userPreferences;
+        });
   }
 }

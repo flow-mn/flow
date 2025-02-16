@@ -19,32 +19,33 @@ class AddAccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      builder: (context) => InkWell(
-        onTap: () => context.push("/account/new"),
-        borderRadius: borderRadius,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      builder:
+          (context) => InkWell(
+            onTap: () => context.push("/account/new"),
+            borderRadius: borderRadius,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  FlowIcon(
-                    FlowIconData.icon(Symbols.add_rounded),
-                    size: 60.0,
-                  ),
-                  const SizedBox(width: 8.0),
-                  Text(
-                    "setup.accounts.addAccount".t(context),
-                    style: context.textTheme.titleSmall,
+                  Row(
+                    children: [
+                      FlowIcon(
+                        FlowIconData.icon(Symbols.add_rounded),
+                        size: 60.0,
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        "setup.accounts.addAccount".t(context),
+                        style: context.textTheme.titleSmall,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 }

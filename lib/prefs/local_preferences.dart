@@ -82,8 +82,8 @@ class LocalPreferences {
       preferences: _prefs,
       removeDuplicates: true,
       initialValue: TransactionType.values,
-      fromJson: (json) =>
-          TransactionType.fromJson(json) ?? TransactionType.expense,
+      fromJson:
+          (json) => TransactionType.fromJson(json) ?? TransactionType.expense,
       toJson: (transactionType) => transactionType.toJson(),
     );
 
@@ -147,8 +147,9 @@ class LocalPreferences {
       initialValue: 30,
     );
 
-    pendingTransactions =
-        PendingTransactionsLocalPreferences.initialize(_prefs);
+    pendingTransactions = PendingTransactionsLocalPreferences.initialize(
+      _prefs,
+    );
     theme = ThemeLocalPreferences.initialize(_prefs);
     transitive = TransitiveLocalPreferences.initialize(_prefs);
   }
@@ -160,11 +161,12 @@ class LocalPreferences {
       late final String? firstAccountCurency;
 
       try {
-        final Query<Account> firstAccountQuery = ObjectBox()
-            .box<Account>()
-            .query()
-            .order(Account_.createdDate)
-            .build();
+        final Query<Account> firstAccountQuery =
+            ObjectBox()
+                .box<Account>()
+                .query()
+                .order(Account_.createdDate)
+                .build();
 
         firstAccountCurency = firstAccountQuery.findFirst()?.currency;
 
@@ -178,9 +180,10 @@ class LocalPreferences {
         // opens the app. When recovering from a backup, backup logic should
         // handle setting this value.
         primaryCurrencyName =
-            NumberFormat.currency(locale: Intl.defaultLocale ?? "en_US")
-                    .currencyName ??
-                "USD";
+            NumberFormat.currency(
+              locale: Intl.defaultLocale ?? "en_US",
+            ).currencyName ??
+            "USD";
       } else {
         primaryCurrencyName = firstAccountCurency;
       }
@@ -211,7 +214,8 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    _instance ??=
-        LocalPreferences._internal(await SharedPreferences.getInstance());
+    _instance ??= LocalPreferences._internal(
+      await SharedPreferences.getInstance(),
+    );
   }
 }

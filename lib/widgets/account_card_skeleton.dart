@@ -17,32 +17,33 @@ class AccountCardSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      builder: (context) => InkWell(
-        onTap: onTap,
-        borderRadius: borderRadius,
-        child: SizedBox(
-          height: 179.0,
-          width: double.infinity,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Create an account",
-                  style: context.textTheme.titleMedium,
+      builder:
+          (context) => InkWell(
+            onTap: onTap,
+            borderRadius: borderRadius,
+            child: SizedBox(
+              height: 179.0,
+              width: double.infinity,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Create an account",
+                      style: context.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    const Icon(
+                      Symbols.add_rounded,
+                      size: 40.0,
+                      weight: 600.0,
+                      opticalSize: 40.0,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8.0),
-                const Icon(
-                  Symbols.add_rounded,
-                  size: 40.0,
-                  weight: 600.0,
-                  opticalSize: 40.0,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
     );
   }
 }

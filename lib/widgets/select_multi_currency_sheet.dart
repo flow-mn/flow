@@ -45,7 +45,8 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text("account.edit.selectCurrency".t(context)),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.4 -
+      scrollableContentMaxHeight:
+          MediaQuery.of(context).size.height * 0.4 -
           MediaQuery.of(context).viewInsets.vertical,
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -65,31 +66,31 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: widget.currencies.map((currency) {
-            final CurrencyData transformedCurrencyData =
-                iso4217CurrenciesGrouped[currency.code]!;
+          children:
+              widget.currencies.map((currency) {
+                final CurrencyData transformedCurrencyData =
+                    iso4217CurrenciesGrouped[currency.code]!;
 
-            return CheckboxListTile /*.adaptive*/ (
-              value: selectedUuids.contains(transformedCurrencyData.code),
-              title: Text(
-                transformedCurrencyData.name,
-              ),
-              subtitle: Text(
-                transformedCurrencyData.country.titleCase(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              secondary: Text(
-                transformedCurrencyData.code,
-                style: context.textTheme.bodyLarge?.copyWith(
-                  fontFeatures: [const FontFeature.tabularFigures()],
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              onChanged: (value) => select(transformedCurrencyData.code, value),
-            );
-          }).toList(),
+                return CheckboxListTile /*.adaptive*/ (
+                  value: selectedUuids.contains(transformedCurrencyData.code),
+                  title: Text(transformedCurrencyData.name),
+                  subtitle: Text(
+                    transformedCurrencyData.country.titleCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  secondary: Text(
+                    transformedCurrencyData.code,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      fontFeatures: [const FontFeature.tabularFigures()],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onChanged:
+                      (value) => select(transformedCurrencyData.code, value),
+                );
+              }).toList(),
         ),
       ),
     );

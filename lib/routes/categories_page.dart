@@ -22,13 +22,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("categories".t(context)),
-      ),
+      appBar: AppBar(title: Text("categories".t(context))),
       body: SafeArea(
         child: StreamBuilder<List<Category>>(
-          stream:
-              qb().watch(triggerImmediately: true).map((event) => event.find()),
+          stream: qb()
+              .watch(triggerImmediately: true)
+              .map((event) => event.find()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Spinner.center();
@@ -39,25 +38,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
             return switch (categories.length) {
               0 => const NoCategories(),
               _ => SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 16.0),
-                        child: AddCategoryCard(),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: AddCategoryCard(),
+                    ),
+                    ...categories.map(
+                      (category) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: CategoryCard(category: category),
                       ),
-                      ...categories.map(
-                        (category) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: CategoryCard(
-                            category: category,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16.0),
+                  ],
                 ),
+              ),
             };
           },
         ),

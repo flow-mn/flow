@@ -7,33 +7,40 @@ part of 'model_v2.dart';
 // **************************************************************************
 
 SyncModelV2 _$SyncModelV2FromJson(Map<String, dynamic> json) => SyncModelV2(
-      versionCode: (json['versionCode'] as num).toInt(),
-      exportDate: DateTime.parse(json['exportDate'] as String),
-      username: json['username'] as String,
-      appVersion: json['appVersion'] as String,
-      transactions: (json['transactions'] as List<dynamic>)
+  versionCode: (json['versionCode'] as num).toInt(),
+  exportDate: DateTime.parse(json['exportDate'] as String),
+  username: json['username'] as String,
+  appVersion: json['appVersion'] as String,
+  transactions:
+      (json['transactions'] as List<dynamic>)
           .map((e) => Transaction.fromJson(e as Map<String, dynamic>))
           .toList(),
-      accounts: (json['accounts'] as List<dynamic>)
+  accounts:
+      (json['accounts'] as List<dynamic>)
           .map((e) => Account.fromJson(e as Map<String, dynamic>))
           .toList(),
-      categories: (json['categories'] as List<dynamic>)
+  categories:
+      (json['categories'] as List<dynamic>)
           .map((e) => Category.fromJson(e as Map<String, dynamic>))
           .toList(),
-      transactionFilterPresets:
-          (json['transactionFilterPresets'] as List<dynamic>?)
-              ?.map((e) =>
-                  TransactionFilterPreset.fromJson(e as Map<String, dynamic>))
-              .toList(),
-      profile: json['profile'] == null
+  transactionFilterPresets:
+      (json['transactionFilterPresets'] as List<dynamic>?)
+          ?.map(
+            (e) => TransactionFilterPreset.fromJson(e as Map<String, dynamic>),
+          )
+          .toList(),
+  profile:
+      json['profile'] == null
           ? null
           : Profile.fromJson(json['profile'] as Map<String, dynamic>),
-      userPreferences: json['userPreferences'] == null
+  userPreferences:
+      json['userPreferences'] == null
           ? null
           : UserPreferences.fromJson(
-              json['userPreferences'] as Map<String, dynamic>),
-      primaryCurrency: json['primaryCurrency'] as String?,
-    );
+            json['userPreferences'] as Map<String, dynamic>,
+          ),
+  primaryCurrency: json['primaryCurrency'] as String?,
+);
 
 Map<String, dynamic> _$SyncModelV2ToJson(SyncModelV2 instance) =>
     <String, dynamic>{

@@ -40,55 +40,63 @@ class _AccountsTabState extends State<AccountsTab>
     super.build(context);
 
     return TransactionWatcher(
-      builder: (context, _, __) => StreamBuilder<List<Account>>(
-          stream:
-              qb().watch(triggerImmediately: true).map((event) => event.find()),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Spinner.center();
-            }
+      builder:
+          (context, _, __) => StreamBuilder<List<Account>>(
+            stream: qb()
+                .watch(triggerImmediately: true)
+                .map((event) => event.find()),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Spinner.center();
+              }
 
-            final List<Account> accounts = snapshot.requireData;
+              final List<Account> accounts = snapshot.requireData;
 
-            return switch (accounts.length) {
-              0 => const NoAccounts(),
-              _ => Column(
+              return switch (accounts.length) {
+                0 => const NoAccounts(),
+                _ => Column(
                   children: [
                     const SizedBox(height: 16.0),
-                    Frame(
-                      child: buildHeader(context),
-                    ),
+                    Frame(child: buildHeader(context)),
                     ValueListenableBuilder(
-                        valueListenable: UserPreferencesService().valueNotiifer,
-                        builder: (context, userPreferences, child) {
-                          final bool excludeTransfersInTotal =
-                              userPreferences.excludeTransfersFromFlow;
+                      valueListenable: UserPreferencesService().valueNotiifer,
+                      builder: (context, userPreferences, child) {
+                        final bool excludeTransfersInTotal =
+                            userPreferences.excludeTransfersFromFlow;
 
-                          return Expanded(
-                            child: _reordering
-                                ? Frame(
+                        return Expanded(
+                          child:
+                              _reordering
+                                  ? Frame(
                                     child: ReorderableListView.builder(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 96.0),
-                                      itemBuilder: (context, index) => Padding(
-                                        key: ValueKey(accounts[index].uuid),
-                                        padding:
-                                            const EdgeInsets.only(bottom: 16.0),
-                                        child: AccountCard(
-                                          account: accounts[index],
-                                          useCupertinoContextMenu: false,
-                                          excludeTransfersInTotal:
-                                              excludeTransfersInTotal == true,
-                                        ),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 96.0,
                                       ),
+                                      itemBuilder:
+                                          (context, index) => Padding(
+                                            key: ValueKey(accounts[index].uuid),
+                                            padding: const EdgeInsets.only(
+                                              bottom: 16.0,
+                                            ),
+                                            child: AccountCard(
+                                              account: accounts[index],
+                                              useCupertinoContextMenu: false,
+                                              excludeTransfersInTotal:
+                                                  excludeTransfersInTotal ==
+                                                  true,
+                                            ),
+                                          ),
                                       proxyDecorator: proxyDecorator,
                                       itemCount: accounts.length,
-                                      onReorder: (oldIndex, newIndex) =>
-                                          onReorder(
-                                              accounts, oldIndex, newIndex),
+                                      onReorder:
+                                          (oldIndex, newIndex) => onReorder(
+                                            accounts,
+                                            oldIndex,
+                                            newIndex,
+                                          ),
                                     ),
                                   )
-                                : ListView(
+                                  : ListView(
                                     padding: const EdgeInsets.all(16.0),
                                     children: [
                                       TotalBalance(),
@@ -98,7 +106,8 @@ class _AccountsTabState extends State<AccountsTab>
                                       ...accounts.map(
                                         (account) => Padding(
                                           padding: const EdgeInsets.only(
-                                              bottom: 16.0),
+                                            bottom: 16.0,
+                                          ),
                                           child: AccountCard(
                                             account: account,
                                             useCupertinoContextMenu:
@@ -107,26 +116,29 @@ class _AccountsTabState extends State<AccountsTab>
                                                 excludeTransfersInTotal == true,
                                             onTapOverride: Optional(() async {
                                               await context.push(
-                                                  "/account/${account.id}");
+                                                "/account/${account.id}",
+                                              );
                                               setState(() {});
                                             }),
                                           ),
                                         ),
                                       ),
                                       AccountCardSkeleton(
-                                        onTap: () =>
-                                            context.push("/account/new"),
+                                        onTap:
+                                            () => context.push("/account/new"),
                                       ),
                                       const SizedBox(height: 16.0),
                                       const SizedBox(height: 64.0),
                                     ],
                                   ),
-                          );
-                        }),
+                        );
+                      },
+                    ),
                   ],
                 ),
-            };
-          }),
+              };
+            },
+          ),
     );
   }
 
@@ -142,12 +154,14 @@ class _AccountsTabState extends State<AccountsTab>
         const Spacer(),
         IconButton(
           onPressed: toggleReorderMode,
-          tooltip: _reordering
-              ? "general.done".t(context)
-              : "tabs.accounts.reorder".t(context),
-          icon: _reordering
-              ? const Icon(Symbols.check_rounded)
-              : const Icon(Symbols.reorder_rounded),
+          tooltip:
+              _reordering
+                  ? "general.done".t(context)
+                  : "tabs.accounts.reorder".t(context),
+          icon:
+              _reordering
+                  ? const Icon(Symbols.check_rounded)
+                  : const Icon(Symbols.reorder_rounded),
         ),
       ],
     );
@@ -157,11 +171,7 @@ class _AccountsTabState extends State<AccountsTab>
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget? child) {
-        return Material(
-          elevation: 0,
-          color: Colors.transparent,
-          child: child,
-        );
+        return Material(elevation: 0, color: Colors.transparent, child: child);
       },
       child: child,
     );

@@ -34,20 +34,20 @@ extension TransactionTypeWidgetData on TransactionType {
   }
 
   Color color(BuildContext context) => switch (this) {
-        TransactionType.income => context.flowColors.income,
-        TransactionType.expense => context.flowColors.expense,
-        TransactionType.transfer => context.colorScheme.onSurface,
-      };
+    TransactionType.income => context.flowColors.income,
+    TransactionType.expense => context.flowColors.expense,
+    TransactionType.transfer => context.colorScheme.onSurface,
+  };
 
   Color actionColor(BuildContext context) => switch (this) {
-        TransactionType.income => context.colorScheme.onError,
-        TransactionType.expense => context.colorScheme.onError,
-        TransactionType.transfer => context.colorScheme.onSecondary,
-      };
+    TransactionType.income => context.colorScheme.onError,
+    TransactionType.expense => context.colorScheme.onError,
+    TransactionType.transfer => context.colorScheme.onSecondary,
+  };
 
   Color actionBackgroundColor(BuildContext context) => switch (this) {
-        TransactionType.income => context.flowColors.income,
-        TransactionType.expense => context.flowColors.expense,
-        TransactionType.transfer => context.colorScheme.secondary,
-      };
+    TransactionType.income => context.flowColors.income,
+    TransactionType.expense => context.flowColors.expense,
+    TransactionType.transfer => context.colorScheme.secondary,
+  };
 }

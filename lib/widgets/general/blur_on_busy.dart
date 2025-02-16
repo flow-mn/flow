@@ -26,10 +26,7 @@ class BlurOnBusy extends StatelessWidget {
           if (busy)
             Positioned.fill(
               child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: sigmaX,
-                  sigmaY: sigmaY,
-                ),
+                filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
                 child: Container(),
               ),
             ),

@@ -11,9 +11,7 @@ class SetupOnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("setup.onboarding".t(context)),
-      ),
+      appBar: AppBar(title: Text("setup.onboarding".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -30,8 +28,9 @@ class SetupOnboardingPage extends StatelessWidget {
                 onTap: () => context.push("/import?setupMode=true"),
                 icon: FlowIconData.icon(Symbols.restore_page_rounded),
                 title: "setup.onboarding.importExisting".t(context),
-                subtitle:
-                    "setup.onboarding.importExisting.description".t(context),
+                subtitle: "setup.onboarding.importExisting.description".t(
+                  context,
+                ),
               ),
             ],
           ),

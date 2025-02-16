@@ -66,29 +66,19 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
     flowerAnimation = CurvedAnimation(
       parent: animationController,
-      curve: Interval(
-        0,
-        0.8,
-        curve: Curves.easeIn,
-      ),
+      curve: Interval(0, 0.8, curve: Curves.easeIn),
     );
     opacityAnimation = CurvedAnimation(
       parent: animationController,
-      curve: Interval(
-        0.8,
-        1.0,
-        curve: Curves.decelerate,
-      ),
+      curve: Interval(0.8, 1.0, curve: Curves.decelerate),
     );
 
-    Future.delayed(widget.animationStartDelay).then(
-      (_) {
-        if (!mounted) return;
+    Future.delayed(widget.animationStartDelay).then((_) {
+      if (!mounted) return;
 
-        animationController.reset();
-        animationController.forward(from: 0.0);
-      },
-    );
+      animationController.reset();
+      animationController.forward(from: 0.0);
+    });
   }
 
   @override
@@ -105,8 +95,9 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     int themeIndex = -1;
 
     for (int i = 0; i < widget.groups.length; i++) {
-      final index = widget.groups[i].schemes
-          .indexWhere((scheme) => scheme.name == currentTheme);
+      final index = widget.groups[i].schemes.indexWhere(
+        (scheme) => scheme.name == currentTheme,
+      );
       if (index != -1) {
         groupIndex = i;
         themeIndex = index;
@@ -146,9 +137,10 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                         itemCount,
                       );
 
-                      _cursor = itemIndexAtPointer != null
-                          ? SystemMouseCursors.click
-                          : MouseCursor.defer;
+                      _cursor =
+                          itemIndexAtPointer != null
+                              ? SystemMouseCursors.click
+                              : MouseCursor.defer;
 
                       setState(() {
                         hoveringIndex = itemIndexAtPointer;
@@ -156,19 +148,21 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                     },
                     onExit: (_) => setState(() => hoveringIndex = null),
                     child: GestureDetector(
-                      onPanUpdate: widget.updateOnHover
-                          ? ((details) {
-                              final int? itemIndexAtPointer = getItemAtPointer(
-                                details.localPosition,
-                                constraints,
-                                itemCount,
-                              );
+                      onPanUpdate:
+                          widget.updateOnHover
+                              ? ((details) {
+                                final int? itemIndexAtPointer =
+                                    getItemAtPointer(
+                                      details.localPosition,
+                                      constraints,
+                                      itemCount,
+                                    );
 
-                              if (itemIndexAtPointer == null) return;
+                                if (itemIndexAtPointer == null) return;
 
-                              setThemeByIndex(itemIndexAtPointer, groupIndex);
-                            })
-                          : null,
+                                setThemeByIndex(itemIndexAtPointer, groupIndex);
+                              })
+                              : null,
                       onTapUp: (details) {
                         final int? itemIndexAtPointer = getItemAtPointer(
                           details.localPosition,
@@ -181,20 +175,22 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                         setThemeByIndex(itemIndexAtPointer, groupIndex);
                       },
                       child: AnimatedBuilder(
-                        builder: (context, child) => CustomPaint(
-                          painter: ThemePetalPainter(
-                            animationValue: flowerAnimation.value,
-                            colors: widget.groups[groupIndex].schemes
-                                .map((theme) => theme.primary)
-                                .toList(),
-                            selectedIndex: themeIndex,
-                            hoveringIndex: hoveringIndex,
-                            petalRadiusProc: petalRadiusProc,
-                            centerSpaceRadiusProc: centerSpaceRadiusProc,
-                            selectedColor: context.colorScheme.onSurface,
-                            angleOffset: angleOffset,
-                          ),
-                        ),
+                        builder:
+                            (context, child) => CustomPaint(
+                              painter: ThemePetalPainter(
+                                animationValue: flowerAnimation.value,
+                                colors:
+                                    widget.groups[groupIndex].schemes
+                                        .map((theme) => theme.primary)
+                                        .toList(),
+                                selectedIndex: themeIndex,
+                                hoveringIndex: hoveringIndex,
+                                petalRadiusProc: petalRadiusProc,
+                                centerSpaceRadiusProc: centerSpaceRadiusProc,
+                                selectedColor: context.colorScheme.onSurface,
+                                angleOffset: angleOffset,
+                              ),
+                            ),
                         animation: animationController,
                       ),
                     ),
@@ -202,47 +198,50 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                 ),
                 if (widget.groups.length > 1)
                   AnimatedBuilder(
-                    builder: (context, child) => SizedBox(
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                      child: Opacity(
-                        opacity: opacityAnimation.value,
-                        child: Center(
-                          child: InkWell(
-                            onTap: () {
-                              if (themeIndex >= 0) {
-                                setThemeByIndex(
-                                  themeIndex,
-                                  (groupIndex + 1),
-                                );
-                              } else {
-                                setState(() {
-                                  selectedGroupIndex =
-                                      (selectedGroupIndex + 1) %
+                    builder:
+                        (context, child) => SizedBox(
+                          width: constraints.maxWidth,
+                          height: constraints.maxHeight,
+                          child: Opacity(
+                            opacity: opacityAnimation.value,
+                            child: Center(
+                              child: InkWell(
+                                onTap: () {
+                                  if (themeIndex >= 0) {
+                                    setThemeByIndex(
+                                      themeIndex,
+                                      (groupIndex + 1),
+                                    );
+                                  } else {
+                                    setState(() {
+                                      selectedGroupIndex =
+                                          (selectedGroupIndex + 1) %
                                           widget.groups.length;
-                                });
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(999.0),
-                            child: Container(
-                              width: middleButtonSize,
-                              height: middleButtonSize,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: context.colorScheme.primary,
-                              ),
-                              alignment: Alignment.center,
-                              child: FlowIcon(
-                                widget.groups[groupIndex].icon ??
-                                    FlowIconData.emoji(groupIndex.toString()),
-                                size: middleButtonSize * 0.67,
-                                color: context.colorScheme.onPrimary,
+                                    });
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(999.0),
+                                child: Container(
+                                  width: middleButtonSize,
+                                  height: middleButtonSize,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: context.colorScheme.primary,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: FlowIcon(
+                                    widget.groups[groupIndex].icon ??
+                                        FlowIconData.emoji(
+                                          groupIndex.toString(),
+                                        ),
+                                    size: middleButtonSize * 0.67,
+                                    color: context.colorScheme.onPrimary,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
                     animation: animationController,
                   ),
               ],
@@ -261,13 +260,18 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
         busy = true;
       });
 
-      final String themeName = widget
-          .groups[(groupIndex % widget.groups.length)].schemes[themeIndex].name;
+      final String themeName =
+          widget
+              .groups[(groupIndex % widget.groups.length)]
+              .schemes[themeIndex]
+              .name;
 
       await LocalPreferences().theme.themeName.set(themeName);
     } catch (e) {
-      log("[Theme Petal Selector] Something went wrong with the theme petal selector.",
-          error: e);
+      log(
+        "[Theme Petal Selector] Something went wrong with the theme petal selector.",
+        error: e,
+      );
     } finally {
       busy = false;
       if (mounted) {
@@ -281,7 +285,8 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     BoxConstraints constraints,
     int itemCount,
   ) {
-    final Offset adjustedPosition = localPosition -
+    final Offset adjustedPosition =
+        localPosition -
         Offset(constraints.maxWidth / 2, constraints.maxHeight / 2);
     final double r = adjustedPosition.distance;
 
@@ -294,13 +299,15 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
       return null;
     }
 
-    final double angle = (math.atan2(adjustedPosition.dy, adjustedPosition.dx) +
+    final double angle =
+        (math.atan2(adjustedPosition.dy, adjustedPosition.dx) +
             (math.pi * 3) +
             angleOffset) %
         (math.pi * 2);
 
-    final double halfItemAngle =
-        math.tan((totalR * petalRadiusProc) / innerRadius);
+    final double halfItemAngle = math.tan(
+      (totalR * petalRadiusProc) / innerRadius,
+    );
     final double sectorAngle = math.pi * 2 / itemCount;
 
     final double allowedError = halfItemAngle;
@@ -309,7 +316,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
     final double closestAngle =
         ((math.pi * 2) + (closestIndex * (math.pi * 2 / itemCount))) %
-            (math.pi * 2);
+        (math.pi * 2);
 
     final double delta = (angle - (closestAngle)).abs();
 

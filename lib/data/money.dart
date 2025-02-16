@@ -26,7 +26,11 @@ class Money {
   }
 
   static double convertDouble(
-      String from, String to, double amount, ExchangeRates rates) {
+    String from,
+    String to,
+    double amount,
+    ExchangeRates rates,
+  ) {
     if (from == to) return amount;
 
     if (!isCurrencyCodeValid(from) || !isCurrencyCodeValid(to)) {
@@ -66,9 +70,7 @@ class Money {
 
   Money operator +(Money other) {
     if (currency != other.currency) {
-      throw const MoneyException(
-        "Cannot add Money of different currencies",
-      );
+      throw const MoneyException("Cannot add Money of different currencies");
     }
 
     return Money(amount + other.amount, currency);
@@ -113,8 +115,10 @@ class Money {
       return tryCompareTo(other);
     }
 
-    return convert(rates.baseCurrency, rates)
-        .tryCompareTo(other.convert(rates.baseCurrency, rates));
+    return convert(
+      rates.baseCurrency,
+      rates,
+    ).tryCompareTo(other.convert(rates.baseCurrency, rates));
   }
 
   @override
@@ -151,12 +155,13 @@ class Money {
     final String currencyToFormat = !includeCurrency ? "" : currency;
     useCurrencySymbol = useCurrencySymbol && includeCurrency;
 
-    final String? symbol = useCurrencySymbol
-        ? NumberFormat.simpleCurrency(
-            locale: Intl.defaultLocale,
-            name: currencyToFormat,
-          ).currencySymbol
-        : null;
+    final String? symbol =
+        useCurrencySymbol
+            ? NumberFormat.simpleCurrency(
+              locale: Intl.defaultLocale,
+              name: currencyToFormat,
+            ).currencySymbol
+            : null;
 
     if (compact) {
       return NumberFormat.compactCurrency(
@@ -194,10 +199,8 @@ class Money {
   /// Returns money-formatted string (in the default locale)
   ///
   /// e.g., 1.2M
-  String get formattedNoMarkerCompact => formatMoney(
-        includeCurrency: false,
-        compact: true,
-      );
+  String get formattedNoMarkerCompact =>
+      formatMoney(includeCurrency: false, compact: true);
 
   String toSemanticLabel() {
     final String currencyName =

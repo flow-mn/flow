@@ -14,11 +14,14 @@ class PrivacyToggler extends StatelessWidget {
         final bool obscure = snapshot == true;
 
         return IconButton(
-          onPressed: () =>
-              TransitiveLocalPreferences().sessionPrivacyMode.set(!obscure),
-          icon: Icon(obscure
-              ? Symbols.visibility_rounded
-              : Symbols.visibility_off_rounded),
+          onPressed:
+              () =>
+                  TransitiveLocalPreferences().sessionPrivacyMode.set(!obscure),
+          icon: Icon(
+            obscure
+                ? Symbols.visibility_rounded
+                : Symbols.visibility_off_rounded,
+          ),
         );
       },
     );

@@ -33,8 +33,9 @@ class _DefaultFilterPresetListTileState
     extends State<DefaultFilterPresetListTile> {
   @override
   Widget build(BuildContext context) {
-    final String filterSummary =
-        TransactionFilterPreset.defaultFilter.summary(context);
+    final String filterSummary = TransactionFilterPreset.defaultFilter.summary(
+      context,
+    );
 
     final Widget listTile = ListTile(
       onTap: widget.onTap,
@@ -54,18 +55,19 @@ class _DefaultFilterPresetListTileState
           onPressed: (context) => widget.makeDefault!(),
           icon: Symbols.star_rounded,
           backgroundColor: context.colorScheme.secondary,
-        )
+        ),
     ];
 
     return Slidable(
       key: widget.dismissibleKey,
       groupTag: "filter_preset_list_tile",
-      startActionPane: startActionPanes.isNotEmpty
-          ? ActionPane(
-              motion: const DrawerMotion(),
-              children: startActionPanes,
-            )
-          : null,
+      startActionPane:
+          startActionPanes.isNotEmpty
+              ? ActionPane(
+                motion: const DrawerMotion(),
+                children: startActionPanes,
+              )
+              : null,
       child: listTile,
     );
   }

@@ -6,7 +6,7 @@ import "package:flutter/material.dart";
 /// The updates come from database layer, so it includes every change.
 class TransactionWatcher extends StatefulWidget {
   final Widget Function(BuildContext context, int updateCount, Widget? child)
-      builder;
+  builder;
 
   /// Cached child for performance, see [ValueListenableBuilder.child]
   final Widget? child;

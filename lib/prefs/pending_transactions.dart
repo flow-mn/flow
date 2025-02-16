@@ -68,6 +68,5 @@ class PendingTransactionsLocalPreferences {
 
   static PendingTransactionsLocalPreferences initialize(
     SharedPreferences instance,
-  ) =>
-      _instance ??= PendingTransactionsLocalPreferences._internal(instance);
+  ) => _instance ??= PendingTransactionsLocalPreferences._internal(instance);
 }

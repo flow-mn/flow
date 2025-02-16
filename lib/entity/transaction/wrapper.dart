@@ -26,7 +26,8 @@ class ExtensionsWrapper {
   ExtensionsWrapper getMerged(List<TransactionExtension> newData) {
     return ExtensionsWrapper([
       ...data.where(
-          (currrent) => !newData.any((newExt) => currrent.key == newExt.key)),
+        (currrent) => !newData.any((newExt) => currrent.key == newExt.key),
+      ),
       ...newData,
     ]);
   }
@@ -40,10 +41,7 @@ class ExtensionsWrapper {
     data.removeWhere((element) => element.key == key);
   }
 
-  void _overrideSingle(
-    TransactionExtension? newSingle,
-    String key,
-  ) {
+  void _overrideSingle(TransactionExtension? newSingle, String key) {
     _remove(key);
     if (newSingle != null) {
       data.add(newSingle);
@@ -54,10 +52,12 @@ class ExtensionsWrapper {
     if (extra == null) return const ExtensionsWrapper.empty();
 
     try {
-      return ExtensionsWrapper((jsonDecode(extra) as List<dynamic>)
-          .map((item) => deserialize(item as Map<String, dynamic>))
-          .nonNulls
-          .toList());
+      return ExtensionsWrapper(
+        (jsonDecode(extra) as List<dynamic>)
+            .map((item) => deserialize(item as Map<String, dynamic>))
+            .nonNulls
+            .toList(),
+      );
     } catch (e) {
       log("[ExtensionsWrapper] An error occured during deserializing: $e");
       return const ExtensionsWrapper.empty();
@@ -79,7 +79,8 @@ class ExtensionsWrapper {
   }
 
   static T? deserialize<T extends TransactionExtension>(
-      Map<String, dynamic> value) {
+    Map<String, dynamic> value,
+  ) {
     return switch (value["key"]) {
       Transfer.keyName => Transfer.fromJson(value) as T,
       Geo.keyName => Geo.fromJson(value) as T,

@@ -31,7 +31,7 @@ class _PendingTransactionPreferencesPageState
   Widget build(BuildContext context) {
     final int pendingTransactionsHomeTimeframe =
         LocalPreferences().pendingTransactions.homeTimeframe.get() ??
-            PendingTransactionsLocalPreferences.homeTimeframeDefault;
+        PendingTransactionsLocalPreferences.homeTimeframeDefault;
     final bool pendingTransactionsRequireConfrimation =
         LocalPreferences().pendingTransactions.requireConfrimation.get();
     final bool pendingTransactionsUpdateDateUponConfirmation =
@@ -41,9 +41,7 @@ class _PendingTransactionPreferencesPageState
         LocalPreferences().pendingTransactions.earlyReminderInSeconds.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.pendingTransactions".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.pendingTransactions".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -69,28 +67,35 @@ class _PendingTransactionPreferencesPageState
                 child: Wrap(
                   spacing: 12.0,
                   runSpacing: 8.0,
-                  children: [1, 2, 3, 5, 7, 14, 30]
-                      .map(
-                        (value) => FilterChip(
-                          showCheckmark: false,
-                          key: ValueKey(value),
-                          label: Text(
-                            "general.nextNDays".t(context, value),
-                          ),
-                          onSelected: (bool selected) => selected
-                              ? updatePendingTransactionsHomeTimeframe(value)
-                              : null,
-                          selected: value == pendingTransactionsHomeTimeframe,
-                        ),
-                      )
-                      .toList(),
+                  children:
+                      [1, 2, 3, 5, 7, 14, 30]
+                          .map(
+                            (value) => FilterChip(
+                              showCheckmark: false,
+                              key: ValueKey(value),
+                              label: Text(
+                                "general.nextNDays".t(context, value),
+                              ),
+                              onSelected:
+                                  (bool selected) =>
+                                      selected
+                                          ? updatePendingTransactionsHomeTimeframe(
+                                            value,
+                                          )
+                                          : null,
+                              selected:
+                                  value == pendingTransactionsHomeTimeframe,
+                            ),
+                          )
+                          .toList(),
                 ),
               ),
               const SizedBox(height: 16.0),
               CheckboxListTile /*.adaptive*/ (
                 title: Text(
-                  "preferences.pendingTransactions.requireConfirmation"
-                      .t(context),
+                  "preferences.pendingTransactions.requireConfirmation".t(
+                    context,
+                  ),
                 ),
                 value: pendingTransactionsRequireConfrimation,
                 onChanged: updatePendingTransactionsRequireConfrimation,
@@ -166,44 +171,51 @@ class _PendingTransactionPreferencesPageState
                           ),
                           const SizedBox(height: 8.0),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                            ),
                             child: Wrap(
                               spacing: 12.0,
                               runSpacing: 8.0,
-                              children: [
-                                null,
-                                Duration(minutes: 5),
-                                Duration(minutes: 15),
-                                Duration(minutes: 30),
-                                Duration(hours: 1),
-                                Duration(hours: 2),
-                                Duration(hours: 6),
-                                Duration(hours: 12),
-                                Duration(days: 1),
-                                Duration(days: 2),
-                                Duration(days: 3),
-                                Duration(days: 7),
-                              ]
-                                  .map(
-                                    (value) => FilterChip(
-                                      showCheckmark: false,
-                                      key: ValueKey(value),
-                                      label: Text(
-                                        value?.toDurationString(
-                                              dropPrefixOrSuffix: true,
-                                            ) ??
-                                            "preferences.pendingTransactions.notify.earlyReminder.none"
-                                                .t(context),
-                                      ),
-                                      onSelected: (bool selected) => selected
-                                          ? updateEarlyReminderInSeconds(value)
-                                          : null,
-                                      selected: (value?.inSeconds ?? 0) ==
-                                          (earlyReminderInSeconds ?? 0),
-                                    ),
-                                  )
-                                  .toList(),
+                              children:
+                                  [
+                                        null,
+                                        Duration(minutes: 5),
+                                        Duration(minutes: 15),
+                                        Duration(minutes: 30),
+                                        Duration(hours: 1),
+                                        Duration(hours: 2),
+                                        Duration(hours: 6),
+                                        Duration(hours: 12),
+                                        Duration(days: 1),
+                                        Duration(days: 2),
+                                        Duration(days: 3),
+                                        Duration(days: 7),
+                                      ]
+                                      .map(
+                                        (value) => FilterChip(
+                                          showCheckmark: false,
+                                          key: ValueKey(value),
+                                          label: Text(
+                                            value?.toDurationString(
+                                                  dropPrefixOrSuffix: true,
+                                                ) ??
+                                                "preferences.pendingTransactions.notify.earlyReminder.none"
+                                                    .t(context),
+                                          ),
+                                          onSelected:
+                                              (bool selected) =>
+                                                  selected
+                                                      ? updateEarlyReminderInSeconds(
+                                                        value,
+                                                      )
+                                                      : null,
+                                          selected:
+                                              (value?.inSeconds ?? 0) ==
+                                              (earlyReminderInSeconds ?? 0),
+                                        ),
+                                      )
+                                      .toList(),
                             ),
                           ),
                         ],
@@ -229,15 +241,12 @@ class _PendingTransactionPreferencesPageState
     final int? value = duration?.inSeconds;
 
     if (value == null) {
-      await LocalPreferences()
-          .pendingTransactions
-          .earlyReminderInSeconds
+      await LocalPreferences().pendingTransactions.earlyReminderInSeconds
           .remove();
     } else {
-      await LocalPreferences()
-          .pendingTransactions
-          .earlyReminderInSeconds
-          .set(value);
+      await LocalPreferences().pendingTransactions.earlyReminderInSeconds.set(
+        value,
+      );
     }
 
     if (mounted) setState(() {});
@@ -248,30 +257,24 @@ class _PendingTransactionPreferencesPageState
   ) async {
     if (requirePendingTransactionConfrimation == null) return;
 
-    await LocalPreferences()
-        .pendingTransactions
-        .requireConfrimation
-        .set(requirePendingTransactionConfrimation);
+    await LocalPreferences().pendingTransactions.requireConfrimation.set(
+      requirePendingTransactionConfrimation,
+    );
 
     if (mounted) setState(() {});
   }
 
-  void updatePendingTransactionsConfirmationDate(
-    bool? newValue,
-  ) async {
+  void updatePendingTransactionsConfirmationDate(bool? newValue) async {
     if (newValue == null) return;
 
-    await LocalPreferences()
-        .pendingTransactions
-        .updateDateUponConfirmation
-        .set(newValue);
+    await LocalPreferences().pendingTransactions.updateDateUponConfirmation.set(
+      newValue,
+    );
 
     if (mounted) setState(() {});
   }
 
-  void updateNotify(
-    bool? newValue,
-  ) async {
+  void updateNotify(bool? newValue) async {
     if (newValue == null) return;
 
     await LocalPreferences().pendingTransactions.notify.set(newValue);

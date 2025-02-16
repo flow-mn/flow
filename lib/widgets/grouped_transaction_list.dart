@@ -28,7 +28,8 @@ class GroupedTransactionList extends StatefulWidget {
     bool pendingGroup,
     TimeRange range,
     List<Transaction> transactions,
-  ) headerBuilder;
+  )
+  headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
@@ -97,23 +98,24 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     super.initState();
 
     globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
-    TransitiveLocalPreferences()
-        .sessionPrivacyMode
-        .addListener(_privacyModeUpdate);
+    TransitiveLocalPreferences().sessionPrivacyMode.addListener(
+      _privacyModeUpdate,
+    );
   }
 
   @override
   void dispose() {
-    TransitiveLocalPreferences()
-        .sessionPrivacyMode
-        .removeListener(_privacyModeUpdate);
+    TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
+      _privacyModeUpdate,
+    );
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
+    final bool combineTransfers =
+        widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
@@ -136,38 +138,37 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
     final EdgeInsets headerPadding = widget.headerPadding ?? widget.itemPadding;
 
-    Widget itemBuilder(BuildContext context, int index) =>
-        switch (flattened[index]) {
-          (Padding widgetWithPadding) => widgetWithPadding,
-          (Widget header) => Padding(
-              padding: headerPadding.copyWith(
-                top: index == 0
-                    ? widget.firstHeaderTopPadding
-                    : headerPadding.top,
-              ),
-              child: header,
-            ),
-          (Transaction transaction) => TransactionListTile(
-              combineTransfers: combineTransfers,
-              transaction: transaction,
-              padding: widget.itemPadding,
-              dismissibleKey: ValueKey(transaction.id),
-              moveToTrashFn: () => transaction.moveToTrashBin(),
-              recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
-              confirmFn: ([bool confirm = true]) {
-                final bool updateTransactionDate = LocalPreferences()
-                    .pendingTransactions
-                    .updateDateUponConfirmation
-                    .get();
+    Widget itemBuilder(
+      BuildContext context,
+      int index,
+    ) => switch (flattened[index]) {
+      (Padding widgetWithPadding) => widgetWithPadding,
+      (Widget header) => Padding(
+        padding: headerPadding.copyWith(
+          top: index == 0 ? widget.firstHeaderTopPadding : headerPadding.top,
+        ),
+        child: header,
+      ),
+      (Transaction transaction) => TransactionListTile(
+        combineTransfers: combineTransfers,
+        transaction: transaction,
+        padding: widget.itemPadding,
+        dismissibleKey: ValueKey(transaction.id),
+        moveToTrashFn: () => transaction.moveToTrashBin(),
+        recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
+        confirmFn: ([bool confirm = true]) {
+          final bool updateTransactionDate =
+              LocalPreferences().pendingTransactions.updateDateUponConfirmation
+                  .get();
 
-                transaction.confirm(confirm, updateTransactionDate);
-              },
-              duplicateFn: () => transaction.duplicate(),
-              overrideObscure: widget.overrideObscure,
-              groupRange: widget.groupBy,
-            ),
-          (_) => Container(),
-        };
+          transaction.confirm(confirm, updateTransactionDate);
+        },
+        duplicateFn: () => transaction.duplicate(),
+        overrideObscure: widget.overrideObscure,
+        groupRange: widget.groupBy,
+      ),
+      (_) => Container(),
+    };
 
     if (widget.sliver == true) {
       return SlidableAutoCloseBehavior(

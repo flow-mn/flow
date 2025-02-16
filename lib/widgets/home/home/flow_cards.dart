@@ -37,42 +37,45 @@ class _FlowCardsState extends State<FlowCards> {
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
 
     excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
-    UserPreferencesService()
-        .valueNotiifer
-        .addListener(_updateExcludeTransferFromFlow);
+    UserPreferencesService().valueNotiifer.addListener(
+      _updateExcludeTransferFromFlow,
+    );
   }
 
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
-    UserPreferencesService()
-        .valueNotiifer
-        .removeListener(_updateExcludeTransferFromFlow);
+    UserPreferencesService().valueNotiifer.removeListener(
+      _updateExcludeTransferFromFlow,
+    );
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow? flow = excludeTransferFromFlow
-        ? widget.transactions?.nonPending.nonTransfers.flow
-        : widget.transactions?.nonPending.flow;
+    final MoneyFlow? flow =
+        excludeTransferFromFlow
+            ? widget.transactions?.nonPending.nonTransfers.flow
+            : widget.transactions?.nonPending.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final Money? totalExpense = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getExpenseByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency),
+      (MoneyFlow moneyFlow, null) => moneyFlow.getExpenseByCurrency(
+        primaryCurrency,
+      ),
+      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) => moneyFlow
+          .getTotalExpense(exchangeRates, primaryCurrency),
     };
 
     final Money? totalIncome = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getIncomeByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency),
+      (MoneyFlow moneyFlow, null) => moneyFlow.getIncomeByCurrency(
+        primaryCurrency,
+      ),
+      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) => moneyFlow
+          .getTotalIncome(exchangeRates, primaryCurrency),
     };
 
     return Row(

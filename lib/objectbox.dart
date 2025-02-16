@@ -42,9 +42,7 @@ class ObjectBox {
 
   factory ObjectBox() {
     if (_instance == null) {
-      throw Exception(
-        "You must initialize ObjectBox by calling initialize().",
-      );
+      throw Exception("You must initialize ObjectBox by calling initialize().");
     }
 
     return _instance!;
@@ -96,33 +94,46 @@ class ObjectBox {
       return;
     }
 
-    final categories =
-        await box<Category>().putAndGetManyAsync(getCategoryPresets().map((e) {
-      e.id = 0;
-      return e;
-    }).toList());
+    final categories = await box<Category>().putAndGetManyAsync(
+      getCategoryPresets().map((e) {
+        e.id = 0;
+        return e;
+      }).toList(),
+    );
 
-    final services = categories.firstWhere((element) =>
-        element.iconCode ==
-        const IconFlowIcon(Symbols.cloud_circle_rounded).toString());
-    final coffee = categories.firstWhere((element) =>
-        element.iconCode ==
-        const IconFlowIcon(Symbols.local_cafe_rounded).toString());
-    final gift = categories.firstWhere((element) =>
-        element.iconCode ==
-        const IconFlowIcon(Symbols.featured_seasonal_and_gifts_rounded)
-            .toString());
-    final paycheck = categories.firstWhere((element) =>
-        element.iconCode ==
-        const IconFlowIcon(Symbols.wallet_rounded).toString());
-    final rent = categories.firstWhere((element) =>
-        element.iconCode ==
-        const IconFlowIcon(Symbols.request_quote_rounded).toString());
+    final services = categories.firstWhere(
+      (element) =>
+          element.iconCode ==
+          const IconFlowIcon(Symbols.cloud_circle_rounded).toString(),
+    );
+    final coffee = categories.firstWhere(
+      (element) =>
+          element.iconCode ==
+          const IconFlowIcon(Symbols.local_cafe_rounded).toString(),
+    );
+    final gift = categories.firstWhere(
+      (element) =>
+          element.iconCode ==
+          const IconFlowIcon(
+            Symbols.featured_seasonal_and_gifts_rounded,
+          ).toString(),
+    );
+    final paycheck = categories.firstWhere(
+      (element) =>
+          element.iconCode ==
+          const IconFlowIcon(Symbols.wallet_rounded).toString(),
+    );
+    final rent = categories.firstWhere(
+      (element) =>
+          element.iconCode ==
+          const IconFlowIcon(Symbols.request_quote_rounded).toString(),
+    );
 
-    final [main, cash, savings] = getAccountPresets("USD").map((e) {
-      e.id = 0;
-      return e;
-    }).toList();
+    final [main, cash, savings] =
+        getAccountPresets("USD").map((e) {
+          e.id = 0;
+          return e;
+        }).toList();
 
     main
       ..updateBalanceAndSave(
@@ -186,8 +197,11 @@ class ObjectBox {
         transactionDate: DateTime.now() - const Duration(days: 6),
       );
 
-    final [main2, ..., savings2] =
-        await box<Account>().putAndGetManyAsync([main, cash, savings]);
+    final [main2, ..., savings2] = await box<Account>().putAndGetManyAsync([
+      main,
+      cash,
+      savings,
+    ]);
 
     main2.transferTo(
       amount: 250,

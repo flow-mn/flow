@@ -25,15 +25,13 @@ enum TransactionGroupRange implements LocalizedEnum {
   String get localizationEnumValue => name;
 
   TimeRange fromTransaction(Transaction t) => switch (this) {
-        TransactionGroupRange.hour =>
-          HourTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.day =>
-          DayTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.week => LocalWeekTimeRange(t.transactionDate),
-        TransactionGroupRange.month =>
-          MonthTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.year =>
-          YearTimeRange.fromDateTime(t.transactionDate),
-        TransactionGroupRange.allTime => TimeRange.allTime(),
-      };
+    TransactionGroupRange.hour => HourTimeRange.fromDateTime(t.transactionDate),
+    TransactionGroupRange.day => DayTimeRange.fromDateTime(t.transactionDate),
+    TransactionGroupRange.week => LocalWeekTimeRange(t.transactionDate),
+    TransactionGroupRange.month => MonthTimeRange.fromDateTime(
+      t.transactionDate,
+    ),
+    TransactionGroupRange.year => YearTimeRange.fromDateTime(t.transactionDate),
+    TransactionGroupRange.allTime => TimeRange.allTime(),
+  };
 }

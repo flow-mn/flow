@@ -25,11 +25,12 @@ class Trend extends StatelessWidget {
     TextStyle? style,
   }) {
     final double hundredPercent = previous?.amount ?? 0;
-    final double delta = (hundredPercent == 0 ||
-            hundredPercent.isNaN ||
-            hundredPercent.isInfinite)
-        ? 0
-        : ((current?.amount ?? 0) - hundredPercent) / hundredPercent.abs();
+    final double delta =
+        (hundredPercent == 0 ||
+                hundredPercent.isNaN ||
+                hundredPercent.isInfinite)
+            ? 0
+            : ((current?.amount ?? 0) - hundredPercent) / hundredPercent.abs();
 
     return Trend(
       key: key,
@@ -61,12 +62,7 @@ class Trend extends StatelessWidget {
           size: style.fontSize,
           color: color,
         ),
-        Text(
-          deltaString,
-          style: style.copyWith(
-            color: color,
-          ),
-        )
+        Text(deltaString, style: style.copyWith(color: color)),
       ],
     );
   }

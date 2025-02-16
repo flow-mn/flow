@@ -53,20 +53,19 @@ class FlowIcon extends StatelessWidget {
     final plateColor = this.plateColor ?? context.colorScheme.secondary;
 
     return Surface(
-      builder: (BuildContext context) => InkWell(
-        borderRadius: borderRadius,
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Padding(
-          padding: platePadding,
-          child: buildChild(context, data),
-        ),
-      ),
+      builder:
+          (BuildContext context) => InkWell(
+            borderRadius: borderRadius,
+            onTap: onTap,
+            onLongPress: onLongPress,
+            child: Padding(
+              padding: platePadding,
+              child: buildChild(context, data),
+            ),
+          ),
       color: plateColor,
       iconColor: context.colorScheme.primary,
-      shape: RoundedRectangleBorder(
-        borderRadius: borderRadius,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
       elevation: plateElevation,
     );
   }
@@ -76,46 +75,48 @@ class FlowIcon extends StatelessWidget {
 
     return switch (data) {
       IconFlowIcon icon => Icon(
-          icon.iconData,
-          size: size,
-          color: color,
-          fill: fill,
-        ),
+        icon.iconData,
+        size: size,
+        color: color,
+        fill: fill,
+      ),
       ImageFlowIcon image => ClipRRect(
-          borderRadius:
-              borderRadius.subtract(BorderRadius.circular(platePadding.top)),
-          child: Image.file(
-            File(join(ObjectBox.appDataDirectory, image.imagePath)),
-            width: size,
-            height: size,
-            errorBuilder: (context, error, stackTrace) => Icon(
-              Symbols.error_rounded,
-              color: context.flowColors.expense,
-              size: size,
-            ),
-          ),
+        borderRadius: borderRadius.subtract(
+          BorderRadius.circular(platePadding.top),
         ),
-      CharacterFlowIcon character => SizedBox.square(
-          dimension: size,
-          child: Center(
-            child: RichText(
-              text: TextSpan(
-                text: character.character,
-                spellOut: false,
-                style: TextStyle(
-                  overflow: TextOverflow.visible,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: "Poppins",
-                  fontSize: size * 0.75,
-                  height: 1.0,
-                  inherit: false,
-                  color: color,
-                ),
+        child: Image.file(
+          File(join(ObjectBox.appDataDirectory, image.imagePath)),
+          width: size,
+          height: size,
+          errorBuilder:
+              (context, error, stackTrace) => Icon(
+                Symbols.error_rounded,
+                color: context.flowColors.expense,
+                size: size,
               ),
-              textDirection: TextDirection.ltr,
+        ),
+      ),
+      CharacterFlowIcon character => SizedBox.square(
+        dimension: size,
+        child: Center(
+          child: RichText(
+            text: TextSpan(
+              text: character.character,
+              spellOut: false,
+              style: TextStyle(
+                overflow: TextOverflow.visible,
+                fontWeight: FontWeight.w500,
+                fontFamily: "Poppins",
+                fontSize: size * 0.75,
+                height: 1.0,
+                inherit: false,
+                color: color,
+              ),
             ),
+            textDirection: TextDirection.ltr,
           ),
         ),
+      ),
       _ => Container(),
     };
   }

@@ -22,9 +22,7 @@ class _HapticsState extends State<Haptics> {
       children: [
         SwitchListTile /*.adaptive*/ (
           secondary: const Icon(Symbols.vibration_rounded),
-          title: Text(
-            "preferences.hapticFeedback.description".t(context),
-          ),
+          title: Text("preferences.hapticFeedback.description".t(context)),
           value: enableHapticFeedback,
           onChanged: updateEnableHapticFeedback,
         ),

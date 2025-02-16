@@ -48,14 +48,12 @@ class TransactionsPage extends StatefulWidget {
     );
   }
 
-  factory TransactionsPage.all({
-    Key? key,
-    String? title,
-    Widget? header,
-  }) {
-    final QueryBuilder<Transaction> queryBuilder = TransactionFilter(
-            sortBy: TransactionSortField.transactionDate, sortDescending: true)
-        .queryBuilder();
+  factory TransactionsPage.all({Key? key, String? title, Widget? header}) {
+    final QueryBuilder<Transaction> queryBuilder =
+        TransactionFilter(
+          sortBy: TransactionSortField.transactionDate,
+          sortDescending: true,
+        ).queryBuilder();
 
     return TransactionsPage(
       query: queryBuilder,
@@ -71,8 +69,8 @@ class TransactionsPage extends StatefulWidget {
     String? title,
     Widget? header,
   }) {
-    final QueryBuilder<Transaction> queryBuilder =
-        TransactionsService().pendingTransactionsQb(anchor);
+    final QueryBuilder<Transaction> queryBuilder = TransactionsService()
+        .pendingTransactionsQb(anchor);
 
     return TransactionsPage(
       query: queryBuilder,
@@ -107,9 +105,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: widget.title == null ? null : Text(widget.title!),
-      ),
+      appBar: AppBar(title: widget.title == null ? null : Text(widget.title!)),
       body: SafeArea(
         child: StreamBuilder<List<Transaction>>(
           stream: widget.query
@@ -147,28 +143,33 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
             final DateTime now = DateTime.now().startOfNextMinute();
 
-            final Map<TimeRange, List<Transaction>> transactions = snapshot
-                .requireData
-                .where((transaction) =>
-                    !transaction.transactionDate.isAfter(now) &&
-                    transaction.isPending != true)
-                .groupByDate();
+            final Map<TimeRange, List<Transaction>> transactions =
+                snapshot.requireData
+                    .where(
+                      (transaction) =>
+                          !transaction.transactionDate.isAfter(now) &&
+                          transaction.isPending != true,
+                    )
+                    .groupByDate();
             final Map<TimeRange, List<Transaction>> pendingTransactions =
                 snapshot.requireData
-                    .where((transaction) =>
-                        transaction.transactionDate.isAfter(now) ||
-                        transaction.isPending == true)
+                    .where(
+                      (transaction) =>
+                          transaction.transactionDate.isAfter(now) ||
+                          transaction.isPending == true,
+                    )
                     .groupByDate();
 
             return GroupedTransactionList(
               transactions: transactions,
               pendingTransactions: pendingTransactions,
-              headerBuilder: (pendingGroup, range, transactions) =>
-                  TransactionListDateHeader(
-                pendingGroup: pendingGroup,
-                range: range,
-                transactions: transactions,
-              ),
+              headerBuilder:
+                  (pendingGroup, range, transactions) =>
+                      TransactionListDateHeader(
+                        pendingGroup: pendingGroup,
+                        range: range,
+                        transactions: transactions,
+                      ),
               pendingDivider: WavyDivider(),
               header: widget.header,
             );

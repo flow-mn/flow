@@ -44,8 +44,9 @@ class ThemeFactory {
       pointerColor: kTransparent,
       angleOffset: 0.0,
       pointerSize: 2.0,
-      tooltipTextStyle:
-          flowTextTheme.displaySmall!.copyWith(color: colorScheme.onSurface),
+      tooltipTextStyle: flowTextTheme.displaySmall!.copyWith(
+        color: colorScheme.onSurface,
+      ),
       rightClickShowsMenu: true,
       menuAlignment: Alignment.center,
     );
@@ -73,8 +74,9 @@ class ThemeFactory {
         surfaceTintColor: colorScheme.primary,
       ),
       chipTheme: ChipThemeData(
-        labelStyle:
-            textTheme.labelLarge!.copyWith(color: colorScheme.onSurface),
+        labelStyle: textTheme.labelLarge!.copyWith(
+          color: colorScheme.onSurface,
+        ),
         selectedColor: colorScheme.secondary,
       ),
       extensions: [
@@ -108,30 +110,29 @@ class ThemeFactory {
         iconColor: colorScheme.primary,
         selectedTileColor: colorScheme.secondary,
         selectedColor: isDark ? colorScheme.primary : null,
-        subtitleTextStyle:
-            textTheme.bodyMedium!.copyWith(color: colorScheme.onSurface),
+        subtitleTextStyle: textTheme.bodyMedium!.copyWith(
+          color: colorScheme.onSurface,
+        ),
       ),
       radioTheme: RadioThemeData(
-        fillColor: WidgetStateProperty.resolveWith(
-          (states) {
-            if (states.contains(WidgetState.disabled)) {
-              return colorScheme.onSurface.withAlpha(0x61);
-            }
-            if (states.contains(WidgetState.selected)) {
-              return colorScheme.primary;
-            }
-            if (states.contains(WidgetState.pressed)) {
-              return colorScheme.onSurface;
-            }
-            if (states.contains(WidgetState.hovered)) {
-              return colorScheme.onSurface;
-            }
-            if (states.contains(WidgetState.focused)) {
-              return colorScheme.onSurface;
-            }
-            return colorScheme.onSurfaceVariant;
-          },
-        ),
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.onSurface.withAlpha(0x61);
+          }
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          if (states.contains(WidgetState.pressed)) {
+            return colorScheme.onSurface;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return colorScheme.onSurface;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return colorScheme.onSurface;
+          }
+          return colorScheme.onSurfaceVariant;
+        }),
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
@@ -155,9 +156,7 @@ class ThemeFactory {
         cursorColor: colorScheme.primary,
         selectionHandleColor: colorScheme.primary,
       ),
-      tabBarTheme: TabBarTheme(
-        dividerColor: colorScheme.primary,
-      ),
+      tabBarTheme: TabBarTheme(dividerColor: colorScheme.primary),
     );
   }
 
@@ -171,10 +170,7 @@ class ThemeFactory {
     bool preferDark = false,
     bool preferOled = false,
   }) {
-    final resolved = getTheme(
-      themeName,
-      preferDark: preferDark,
-    );
+    final resolved = getTheme(themeName, preferDark: preferDark);
 
     return ThemeFactory(resolved);
   }

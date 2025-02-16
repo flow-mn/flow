@@ -15,8 +15,9 @@ class FlowLocalizations {
   FlowLocalizations(this.locale);
 
   static Future<Map<String, String>> _loadLocale(Locale locale) async {
-    String jsonStringValues =
-        await rootBundle.loadString("assets/l10n/${locale.code}.json");
+    String jsonStringValues = await rootBundle.loadString(
+      "assets/l10n/${locale.code}.json",
+    );
     Map<String, dynamic> mappedJson = json.decode(jsonStringValues);
     return mappedJson.map((key, value) => MapEntry(key, value.toString()));
   }
@@ -36,10 +37,11 @@ class FlowLocalizations {
   static String _fillFromTable(Map lookupTable, String text) {
     for (final key in lookupTable.keys) {
       text = text.replaceAll(
-          "{$key}",
-          lookupTable[key] is String
-              ? lookupTable[key]
-              : lookupTable[key].toString());
+        "{$key}",
+        lookupTable[key] is String
+            ? lookupTable[key]
+            : lookupTable[key].toString(),
+      );
     }
 
     return text;
@@ -53,10 +55,14 @@ class FlowLocalizations {
 
     return switch (replace) {
       null => translatedText,
-      String singleValue =>
-        translatedText.replaceAll(RegExp(r"{[^}]*}"), singleValue),
-      num singleValue =>
-        translatedText.replaceAll(RegExp(r"{[^}]*}"), singleValue.toString()),
+      String singleValue => translatedText.replaceAll(
+        RegExp(r"{[^}]*}"),
+        singleValue,
+      ),
+      num singleValue => translatedText.replaceAll(
+        RegExp(r"{[^}]*}"),
+        singleValue.toString(),
+      ),
       Map lookupTable => _fillFromTable(lookupTable, translatedText),
       _ => translatedText,
     };
@@ -81,11 +87,13 @@ class FlowLocalizations {
   static void printMissingKeys() async {
     final Map<String, Map<String, String>> languages = {};
     for (Locale locale in supportedLanguages) {
-      String value =
-          await rootBundle.loadString("assets/l10n/${locale.code}.json");
+      String value = await rootBundle.loadString(
+        "assets/l10n/${locale.code}.json",
+      );
 
-      languages[locale.code] = (json.decode(value) as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, value.toString()));
+      languages[locale.code] = (json.decode(value) as Map<String, dynamic>).map(
+        (key, value) => MapEntry(key, value.toString()),
+      );
     }
     final Set<String> keys = <String>{};
     for (var key in languages.keys) {
@@ -93,12 +101,15 @@ class FlowLocalizations {
     }
 
     for (var key in languages.keys) {
-      final Iterable<String> missingKeys =
-          keys.where((element) => !languages[key]!.keys.contains(element));
+      final Iterable<String> missingKeys = keys.where(
+        (element) => !languages[key]!.keys.contains(element),
+      );
       if (missingKeys.isEmpty) {
         log("[Gegee Language Service] $key has no missing keys");
       } else {
-        log("[Gegee Language Service] $key has ${missingKeys.length} missing keys");
+        log(
+          "[Gegee Language Service] $key has ${missingKeys.length} missing keys",
+        );
         for (var element in missingKeys) {
           log(element);
         }

@@ -13,10 +13,7 @@ import "package:uuid/uuid.dart";
 part "account.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class Account implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -62,17 +59,16 @@ class Account implements EntityBase {
   Money get balance => balanceAt(DateTime.now());
 
   Money balanceAt(DateTime anchor) => Money(
-        transactions
-            .where(
-                (element) => !element.transactionDate.isFutureAnchored(anchor))
-            .nonPending
-            .nonDeleted
-            .fold<double>(
-              0,
-              (previousValue, element) => previousValue + element.amount,
-            ),
-        currency,
-      );
+    transactions
+        .where((element) => !element.transactionDate.isFutureAnchored(anchor))
+        .nonPending
+        .nonDeleted
+        .fold<double>(
+          0,
+          (previousValue, element) => previousValue + element.amount,
+        ),
+    currency,
+  );
 
   Account({
     this.id = 0,
@@ -83,19 +79,19 @@ class Account implements EntityBase {
     this.archived = false,
     this.sortOrder = -1,
     DateTime? createdDate,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+  }) : createdDate = createdDate ?? DateTime.now(),
+       uuid = const Uuid().v4();
 
   Account.preset({
     required this.name,
     required this.currency,
     required this.iconCode,
     required this.uuid,
-  })  : archived = false,
-        excludeFromTotalBalance = false,
-        sortOrder = -1,
-        id = -1,
-        createdDate = DateTime.now();
+  }) : archived = false,
+       excludeFromTotalBalance = false,
+       sortOrder = -1,
+       id = -1,
+       createdDate = DateTime.now();
 
   factory Account.fromJson(Map<String, dynamic> json) =>
       _$AccountFromJson(json);

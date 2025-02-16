@@ -22,9 +22,7 @@ class DebugThemePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Debug Theme Page"),
-      ),
+      appBar: AppBar(title: const Text("Debug Theme Page")),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,8 +54,10 @@ class DebugThemePage extends StatelessWidget {
             ListHeader("Cards"),
             const SizedBox(height: 12.0),
             Card(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
               child: ListTile(
                 title: const Text("Plain MUI card"),
                 leading: const Icon(Symbols.wallet_rounded),
@@ -84,11 +84,7 @@ class DebugThemePage extends StatelessWidget {
                 trailing: Button(
                   backgroundColor: context.colorScheme.surface,
                   trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text(
-                      "PB&J est tres delicieux",
-                    ),
-                  ),
+                  child: Expanded(child: Text("PB&J est tres delicieux")),
                   onTap: () => {},
                 ),
               ),
@@ -106,18 +102,21 @@ class DebugThemePage extends StatelessWidget {
             WavyDivider(),
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: _demoTransactions
-                  .map(
-                    (transaction) => TransactionListTile(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                      transaction: transaction,
-                      moveToTrashFn: null,
-                      recoverFromTrashFn: null,
-                      combineTransfers: false,
-                    ),
-                  )
-                  .toList(),
+              children:
+                  _demoTransactions
+                      .map(
+                        (transaction) => TransactionListTile(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 4.0,
+                          ),
+                          transaction: transaction,
+                          moveToTrashFn: null,
+                          recoverFromTrashFn: null,
+                          combineTransfers: false,
+                        ),
+                      )
+                      .toList(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("ListTiles"),

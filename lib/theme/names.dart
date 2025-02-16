@@ -60,7 +60,6 @@ final Map<String, String> themeNames = {
   "palenight": "Material - Palenight",
 
   // Catppuccin
-
   "catppuccinFlamingoFrappe": "Catppuccin Frappé - Flamingo",
   "catppuccinRosewaterFrappe": "Catppuccin Frappé - Rosewater",
   "catppuccinMauveFrappe": "Catppuccin Frappé - Mauve",

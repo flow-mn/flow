@@ -36,9 +36,7 @@ class AccountEditPage extends StatefulWidget {
   bool get isNewAccount => accountId == 0;
 
   const AccountEditPage({super.key, required this.accountId});
-  const AccountEditPage.create({
-    super.key,
-  }) : accountId = 0;
+  const AccountEditPage.create({super.key}) : accountId = 0;
 
   @override
   State<AccountEditPage> createState() => _AccountEditPageState();
@@ -79,17 +77,20 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewAccount
-        ? null
-        : ObjectBox().box<Account>().get(widget.accountId);
+    _currentlyEditing =
+        widget.isNewAccount
+            ? null
+            : ObjectBox().box<Account>().get(widget.accountId);
 
     if (!widget.isNewAccount && _currentlyEditing == null) {
       error = "Account with id ${widget.accountId} was not found";
     } else {
-      _nameTextController =
-          TextEditingController(text: _currentlyEditing?.name);
+      _nameTextController = TextEditingController(
+        text: _currentlyEditing?.name,
+      );
       _balance = _currentlyEditing?.balance.amount ?? 0.0;
-      _currency = _currentlyEditing?.currency ??
+      _currency =
+          _currentlyEditing?.currency ??
           LocalPreferences().getPrimaryCurrency();
       _iconData = _currentlyEditing?.icon;
       _excludeFromTotalBalance =
@@ -119,9 +120,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40.0,
-        leading: FormCloseButton(
-          canPop: () => !hasChanged(),
-        ),
+        leading: FormCloseButton(canPop: () => !hasChanged()),
         actions: [
           IconButton(
             onPressed: () => save(),
@@ -181,32 +180,35 @@ class _AccountEditPageState extends State<AccountEditPage> {
                                       hintText: "account.name".t(context),
                                       focusColor: context.colorScheme.secondary,
                                       isDense: true,
-                                      border: _editingName
-                                          ? null
-                                          : InputBorder.none,
+                                      border:
+                                          _editingName
+                                              ? null
+                                              : InputBorder.none,
                                       counter: const SizedBox.shrink(),
                                     ),
                                     onTap: () => toggleEditName(true),
-                                    onFieldSubmitted: (_) =>
-                                        toggleEditName(false),
+                                    onFieldSubmitted:
+                                        (_) => toggleEditName(false),
                                     readOnly: !_editingName,
                                     validator: validateNameField,
                                   ),
                                 ),
                                 const SizedBox(width: 12.0),
                                 IconButton(
-                                  icon: _editingName
-                                      ? const Icon(Symbols.done_rounded)
-                                      : const Icon(Symbols.edit_rounded),
+                                  icon:
+                                      _editingName
+                                          ? const Icon(Symbols.done_rounded)
+                                          : const Icon(Symbols.edit_rounded),
                                   onPressed: toggleEditName,
-                                )
+                                ),
                               ],
                             ),
                             if (!widget.isNewAccount)
                               Text(
                                 _currency,
-                                style:
-                                    context.textTheme.labelLarge?.semi(context),
+                                style: context.textTheme.labelLarge?.semi(
+                                  context,
+                                ),
                               ),
                           ],
                         ),
@@ -237,7 +239,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                             color: context.colorScheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -257,9 +259,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                 const SizedBox(height: 8.0),
                 Frame(
                   child: InfoText(
-                    child: Text(
-                      "account.archive.description".t(context),
-                    ),
+                    child: Text("account.archive.description".t(context)),
                   ),
                 ),
                 if (widget.isNewAccount)
@@ -290,9 +290,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void updateBalance() async {
     final Optional<DateTime>? updateAtResult =
         await showModalBottomSheet<Optional<DateTime>>(
-      context: context,
-      builder: (context) => UpdateBalanceOptionsSheet(),
-    );
+          context: context,
+          builder: (context) => UpdateBalanceOptionsSheet(),
+        );
 
     if (updateAtResult == null || !mounted) {
       _updateBalanceAt = null;
@@ -303,10 +303,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final result = await showModalBottomSheet<double>(
       context: context,
-      builder: (context) => InputAmountSheet(
-        initialAmount: _balance,
-        currency: _currency,
-      ),
+      builder:
+          (context) =>
+              InputAmountSheet(initialAmount: _balance, currency: _currency),
       isScrollControlled: true,
     );
 
@@ -367,10 +366,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
     _currentlyEditing!.archived = _archived;
 
-    ObjectBox().box<Account>().put(
-          _currentlyEditing!,
-          mode: PutMode.update,
-        );
+    ObjectBox().box<Account>().put(_currentlyEditing!, mode: PutMode.update);
 
     if (mounted) {
       context.pop();
@@ -401,27 +397,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
       unawaited(
         ObjectBox()
             .box<Account>()
-            .putAndGetAsync(
-              account,
-              mode: PutMode.insert,
-            )
-            .then(
-          (value) {
-            value.updateBalanceAndSave(
-              _balance,
-              title: "account.updateBalance.transactionTitle".tr(),
-              transactionDate: _updateBalanceAt,
-            );
-            ObjectBox().box<Account>().putAsync(value);
-          },
-        ),
+            .putAndGetAsync(account, mode: PutMode.insert)
+            .then((value) {
+              value.updateBalanceAndSave(
+                _balance,
+                title: "account.updateBalance.transactionTitle".tr(),
+                transactionDate: _updateBalanceAt,
+              );
+              ObjectBox().box<Account>().putAsync(value);
+            }),
       );
     } else {
       unawaited(
-        ObjectBox().box<Account>().putAsync(
-              account,
-              mode: PutMode.insert,
-            ),
+        ObjectBox().box<Account>().putAsync(account, mode: PutMode.insert),
       );
     }
 
@@ -473,14 +461,15 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final String trimmed = value!.trim();
 
-    final Query<Account> sameNameQuery = ObjectBox()
-        .box<Account>()
-        .query(
-          Account_.name
-              .equals(trimmed)
-              .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
-        )
-        .build();
+    final Query<Account> sameNameQuery =
+        ObjectBox()
+            .box<Account>()
+            .query(
+              Account_.name
+                  .equals(trimmed)
+                  .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
+            )
+            .build();
 
     final bool isNameUnique = sameNameQuery.count() == 0;
 
@@ -500,9 +489,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
   Future<void> selectIcon() async {
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
-      builder: (context) => SelectFlowIconSheet(
-        current: _iconData,
-      ),
+      builder: (context) => SelectFlowIconSheet(current: _iconData),
       isScrollControlled: true,
     );
 
@@ -516,8 +503,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void _deleteAccount() async {
     if (_currentlyEditing == null) return;
 
-    final TransactionFilter filter =
-        TransactionFilter(accounts: [_currentlyEditing!.uuid]);
+    final TransactionFilter filter = TransactionFilter(
+      accounts: [_currentlyEditing!.uuid],
+    );
 
     final int txnCount = TransactionsService().countMany(filter);
 
@@ -539,22 +527,24 @@ class _AccountEditPageState extends State<AccountEditPage> {
       try {
         await TransactionsService().deleteMany(filter);
       } catch (e) {
-        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
+        log(
+          "[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
+        );
       }
 
       try {
         await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
       } catch (e) {
-        log("[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
+        log(
+          "[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
+        );
       }
     }
 
     if (!mounted) return;
     context.pop();
-    GoRouter.of(context).popUntil(
-      (route) {
-        return route.path != "/account/:id";
-      },
-    );
+    GoRouter.of(context).popUntil((route) {
+      return route.path != "/account/:id";
+    });
   }
 }

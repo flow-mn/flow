@@ -23,12 +23,7 @@ class InfoText extends StatelessWidget {
       crossAxisAlignment:
           singleLine ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          fill: 0,
-          color: context.flowColors.semi,
-          size: 16.0,
-        ),
+        Icon(icon, fill: 0, color: context.flowColors.semi, size: 16.0),
         const SizedBox(width: 4.0),
         Flexible(
           child: DefaultTextStyle(

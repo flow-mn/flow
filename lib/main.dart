@@ -52,13 +52,20 @@ void main() async {
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
-  unawaited(PackageInfo.fromPlatform()
-      .then((value) =>
-          appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
-      .catchError((e) {
-    log("[Flow Startup] An error was occured while fetching app version: $e");
-    return appVersion = "<unknown>+<0>$debugBuildSuffix";
-  }));
+  unawaited(
+    PackageInfo.fromPlatform()
+        .then(
+          (value) =>
+              appVersion =
+                  "${value.version}+${value.buildNumber}$debugBuildSuffix",
+        )
+        .catchError((e) {
+          log(
+            "[Flow Startup] An error was occured while fetching app version: $e",
+          );
+          return appVersion = "<unknown>+<0>$debugBuildSuffix";
+        }),
+  );
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
@@ -74,19 +81,22 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
   unawaited(
-      TransactionsService().synchronizeNotifications().catchError((error) {
-    log("[Flow Startup] Failed to synchronize notifications", error: error);
-  }));
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      log("[Flow Startup] Failed to synchronize notifications", error: error);
+    }),
+  );
   ExchangeRatesService().init();
 
   try {
     LocalPreferences().privacyMode.addListener(
-          () => TransitiveLocalPreferences().sessionPrivacyMode.set(
-                LocalPreferences().privacyMode.get(),
-              ),
-        );
+      () => TransitiveLocalPreferences().sessionPrivacyMode.set(
+        LocalPreferences().privacyMode.get(),
+      ),
+    );
   } catch (e) {
-    log("[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode");
+    log(
+      "[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode",
+    );
   }
 
   try {
@@ -116,9 +126,10 @@ class FlowState extends State<Flow> {
 
   ThemeMode get themeMode => _themeMode;
 
-  bool get useDarkTheme => (_themeMode == ThemeMode.system
-      ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
-      : (_themeMode == ThemeMode.dark));
+  bool get useDarkTheme =>
+      (_themeMode == ThemeMode.system
+          ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
+          : (_themeMode == ThemeMode.dark));
 
   @override
   void initState() {
@@ -183,10 +194,7 @@ class FlowState extends State<Flow> {
 
     log("[Theme] Reloading theme $themeName");
 
-    FlowColorScheme theme = getTheme(
-      themeName,
-      preferDark: useDarkTheme,
-    );
+    FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
     setState(() {
       _themeMode = theme.mode;
@@ -198,21 +206,26 @@ class FlowState extends State<Flow> {
     final List<Locale> systemLocales =
         WidgetsBinding.instance.platformDispatcher.locales;
 
-    final List<Locale> favorableLocales = systemLocales
-        .where(
-          (locale) => FlowLocalizations.supportedLanguages.any(
-              (flowSupportedLocalization) =>
-                  flowSupportedLocalization.languageCode ==
-                  locale.languageCode),
-        )
-        .toList();
+    final List<Locale> favorableLocales =
+        systemLocales
+            .where(
+              (locale) => FlowLocalizations.supportedLanguages.any(
+                (flowSupportedLocalization) =>
+                    flowSupportedLocalization.languageCode ==
+                    locale.languageCode,
+              ),
+            )
+            .toList();
 
-    final Locale overriddenLocale = LocalPreferences().localeOverride.value ??
+    final Locale overriddenLocale =
+        LocalPreferences().localeOverride.value ??
         favorableLocales.firstOrNull ??
         _locale;
 
-    _locale =
-        Locale(overriddenLocale.languageCode, overriddenLocale.countryCode);
+    _locale = Locale(
+      overriddenLocale.languageCode,
+      overriddenLocale.countryCode,
+    );
     Moment.setGlobalLocalization(
       MomentLocalizations.byLocale(overriddenLocale.code) ??
           MomentLocalizations.enUS(),

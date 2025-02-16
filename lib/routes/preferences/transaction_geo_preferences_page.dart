@@ -27,9 +27,7 @@ class _TransactionGeoPreferencesPageState
         LocalPreferences().autoAttachTransactionGeo.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.transactionGeo".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.transactionGeo".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -44,8 +42,9 @@ class _TransactionGeoPreferencesPageState
               if (geoSupported) ...[
                 const SizedBox(height: 16.0),
                 CheckboxListTile /*.adaptive*/ (
-                  title:
-                      Text("preferences.transactionGeo.auto.enable".t(context)),
+                  title: Text(
+                    "preferences.transactionGeo.auto.enable".t(context),
+                  ),
                   value: autoAttachTransactionGeo,
                   onChanged: updateAutoAttachTransactionGeo,
                 ),
@@ -67,8 +66,9 @@ class _TransactionGeoPreferencesPageState
     );
   }
 
-  Future<bool> tryRequestPermission(
-      [bool retryAfterOpeningSettings = true]) async {
+  Future<bool> tryRequestPermission([
+    bool retryAfterOpeningSettings = true,
+  ]) async {
     final LocationPermission currentPermission =
         await Geolocator.checkPermission();
 
@@ -124,13 +124,13 @@ class _TransactionGeoPreferencesPageState
         await LocalPreferences().autoAttachTransactionGeo.set(false);
       }
 
-      await LocalPreferences()
-          .autoAttachTransactionGeo
-          .set(newAutoAttachTransactionGeo);
+      await LocalPreferences().autoAttachTransactionGeo.set(
+        newAutoAttachTransactionGeo,
+      );
     } else {
-      await LocalPreferences()
-          .autoAttachTransactionGeo
-          .set(newAutoAttachTransactionGeo);
+      await LocalPreferences().autoAttachTransactionGeo.set(
+        newAutoAttachTransactionGeo,
+      );
     }
 
     if (mounted) setState(() {});
