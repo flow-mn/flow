@@ -69,8 +69,8 @@ class FlowLocalizations {
     Locale("en", "US"), // Will fallback to this for unsupported locales
     Locale("mn", "MN"),
     Locale("it", "IT"),
-    Locale("en", "IN"),
     Locale("tr", "TR"),
+    Locale("ft", "FR"),
   ];
 
   static FlowLocalizations of(BuildContext context) =>

@@ -219,6 +219,7 @@ class FlowState extends State<Flow> {
     );
 
     Intl.defaultLocale = overriddenLocale.code;
+
     setState(() {});
   }
 
