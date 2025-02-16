@@ -445,6 +445,7 @@
     "enum.TransactionGroupRange@week": "Week",
     "enum.TransactionGroupRange@month": "Month",
     "enum.TransactionGroupRange@year": "Year",
+    "enum.TransactionGroupRange@allTime": "All time",
 
     "enum.TransactionFilterRangePreset@last30Days": "Last 30 days",
     "enum.TransactionFilterRangePreset@thisWeek": "This week",

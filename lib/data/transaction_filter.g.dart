@@ -78,4 +78,5 @@ const _$TransactionGroupRangeEnumMap = {
   TransactionGroupRange.week: 'week',
   TransactionGroupRange.month: 'month',
   TransactionGroupRange.year: 'year',
+  TransactionGroupRange.allTime: 'allTime',
 };

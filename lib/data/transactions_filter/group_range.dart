@@ -11,7 +11,8 @@ enum TransactionGroupRange implements LocalizedEnum {
   day("day"),
   week("week"),
   month("month"),
-  year("year");
+  year("year"),
+  allTime("allTime");
 
   final String value;
 
@@ -33,5 +34,6 @@ enum TransactionGroupRange implements LocalizedEnum {
           MonthTimeRange.fromDateTime(t.transactionDate),
         TransactionGroupRange.year =>
           YearTimeRange.fromDateTime(t.transactionDate),
+        TransactionGroupRange.allTime => TimeRange.allTime(),
       };
 }

@@ -15,6 +15,7 @@
 
 * Missing exchange rates warning no longer shows if you use only one currency
   across Flow
+* Now you can group by "All time" - have your transactions in one big group...?
 * Currency filter now longer shows when you only use single currency
 * Slidable actions no longer preserve open panes when another opens in the same group
 
