@@ -8,7 +8,7 @@ part of 'user_preferences.dart';
 
 UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
     UserPreferences(
-      combineTransfers: json['combineTransfers'] as bool? ?? false,
+      combineTransfers: json['combineTransfers'] as bool? ?? true,
       excludeTransfersFromFlow:
           json['excludeTransfersFromFlow'] as bool? ?? true,
       defaultFilterPreset: json['defaultFilterPreset'] as String?,

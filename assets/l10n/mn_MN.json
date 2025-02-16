@@ -445,6 +445,7 @@
     "enum.TransactionGroupRange@week": "Долоо хоног",
     "enum.TransactionGroupRange@month": "Сар",
     "enum.TransactionGroupRange@year": "Жил",
+    "enum.TransactionGroupRange@allTime": "Бүх цаг үе",
 
     "enum.TransactionFilterRangePreset@last30Days": "Сүүлийн 30 хоног",
     "enum.TransactionFilterRangePreset@thisWeek": "Энэ долоо хоног",

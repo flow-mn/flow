@@ -445,6 +445,7 @@
     "enum.TransactionGroupRange@week": "Hafta",
     "enum.TransactionGroupRange@month": "Ay",
     "enum.TransactionGroupRange@year": "Yıl",
+    "enum.TransactionGroupRange@allTime": "Tüm zamanlar",
 
     "enum.TransactionFilterRangePreset@last30Days": "Son 30 gün",
     "enum.TransactionFilterRangePreset@thisWeek": "Bu hafta",
