@@ -71,6 +71,8 @@ class _AccountEditPageState extends State<AccountEditPage> {
       _iconData?.toString() ??
       FlowIconData.icon(Symbols.wallet_rounded).toString();
 
+  int? balanceUpdateTransactionId;
+
   dynamic error;
 
   @override
@@ -309,7 +311,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
       isScrollControlled: true,
     );
 
-    if (result == null) return;
+    if (result == null || result == _balance) return;
     if (!mounted) return;
 
     _balance = result;
@@ -319,10 +321,11 @@ class _AccountEditPageState extends State<AccountEditPage> {
       return;
     }
 
-    _currentlyEditing!.updateBalanceAndSave(
+    balanceUpdateTransactionId = _currentlyEditing!.updateBalanceAndSave(
       _balance,
       title: "account.updateBalance.transactionTitle".t(context),
       transactionDate: _updateBalanceAt,
+      existingTransactionId: balanceUpdateTransactionId,
     );
 
     _refetch();

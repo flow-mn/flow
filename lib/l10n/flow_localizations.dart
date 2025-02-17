@@ -76,7 +76,7 @@ class FlowLocalizations {
     Locale("mn", "MN"),
     Locale("it", "IT"),
     Locale("tr", "TR"),
-    Locale("ft", "FR"),
+    Locale("fr", "FR"),
   ];
 
   static FlowLocalizations of(BuildContext context) =>

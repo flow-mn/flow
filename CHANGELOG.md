@@ -28,6 +28,9 @@
   page in some cases
 * Fixed toggling `Transfers > Exclude from totals` would cause home tab flow to
   show incorrect data
+* Updating account balance no longer creates multiple amendment transactions when
+  updating/correcting the amount for the second and subsequent times
+* Updating account balance no longer creates unnecessary `zero` amount transactions
 
 ## Beta 0.11.1
 
