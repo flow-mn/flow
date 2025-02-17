@@ -387,7 +387,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(5, 4865088217867740277),
+    lastPropertyId: const obx_int.IdUid(6, 6538022804139410219),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -419,6 +419,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(5, 4865088217867740277),
         name: 'defaultFilterPreset',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 6538022804139410219),
+        name: 'trashBinRetentionDays',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -1003,12 +1009,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(6);
+        fbb.startTable(7);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
         fbb.addBool(3, object.excludeTransfersFromFlow);
         fbb.addOffset(4, defaultFilterPresetOffset);
+        fbb.addInt64(5, object.trashBinRetentionDays);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1033,6 +1040,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
+        final trashBinRetentionDaysParam = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
@@ -1040,6 +1049,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             id: idParam,
             combineTransfers: combineTransfersParam,
             excludeTransfersFromFlow: excludeTransfersFromFlowParam,
+            trashBinRetentionDays: trashBinRetentionDaysParam,
             defaultFilterPreset: defaultFilterPresetParam,
           )
           ..uuid = const fb.StringReader(
@@ -1338,4 +1348,8 @@ class UserPreferences_ {
   static final defaultFilterPreset = obx.QueryStringProperty<UserPreferences>(
     _entities[6].properties[4],
   );
+
+  /// See [UserPreferences.trashBinRetentionDays].
+  static final trashBinRetentionDays =
+      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[5]);
 }
