@@ -23,7 +23,7 @@ Future<bool> openUrl(
   try {
     return await launchUrl(uri);
   } catch (e) {
-    _log.warning("[Flow] Failed to launch uri ($uri)", e);
+    _log.warning("Failed to launch uri ($uri)", e);
     return false;
   }
 }

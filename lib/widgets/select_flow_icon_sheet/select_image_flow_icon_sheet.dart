@@ -148,7 +148,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         setState(() {});
       }
     } catch (e) {
-      _log.warning("[Select Icon Sheet] uploadPicture has failed due to", e);
+      _log.warning("uploadPicture has failed due to", e);
     } finally {
       busy = false;
       if (mounted) setState(() {});

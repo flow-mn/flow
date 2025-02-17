@@ -31,7 +31,7 @@ void nonImportantMigrateProfileImagePath() async {
 
     await old.delete();
   } catch (e) {
-    _log.info("[Flow] Failed to migrate profile image path", e);
+    _log.info("Failed to migrate profile image path", e);
   }
 }
 
@@ -48,10 +48,7 @@ void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
       oldValue,
     );
   } catch (e) {
-    _log.info(
-      "[Flow] Failed to migrate requirePendingTransactionConfrimation",
-      e,
-    );
+    _log.info("Failed to migrate requirePendingTransactionConfrimation", e);
   }
 }
 
@@ -80,7 +77,7 @@ void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
     ObjectBox().box<UserPreferences>().put(userPreferences);
   } catch (e) {
     _log.warning(
-      "[Flow] Failed to migrate user preferences regarding transfer stuff",
+      "Failed to migrate user preferences regarding transfer stuff",
       e,
     );
   }

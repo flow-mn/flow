@@ -124,10 +124,6 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
 
   void updateTrashBinRetentionDays(int? days) async {
     UserPreferencesService().trashBinRetentionDays = days;
-
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   void emptyTrashBin() async {

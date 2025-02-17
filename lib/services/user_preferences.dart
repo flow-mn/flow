@@ -25,6 +25,10 @@ class UserPreferencesService {
   set trashBinRetentionDays(int? newTrashBinRetentionDays) {
     if (value.id == 0) return;
 
+    print(value.id);
+    print(value.trashBinRetentionDays);
+    print(newTrashBinRetentionDays);
+
     if (newTrashBinRetentionDays == null) {
       value.trashBinRetentionDays = null;
     } else {

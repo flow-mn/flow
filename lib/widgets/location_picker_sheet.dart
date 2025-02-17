@@ -110,10 +110,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           }
         })
         .catchError((e) {
-          _log.warning(
-            "[Location Picker Sheet] Failed to get last known location",
-            e,
-          );
+          _log.warning("Failed to get last known location", e);
         });
 
     Geolocator.getCurrentPosition()
@@ -123,10 +120,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           center = LatLng(current.latitude, current.longitude);
         })
         .catchError((e) {
-          _log.warning(
-            "[Location Picker Sheet] Failed to get current location",
-            e,
-          );
+          _log.warning("Failed to get current location", e);
         })
         .whenComplete(() {
           if (mounted) {
