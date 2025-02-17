@@ -131,6 +131,37 @@ class TransactionsService {
     return transaction;
   }
 
+  Future<Transaction?> findByIdentifier(dynamic identifier) async {
+    switch (identifier) {
+      case int id:
+        return await getOne(id);
+      case Transaction transaction:
+        return transaction;
+      case String uuid:
+        return await findFirst(TransactionFilter(uuids: [uuid]));
+      default:
+        return null;
+    }
+  }
+
+  Transaction? findByIdentifierSync(
+    dynamic identifier, {
+    bool includeDeleted = false,
+  }) {
+    switch (identifier) {
+      case int id:
+        return getOneSync(id);
+      case Transaction transaction:
+        return transaction;
+      case String uuid:
+        return findFirstSync(
+          TransactionFilter(uuids: [uuid], includeDeleted: includeDeleted),
+        );
+      default:
+        return null;
+    }
+  }
+
   int countMany(TransactionFilter filter) {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
@@ -175,18 +206,59 @@ class TransactionsService {
 
   /// Deletes a transaction by its identifier.
   ///
-  /// The identifier can be either an [int] or a [Transaction] object.
+  /// The identifier can be either an [int] id, a [Transaction] object, or [string] uuid.
   ///
-  /// Returns `true` if the transaction existend, and was deleted, `false` otherwise.
+  /// Returns `true` if the transaction existed, and was deleted, `false` otherwise.
   bool deleteSync(dynamic identifier) {
-    switch (identifier) {
-      case int id:
-        return ObjectBox().box<Transaction>().remove(id);
-      case Transaction transaction:
-        return ObjectBox().box<Transaction>().remove(transaction.id);
-      default:
-        return false;
+    final Transaction? transaction = findByIdentifierSync(identifier);
+
+    if (transaction == null) {
+      return false;
     }
+
+    return ObjectBox().box<Transaction>().remove(transaction.id);
+  }
+
+  /// Moves transaction into the trash bin by its identifier.
+  ///
+  /// The identifier can be either an [int] id, a [Transaction] object, or [string] uuid.
+  ///
+  /// Returns `true` upon success
+  bool moveToBinSync(dynamic identifier) {
+    final Transaction? transaction = findByIdentifierSync(identifier);
+
+    if (transaction == null) {
+      return false;
+    }
+
+    transaction.deletedDate = DateTime.now();
+    transaction.isDeleted = true;
+
+    updateOneSync(transaction);
+
+    return true;
+  }
+
+  /// Recovers transaction from the trash bin by its identifier.
+  ///
+  /// The identifier can be either an [int] id, a [Transaction] object, or [string] uuid.
+  ///
+  /// Returns `true` upon success
+  bool recoverFromBinSync(dynamic identifier) {
+    final Transaction? transaction = findByIdentifierSync(
+      identifier,
+      includeDeleted: true,
+    );
+
+    if (transaction == null) {
+      return false;
+    }
+
+    transaction.isDeleted = false;
+
+    updateOneSync(transaction);
+
+    return true;
   }
 
   Future<void> synchronizeNotifications() async {

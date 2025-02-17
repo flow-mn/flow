@@ -435,8 +435,8 @@ extension TransactionActions on Transaction {
             .findFirstSync(filter);
 
         try {
-          final bool removedRelated = ObjectBox().box<Transaction>().remove(
-            relatedTransaction?.id ?? -1,
+          final bool removedRelated = TransactionsService().deleteSync(
+            relatedTransaction,
           );
 
           if (!removedRelated) {
@@ -460,20 +460,8 @@ extension TransactionActions on Transaction {
           "Couldn't delete transfer transaction properly due to missing transfer data",
         );
       } else {
-        final TransactionFilter filter = TransactionFilter(
-          uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value],
-        );
-
         try {
-          final Transaction? relatedTransaction = TransactionsService()
-              .findFirstSync(filter);
-
-          if (relatedTransaction != null) {
-            relatedTransaction.deletedDate = DateTime.now();
-            relatedTransaction.isDeleted = true;
-
-            TransactionsService().updateOne(relatedTransaction);
-          }
+          TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
         } catch (e) {
           log(
             "Couldn't move transfer transaction to trash bin properly due to: $e",
@@ -483,10 +471,7 @@ extension TransactionActions on Transaction {
     }
 
     try {
-      deletedDate = DateTime.now();
-      isDeleted = true;
-
-      TransactionsService().updateOne(this);
+      TransactionsService().moveToBinSync(this);
     } catch (e) {
       log("Failed to move transaction to trash bin: $e");
     }
@@ -501,19 +486,10 @@ extension TransactionActions on Transaction {
           "Couldn't delete transfer transaction properly due to missing transfer data",
         );
       } else {
-        final TransactionFilter filter = TransactionFilter(
-          uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value],
-        );
-
         try {
-          final Transaction? relatedTransaction = TransactionsService()
-              .findFirstSync(filter);
-
-          if (relatedTransaction != null) {
-            relatedTransaction.isDeleted = false;
-
-            TransactionsService().updateOne(relatedTransaction);
-          }
+          TransactionsService().recoverFromBinSync(
+            transfer.relatedTransactionUuid,
+          );
         } catch (e) {
           log(
             "Couldn't move transfer transaction to trash bin properly due to: $e",
@@ -523,9 +499,7 @@ extension TransactionActions on Transaction {
     }
 
     try {
-      isDeleted = false;
-
-      TransactionsService().updateOne(this);
+      TransactionsService().recoverFromBinSync(this);
     } catch (e) {
       log("Failed to move transaction to trash bin: $e");
     }
