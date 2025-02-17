@@ -716,11 +716,12 @@ extension AccountActions on Account {
     }
   }
 
-  /// Creates a new transaction, and saves it
+  /// Upserts a transaction (creates if not exists, updates if exists)
   ///
   /// Returns transaction id from [Box.put]
   int updateBalanceAndSave(
     double targetBalance, {
+    int? existingTransactionId,
     String? title,
     DateTime? transactionDate,
   }) {
@@ -729,6 +730,28 @@ extension AccountActions on Account {
         (transactionDate == null
             ? balance.amount
             : balanceAt(transactionDate).amount);
+
+    if (delta == 0) {
+      throw Exception(
+        "[Account.updateBalanceAndSave] Target balance ($targetBalance) is same as current balance (${balance.amount})",
+      );
+    }
+
+    if (existingTransactionId != null && existingTransactionId > 0) {
+      final Transaction? transaction = TransactionsService().getOneSync(
+        existingTransactionId,
+      );
+
+      if (transaction == null) {
+        throw Exception(
+          "[Account.updateBalanceAndSave] Transaction with id $existingTransactionId not found, aborting operation",
+        );
+      }
+
+      transaction.amount = delta;
+      transaction.transactionDate = DateTime.now();
+      return TransactionsService().updateOneSync(transaction);
+    }
 
     return createAndSaveTransaction(
       amount: delta,
