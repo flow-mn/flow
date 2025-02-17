@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 
 import "package:flow/constants.dart";
@@ -37,8 +36,11 @@ import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("TransactionPage");
 
 class TransactionPage extends StatefulWidget {
   /// Transaction Object ID
@@ -488,17 +490,20 @@ class _TransactionPageState extends State<TransactionPage> {
 
           if (mounted) setState(() => {});
         })
-        .catchError((_) {
-          log("[Transaction Page] Failed to get last known location");
+        .catchError((e) {
+          _log.warning(
+            "[Transaction Page] Failed to get last known location",
+            e,
+          );
         });
 
     Geolocator.getCurrentPosition()
         .then((current) {
           _geo = Geo.fromPosition(current);
         })
-        .catchError((_) {
+        .catchError((e) {
           locationFailed = true;
-          log("[Transaction Page] Failed to get current location");
+          _log.warning("[Transaction Page] Failed to get current location", e);
         })
         .whenComplete(() {
           if (mounted) setState(() => {});
@@ -768,8 +773,9 @@ class _TransactionPageState extends State<TransactionPage> {
         _currentlyEditing.permanentlyDelete(true);
         context.pop();
       } catch (e) {
-        log(
-          "[Transaction Page] Failed to update transfer transaction due to: $e",
+        _log.severe(
+          "[Transaction Page] Failed to update transfer transaction",
+          e,
         );
       }
       return;

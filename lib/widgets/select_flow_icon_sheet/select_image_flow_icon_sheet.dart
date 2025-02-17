@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
 
@@ -12,9 +11,12 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:path/path.dart" as path;
 import "package:uuid/uuid.dart";
+
+final Logger _log = Logger("SelectImageFlowIconSheet");
 
 class SelectImageFlowIconSheet extends StatefulWidget {
   final FlowIconData? initialValue;
@@ -146,7 +148,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         setState(() {});
       }
     } catch (e) {
-      log("[Select Icon Sheet] uploadPicture has failed due to: $e");
+      _log.warning("[Select Icon Sheet] uploadPicture has failed due to", e);
     } finally {
       busy = false;
       if (mounted) setState(() {});

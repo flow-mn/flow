@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
@@ -16,6 +18,19 @@ class UserPreferencesService {
     if (value.id == 0) return;
 
     value.combineTransfers = newCombineTransfers;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  int? get trashBinRetentionDays => value.trashBinRetentionDays;
+  set trashBinRetentionDays(int? newTrashBinRetentionDays) {
+    if (value.id == 0) return;
+
+    if (newTrashBinRetentionDays == null) {
+      value.trashBinRetentionDays = null;
+    } else {
+      value.trashBinRetentionDays = min(max(0, newTrashBinRetentionDays), 365);
+    }
+
     ObjectBox().box<UserPreferences>().put(value);
   }
 
