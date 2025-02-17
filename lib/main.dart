@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:ui";
 
@@ -39,11 +38,17 @@ import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:window_manager/window_manager.dart";
 
+final Logger _startupLog = Logger("Flow Startup");
+final Logger _themeLog = Logger("Theme");
+
 void main() async {
+  Logger.root.level = Level.ALL;
+
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
@@ -60,8 +65,9 @@ void main() async {
                   "${value.version}+${value.buildNumber}$debugBuildSuffix",
         )
         .catchError((e) {
-          log(
-            "[Flow Startup] An error was occured while fetching app version: $e",
+          _startupLog.warning(
+            "[Flow Startup] An error was occured while fetching app version",
+            e,
           );
           return appVersion = "<unknown>+<0>$debugBuildSuffix";
         }),
@@ -82,7 +88,10 @@ void main() async {
 
   unawaited(
     TransactionsService().synchronizeNotifications().catchError((error) {
-      log("[Flow Startup] Failed to synchronize notifications", error: error);
+      _startupLog.severe(
+        "[Flow Startup] Failed to synchronize notifications",
+        error,
+      );
     }),
   );
   ExchangeRatesService().init();
@@ -94,7 +103,7 @@ void main() async {
       ),
     );
   } catch (e) {
-    log(
+    _startupLog.severe(
       "[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode",
     );
   }
@@ -102,7 +111,10 @@ void main() async {
   try {
     UserPreferencesService().initialize();
   } catch (e) {
-    log("[Flow Startup] Failed to initialize UserPreferencesService", error: e);
+    _startupLog.severe(
+      "[Flow Startup] Failed to initialize UserPreferencesService",
+      e,
+    );
   }
 
   runApp(const Flow());
@@ -192,7 +204,7 @@ class FlowState extends State<Flow> {
   void _reloadTheme() {
     final String? themeName = LocalPreferences().theme.themeName.value;
 
-    log("[Theme] Reloading theme $themeName");
+    _themeLog.info("[Theme] Reloading theme $themeName");
 
     FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
@@ -244,7 +256,10 @@ class FlowState extends State<Flow> {
 
   void _synchronizePlannedNotifications() {
     TransactionsService().synchronizeNotifications().catchError((error) {
-      log("[Flow Startup] Failed to synchronize notifications", error: error);
+      _startupLog.severe(
+        "[Flow Startup] Failed to synchronize notifications",
+        error,
+      );
     });
   }
 }

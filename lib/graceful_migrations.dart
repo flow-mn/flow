@@ -1,12 +1,14 @@
-import "dart:developer";
 import "dart:io";
 
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
 import "package:shared_preferences/shared_preferences.dart";
+
+final Logger _log = Logger("GracefulMigrations");
 
 void nonImportantMigrateProfileImagePath() async {
   try {
@@ -29,7 +31,7 @@ void nonImportantMigrateProfileImagePath() async {
 
     await old.delete();
   } catch (e) {
-    log("[Flow] Failed to migrate profile image path due to:\n$e");
+    _log.info("[Flow] Failed to migrate profile image path", e);
   }
 }
 
@@ -46,8 +48,9 @@ void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
       oldValue,
     );
   } catch (e) {
-    log(
-      "[Flow] Failed to migrate requirePendingTransactionConfrimation due to:\n$e",
+    _log.info(
+      "[Flow] Failed to migrate requirePendingTransactionConfrimation",
+      e,
     );
   }
 }
@@ -76,8 +79,9 @@ void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
 
     ObjectBox().box<UserPreferences>().put(userPreferences);
   } catch (e) {
-    log(
-      "[Flow] Failed to migrate user preferences regarding transfer stuff due to:\n$e",
+    _log.warning(
+      "[Flow] Failed to migrate user preferences regarding transfer stuff",
+      e,
     );
   }
 }

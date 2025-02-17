@@ -4,8 +4,10 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:moment_dart/moment_dart.dart";
 
 /// Call [disableUpdates] to pause listeners and [enableUpdates] to resume them.
@@ -259,6 +261,35 @@ class TransactionsService {
     updateOneSync(transaction);
 
     return true;
+  }
+
+  Future<void> clearStaleTrashBinEntries() async {
+    final int? keepDays = UserPreferencesService().trashBinRetentionDays;
+
+    // Retain forever!
+    if (keepDays == null) return;
+
+    if (keepDays <= 0) {
+      await emptyTrashBin();
+      return;
+    }
+
+    final Query<Transaction> staleTrashBinTxns =
+        ObjectBox()
+            .box<Transaction>()
+            .query(
+              Transaction_.isDeleted.equals(true) &
+                  Transaction_.deletedDate.lessOrEqualDate(
+                    Moment.now().subtract(Duration(days: keepDays)),
+                  ),
+            )
+            .build();
+
+    final int deletedCount = await staleTrashBinTxns.removeAsync();
+
+    staleTrashBinTxns.close();
+
+    log("Deleted $deletedCount stale trash bin entries");
   }
 
   Future<void> synchronizeNotifications() async {

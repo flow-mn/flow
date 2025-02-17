@@ -1,5 +1,3 @@
-import "dart:developer";
-
 import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
@@ -22,7 +20,6 @@ class MoneyFlow<T> {
     final String currency = money.currency.trim().toUpperCase();
 
     if (amount.abs() == 0.0) {
-      log("[MoneyFlow] Ignoring zero entry");
       return;
     }
 
