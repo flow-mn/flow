@@ -66,7 +66,7 @@ void main() async {
         )
         .catchError((e) {
           _startupLog.warning(
-            "[Flow Startup] An error was occured while fetching app version",
+            "An error was occured while fetching app version",
             e,
           );
           return appVersion = "<unknown>+<0>$debugBuildSuffix";
@@ -88,12 +88,15 @@ void main() async {
 
   unawaited(
     TransactionsService().synchronizeNotifications().catchError((error) {
-      _startupLog.severe(
-        "[Flow Startup] Failed to synchronize notifications",
-        error,
-      );
+      _startupLog.severe("Failed to synchronize notifications", error);
     }),
   );
+  unawaited(
+    TransactionsService().clearStaleTrashBinEntries().catchError((error) {
+      _startupLog.severe("Failed to clear stale trash bin entries", error);
+    }),
+  );
+
   ExchangeRatesService().init();
 
   try {
@@ -104,17 +107,14 @@ void main() async {
     );
   } catch (e) {
     _startupLog.severe(
-      "[Flow Startup] Failed to add listener updates prefs.sessionPrivacyMode",
+      "Failed to add listener updates prefs.sessionPrivacyMode",
     );
   }
 
   try {
     UserPreferencesService().initialize();
   } catch (e) {
-    _startupLog.severe(
-      "[Flow Startup] Failed to initialize UserPreferencesService",
-      e,
-    );
+    _startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
   runApp(const Flow());
@@ -204,7 +204,7 @@ class FlowState extends State<Flow> {
   void _reloadTheme() {
     final String? themeName = LocalPreferences().theme.themeName.value;
 
-    _themeLog.info("[Theme] Reloading theme $themeName");
+    _themeLog.info("Reloading $themeName");
 
     FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
@@ -256,10 +256,7 @@ class FlowState extends State<Flow> {
 
   void _synchronizePlannedNotifications() {
     TransactionsService().synchronizeNotifications().catchError((error) {
-      _startupLog.severe(
-        "[Flow Startup] Failed to synchronize notifications",
-        error,
-      );
+      _startupLog.severe("Failed to synchronize notifications", error);
     });
   }
 }
