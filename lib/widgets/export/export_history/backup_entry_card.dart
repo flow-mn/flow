@@ -25,10 +25,7 @@ class BackupEntryCard extends StatelessWidget {
     super.key,
     required this.entry,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 16.0,
-      vertical: 4.0,
-    ),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
     this.dismissibleKey,
   });
 
@@ -42,11 +39,7 @@ class BackupEntryCard extends StatelessWidget {
         padding: padding,
         child: Row(
           children: [
-            FlowIcon(
-              entry.icon,
-              size: 48.0,
-              plated: true,
-            ),
+            FlowIcon(entry.icon, size: 48.0, plated: true),
             const SizedBox(width: 12.0),
             Expanded(
               child: Column(
@@ -63,7 +56,7 @@ class BackupEntryCard extends StatelessWidget {
                     [
                       entry.createdDate.toMoment().calendar(),
                       entry.fileExt,
-                      fileSize?.binarySize
+                      fileSize?.binarySize,
                     ].nonNulls.join(" • "),
                     style: context.textTheme.bodyMedium?.semi(context),
                     maxLines: 2,
@@ -75,12 +68,13 @@ class BackupEntryCard extends StatelessWidget {
             const SizedBox(width: 8.0),
             IconButton(
               onPressed: () => showShareSheet(context, fileSize != null),
-              icon: fileSize != null
-                  ? const Icon(Symbols.save_alt_rounded)
-                  : Icon(
-                      Symbols.error_circle_rounded,
-                      color: context.flowColors.expense,
-                    ),
+              icon:
+                  fileSize != null
+                      ? const Icon(Symbols.save_alt_rounded)
+                      : Icon(
+                        Symbols.error_circle_rounded,
+                        color: context.flowColors.expense,
+                      ),
             ),
             const SizedBox(width: 8.0),
           ],
@@ -90,6 +84,7 @@ class BackupEntryCard extends StatelessWidget {
 
     return Slidable(
       key: dismissibleKey,
+      groupTag: "backup_entry_card",
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
         children: [
@@ -97,7 +92,7 @@ class BackupEntryCard extends StatelessWidget {
             onPressed: (context) => delete(context),
             icon: Symbols.delete_forever_rounded,
             backgroundColor: context.flowColors.expense,
-          )
+          ),
         ],
       ),
       child: listTile,
@@ -121,12 +116,14 @@ class BackupEntryCard extends StatelessWidget {
     final origin =
         box == null ? Rect.zero : box.localToGlobal(Offset.zero) & box.size;
 
-    await Share.shareXFiles([XFile(entry.filePath)],
-        sharePositionOrigin: origin,
-        subject: "sync.export.save.shareTitle".t(context, {
-          "type": entry.fileExt,
-          "date": entry.createdDate.toMoment().lll,
-        }));
+    await Share.shareXFiles(
+      [XFile(entry.filePath)],
+      sharePositionOrigin: origin,
+      subject: "sync.export.save.shareTitle".t(context, {
+        "type": entry.fileExt,
+        "date": entry.createdDate.toMoment().lll,
+      }),
+    );
   }
 
   Future<void> delete(BuildContext context) async {

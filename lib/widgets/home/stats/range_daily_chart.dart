@@ -4,7 +4,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flow/data/flow_standard_report.dart";
 import "package:flow/data/money.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/chart_legend.dart";
 import "package:flow/widgets/general/money_text.dart";
@@ -64,9 +64,10 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
     final Widget child = Container(
       height: widget.height,
       padding: EdgeInsets.all(16.0),
-      child: dailyExpenditureChartData == null
-          ? Spinner.center()
-          : LineChart(dailyExpenditureChartData!),
+      child:
+          dailyExpenditureChartData == null
+              ? Spinner.center()
+              : LineChart(dailyExpenditureChartData!),
     );
 
     final String? previousLabel = widget.report.previous?.format();
@@ -136,20 +137,19 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
         ),
       ),
       titlesData: FlTitlesData(
-        bottomTitles: AxisTitles(
-          sideTitles: bottomTitles(report),
-        ),
+        bottomTitles: AxisTitles(sideTitles: bottomTitles(report)),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            getTitlesWidget: (value, meta) => MoneyText(
-              Money(value, primaryCurrency),
-              initiallyAbbreviated: true,
-              tapToToggleAbbreviation: false,
-              autoSize: true,
-              autoSizeGroup: autoSizeGroup,
-              displayAbsoluteAmount: true,
-            ),
+            getTitlesWidget:
+                (value, meta) => MoneyText(
+                  Money(value, primaryCurrency),
+                  initiallyAbbreviated: true,
+                  tapToToggleAbbreviation: false,
+                  autoSize: true,
+                  autoSizeGroup: autoSizeGroup,
+                  displayAbsoluteAmount: true,
+                ),
             reservedSize: 48.0,
           ),
         ),
@@ -157,22 +157,24 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       gridData: gridData(report),
-      extraLinesData: ExtraLinesData(horizontalLines: [
-        HorizontalLine(
-          y: report.dailyAvgExpenditure.amount.abs(),
-          color: context.colorScheme.primary.withAlpha(0x40),
-          label: HorizontalLineLabel(
-            style: TextStyle(
-              color: context.colorScheme.primary.withAlpha(0xc0),
-              fontSize: 12.0,
+      extraLinesData: ExtraLinesData(
+        horizontalLines: [
+          HorizontalLine(
+            y: report.dailyAvgExpenditure.amount.abs(),
+            color: context.colorScheme.primary.withAlpha(0x40),
+            label: HorizontalLineLabel(
+              style: TextStyle(
+                color: context.colorScheme.primary.withAlpha(0xc0),
+                fontSize: 12.0,
+              ),
+              alignment: Alignment.topRight,
+              labelResolver:
+                  (p0) => Money(p0.y, primaryCurrency).formattedCompact,
+              show: true,
             ),
-            alignment: Alignment.topRight,
-            labelResolver: (p0) =>
-                Money(p0.y, primaryCurrency).formattedCompact,
-            show: true,
           ),
-        ),
-      ]),
+        ],
+      ),
       borderData: borderData,
       lineBarsData: [
         LineChartBarData(
@@ -180,15 +182,12 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
           color: currentPeriod,
           dotData: FlDotData(show: false),
           isStrokeCapRound: true,
-          spots: List.generate(
-            maxDays,
-            (index) {
-              return FlSpot(
-                index.toDouble(),
-                report.dailyExpenditure[index]?.abs() ?? 0.0,
-              );
-            },
-          ),
+          spots: List.generate(maxDays, (index) {
+            return FlSpot(
+              index.toDouble(),
+              report.dailyExpenditure[index]?.abs() ?? 0.0,
+            );
+          }),
         ),
         if (hasPrevious)
           LineChartBarData(
@@ -209,29 +208,29 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
   }
 
   FlBorderData get borderData => FlBorderData(
-        show: true,
-        border: Border(
-          bottom: BorderSide(
-            color: context.colorScheme.onSurface.withAlpha(0x40),
-            width: 2.0,
-          ),
-          left: BorderSide(
-            color: context.colorScheme.onSurface.withAlpha(0x40),
-            width: 2.0,
-          ),
-          right: BorderSide.none,
-          top: BorderSide.none,
-        ),
-      );
+    show: true,
+    border: Border(
+      bottom: BorderSide(
+        color: context.colorScheme.onSurface.withAlpha(0x40),
+        width: 2.0,
+      ),
+      left: BorderSide(
+        color: context.colorScheme.onSurface.withAlpha(0x40),
+        width: 2.0,
+      ),
+      right: BorderSide.none,
+      top: BorderSide.none,
+    ),
+  );
 
   int calculateMaxDays(TimeRange range) => switch (range) {
-        DayTimeRange() => 1,
-        MonthTimeRange() => math.max(
-            range.from.endOfMonth().day,
-            range.last.from.endOfMonth().day,
-          ),
-        TimeRange other => other.duration.inDays
-      };
+    DayTimeRange() => 1,
+    MonthTimeRange() => math.max(
+      range.from.endOfMonth().day,
+      range.last.from.endOfMonth().day,
+    ),
+    TimeRange other => other.duration.inDays,
+  };
 
   FlGridData gridData(FlowStandardReport report) {
     final double verticalInterval = switch (report.current) {
@@ -253,30 +252,55 @@ class _RangeDailyChartState extends State<RangeDailyChart> {
   SideTitles bottomTitles(FlowStandardReport report) {
     return switch (report.current) {
       MonthTimeRange() => SideTitles(
-          showTitles: true,
-          getTitlesWidget: (value, meta) =>
-              Text((value + 1.0).toStringAsFixed(0)),
-          interval: 3,
-          minIncluded: true,
-          maxIncluded: false,
-        ),
+        showTitles: true,
+        getTitlesWidget:
+            (value, meta) => Text((value + 1.0).toStringAsFixed(0)),
+        interval: 3,
+        minIncluded: true,
+        maxIncluded: false,
+      ),
       YearTimeRange yearTimeRange => SideTitles(
-          showTitles: true,
-          getTitlesWidget: (value, meta) {
-            final int month = yearTimeRange.from.isLeapYear
-                ? [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 303, 333]
-                    .indexOf(value.toInt())
-                : [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 302, 332]
-                    .indexOf(value.toInt());
+        showTitles: true,
+        getTitlesWidget: (value, meta) {
+          final int month =
+              yearTimeRange.from.isLeapYear
+                  ? [
+                    0,
+                    31,
+                    60,
+                    91,
+                    121,
+                    152,
+                    182,
+                    213,
+                    244,
+                    274,
+                    303,
+                    333,
+                  ].indexOf(value.toInt())
+                  : [
+                    0,
+                    31,
+                    59,
+                    90,
+                    120,
+                    151,
+                    181,
+                    212,
+                    243,
+                    273,
+                    302,
+                    332,
+                  ].indexOf(value.toInt());
 
-            if (month < 0) return const SizedBox.shrink();
+          if (month < 0) return const SizedBox.shrink();
 
-            return Text(DateTime(1970, month + 1).toMoment().format("MMM"));
-          },
-          interval: 1,
-          minIncluded: true,
-          maxIncluded: true,
-        ),
+          return Text(DateTime(1970, month + 1).toMoment().format("MMM"));
+        },
+        interval: 1,
+        minIncluded: true,
+        maxIncluded: true,
+      ),
       _ => SideTitles(showTitles: false),
     };
   }

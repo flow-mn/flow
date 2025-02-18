@@ -1,5 +1,5 @@
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
@@ -18,7 +18,8 @@ class TransactionListTile extends StatelessWidget {
   final Transaction transaction;
   final EdgeInsets padding;
 
-  final VoidCallback deleteFn;
+  final VoidCallback? recoverFromTrashFn;
+  final VoidCallback? moveToTrashFn;
   final VoidCallback? duplicateFn;
   final Function([bool confirm])? confirmFn;
 
@@ -42,7 +43,8 @@ class TransactionListTile extends StatelessWidget {
   const TransactionListTile({
     super.key,
     required this.transaction,
-    required this.deleteFn,
+    required this.recoverFromTrashFn,
+    required this.moveToTrashFn,
     required this.combineTransfers,
     this.groupRange = TransactionGroupRange.day,
     this.padding = EdgeInsets.zero,
@@ -103,20 +105,20 @@ class TransactionListTile extends StatelessWidget {
                                   Symbols.schedule_rounded,
                                   size: context.textTheme.bodyMedium!.fontSize!,
                                   fill: 0.0,
-                                  color: transaction.isPending == true
-                                      ? context.colorScheme.onSurface
-                                          .withAlpha(0xc0)
-                                      : context.flowColors.income,
+                                  color:
+                                      transaction.isPending == true
+                                          ? context.colorScheme.onSurface
+                                              .withAlpha(0xc0)
+                                          : context.flowColors.income,
                                 ),
                               ),
-                              TextSpan(
-                                text: " ",
-                              ),
+                              TextSpan(text: " "),
                             ],
                             TextSpan(
-                              text: (missingTitle
-                                  ? "transaction.fallbackTitle".t(context)
-                                  : transaction.title!),
+                              text:
+                                  (missingTitle
+                                      ? "transaction.fallbackTitle".t(context)
+                                      : transaction.title!),
                             ),
                           ],
                           style: context.textTheme.bodyMedium,
@@ -164,7 +166,7 @@ class TransactionListTile extends StatelessWidget {
                     onPressed: () => confirmFn!(),
                     label: Text("general.confirm".t(context)),
                     icon: Icon(Symbols.check_rounded),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 12.0),
@@ -174,13 +176,13 @@ class TransactionListTile extends StatelessWidget {
       ),
     );
 
-    final List<SlidableAction> startActionsPanes = [
+    final List<SlidableAction> startActionPanes = [
       if (!transaction.isTransfer && duplicateFn != null)
         SlidableAction(
           onPressed: (context) => duplicateFn!(),
           icon: Symbols.content_copy_rounded,
           backgroundColor: context.flowColors.semi,
-        )
+        ),
     ];
 
     final List<SlidableAction> endActionPanes = [
@@ -196,28 +198,41 @@ class TransactionListTile extends StatelessWidget {
           icon: Symbols.cancel_rounded,
           backgroundColor: context.flowColors.expense,
         ),
-      if (!showHoldButton)
+      if (moveToTrashFn != null &&
+          !showHoldButton &&
+          transaction.isDeleted != true)
         SlidableAction(
-          onPressed: (context) => deleteFn(),
+          onPressed: (context) => moveToTrashFn!(),
           icon: Symbols.delete_forever_rounded,
           backgroundColor: context.flowColors.expense,
-        )
+        ),
+      if (recoverFromTrashFn != null &&
+          !showHoldButton &&
+          transaction.isDeleted == true)
+        SlidableAction(
+          onPressed: (context) => recoverFromTrashFn!(),
+          icon: Symbols.restore_page_rounded,
+          backgroundColor: context.flowColors.income,
+        ),
     ];
 
     return Slidable(
       key: dismissibleKey,
-      endActionPane: endActionPanes.isNotEmpty
-          ? ActionPane(
-              motion: const DrawerMotion(),
-              children: endActionPanes,
-            )
-          : null,
-      startActionPane: startActionsPanes.isNotEmpty
-          ? ActionPane(
-              motion: const DrawerMotion(),
-              children: startActionsPanes,
-            )
-          : null,
+      groupTag: "transaction_list_tile",
+      endActionPane:
+          endActionPanes.isNotEmpty
+              ? ActionPane(
+                motion: const DrawerMotion(),
+                children: endActionPanes,
+              )
+              : null,
+      startActionPane:
+          startActionPanes.isNotEmpty
+              ? ActionPane(
+                motion: const DrawerMotion(),
+                children: startActionPanes,
+              )
+              : null,
       child: listTile,
     );
   }
@@ -225,16 +240,16 @@ class TransactionListTile extends StatelessWidget {
   String get dateString {
     final DateTime now = Moment.now().startOfNextMinute();
 
-    final bool pending = transaction.isPending == true ||
+    final bool pending =
+        transaction.isPending == true ||
         transaction.transactionDate.isFutureAnchored(now);
 
     if (pending) return transaction.transactionDate.toMoment().calendar();
 
     return switch (groupRange) {
       TransactionGroupRange.hour ||
-      TransactionGroupRange.day =>
-        transaction.transactionDate.toMoment().LT,
-      _ => transaction.transactionDate.toMoment().lll
+      TransactionGroupRange.day => transaction.transactionDate.toMoment().LT,
+      _ => transaction.transactionDate.toMoment().lll,
     };
   }
 }

@@ -1,11 +1,14 @@
 import "dart:async";
 
 import "package:flow/data/exchange_rates.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -17,7 +20,6 @@ import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/transactions_date_header.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -36,26 +38,26 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late int _plannedTransactionsNextNDays;
 
-  TransactionFilter defaultFilter = TransactionFilter(
-    range: last30Days(),
-  );
+  late TransactionFilter defaultFilter;
   DateTime dateKey = Moment.startOfToday();
 
-  late TransactionFilter currentFilter = defaultFilter.copyWithOptional();
+  late TransactionFilter currentFilter;
 
   TransactionFilter get currentFilterWithPlanned {
-    final DateTime plannedTransactionTo = Moment.now()
-        .add(Duration(days: _plannedTransactionsNextNDays))
-        .startOfNextDay();
+    final DateTime plannedTransactionTo =
+        Moment.now()
+            .add(Duration(days: _plannedTransactionsNextNDays))
+            .startOfNextDay();
 
-    if (currentFilter.range != null &&
-        currentFilter.range!.contains(Moment.now()) &&
-        !currentFilter.range!.contains(plannedTransactionTo)) {
+    final TimeRange? timeRange = currentFilter.range?.range;
+
+    if (timeRange != null &&
+        timeRange.contains(Moment.now()) &&
+        !timeRange.contains(plannedTransactionTo)) {
       return currentFilter.copyWithOptional(
         range: Optional(
-          CustomTimeRange(
-            currentFilter.range!.from,
-            plannedTransactionTo,
+          TransactionFilterTimeRange.fromTimeRange(
+            CustomTimeRange(timeRange.from, plannedTransactionTo),
           ),
         ),
       );
@@ -70,25 +72,36 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     _updatePlannedTransactionDays();
-    LocalPreferences()
-        .pendingTransactionsHomeTimeframe
-        .addListener(_updatePlannedTransactionDays);
+    LocalPreferences().pendingTransactions.homeTimeframe.addListener(
+      _updatePlannedTransactionDays,
+    );
+
+    _rawUpdateDefaultFilter();
+
+    currentFilter = defaultFilter.copyWithOptional();
 
     _listener = AppLifecycleListener(
       onShow: () => refreshDateKeyAndDefaultFilter(),
     );
 
     _timer = Timer.periodic(
-        const Duration(seconds: 30), (_) => refreshDateKeyAndDefaultFilter());
+      const Duration(seconds: 30),
+      (_) => refreshDateKeyAndDefaultFilter(),
+    );
+
+    UserPreferencesService().valueNotiifer.addListener(_rawUpdateDefaultFilter);
   }
 
   @override
   void dispose() {
     _listener.dispose();
-    LocalPreferences()
-        .pendingTransactionsHomeTimeframe
-        .removeListener(_updatePlannedTransactionDays);
+    LocalPreferences().pendingTransactions.homeTimeframe.removeListener(
+      _updatePlannedTransactionDays,
+    );
     _timer.cancel();
+    UserPreferencesService().valueNotiifer.removeListener(
+      _rawUpdateDefaultFilter,
+    );
     super.dispose();
   }
 
@@ -139,19 +152,21 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             ),
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => SliverFillRemaining(
-                  child: NoTransactions(isFilterModified: isFilterModified),
-                ),
-              (_, true) =>
-                buildGroupedList(context, now, transactions ?? [], rates),
+                child: NoTransactions(isFilterModified: isFilterModified),
+              ),
+              (_, true) => buildGroupedList(
+                context,
+                now,
+                transactions ?? [],
+                rates,
+              ),
               (_, false) => const SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
+                child: Center(
+                  child: CircularProgressIndicator /*.adaptive*/ (),
                 ),
+              ),
             },
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 96.0),
-            ),
+            SliverToBoxAdapter(child: const SizedBox(height: 96.0)),
           ],
         );
       },
@@ -164,27 +179,38 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     List<Transaction> transactions,
     ExchangeRates? rates,
   ) {
+    final bool showMissingExchangeRatesWarning =
+        rates == null &&
+        TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
+
     final Map<TimeRange, List<Transaction>> grouped = transactions
-        .where((transaction) =>
-            !transaction.transactionDate.isAfter(now) &&
-            transaction.isPending != true)
+        .where(
+          (transaction) =>
+              !transaction.transactionDate.isAfter(now) &&
+              transaction.isPending != true,
+        )
         .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
 
-    final List<Transaction> pendingTransactions = transactions
-        .where((transaction) =>
-            transaction.transactionDate.isAfter(now) ||
-            transaction.isPending == true)
-        .toList();
+    final List<Transaction> pendingTransactions =
+        transactions
+            .where(
+              (transaction) =>
+                  transaction.transactionDate.isAfter(now) ||
+                  transaction.isPending == true,
+            )
+            .toList();
 
-    final int actionNeededCount = pendingTransactions
-        .where((transaction) => transaction.confirmable())
-        .length;
+    final int actionNeededCount =
+        pendingTransactions
+            .where((transaction) => transaction.confirmable())
+            .length;
 
     final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
         pendingTransactions.groupByRange(
-      rangeFn: (transaction) =>
-          CustomTimeRange(Moment.minValue, Moment.maxValue),
-    );
+          rangeFn:
+              (transaction) =>
+                  CustomTimeRange(Moment.minValue, Moment.maxValue),
+        );
 
     final bool shouldCombineTransferIfNeeded =
         currentFilter.accounts?.isNotEmpty != true;
@@ -195,11 +221,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 12.0),
-          FlowCards(
-            transactions: transactions,
-            rates: rates,
-          ),
-          if (rates == null) ...[
+          FlowCards(transactions: transactions, rates: rates),
+          if (showMissingExchangeRatesWarning) ...[
             const SizedBox(height: 12.0),
             RatesMissingWarning(),
           ],
@@ -211,15 +234,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       pendingTransactions: pendingTransactionsGrouped,
       shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
       pendingDivider: const WavyDivider(),
-      listPadding: const EdgeInsets.only(
-        top: 0,
-        bottom: 80.0,
-      ),
-      headerBuilder: (
-        pendingGroup,
-        range,
-        transactions,
-      ) {
+      listPadding: const EdgeInsets.only(top: 0, bottom: 80.0),
+      headerBuilder: (pendingGroup, range, transactions) {
         if (pendingGroup) {
           return PendingTransactionsHeader(
             transactions: transactions,
@@ -238,19 +254,24 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   void _updatePlannedTransactionDays() {
     _plannedTransactionsNextNDays =
-        LocalPreferences().pendingTransactionsHomeTimeframe.get() ??
-            LocalPreferences.pendingTransactionsHomeTimeframeDefault;
+        LocalPreferences().pendingTransactions.homeTimeframe.get() ??
+        PendingTransactionsLocalPreferences.homeTimeframeDefault;
     setState(() {});
   }
 
   void refreshDateKeyAndDefaultFilter() {
     if (!mounted) return;
+    _rawUpdateDefaultFilter();
     setState(() {
       dateKey = Moment.startOfToday();
-      defaultFilter = TransactionFilter(
-        range: last30Days(),
-      );
     });
+  }
+
+  void _rawUpdateDefaultFilter() {
+    defaultFilter =
+        UserPreferencesService().defaultFilterPreset?.filter
+            .copyWithOptional() ??
+        TransactionFilterPreset.defaultFilter;
   }
 
   @override

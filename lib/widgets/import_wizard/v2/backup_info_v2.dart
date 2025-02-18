@@ -26,9 +26,7 @@ class BackupInfoV2 extends StatelessWidget {
     final String? primaryCurrency = importer.data.primaryCurrency;
 
     return Padding(
-      padding: const EdgeInsets.all(
-        16.0,
-      ),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Align(
@@ -70,6 +68,19 @@ class BackupInfoV2 extends StatelessWidget {
               ),
             ),
           ),
+          if (importer.data.transactionFilterPresets?.isNotEmpty == true) ...[
+            const SizedBox(height: 8.0),
+            ImportItemListTile(
+              icon: FlowIconData.icon(Symbols.filter_alt_rounded),
+              label: Text(
+                "sync.import.syncData.parsedEstimate.transactionFilterPresets"
+                    .t(
+                      context,
+                      importer.data.transactionFilterPresets?.length ?? 0,
+                    ),
+              ),
+            ),
+          ],
           if (primaryCurrency != null) ...[
             const SizedBox(height: 8.0),
             ImportItemListTile(
@@ -77,19 +88,14 @@ class BackupInfoV2 extends StatelessWidget {
               label: Text(primaryCurrency),
             ),
           ],
+          // TODO @sadespresso maybe show `UserPreferences`
           const Spacer(),
-          InfoText(
-            child: Text("sync.import.emergencyBackup".t(context)),
-          ),
+          InfoText(child: Text("sync.import.emergencyBackup".t(context))),
           const SizedBox(height: 16.0),
           Button(
             onTap: onClickStart,
-            leading: FlowIcon(
-              FlowIconData.icon(Symbols.download_rounded),
-            ),
-            child: Text(
-              "sync.import.start".t(context),
-            ),
+            leading: FlowIcon(FlowIconData.icon(Symbols.download_rounded)),
+            child: Text("sync.import.start".t(context)),
           ),
           const SizedBox(height: 24.0),
         ],

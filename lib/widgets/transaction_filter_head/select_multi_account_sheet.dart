@@ -46,7 +46,8 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text(
-          widget.titleOverride ?? "transaction.edit.selectAccount".t(context)),
+        widget.titleOverride ?? "transaction.edit.selectAccount".t(context),
+      ),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -58,7 +59,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -77,7 +78,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
                 ),
               ),
             ...widget.accounts.map(
-              (account) => CheckboxListTile.adaptive(
+              (account) => CheckboxListTile /*.adaptive*/ (
                 title: Text(account.name),
                 value: selectedUuids.contains(account.uuid),
                 onChanged: (value) => select(account.uuid, value),
@@ -102,9 +103,10 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
   }
 
   void pop() {
-    final List<Account> selectedAccounts = widget.accounts
-        .where((account) => selectedUuids.contains(account.uuid))
-        .toList();
+    final List<Account> selectedAccounts =
+        widget.accounts
+            .where((account) => selectedUuids.contains(account.uuid))
+            .toList();
 
     context.pop(selectedAccounts);
   }

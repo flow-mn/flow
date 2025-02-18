@@ -3,16 +3,17 @@ import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -35,9 +36,7 @@ class AccountEditPage extends StatefulWidget {
   bool get isNewAccount => accountId == 0;
 
   const AccountEditPage({super.key, required this.accountId});
-  const AccountEditPage.create({
-    super.key,
-  }) : accountId = 0;
+  const AccountEditPage.create({super.key}) : accountId = 0;
 
   @override
   State<AccountEditPage> createState() => _AccountEditPageState();
@@ -72,23 +71,28 @@ class _AccountEditPageState extends State<AccountEditPage> {
       _iconData?.toString() ??
       FlowIconData.icon(Symbols.wallet_rounded).toString();
 
+  int? balanceUpdateTransactionId;
+
   dynamic error;
 
   @override
   void initState() {
     super.initState();
 
-    _currentlyEditing = widget.isNewAccount
-        ? null
-        : ObjectBox().box<Account>().get(widget.accountId);
+    _currentlyEditing =
+        widget.isNewAccount
+            ? null
+            : ObjectBox().box<Account>().get(widget.accountId);
 
     if (!widget.isNewAccount && _currentlyEditing == null) {
       error = "Account with id ${widget.accountId} was not found";
     } else {
-      _nameTextController =
-          TextEditingController(text: _currentlyEditing?.name);
+      _nameTextController = TextEditingController(
+        text: _currentlyEditing?.name,
+      );
       _balance = _currentlyEditing?.balance.amount ?? 0.0;
-      _currency = _currentlyEditing?.currency ??
+      _currency =
+          _currentlyEditing?.currency ??
           LocalPreferences().getPrimaryCurrency();
       _iconData = _currentlyEditing?.icon;
       _excludeFromTotalBalance =
@@ -178,32 +182,35 @@ class _AccountEditPageState extends State<AccountEditPage> {
                                       hintText: "account.name".t(context),
                                       focusColor: context.colorScheme.secondary,
                                       isDense: true,
-                                      border: _editingName
-                                          ? null
-                                          : InputBorder.none,
+                                      border:
+                                          _editingName
+                                              ? null
+                                              : InputBorder.none,
                                       counter: const SizedBox.shrink(),
                                     ),
                                     onTap: () => toggleEditName(true),
-                                    onFieldSubmitted: (_) =>
-                                        toggleEditName(false),
+                                    onFieldSubmitted:
+                                        (_) => toggleEditName(false),
                                     readOnly: !_editingName,
                                     validator: validateNameField,
                                   ),
                                 ),
                                 const SizedBox(width: 12.0),
                                 IconButton(
-                                  icon: _editingName
-                                      ? const Icon(Symbols.done_rounded)
-                                      : const Icon(Symbols.edit_rounded),
+                                  icon:
+                                      _editingName
+                                          ? const Icon(Symbols.done_rounded)
+                                          : const Icon(Symbols.edit_rounded),
                                   onPressed: toggleEditName,
-                                )
+                                ),
                               ],
                             ),
                             if (!widget.isNewAccount)
                               Text(
                                 _currency,
-                                style:
-                                    context.textTheme.labelLarge?.semi(context),
+                                style: context.textTheme.labelLarge?.semi(
+                                  context,
+                                ),
                               ),
                           ],
                         ),
@@ -234,19 +241,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
                             color: context.colorScheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 24.0),
-                CheckboxListTile.adaptive(
+                CheckboxListTile /*.adaptive*/ (
                   value: _excludeFromTotalBalance,
                   onChanged: updateBalanceExclusion,
                   title: Text("account.excludeFromTotalBalance".t(context)),
                 ),
                 if (!widget.isNewAccount)
-                  CheckboxListTile.adaptive(
+                  CheckboxListTile /*.adaptive*/ (
                     value: _archived,
                     onChanged: updateArchived,
                     title: Text("account.archive".t(context)),
@@ -254,7 +261,8 @@ class _AccountEditPageState extends State<AccountEditPage> {
                 const SizedBox(height: 8.0),
                 Frame(
                   child: InfoText(
-                      child: Text("account.archive.description".t(context))),
+                    child: Text("account.archive.description".t(context)),
+                  ),
                 ),
                 if (widget.isNewAccount)
                   ListTile(
@@ -284,9 +292,9 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void updateBalance() async {
     final Optional<DateTime>? updateAtResult =
         await showModalBottomSheet<Optional<DateTime>>(
-      context: context,
-      builder: (context) => UpdateBalanceOptionsSheet(),
-    );
+          context: context,
+          builder: (context) => UpdateBalanceOptionsSheet(),
+        );
 
     if (updateAtResult == null || !mounted) {
       _updateBalanceAt = null;
@@ -297,14 +305,13 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final result = await showModalBottomSheet<double>(
       context: context,
-      builder: (context) => InputAmountSheet(
-        initialAmount: _balance,
-        currency: _currency,
-      ),
+      builder:
+          (context) =>
+              InputAmountSheet(initialAmount: _balance, currency: _currency),
       isScrollControlled: true,
     );
 
-    if (result == null) return;
+    if (result == null || result == _balance) return;
     if (!mounted) return;
 
     _balance = result;
@@ -314,10 +321,11 @@ class _AccountEditPageState extends State<AccountEditPage> {
       return;
     }
 
-    _currentlyEditing!.updateBalanceAndSave(
+    balanceUpdateTransactionId = _currentlyEditing!.updateBalanceAndSave(
       _balance,
       title: "account.updateBalance.transactionTitle".t(context),
       transactionDate: _updateBalanceAt,
+      existingTransactionId: balanceUpdateTransactionId,
     );
 
     _refetch();
@@ -361,10 +369,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
     _currentlyEditing!.archived = _archived;
 
-    ObjectBox().box<Account>().put(
-          _currentlyEditing!,
-          mode: PutMode.update,
-        );
+    ObjectBox().box<Account>().put(_currentlyEditing!, mode: PutMode.update);
 
     if (mounted) {
       context.pop();
@@ -395,27 +400,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
       unawaited(
         ObjectBox()
             .box<Account>()
-            .putAndGetAsync(
-              account,
-              mode: PutMode.insert,
-            )
-            .then(
-          (value) {
-            value.updateBalanceAndSave(
-              _balance,
-              title: "account.updateBalance.transactionTitle".tr(),
-              transactionDate: _updateBalanceAt,
-            );
-            ObjectBox().box<Account>().putAsync(value);
-          },
-        ),
+            .putAndGetAsync(account, mode: PutMode.insert)
+            .then((value) {
+              value.updateBalanceAndSave(
+                _balance,
+                title: "account.updateBalance.transactionTitle".tr(),
+                transactionDate: _updateBalanceAt,
+              );
+              ObjectBox().box<Account>().putAsync(value);
+            }),
       );
     } else {
       unawaited(
-        ObjectBox().box<Account>().putAsync(
-              account,
-              mode: PutMode.insert,
-            ),
+        ObjectBox().box<Account>().putAsync(account, mode: PutMode.insert),
       );
     }
 
@@ -467,14 +464,15 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     final String trimmed = value!.trim();
 
-    final Query<Account> sameNameQuery = ObjectBox()
-        .box<Account>()
-        .query(
-          Account_.name
-              .equals(trimmed)
-              .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
-        )
-        .build();
+    final Query<Account> sameNameQuery =
+        ObjectBox()
+            .box<Account>()
+            .query(
+              Account_.name
+                  .equals(trimmed)
+                  .and(Account_.id.notEquals(_currentlyEditing?.id ?? 0)),
+            )
+            .build();
 
     final bool isNameUnique = sameNameQuery.count() == 0;
 
@@ -494,9 +492,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
   Future<void> selectIcon() async {
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
-      builder: (context) => SelectFlowIconSheet(
-        current: _iconData,
-      ),
+      builder: (context) => SelectFlowIconSheet(current: _iconData),
       isScrollControlled: true,
     );
 
@@ -510,17 +506,16 @@ class _AccountEditPageState extends State<AccountEditPage> {
   void _deleteAccount() async {
     if (_currentlyEditing == null) return;
 
-    final Query<Transaction> associatedTransactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.account.equals(_currentlyEditing!.id))
-        .build();
+    final TransactionFilter filter = TransactionFilter(
+      accounts: [_currentlyEditing!.uuid],
+    );
 
-    final int txnCount = associatedTransactionsQuery.count();
+    final int txnCount = TransactionsService().countMany(filter);
 
     final bool? confirmation = await context.showConfirmDialog(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing!.name),
-      child: Text("account.delete.warning".t(context, txnCount)),
+      child: Text("account.delete.description".t(context, txnCount)),
     );
 
     if (!mounted) return;
@@ -533,21 +528,26 @@ class _AccountEditPageState extends State<AccountEditPage> {
       );
 
       try {
-        await associatedTransactionsQuery.removeAsync();
+        await TransactionsService().deleteMany(filter);
       } catch (e) {
-        log("[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
-      } finally {
-        associatedTransactionsQuery.close();
+        log(
+          "[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
+        );
       }
 
       try {
         await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
       } catch (e) {
-        log("[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e");
+        log(
+          "[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
+        );
       }
     }
 
     if (!mounted) return;
     context.pop();
+    GoRouter.of(context).popUntil((route) {
+      return route.path != "/account/:id";
+    });
   }
 }

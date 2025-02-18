@@ -36,14 +36,15 @@ class TitleInput extends StatelessWidget {
         focusNode: focusNode,
         controller: controller,
         itemBuilder: (context, value) => ListTile(title: Text(value.title)),
-        // TODO fix laoding indicator appearing everytime i type
+        // TODO fix loading indicator appearing everytime i type
         debounceDuration: const Duration(milliseconds: 180),
-        decorationBuilder: (context, child) => Material(
-          clipBehavior: Clip.hardEdge,
-          elevation: 1.0,
-          borderRadius: BorderRadius.circular(16.0),
-          child: child,
-        ),
+        decorationBuilder:
+            (context, child) => Material(
+              clipBehavior: Clip.hardEdge,
+              elevation: 1.0,
+              borderRadius: BorderRadius.circular(16.0),
+              child: child,
+            ),
         onSelected: (option) => controller.text = option.title,
         suggestionsCallback: getAutocompleteOptions,
         builder: (context, controller, focusNode) {
@@ -67,12 +68,12 @@ class TitleInput extends StatelessWidget {
   }
 
   Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
-          String query) async =>
-      ObjectBox().transactionTitleSuggestions(
-        currentInput: query,
-        accountId: selectedAccountId,
-        categoryId: selectedCategoryId,
-        type: transactionType,
-        limit: 5,
-      );
+    String query,
+  ) async => ObjectBox().transactionTitleSuggestions(
+    currentInput: query,
+    accountId: selectedAccountId,
+    categoryId: selectedCategoryId,
+    type: transactionType,
+    limit: 5,
+  );
 }

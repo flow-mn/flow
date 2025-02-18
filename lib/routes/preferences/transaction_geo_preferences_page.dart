@@ -2,7 +2,7 @@ import "dart:io";
 
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
@@ -27,25 +27,24 @@ class _TransactionGeoPreferencesPageState
         LocalPreferences().autoAttachTransactionGeo.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.transactionGeo".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.transactionGeo".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text("preferences.transactionGeo.enable".t(context)),
                 value: enableGeo,
                 onChanged: updateEnableGeo,
               ),
               if (geoSupported) ...[
                 const SizedBox(height: 16.0),
-                CheckboxListTile.adaptive(
-                  title:
-                      Text("preferences.transactionGeo.auto.enable".t(context)),
+                CheckboxListTile /*.adaptive*/ (
+                  title: Text(
+                    "preferences.transactionGeo.auto.enable".t(context),
+                  ),
                   value: autoAttachTransactionGeo,
                   onChanged: updateAutoAttachTransactionGeo,
                 ),
@@ -67,8 +66,9 @@ class _TransactionGeoPreferencesPageState
     );
   }
 
-  Future<bool> tryRequestPermission(
-      [bool retryAfterOpeningSettings = true]) async {
+  Future<bool> tryRequestPermission([
+    bool retryAfterOpeningSettings = true,
+  ]) async {
     final LocationPermission currentPermission =
         await Geolocator.checkPermission();
 
@@ -124,13 +124,13 @@ class _TransactionGeoPreferencesPageState
         await LocalPreferences().autoAttachTransactionGeo.set(false);
       }
 
-      await LocalPreferences()
-          .autoAttachTransactionGeo
-          .set(newAutoAttachTransactionGeo);
+      await LocalPreferences().autoAttachTransactionGeo.set(
+        newAutoAttachTransactionGeo,
+      );
     } else {
-      await LocalPreferences()
-          .autoAttachTransactionGeo
-          .set(newAutoAttachTransactionGeo);
+      await LocalPreferences().autoAttachTransactionGeo.set(
+        newAutoAttachTransactionGeo,
+      );
     }
 
     if (mounted) setState(() {});

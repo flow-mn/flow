@@ -1,4 +1,4 @@
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/optional.dart";
@@ -50,7 +50,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
           ),
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -65,15 +65,18 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
               child: Wrap(
                 spacing: 8.0,
                 runSpacing: 8.0,
-                children: TransactionSearchMode.values
-                    .map(
-                      (mode) => ChoiceChip(
-                          label: Text(mode.localizedTextKey.t(context)),
-                          selected: mode == _searchData.mode,
-                          onSelected: (bool selected) =>
-                              _updateMode(selected ? mode : null)),
-                    )
-                    .toList(),
+                children:
+                    TransactionSearchMode.values
+                        .map(
+                          (mode) => ChoiceChip(
+                            label: Text(mode.localizedTextKey.t(context)),
+                            selected: mode == _searchData.mode,
+                            onSelected:
+                                (bool selected) =>
+                                    _updateMode(selected ? mode : null),
+                          ),
+                        )
+                        .toList(),
               ),
             ),
             const SizedBox(height: 16.0),
@@ -89,10 +92,11 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
               ),
             ),
             const SizedBox(height: 16.0),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: Text(
-                "transactions.query.filter.keyword.includeDescription"
-                    .t(context),
+                "transactions.query.filter.keyword.includeDescription".t(
+                  context,
+                ),
               ),
               value: _searchData.includeDescription,
               onChanged: _updateIncludeDescription,
@@ -116,9 +120,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
   void _updateMode(TransactionSearchMode? mode) {
     if (mode == null) return;
 
-    _searchData = _searchData.copyWithOptional(
-      mode: mode,
-    );
+    _searchData = _searchData.copyWithOptional(mode: mode);
 
     if (!mounted) return;
 
@@ -128,8 +130,9 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
   void _updateIncludeDescription(bool? includeDescription) {
     if (includeDescription == null) return;
 
-    _searchData =
-        _searchData.copyWithOptional(includeDescription: includeDescription);
+    _searchData = _searchData.copyWithOptional(
+      includeDescription: includeDescription,
+    );
 
     if (!mounted) return;
 

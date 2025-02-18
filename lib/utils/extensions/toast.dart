@@ -1,5 +1,5 @@
 import "package:flow/l10n/localized_exception.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -10,8 +10,8 @@ extension ToastHelper on BuildContext {
   ToastificationItem showErrorToast({required dynamic error, Widget? icon}) =>
       showToast(
         text: switch (error) {
-          LocalizedException localizedException =>
-            localizedException.localizedString(this),
+          LocalizedException localizedException => localizedException
+              .localizedString(this),
           String errorText => errorText,
           _ => error.toString(),
         },
@@ -26,15 +26,9 @@ extension ToastHelper on BuildContext {
   }) {
     if (icon == null) {
       if (type == ToastificationType.success) {
-        icon = Icon(
-          Symbols.check_rounded,
-          color: flowColors.income,
-        );
+        icon = Icon(Symbols.check_rounded, color: flowColors.income);
       } else {
-        icon = Icon(
-          Symbols.error_circle_rounded,
-          color: colorScheme.error,
-        );
+        icon = Icon(Symbols.error_circle_rounded, color: colorScheme.error);
       }
     }
 
@@ -62,7 +56,7 @@ extension ToastHelper on BuildContext {
           offset: const Offset(0.0, 1.0),
           blurRadius: 4.0,
           spreadRadius: -1.5,
-        )
+        ),
       ],
     );
   }

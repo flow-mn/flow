@@ -22,36 +22,37 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Profile?>(
-        stream: qb()
-            .watch(triggerImmediately: true)
-            .map((event) => event.findFirst()),
-        builder: (context, snapshot) {
-          final profile = snapshot.data;
+      stream: qb()
+          .watch(triggerImmediately: true)
+          .map((event) => event.findFirst()),
+      builder: (context, snapshot) {
+        final profile = snapshot.data;
 
-          return InkWell(
-            borderRadius: borderRadius,
-            onTap: () => context.push("/profile/${profile?.id}"),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 4.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Hero(
-                    tag: "pfp",
-                    child: ProfilePicture(filePath: profile?.imagePath),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    profile?.name ?? "unnamed",
-                    style: context.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+        return InkWell(
+          borderRadius: borderRadius,
+          onTap: () => context.push("/profile/${profile?.id}"),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 4.0,
             ),
-          );
-        });
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Hero(
+                  tag: "pfp",
+                  child: ProfilePicture(filePath: profile?.imagePath),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  profile?.name ?? "unnamed",
+                  style: context.textTheme.headlineSmall,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

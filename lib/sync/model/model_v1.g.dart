@@ -7,20 +7,23 @@ part of 'model_v1.dart';
 // **************************************************************************
 
 SyncModelV1 _$SyncModelV1FromJson(Map<String, dynamic> json) => SyncModelV1(
-      versionCode: (json['versionCode'] as num).toInt(),
-      exportDate: DateTime.parse(json['exportDate'] as String),
-      username: json['username'] as String,
-      appVersion: json['appVersion'] as String,
-      transactions: (json['transactions'] as List<dynamic>)
+  versionCode: (json['versionCode'] as num).toInt(),
+  exportDate: DateTime.parse(json['exportDate'] as String),
+  username: json['username'] as String,
+  appVersion: json['appVersion'] as String,
+  transactions:
+      (json['transactions'] as List<dynamic>)
           .map((e) => Transaction.fromJson(e as Map<String, dynamic>))
           .toList(),
-      accounts: (json['accounts'] as List<dynamic>)
+  accounts:
+      (json['accounts'] as List<dynamic>)
           .map((e) => Account.fromJson(e as Map<String, dynamic>))
           .toList(),
-      categories: (json['categories'] as List<dynamic>)
+  categories:
+      (json['categories'] as List<dynamic>)
           .map((e) => Category.fromJson(e as Map<String, dynamic>))
           .toList(),
-    );
+);
 
 Map<String, dynamic> _$SyncModelV1ToJson(SyncModelV1 instance) =>
     <String, dynamic>{

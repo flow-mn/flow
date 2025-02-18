@@ -34,7 +34,8 @@ class Numpad extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = this.width ?? MediaQuery.of(context).size.width;
 
-    final double totalHorizontalPadding = padding.left +
+    final double totalHorizontalPadding =
+        padding.left +
         padding.right +
         (crossAxisCount * (crossAxisSpacing - 1));
 
@@ -61,11 +62,7 @@ class Numpad extends StatelessWidget {
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
             crossAxisCount: crossAxisCount,
-            children: children
-                .map(
-                  (child) => child,
-                )
-                .toList(),
+            children: children.map((child) => child).toList(),
           ),
         ),
       ),

@@ -3,7 +3,7 @@ import "dart:developer";
 import "package:dotted_border/dotted_border.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/widgets/home/preferences/button_order_preferences/transaction_type_button.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
@@ -48,65 +48,76 @@ class ButtonOrderPreferencesPageState
               const SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: transactionButtonOrder
-                    .map(
-                      (transactionType) => Container(
-                        margin: EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            top: transactionButtonOrder
-                                        .indexOf(transactionType) !=
-                                    1
-                                ? 72.0
-                                : 0.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(widget.radius),
-                        ),
-                        clipBehavior: Clip.none,
-                        child: DottedBorder(
-                          color: Theme.of(context).dividerColor.withAlpha(0x80),
-                          strokeWidth: 4.0,
-                          radius: widget.radius,
-                          strokeCap: StrokeCap.round,
-                          borderType: BorderType.RRect,
-                          dashPattern: const [
-                            6.0,
-                            10.0,
-                          ],
-                          child: DragTarget<TransactionType>(
-                            onWillAcceptWithDetails: (details) =>
-                                details.data != transactionType,
-                            onAcceptWithDetails: (details) => swap(
-                                transactionButtonOrder,
-                                details.data,
-                                transactionType),
-                            builder: (context, candidateData, rejectedData) {
-                              final List<TransactionType> candidates =
-                                  candidateData.nonNulls.toList();
+                children:
+                    transactionButtonOrder
+                        .map(
+                          (transactionType) => Container(
+                            margin: EdgeInsets.only(
+                              left: 8.0,
+                              right: 8.0,
+                              top:
+                                  transactionButtonOrder.indexOf(
+                                            transactionType,
+                                          ) !=
+                                          1
+                                      ? 72.0
+                                      : 0.0,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(widget.radius),
+                            ),
+                            clipBehavior: Clip.none,
+                            child: DottedBorder(
+                              color: Theme.of(
+                                context,
+                              ).dividerColor.withAlpha(0x80),
+                              strokeWidth: 4.0,
+                              radius: widget.radius,
+                              strokeCap: StrokeCap.round,
+                              borderType: BorderType.RRect,
+                              dashPattern: const [6.0, 10.0],
+                              child: DragTarget<TransactionType>(
+                                onWillAcceptWithDetails:
+                                    (details) =>
+                                        details.data != transactionType,
+                                onAcceptWithDetails:
+                                    (details) => swap(
+                                      transactionButtonOrder,
+                                      details.data,
+                                      transactionType,
+                                    ),
+                                builder: (
+                                  context,
+                                  candidateData,
+                                  rejectedData,
+                                ) {
+                                  final List<TransactionType> candidates =
+                                      candidateData.nonNulls.toList();
 
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Draggable<TransactionType>(
-                                  data: transactionType,
-                                  childWhenDragging: TransactionTypeButton(
-                                    type: transactionType,
-                                    opacity: 0.25,
-                                  ),
-                                  feedback: TransactionTypeButton(
-                                    type: transactionType,
-                                  ),
-                                  child: TransactionTypeButton(
-                                    type: transactionType,
-                                    opacity: candidates.isNotEmpty ? 0.5 : 1.0,
-                                  ),
-                                ),
-                              );
-                            },
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Draggable<TransactionType>(
+                                      data: transactionType,
+                                      childWhenDragging: TransactionTypeButton(
+                                        type: transactionType,
+                                        opacity: 0.25,
+                                      ),
+                                      feedback: TransactionTypeButton(
+                                        type: transactionType,
+                                      ),
+                                      child: TransactionTypeButton(
+                                        type: transactionType,
+                                        opacity:
+                                            candidates.isNotEmpty ? 0.5 : 1.0,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        )
+                        .toList(),
               ),
             ],
           ),

@@ -22,11 +22,7 @@ class ErrorPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                FlowIcon(
-                  FlowIconData.emoji("😪"),
-                  size: 80.0,
-                  plated: true,
-                ),
+                FlowIcon(FlowIconData.emoji("😪"), size: 80.0, plated: true),
                 const SizedBox(height: 12.0),
                 Text(
                   error ?? "error.route.404".t(context),

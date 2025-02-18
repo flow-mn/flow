@@ -13,10 +13,7 @@ class ModalOverflowBar extends StatelessWidget {
 
   const ModalOverflowBar({
     super.key,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 16.0,
-      vertical: 12.0,
-    ),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
     required this.children,
     this.alignment,
     this.spacing = 12.0,

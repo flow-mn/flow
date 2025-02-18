@@ -6,17 +6,14 @@ import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
-import "package:flow/utils/utc_datetime_converter.dart";
+import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
 
 part "transaction.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class Transaction implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -30,6 +27,11 @@ class Transaction implements EntityBase {
 
   @Property(type: PropertyType.date)
   DateTime transactionDate;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
 
   static const int maxTitleLength = 256;
 
@@ -59,11 +61,12 @@ class Transaction implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  TransactionSubtype? get transactionSubtype => subtype == null
-      ? null
-      : TransactionSubtype.values
-          .where((element) => element.value == (subtype!))
-          .firstOrNull;
+  TransactionSubtype? get transactionSubtype =>
+      subtype == null
+          ? null
+          : TransactionSubtype.values
+              .where((element) => element.value == (subtype!))
+              .firstOrNull;
 
   @Transient()
   set transactionSubtype(TransactionSubtype? value) {
@@ -157,8 +160,8 @@ class Transaction implements EntityBase {
     required this.uuid,
     DateTime? transactionDate,
     DateTime? createdDate,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        transactionDate = transactionDate ?? createdDate ?? DateTime.now();
+  }) : createdDate = createdDate ?? DateTime.now(),
+       transactionDate = transactionDate ?? createdDate ?? DateTime.now();
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>
       _$TransactionFromJson(json);
@@ -181,8 +184,9 @@ enum TransactionType implements LocalizedEnum {
   String get localizationEnumName => "TransactionType";
 
   static TransactionType? fromJson(Map json) {
-    return TransactionType.values
-        .firstWhereOrNull((element) => element.value == json["value"]);
+    return TransactionType.values.firstWhereOrNull(
+      (element) => element.value == json["value"],
+    );
   }
 
   Map<String, dynamic> toJson() => {"value": value};

@@ -19,8 +19,8 @@ class Frame extends StatelessWidget {
     super.key,
     this.withSurface = false,
     required this.child,
-  })  : pad = true,
-        padding = const EdgeInsets.all(16.0);
+  }) : pad = true,
+       padding = const EdgeInsets.all(16.0);
 
   @override
   Widget build(BuildContext context) {

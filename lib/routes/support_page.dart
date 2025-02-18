@@ -4,7 +4,7 @@ import "dart:io";
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/action_card.dart";
@@ -21,9 +21,7 @@ class SupportPage extends StatelessWidget {
   );
 
   static const ShapeBorder cardShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(
-      Radius.circular(16.0),
-    ),
+    borderRadius: BorderRadius.all(Radius.circular(16.0)),
   );
 
   const SupportPage({super.key});
@@ -34,9 +32,7 @@ class SupportPage extends StatelessWidget {
         Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("support".t(context)),
-      ),
+      appBar: AppBar(title: Text("support".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -56,9 +52,7 @@ class SupportPage extends StatelessWidget {
                     backgroundColor: context.colorScheme.surface,
                     trailing: const Icon(Symbols.chevron_right_rounded),
                     child: Expanded(
-                      child: Text(
-                        "support.leaveAReview.action".t(context),
-                      ),
+                      child: Text("support.leaveAReview.action".t(context)),
                     ),
                     onTap: () => requestReview(),
                   ),
@@ -71,11 +65,7 @@ class SupportPage extends StatelessWidget {
                 trailing: Button(
                   backgroundColor: context.colorScheme.surface,
                   trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text(
-                      "visitGitHubRepo".t(context),
-                    ),
-                  ),
+                  child: Expanded(child: Text("visitGitHubRepo".t(context))),
                   onTap: () => openUrl(flowGitHubRepoLink),
                 ),
               ),
@@ -88,9 +78,7 @@ class SupportPage extends StatelessWidget {
                   backgroundColor: context.colorScheme.surface,
                   trailing: const Icon(Symbols.chevron_right_rounded),
                   child: Expanded(
-                    child: Text(
-                      "support.requestFeatures.action".t(context),
-                    ),
+                    child: Text("support.requestFeatures.action".t(context)),
                   ),
                   onTap: () => openUrl(flowGitHubIssuesLink),
                 ),
@@ -103,11 +91,7 @@ class SupportPage extends StatelessWidget {
                 trailing: Button(
                   backgroundColor: context.colorScheme.surface,
                   trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text(
-                      "visitGitHubRepo".t(context),
-                    ),
-                  ),
+                  child: Expanded(child: Text("visitGitHubRepo".t(context))),
                   onTap: () => openUrl(flowGitHubRepoLink),
                 ),
               ),
@@ -121,9 +105,7 @@ class SupportPage extends StatelessWidget {
                     backgroundColor: context.colorScheme.surface,
                     trailing: const Icon(Symbols.chevron_right_rounded),
                     child: Expanded(
-                      child: Text(
-                        "support.donateDeveloper.action".t(context),
-                      ),
+                      child: Text("support.donateDeveloper.action".t(context)),
                     ),
                     onTap: () => openUrl(maintainerKoFiLink),
                   ),

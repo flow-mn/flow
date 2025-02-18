@@ -27,16 +27,15 @@ class TypeSelector extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
       borderRadius: BorderRadius.circular(8.0),
       value: current,
-      items: TransactionType.values
-          .map(
-            (type) => DropdownMenuItem(
-              value: type,
-              child: Text(
-                type.localizedNameContext(context),
-              ),
-            ),
-          )
-          .toList(),
+      items:
+          TransactionType.values
+              .map(
+                (type) => DropdownMenuItem(
+                  value: type,
+                  child: Text(type.localizedNameContext(context)),
+                ),
+              )
+              .toList(),
       onChanged: (TransactionType? value) {
         if (value == null) return;
 

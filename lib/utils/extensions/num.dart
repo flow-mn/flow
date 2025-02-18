@@ -33,6 +33,6 @@ extension NumberFormatter on num {
 
     final int unitIndex = (log(toDouble()) / log1024).floor();
 
-    return "${(this / pow(1024, unitIndex)).round()} ${formats[unitIndex]}";
+    return "${(this / pow(1024, unitIndex)).toStringAsFixed(1)} ${formats[unitIndex]}";
   }
 }

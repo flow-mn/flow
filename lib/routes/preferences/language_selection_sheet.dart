@@ -29,7 +29,7 @@ class LanguageSelectionSheet extends StatelessWidget {
         child: Column(
           children: [
             ...FlowLocalizations.supportedLanguages.map(
-              (locale) => RadioListTile<Locale>.adaptive(
+              (locale) => RadioListTile<Locale> /*.adaptive*/ (
                 title: Text(locale.endonym),
                 subtitle: Text(locale.name),
                 selected: currentLocale == locale,

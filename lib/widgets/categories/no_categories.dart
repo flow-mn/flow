@@ -31,10 +31,7 @@ class NoCategories extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Button(
-              trailing: const Icon(
-                Symbols.add_rounded,
-                weight: 600.0,
-              ),
+              trailing: const Icon(Symbols.add_rounded, weight: 600.0),
               child: Text("category.new".t(context)),
               onTap: () => context.push("/category/new"),
             ),

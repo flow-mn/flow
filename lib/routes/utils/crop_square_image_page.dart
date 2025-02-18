@@ -40,9 +40,7 @@ class CropSquareImagePage extends StatefulWidget {
 class _CropSquareImagePageState extends State<CropSquareImagePage> {
   late final Image _image;
 
-  final CropController _controller = CropController(
-    aspectRatio: 1.0,
-  );
+  final CropController _controller = CropController(aspectRatio: 1.0);
 
   bool busy = false;
 
@@ -63,12 +61,7 @@ class _CropSquareImagePageState extends State<CropSquareImagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
-        child: CropImage(
-          controller: _controller,
-          image: _image,
-        ),
-      ),
+      body: SafeArea(child: CropImage(controller: _controller, image: _image)),
       bottomNavigationBar: SafeArea(
         child: Frame(
           child: Row(
@@ -87,7 +80,7 @@ class _CropSquareImagePageState extends State<CropSquareImagePage> {
                 label: Text("general.confirm".t(context)),
                 icon:
                     busy ? const Spinner() : const Icon(Symbols.check_rounded),
-              )
+              ),
             ],
           ),
         ),
@@ -102,14 +95,13 @@ class _CropSquareImagePageState extends State<CropSquareImagePage> {
       busy = true;
     });
 
-    final image = widget.returnBitmap
-        ? await _controller.croppedBitmap(
-            quality: FilterQuality.high,
-            maxSize: widget.maxDimension,
-          )
-        : await _controller.croppedImage(
-            quality: FilterQuality.high,
-          );
+    final image =
+        widget.returnBitmap
+            ? await _controller.croppedBitmap(
+              quality: FilterQuality.high,
+              maxSize: widget.maxDimension,
+            )
+            : await _controller.croppedImage(quality: FilterQuality.high);
 
     if (!mounted) return;
 

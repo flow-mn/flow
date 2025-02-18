@@ -11,10 +11,7 @@ class EditMarkdownPageProps {
   final String? initialValue;
   final int? maxLength;
 
-  const EditMarkdownPageProps({
-    this.initialValue,
-    this.maxLength,
-  });
+  const EditMarkdownPageProps({this.initialValue, this.maxLength});
 }
 
 class EditMarkdownPage extends StatefulWidget {
@@ -54,23 +51,22 @@ class _EditMarkdownPageState extends State<EditMarkdownPage>
 
   @override
   Widget build(BuildContext context) {
-    final Widget? counterOverride = (widget.maxLength != null &&
-            _controller.text.length < (widget.maxLength! * 0.9))
-        ? SizedBox.shrink()
-        : null;
+    final Widget? counterOverride =
+        (widget.maxLength != null &&
+                _controller.text.length < (widget.maxLength! * 0.9))
+            ? SizedBox.shrink()
+            : null;
 
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40.0,
-        leading: FormCloseButton(
-          canPop: () => !hasChanged(),
-        ),
+        leading: FormCloseButton(canPop: () => !hasChanged()),
         actions: [
           IconButton(
             onPressed: () => save(),
             icon: const Icon(Symbols.check_rounded),
             tooltip: "general.save".t(context),
-          )
+          ),
         ],
         bottom: TabBar(
           tabs: [
@@ -109,10 +105,8 @@ class _EditMarkdownPageState extends State<EditMarkdownPage>
               ),
               SingleChildScrollView(
                 padding: EdgeInsets.only(top: 16.0),
-                child: MarkdownView(
-                  controller: _controller,
-                ),
-              )
+                child: MarkdownView(controller: _controller),
+              ),
             ],
           ),
           Positioned(
@@ -120,8 +114,10 @@ class _EditMarkdownPageState extends State<EditMarkdownPage>
             right: 0,
             bottom: MediaQuery.of(context).viewInsets.bottom,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 4.0,
+              ),
               child: Row(
                 children: [
                   IconButton(

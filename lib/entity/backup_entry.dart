@@ -37,10 +37,10 @@ class BackupEntry {
 
   @Transient()
   FlowIconData get icon => switch (fileExt) {
-        "json" => FlowIconData.icon(Symbols.hard_drive_rounded),
-        "csv" => FlowIconData.icon(Symbols.table_rounded),
-        _ => FlowIconData.icon(Symbols.error_rounded)
-      };
+    "json" => FlowIconData.icon(Symbols.hard_drive_rounded),
+    "csv" => FlowIconData.icon(Symbols.table_rounded),
+    _ => FlowIconData.icon(Symbols.error_rounded),
+  };
 
   Future<bool> exists() => File(filePath).exists();
   bool existsSync() => File(filePath).existsSync();

@@ -3,24 +3,33 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/optional.dart";
+import "package:json_annotation/json_annotation.dart";
 
+part "search_data.g.dart";
+
+@JsonEnum(valueField: "value")
 enum TransactionSearchMode implements LocalizedEnum {
   /// Fuzzy matching, allows for little error
-  smart,
+  smart("smart"),
 
   /// Text must contain the keyword, no room for error
-  substring,
+  substring("substring"),
 
   /// Text must be exactly the keyword
-  exact;
+  exact("exact");
+
+  final String value;
+
+  const TransactionSearchMode(this.value);
 
   @override
-  String get localizationEnumValue => name;
+  String get localizationEnumValue => value;
   @override
   String get localizationEnumName => "TransactionSearchMode";
 }
 
 /// Fuzzy finding is case insensitive regardless of [caseInsensitive]
+@JsonSerializable(explicitToJson: true)
 class TransactionSearchData {
   /// Recomend using normalizedKeyword.
   final String? keyword;
@@ -79,11 +88,8 @@ class TransactionSearchData {
       return _titleFilter;
     }
 
-    final Condition<Transaction> descriptionFilter =
-        Transaction_.description.contains(
-      normalizedKeyword!,
-      caseSensitive: false,
-    );
+    final Condition<Transaction> descriptionFilter = Transaction_.description
+        .contains(normalizedKeyword!, caseSensitive: false);
 
     if (_titleFilter != null) {
       return _titleFilter!.or(descriptionFilter);
@@ -162,9 +168,7 @@ class TransactionSearchData {
 
     if (normalizedTitle == null) return false;
 
-    return normalizedTitle.contains(
-      normalizedKeyword!,
-    );
+    return normalizedTitle.contains(normalizedKeyword!);
   }
 
   bool _exactMatching(Transaction t) {
@@ -176,4 +180,8 @@ class TransactionSearchData {
 
     return normalizedTitle == normalizedKeyword!;
   }
+
+  factory TransactionSearchData.fromJson(Map<String, dynamic> json) =>
+      _$TransactionSearchDataFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionSearchDataToJson(this);
 }

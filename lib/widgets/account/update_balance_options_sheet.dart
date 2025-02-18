@@ -27,7 +27,8 @@ class UpdateBalanceOptionsSheet extends StatelessWidget {
             ListTile(
               title: Text("account.updateBalance.updateAtDate".t(context)),
               subtitle: Text(
-                  "account.updateBalance.updateAtDate.description".t(context)),
+                "account.updateBalance.updateAtDate.description".t(context),
+              ),
               // leading: FlowIcon(category.icon),
               trailing: const Icon(Symbols.chevron_right_rounded),
               onTap: () => _selectDateAndTimeAndPop(context),
@@ -58,10 +59,7 @@ class UpdateBalanceOptionsSheet extends StatelessWidget {
 
     context.pop(
       Optional<DateTime>(
-        dateResult.copyWith(
-          hour: timeResult.hour,
-          minute: timeResult.minute,
-        ),
+        dateResult.copyWith(hour: timeResult.hour, minute: timeResult.minute),
       ),
     );
   }

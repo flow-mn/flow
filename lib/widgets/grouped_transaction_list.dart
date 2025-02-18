@@ -1,9 +1,11 @@
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/prefs.dart";
-import "package:flow/utils/extensions/transaction_context_actions.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class GroupedTransactionList extends StatefulWidget {
@@ -26,7 +28,8 @@ class GroupedTransactionList extends StatefulWidget {
     bool pendingGroup,
     TimeRange range,
     List<Transaction> transactions,
-  ) headerBuilder;
+  )
+  headerBuilder;
 
   /// Divider to displayed between future/past transactions. How it's divided
   /// is based on [anchor]
@@ -94,21 +97,26 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
   void initState() {
     super.initState();
 
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
-    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
+    TransitiveLocalPreferences().sessionPrivacyMode.addListener(
+      _privacyModeUpdate,
+    );
   }
 
   @override
   void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
+    TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
+      _privacyModeUpdate,
+    );
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool combineTransfers = widget.shouldCombineTransferIfNeeded &&
-        LocalPreferences().combineTransferTransactions.get();
+    final bool combineTransfers =
+        widget.shouldCombineTransferIfNeeded &&
+        UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -130,49 +138,59 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
 
     final EdgeInsets headerPadding = widget.headerPadding ?? widget.itemPadding;
 
-    Widget itemBuilder(BuildContext context, int index) =>
-        switch (flattened[index]) {
-          (Padding widgetWithPadding) => widgetWithPadding,
-          (Widget header) => Padding(
-              padding: headerPadding.copyWith(
-                top: index == 0
-                    ? widget.firstHeaderTopPadding
-                    : headerPadding.top,
-              ),
-              child: header,
-            ),
-          (Transaction transaction) => TransactionListTile(
-              combineTransfers: combineTransfers,
-              transaction: transaction,
-              padding: widget.itemPadding,
-              dismissibleKey: ValueKey(transaction.id),
-              deleteFn: () => context.deleteTransaction(transaction),
-              confirmFn: ([bool confirm = true]) =>
-                  context.confirmTransaction(transaction, confirm),
-              duplicateFn: () => context.duplicateTransaction(transaction),
-              overrideObscure: widget.overrideObscure,
-              groupRange: widget.groupBy,
-            ),
-          (_) => Container(),
-        };
+    Widget itemBuilder(
+      BuildContext context,
+      int index,
+    ) => switch (flattened[index]) {
+      (Padding widgetWithPadding) => widgetWithPadding,
+      (Widget header) => Padding(
+        padding: headerPadding.copyWith(
+          top: index == 0 ? widget.firstHeaderTopPadding : headerPadding.top,
+        ),
+        child: header,
+      ),
+      (Transaction transaction) => TransactionListTile(
+        combineTransfers: combineTransfers,
+        transaction: transaction,
+        padding: widget.itemPadding,
+        dismissibleKey: ValueKey(transaction.id),
+        moveToTrashFn: () => transaction.moveToTrashBin(),
+        recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
+        confirmFn: ([bool confirm = true]) {
+          final bool updateTransactionDate =
+              LocalPreferences().pendingTransactions.updateDateUponConfirmation
+                  .get();
+
+          transaction.confirm(confirm, updateTransactionDate);
+        },
+        duplicateFn: () => transaction.duplicate(),
+        overrideObscure: widget.overrideObscure,
+        groupRange: widget.groupBy,
+      ),
+      (_) => Container(),
+    };
 
     if (widget.sliver == true) {
-      return SliverList.builder(
-        itemBuilder: itemBuilder,
-        itemCount: flattened.length,
+      return SlidableAutoCloseBehavior(
+        child: SliverList.builder(
+          itemBuilder: itemBuilder,
+          itemCount: flattened.length,
+        ),
       );
     }
 
-    return ListView.builder(
-      controller: widget.controller,
-      padding: widget.listPadding,
-      itemBuilder: itemBuilder,
-      itemCount: flattened.length,
+    return SlidableAutoCloseBehavior(
+      child: ListView.builder(
+        controller: widget.controller,
+        padding: widget.listPadding,
+        itemBuilder: itemBuilder,
+        itemCount: flattened.length,
+      ),
     );
   }
 
   _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
   }

@@ -89,7 +89,7 @@ class _ContextMenuState extends State<ContextMenu> {
             value: "paste",
             child: Text("general.paste".t(context)),
           ),
-        ...widget.actions
+        ...widget.actions,
       ],
       position: RelativeRect.fromLTRB(
         _lastPointerPosition.dx,

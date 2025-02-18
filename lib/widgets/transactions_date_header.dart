@@ -4,7 +4,7 @@ import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text_builder.dart";
@@ -40,8 +40,8 @@ class TransactionListDateHeader extends StatefulWidget {
     this.action,
     this.titleOverride,
     this.resolveNonPrimaryCurrencies = true,
-  })  : pendingGroup = true,
-        transactions = const [];
+  }) : pendingGroup = true,
+       transactions = const [];
 
   @override
   State<TransactionListDateHeader> createState() =>
@@ -56,21 +56,26 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   void initState() {
     super.initState();
 
-    LocalPreferences().sessionPrivacyMode.addListener(_updatePrivacyMode);
+    TransitiveLocalPreferences().sessionPrivacyMode.addListener(
+      _updatePrivacyMode,
+    );
 
-    obscure = LocalPreferences().sessionPrivacyMode.get();
+    obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
   }
 
   @override
   void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_updatePrivacyMode);
+    TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
+      _updatePrivacyMode,
+    );
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget title = widget.titleOverride ??
+    final Widget title =
+        widget.titleOverride ??
         GestureDetector(
           onTap: _handleRangeTextTap,
           child: Text(_getRangeTitle()),
@@ -78,31 +83,37 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final MoneyFlow flow = MoneyFlow()
-      ..addAll(widget.transactions.map((transaction) => transaction.money));
+    final MoneyFlow flow =
+        MoneyFlow()
+          ..addAll(widget.transactions.map((transaction) => transaction.money));
 
-    final bool containsNonPrimaryCurrency = widget.transactions
-        .any((transaction) => transaction.currency != primaryCurrency);
+    final bool containsNonPrimaryCurrency = widget.transactions.any(
+      (transaction) => transaction.currency != primaryCurrency,
+    );
 
     return ValueListenableBuilder(
       valueListenable: ExchangeRatesService().exchangeRatesCache,
       builder: (context, exchangeRatesCache, child) {
         final ExchangeRates? rates = exchangeRatesCache?.get(primaryCurrency);
 
-        final bool resolve = widget.resolveNonPrimaryCurrencies &&
+        final bool resolve =
+            widget.resolveNonPrimaryCurrencies &&
             containsNonPrimaryCurrency &&
             rates != null;
 
-        final String exclamation =
-            switch ((containsNonPrimaryCurrency, resolve)) {
+        final String exclamation = switch ((
+          containsNonPrimaryCurrency,
+          resolve,
+        )) {
           (true, true) => "~",
           (true, false) => "+",
           _ => "",
         };
 
-        final Money sum = resolve
-            ? flow.getTotalFlow(rates, primaryCurrency)
-            : flow.getFlowByCurrency(primaryCurrency);
+        final Money sum =
+            resolve
+                ? flow.getTotalFlow(rates, primaryCurrency)
+                : flow.getFlowByCurrency(primaryCurrency);
 
         return Row(
           mainAxisSize: MainAxisSize.max,
@@ -121,10 +132,11 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
                   ),
                   if (!widget.pendingGroup)
                     MoneyTextBuilder(
-                      builder: (context, formattedSum, originalSum) => Text(
-                        "$formattedSum$exclamation • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
-                        style: context.textTheme.labelMedium,
-                      ),
+                      builder:
+                          (context, formattedSum, originalSum) => Text(
+                            "$formattedSum$exclamation • ${'tabs.home.transactionsCount'.t(context, widget.transactions.renderableCount)}",
+                            style: context.textTheme.labelMedium,
+                          ),
                       money: sum,
                     ),
                 ],
@@ -138,7 +150,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   }
 
   _updatePrivacyMode() {
-    obscure = LocalPreferences().sessionPrivacyMode.get();
+    obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
 
     if (!mounted) return;
     setState(() {});
@@ -156,8 +168,9 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
   String _getRangeTitle() {
     return switch ((widget.range, rangeTitleAlternative)) {
-      (DayTimeRange dayTimeRange, false) =>
-        dayTimeRange.from.toMoment().calendar(omitHours: true),
+      (DayTimeRange dayTimeRange, false) => dayTimeRange.from
+          .toMoment()
+          .calendar(omitHours: true),
       (DayTimeRange dayTimeRange, true) => dayTimeRange.from.toMoment().ll,
       (TimeRange other, _) => other.format(),
     };

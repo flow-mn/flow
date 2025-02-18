@@ -41,14 +41,16 @@ class CombineTransferRadio extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(combine
-                    ? "preferences.transfer.combineTransferTransaction.combine"
-                        .t(context)
-                    : "preferences.transfer.combineTransferTransaction.separate"
-                        .t(context)),
+                Text(
+                  combine
+                      ? "preferences.transfer.combineTransferTransaction.combine"
+                          .t(context)
+                      : "preferences.transfer.combineTransferTransaction.separate"
+                          .t(context),
+                ),
                 const SizedBox(height: 8.0),
                 IgnorePointer(
-                  child: Radio.adaptive(
+                  child: Radio /*.adaptive*/ (
                     value: combine,
                     groupValue: currentlyUsingCombineMode,
                     onChanged: (_) {},
@@ -76,10 +78,7 @@ class CombineTransferRadio extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const DemoTransactionListTile(type: TransactionType.income),
-          Divider(
-            height: 8.0,
-            color: context.flowColors.semi.withAlpha(0x40),
-          ),
+          Divider(height: 8.0, color: context.flowColors.semi.withAlpha(0x40)),
           const DemoTransactionListTile(type: TransactionType.expense),
         ],
       ),

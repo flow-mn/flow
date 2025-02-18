@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -17,8 +17,9 @@ class SetupCurrencyPage extends StatefulWidget {
 }
 
 class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
-  final TextEditingController _textController =
-      TextEditingController(text: "~~~");
+  final TextEditingController _textController = TextEditingController(
+    text: "~~~",
+  );
 
   String? _currency;
 
@@ -50,9 +51,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
           child: Column(
             children: [
               InfoText(
-                child: Text(
-                  "setup.primaryCurrency.description".t(context),
-                ),
+                child: Text("setup.primaryCurrency.description".t(context)),
               ),
               const SizedBox(height: 16.0),
               TextField(
@@ -62,17 +61,19 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
                 onSubmitted: (_) => save(),
                 decoration: const InputDecoration(border: InputBorder.none),
                 textAlign: TextAlign.center,
-                style: _currency == null
-                    ? context.textTheme.displaySmall?.semi(context)
-                    : context.textTheme.displaySmall,
+                style:
+                    _currency == null
+                        ? context.textTheme.displaySmall?.semi(context)
+                        : context.textTheme.displaySmall,
               ),
               if (error != null) ...[
                 const SizedBox(height: 8.0),
                 Text(
                   error.toString(),
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: context.flowColors.expense),
-                )
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.flowColors.expense,
+                  ),
+                ),
               ],
               const SizedBox(height: 16.0),
               Button(
@@ -93,7 +94,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
                 onTap: save,
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 child: Text("setup.next".t(context)),
-              )
+              ),
             ],
           ),
         ),

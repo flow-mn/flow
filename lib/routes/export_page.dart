@@ -37,12 +37,8 @@ class _ExportPageState extends State<ExportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("sync.export".t(context, widget.mode.name)),
-      ),
-      body: SafeArea(
-        child: buildChild(context),
-      ),
+      appBar: AppBar(title: Text("sync.export".t(context, widget.mode.name))),
+      body: SafeArea(child: buildChild(context)),
     );
   }
 
@@ -53,9 +49,7 @@ class _ExportPageState extends State<ExportPage> {
 
     if (filePath == null) {
       return Center(
-        child: Text(
-          error?.toString() ?? "error.sync.exportFailed".t(context),
-        ),
+        child: Text(error?.toString() ?? "error.sync.exportFailed".t(context)),
       );
     }
 

@@ -2,7 +2,8 @@ import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/utils/utc_datetime_converter.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -12,10 +13,7 @@ import "package:uuid/uuid.dart";
 part "account.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class Account implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -58,29 +56,19 @@ class Account implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Money get balance => Money(
-        transactions
-            .where((element) =>
-                element.transactionDate.isPast && element.isPending != true)
-            .fold<double>(
-              0,
-              (previousValue, element) => previousValue + element.amount,
-            ),
-        currency,
-      );
+  Money get balance => balanceAt(DateTime.now());
 
   Money balanceAt(DateTime anchor) => Money(
-        transactions.where((element) {
-          if (element.isPending == true) return false;
-          if (element.transactionDate == anchor) return true;
-
-          return element.transactionDate.isPastAnchored(anchor);
-        }).fold<double>(
+    transactions
+        .where((element) => !element.transactionDate.isFutureAnchored(anchor))
+        .nonPending
+        .nonDeleted
+        .fold<double>(
           0,
           (previousValue, element) => previousValue + element.amount,
         ),
-        currency,
-      );
+    currency,
+  );
 
   Account({
     this.id = 0,
@@ -91,19 +79,19 @@ class Account implements EntityBase {
     this.archived = false,
     this.sortOrder = -1,
     DateTime? createdDate,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+  }) : createdDate = createdDate ?? DateTime.now(),
+       uuid = const Uuid().v4();
 
   Account.preset({
     required this.name,
     required this.currency,
     required this.iconCode,
     required this.uuid,
-  })  : archived = false,
-        excludeFromTotalBalance = false,
-        sortOrder = -1,
-        id = -1,
-        createdDate = DateTime.now();
+  }) : archived = false,
+       excludeFromTotalBalance = false,
+       sortOrder = -1,
+       id = -1,
+       createdDate = DateTime.now();
 
   factory Account.fromJson(Map<String, dynamic> json) =>
       _$AccountFromJson(json);

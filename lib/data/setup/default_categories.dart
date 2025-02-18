@@ -61,8 +61,10 @@ List<Category> getCategoryPresets() {
     Category.preset(
       uuid: "e8cf1c76-cdf7-41e1-9343-923b86cd9ea2",
       name: "setup.categories.preset.gifts".tr(),
-      iconCode: const IconFlowIcon(Symbols.featured_seasonal_and_gifts_rounded)
-          .toString(),
+      iconCode:
+          const IconFlowIcon(
+            Symbols.featured_seasonal_and_gifts_rounded,
+          ).toString(),
     ),
     Category.preset(
       uuid: "f442d114-b8c0-4f7e-befd-70844ad16fb4",

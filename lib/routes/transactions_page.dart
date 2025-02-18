@@ -1,12 +1,19 @@
+import "package:flow/data/flow_icon.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class TransactionsPage extends StatefulWidget {
@@ -41,15 +48,12 @@ class TransactionsPage extends StatefulWidget {
     );
   }
 
-  factory TransactionsPage.all({
-    Key? key,
-    String? title,
-    Widget? header,
-  }) {
-    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
-        .box<Transaction>()
-        .query()
-        .order(Transaction_.transactionDate, flags: Order.descending);
+  factory TransactionsPage.all({Key? key, String? title, Widget? header}) {
+    final QueryBuilder<Transaction> queryBuilder =
+        TransactionFilter(
+          sortBy: TransactionSortField.transactionDate,
+          sortDescending: true,
+        ).queryBuilder();
 
     return TransactionsPage(
       query: queryBuilder,
@@ -65,14 +69,25 @@ class TransactionsPage extends StatefulWidget {
     String? title,
     Widget? header,
   }) {
-    anchor ??= DateTime.now().startOfMinute();
+    final QueryBuilder<Transaction> queryBuilder = TransactionsService()
+        .pendingTransactionsQb(anchor);
 
-    final QueryBuilder<Transaction> queryBuilder = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.transactionDate
-            .greaterThanDate(anchor)
-            .or(Transaction_.isPending.equals(true)))
-        .order(Transaction_.transactionDate);
+    return TransactionsPage(
+      query: queryBuilder,
+      key: key,
+      title: title,
+      header: header,
+    );
+  }
+
+  factory TransactionsPage.deleted({
+    Key? key,
+    DateTime? anchor,
+    String? title,
+    Widget? header,
+  }) {
+    final QueryBuilder<Transaction> queryBuilder =
+        TransactionsService().deletedTransactionsQb();
 
     return TransactionsPage(
       query: queryBuilder,
@@ -90,9 +105,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: widget.title == null ? null : Text(widget.title!),
-      ),
+      appBar: AppBar(title: widget.title == null ? null : Text(widget.title!)),
       body: SafeArea(
         child: StreamBuilder<List<Transaction>>(
           stream: widget.query
@@ -103,30 +116,60 @@ class _TransactionsPageState extends State<TransactionsPage> {
               return const Spinner.center();
             }
 
+            if (snapshot.requireData.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "transactions.query.noResult".t(context),
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8.0),
+                      FlowIcon(
+                        FlowIconData.icon(Symbols.family_star_rounded),
+                        size: 128.0,
+                        color: context.colorScheme.primary,
+                      ),
+                      const SizedBox(height: 8.0),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             final DateTime now = DateTime.now().startOfNextMinute();
 
-            final Map<TimeRange, List<Transaction>> transactions = snapshot
-                .requireData
-                .where((transaction) =>
-                    !transaction.transactionDate.isAfter(now) &&
-                    transaction.isPending != true)
-                .groupByDate();
+            final Map<TimeRange, List<Transaction>> transactions =
+                snapshot.requireData
+                    .where(
+                      (transaction) =>
+                          !transaction.transactionDate.isAfter(now) &&
+                          transaction.isPending != true,
+                    )
+                    .groupByDate();
             final Map<TimeRange, List<Transaction>> pendingTransactions =
                 snapshot.requireData
-                    .where((transaction) =>
-                        transaction.transactionDate.isAfter(now) ||
-                        transaction.isPending == true)
+                    .where(
+                      (transaction) =>
+                          transaction.transactionDate.isAfter(now) ||
+                          transaction.isPending == true,
+                    )
                     .groupByDate();
 
             return GroupedTransactionList(
               transactions: transactions,
               pendingTransactions: pendingTransactions,
-              headerBuilder: (pendingGroup, range, transactions) =>
-                  TransactionListDateHeader(
-                pendingGroup: pendingGroup,
-                range: range,
-                transactions: transactions,
-              ),
+              headerBuilder:
+                  (pendingGroup, range, transactions) =>
+                      TransactionListDateHeader(
+                        pendingGroup: pendingGroup,
+                        range: range,
+                        transactions: transactions,
+                      ),
               pendingDivider: WavyDivider(),
               header: widget.header,
             );

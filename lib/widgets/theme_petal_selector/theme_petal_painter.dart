@@ -35,45 +35,44 @@ class ThemePetalPainter extends CustomPainter {
 
     final Paint paint = Paint()..style = PaintingStyle.fill;
 
-    final Paint ringPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 2.0
-      ..color = selectedColor;
+    final double r = size.width * 0.5;
+
+    final Paint ringPaint =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..strokeWidth = 2.0
+          ..color = selectedColor;
 
     final double petalCenterDistance =
-        size.width * (petalRadiusProc + centerSpaceRadiusProc);
-    final double petalRadius = size.width * petalRadiusProc;
+        r * (petalRadiusProc + centerSpaceRadiusProc);
+    final double petalRadius = r * petalRadiusProc;
     final double ringRadius = petalRadius + 4.0;
 
     final double angleDelta = math.pi * 2 / colors.length;
 
     for (int i = 0; i < colors.length; i++) {
-      final double localProgress =
-          math.min(1, math.max(0, animationValue * colors.length - i));
+      final double localProgress = math.min(
+        1,
+        math.max(0, animationValue * colors.length - i),
+      );
 
       final double theta = angleOffset + angleDelta * (i - 1 + localProgress);
 
-      final Offset center = Offset(math.cos(theta), math.sin(theta)) *
+      final Offset center =
+          Offset(math.cos(theta), math.sin(theta)) *
           petalCenterDistance *
           localProgress;
 
-      paint.color = i == hoveringIndex
-          ? Color.alphaBlend(selectedColor.withAlpha(0x80), colors[i])
-          : colors[i];
-      canvas.drawCircle(
-        center,
-        petalRadius * localProgress,
-        paint,
-      );
+      paint.color =
+          i == hoveringIndex
+              ? Color.alphaBlend(selectedColor.withAlpha(0x80), colors[i])
+              : colors[i];
+      canvas.drawCircle(center, petalRadius * localProgress, paint);
 
       if (localProgress == 1 && selectedIndex == i) {
-        canvas.drawCircle(
-          center,
-          ringRadius,
-          ringPaint,
-        );
+        canvas.drawCircle(center, ringRadius, ringPaint);
       }
     }
   }

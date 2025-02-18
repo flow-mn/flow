@@ -17,11 +17,7 @@ class FlowCustomColors extends ThemeExtension<FlowCustomColors> {
   });
 
   @override
-  FlowCustomColors copyWith({
-    Color? income,
-    Color? expense,
-    Color? semi,
-  }) {
+  FlowCustomColors copyWith({Color? income, Color? expense, Color? semi}) {
     return FlowCustomColors(
       income: income ?? this.income,
       expense: expense ?? this.expense,

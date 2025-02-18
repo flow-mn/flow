@@ -36,12 +36,13 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
     final List<ExtractedResult<CurrencyData>> queryResults =
         extractTop<CurrencyData>(
-      query: _query.trim(),
-      choices: iso4217Currencies,
-      limit: iso4217Currencies.length,
-      getter: (currencyData) =>
-          "${currencyData.code} ${currencyData.name} ${currencyData.country}",
-    )
+              query: _query.trim(),
+              choices: iso4217Currencies,
+              limit: iso4217Currencies.length,
+              getter:
+                  (currencyData) =>
+                      "${currencyData.code} ${currencyData.name} ${currencyData.country}",
+            )
             .groupBy((resultItem) => resultItem.choice.code)
             .values
             .map((e) => e.firstOrNull)
@@ -49,8 +50,9 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
             .toList();
 
     // Artificially deprioritize North Korean Won due to its unpopularity
-    final int kpwIndex =
-        queryResults.indexWhere((element) => element.choice.code == "KPW");
+    final int kpwIndex = queryResults.indexWhere(
+      (element) => element.choice.code == "KPW",
+    );
 
     if (kpwIndex > -1) {
       final ExtractedResult<CurrencyData> kpw = queryResults.removeAt(kpwIndex);
@@ -59,11 +61,13 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
     // Bring the selected item to top
     final int selectedItemIndex = queryResults.indexWhere(
-        (element) => element.choice.code == widget.currentlySelected);
+      (element) => element.choice.code == widget.currentlySelected,
+    );
 
     if (selectedItemIndex > -1) {
-      final ExtractedResult<CurrencyData> selectedItem =
-          queryResults.removeAt(selectedItemIndex);
+      final ExtractedResult<CurrencyData> selectedItem = queryResults.removeAt(
+        selectedItemIndex,
+      );
       queryResults.insert(0, selectedItem);
     }
 
@@ -80,7 +84,8 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         ),
       ),
       title: Text("account.edit.selectCurrency".t(context)),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.4 -
+      scrollableContentMaxHeight:
+          MediaQuery.of(context).size.height * 0.4 -
           MediaQuery.of(context).viewInsets.vertical,
       child: ListView.builder(
         controller: _scrollController,
@@ -90,9 +95,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
 
           return ListTile(
             selected: widget.currentlySelected == transformedCurrencyData.code,
-            title: Text(
-              transformedCurrencyData.name,
-            ),
+            title: Text(transformedCurrencyData.name),
             subtitle: Text(
               transformedCurrencyData.country.titleCase(),
               maxLines: 1,

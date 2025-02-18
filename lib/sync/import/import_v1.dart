@@ -8,7 +8,8 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/transitive.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/mode.dart";
@@ -45,13 +46,11 @@ class ImportV1 extends Importer {
   final Map<String, int> memoizeCategories = {};
 
   @override
-  final ValueNotifier<ImportV1Progress> progressNotifier =
-      ValueNotifier(ImportV1Progress.waitingConfirmation);
+  final ValueNotifier<ImportV1Progress> progressNotifier = ValueNotifier(
+    ImportV1Progress.waitingConfirmation,
+  );
 
-  ImportV1(
-    this.data, {
-    this.mode = ImportMode.merge,
-  });
+  ImportV1(this.data, {this.mode = ImportMode.merge});
 
   @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
@@ -75,6 +74,8 @@ class ImportV1 extends Importer {
     }
 
     try {
+      TransactionsService().pauseListeners();
+
       switch (mode) {
         case ImportMode.eraseAndWrite:
           await _eraseAndWrite();
@@ -86,6 +87,8 @@ class ImportV1 extends Importer {
     } catch (e) {
       progressNotifier.value = ImportV1Progress.error;
       rethrow;
+    } finally {
+      TransactionsService().resumeListeners();
     }
 
     return safetyBackupFilePath;
@@ -113,41 +116,45 @@ class ImportV1 extends Importer {
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
     progressNotifier.value = ImportV1Progress.resolvingTransactions;
-    final transformedTransactions = data.transactions
-        .map((transaction) {
-          try {
-            transaction = _resolveAccountForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            return null;
-          }
+    final transformedTransactions =
+        data.transactions
+            .map((transaction) {
+              try {
+                transaction = _resolveAccountForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                return null;
+              }
 
-          try {
-            transaction = _resolveCategoryForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            // Still proceed without category
-          }
+              try {
+                transaction = _resolveCategoryForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                // Still proceed without category
+              }
 
-          return transaction;
-        })
-        .nonNulls
-        .toList();
+              return transaction;
+            })
+            .nonNulls
+            .toList();
 
     progressNotifier.value = ImportV1Progress.writingTransactions;
-    await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
+    await TransactionsService().upsertMany(transformedTransactions);
 
     unawaited(
-        LocalPreferences().updateTransitiveProperties().catchError((error) {
-      log(
-        "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
-        error: error,
-      );
-    }));
+      TransitiveLocalPreferences().updateTransitiveProperties().catchError((
+        error,
+      ) {
+        log(
+          "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
+          error: error,
+        );
+      }),
+    );
 
     progressNotifier.value = ImportV1Progress.success;
   }
@@ -178,7 +185,7 @@ class ImportV1 extends Importer {
     // // 3. Resurrect [Transaction]s
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
-    //     await ObjectBox().box<Transaction>().getAllAsync();
+    //     await TransactionsService().getAll();
   }
 
   Transaction _resolveAccountForTransaction(Transaction transaction) {
@@ -190,10 +197,11 @@ class ImportV1 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeAccounts[accountUuid] != 0) {
-      final Query<Account> accountQuery = ObjectBox()
-          .box<Account>()
-          .query(Account_.uuid.equals(accountUuid))
-          .build();
+      final Query<Account> accountQuery =
+          ObjectBox()
+              .box<Account>()
+              .query(Account_.uuid.equals(accountUuid))
+              .build();
 
       memoizeAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
 
@@ -221,10 +229,11 @@ class ImportV1 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeCategories[categoryUuid] != 0) {
-      final Query<Category> categoryQuery = ObjectBox()
-          .box<Category>()
-          .query(Category_.uuid.equals(categoryUuid))
-          .build();
+      final Query<Category> categoryQuery =
+          ObjectBox()
+              .box<Category>()
+              .query(Category_.uuid.equals(categoryUuid))
+              .build();
 
       memoizeCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
 

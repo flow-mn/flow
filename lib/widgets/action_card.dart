@@ -31,44 +31,34 @@ class ActionCard extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Surface(
-        shape: RoundedRectangleBorder(
-          borderRadius: borderRadius,
-        ),
-        builder: (context) => InkWell(
-          borderRadius: borderRadius,
-          onTap: onTap,
-          onLongPress: onLongPress,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (icon != null) ...[
-                  FlowIcon(icon!, size: 80.0, plated: true),
-                  const SizedBox(height: 8.0),
-                ],
-                Text(
-                  title,
-                  style: context.textTheme.headlineSmall,
+        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        builder:
+            (context) => InkWell(
+              borderRadius: borderRadius,
+              onTap: onTap,
+              onLongPress: onLongPress,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (icon != null) ...[
+                      FlowIcon(icon!, size: 80.0, plated: true),
+                      const SizedBox(height: 8.0),
+                    ],
+                    Text(title, style: context.textTheme.headlineSmall),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 4.0),
+                      Text(subtitle!, style: context.textTheme.bodyMedium),
+                    ],
+                    if (trailing != null) ...[
+                      const SizedBox(height: 8.0),
+                      trailing!,
+                    ],
+                  ],
                 ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4.0),
-                  Text(
-                    subtitle!,
-                    style: context.textTheme.bodyMedium,
-                  ),
-                ],
-                if (trailing != null) ...[
-                  const SizedBox(height: 8.0),
-                  trailing!,
-                ],
-              ],
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

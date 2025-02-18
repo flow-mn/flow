@@ -19,16 +19,9 @@ class DemoTransactionListTile extends StatelessWidget {
 
     return Row(
       children: [
-        FlowIcon(
-          FlowIconData.icon(icon),
-          plated: true,
-          fill: 0.0,
-        ),
+        FlowIcon(FlowIconData.icon(icon), plated: true, fill: 0.0),
         const SizedBox(width: 4.0),
-        Text(
-          "▅▅▅",
-          style: context.textTheme.bodySmall?.semi(context),
-        ),
+        Text("▅▅▅", style: context.textTheme.bodySmall?.semi(context)),
         const Spacer(),
         Text(
           type == TransactionType.expense ? "-▇" : "▇",

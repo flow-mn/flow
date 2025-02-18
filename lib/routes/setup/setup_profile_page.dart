@@ -5,7 +5,7 @@ import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flutter/material.dart";
@@ -45,9 +45,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("setup.profile.setup".t(context)),
-      ),
+      appBar: AppBar(title: Text("setup.profile.setup".t(context))),
       body: SafeArea(
         child: Form(
           key: formKey,
@@ -67,7 +65,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                 ),
                 const SizedBox(height: 16.0),
                 if (_textEditingController.text.trim().toLowerCase() == "test")
-                  CheckboxListTile.adaptive(
+                  CheckboxListTile /*.adaptive*/ (
                     title: Text("Enable demo mode"),
                     value: testMode,
                     onChanged: (value) {
@@ -91,7 +89,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                 onTap: save,
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 child: Text("setup.next".t(context)),
-              )
+              ),
             ],
           ),
         ),
@@ -118,8 +116,9 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
         _currentlyEditing = Profile(name: trimmed);
       }
 
-      final updatedProfile =
-          await ObjectBox().box<Profile>().putAndGetAsync(_currentlyEditing!);
+      final updatedProfile = await ObjectBox().box<Profile>().putAndGetAsync(
+        _currentlyEditing!,
+      );
 
       if (testMode) {
         unawaited(LocalPreferences().primaryCurrency.set("USD"));

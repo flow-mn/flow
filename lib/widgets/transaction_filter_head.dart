@@ -1,4 +1,4 @@
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 
@@ -38,9 +38,7 @@ class TransactionFilterHead extends StatelessWidget {
       child: SingleChildScrollView(
         padding: padding,
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: children,
-        ),
+        child: Row(children: children),
       ),
     );
   }

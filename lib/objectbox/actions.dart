@@ -8,7 +8,8 @@ import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
@@ -18,8 +19,10 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -32,18 +35,25 @@ extension MainActions on ObjectBox {
   Money getPrimaryCurrencyGrandTotal() {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final Query<Account> accountsQuery = box<Account>()
-        .query(Account_.excludeFromTotalBalance
-            .notEquals(true)
-            .and(Account_.currency.equals(primaryCurrency)))
-        .build();
+    final Query<Account> accountsQuery =
+        box<Account>()
+            .query(
+              Account_.excludeFromTotalBalance
+                  .notEquals(true)
+                  .and(Account_.currency.equals(primaryCurrency)),
+            )
+            .build();
 
     final List<Account> accounts = accountsQuery.find();
 
     accountsQuery.close();
 
-    return accounts.map((e) => e.balance).fold(Money(0, primaryCurrency),
-        (previousValue, element) => previousValue + element);
+    return accounts
+        .map((e) => e.balance)
+        .fold(
+          Money(0, primaryCurrency),
+          (previousValue, element) => previousValue + element,
+        );
   }
 
   /// Returns the grand total of all accounts (including non-primary currency accounts) in the primary currency
@@ -68,12 +78,14 @@ extension MainActions on ObjectBox {
           (previousValue, element) => previousValue + element.balance,
         );
 
-    final List<Account> nonPrimaryCurrencyAccounts = accounts
-        .where((account) => account.currency != primaryCurrency)
-        .toList();
+    final List<Account> nonPrimaryCurrencyAccounts =
+        accounts
+            .where((account) => account.currency != primaryCurrency)
+            .toList();
 
-    final ExchangeRates? rates =
-        await ExchangeRatesService().tryFetchRates(primaryCurrency);
+    final ExchangeRates? rates = await ExchangeRatesService().tryFetchRates(
+      primaryCurrency,
+    );
 
     if (rates == null) return null;
 
@@ -92,15 +104,23 @@ extension MainActions on ObjectBox {
     accounts.removeWhere((account) => account.archived == true);
 
     if (sortByFrecency) {
-      final FrecencyGroup frecencyGroup = FrecencyGroup(accounts
-          .map((account) =>
-              LocalPreferences().getFrecencyData("account", account.uuid))
-          .nonNulls
-          .toList());
+      final FrecencyGroup frecencyGroup = FrecencyGroup(
+        accounts
+            .map(
+              (account) => TransitiveLocalPreferences().getFrecencyData(
+                "account",
+                account.uuid,
+              ),
+            )
+            .nonNulls
+            .toList(),
+      );
 
-      accounts.sort((a, b) => frecencyGroup
-          .getScore(b.uuid)
-          .compareTo(frecencyGroup.getScore(a.uuid)));
+      accounts.sort(
+        (a, b) => frecencyGroup
+            .getScore(b.uuid)
+            .compareTo(frecencyGroup.getScore(a.uuid)),
+      );
     }
 
     return accounts;
@@ -110,15 +130,23 @@ extension MainActions on ObjectBox {
     final List<Category> categories = box<Category>().getAll();
 
     if (sortByFrecency) {
-      final FrecencyGroup frecencyGroup = FrecencyGroup(categories
-          .map((category) =>
-              LocalPreferences().getFrecencyData("category", category.uuid))
-          .nonNulls
-          .toList());
+      final FrecencyGroup frecencyGroup = FrecencyGroup(
+        categories
+            .map(
+              (category) => TransitiveLocalPreferences().getFrecencyData(
+                "category",
+                category.uuid,
+              ),
+            )
+            .nonNulls
+            .toList(),
+      );
 
-      categories.sort((a, b) => frecencyGroup
-          .getScore(b.uuid)
-          .compareTo(frecencyGroup.getScore(a.uuid)));
+      categories.sort(
+        (a, b) => frecencyGroup
+            .getScore(b.uuid)
+            .compareTo(frecencyGroup.getScore(a.uuid)),
+      );
     }
 
     return categories;
@@ -144,26 +172,23 @@ extension MainActions on ObjectBox {
 
   /// Returns all non-pending transactions in given [range]
   Future<List<Transaction>> transcationsByRange(TimeRange range) async {
-    final Condition<Transaction> dateFilter = Transaction_.transactionDate
-        .betweenDate(range.from, range.to)
-        .and(Transaction_.isPending
-            .isNull()
-            .or(Transaction_.isPending.notEquals(true)));
+    final TransactionFilter filter = TransactionFilter(
+      range: TransactionFilterTimeRange.fromTimeRange(range),
+      isPending: false,
+    );
 
-    final Query<Transaction> transactionsQuery =
-        ObjectBox().box<Transaction>().query(dateFilter).build();
-
-    final List<Transaction> transactions = await transactionsQuery.findAsync();
-
-    transactionsQuery.close();
+    final List<Transaction> transactions = await TransactionsService().findMany(
+      filter,
+    );
 
     return transactions;
   }
 
   Future<Map<T, MoneyFlow<K>>> flowBy<T, K>(
-      List<Transaction> transactions,
-      T? Function(Transaction t) keyBy,
-      K Function(Transaction t)? associateBy) async {
+    List<Transaction> transactions,
+    T? Function(Transaction t) keyBy,
+    K Function(Transaction t)? associateBy,
+  ) async {
     final Map<T, MoneyFlow<K>> flow = {};
 
     for (final transaction in transactions) {
@@ -203,8 +228,9 @@ extension MainActions on ObjectBox {
   }) async {
     final List<Transaction> transactions = await transcationsByRange(range);
 
-    final Map<String, MoneyFlow<Account>> flow =
-        await flowBy(transactions, (t) {
+    final Map<String, MoneyFlow<Account>> flow = await flowBy(transactions, (
+      t,
+    ) {
       if (ignoreTransfers && t.isTransfer) return null;
 
       return t.account.target?.uuid ?? Namespace.nil.value;
@@ -225,51 +251,54 @@ extension MainActions on ObjectBox {
     TransactionType? type,
     int? limit,
   }) async {
-    final Query<Transaction> transactionsQuery = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.title.contains(
-          currentInput?.trim() ?? "",
-          caseSensitive: false,
-        ))
-        .build();
-
-    final List<Transaction> transactions = await transactionsQuery
-        .findAsync()
-        .then((value) => value.where((element) {
-              if (element.title?.trim().isNotEmpty != true) {
-                return false;
-              }
-              if (type != TransactionType.transfer && element.isTransfer) {
-                return false;
-              }
-
-              return true;
-            }).toList())
-        .catchError(
-      (error) {
-        log("Failed to fetch transactions for title suggestions: $error");
-        return <Transaction>[];
-      },
+    final TransactionFilter filter = TransactionFilter(
+      searchData: TransactionSearchData(
+        includeDescription: false,
+        keyword: currentInput?.trim() ?? "",
+        mode: TransactionSearchMode.substring,
+      ),
     );
 
-    transactionsQuery.close();
+    final List<Transaction> transactions = await TransactionsService()
+        .findMany(filter)
+        .then(
+          (value) =>
+              value.where((element) {
+                if (element.title?.trim().isNotEmpty != true) {
+                  return false;
+                }
+                if (type != TransactionType.transfer && element.isTransfer) {
+                  return false;
+                }
 
-    final List<RelevanceScoredTitle> relevanceCalculatedList = transactions
-        .map((e) => (
-              title: e.title,
-              relevancy: e.titleSuggestionScore(
-                accountId: accountId,
-                categoryId: categoryId,
-                transactionType: type,
-              )
-            ))
-        .cast<RelevanceScoredTitle>()
-        .toList();
+                return true;
+              }).toList(),
+        )
+        .catchError((error) {
+          log("Failed to fetch transactions for title suggestions: $error");
+          return <Transaction>[];
+        });
+
+    final List<RelevanceScoredTitle> relevanceCalculatedList =
+        transactions
+            .map(
+              (e) => (
+                title: e.title,
+                relevancy: e.titleSuggestionScore(
+                  accountId: accountId,
+                  categoryId: categoryId,
+                  transactionType: type,
+                ),
+              ),
+            )
+            .cast<RelevanceScoredTitle>()
+            .toList();
 
     relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
-    final List<RelevanceScoredTitle> scoredTitles =
-        _mergeTitleRelevancy(relevanceCalculatedList);
+    final List<RelevanceScoredTitle> scoredTitles = _mergeTitleRelevancy(
+      relevanceCalculatedList,
+    );
 
     scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
@@ -286,23 +315,18 @@ extension MainActions on ObjectBox {
     final List<List<RelevanceScoredTitle>> grouped =
         scores.groupBy((relevance) => relevance.title).values.toList();
 
-    return grouped.map(
-      (items) {
-        final double sum = items
-            .map((x) => x.relevancy)
-            .fold<double>(0, (value, element) => value + element);
+    return grouped.map((items) {
+      final double sum = items
+          .map((x) => x.relevancy)
+          .fold<double>(0, (value, element) => value + element);
 
-        final double average = sum / items.length;
+      final double average = sum / items.length;
 
-        /// If an item occurs multiple times, its relevancy is increased
-        final double weight = 1 + (items.length * 0.025);
+      /// If an item occurs multiple times, its relevancy is increased
+      final double weight = 1 + (items.length * 0.025);
 
-        return (
-          title: items.first.title,
-          relevancy: average * weight,
-        );
-      },
-    ).toList();
+      return (title: items.first.title, relevancy: average * weight);
+    }).toList();
   }
 }
 
@@ -332,9 +356,10 @@ extension TransactionActions on Transaction {
         caseSensitive ? title?.trim() : title?.trim().toLowerCase();
 
     if (query?.trim().isNotEmpty == true && normalizedTitle != null) {
-      score += fuzzyPartial
-          ? partialRatio(query!, normalizedTitle).toDouble()
-          : ratio(query!, normalizedTitle).toDouble();
+      score +=
+          fuzzyPartial
+              ? partialRatio(query!, normalizedTitle).toDouble()
+              : ratio(query!, normalizedTitle).toDouble();
     }
 
     double multipler = 1.0;
@@ -368,11 +393,15 @@ extension TransactionActions on Transaction {
 
     if (amount.isNegative) return this;
 
-    final Query<Transaction> query = ObjectBox()
-        .box<Transaction>()
-        .query(Transaction_.uuid
-            .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
-        .build();
+    final Query<Transaction> query =
+        ObjectBox()
+            .box<Transaction>()
+            .query(
+              Transaction_.uuid.equals(
+                transfer.relatedTransactionUuid ?? Namespace.nil.value,
+              ),
+            )
+            .build();
 
     try {
       return query.findFirst();
@@ -383,28 +412,32 @@ extension TransactionActions on Transaction {
     }
   }
 
-  bool delete() {
+  bool permanentlyDelete([bool skipBinCheck = false]) {
+    if (!skipBinCheck && isDeleted != true) {
+      throw StateError(
+        "Transaction must be moved to trash bin before deletion, or set [skipBinCheck] to true",
+      );
+    }
+
     if (isTransfer) {
       final Transfer? transfer = extensions.transfer;
 
       if (transfer == null) {
-        log("Couldn't delete transfer transaction properly due to missing transfer data");
+        log(
+          "Couldn't delete transfer transaction properly due to missing transfer data",
+        );
       } else {
-        final Query<Transaction> relatedTransactionQuery = ObjectBox()
-            .box<Transaction>()
-            .query(Transaction_.uuid
-                .equals(transfer.relatedTransactionUuid ?? Namespace.nil.value))
-            .build();
+        final TransactionFilter filter = TransactionFilter(
+          uuids: [transfer.relatedTransactionUuid ?? Namespace.nil.value],
+        );
 
-        final Transaction? relatedTransaction =
-            relatedTransactionQuery.findFirst();
-
-        relatedTransactionQuery.close();
+        final Transaction? relatedTransaction = TransactionsService()
+            .findFirstSync(filter);
 
         try {
-          final bool removedRelated = ObjectBox()
-              .box<Transaction>()
-              .remove(relatedTransaction?.id ?? -1);
+          final bool removedRelated = TransactionsService().deleteSync(
+            relatedTransaction,
+          );
 
           if (!removedRelated) {
             throw Exception("Failed to remove related transaction");
@@ -415,7 +448,61 @@ extension TransactionActions on Transaction {
       }
     }
 
-    return ObjectBox().box<Transaction>().remove(id);
+    return TransactionsService().deleteSync(id);
+  }
+
+  void moveToTrashBin() {
+    if (isTransfer) {
+      final Transfer? transfer = extensions.transfer;
+
+      if (transfer == null) {
+        log(
+          "Couldn't delete transfer transaction properly due to missing transfer data",
+        );
+      } else {
+        try {
+          TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
+        } catch (e) {
+          log(
+            "Couldn't move transfer transaction to trash bin properly due to: $e",
+          );
+        }
+      }
+    }
+
+    try {
+      TransactionsService().moveToBinSync(this);
+    } catch (e) {
+      log("Failed to move transaction to trash bin: $e");
+    }
+  }
+
+  void recoverFromTrashBin() {
+    if (isTransfer) {
+      final Transfer? transfer = extensions.transfer;
+
+      if (transfer == null) {
+        log(
+          "Couldn't delete transfer transaction properly due to missing transfer data",
+        );
+      } else {
+        try {
+          TransactionsService().recoverFromBinSync(
+            transfer.relatedTransactionUuid,
+          );
+        } catch (e) {
+          log(
+            "Couldn't move transfer transaction to trash bin properly due to: $e",
+          );
+        }
+      }
+    }
+
+    try {
+      TransactionsService().recoverFromBinSync(this);
+    } catch (e) {
+      log("Failed to move transaction to trash bin: $e");
+    }
   }
 
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
@@ -424,66 +511,52 @@ extension TransactionActions on Transaction {
         final Transfer? transfer = extensions.transfer;
 
         if (transfer == null) {
-          log("Couldn't delete transfer transaction properly due to missing transfer data");
+          log(
+            "Couldn't delete transfer transaction properly due to missing transfer data",
+          );
         } else {
-          final Query<Transaction> relatedTransactionQuery = ObjectBox()
-              .box<Transaction>()
-              .query(Transaction_.uuid.equals(
-                  transfer.relatedTransactionUuid ?? Namespace.nil.value))
-              .build();
-
-          final Transaction? relatedTransaction =
-              relatedTransactionQuery.findFirst();
-
-          relatedTransactionQuery.close();
-
           try {
-            if (relatedTransaction == null) {
-              throw Exception("Related transaction not found");
-            }
-
-            relatedTransaction.isPending = !confirm;
-            if (updateTransactionDate && isPending != true) {
-              relatedTransaction.transactionDate = Moment.now();
-            }
-            ObjectBox()
-                .box<Transaction>()
-                .put(relatedTransaction, mode: PutMode.update);
+            TransactionsService().confirmTransactionSync(
+              transfer.relatedTransactionUuid,
+              confirm: confirm,
+              updateTransactionDate: updateTransactionDate,
+            );
           } catch (e) {
             log("Couldn't delete transfer transaction properly due to: $e");
           }
         }
       }
 
-      isPending = !confirm;
-      if (updateTransactionDate && isPending != true) {
-        transactionDate = Moment.now();
-      }
-      ObjectBox().box<Transaction>().put(this, mode: PutMode.update);
-      return true;
+      return TransactionsService().confirmTransactionSync(
+        this,
+        confirm: confirm,
+        updateTransactionDate: updateTransactionDate,
+      );
     } catch (e) {
       log("Failed to confirm transaction: $e");
       return false;
     }
   }
 
-  void duplicate() {
+  /// Returns the ObjectBox ID for the newly created transaction
+  int duplicate() {
     if (isTransfer) {
       throw Exception("Cannot duplicate transfer transactions");
     }
 
-    final Transaction duplicate = Transaction(
-      amount: amount,
-      currency: currency,
-      title: title,
-      description: description,
-      transactionDate: transactionDate,
-      createdDate: Moment.now(),
-      isPending: isPending,
-      uuid: Uuid().v4(),
-    )
-      ..setCategory(category.target)
-      ..setAccount(account.target);
+    final Transaction duplicate =
+        Transaction(
+            amount: amount,
+            currency: currency,
+            title: title,
+            description: description,
+            transactionDate: transactionDate,
+            createdDate: Moment.now(),
+            isPending: isPending,
+            uuid: Uuid().v4(),
+          )
+          ..setCategory(category.target)
+          ..setAccount(account.target);
 
     final List<TransactionExtension> filteredExtensions =
         extensions.data.where((ext) => ext is! Transfer).toList();
@@ -492,7 +565,7 @@ extension TransactionActions on Transaction {
       duplicate.addExtensions(filteredExtensions);
     }
 
-    ObjectBox().box<Transaction>().put(duplicate);
+    return TransactionsService().upsertOneSync(duplicate);
   }
 }
 
@@ -513,6 +586,8 @@ extension TransactionListActions on Iterable<Transaction> {
       where((transaction) => transaction.amount > 0);
   Iterable<Transaction> get nonPending =>
       where((transaction) => transaction.isPending != true);
+  Iterable<Transaction> get nonDeleted =>
+      where((transaction) => transaction.isDeleted != true);
 
   /// Number of transactions that are rendered on the screen
   ///
@@ -520,9 +595,7 @@ extension TransactionListActions on Iterable<Transaction> {
   /// and current list of transactions
   int get renderableCount =>
       length -
-      (LocalPreferences().combineTransferTransactions.get()
-          ? transfers.length ~/ 2
-          : 0);
+      (UserPreferencesService().combineTransfers ? transfers.length ~/ 2 : 0);
 
   double get incomeSumWithoutCurrency =>
       incomes.fold(0, (value, element) => value + element.amount);
@@ -532,28 +605,28 @@ extension TransactionListActions on Iterable<Transaction> {
       fold(0, (value, element) => value + element.amount);
 
   Money get incomeSum => incomes.fold(
-      Money(0.0, firstOrNull?.currency ?? "XXX"),
-      (value, element) => value + element.money);
+    Money(0.0, firstOrNull?.currency ?? "XXX"),
+    (value, element) => value + element.money,
+  );
   Money get expenseSum => expenses.fold(
-      Money(0.0, firstOrNull?.currency ?? "XXX"),
-      (value, element) => value + element.money);
-  Money get sum => fold(Money(0.0, firstOrNull?.currency ?? "XXX"),
-      (value, element) => value + element.money);
+    Money(0.0, firstOrNull?.currency ?? "XXX"),
+    (value, element) => value + element.money,
+  );
+  Money get sum => fold(
+    Money(0.0, firstOrNull?.currency ?? "XXX"),
+    (value, element) => value + element.money,
+  );
 
-  MoneyFlow get flow => MoneyFlow()
-    ..addAll(
-      map((transaction) => transaction.money),
-    );
+  MoneyFlow get flow =>
+      MoneyFlow()..addAll(map((transaction) => transaction.money));
 
   /// If [mergeFutureTransactions] is set to true, transactions in future
   /// relative to [anchor] will be grouped into the same group
-  Map<TimeRange, List<Transaction>> groupByDate({
-    DateTime? anchor,
-  }) =>
+  Map<TimeRange, List<Transaction>> groupByDate({DateTime? anchor}) =>
       groupByRange(
-        rangeFn: (transaction) => DayTimeRange.fromDateTime(
-          transaction.transactionDate,
-        ),
+        rangeFn:
+            (transaction) =>
+                DayTimeRange.fromDateTime(transaction.transactionDate),
         anchor: anchor,
       );
 
@@ -576,9 +649,11 @@ extension TransactionListActions on Iterable<Transaction> {
   }
 
   List<Transaction> filter(List<bool Function(Transaction)> predicates) =>
-      where((Transaction t) => predicates
-          .map((predicate) => predicate(t))
-          .every((element) => element)).toList();
+      where(
+        (Transaction t) => predicates
+            .map((predicate) => predicate(t))
+            .every((element) => element),
+      ).toList();
 
   List<Transaction> search(TransactionSearchData? data) {
     if (data == null || data.normalizedKeyword == null) return toList();
@@ -587,7 +662,8 @@ extension TransactionListActions on Iterable<Transaction> {
 
     if (data.mode == TransactionSearchMode.smart && matches.isEmpty) {
       return search(
-          data.copyWithOptional(mode: TransactionSearchMode.substring));
+        data.copyWithOptional(mode: TransactionSearchMode.substring),
+      );
     }
 
     return matches;
@@ -598,9 +674,7 @@ extension AccountActions on Account {
   static Memoizer<String, String?>? accountNameToUuid;
 
   static String nameByUuid(String uuid) {
-    accountNameToUuid ??= Memoizer(
-      compute: _nameByUuid,
-    );
+    accountNameToUuid ??= Memoizer(compute: _nameByUuid);
 
     return accountNameToUuid!.get(uuid) ?? "???";
   }
@@ -618,18 +692,42 @@ extension AccountActions on Account {
     }
   }
 
-  /// Creates a new transaction, and saves it
+  /// Upserts a transaction (creates if not exists, updates if exists)
   ///
   /// Returns transaction id from [Box.put]
   int updateBalanceAndSave(
     double targetBalance, {
+    int? existingTransactionId,
     String? title,
     DateTime? transactionDate,
   }) {
-    final double delta = targetBalance -
+    final double delta =
+        targetBalance -
         (transactionDate == null
             ? balance.amount
             : balanceAt(transactionDate).amount);
+
+    if (delta == 0) {
+      throw Exception(
+        "[Account.updateBalanceAndSave] Target balance ($targetBalance) is same as current balance (${balance.amount})",
+      );
+    }
+
+    if (existingTransactionId != null && existingTransactionId > 0) {
+      final Transaction? transaction = TransactionsService().getOneSync(
+        existingTransactionId,
+      );
+
+      if (transaction == null) {
+        throw Exception(
+          "[Account.updateBalanceAndSave] Transaction with id $existingTransactionId not found, aborting operation",
+        );
+      }
+
+      transaction.amount = delta;
+      transaction.transactionDate = DateTime.now();
+      return TransactionsService().updateOneSync(transaction);
+    }
 
     return createAndSaveTransaction(
       amount: delta,
@@ -681,9 +779,12 @@ extension AccountActions on Account {
       relatedTransactionUuid: toTransactionUuid,
     );
 
-    final String resolvedTitle = title ??
-        "transaction.transfer.fromToTitle"
-            .tr({"from": name, "to": targetAccount.name});
+    final String resolvedTitle =
+        title ??
+        "transaction.transfer.fromToTitle".tr({
+          "from": name,
+          "to": targetAccount.name,
+        });
 
     final List<TransactionExtension> filteredExtensions =
         extensions?.where((ext) => ext is! Transfer).toList() ?? [];
@@ -692,10 +793,7 @@ extension AccountActions on Account {
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [
-        transferData,
-        ...filteredExtensions,
-      ],
+      extensions: [transferData, ...filteredExtensions],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -733,53 +831,60 @@ extension AccountActions on Account {
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
 
-    Transaction value = Transaction(
-      amount: amount,
-      currency: currency,
-      title: title,
-      description: description,
-      transactionDate: transactionDate,
-      createdDate: createdDate,
-      uuid: uuid,
-      isPending: isPending ?? false,
-      subtype: subtype?.value,
-    )
-      ..setCategory(category)
-      ..setAccount(this);
+    Transaction value =
+        Transaction(
+            amount: amount,
+            currency: currency,
+            title: title,
+            description: description,
+            transactionDate: transactionDate,
+            createdDate: createdDate,
+            uuid: uuid,
+            isPending: isPending ?? false,
+            subtype: subtype?.value,
+          )
+          ..setCategory(category)
+          ..setAccount(this);
 
-    final List<TransactionExtension>? applicableExtensions = extensions
-        ?.map((ext) {
-          log("Adding extension to Transaction($uuidOverride): ${ext.runtimeType}(${ext.uuid})");
-          log("Checking extension: ${ext.runtimeType}");
+    final List<TransactionExtension>? applicableExtensions =
+        extensions
+            ?.map((ext) {
+              log(
+                "Adding extension to Transaction($uuidOverride): ${ext.runtimeType}(${ext.uuid})",
+              );
+              log("Checking extension: ${ext.runtimeType}");
 
-          if (ext.relatedTransactionUuid == null) {
-            return ext..setRelatedTransactionUuid(uuid);
-          }
+              if (ext.relatedTransactionUuid == null) {
+                return ext..setRelatedTransactionUuid(uuid);
+              }
 
-          if (ext.key == Transfer.keyName) {
-            // Transfer extension is handled separately
-            return ext;
-          }
+              if (ext.key == Transfer.keyName) {
+                // Transfer extension is handled separately
+                return ext;
+              }
 
-          if (ext.relatedTransactionUuid == uuid) {
-            return ext;
-          }
+              if (ext.relatedTransactionUuid == uuid) {
+                return ext;
+              }
 
-          return null;
-        })
-        .nonNulls
-        .toList();
+              return null;
+            })
+            .nonNulls
+            .toList();
 
     if (applicableExtensions != null && applicableExtensions.isNotEmpty) {
       value.addExtensions(applicableExtensions);
     }
 
-    final int id = ObjectBox().box<Transaction>().put(value);
+    final int id = TransactionsService().upsertOneSync(value);
 
     try {
-      LocalPreferences().updateFrecencyData("account", uuid);
+      TransitiveLocalPreferences().updateFrecencyData("account", uuid);
       if (category != null) {
-        LocalPreferences().updateFrecencyData("category", category.uuid);
+        TransitiveLocalPreferences().updateFrecencyData(
+          "category",
+          category.uuid,
+        );
       }
     } catch (e) {
       log("Failed to update frecency data for transaction ($id)");

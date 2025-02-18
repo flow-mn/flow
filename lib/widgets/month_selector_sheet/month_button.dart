@@ -33,9 +33,10 @@ class MonthButton extends StatelessWidget {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: selected
-              ? context.colorScheme.secondary
-              : context.colorScheme.surface,
+          color:
+              selected
+                  ? context.colorScheme.secondary
+                  : context.colorScheme.surface,
           borderRadius: borderRadius,
           border: Border.fromBorderSide(
             BorderSide(
@@ -51,12 +52,13 @@ class MonthButton extends StatelessWidget {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: future
-              ? context.textTheme.bodyMedium?.semi(context)
-              : context.textTheme.bodyMedium?.copyWith(
-                  color: highlighted ? context.colorScheme.primary : null,
-                  fontWeight: highlighted ? FontWeight.w500 : null,
-                ),
+          style:
+              future
+                  ? context.textTheme.bodyMedium?.semi(context)
+                  : context.textTheme.bodyMedium?.copyWith(
+                    color: highlighted ? context.colorScheme.primary : null,
+                    fontWeight: highlighted ? FontWeight.w500 : null,
+                  ),
         ),
       ),
     );

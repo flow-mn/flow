@@ -1,7 +1,7 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/utils/utc_datetime_converter.dart";
+import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:objectbox/objectbox.dart";
@@ -10,10 +10,7 @@ import "package:uuid/uuid.dart";
 part "category.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class Category implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -50,15 +47,15 @@ class Category implements EntityBase {
     required this.name,
     required this.iconCode,
     DateTime? createdDate,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+  }) : createdDate = createdDate ?? DateTime.now(),
+       uuid = const Uuid().v4();
 
   Category.preset({
     required this.name,
     required this.iconCode,
     required this.uuid,
-  })  : createdDate = DateTime.now(),
-        id = -1;
+  }) : createdDate = DateTime.now(),
+       id = -1;
 
   factory Category.fromJson(Map<String, dynamic> json) =>
       _$CategoryFromJson(json);

@@ -44,14 +44,23 @@ class ThemeFactory {
       pointerColor: kTransparent,
       angleOffset: 0.0,
       pointerSize: 2.0,
-      tooltipTextStyle:
-          flowTextTheme.displaySmall!.copyWith(color: colorScheme.onSurface),
+      tooltipTextStyle: flowTextTheme.displaySmall!.copyWith(
+        color: colorScheme.onSurface,
+      ),
       rightClickShowsMenu: true,
       menuAlignment: Alignment.center,
     );
 
     final Color bottomNavigationBarItemColor =
         isDark ? colorScheme.onSurface : colorScheme.primary;
+
+    final TextTheme textTheme = flowTextTheme.apply(
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+      decorationColor: colorScheme.onSurface,
+    );
 
     materialTheme = ThemeData(
       useMaterial3: true,
@@ -63,6 +72,12 @@ class ThemeFactory {
       cardTheme: CardTheme(
         color: colorScheme.secondary,
         surfaceTintColor: colorScheme.primary,
+      ),
+      chipTheme: ChipThemeData(
+        labelStyle: textTheme.labelLarge!.copyWith(
+          color: colorScheme.onSurface,
+        ),
+        selectedColor: colorScheme.secondary,
       ),
       extensions: [
         flowColorScheme.customColors,
@@ -88,43 +103,36 @@ class ThemeFactory {
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: colorScheme.surface,
       ),
-      textTheme: flowTextTheme
-          .apply(
-            fontFamily: fontFamily,
-            fontFamilyFallback: fontFamilyFallback,
-            bodyColor: colorScheme.onSurface,
-            displayColor: colorScheme.onSurface,
-            decorationColor: colorScheme.onSurface,
-          )
-          .copyWith(),
+      textTheme: textTheme,
       highlightColor: colorScheme.onSurface.withAlpha(0x16),
       splashColor: colorScheme.onSurface.withAlpha(0x12),
       listTileTheme: ListTileThemeData(
         iconColor: colorScheme.primary,
         selectedTileColor: colorScheme.secondary,
         selectedColor: isDark ? colorScheme.primary : null,
+        subtitleTextStyle: textTheme.bodyMedium!.copyWith(
+          color: colorScheme.onSurface,
+        ),
       ),
       radioTheme: RadioThemeData(
-        fillColor: WidgetStateProperty.resolveWith(
-          (states) {
-            if (states.contains(WidgetState.disabled)) {
-              return colorScheme.onSurface.withAlpha(0x61);
-            }
-            if (states.contains(WidgetState.selected)) {
-              return colorScheme.primary;
-            }
-            if (states.contains(WidgetState.pressed)) {
-              return colorScheme.onSurface;
-            }
-            if (states.contains(WidgetState.hovered)) {
-              return colorScheme.onSurface;
-            }
-            if (states.contains(WidgetState.focused)) {
-              return colorScheme.onSurface;
-            }
-            return colorScheme.onSurfaceVariant;
-          },
-        ),
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.onSurface.withAlpha(0x61);
+          }
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          if (states.contains(WidgetState.pressed)) {
+            return colorScheme.onSurface;
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return colorScheme.onSurface;
+          }
+          if (states.contains(WidgetState.focused)) {
+            return colorScheme.onSurface;
+          }
+          return colorScheme.onSurfaceVariant;
+        }),
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
@@ -148,9 +156,7 @@ class ThemeFactory {
         cursorColor: colorScheme.primary,
         selectionHandleColor: colorScheme.primary,
       ),
-      tabBarTheme: TabBarTheme(
-        dividerColor: colorScheme.primary,
-      ),
+      tabBarTheme: TabBarTheme(dividerColor: colorScheme.primary),
     );
   }
 
@@ -164,11 +170,7 @@ class ThemeFactory {
     bool preferDark = false,
     bool preferOled = false,
   }) {
-    final resolved = getTheme(
-      themeName,
-      preferDark: preferDark,
-      preferOled: preferOled,
-    );
+    final resolved = getTheme(themeName, preferDark: preferDark);
 
     return ThemeFactory(resolved);
   }
