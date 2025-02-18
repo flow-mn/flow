@@ -18,9 +18,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
         LocalPreferences().usePhoneNumpadLayout.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.numpad".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.numpad".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

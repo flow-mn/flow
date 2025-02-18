@@ -86,10 +86,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
           "tabs.stats.chart.total".t(context),
           style: context.textTheme.labelMedium,
         ),
-        MoneyText(
-          totalAmount,
-          style: context.textTheme.headlineMedium,
-        ),
+        MoneyText(totalAmount, style: context.textTheme.headlineMedium),
         Padding(
           padding: widget.chartPadding,
           child: ConstrainedBox(
@@ -103,8 +100,10 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                 builder: (context, constraints) {
                   final double size = constraints.maxWidth;
 
-                  final double centerHoleDiameter =
-                      math.max(size * 0.5, GroupPieChart.graphHoleSizeMin);
+                  final double centerHoleDiameter = math.max(
+                    size * 0.5,
+                    GroupPieChart.graphHoleSizeMin,
+                  );
                   final double radius = (size - centerHoleDiameter) * 0.5;
 
                   return Stack(
@@ -140,16 +139,17 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                           sectionsSpace: 1.0,
                           centerSpaceRadius: centerHoleDiameter / 2,
                           startDegreeOffset: -90.0,
-                          sections: data.entries.indexed
-                              .map(
-                                (e) => sectionData(
-                                  data[e.$2.key]!,
-                                  selected: e.$2.key == selectedKey,
-                                  index: e.$1,
-                                  radius: radius,
-                                ),
-                              )
-                              .toList(),
+                          sections:
+                              data.entries.indexed
+                                  .map(
+                                    (e) => sectionData(
+                                      data[e.$2.key]!,
+                                      selected: e.$2.key == selectedKey,
+                                      index: e.$1,
+                                      radius: radius,
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ),
                       Positioned.fill(
@@ -182,7 +182,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   );
                 },
@@ -202,12 +202,12 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
   }) {
     final bool usingDarkTheme = Flow.of(context).useDarkTheme;
 
-    final Color color = (usingDarkTheme
-        ? accentColors
-        : primaryColors)[index % primaryColors.length];
-    final Color backgroundColor = (usingDarkTheme
-        ? primaryColors
-        : accentColors)[index % primaryColors.length];
+    final Color color =
+        (usingDarkTheme ? accentColors : primaryColors)[index %
+            primaryColors.length];
+    final Color backgroundColor =
+        (usingDarkTheme ? primaryColors : accentColors)[index %
+            primaryColors.length];
 
     return PieChartSectionData(
       color: color,
@@ -215,53 +215,50 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
       value: data.displayTotal,
       title: resolveName(data.associatedData),
       showTitle: false,
-      badgeWidget: selected
-          ? resolveBadgeWidget(
-              data.associatedData,
-              color: color,
-              backgroundColor: backgroundColor,
-              percent: data.displayTotal / totalAmount.amount,
-            )
-          : null,
+      badgeWidget:
+          selected
+              ? resolveBadgeWidget(
+                data.associatedData,
+                color: color,
+                backgroundColor: backgroundColor,
+                percent: data.displayTotal / totalAmount.amount,
+              )
+              : null,
       badgePositionPercentageOffset: 0.8,
-      borderSide: selected
-          ? BorderSide(
-              color: backgroundColor,
-              width: 3.0,
-            )
-          : null,
+      borderSide:
+          selected ? BorderSide(color: backgroundColor, width: 3.0) : null,
     );
   }
 
   String resolveName(Object? entity) => switch (entity) {
-        Category category => category.name,
-        Account account => account.name,
-        _ => widget.unresolvedDataTitle ?? "-"
-      };
+    Category category => category.name,
+    Account account => account.name,
+    _ => widget.unresolvedDataTitle ?? "-",
+  };
 
   Widget? resolveBadgeWidget(
     Object? entity, {
     Color? color,
     Color? backgroundColor,
     required double percent,
-  }) =>
-      switch (entity) {
-        Category category => PiePercentBadge(
-            icon: category.icon,
-            color: color,
-            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
-            percent: percent,
-          ),
-        Account account => PiePercentBadge(
-            icon: account.icon,
-            color: color,
-            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
-            percent: percent,
-          ),
-        _ => PiePercentBadge(
-            icon: FlowIconData.emoji("?"),
-            color: color,
-            backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
-            percent: percent),
-      };
+  }) => switch (entity) {
+    Category category => PiePercentBadge(
+      icon: category.icon,
+      color: color,
+      backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+      percent: percent,
+    ),
+    Account account => PiePercentBadge(
+      icon: account.icon,
+      color: color,
+      backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+      percent: percent,
+    ),
+    _ => PiePercentBadge(
+      icon: FlowIconData.emoji("?"),
+      color: color,
+      backgroundColor: backgroundColor ?? color?.withAlpha(0x40),
+      percent: percent,
+    ),
+  };
 }

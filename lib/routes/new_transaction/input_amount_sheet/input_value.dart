@@ -23,9 +23,11 @@ class InputValue implements Comparable<InputValue> {
     required this.decimalPart,
     required this.isNegative,
     required this.decimalLeadingZeroesCount,
-  })  : assert(wholePart >= 0, "wholePart must be greater than or equal to 0"),
-        assert(
-            decimalPart >= 0, "decimalPart must be greater than or equal to 0");
+  }) : assert(wholePart >= 0, "wholePart must be greater than or equal to 0"),
+       assert(
+         decimalPart >= 0,
+         "decimalPart must be greater than or equal to 0",
+       );
 
   factory InputValue.fromDouble(
     double value, {
@@ -43,9 +45,10 @@ class InputValue implements Comparable<InputValue> {
 
     final int decimalPart = int.tryParse(rawDecimal) ?? 0;
 
-    final int decimalLeadingZeroesCount = decimalPart == 0
-        ? 0
-        : rawDecimal.length - decimalPart.toString().length;
+    final int decimalLeadingZeroesCount =
+        decimalPart == 0
+            ? 0
+            : rawDecimal.length - decimalPart.toString().length;
 
     return InputValue(
       wholePart: wholePart,
@@ -56,33 +59,35 @@ class InputValue implements Comparable<InputValue> {
   }
 
   static const zero = InputValue(
-      wholePart: 0,
-      decimalPart: 0,
-      isNegative: false,
-      decimalLeadingZeroesCount: 0);
+    wholePart: 0,
+    decimalPart: 0,
+    isNegative: false,
+    decimalLeadingZeroesCount: 0,
+  );
 
   InputValue signed(num sign) => InputValue(
-        wholePart: wholePart,
-        decimalPart: decimalPart,
-        isNegative: sign.isNegative,
-        decimalLeadingZeroesCount: decimalLeadingZeroesCount,
-      );
+    wholePart: wholePart,
+    decimalPart: decimalPart,
+    isNegative: sign.isNegative,
+    decimalLeadingZeroesCount: decimalLeadingZeroesCount,
+  );
 
   InputValue negated([bool? isNegative]) => InputValue(
-        wholePart: wholePart,
-        decimalPart: decimalPart,
-        isNegative: isNegative ?? !this.isNegative,
-        decimalLeadingZeroesCount: decimalLeadingZeroesCount,
-      );
+    wholePart: wholePart,
+    decimalPart: decimalPart,
+    isNegative: isNegative ?? !this.isNegative,
+    decimalLeadingZeroesCount: decimalLeadingZeroesCount,
+  );
 
-  InputValue abs() => isNegative
-      ? InputValue(
-          wholePart: wholePart,
-          decimalPart: decimalPart,
-          isNegative: false,
-          decimalLeadingZeroesCount: decimalLeadingZeroesCount,
-        )
-      : this;
+  InputValue abs() =>
+      isNegative
+          ? InputValue(
+            wholePart: wholePart,
+            decimalPart: decimalPart,
+            isNegative: false,
+            decimalLeadingZeroesCount: decimalLeadingZeroesCount,
+          )
+          : this;
 
   InputValue appendWhole(int n) {
     assert(n >= 0 && n <= 9);
@@ -104,9 +109,10 @@ class InputValue implements Comparable<InputValue> {
       wholePart: wholePart,
       decimalPart: decimalPart * 10 + n,
       isNegative: isNegative,
-      decimalLeadingZeroesCount: zeroOnZero
-          ? decimalLeadingZeroesCount + 1
-          : decimalLeadingZeroesCount,
+      decimalLeadingZeroesCount:
+          zeroOnZero
+              ? decimalLeadingZeroesCount + 1
+              : decimalLeadingZeroesCount,
     );
   }
 
@@ -126,51 +132,48 @@ class InputValue implements Comparable<InputValue> {
       wholePart: wholePart,
       decimalPart: decimalPart ~/ 10,
       isNegative: isNegative,
-      decimalLeadingZeroesCount: decimalPart == 0
-          ? math.max(decimalLeadingZeroesCount - 1, 0)
-          : decimalLeadingZeroesCount,
+      decimalLeadingZeroesCount:
+          decimalPart == 0
+              ? math.max(decimalLeadingZeroesCount - 1, 0)
+              : decimalLeadingZeroesCount,
     );
   }
 
   InputValue truncate() => InputValue(
-        wholePart: wholePart,
-        decimalPart: 0,
-        isNegative: isNegative,
-        decimalLeadingZeroesCount: 0,
-      );
+    wholePart: wholePart,
+    decimalPart: 0,
+    isNegative: isNegative,
+    decimalLeadingZeroesCount: 0,
+  );
 
   InputValue add(
     InputValue other, {
     int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
-  }) =>
-      InputValue.fromDouble(
-        currentAmount + other.currentAmount,
-        maxNumberOfDecimals: maxNumberOfDecimals,
-      );
+  }) => InputValue.fromDouble(
+    currentAmount + other.currentAmount,
+    maxNumberOfDecimals: maxNumberOfDecimals,
+  );
   InputValue subtract(
     InputValue other, {
     int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
-  }) =>
-      InputValue.fromDouble(
-        currentAmount - other.currentAmount,
-        maxNumberOfDecimals: maxNumberOfDecimals,
-      );
+  }) => InputValue.fromDouble(
+    currentAmount - other.currentAmount,
+    maxNumberOfDecimals: maxNumberOfDecimals,
+  );
   InputValue multiply(
     InputValue other, {
     int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
-  }) =>
-      InputValue.fromDouble(
-        currentAmount * other.currentAmount,
-        maxNumberOfDecimals: maxNumberOfDecimals,
-      );
+  }) => InputValue.fromDouble(
+    currentAmount * other.currentAmount,
+    maxNumberOfDecimals: maxNumberOfDecimals,
+  );
   InputValue divide(
     InputValue other, {
     int maxNumberOfDecimals = _defaultMaxNumberOfDecimals,
-  }) =>
-      InputValue.fromDouble(
-        currentAmount / other.currentAmount,
-        maxNumberOfDecimals: maxNumberOfDecimals,
-      );
+  }) => InputValue.fromDouble(
+    currentAmount / other.currentAmount,
+    maxNumberOfDecimals: maxNumberOfDecimals,
+  );
 
   InputValue operator +(InputValue other) => add(other);
   InputValue operator -(InputValue other) => subtract(other);

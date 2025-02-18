@@ -10,12 +10,10 @@ class MoneyText extends StatefulWidget {
   final Money? money;
 
   final String Function(
-      Money money,
-      ({
-        bool abbreviate,
-        bool obscure,
-        bool useCurrencySymbol,
-      }) options)? customFormatter;
+    Money money,
+    ({bool abbreviate, bool obscure, bool useCurrencySymbol}) options,
+  )?
+  customFormatter;
 
   /// Defaults to [false]
   final bool initiallyAbbreviated;

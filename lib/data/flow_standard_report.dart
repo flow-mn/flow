@@ -75,14 +75,17 @@ class FlowStandardReport {
       ),
     );
 
-    expenseSum = -Money(
-      currentFlowByDay.values.map((flow) {
-        final int dayOffset =
-            flow.associatedData!.from.difference(current.from).inDays;
-        return dailyExpenditure[dayOffset] ?? 0;
-      }).fold(0, (a, b) => a + b),
-      primaryCurrency,
-    );
+    expenseSum =
+        -Money(
+          currentFlowByDay.values
+              .map((flow) {
+                final int dayOffset =
+                    flow.associatedData!.from.difference(current.from).inDays;
+                return dailyExpenditure[dayOffset] ?? 0;
+              })
+              .fold(0, (a, b) => a + b),
+          primaryCurrency,
+        );
     incomeSum = currentFlowByDay.values
         .map((flow) => flow.getIncomeByCurrency(primaryCurrency))
         .fold(Money(0, primaryCurrency), (a, b) => a + b);
@@ -98,8 +101,10 @@ class FlowStandardReport {
       }
     }
 
-    final int countableDays =
-        math.max(1, current.duration.inDays - uncountableDays);
+    final int countableDays = math.max(
+      1,
+      current.duration.inDays - uncountableDays,
+    );
 
     dailyAvgExpenditure = expenseSum / countableDays.toDouble();
     dailyAvgIncome = incomeSum / countableDays.toDouble();
@@ -142,14 +147,17 @@ class FlowStandardReport {
       ),
     );
 
-    previousExpenseSum = -Money(
-      previousFlowByDay!.values.map((flow) {
-        final int? dayOffset =
-            flow.associatedData?.from.difference(previous.from).inDays;
-        return previousDailyExpenditure![dayOffset] ?? 0;
-      }).fold(0, (a, b) => a + b),
-      primaryCurrency,
-    );
+    previousExpenseSum =
+        -Money(
+          previousFlowByDay!.values
+              .map((flow) {
+                final int? dayOffset =
+                    flow.associatedData?.from.difference(previous.from).inDays;
+                return previousDailyExpenditure![dayOffset] ?? 0;
+              })
+              .fold(0, (a, b) => a + b),
+          primaryCurrency,
+        );
     previousIncomeSum = previousFlowByDay!.values
         .map((flow) => flow.getIncomeByCurrency(primaryCurrency))
         .fold(Money(0, primaryCurrency), (a, b) => a == null ? b : (a + b));
@@ -166,12 +174,10 @@ class FlowStandardReport {
       }
     }
 
-    final int previousCountableDays = previousDailyExpenditure == null
-        ? 1
-        : math.max(
-            1,
-            previous.duration.inDays - uncountableDays,
-          );
+    final int previousCountableDays =
+        previousDailyExpenditure == null
+            ? 1
+            : math.max(1, previous.duration.inDays - uncountableDays);
 
     previousDailyAvgExpenditure =
         previousExpenseSum! / previousCountableDays.toDouble();
@@ -192,11 +198,13 @@ class FlowStandardReport {
         await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(range, rates);
     final Map<int, MoneyFlow<DayTimeRange>>? previousFlowByDay =
         switch (range) {
-      PageableRange pageable =>
-        await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
-            pageable.last, rates),
-      _ => null,
-    };
+          PageableRange pageable =>
+            await _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
+              pageable.last,
+              rates,
+            ),
+          _ => null,
+        };
 
     return FlowStandardReport._internal(
       current: range,
@@ -206,20 +214,23 @@ class FlowStandardReport {
   }
 
   static Future<Map<int, MoneyFlow<DayTimeRange>>>
-      _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
-          TimeRange range, ExchangeRates? rates) async {
+  _reportMonthRangeFlowByDayInPrimaryCurrencyOnly(
+    TimeRange range,
+    ExchangeRates? rates,
+  ) async {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
-    final List<Transaction> transactions =
-        await ObjectBox().transcationsByRange(range);
+    final List<Transaction> transactions = await ObjectBox()
+        .transcationsByRange(range);
 
     final Map<int, MoneyFlow<DayTimeRange>> result = {};
 
     for (final Transaction transaction in transactions) {
       if (transaction.isTransfer) continue;
 
-      final DayTimeRange day =
-          DayTimeRange.fromDateTime(transaction.transactionDate);
+      final DayTimeRange day = DayTimeRange.fromDateTime(
+        transaction.transactionDate,
+      );
       final int dayOffset = day.from.difference(range.from).inDays.abs();
 
       result[dayOffset] ??= MoneyFlow(associatedData: day);
@@ -227,8 +238,9 @@ class FlowStandardReport {
       if (transaction.currency == primaryCurrency) {
         result[dayOffset]!.add(transaction.money);
       } else if (rates != null) {
-        result[dayOffset]!
-            .add(transaction.money.convert(primaryCurrency, rates));
+        result[dayOffset]!.add(
+          transaction.money.convert(primaryCurrency, rates),
+        );
       }
     }
 

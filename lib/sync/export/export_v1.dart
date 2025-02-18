@@ -21,8 +21,9 @@ Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions =
-      await TransactionsService().findMany(TransactionFilter.all);
+  final List<Transaction> transactions = await TransactionsService().findMany(
+    TransactionFilter.all,
+  );
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
@@ -56,8 +57,9 @@ Future<String> generateBackupContentV1() async {
 }
 
 Future<String> generateCSVContentV1() async {
-  final transactions =
-      await TransactionsService().findMany(TransactionFilter.all);
+  final transactions = await TransactionsService().findMany(
+    TransactionFilter.all,
+  );
 
   final headers = [
     CSVHeadersV1.uuid.localizedName,
@@ -80,39 +82,37 @@ Future<String> generateCSVContentV1() async {
 
   final Map<String, int> numberOfDecimalsToKeep = {};
 
-  final transformed = transactions
-      .map(
-        (e) => [
-          e.uuid,
-          e.title ?? "",
-          e.description ?? "",
-          e.amount.toStringAsFixed(
-            numberOfDecimalsToKeep[e.currency] ??=
-                NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
-          ),
-          e.currency,
-          e.account.target?.name,
-          e.account.target?.uuid,
-          e.category.target?.name,
-          e.category.target?.uuid,
-          e.type.localizedName,
-          e.transactionSubtype?.localizedName,
-          e.createdDate.format(
-            payload: "LLL",
-            forceLocal: true,
-          ),
-          e.transactionDate.format(
-            payload: "LLL",
-            forceLocal: true,
-          ),
-          e.extensions.geo?.latitude?.toString() ?? "",
-          e.extensions.geo?.longitude?.toString() ?? "",
-          e.extra,
-        ],
-      )
-      .toList()
-    ..insert(0, headers);
+  final transformed =
+      transactions
+          .map(
+            (e) => [
+              e.uuid,
+              e.title ?? "",
+              e.description ?? "",
+              e.amount.toStringAsFixed(
+                numberOfDecimalsToKeep[e.currency] ??=
+                    NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
+              ),
+              e.currency,
+              e.account.target?.name,
+              e.account.target?.uuid,
+              e.category.target?.name,
+              e.category.target?.uuid,
+              e.type.localizedName,
+              e.transactionSubtype?.localizedName,
+              e.createdDate.format(payload: "LLL", forceLocal: true),
+              e.transactionDate.format(payload: "LLL", forceLocal: true),
+              e.extensions.geo?.latitude?.toString() ?? "",
+              e.extensions.geo?.longitude?.toString() ?? "",
+              e.extra,
+            ],
+          )
+          .toList()
+        ..insert(0, headers);
 
-  return const ListToCsvConverter()
-      .convert(transformed, convertNullTo: "", eol: "\n");
+  return const ListToCsvConverter().convert(
+    transformed,
+    convertNullTo: "",
+    eol: "\n",
+  );
 }

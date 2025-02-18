@@ -11,10 +11,7 @@ import "package:uuid/uuid.dart";
 part "transaction_filter_preset.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class TransactionFilterPreset implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -45,8 +42,8 @@ class TransactionFilterPreset implements EntityBase {
     DateTime? createdDate,
     required this.jsonTransactionFilter,
     required this.name,
-  })  : createdDate = createdDate ?? DateTime.now(),
-        uuid = const Uuid().v4();
+  }) : createdDate = createdDate ?? DateTime.now(),
+       uuid = const Uuid().v4();
 
   factory TransactionFilterPreset.fromJson(Map<String, dynamic> json) =>
       _$TransactionFilterPresetFromJson(json);

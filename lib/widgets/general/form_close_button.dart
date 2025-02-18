@@ -16,9 +16,16 @@ class FormCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget child = IconButton(
-      onPressed: () => onPressed(context),
-      icon: const Icon(Symbols.close_rounded),
+    final Widget child = BackButtonListener(
+      onBackButtonPressed: () async {
+        onPressed(context);
+
+        return true;
+      },
+      child: IconButton(
+        onPressed: () => onPressed(context),
+        icon: const Icon(Symbols.close_rounded),
+      ),
     );
 
     if (center) {

@@ -46,7 +46,8 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text(
-          widget.titleOverride ?? "transaction.edit.selectAccount".t(context)),
+        widget.titleOverride ?? "transaction.edit.selectAccount".t(context),
+      ),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -102,9 +103,10 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
   }
 
   void pop() {
-    final List<Account> selectedAccounts = widget.accounts
-        .where((account) => selectedUuids.contains(account.uuid))
-        .toList();
+    final List<Account> selectedAccounts =
+        widget.accounts
+            .where((account) => selectedUuids.contains(account.uuid))
+            .toList();
 
     context.pop(selectedAccounts);
   }

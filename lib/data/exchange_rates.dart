@@ -23,10 +23,7 @@ class ExchangeRates {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "date": date.format(payload: "YYYY-MM-DD"),
-      baseCurrency: rates,
-    };
+    return {"date": date.format(payload: "YYYY-MM-DD"), baseCurrency: rates};
   }
 
   double? getRate(String currency) {

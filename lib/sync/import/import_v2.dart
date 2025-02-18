@@ -60,8 +60,9 @@ class ImportV2 extends Importer {
   final Map<String, int> memoizeCategories = {};
 
   @override
-  final ValueNotifier<ImportV2Progress> progressNotifier =
-      ValueNotifier(ImportV2Progress.waitingConfirmation);
+  final ValueNotifier<ImportV2Progress> progressNotifier = ValueNotifier(
+    ImportV2Progress.waitingConfirmation,
+  );
 
   ImportV2(
     this.data, {
@@ -137,39 +138,40 @@ class ImportV2 extends Importer {
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
     progressNotifier.value = ImportV2Progress.resolvingTransactions;
-    final transformedTransactions = data.transactions
-        .map((transaction) {
-          try {
-            transaction = _resolveAccountForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            return null;
-          }
+    final transformedTransactions =
+        data.transactions
+            .map((transaction) {
+              try {
+                transaction = _resolveAccountForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                return null;
+              }
 
-          try {
-            transaction = _resolveCategoryForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            // Still proceed without category
-          }
+              try {
+                transaction = _resolveCategoryForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                // Still proceed without category
+              }
 
-          return transaction;
-        })
-        .nonNulls
-        .toList();
+              return transaction;
+            })
+            .nonNulls
+            .toList();
 
     progressNotifier.value = ImportV2Progress.writingTransactions;
     await TransactionsService().upsertMany(transformedTransactions);
 
     if (data.transactionFilterPresets?.isNotEmpty == true) {
       progressNotifier.value = ImportV2Progress.writingTranscationFilterPresets;
-      await ObjectBox()
-          .box<TransactionFilterPreset>()
-          .putManyAsync(data.transactionFilterPresets!);
+      await ObjectBox().box<TransactionFilterPreset>().putManyAsync(
+        data.transactionFilterPresets!,
+      );
     }
 
     if (data.profile != null) {
@@ -206,43 +208,53 @@ class ImportV2 extends Importer {
       try {
         await LocalPreferences().primaryCurrency.set(data.primaryCurrency!);
       } catch (e) {
-        log("[Flow Sync Import v2] Failed to set primary currency, ignoring",
-            error: e);
+        log(
+          "[Flow Sync Import v2] Failed to set primary currency, ignoring",
+          error: e,
+        );
       }
     }
 
-    unawaited(TransitiveLocalPreferences()
-        .updateTransitiveProperties()
-        .catchError((error) {
-      log(
-        "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
-        error: error,
-      );
-    }));
+    unawaited(
+      TransitiveLocalPreferences().updateTransitiveProperties().catchError((
+        error,
+      ) {
+        log(
+          "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
+          error: error,
+        );
+      }),
+    );
 
     if (assetsRoot != null) {
       progressNotifier.value = ImportV2Progress.copyingImages;
       try {
-        final List<FileSystemEntity> assetsList =
-            Directory(path.join(assetsRoot!, "images"))
-                .listSync(followLinks: false);
+        final List<FileSystemEntity> assetsList = Directory(
+          path.join(assetsRoot!, "images"),
+        ).listSync(followLinks: false);
 
         await Directory(ObjectBox.imagesDirectory).create(recursive: true);
 
         for (final asset in assetsList) {
           if (path.extension(asset.path).toLowerCase() == ".png") {
             final String assetName = path.basename(asset.path);
-            final String targetPath =
-                path.join(ObjectBox.imagesDirectory, assetName);
+            final String targetPath = path.join(
+              ObjectBox.imagesDirectory,
+              assetName,
+            );
 
             try {
               await File(asset.path).copy(targetPath);
             } catch (e) {
-              log("[Flow Sync Import v2] Failed to copy asset: $assetName",
-                  error: e);
+              log(
+                "[Flow Sync Import v2] Failed to copy asset: $assetName",
+                error: e,
+              );
             }
           } else {
-            log("[Flow Sync Import v2] Skipping non-PNG asset: ${path.basename(asset.path)}");
+            log(
+              "[Flow Sync Import v2] Skipping non-PNG asset: ${path.basename(asset.path)}",
+            );
           }
         }
       } catch (e) {
@@ -303,10 +315,11 @@ class ImportV2 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeAccounts[accountUuid] != 0) {
-      final Query<Account> accountQuery = ObjectBox()
-          .box<Account>()
-          .query(Account_.uuid.equals(accountUuid))
-          .build();
+      final Query<Account> accountQuery =
+          ObjectBox()
+              .box<Account>()
+              .query(Account_.uuid.equals(accountUuid))
+              .build();
 
       memoizeAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
 
@@ -333,10 +346,11 @@ class ImportV2 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeCategories[categoryUuid] != 0) {
-      final Query<Category> categoryQuery = ObjectBox()
-          .box<Category>()
-          .query(Category_.uuid.equals(categoryUuid))
-          .build();
+      final Query<Category> categoryQuery =
+          ObjectBox()
+              .box<Category>()
+              .query(Category_.uuid.equals(categoryUuid))
+              .build();
 
       memoizeCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
 

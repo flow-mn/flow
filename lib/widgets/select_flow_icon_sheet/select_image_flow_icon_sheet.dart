@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
 
@@ -12,9 +11,12 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:path/path.dart" as path;
 import "package:uuid/uuid.dart";
+
+final Logger _log = Logger("SelectImageFlowIconSheet");
 
 class SelectImageFlowIconSheet extends StatefulWidget {
   final FlowIconData? initialValue;
@@ -42,9 +44,10 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
   @override
   void initState() {
     super.initState();
-    value = widget.initialValue is ImageFlowIcon
-        ? widget.initialValue as ImageFlowIcon
-        : null;
+    value =
+        widget.initialValue is ImageFlowIcon
+            ? widget.initialValue as ImageFlowIcon
+            : null;
 
     if (value != null) {
       final String initialImagePath = value!.imagePath;
@@ -58,15 +61,14 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         }
 
         final File oldImage = File(
-          path.join(
-            ObjectBox.appDataDirectory,
-            initialImagePath,
-          ),
+          path.join(ObjectBox.appDataDirectory, initialImagePath),
         );
 
-        unawaited(oldImage.exists().then((_) {
-          unawaited(oldImage.delete());
-        }));
+        unawaited(
+          oldImage.exists().then((_) {
+            unawaited(oldImage.delete());
+          }),
+        );
       };
     } else {
       cleanUpImage = null;
@@ -91,9 +93,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
           TextButton.icon(
             onPressed: () => context.pop(value),
             icon: const Icon(Symbols.check_rounded),
-            label: Text(
-              "general.done".t(context),
-            ),
+            label: Text("general.done".t(context)),
           ),
         ],
       ),
@@ -111,9 +111,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
           TextButton.icon(
             onPressed: updatePicture,
             icon: const Icon(Symbols.add_photo_alternate_rounded),
-            label: Text(
-              "flowIcon.type.image.pick".t(context),
-            ),
+            label: Text("flowIcon.type.image.pick".t(context)),
           ),
           const SizedBox(height: 24.0),
         ],
@@ -141,10 +139,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
       if (bytes == null) throw "";
 
       final fileName = "${const Uuid().v4()}.png";
-      final file = File(path.join(
-        ObjectBox.imagesDirectory,
-        fileName,
-      ));
+      final file = File(path.join(ObjectBox.imagesDirectory, fileName));
       await file.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
 
@@ -153,7 +148,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         setState(() {});
       }
     } catch (e) {
-      log("[Select Icon Sheet] uploadPicture has failed due to: $e");
+      _log.warning("uploadPicture has failed due to", e);
     } finally {
       busy = false;
       if (mounted) setState(() {});

@@ -15,7 +15,7 @@ abstract class FlowIconData {
       "IconFlowIcon" => IconFlowIcon.parse(serialized),
       "ImageFlowIcon" => ImageFlowIcon.parse(serialized),
       "CharacterFlowIcon" => CharacterFlowIcon.parse(serialized),
-      _ => throw UnimplementedError()
+      _ => throw UnimplementedError(),
     };
   }
 
@@ -35,7 +35,7 @@ class CharacterFlowIcon extends FlowIconData {
   final String character;
 
   CharacterFlowIcon._constructor(this.character)
-      : assert(character.characters.length == 1);
+    : assert(character.characters.length == 1);
 
   /// Will throw [StateError] if the string is empty
   factory CharacterFlowIcon(String character) {
@@ -74,11 +74,13 @@ class IconFlowIcon extends FlowIconData {
 
     final [fontFamily, fontPackage, codePointHex] = payload.split(",");
 
-    return FlowIconData.icon(IconData(
-      int.parse(codePointHex, radix: 16),
-      fontFamily: fontFamily,
-      fontPackage: fontPackage,
-    ));
+    return FlowIconData.icon(
+      IconData(
+        int.parse(codePointHex, radix: 16),
+        fontFamily: fontFamily,
+        fontPackage: fontPackage,
+      ),
+    );
   }
 
   static FlowIconData? tryParse(String serialized) {

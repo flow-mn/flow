@@ -46,41 +46,40 @@ class DescriptionSection extends StatelessWidget {
               fill: 0,
               color: context.flowColors.semi,
             ),
-          )
+          ),
         ],
       ),
-      child: noContent
-          ? Align(
-              alignment: Alignment.topLeft,
-              child: Frame(
-                child: TextButton(
-                  onPressed: () => showEditModal(context),
-                  child: Text(
-                    "transaction.description.add".t(context),
-                  ),
-                ),
-              ),
-            )
-          : Stack(
-              children: [
-                MarkdownView(
-                  controller: controller,
-                  onChanged: onChanged,
-                  focusNode: focusNode,
-                  allowTogglingCheckboxes: true,
-                ),
-                Positioned(
-                  right: 24.0,
-                  top: 8.0,
-                  child: IconButton(
-                    isSelected: true,
-                    icon: Icon(Symbols.edit_rounded),
+      child:
+          noContent
+              ? Align(
+                alignment: Alignment.topLeft,
+                child: Frame(
+                  child: TextButton(
                     onPressed: () => showEditModal(context),
-                    tooltip: "general.edit".t(context),
+                    child: Text("transaction.description.add".t(context)),
                   ),
                 ),
-              ],
-            ),
+              )
+              : Stack(
+                children: [
+                  MarkdownView(
+                    controller: controller,
+                    onChanged: onChanged,
+                    focusNode: focusNode,
+                    allowTogglingCheckboxes: true,
+                  ),
+                  Positioned(
+                    right: 24.0,
+                    top: 8.0,
+                    child: IconButton(
+                      isSelected: true,
+                      icon: Icon(Symbols.edit_rounded),
+                      onPressed: () => showEditModal(context),
+                      tooltip: "general.edit".t(context),
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 
@@ -93,9 +92,10 @@ class DescriptionSection extends StatelessWidget {
     log("[Flow] Flipping checkbox at [$index] to $value");
 
     try {
-      final RegExpMatch match = RegExp(r"-\s\[(\s|x)\]", multiLine: true)
-          .allMatches(controller.text)
-          .elementAt(index);
+      final RegExpMatch match = RegExp(
+        r"-\s\[(\s|x)\]",
+        multiLine: true,
+      ).allMatches(controller.text).elementAt(index);
 
       final String replacement = value ? "- [x]" : "- [ ]";
 
@@ -134,29 +134,27 @@ class DescriptionSection extends StatelessWidget {
   }
 
   void onTapLink(
-      BuildContext context, String text, String? href, String title) {
+    BuildContext context,
+    String text,
+    String? href,
+    String title,
+  ) {
     log("[Flow] Tapped link: $text, $href, $title");
 
     if (href == null) {
-      context.showErrorToast(
-        error: "error.url.cannotOpen".t(context),
-      );
+      context.showErrorToast(error: "error.url.cannotOpen".t(context));
       return;
     }
 
     final Uri? parsed = Uri.tryParse(href);
     if (parsed == null) {
-      context.showErrorToast(
-        error: "error.url.cannotOpen".t(context),
-      );
+      context.showErrorToast(error: "error.url.cannotOpen".t(context));
       return;
     }
 
     openUrl(parsed).then((succeeded) {
       if (!succeeded && context.mounted) {
-        context.showErrorToast(
-          error: "error.url.cannotOpen".t(context),
-        );
+        context.showErrorToast(error: "error.url.cannotOpen".t(context));
       }
     });
   }
@@ -166,12 +164,15 @@ class DescriptionSection extends StatelessWidget {
     final TextStyle p = textTheme.bodyLarge!;
 
     return MarkdownStyleSheet(
-      h1: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.4),
-      h2: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.28),
-      h3: textTheme.headlineLarge!
-          .copyWith(fontSize: textTheme.headlineLarge!.fontSize! * 1.14),
+      h1: textTheme.headlineLarge!.copyWith(
+        fontSize: textTheme.headlineLarge!.fontSize! * 1.4,
+      ),
+      h2: textTheme.headlineLarge!.copyWith(
+        fontSize: textTheme.headlineLarge!.fontSize! * 1.28,
+      ),
+      h3: textTheme.headlineLarge!.copyWith(
+        fontSize: textTheme.headlineLarge!.fontSize! * 1.14,
+      ),
       h4: textTheme.headlineLarge,
       h5: textTheme.headlineMedium,
       h6: textTheme.headlineSmall,

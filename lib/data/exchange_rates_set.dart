@@ -17,9 +17,7 @@ class ExchangeRatesSet {
     final Map<String, ExchangeRates> rates = {};
 
     for (final String baseCurrency in json.keys) {
-      rates[baseCurrency] = ExchangeRates.fromJson(
-        json[baseCurrency],
-      );
+      rates[baseCurrency] = ExchangeRates.fromJson(json[baseCurrency]);
     }
 
     return ExchangeRatesSet(rates);

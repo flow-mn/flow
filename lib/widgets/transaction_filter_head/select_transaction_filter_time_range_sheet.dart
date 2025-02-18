@@ -5,8 +5,9 @@ import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
 Future<TransactionFilterTimeRange?> showTransactionFilterTimeRangeSelectorSheet(
-    BuildContext context,
-    {TransactionFilterTimeRange? initialValue}) async {
+  BuildContext context, {
+  TransactionFilterTimeRange? initialValue,
+}) async {
   final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
     context: context,
     isScrollControlled: true,
@@ -23,43 +24,48 @@ Future<TransactionFilterTimeRange?> showTransactionFilterTimeRangeSelectorSheet(
     TimeRangeMode.thisYear => TransactionFilterTimeRange.thisYear,
     TimeRangeMode.allTime => TransactionFilterTimeRange.allTime,
     TimeRangeMode.byYear when context.mounted => await showYearPickerSheet(
-              context,
-              initialDate: initialValue?.range is YearTimeRange
-                  ? initialValue!.range!.from
-                  : null)
-          .then(
-        (value) => value == null
-            ? null
-            : TransactionFilterTimeRange.fromTimeRange(
+      context,
+      initialDate:
+          initialValue?.range is YearTimeRange
+              ? initialValue!.range!.from
+              : null,
+    ).then(
+      (value) =>
+          value == null
+              ? null
+              : TransactionFilterTimeRange.fromTimeRange(
                 YearTimeRange.fromDateTime(value),
               ),
-      ),
-    TimeRangeMode.byMonth when context.mounted =>
-      await showMonthPickerSheet(context).then(
-        (value) => value == null
-            ? null
-            : TransactionFilterTimeRange.fromTimeRange(
+    ),
+    TimeRangeMode.byMonth when context.mounted => await showMonthPickerSheet(
+      context,
+    ).then(
+      (value) =>
+          value == null
+              ? null
+              : TransactionFilterTimeRange.fromTimeRange(
                 MonthTimeRange.fromDateTime(value),
               ),
-      ),
+    ),
     TimeRangeMode.custom when context.mounted => await showDateRangePicker(
-        context: context,
-        firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-        lastDate: DateTime.now().startOfNextYear(),
-        initialDateRange: initialValue?.range is CustomTimeRange
-            ? DateTimeRange(
-                start: initialValue!.range!.from, end: initialValue.range!.to)
-            : null,
-      ).then(
-        (value) => value == null
-            ? null
-            : TransactionFilterTimeRange.fromTimeRange(
-                CustomTimeRange(
-                  value.start.startOfDay(),
-                  value.end.endOfDay(),
-                ),
+      context: context,
+      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+      lastDate: DateTime.now().startOfNextYear(),
+      initialDateRange:
+          initialValue?.range is CustomTimeRange
+              ? DateTimeRange(
+                start: initialValue!.range!.from,
+                end: initialValue.range!.to,
+              )
+              : null,
+    ).then(
+      (value) =>
+          value == null
+              ? null
+              : TransactionFilterTimeRange.fromTimeRange(
+                CustomTimeRange(value.start.startOfDay(), value.end.endOfDay()),
               ),
-      ),
+    ),
     _ => null, // context.mounted == true
   };
 }

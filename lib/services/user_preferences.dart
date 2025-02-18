@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
@@ -5,8 +7,9 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
-  final ValueNotifier<UserPreferences> valueNotiifer =
-      ValueNotifier(UserPreferences());
+  final ValueNotifier<UserPreferences> valueNotiifer = ValueNotifier(
+    UserPreferences(),
+  );
 
   UserPreferences get value => valueNotiifer.value;
 
@@ -15,6 +18,19 @@ class UserPreferencesService {
     if (value.id == 0) return;
 
     value.combineTransfers = newCombineTransfers;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  int? get trashBinRetentionDays => value.trashBinRetentionDays;
+  set trashBinRetentionDays(int? newTrashBinRetentionDays) {
+    if (value.id == 0) return;
+
+    if (newTrashBinRetentionDays == null) {
+      value.trashBinRetentionDays = null;
+    } else {
+      value.trashBinRetentionDays = min(max(0, newTrashBinRetentionDays), 365);
+    }
+
     ObjectBox().box<UserPreferences>().put(value);
   }
 
@@ -39,10 +55,13 @@ class UserPreferencesService {
       return null;
     }
 
-    final Query<TransactionFilterPreset> query = ObjectBox()
-        .box<TransactionFilterPreset>()
-        .query(TransactionFilterPreset_.uuid.equals(defaultFilterPresetUuid!))
-        .build();
+    final Query<TransactionFilterPreset> query =
+        ObjectBox()
+            .box<TransactionFilterPreset>()
+            .query(
+              TransactionFilterPreset_.uuid.equals(defaultFilterPresetUuid!),
+            )
+            .build();
 
     final TransactionFilterPreset? preset = query.findFirst();
 
@@ -64,13 +83,13 @@ class UserPreferencesService {
         .query()
         .watch(triggerImmediately: true)
         .listen((event) {
-      final UserPreferences? userPreferences = event.findFirst();
+          final UserPreferences? userPreferences = event.findFirst();
 
-      if (userPreferences == null) {
-        return;
-      }
+          if (userPreferences == null) {
+            return;
+          }
 
-      valueNotiifer.value = userPreferences;
-    });
+          valueNotiifer.value = userPreferences;
+        });
   }
 }

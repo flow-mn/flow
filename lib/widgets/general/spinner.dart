@@ -4,10 +4,7 @@ import "package:flutter/material.dart";
 class Spinner extends StatelessWidget {
   final bool center;
 
-  const Spinner({
-    super.key,
-    this.center = false,
-  });
+  const Spinner({super.key, this.center = false});
   const Spinner.center({super.key}) : center = true;
 
   @override
@@ -15,9 +12,7 @@ class Spinner extends StatelessWidget {
     const child = CircularProgressIndicator /*.adaptive*/ ();
 
     if (center) {
-      return const Center(
-        child: child,
-      );
+      return const Center(child: child);
     }
 
     return child;

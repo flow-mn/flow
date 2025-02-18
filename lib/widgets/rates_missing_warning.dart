@@ -39,23 +39,21 @@ class _RatesMissingWarningState extends State<RatesMissingWarning> {
                     .semi(context)
                     .copyWith(color: context.colorScheme.error),
                 child: Text(
-                    "error.exchangeRates.inaccurateDataDueToMissingRates"
-                        .t(context)),
+                  "error.exchangeRates.inaccurateDataDueToMissingRates".t(
+                    context,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 12.0),
             busy
-                ? SizedBox(
-                    width: 24.0,
-                    height: 24.0,
-                    child: Spinner(),
-                  )
+                ? SizedBox(width: 24.0, height: 24.0, child: Spinner())
                 : Icon(
-                    Symbols.refresh_rounded,
-                    fill: 0,
-                    size: 24.0,
-                    color: context.colorScheme.error,
-                  ),
+                  Symbols.refresh_rounded,
+                  fill: 0,
+                  size: 24.0,
+                  color: context.colorScheme.error,
+                ),
           ],
         ),
       ),
@@ -70,8 +68,9 @@ class _RatesMissingWarningState extends State<RatesMissingWarning> {
     });
 
     try {
-      await ExchangeRatesService()
-          .fetchRates(LocalPreferences().getPrimaryCurrency());
+      await ExchangeRatesService().fetchRates(
+        LocalPreferences().getPrimaryCurrency(),
+      );
     } catch (e) {
       if (mounted) {
         context.showErrorToast(

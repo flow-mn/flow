@@ -31,7 +31,6 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       // padding: const EdgeInsets.all(16.0),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -97,10 +96,11 @@ class _ProfileTabState extends State<ProfileTab> {
               title: const Text("Show debug notification"),
               leading: const Icon(Symbols.notifications_rounded),
               onTap: () => NotificationsService().debugShow(),
-              onLongPress: () => Future.delayed(
-                const Duration(seconds: 3),
-                () => NotificationsService().debugShow(),
-              ),
+              onLongPress:
+                  () => Future.delayed(
+                    const Duration(seconds: 3),
+                    () => NotificationsService().debugShow(),
+                  ),
             ),
             ListTile(
               title: const Text("Clear exchange rates cache"),
@@ -113,8 +113,9 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => ObjectBox().createAndPutDebugData(),
             ),
             ListTile(
-              title:
-                  Text(_debugDbBusy ? "Clearing database" : "Clear objectbox"),
+              title: Text(
+                _debugDbBusy ? "Clearing database" : "Clear objectbox",
+              ),
               onTap: () => resetDatabase(),
               leading: const Icon(Symbols.adb_rounded),
             ),
@@ -131,10 +132,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ],
           const SizedBox(height: 64.0),
           Center(
-            child: Text(
-              "v$appVersion",
-              style: context.textTheme.labelSmall,
-            ),
+            child: Text("v$appVersion", style: context.textTheme.labelSmall),
           ),
           Center(
             child: InkWell(
@@ -161,19 +159,20 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog /*.adaptive*/ (
-        title: const Text("[dev] Reset database?"),
-        actions: [
-          Button(
-            onTap: () => context.pop(true),
-            child: const Text("Confirm delete"),
+      builder:
+          (context) => AlertDialog /*.adaptive*/ (
+            title: const Text("[dev] Reset database?"),
+            actions: [
+              Button(
+                onTap: () => context.pop(true),
+                child: const Text("Confirm delete"),
+              ),
+              Button(
+                onTap: () => context.pop(false),
+                child: const Text("Cancel"),
+              ),
+            ],
           ),
-          Button(
-            onTap: () => context.pop(false),
-            child: const Text("Cancel"),
-          ),
-        ],
-      ),
     );
 
     setState(() {
@@ -198,19 +197,20 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog /*.adaptive*/ (
-        title: const Text("[dev] Clear Shared Preferences?"),
-        actions: [
-          Button(
-            onTap: () => context.pop(true),
-            child: const Text("Confirm clear"),
+      builder:
+          (context) => AlertDialog /*.adaptive*/ (
+            title: const Text("[dev] Clear Shared Preferences?"),
+            actions: [
+              Button(
+                onTap: () => context.pop(true),
+                child: const Text("Confirm clear"),
+              ),
+              Button(
+                onTap: () => context.pop(false),
+                child: const Text("Cancel"),
+              ),
+            ],
           ),
-          Button(
-            onTap: () => context.pop(false),
-            child: const Text("Cancel"),
-          ),
-        ],
-      ),
     );
 
     setState(() {

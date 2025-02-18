@@ -64,35 +64,35 @@ class NotificationsService {
 
     try {
       pluginInstance = FlutterLocalNotificationsPlugin();
-// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+      // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings("@mipmap/ic_launcher");
 
       final DarwinInitializationSettings initializationSettingsDarwin =
           DarwinInitializationSettings(
-        notificationCategories: [
-          DarwinNotificationCategory("planned-transaction-reminder"),
-        ],
-      );
+            notificationCategories: [
+              DarwinNotificationCategory("planned-transaction-reminder"),
+            ],
+          );
 
       final LinuxInitializationSettings initializationSettingsLinux =
           LinuxInitializationSettings(defaultActionName: "Open notification");
 
       final WindowsInitializationSettings initializationSettingsWindows =
           WindowsInitializationSettings(
-        appName: "Flow",
-        appUserModelId: "TODO @sadespresso",
-        guid: windowsNotificationGuid,
-      );
+            appName: "Flow",
+            appUserModelId: "TODO @sadespresso",
+            guid: windowsNotificationGuid,
+          );
 
       final InitializationSettings initializationSettings =
           InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsDarwin,
-        macOS: initializationSettingsDarwin,
-        linux: initializationSettingsLinux,
-        windows: initializationSettingsWindows,
-      );
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+            macOS: initializationSettingsDarwin,
+            linux: initializationSettingsLinux,
+            windows: initializationSettingsWindows,
+          );
 
       _available = await pluginInstance.initialize(
         initializationSettings,
@@ -108,7 +108,9 @@ class NotificationsService {
                 ? launchDetails
                 : null;
 
-        log("[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails");
+        log(
+          "[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails",
+        );
       } catch (e) {
         notificationAppLaunchDetails = null;
         log(
@@ -211,10 +213,7 @@ class NotificationsService {
           urgency: LinuxNotificationUrgency.normal,
           category: LinuxNotificationCategory.imReceived,
           actions: [
-            LinuxNotificationAction(
-              key: "open",
-              label: "Open notification",
-            ),
+            LinuxNotificationAction(key: "open", label: "Open notification"),
           ],
         ),
         windows: WindowsNotificationDetails(),
@@ -234,8 +233,9 @@ class NotificationsService {
   }
 
   void debugSchedule() async {
-    final TZDateTime dateTime =
-        _getTZDateTime(Moment.now().startOfNextMinute());
+    final TZDateTime dateTime = _getTZDateTime(
+      Moment.now().startOfNextMinute(),
+    );
 
     try {
       await pluginInstance.zonedSchedule(
@@ -254,10 +254,7 @@ class NotificationsService {
             urgency: LinuxNotificationUrgency.normal,
             category: LinuxNotificationCategory.imReceived,
             actions: [
-              LinuxNotificationAction(
-                key: "open",
-                label: "Open notification",
-              ),
+              LinuxNotificationAction(key: "open", label: "Open notification"),
             ],
           ),
         ),
@@ -304,16 +301,19 @@ class NotificationsService {
   void onDidReceiveNotificationResponse(NotificationResponse response) {
     try {
       if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-        windowManager.isFocused().then((focused) {
-          if (!focused) {
-            windowManager.focus();
-          }
-        }).catchError((error) {
-          log(
-            "[NotificationsService] Failed to check window focus",
-            error: error,
-          );
-        });
+        windowManager
+            .isFocused()
+            .then((focused) {
+              if (!focused) {
+                windowManager.focus();
+              }
+            })
+            .catchError((error) {
+              log(
+                "[NotificationsService] Failed to check window focus",
+                error: error,
+              );
+            });
       }
     } catch (e) {
       log(
@@ -325,10 +325,14 @@ class NotificationsService {
     for (final callback in _registeredCallbacks) {
       try {
         callback(response);
-        log("response.actionId: ${response.actionId}, ${response.id}, $response");
+        log(
+          "response.actionId: ${response.actionId}, ${response.id}, $response",
+        );
       } catch (error) {
-        log("[NotificationsService] Failed to call notification callback",
-            error: error);
+        log(
+          "[NotificationsService] Failed to call notification callback",
+          error: error,
+        );
       }
     }
   }
@@ -336,35 +340,33 @@ class NotificationsService {
   void requestPermissions() async {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          pluginInstance.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+          pluginInstance
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
       await androidImplementation?.requestNotificationsPermission();
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
       await pluginInstance
           .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
     }
   }
 
   Future<bool?> hasPermissions() async {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          pluginInstance.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+          pluginInstance
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
       try {
         final bool? enabled =
@@ -381,10 +383,12 @@ class NotificationsService {
       }
     }
     if (Platform.isIOS) {
-      final NotificationsEnabledOptions? permissions = await pluginInstance
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.checkPermissions();
+      final NotificationsEnabledOptions? permissions =
+          await pluginInstance
+              .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin
+              >()
+              ?.checkPermissions();
 
       if (permissions == null || !permissions.isEnabled) {
         return false;
@@ -392,10 +396,12 @@ class NotificationsService {
       return true;
     }
     if (Platform.isMacOS) {
-      final NotificationsEnabledOptions? permissions = await pluginInstance
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.checkPermissions();
+      final NotificationsEnabledOptions? permissions =
+          await pluginInstance
+              .resolvePlatformSpecificImplementation<
+                MacOSFlutterLocalNotificationsPlugin
+              >()
+              ?.checkPermissions();
 
       if (permissions == null || !permissions.isEnabled) {
         return false;

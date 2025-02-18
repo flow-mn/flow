@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 import "dart:ui" as ui;
 
@@ -9,7 +8,10 @@ import "package:flow/utils/extensions/toast.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
+import "package:logging/logging.dart";
 import "package:url_launcher/url_launcher.dart";
+
+final Logger _log = Logger("Flow");
 
 Future<bool> openUrl(
   Uri uri, [
@@ -21,7 +23,7 @@ Future<bool> openUrl(
   try {
     return await launchUrl(uri);
   } catch (e) {
-    log("[Flow] Failed to launch uri ($uri) due to $e");
+    _log.warning("Failed to launch uri ($uri)", e);
     return false;
   }
 }
@@ -56,10 +58,7 @@ Future<ui.Image?> pickAndCropSquareImage(
   BuildContext context, {
   double? maxDimension,
 }) async {
-  final xfile = await pickImage(
-    maxWidth: 512,
-    maxHeight: 512,
-  );
+  final xfile = await pickImage(maxWidth: 512, maxHeight: 512);
 
   if (xfile == null) {
     if (context.mounted) {

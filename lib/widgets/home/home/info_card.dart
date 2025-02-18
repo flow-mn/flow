@@ -22,35 +22,36 @@ class InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      builder: (BuildContext context) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 12.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+      builder:
+          (BuildContext context) => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  title,
-                  style: context.textTheme.bodyMedium,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    Text(
+                      title,
+                      style: context.textTheme.bodyMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (icon != null) ...[
+                      const SizedBox(width: 4.0),
+                      IconTheme(data: IconThemeData(size: 20.0), child: icon!),
+                    ],
+                  ],
                 ),
-                if (icon != null) ...[
-                  const SizedBox(width: 4.0),
-                  IconTheme(data: IconThemeData(size: 20.0), child: icon!),
-                ],
+                if (moneyText != null) moneyText!,
+                if (delta != null) delta!,
               ],
             ),
-            if (moneyText != null) moneyText!,
-            if (delta != null) delta!
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

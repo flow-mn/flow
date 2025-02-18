@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 
 import "package:flow/constants.dart";
@@ -12,7 +11,10 @@ import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("LocationPickerSheet");
 
 class LocationPickerSheet extends StatefulWidget {
   final double? latitude;
@@ -77,10 +79,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           borderRadius: BorderRadius.circular(8.0),
           child: SquareMap(
             center: center,
-            onTap: (pos) => setState(() {
-              useCurrentLocationWhenAvailable = false;
-              center = pos;
-            }),
+            onTap:
+                (pos) => setState(() {
+                  useCurrentLocationWhenAvailable = false;
+                  center = pos;
+                }),
           ),
         ),
       ),
@@ -92,34 +95,39 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
     if (LocalPreferences().enableGeo.get() != true) return;
     if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
 
-    Geolocator.getLastKnownPosition().then((lastKnown) {
-      if (lastKnown == null) {
-        return;
-      }
+    Geolocator.getLastKnownPosition()
+        .then((lastKnown) {
+          if (lastKnown == null) {
+            return;
+          }
 
-      if (!useCurrentLocationWhenAvailable) return;
+          if (!useCurrentLocationWhenAvailable) return;
 
-      if (mounted) {
-        setState(() {
-          center = LatLng(lastKnown.latitude, lastKnown.longitude);
+          if (mounted) {
+            setState(() {
+              center = LatLng(lastKnown.latitude, lastKnown.longitude);
+            });
+          }
+        })
+        .catchError((e) {
+          _log.warning("Failed to get last known location", e);
         });
-      }
-    }).catchError((_) {
-      log("[Location Picker Sheet] Failed to get last known location");
-    });
 
-    Geolocator.getCurrentPosition().then((current) {
-      if (!useCurrentLocationWhenAvailable) return;
+    Geolocator.getCurrentPosition()
+        .then((current) {
+          if (!useCurrentLocationWhenAvailable) return;
 
-      center = LatLng(current.latitude, current.longitude);
-    }).catchError((_) {
-      log("[Location Picker Sheet] Failed to get current location");
-    }).whenComplete(() {
-      if (mounted) {
-        setState(() {
-          useCurrentLocationWhenAvailable = false;
+          center = LatLng(current.latitude, current.longitude);
+        })
+        .catchError((e) {
+          _log.warning("Failed to get current location", e);
+        })
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              useCurrentLocationWhenAvailable = false;
+            });
+          }
         });
-      }
-    });
   }
 }

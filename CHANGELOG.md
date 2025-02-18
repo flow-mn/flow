@@ -18,6 +18,9 @@
 * Now you can group by "All time" - have your transactions in one big group...?
 * Currency filter now longer shows when you only use single currency
 * Slidable actions no longer preserve open panes when another opens in the same group
+* Backup history entry now shows file size with extra decimal precision (e.g., 1mb -> 1.2mb)
+* Modal pages will now respond to back buttons/gestures
+* Confirming transfers no longer leaves the other transaction stranded
 
 ### Fixes
 
@@ -26,6 +29,9 @@
   page in some cases
 * Fixed toggling `Transfers > Exclude from totals` would cause home tab flow to
   show incorrect data
+* Updating account balance no longer creates multiple amendment transactions when
+  updating/correcting the amount for the second and subsequent times
+* Updating account balance no longer creates unnecessary `zero` amount transactions
 
 ## Beta 0.11.1
 

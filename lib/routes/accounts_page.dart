@@ -29,29 +29,28 @@ class _AccountsPageState extends State<AccountsPage> {
   void initState() {
     super.initState();
 
-    UserPreferencesService()
-        .valueNotiifer
-        .addListener(_updateExcludeTransfersInTotal);
+    UserPreferencesService().valueNotiifer.addListener(
+      _updateExcludeTransfersInTotal,
+    );
   }
 
   @override
   void dispose() {
-    UserPreferencesService()
-        .valueNotiifer
-        .removeListener(_updateExcludeTransfersInTotal);
+    UserPreferencesService().valueNotiifer.removeListener(
+      _updateExcludeTransfersInTotal,
+    );
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("accounts".t(context)),
-      ),
+      appBar: AppBar(title: Text("accounts".t(context))),
       body: SafeArea(
         child: StreamBuilder<List<Account>>(
-          stream:
-              qb().watch(triggerImmediately: true).map((event) => event.find()),
+          stream: qb()
+              .watch(triggerImmediately: true)
+              .map((event) => event.find()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Spinner.center();
@@ -62,37 +61,37 @@ class _AccountsPageState extends State<AccountsPage> {
             return switch (accounts.length) {
               0 => const NoAccounts(),
               _ => SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 16.0),
-                        child: AddAccountCard(),
-                      ),
-                      ...accounts.actives.map(
-                        (account) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: AccountCard(
-                            account: account,
-                            useCupertinoContextMenu: Platform.isIOS,
-                            excludeTransfersInTotal: excludeTransfersInTotal,
-                          ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: AddAccountCard(),
+                    ),
+                    ...accounts.actives.map(
+                      (account) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: AccountCard(
+                          account: account,
+                          useCupertinoContextMenu: Platform.isIOS,
+                          excludeTransfersInTotal: excludeTransfersInTotal,
                         ),
                       ),
-                      ...accounts.inactives.map(
-                        (account) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: AccountCard(
-                            account: account,
-                            useCupertinoContextMenu: Platform.isIOS,
-                            excludeTransfersInTotal: excludeTransfersInTotal,
-                          ),
+                    ),
+                    ...accounts.inactives.map(
+                      (account) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: AccountCard(
+                          account: account,
+                          useCupertinoContextMenu: Platform.isIOS,
+                          excludeTransfersInTotal: excludeTransfersInTotal,
                         ),
                       ),
-                      const SizedBox(height: 16.0),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16.0),
+                  ],
                 ),
+              ),
             };
           },
         ),

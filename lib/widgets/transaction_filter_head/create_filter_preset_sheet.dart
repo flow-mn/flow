@@ -95,11 +95,11 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
       }
 
       ObjectBox().box<TransactionFilterPreset>().put(
-            TransactionFilterPreset(
-              name: _controller.text,
-              jsonTransactionFilter: widget.filter.serialize(),
-            ),
-          );
+        TransactionFilterPreset(
+          name: _controller.text,
+          jsonTransactionFilter: widget.filter.serialize(),
+        ),
+      );
 
       pop();
     } catch (e) {

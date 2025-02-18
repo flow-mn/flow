@@ -7,10 +7,7 @@ import "package:uuid/uuid.dart";
 part "user_preferences.g.dart";
 
 @Entity()
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [UTCDateTimeConverter()],
-)
+@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
 class UserPreferences implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -33,6 +30,11 @@ class UserPreferences implements EntityBase {
   /// to total income/expense for a given context
   bool excludeTransfersFromFlow;
 
+  /// Defaults to [30]
+  ///
+  /// Set null to retain forever
+  int? trashBinRetentionDays;
+
   /// Le UUID of it
   String? defaultFilterPreset;
 
@@ -41,6 +43,7 @@ class UserPreferences implements EntityBase {
     DateTime? createdDate,
     this.combineTransfers = true,
     this.excludeTransfersFromFlow = true,
+    this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
   }) : uuid = const Uuid().v4();
 

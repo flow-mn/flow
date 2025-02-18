@@ -64,12 +64,15 @@ Future<Importer> importBackup({
     late final String? jsonRelativePath;
 
     try {
-      jsonRelativePath = zip.files
-          .singleWhere((archiveFile) =>
-              archiveFile.isFile &&
-              !archiveFile.isSymbolicLink &&
-              path.extension(archiveFile.name).toLowerCase() == ".json")
-          .name;
+      jsonRelativePath =
+          zip.files
+              .singleWhere(
+                (archiveFile) =>
+                    archiveFile.isFile &&
+                    !archiveFile.isSymbolicLink &&
+                    path.extension(archiveFile.name).toLowerCase() == ".json",
+              )
+              .name;
     } catch (e) {
       jsonRelativePath = null;
       throw ImportException(
@@ -80,8 +83,10 @@ Future<Importer> importBackup({
 
     final Directory tempDir = await getApplicationCacheDirectory();
 
-    final String dir = path.join(tempDir.path,
-        "flow_unzipped_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}");
+    final String dir = path.join(
+      tempDir.path,
+      "flow_unzipped_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}",
+    );
 
     await Directory(dir).create();
 
@@ -92,23 +97,19 @@ Future<Importer> importBackup({
     assetsRoot = path.join(dir, "assets");
     cleanupPath = dir;
 
-    parsed = await jsonFile.readAsString().then(
-          (raw) => jsonDecode(raw),
-        );
+    parsed = await jsonFile.readAsString().then((raw) => jsonDecode(raw));
   } else if (ext == ".json") {
-    parsed = await file.readAsString().then(
-          (raw) => jsonDecode(raw),
-        );
+    parsed = await file.readAsString().then((raw) => jsonDecode(raw));
   }
 
   return switch (parsed["versionCode"]) {
     1 => ImportV1(SyncModelV1.fromJson(parsed), mode: mode),
     2 => ImportV2(
-        SyncModelV2.fromJson(parsed),
-        mode: mode,
-        cleanupFolder: cleanupPath,
-        assetsRoot: assetsRoot,
-      ),
-    _ => throw UnimplementedError()
+      SyncModelV2.fromJson(parsed),
+      mode: mode,
+      cleanupFolder: cleanupPath,
+      assetsRoot: assetsRoot,
+    ),
+    _ => throw UnimplementedError(),
   };
 }

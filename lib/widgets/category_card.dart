@@ -35,44 +35,40 @@ class CategoryCard extends StatelessWidget {
 
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      builder: (context) => InkWell(
-        borderRadius: borderRadius,
-        onTap: onTapOverride == null
-            ? () => context.push("/category/${category.id}")
-            : onTapOverride!.value,
-        child: Row(
-          children: [
-            FlowIcon(
-              category.icon,
-              size: 32.0,
-              plated: true,
-            ),
-            const SizedBox(width: 12.0),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      builder:
+          (context) => InkWell(
+            borderRadius: borderRadius,
+            onTap:
+                onTapOverride == null
+                    ? () => context.push("/category/${category.id}")
+                    : onTapOverride!.value,
+            child: Row(
               children: [
-                Text(
-                  category.name,
-                  style: context.textTheme.titleSmall,
+                FlowIcon(category.icon, size: 32.0, plated: true),
+                const SizedBox(width: 12.0),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(category.name, style: context.textTheme.titleSmall),
+                    if (showAmount)
+                      Text(
+                        Money(
+                          category.transactions.sumWithoutCurrency,
+                          primaryCurrency,
+                        ).formatted,
+                        style: context.textTheme.bodyMedium?.semi(context),
+                      ),
+                  ],
                 ),
-                if (showAmount)
-                  Text(
-                    Money(category.transactions.sumWithoutCurrency,
-                            primaryCurrency)
-                        .formatted,
-                    style: context.textTheme.bodyMedium?.semi(context),
-                  ),
+                const Spacer(),
+                if (trailing != null) ...[
+                  trailing!,
+                  const SizedBox(width: 12.0),
+                ],
               ],
             ),
-            const Spacer(),
-            if (trailing != null) ...[
-              trailing!,
-              const SizedBox(width: 12.0),
-            ],
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

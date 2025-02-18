@@ -24,12 +24,7 @@ typedef TransactionPredicate = bool Function(Transaction);
 /// For all fields, disabled if it's null.
 ///
 /// All values must be wrapped by [Optional]
-@JsonSerializable(
-  explicitToJson: true,
-  converters: [
-    TimeRangeConverter(),
-  ],
-)
+@JsonSerializable(explicitToJson: true, converters: [TimeRangeConverter()])
 class TransactionFilter implements Jasonable {
   final TransactionFilterTimeRange? range;
 
@@ -84,16 +79,14 @@ class TransactionFilter implements Jasonable {
     required List<String> categories,
   }) {
     if (this.accounts?.isNotEmpty == true &&
-        this.accounts!.any(
-              (accountUuid) => !accounts.contains(accountUuid),
-            )) {
+        this.accounts!.any((accountUuid) => !accounts.contains(accountUuid))) {
       return false;
     }
 
     if (this.categories?.isNotEmpty == true &&
         this.categories!.any(
-              (categoryUuid) => !categories.contains(categoryUuid),
-            )) {
+          (categoryUuid) => !categories.contains(categoryUuid),
+        )) {
       return false;
     }
 
@@ -104,9 +97,7 @@ class TransactionFilter implements Jasonable {
     final List<TransactionPredicate> predicates = [];
 
     if (types?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) => types!.contains(t.type),
-      );
+      predicates.add((Transaction t) => types!.contains(t.type));
     }
 
     predicates.add(searchData.predicate);
@@ -118,37 +109,31 @@ class TransactionFilter implements Jasonable {
     final List<TransactionPredicate> predicates = [];
 
     if (uuids?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) => uuids!.any((uuid) => t.uuid == uuid),
-      );
+      predicates.add((Transaction t) => uuids!.any((uuid) => t.uuid == uuid));
     }
 
     if (range case TimeRange filterTimeRange) {
-      predicates
-          .add((Transaction t) => filterTimeRange.contains(t.transactionDate));
+      predicates.add(
+        (Transaction t) => filterTimeRange.contains(t.transactionDate),
+      );
     }
 
     if (types?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) => types!.contains(t.type),
-      );
+      predicates.add((Transaction t) => types!.contains(t.type));
     }
 
     predicates.add(searchData.predicate);
 
     if (categories?.isNotEmpty == true) {
       predicates.add(
-        (Transaction t) => categories!.any(
-          (category) => t.categoryUuid == category,
-        ),
+        (Transaction t) =>
+            categories!.any((category) => t.categoryUuid == category),
       );
     }
 
     if (accounts?.isNotEmpty == true) {
       predicates.add(
-        (Transaction t) => accounts!.any(
-          (account) => t.accountUuid == account,
-        ),
+        (Transaction t) => accounts!.any((account) => t.accountUuid == account),
       );
     }
 
@@ -175,8 +160,9 @@ class TransactionFilter implements Jasonable {
     }
 
     if (includeDeleted != true) {
-      predicates
-          .add((Transaction t) => t.isDeleted == null || t.isDeleted == false);
+      predicates.add(
+        (Transaction t) => t.isDeleted == null || t.isDeleted == false,
+      );
     }
 
     return predicates;
@@ -195,8 +181,12 @@ class TransactionFilter implements Jasonable {
     }
 
     if (range case TimeRange filterTimeRange) {
-      conditions.add(Transaction_.transactionDate
-          .betweenDate(filterTimeRange.from, filterTimeRange.to));
+      conditions.add(
+        Transaction_.transactionDate.betweenDate(
+          filterTimeRange.from,
+          filterTimeRange.to,
+        ),
+      );
     }
 
     if (range case TransactionFilterTimeRange transactionFilterTimeRange) {
@@ -204,10 +194,7 @@ class TransactionFilter implements Jasonable {
 
       if (range != null) {
         conditions.add(
-          Transaction_.transactionDate.betweenDate(
-            range.from,
-            range.to,
-          ),
+          Transaction_.transactionDate.betweenDate(range.from, range.to),
         );
       }
     }
@@ -241,35 +228,39 @@ class TransactionFilter implements Jasonable {
       if (isPending!) {
         conditions.add(Transaction_.isPending.equals(true));
       } else {
-        conditions.add(Transaction_.isPending
-            .notEquals(true)
-            .or(Transaction_.isPending.isNull()));
+        conditions.add(
+          Transaction_.isPending
+              .notEquals(true)
+              .or(Transaction_.isPending.isNull()),
+        );
       }
     }
 
     if (includeDeleted != true) {
-      conditions.add(Transaction_.isDeleted
-          .isNull()
-          .or(Transaction_.isDeleted.notEquals(true)));
+      conditions.add(
+        Transaction_.isDeleted.isNull().or(
+          Transaction_.isDeleted.notEquals(true),
+        ),
+      );
     }
 
     final filtered = ObjectBox().box<Transaction>().query(
-          conditions.isNotEmpty ? conditions.reduce((a, b) => a & b) : null,
-        );
+      conditions.isNotEmpty ? conditions.reduce((a, b) => a & b) : null,
+    );
 
     return switch (sortBy) {
       TransactionSortField.amount => filtered.order(
-          Transaction_.amount,
-          flags: sortDescending ? Order.descending : 0,
-        ),
+        Transaction_.amount,
+        flags: sortDescending ? Order.descending : 0,
+      ),
       TransactionSortField.createdDate => filtered.order(
-          Transaction_.createdDate,
-          flags: sortDescending ? Order.descending : 0,
-        ),
+        Transaction_.createdDate,
+        flags: sortDescending ? Order.descending : 0,
+      ),
       TransactionSortField.transactionDate => filtered.order(
-          Transaction_.transactionDate,
-          flags: sortDescending ? Order.descending : 0,
-        ),
+        Transaction_.transactionDate,
+        flags: sortDescending ? Order.descending : 0,
+      ),
     };
   }
 
@@ -356,9 +347,10 @@ class TransactionFilter implements Jasonable {
       categories: categories == null ? this.categories : categories.value,
       accounts: accounts == null ? this.accounts : accounts.value,
       sortBy: sortBy ?? this.sortBy,
-      groupBy: (groupBy == null || groupBy.value == null)
-          ? this.groupBy
-          : groupBy.value!,
+      groupBy:
+          (groupBy == null || groupBy.value == null)
+              ? this.groupBy
+              : groupBy.value!,
       sortDescending: sortDescending ?? this.sortDescending,
       isPending: isPending == null ? this.isPending : isPending.value,
       minAmount: minAmount == null ? this.minAmount : minAmount.value,
@@ -369,21 +361,21 @@ class TransactionFilter implements Jasonable {
 
   @override
   int get hashCode => Object.hashAll([
-        uuids,
-        categories,
-        accounts,
-        range,
-        types,
-        isPending,
-        minAmount,
-        maxAmount,
-        currencies,
-        includeDeleted,
-        sortDescending,
-        searchData,
-        sortBy,
-        groupBy,
-      ]);
+    uuids,
+    categories,
+    accounts,
+    range,
+    types,
+    isPending,
+    minAmount,
+    maxAmount,
+    currencies,
+    includeDeleted,
+    sortDescending,
+    searchData,
+    sortBy,
+    groupBy,
+  ]);
 
   @override
   bool operator ==(Object other) {

@@ -9,10 +9,7 @@ import "package:go_router/go_router.dart";
 class YearSelectorSheet extends StatefulWidget {
   final DateTime? initialDate;
 
-  const YearSelectorSheet({
-    super.key,
-    this.initialDate,
-  });
+  const YearSelectorSheet({super.key, this.initialDate});
 
   @override
   State<YearSelectorSheet> createState() => _YearSelectorSheetState();
@@ -44,20 +41,14 @@ class _YearSelectorSheetState extends State<YearSelectorSheet> {
         alignment: MainAxisAlignment.end,
         children: [
           TextButton(
-            onPressed: () => setState(() {
-              final DateTime now = DateTime.now();
-              _yearController.text = now.year.toString();
-            }),
-            child: Text(
-              "general.timeSelector.now".t(context),
-            ),
+            onPressed:
+                () => setState(() {
+                  final DateTime now = DateTime.now();
+                  _yearController.text = now.year.toString();
+                }),
+            child: Text("general.timeSelector.now".t(context)),
           ),
-          Button(
-            onTap: pop,
-            child: Text(
-              "general.done".t(context),
-            ),
-          ),
+          Button(onTap: pop, child: Text("general.done".t(context))),
         ],
       ),
       child: Column(
@@ -69,7 +60,7 @@ class _YearSelectorSheetState extends State<YearSelectorSheet> {
             keyboardType: TextInputType.number,
             autofocus: true,
             onSubmitted: (_) => pop(),
-          )
+          ),
         ],
       ),
     );

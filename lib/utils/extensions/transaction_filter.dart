@@ -113,10 +113,7 @@ extension TransactionFilterHelpers on TransactionFilter {
     if (value case Iterable<dynamic> list) {
       if (list.length > 2) {
         if (list.first is Account) {
-          return "transactions.query.filter.accounts.n".t(
-            context,
-            list.length,
-          );
+          return "transactions.query.filter.accounts.n".t(context, list.length);
         } else if (list.first is Category) {
           return "transactions.query.filter.categories.n".t(
             context,
@@ -126,12 +123,14 @@ extension TransactionFilterHelpers on TransactionFilter {
       }
 
       final String items = list
-          .map((item) => getValueLabel(
-                context,
-                value: item,
-                translationKey: translationKey,
-                valueLabelOverride: valueLabelOverride,
-              ))
+          .map(
+            (item) => getValueLabel(
+              context,
+              value: item,
+              translationKey: translationKey,
+              valueLabelOverride: valueLabelOverride,
+            ),
+          )
           .join(", ");
 
       if (list.length == 1) {

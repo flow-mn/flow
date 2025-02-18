@@ -30,9 +30,10 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
   void initState() {
     super.initState();
 
-    value = widget.initialValue is IconFlowIcon
-        ? widget.initialValue as IconFlowIcon
-        : null;
+    value =
+        widget.initialValue is IconFlowIcon
+            ? widget.initialValue as IconFlowIcon
+            : null;
 
     _controller = TabController(length: 2, vsync: this);
   }
@@ -47,7 +48,7 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
   Widget build(BuildContext context) {
     final double scrollableContentMaxHeight =
         MediaQuery.of(context).size.height * 0.4 -
-            MediaQuery.of(context).viewInsets.vertical;
+        MediaQuery.of(context).viewInsets.vertical;
 
     final List<IconData> simpleIconsResult = querySimpleIcons(_query);
     final List<IconData> materialSymbolsResult = queryMaterialSymbols(_query);
@@ -72,15 +73,11 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
           ),
           TabBar(
             tabs: [
-              Tab(
-                text: "flowIcon.type.icon.brands".t(context),
-              ),
-              Tab(
-                text: "flowIcon.type.icon.symbols".t(context),
-              ),
+              Tab(text: "flowIcon.type.icon.brands".t(context)),
+              Tab(text: "flowIcon.type.icon.symbols".t(context)),
             ],
             controller: _controller,
-          )
+          ),
         ],
       ),
       trailing: ModalOverflowBar(
@@ -89,9 +86,7 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
           TextButton.icon(
             onPressed: () => context.pop(value),
             icon: const Icon(Symbols.check_rounded),
-            label: Text(
-              "general.done".t(context),
-            ),
+            label: Text("general.done".t(context)),
           ),
         ],
       ),
@@ -99,22 +94,24 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
         controller: _controller,
         children: [
           GridView.builder(
-            itemBuilder: (context, index) => IconButton(
-              onPressed: () => updateIcon(simpleIconsResult[index]),
-              icon: Icon(simpleIconsResult[index]),
-              iconSize: 48.0,
-            ),
+            itemBuilder:
+                (context, index) => IconButton(
+                  onPressed: () => updateIcon(simpleIconsResult[index]),
+                  icon: Icon(simpleIconsResult[index]),
+                  iconSize: 48.0,
+                ),
             itemCount: simpleIconsResult.length,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 72.0,
             ),
           ),
           GridView.builder(
-            itemBuilder: (context, index) => IconButton(
-              onPressed: () => updateIcon(materialSymbolsResult[index]),
-              icon: Icon(materialSymbolsResult[index]),
-              iconSize: 48.0,
-            ),
+            itemBuilder:
+                (context, index) => IconButton(
+                  onPressed: () => updateIcon(materialSymbolsResult[index]),
+                  icon: Icon(materialSymbolsResult[index]),
+                  iconSize: 48.0,
+                ),
             itemCount: materialSymbolsResult.length,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 72.0,

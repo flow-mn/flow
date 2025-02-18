@@ -35,28 +35,26 @@ class MoneyTextRaw extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    final Widget child = autoSize
-        ? AutoSizeText(
-            text,
-            group: autoSizeGroup,
-            style: style,
-            maxLines: maxLines,
-            textAlign: textAlign,
-            semanticsLabel: money?.toSemanticLabel() ?? text,
-          )
-        : Text(
-            text,
-            style: style,
-            maxLines: maxLines,
-            textAlign: textAlign,
-            semanticsLabel: money?.toSemanticLabel() ?? text,
-          );
+    final Widget child =
+        autoSize
+            ? AutoSizeText(
+              text,
+              group: autoSizeGroup,
+              style: style,
+              maxLines: maxLines,
+              textAlign: textAlign,
+              semanticsLabel: money?.toSemanticLabel() ?? text,
+            )
+            : Text(
+              text,
+              style: style,
+              maxLines: maxLines,
+              textAlign: textAlign,
+              semanticsLabel: money?.toSemanticLabel() ?? text,
+            );
 
     if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: child,
-      );
+      return GestureDetector(onTap: onTap, child: child);
     }
 
     return child;

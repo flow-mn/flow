@@ -28,8 +28,9 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
       appBar: AppBar(title: Text("sync.export.history".t(context))),
       body: SafeArea(
         child: StreamBuilder<List<BackupEntry>>(
-          stream:
-              qb().watch(triggerImmediately: true).map((event) => event.find()),
+          stream: qb()
+              .watch(triggerImmediately: true)
+              .map((event) => event.find()),
           builder: (context, snapshot) {
             final List<BackupEntry>? backupEntires = snapshot.data;
 
@@ -38,15 +39,16 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
             return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
               (0, true) => const NoBackups(),
               (_, true) => SlidableAutoCloseBehavior(
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => BackupEntryCard(
-                      entry: backupEntires[index],
-                      dismissibleKey: ValueKey(backupEntires[index].id),
-                    ),
-                    separatorBuilder: (context, index) => separator,
-                    itemCount: backupEntires!.length,
-                  ),
+                child: ListView.separated(
+                  itemBuilder:
+                      (context, index) => BackupEntryCard(
+                        entry: backupEntires[index],
+                        dismissibleKey: ValueKey(backupEntires[index].id),
+                      ),
+                  separatorBuilder: (context, index) => separator,
+                  itemCount: backupEntires!.length,
                 ),
+              ),
               (_, false) => const Spinner.center(),
             };
           },
