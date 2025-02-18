@@ -13,6 +13,7 @@ enum TimeRangeMode {
   thisYear("thisYear"),
   byMonth("byMonth"),
   byYear("byYear"),
+  allTime("allTime"),
   custom("custom");
 
   final String value;
@@ -74,6 +75,10 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
                 ActionChip(
                   label: Text("tabs.stats.timeRange.thisYear".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.thisYear),
+                ),
+                ActionChip(
+                  label: Text("tabs.stats.timeRange.allTime".t(context)),
+                  onPressed: () => context.pop(TimeRangeMode.allTime),
                 ),
               ],
             ),

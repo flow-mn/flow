@@ -28,10 +28,7 @@ class WelcomeSlide extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(
-            "appShortDesc".t(context),
-            style: context.textTheme.bodyLarge,
-          ),
+          Text("appShortDesc".t(context), style: context.textTheme.bodyLarge),
           const SizedBox(height: 16.0),
         ],
       ),

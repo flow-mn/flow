@@ -22,9 +22,7 @@ class DebugThemePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Debug Theme Page"),
-      ),
+      appBar: AppBar(title: const Text("Debug Theme Page")),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,12 +35,29 @@ class DebugThemePage extends StatelessWidget {
               onTap: () => context.push("/preferences/theme"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
+            Frame(
+              child: Wrap(
+                spacing: 12.0,
+                runSpacing: 12.0,
+                children: [
+                  FilterChip(label: Text("FilterChip"), onSelected: (_) {}),
+                  FilterChip(
+                    label: Text("Selected FilterChip"),
+                    onSelected: (_) {},
+                    selected: true,
+                  ),
+                  ActionChip(label: Text("ActionChip"), onPressed: () {}),
+                ],
+              ),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("Cards"),
             const SizedBox(height: 12.0),
             Card(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
               child: ListTile(
                 title: const Text("Plain MUI card"),
                 leading: const Icon(Symbols.wallet_rounded),
@@ -69,11 +84,7 @@ class DebugThemePage extends StatelessWidget {
                 trailing: Button(
                   backgroundColor: context.colorScheme.surface,
                   trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text(
-                      "PB&J est tres delicieux",
-                    ),
-                  ),
+                  child: Expanded(child: Text("PB&J est tres delicieux")),
                   onTap: () => {},
                 ),
               ),
@@ -84,23 +95,28 @@ class DebugThemePage extends StatelessWidget {
             TransactionListTile(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               transaction: demoPendingTransaction,
-              deleteFn: () => {},
+              moveToTrashFn: null,
+              recoverFromTrashFn: null,
               combineTransfers: false,
             ),
             WavyDivider(),
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: _demoTransactions
-                  .map(
-                    (transaction) => TransactionListTile(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                      transaction: transaction,
-                      deleteFn: () => {},
-                      combineTransfers: false,
-                    ),
-                  )
-                  .toList(),
+              children:
+                  _demoTransactions
+                      .map(
+                        (transaction) => TransactionListTile(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 4.0,
+                          ),
+                          transaction: transaction,
+                          moveToTrashFn: null,
+                          recoverFromTrashFn: null,
+                          combineTransfers: false,
+                        ),
+                      )
+                      .toList(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("ListTiles"),
@@ -117,28 +133,35 @@ class DebugThemePage extends StatelessWidget {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
+              title: const Text("Selected"),
+              leading: const Icon(Symbols.settings_rounded),
+              onTap: () {},
+              trailing: const Icon(Symbols.chevron_right_rounded),
+              selected: true,
+            ),
+            ListTile(
               title: const Text("With subtitle"),
               leading: const Icon(Symbols.zoom_out_map_rounded),
               subtitle: Text("bla bla bla disclaimer yara yara"),
               onTap: () {},
             ),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: const Text("With Checkbox Selected"),
               value: true,
               onChanged: (_) => {},
             ),
-            CheckboxListTile.adaptive(
+            CheckboxListTile /*.adaptive*/ (
               title: const Text("With Checkbox Unselected"),
               value: false,
               onChanged: (_) => {},
             ),
-            RadioListTile.adaptive(
+            RadioListTile /*.adaptive*/ (
               title: const Text("With Radio Selected"),
               value: "a",
               groupValue: "a",
               onChanged: (_) {},
             ),
-            RadioListTile.adaptive(
+            RadioListTile /*.adaptive*/ (
               title: const Text("With Radio Unselected"),
               value: "b",
               groupValue: "a",

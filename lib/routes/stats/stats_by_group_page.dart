@@ -8,10 +8,10 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
-import "package:flow/widgets/home/stats/pie_graph_view.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
@@ -62,78 +62,79 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
         ),
       ),
       body: ValueListenableBuilder(
-          valueListenable: ExchangeRatesService().exchangeRatesCache,
-          builder: (context, exchangeRatesCache, child) {
-            final ExchangeRates? rates = exchangeRatesCache?.get(
-              LocalPreferences().getPrimaryCurrency(),
-            );
+        valueListenable: ExchangeRatesService().exchangeRatesCache,
+        builder: (context, exchangeRatesCache, child) {
+          final ExchangeRates? rates = exchangeRatesCache?.get(
+            LocalPreferences().getPrimaryCurrency(),
+          );
 
-            final Map<String, ChartData> expenses = _prepareChartData(
-              analytics?.flow,
-              TransactionType.expense,
-              rates,
-            );
+          final bool showMissingExchangeRatesWarning =
+              rates == null &&
+              TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
 
-            final Map<String, ChartData> incomes = _prepareChartData(
-              analytics?.flow,
-              TransactionType.income,
-              rates,
-            );
+          final Map<String, ChartData> expenses = _prepareChartData(
+            analytics?.flow,
+            TransactionType.expense,
+            rates,
+          );
 
-            return Column(
-              children: [
-                Material(
-                  elevation: 1.0,
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
-                    width: double.infinity,
-                    child: TimeRangeSelector(
-                      initialValue: range,
-                      onChanged: updateRange,
-                    ),
+          final Map<String, ChartData> incomes = _prepareChartData(
+            analytics?.flow,
+            TransactionType.income,
+            rates,
+          );
+
+          return Column(
+            children: [
+              Material(
+                elevation: 1.0,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0).copyWith(bottom: 8.0),
+                  width: double.infinity,
+                  child: TimeRangeSelector(
+                    initialValue: range,
+                    onChanged: updateRange,
                   ),
                 ),
-                if (busy)
-                  const Padding(
-                    padding: EdgeInsets.all(24.0),
-                    child: Spinner(),
-                  )
-                else ...[
-                  TabBar(
+              ),
+              if (busy)
+                const Padding(padding: EdgeInsets.all(24.0), child: Spinner())
+              else ...[
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                      text: TransactionType.expense.localizedTextKey.t(context),
+                    ),
+                    Tab(
+                      text: TransactionType.income.localizedTextKey.t(context),
+                    ),
+                  ],
+                ),
+                if (showMissingExchangeRatesWarning)
+                  const RatesMissingWarning(),
+                Expanded(
+                  child: TabBarView(
                     controller: _tabController,
-                    tabs: [
-                      Tab(
-                        text:
-                            TransactionType.expense.localizedTextKey.t(context),
+                    children: [
+                      PieGraphView(
+                        data: expenses,
+                        changeMode: changeMode,
+                        range: range,
                       ),
-                      Tab(
-                        text:
-                            TransactionType.income.localizedTextKey.t(context),
+                      PieGraphView(
+                        data: incomes,
+                        changeMode: changeMode,
+                        range: range,
                       ),
                     ],
                   ),
-                  if (rates == null) const RatesMissingWarning(),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        PieGraphView(
-                          data: expenses,
-                          changeMode: changeMode,
-                          range: range,
-                        ),
-                        PieGraphView(
-                          data: incomes,
-                          changeMode: changeMode,
-                          range: range,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                ),
               ],
-            );
-          }),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -153,9 +154,10 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
     });
 
     try {
-      analytics = widget.byCategory
-          ? await ObjectBox().flowByCategories(range: range)
-          : await ObjectBox().flowByAccounts(range: range);
+      analytics =
+          widget.byCategory
+              ? await ObjectBox().flowByCategories(range: range)
+              : await ObjectBox().flowByAccounts(range: range);
     } finally {
       busy = false;
 
@@ -191,24 +193,27 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
 
     final List<MapEntry<String, MoneyFlow<T>>> filtered =
         raw.entries.where((entry) {
-      if (rates != null) {
-        cache[entry.key] =
-            entry.value.getTotalByType(type, rates, primaryCurrency);
-      } else {
-        cache[entry.key] =
-            entry.value.getByTypeAndCurrency(primaryCurrency, type);
-      }
+          if (rates != null) {
+            cache[entry.key] = entry.value.getTotalByType(
+              type,
+              rates,
+              primaryCurrency,
+            );
+          } else {
+            cache[entry.key] = entry.value.getByTypeAndCurrency(
+              primaryCurrency,
+              type,
+            );
+          }
 
-      if (type == TransactionType.expense) {
-        return cache[entry.key]!.amount < 0.0;
-      } else {
-        return cache[entry.key]!.amount > 0.0;
-      }
-    }).toList();
+          if (type == TransactionType.expense) {
+            return cache[entry.key]!.amount < 0.0;
+          } else {
+            return cache[entry.key]!.amount > 0.0;
+          }
+        }).toList();
 
-    filtered.sort(
-      (a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!),
-    );
+    filtered.sort((a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!));
 
     return Map.fromEntries(
       filtered.map(

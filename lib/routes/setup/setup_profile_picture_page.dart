@@ -30,13 +30,13 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double pfpSize =
-        math.min(MediaQuery.of(context).size.width * 0.5, 200.0);
+    final double pfpSize = math.min(
+      MediaQuery.of(context).size.width * 0.5,
+      200.0,
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("setup.profile.addPhoto".t(context)),
-      ),
+      appBar: AppBar(title: Text("setup.profile.addPhoto".t(context))),
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
@@ -47,9 +47,7 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InfoText(
-                  child: Text(
-                    "setup.profile.addPhoto.description".t(context),
-                  ),
+                  child: Text("setup.profile.addPhoto.description".t(context)),
                 ),
                 const SizedBox(height: 24.0),
                 ProfilePicture(
@@ -73,9 +71,11 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
               Button(
                 onTap: save,
                 trailing: const Icon(Symbols.chevron_right_rounded),
-                child: Text(_selected
-                    ? "setup.next".t(context)
-                    : "setup.profile.addPhoto.skip".t(context)),
+                child: Text(
+                  _selected
+                      ? "setup.next".t(context)
+                      : "setup.profile.addPhoto.skip".t(context),
+                ),
               ),
             ],
           ),
@@ -98,16 +98,15 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
 
     final dataDirectory = ObjectBox.appDataDirectory;
 
-    final file = File(path.join(
-      dataDirectory,
-      widget.profileImagePath,
-    ));
+    final file = File(path.join(dataDirectory, widget.profileImagePath));
 
     try {
       await FileImage(file).evict();
       _profilePictureUpdateCounter++;
     } catch (e) {
-      log("[Flow] Setup Profile Photo Page > Failed to evict profile FileImage cache due to:\n$e");
+      log(
+        "[Flow] Setup Profile Photo Page > Failed to evict profile FileImage cache due to:\n$e",
+      );
     }
 
     await file.create(recursive: true);

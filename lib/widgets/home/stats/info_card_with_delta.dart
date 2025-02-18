@@ -1,6 +1,6 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/money.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";

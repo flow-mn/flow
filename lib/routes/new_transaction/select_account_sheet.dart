@@ -31,19 +31,18 @@ class SelectAccountSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       title: Text(titleOverride ?? "transaction.edit.selectAccount".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
-      trailing: accounts.isEmpty
-          ? ModalOverflowBar(
-              alignment: MainAxisAlignment.end,
-              children: [
-                Button(
-                  onTap: () => context.pop(),
-                  child: Text(
-                    "general.cancel".t(context),
+      trailing:
+          accounts.isEmpty
+              ? ModalOverflowBar(
+                alignment: MainAxisAlignment.end,
+                children: [
+                  Button(
+                    onTap: () => context.pop(),
+                    child: Text("general.cancel".t(context)),
                   ),
-                ),
-              ],
-            )
-          : null,
+                ],
+              )
+              : null,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -60,14 +59,15 @@ class SelectAccountSheet extends StatelessWidget {
             ...accounts.map(
               (account) => ListTile(
                 title: Text(account.name),
-                subtitle: showBalance
-                    ? MoneyText(
-                        account.balance,
-                        initiallyAbbreviated: false,
-                        autoSize: true,
-                        overrideObscure: false,
-                      )
-                    : null,
+                subtitle:
+                    showBalance
+                        ? MoneyText(
+                          account.balance,
+                          initiallyAbbreviated: false,
+                          autoSize: true,
+                          overrideObscure: false,
+                        )
+                        : null,
                 leading: FlowIcon(account.icon),
                 trailing: const Icon(Symbols.chevron_right_rounded),
                 onTap: () => context.pop(account),

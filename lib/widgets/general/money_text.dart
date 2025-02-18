@@ -1,6 +1,6 @@
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/money.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/widgets/general/money_text_builder.dart";
 import "package:flow/widgets/general/money_text_raw.dart";
 import "package:flutter/material.dart";
@@ -10,12 +10,10 @@ class MoneyText extends StatefulWidget {
   final Money? money;
 
   final String Function(
-      Money money,
-      ({
-        bool abbreviate,
-        bool obscure,
-        bool useCurrencySymbol,
-      }) options)? customFormatter;
+    Money money,
+    ({bool abbreviate, bool obscure, bool useCurrencySymbol}) options,
+  )?
+  customFormatter;
 
   /// Defaults to [false]
   final bool initiallyAbbreviated;

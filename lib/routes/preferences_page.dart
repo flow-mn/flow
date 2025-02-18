@@ -3,12 +3,13 @@ import "dart:io";
 
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
+import "package:flow/theme/names.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
@@ -32,41 +33,31 @@ class PreferencesPageState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final FlowColorScheme currentTheme =
-        getTheme(LocalPreferences().themeName.get());
+    final FlowColorScheme currentTheme = getTheme(
+      LocalPreferences().theme.themeName.get(),
+    );
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
     final bool autoAttachTransactionGeo =
         LocalPreferences().autoAttachTransactionGeo.get();
-    final bool requirePendingTransactionConfrimation =
-        LocalPreferences().requirePendingTransactionConfrimation.get();
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences".t(context))),
       body: SafeArea(
         child: ListView(
           children: [
             ListTile(
               title: Text("preferences.pendingTransactions".t(context)),
               subtitle: Text(
-                requirePendingTransactionConfrimation
+                pendingTransactionsRequireConfrimation
                     ? "general.enabled".t(context)
                     : "general.disabled".t(context),
               ),
               leading: const Icon(Symbols.schedule_rounded),
               onTap: _openPendingTransactionsPrefs,
               // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
-            ListTile(
-              title: Text("preferences.theme".t(context)),
-              leading: currentTheme.isDark
-                  ? const Icon(Symbols.dark_mode_rounded)
-                  : const Icon(Symbols.light_mode_rounded),
-              subtitle: Text(currentTheme.name),
-              onTap: _openTheme,
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
@@ -84,17 +75,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.numpad".t(context)),
-              leading: const Icon(Symbols.dialpad_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/numpad"),
-              subtitle: Text(
-                LocalPreferences().usePhoneNumpadLayout.get()
-                    ? "preferences.numpad.layout.modern".t(context)
-                    : "preferences.numpad.layout.classic".t(context),
-              ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
-            ListTile(
               title: Text("preferences.transfer".t(context)),
               leading: const Icon(Symbols.sync_alt_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/transfer"),
@@ -106,15 +86,9 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.transactionButtonOrder".t(context)),
-              leading: const Icon(Symbols.action_key_rounded),
-              onTap: () =>
-                  _pushAndRefreshAfter("/preferences/transactionButtonOrder"),
-              subtitle: Text(
-                "preferences.transactionButtonOrder.description".t(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              title: Text("preferences.trashBin".t(context)),
+              leading: const Icon(Symbols.delete_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
@@ -136,6 +110,46 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.appearance".t(context)),
+            const SizedBox(height: 8.0),
+            ListTile(
+              title: Text("preferences.theme".t(context)),
+              leading:
+                  currentTheme.isDark
+                      ? const Icon(Symbols.dark_mode_rounded)
+                      : const Icon(Symbols.light_mode_rounded),
+              subtitle: Text(
+                themeNames[currentTheme.name] ?? currentTheme.name,
+              ),
+              onTap: _openTheme,
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.numpad".t(context)),
+              leading: const Icon(Symbols.dialpad_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/numpad"),
+              subtitle: Text(
+                LocalPreferences().usePhoneNumpadLayout.get()
+                    ? "preferences.numpad.layout.modern".t(context)
+                    : "preferences.numpad.layout.classic".t(context),
+              ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.transactionButtonOrder".t(context)),
+              leading: const Icon(Symbols.action_key_rounded),
+              onTap:
+                  () => _pushAndRefreshAfter(
+                    "/preferences/transactionButtonOrder",
+                  ),
+              subtitle: Text(
+                "preferences.transactionButtonOrder.description".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             const SizedBox(height: 24.0),
@@ -173,14 +187,14 @@ class PreferencesPageState extends State<PreferencesPage> {
     });
 
     try {
-      Locale current = LocalPreferences().localeOverride.get() ??
+      Locale current =
+          LocalPreferences().localeOverride.get() ??
           FlowLocalizations.supportedLanguages.first;
 
       final selected = await showModalBottomSheet<Locale>(
         context: context,
-        builder: (context) => LanguageSelectionSheet(
-          currentLocale: current,
-        ),
+        builder: (context) => LanguageSelectionSheet(currentLocale: current),
+        isScrollControlled: true,
       );
 
       if (selected != null) {
@@ -243,10 +257,12 @@ class PreferencesPageState extends State<PreferencesPage> {
     await context.push("/preferences/theme");
 
     final bool themeChangesAppIcon =
-        LocalPreferences().themeChangesAppIcon.get();
+        LocalPreferences().theme.themeChangesAppIcon.get();
 
-    trySetThemeIcon(
-      themeChangesAppIcon ? LocalPreferences().themeName.get() : null,
+    trySetAppIcon(
+      themeChangesAppIcon
+          ? allThemes[LocalPreferences().theme.themeName.get()]?.iconName
+          : null,
     );
 
     // Rebuild to update description text

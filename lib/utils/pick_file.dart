@@ -48,10 +48,7 @@ Future<ui.Image?> pickAndCropSquareImage(
   BuildContext context, {
   double? maxDimension,
 }) async {
-  final xfile = await pickImage(
-    maxWidth: 512,
-    maxHeight: 512,
-  );
+  final xfile = await pickImage(maxWidth: 512, maxHeight: 512);
 
   if (xfile == null) {
     if (context.mounted) {

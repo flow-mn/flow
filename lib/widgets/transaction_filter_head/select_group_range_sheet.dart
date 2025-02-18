@@ -1,4 +1,4 @@
-import "package:flow/data/transactions_filter.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -36,7 +36,7 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
         children: [
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.check),
+            icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
@@ -48,19 +48,22 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Frame(
-                child: Wrap(
-              spacing: 12.0,
-              runSpacing: 12.0,
-              children: TransactionGroupRange.values
-                  .map(
-                    (range) => ChoiceChip(
-                      label: Text(range.localizedNameContext(context)),
-                      selected: _selected == range,
-                      onSelected: (value) => _updateRange(value ? range : null),
-                    ),
-                  )
-                  .toList(),
-            )),
+              child: Wrap(
+                spacing: 12.0,
+                runSpacing: 12.0,
+                children:
+                    TransactionGroupRange.values
+                        .map(
+                          (range) => ChoiceChip(
+                            label: Text(range.localizedNameContext(context)),
+                            selected: _selected == range,
+                            onSelected:
+                                (value) => _updateRange(value ? range : null),
+                          ),
+                        )
+                        .toList(),
+              ),
+            ),
           ],
         ),
       ),

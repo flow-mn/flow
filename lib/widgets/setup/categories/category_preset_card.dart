@@ -27,9 +27,10 @@ class CategoryPresetCard extends StatelessWidget {
         category: category,
         onTapOverride: Optional(() => onSelect(!selected)),
         showAmount: false,
-        trailing: preexisting
-            ? null
-            : Icon(selected ? Symbols.remove_rounded : Symbols.add_rounded),
+        trailing:
+            preexisting
+                ? null
+                : Icon(selected ? Symbols.remove_rounded : Symbols.add_rounded),
       ),
     );
   }

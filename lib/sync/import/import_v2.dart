@@ -2,24 +2,26 @@ import "dart:async";
 import "dart:developer";
 import "dart:io";
 
-import "package:path/path.dart" as path;
-
 import "package:flow/data/currencies.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/user_preferences.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
+import "package:path/path.dart" as path;
 
 /// Used to report current status to user
 enum ImportV2Progress implements LocalizedEnum {
@@ -29,7 +31,9 @@ enum ImportV2Progress implements LocalizedEnum {
   writingAccounts,
   resolvingTransactions,
   writingTransactions,
+  writingTranscationFilterPresets,
   writingProfile,
+  writingUserPreferences,
   settingPrimaryCurrency,
   copyingImages,
   success,
@@ -56,8 +60,9 @@ class ImportV2 extends Importer {
   final Map<String, int> memoizeCategories = {};
 
   @override
-  final ValueNotifier<ImportV2Progress> progressNotifier =
-      ValueNotifier(ImportV2Progress.waitingConfirmation);
+  final ValueNotifier<ImportV2Progress> progressNotifier = ValueNotifier(
+    ImportV2Progress.waitingConfirmation,
+  );
 
   ImportV2(
     this.data, {
@@ -87,6 +92,8 @@ class ImportV2 extends Importer {
     }
 
     try {
+      TransactionsService().pauseListeners();
+
       switch (mode) {
         case ImportMode.eraseAndWrite:
           await _eraseAndWrite();
@@ -102,6 +109,8 @@ class ImportV2 extends Importer {
       if (cleanupFolder != null) {
         unawaited(_cleanup());
       }
+
+      TransactionsService().resumeListeners();
     }
 
     return safetyBackupFilePath;
@@ -129,33 +138,41 @@ class ImportV2 extends Importer {
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
     progressNotifier.value = ImportV2Progress.resolvingTransactions;
-    final transformedTransactions = data.transactions
-        .map((transaction) {
-          try {
-            transaction = _resolveAccountForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            return null;
-          }
+    final transformedTransactions =
+        data.transactions
+            .map((transaction) {
+              try {
+                transaction = _resolveAccountForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                return null;
+              }
 
-          try {
-            transaction = _resolveCategoryForTransaction(transaction);
-          } catch (e) {
-            if (e is ImportException) {
-              log(e.toString());
-            }
-            // Still proceed without category
-          }
+              try {
+                transaction = _resolveCategoryForTransaction(transaction);
+              } catch (e) {
+                if (e is ImportException) {
+                  log(e.toString());
+                }
+                // Still proceed without category
+              }
 
-          return transaction;
-        })
-        .nonNulls
-        .toList();
+              return transaction;
+            })
+            .nonNulls
+            .toList();
 
     progressNotifier.value = ImportV2Progress.writingTransactions;
-    await ObjectBox().box<Transaction>().putManyAsync(transformedTransactions);
+    await TransactionsService().upsertMany(transformedTransactions);
+
+    if (data.transactionFilterPresets?.isNotEmpty == true) {
+      progressNotifier.value = ImportV2Progress.writingTranscationFilterPresets;
+      await ObjectBox().box<TransactionFilterPreset>().putManyAsync(
+        data.transactionFilterPresets!,
+      );
+    }
 
     if (data.profile != null) {
       try {
@@ -171,48 +188,73 @@ class ImportV2 extends Importer {
       await ObjectBox().box<Profile>().putAsync(data.profile!);
     }
 
+    if (data.userPreferences != null) {
+      try {
+        await ObjectBox().box<UserPreferences>().removeAllAsync();
+      } catch (e) {
+        log(
+          "[Flow Sync Import v2] Failed to remove existing user preferences, ignoring",
+          error: e,
+        );
+      }
+
+      progressNotifier.value = ImportV2Progress.writingUserPreferences;
+      await ObjectBox().box<UserPreferences>().putAsync(data.userPreferences!);
+    }
+
     if (data.primaryCurrency != null &&
         isCurrencyCodeValid(data.primaryCurrency!)) {
       progressNotifier.value = ImportV2Progress.settingPrimaryCurrency;
       try {
         await LocalPreferences().primaryCurrency.set(data.primaryCurrency!);
       } catch (e) {
-        log("[Flow Sync Import v2] Failed to set primary currency, ignoring",
-            error: e);
+        log(
+          "[Flow Sync Import v2] Failed to set primary currency, ignoring",
+          error: e,
+        );
       }
     }
 
     unawaited(
-        LocalPreferences().updateTransitiveProperties().catchError((error) {
-      log(
-        "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
-        error: error,
-      );
-    }));
+      TransitiveLocalPreferences().updateTransitiveProperties().catchError((
+        error,
+      ) {
+        log(
+          "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
+          error: error,
+        );
+      }),
+    );
 
     if (assetsRoot != null) {
       progressNotifier.value = ImportV2Progress.copyingImages;
       try {
-        final List<FileSystemEntity> assetsList =
-            Directory(path.join(assetsRoot!, "images"))
-                .listSync(followLinks: false);
+        final List<FileSystemEntity> assetsList = Directory(
+          path.join(assetsRoot!, "images"),
+        ).listSync(followLinks: false);
 
         await Directory(ObjectBox.imagesDirectory).create(recursive: true);
 
         for (final asset in assetsList) {
           if (path.extension(asset.path).toLowerCase() == ".png") {
             final String assetName = path.basename(asset.path);
-            final String targetPath =
-                path.join(ObjectBox.imagesDirectory, assetName);
+            final String targetPath = path.join(
+              ObjectBox.imagesDirectory,
+              assetName,
+            );
 
             try {
               await File(asset.path).copy(targetPath);
             } catch (e) {
-              log("[Flow Sync Import v2] Failed to copy asset: $assetName",
-                  error: e);
+              log(
+                "[Flow Sync Import v2] Failed to copy asset: $assetName",
+                error: e,
+              );
             }
           } else {
-            log("[Flow Sync Import v2] Skipping non-PNG asset: ${path.basename(asset.path)}");
+            log(
+              "[Flow Sync Import v2] Skipping non-PNG asset: ${path.basename(asset.path)}",
+            );
           }
         }
       } catch (e) {
@@ -249,7 +291,7 @@ class ImportV2 extends Importer {
     // // 3. Resurrect [Transaction]s
     // progressNotifier.value = ImportV1Progress.loadingTransactions;
     // final currentTransactions =
-    //     await ObjectBox().box<Transaction>().getAllAsync();
+    //     await TransactionsService().getAll();
   }
 
   Future<void> _cleanup() async {
@@ -273,10 +315,11 @@ class ImportV2 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeAccounts[accountUuid] != 0) {
-      final Query<Account> accountQuery = ObjectBox()
-          .box<Account>()
-          .query(Account_.uuid.equals(accountUuid))
-          .build();
+      final Query<Account> accountQuery =
+          ObjectBox()
+              .box<Account>()
+              .query(Account_.uuid.equals(accountUuid))
+              .build();
 
       memoizeAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
 
@@ -303,10 +346,11 @@ class ImportV2 extends Importer {
 
     // If the `id` is 0, we've already encountered it
     if (memoizeCategories[categoryUuid] != 0) {
-      final Query<Category> categoryQuery = ObjectBox()
-          .box<Category>()
-          .query(Category_.uuid.equals(categoryUuid))
-          .build();
+      final Query<Category> categoryQuery =
+          ObjectBox()
+              .box<Category>()
+              .query(Category_.uuid.equals(categoryUuid))
+              .build();
 
       memoizeCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
 

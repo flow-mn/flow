@@ -1,5 +1,38 @@
 # Changelog
 
+## Beta 0.12.0
+
+### New features
+
+* Now you can create and delete (except the default one) filter presets
+* **[Experimental]** Now you can receive notifications for pending transactions on iOS and Android.
+  It may support macOS in the future.
+* Deleted transaction now go to "Trash bin". You can recover recently deleted
+  items, closes [#294](https://github.com/flow-mn/flow/issues/294)
+* Added [catppuccin](https://github.com/catppuccin/catppuccin) themes
+
+### Changes and improvements
+
+* Missing exchange rates warning no longer shows if you use only one currency
+  across Flow
+* Now you can group by "All time" - have your transactions in one big group...?
+* Currency filter now longer shows when you only use single currency
+* Slidable actions no longer preserve open panes when another opens in the same group
+* Backup history entry now shows file size with extra decimal precision (e.g., 1mb -> 1.2mb)
+* Modal pages will now respond to back buttons/gestures
+* Confirming transfers no longer leaves the other transaction stranded
+
+### Fixes
+
+* Fixed total balance not updating in the account tab
+* Deleting accounts and categories no longer leave you stranded in a "not found"
+  page in some cases
+* Fixed toggling `Transfers > Exclude from totals` would cause home tab flow to
+  show incorrect data
+* Updating account balance no longer creates multiple amendment transactions when
+  updating/correcting the amount for the second and subsequent times
+* Updating account balance no longer creates unnecessary `zero` amount transactions
+
 ## Beta 0.11.1
 
 ### Fixes

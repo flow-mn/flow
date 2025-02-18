@@ -9,11 +9,7 @@ class Navbar extends StatelessWidget {
 
   final int activeIndex;
 
-  const Navbar({
-    super.key,
-    required this.onTap,
-    this.activeIndex = 0,
-  });
+  const Navbar({super.key, required this.onTap, this.activeIndex = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +40,7 @@ class Navbar extends StatelessWidget {
             onTap: onTap,
             activeIndex: activeIndex,
           ),
-          const SizedBox(
-            width: 64.0 + 12.0 + 12.0,
-          ),
+          const SizedBox(width: 64.0 + 12.0 + 12.0),
           NavbarButton(
             index: 2,
             tooltip: "tabs.accounts".t(context),

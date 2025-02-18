@@ -16,42 +16,62 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:ui";
 
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:window_manager/window_manager.dart";
+
+final Logger _startupLog = Logger("Flow Startup");
+final Logger _themeLog = Logger("Theme");
 
 void main() async {
+  Logger.root.level = Level.ALL;
+
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+  }
 
   const String debugBuildSuffix = debugBuild ? " (dev)" : "";
 
-  unawaited(PackageInfo.fromPlatform()
-      .then((value) =>
-          appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix")
-      .catchError((e) {
-    log("An error was occured while fetching app version: $e");
-    return appVersion = "<unknown>+<0>$debugBuildSuffix";
-  }));
+  unawaited(
+    PackageInfo.fromPlatform()
+        .then(
+          (value) =>
+              appVersion =
+                  "${value.version}+${value.buildNumber}$debugBuildSuffix",
+        )
+        .catchError((e) {
+          _startupLog.warning(
+            "An error was occured while fetching app version",
+            e,
+          );
+          return appVersion = "<unknown>+<0>$debugBuildSuffix";
+        }),
+  );
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
@@ -61,20 +81,40 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
+  unawaited(NotificationsService().initialize());
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
+
+  unawaited(
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      _startupLog.severe("Failed to synchronize notifications", error);
+    }),
+  );
+  unawaited(
+    TransactionsService().clearStaleTrashBinEntries().catchError((error) {
+      _startupLog.severe("Failed to clear stale trash bin entries", error);
+    }),
+  );
 
   ExchangeRatesService().init();
 
   try {
     LocalPreferences().privacyMode.addListener(
-          () => LocalPreferences().sessionPrivacyMode.set(
-                LocalPreferences().privacyMode.get(),
-              ),
-        );
+      () => TransitiveLocalPreferences().sessionPrivacyMode.set(
+        LocalPreferences().privacyMode.get(),
+      ),
+    );
   } catch (e) {
-    log("Failed to add listener updates prefs.sessionPrivacyMode");
+    _startupLog.severe(
+      "Failed to add listener updates prefs.sessionPrivacyMode",
+    );
+  }
+
+  try {
+    UserPreferencesService().initialize();
+  } catch (e) {
+    _startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
   runApp(const Flow());
@@ -98,9 +138,10 @@ class FlowState extends State<Flow> {
 
   ThemeMode get themeMode => _themeMode;
 
-  bool get useDarkTheme => (_themeMode == ThemeMode.system
-      ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
-      : (_themeMode == ThemeMode.dark));
+  bool get useDarkTheme =>
+      (_themeMode == ThemeMode.system
+          ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
+          : (_themeMode == ThemeMode.dark));
 
   @override
   void initState() {
@@ -110,12 +151,10 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().themeName.addListener(_reloadTheme);
+    LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
-    ObjectBox().box<Transaction>().query().watch().listen((event) {
-      ObjectBox().invalidateAccountsTab();
-    });
+    TransactionsService().addListener(_synchronizePlannedNotifications);
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
@@ -123,13 +162,18 @@ class FlowState extends State<Flow> {
       // To migrate profile image path from old to new (since 0.10.0)
       nonImportantMigrateProfileImagePath();
     }
+    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
+    migrateLocalPrefsRequirePendingTransactionConfrimation();
   }
 
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().themeName.removeListener(_reloadTheme);
+    LocalPreferences().theme.themeName.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+
+    TransactionsService().removeListener(_synchronizePlannedNotifications);
+
     super.dispose();
   }
 
@@ -158,16 +202,11 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().themeName.value;
-    final bool oled = LocalPreferences().enableOledTheme.get();
+    final String? themeName = LocalPreferences().theme.themeName.value;
 
-    log("[Theme] Reloading theme $themeName");
+    _themeLog.info("Reloading $themeName");
 
-    FlowColorScheme theme = getTheme(
-      themeName,
-      preferDark: useDarkTheme,
-      preferOled: oled,
-    );
+    FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
     setState(() {
       _themeMode = theme.mode;
@@ -179,27 +218,33 @@ class FlowState extends State<Flow> {
     final List<Locale> systemLocales =
         WidgetsBinding.instance.platformDispatcher.locales;
 
-    final List<Locale> favorableLocales = systemLocales
-        .where(
-          (locale) => FlowLocalizations.supportedLanguages.any(
-              (flowSupportedLocalization) =>
-                  flowSupportedLocalization.languageCode ==
-                  locale.languageCode),
-        )
-        .toList();
+    final List<Locale> favorableLocales =
+        systemLocales
+            .where(
+              (locale) => FlowLocalizations.supportedLanguages.any(
+                (flowSupportedLocalization) =>
+                    flowSupportedLocalization.languageCode ==
+                    locale.languageCode,
+              ),
+            )
+            .toList();
 
-    final Locale overriddenLocale = LocalPreferences().localeOverride.value ??
+    final Locale overriddenLocale =
+        LocalPreferences().localeOverride.value ??
         favorableLocales.firstOrNull ??
         _locale;
 
-    _locale =
-        Locale(overriddenLocale.languageCode, overriddenLocale.countryCode);
+    _locale = Locale(
+      overriddenLocale.languageCode,
+      overriddenLocale.countryCode,
+    );
     Moment.setGlobalLocalization(
       MomentLocalizations.byLocale(overriddenLocale.code) ??
           MomentLocalizations.enUS(),
     );
 
     Intl.defaultLocale = overriddenLocale.code;
+
     setState(() {});
   }
 
@@ -207,5 +252,11 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       LocalPreferences().getPrimaryCurrency(),
     );
+  }
+
+  void _synchronizePlannedNotifications() {
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      _startupLog.severe("Failed to synchronize notifications", error);
+    });
   }
 }

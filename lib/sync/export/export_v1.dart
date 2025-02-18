@@ -3,6 +3,7 @@ import "dart:developer";
 
 import "package:csv/csv.dart";
 import "package:flow/constants.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
@@ -10,6 +11,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/sync/export/headers/header_v1.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:intl/intl.dart";
@@ -19,8 +21,9 @@ Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
   log("[Flow Sync] Initiating export, version code = $versionCode");
 
-  final List<Transaction> transactions =
-      await ObjectBox().box<Transaction>().getAllAsync();
+  final List<Transaction> transactions = await TransactionsService().findMany(
+    TransactionFilter.all,
+  );
   log("[Flow Sync] Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
@@ -54,7 +57,9 @@ Future<String> generateBackupContentV1() async {
 }
 
 Future<String> generateCSVContentV1() async {
-  final transaction = await ObjectBox().box<Transaction>().getAllAsync();
+  final transactions = await TransactionsService().findMany(
+    TransactionFilter.all,
+  );
 
   final headers = [
     CSVHeadersV1.uuid.localizedName,
@@ -77,39 +82,37 @@ Future<String> generateCSVContentV1() async {
 
   final Map<String, int> numberOfDecimalsToKeep = {};
 
-  final transformed = transaction
-      .map(
-        (e) => [
-          e.uuid,
-          e.title ?? "",
-          e.description ?? "",
-          e.amount.toStringAsFixed(
-            numberOfDecimalsToKeep[e.currency] ??=
-                NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
-          ),
-          e.currency,
-          e.account.target?.name,
-          e.account.target?.uuid,
-          e.category.target?.name,
-          e.category.target?.uuid,
-          e.type.localizedName,
-          e.transactionSubtype?.localizedName,
-          e.createdDate.format(
-            payload: "LLL",
-            forceLocal: true,
-          ),
-          e.transactionDate.format(
-            payload: "LLL",
-            forceLocal: true,
-          ),
-          e.extensions.geo?.latitude?.toString() ?? "",
-          e.extensions.geo?.longitude?.toString() ?? "",
-          e.extra,
-        ],
-      )
-      .toList()
-    ..insert(0, headers);
+  final transformed =
+      transactions
+          .map(
+            (e) => [
+              e.uuid,
+              e.title ?? "",
+              e.description ?? "",
+              e.amount.toStringAsFixed(
+                numberOfDecimalsToKeep[e.currency] ??=
+                    NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
+              ),
+              e.currency,
+              e.account.target?.name,
+              e.account.target?.uuid,
+              e.category.target?.name,
+              e.category.target?.uuid,
+              e.type.localizedName,
+              e.transactionSubtype?.localizedName,
+              e.createdDate.format(payload: "LLL", forceLocal: true),
+              e.transactionDate.format(payload: "LLL", forceLocal: true),
+              e.extensions.geo?.latitude?.toString() ?? "",
+              e.extensions.geo?.longitude?.toString() ?? "",
+              e.extra,
+            ],
+          )
+          .toList()
+        ..insert(0, headers);
 
-  return const ListToCsvConverter()
-      .convert(transformed, convertNullTo: "", eol: "\n");
+  return const ListToCsvConverter().convert(
+    transformed,
+    convertNullTo: "",
+    eol: "\n",
+  );
 }

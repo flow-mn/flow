@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -20,11 +20,9 @@ class _HapticsState extends State<Haptics> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SwitchListTile.adaptive(
+        SwitchListTile /*.adaptive*/ (
           secondary: const Icon(Symbols.vibration_rounded),
-          title: Text(
-            "preferences.hapticFeedback.description".t(context),
-          ),
+          title: Text("preferences.hapticFeedback.description".t(context)),
           value: enableHapticFeedback,
           onChanged: updateEnableHapticFeedback,
         ),

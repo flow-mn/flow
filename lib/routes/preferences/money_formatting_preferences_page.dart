@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flutter/material.dart";
 
 class MoneyFormattingPreferencesPage extends StatefulWidget {
@@ -18,31 +18,35 @@ class _MoneyFormattingPreferencesPageState
     final bool useCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.moneyFormatting".t(context)),
-      ),
+      appBar: AppBar(title: Text("preferences.moneyFormatting".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
-                title:
-                    Text("preferences.moneyFormatting.preferFull".t(context)),
+              CheckboxListTile /*.adaptive*/ (
+                title: Text(
+                  "preferences.moneyFormatting.preferFull".t(context),
+                ),
                 subtitle: Text(
-                    "preferences.moneyFormatting.preferFull.description"
-                        .t(context)),
+                  "preferences.moneyFormatting.preferFull.description".t(
+                    context,
+                  ),
+                ),
                 value: preferFullAmounts,
                 onChanged: updatePreferFullAmounts,
               ),
               const SizedBox(height: 16.0),
-              CheckboxListTile.adaptive(
+              CheckboxListTile /*.adaptive*/ (
                 title: Text(
-                    "preferences.moneyFormatting.useCurrencySymbol".t(context)),
+                  "preferences.moneyFormatting.useCurrencySymbol".t(context),
+                ),
                 subtitle: Text(
-                    "preferences.moneyFormatting.useCurrencySymbol.description"
-                        .t(context)),
+                  "preferences.moneyFormatting.useCurrencySymbol.description".t(
+                    context,
+                  ),
+                ),
                 value: useCurrencySymbol,
                 onChanged: updateUseCurrencySymbol,
               ),

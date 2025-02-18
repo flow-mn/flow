@@ -14,6 +14,4 @@ FrecencyGroup _$FrecencyGroupFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$FrecencyGroupToJson(FrecencyGroup instance) =>
-    <String, dynamic>{
-      'data': instance.data,
-    };
+    <String, dynamic>{'data': instance.data};

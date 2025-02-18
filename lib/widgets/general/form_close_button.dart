@@ -10,15 +10,29 @@ import "package:material_symbols_icons/symbols.dart";
 /// in which the user can choose to discard the unsaved changes.
 class FormCloseButton extends StatelessWidget {
   final bool Function() canPop;
+  final bool center;
 
-  const FormCloseButton({super.key, required this.canPop});
+  const FormCloseButton({super.key, required this.canPop, this.center = true});
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => onPressed(context),
-      icon: const Icon(Symbols.close_rounded),
+    final Widget child = BackButtonListener(
+      onBackButtonPressed: () async {
+        onPressed(context);
+
+        return true;
+      },
+      child: IconButton(
+        onPressed: () => onPressed(context),
+        icon: const Icon(Symbols.close_rounded),
+      ),
     );
+
+    if (center) {
+      return Center(child: child);
+    }
+
+    return child;
   }
 
   void onPressed(BuildContext context) async {

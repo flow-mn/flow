@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -16,7 +16,7 @@ class _PrivacyState extends State<Privacy> {
   Widget build(BuildContext context) {
     final bool privacyMode = LocalPreferences().privacyMode.get();
 
-    return CheckboxListTile.adaptive(
+    return SwitchListTile /*.adaptive*/ (
       secondary: const Icon(Symbols.password_rounded),
       title: Text("preferences.privacyMode.enableAtStartup".t(context)),
       value: privacyMode,

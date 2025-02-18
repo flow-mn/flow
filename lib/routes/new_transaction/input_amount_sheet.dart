@@ -1,7 +1,7 @@
 import "dart:math";
 
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/new_transaction/amount_text.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart";
 import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
@@ -15,12 +15,7 @@ import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-enum CalculatorOperation {
-  add,
-  subtract,
-  multiply,
-  divide,
-}
+enum CalculatorOperation { add, subtract, multiply, divide }
 
 class InputAmountSheet extends StatefulWidget {
   static const double maxValue = 10e13;
@@ -85,7 +80,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   void initState() {
     super.initState();
 
-    _numberOfDecimals = NumberFormat.simpleCurrency(
+    _numberOfDecimals =
+        NumberFormat.simpleCurrency(
           name: widget.currency ?? LocalPreferences().getPrimaryCurrency(),
         ).decimalDigits ??
         2;
@@ -117,100 +113,105 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         child: ModalSheet.scrollable(
           scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.8,
           topSpacing: 0.0,
-          child: LayoutBuilder(builder: (context, size) {
-            final double width = min(size.maxWidth, 440.0);
+          child: LayoutBuilder(
+            builder: (context, size) {
+              final double width = min(size.maxWidth, 440.0);
 
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints.tightFor(width: width),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16.0),
-                    if (widget.title != null) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
-                          widget.title!,
-                          style: context.textTheme.headlineSmall,
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(width: width),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16.0),
+                      if (widget.title != null) ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            widget.title!,
+                            style: context.textTheme.headlineSmall,
+                          ),
                         ),
+                        const SizedBox(height: 12.0),
+                      ],
+                      AmountText(
+                        value: value,
+                        currency: widget.currency,
+                        focusNode: _amountSelectionAreaFocusNode,
+                        inputtingDecimal: _inputtingDecimal,
+                        numberOfDecimals: _numberOfDecimals,
+                        hideCurrencySymbol: widget.hideCurrencySymbol,
+                        onPaste: (text) => handlePaste(text, true),
                       ),
-                      const SizedBox(height: 12.0),
-                    ],
-                    AmountText(
-                      value: value,
-                      currency: widget.currency,
-                      focusNode: _amountSelectionAreaFocusNode,
-                      inputtingDecimal: _inputtingDecimal,
-                      numberOfDecimals: _numberOfDecimals,
-                      hideCurrencySymbol: widget.hideCurrencySymbol,
-                      onPaste: (text) => handlePaste(text, true),
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Numpad
-                    Numpad(
-                      width: width,
-                      children: [
-                        if (_calculatorMode) ...getCalculatorRow(),
-                        ..._getNumberRow(0),
-                        _calculatorMode
-                            ? CalculatorButton(
+                      const SizedBox(height: 16.0),
+                      // Numpad
+                      Numpad(
+                        width: width,
+                        children: [
+                          if (_calculatorMode) ...getCalculatorRow(),
+                          ..._getNumberRow(0),
+                          _calculatorMode
+                              ? CalculatorButton(
                                 operation: CalculatorOperation.multiply,
                                 onTap: setCalculatorOperation,
                                 currentOperation: _currentOperation,
                               )
-                            : NumpadButton(
+                              : NumpadButton(
                                 onTap: () => removeDigit(),
                                 onLongPress: () => _reset(),
                                 mainAxisCellCount: widget.lockSign ? 2 : 1,
                                 child: const Icon(Symbols.backspace_rounded),
                               ),
-                        ..._getNumberRow(1),
-                        if (!widget.lockSign && !_calculatorMode)
-                          NumpadButton(
-                            child: widget.allowNegative
-                                ? const Icon(Symbols.remove_rounded)
-                                : const Icon(Symbols.add_rounded),
-                            onTap: () => _negate(),
-                          ),
-                        if (_calculatorMode)
-                          CalculatorButton(
-                            operation: CalculatorOperation.add,
-                            onTap: setCalculatorOperation,
-                            currentOperation: _currentOperation,
-                          ),
-                        ..._getNumberRow(2),
-                        widget.hasCalculator
-                            ? (_calculatorMode
-                                ? CalculatorButton(
+                          ..._getNumberRow(1),
+                          if (!widget.lockSign && !_calculatorMode)
+                            NumpadButton(
+                              child:
+                                  widget.allowNegative
+                                      ? const Icon(Symbols.remove_rounded)
+                                      : const Icon(Symbols.add_rounded),
+                              onTap: () => _negate(),
+                            ),
+                          if (_calculatorMode)
+                            CalculatorButton(
+                              operation: CalculatorOperation.add,
+                              onTap: setCalculatorOperation,
+                              currentOperation: _currentOperation,
+                            ),
+                          ..._getNumberRow(2),
+                          widget.hasCalculator
+                              ? (_calculatorMode
+                                  ? CalculatorButton(
                                     operation: CalculatorOperation.subtract,
                                     onTap: setCalculatorOperation,
                                     currentOperation: _currentOperation,
                                   )
-                                : NumpadButton(
+                                  : NumpadButton(
                                     onTap: () => calculatorMode(),
-                                    child:
-                                        const Icon(Symbols.calculate_rounded),
+                                    child: const Icon(
+                                      Symbols.calculate_rounded,
+                                    ),
                                   ))
-                            : _doneButton(context),
-                        NumpadButton(
-                          onTap: () => insertDigit(0),
-                          crossAxisCellCount: 2,
-                          child: const Text("0"),
-                        ),
-                        NumpadButton(
-                          child: Text(
-                              getDecimalSeparatorForCurrency(widget.currency)),
-                          onTap: () => decimalMode(),
-                        ),
-                        if (widget.hasCalculator) _doneButton(context),
-                      ],
-                    ),
-                    const SizedBox(height: 16.0),
-                  ],
+                              : _doneButton(context),
+                          NumpadButton(
+                            onTap: () => insertDigit(0),
+                            crossAxisCellCount: 2,
+                            child: const Text("0"),
+                          ),
+                          NumpadButton(
+                            child: Text(
+                              getDecimalSeparatorForCurrency(widget.currency),
+                            ),
+                            onTap: () => decimalMode(),
+                          ),
+                          if (widget.hasCalculator) _doneButton(context),
+                        ],
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -301,9 +302,10 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     if (_inputtingDecimal) {
       final bool hasAvailableDigits = value.decimalLength < _numberOfDecimals;
 
-      final bool canAppendZero = (n == 0 && value.decimalPart == 0)
-          ? (value.decimalLength + 1 < _numberOfDecimals)
-          : true;
+      final bool canAppendZero =
+          (n == 0 && value.decimalPart == 0)
+              ? (value.decimalLength + 1 < _numberOfDecimals)
+              : true;
 
       if (hasAvailableDigits && canAppendZero) {
         value = value.appendDecimal(n);
@@ -398,9 +400,10 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void _updateAmountFromNumber(num initialAmount) {
-    value = InputValue.fromDouble(initialAmount.toDouble(),
-            maxNumberOfDecimals: _numberOfDecimals)
-        .signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
+    value = InputValue.fromDouble(
+      initialAmount.toDouble(),
+      maxNumberOfDecimals: _numberOfDecimals,
+    ).signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
 
     _inputtingDecimal = value.decimalLength > 0;
   }
@@ -482,17 +485,16 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     }
 
     value = switch (_currentOperation) {
-      CalculatorOperation.add ||
-      CalculatorOperation.subtract =>
+      CalculatorOperation.add || CalculatorOperation.subtract =>
         _operationCache! *
             InputValue.fromDouble(
               value.currentAmount * 0.01,
               maxNumberOfDecimals: _numberOfDecimals,
             ),
       _ => InputValue.fromDouble(
-          value.currentAmount * 0.01,
-          maxNumberOfDecimals: _numberOfDecimals,
-        )
+        value.currentAmount * 0.01,
+        maxNumberOfDecimals: _numberOfDecimals,
+      ),
     };
     setState(() {});
   }
@@ -532,41 +534,39 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   Map<ShortcutActivator, VoidCallback> get bindings => {
-        const CharacterActivator("/"): () => _shortcutDivideKey(),
-        const CharacterActivator("*"): () => _shortcutMultiplyKey(),
-        const CharacterActivator("+"): () => _shortcutPlusKey(),
-        const CharacterActivator("-"): () => _shortcutMinusKey(),
-        const CharacterActivator("%"): () => _shortcutPercentKey(),
-        const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
-        const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
-        const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
-        const SingleActivator(LogicalKeyboardKey.numpad2): () => insertDigit(2),
-        const SingleActivator(LogicalKeyboardKey.digit3): () => insertDigit(3),
-        const SingleActivator(LogicalKeyboardKey.numpad3): () => insertDigit(3),
-        const SingleActivator(LogicalKeyboardKey.digit4): () => insertDigit(4),
-        const SingleActivator(LogicalKeyboardKey.numpad4): () => insertDigit(4),
-        const SingleActivator(LogicalKeyboardKey.digit5): () => insertDigit(5),
-        const SingleActivator(LogicalKeyboardKey.numpad5): () => insertDigit(5),
-        const SingleActivator(LogicalKeyboardKey.digit6): () => insertDigit(6),
-        const SingleActivator(LogicalKeyboardKey.numpad6): () => insertDigit(6),
-        const SingleActivator(LogicalKeyboardKey.digit7): () => insertDigit(7),
-        const SingleActivator(LogicalKeyboardKey.numpad7): () => insertDigit(7),
-        const SingleActivator(LogicalKeyboardKey.digit8): () => insertDigit(8),
-        const SingleActivator(LogicalKeyboardKey.numpad8): () => insertDigit(8),
-        const SingleActivator(LogicalKeyboardKey.digit9): () => insertDigit(9),
-        const SingleActivator(LogicalKeyboardKey.numpad9): () => insertDigit(9),
-        const SingleActivator(LogicalKeyboardKey.digit0): () => insertDigit(0),
-        const SingleActivator(LogicalKeyboardKey.numpad0): () => insertDigit(0),
-        const SingleActivator(LogicalKeyboardKey.period): () => decimalMode(),
-        const SingleActivator(LogicalKeyboardKey.numpadDecimal): () =>
-            decimalMode(),
-        const SingleActivator(LogicalKeyboardKey.enter): () => _saveOrPop(),
-        const SingleActivator(LogicalKeyboardKey.numpadEnter): () =>
-            _saveOrPop(),
-        const SingleActivator(LogicalKeyboardKey.backspace): () =>
-            removeDigit(),
-        osSingleActivator(LogicalKeyboardKey.backspace): () => _reset(),
-        osSingleActivator(LogicalKeyboardKey.keyC): () => _copy(),
-        osSingleActivator(LogicalKeyboardKey.keyV): () => _paste(),
-      };
+    const CharacterActivator("/"): () => _shortcutDivideKey(),
+    const CharacterActivator("*"): () => _shortcutMultiplyKey(),
+    const CharacterActivator("+"): () => _shortcutPlusKey(),
+    const CharacterActivator("-"): () => _shortcutMinusKey(),
+    const CharacterActivator("%"): () => _shortcutPercentKey(),
+    const SingleActivator(LogicalKeyboardKey.digit1): () => insertDigit(1),
+    const SingleActivator(LogicalKeyboardKey.numpad1): () => insertDigit(1),
+    const SingleActivator(LogicalKeyboardKey.digit2): () => insertDigit(2),
+    const SingleActivator(LogicalKeyboardKey.numpad2): () => insertDigit(2),
+    const SingleActivator(LogicalKeyboardKey.digit3): () => insertDigit(3),
+    const SingleActivator(LogicalKeyboardKey.numpad3): () => insertDigit(3),
+    const SingleActivator(LogicalKeyboardKey.digit4): () => insertDigit(4),
+    const SingleActivator(LogicalKeyboardKey.numpad4): () => insertDigit(4),
+    const SingleActivator(LogicalKeyboardKey.digit5): () => insertDigit(5),
+    const SingleActivator(LogicalKeyboardKey.numpad5): () => insertDigit(5),
+    const SingleActivator(LogicalKeyboardKey.digit6): () => insertDigit(6),
+    const SingleActivator(LogicalKeyboardKey.numpad6): () => insertDigit(6),
+    const SingleActivator(LogicalKeyboardKey.digit7): () => insertDigit(7),
+    const SingleActivator(LogicalKeyboardKey.numpad7): () => insertDigit(7),
+    const SingleActivator(LogicalKeyboardKey.digit8): () => insertDigit(8),
+    const SingleActivator(LogicalKeyboardKey.numpad8): () => insertDigit(8),
+    const SingleActivator(LogicalKeyboardKey.digit9): () => insertDigit(9),
+    const SingleActivator(LogicalKeyboardKey.numpad9): () => insertDigit(9),
+    const SingleActivator(LogicalKeyboardKey.digit0): () => insertDigit(0),
+    const SingleActivator(LogicalKeyboardKey.numpad0): () => insertDigit(0),
+    const SingleActivator(LogicalKeyboardKey.period): () => decimalMode(),
+    const SingleActivator(LogicalKeyboardKey.numpadDecimal):
+        () => decimalMode(),
+    const SingleActivator(LogicalKeyboardKey.enter): () => _saveOrPop(),
+    const SingleActivator(LogicalKeyboardKey.numpadEnter): () => _saveOrPop(),
+    const SingleActivator(LogicalKeyboardKey.backspace): () => removeDigit(),
+    osSingleActivator(LogicalKeyboardKey.backspace): () => _reset(),
+    osSingleActivator(LogicalKeyboardKey.keyC): () => _copy(),
+    osSingleActivator(LogicalKeyboardKey.keyV): () => _paste(),
+  };
 }

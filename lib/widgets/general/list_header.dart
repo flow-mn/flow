@@ -18,10 +18,7 @@ class ListHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Text(
-        title,
-        style: style ?? context.textTheme.titleSmall,
-      ),
+      child: Text(title, style: style ?? context.textTheme.titleSmall),
     );
   }
 }

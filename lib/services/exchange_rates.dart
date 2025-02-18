@@ -3,7 +3,7 @@ import "dart:developer";
 import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/exchange_rates_set.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flutter/widgets.dart";
 import "package:http/http.dart" as http;
 import "package:moment_dart/moment_dart.dart";
@@ -32,8 +32,9 @@ class ExchangeRatesService {
   }
 
   ExchangeRates? getPrimaryCurrencyRates() {
-    return exchangeRatesCache.value
-        ?.get(LocalPreferences().getPrimaryCurrency());
+    return exchangeRatesCache.value?.get(
+      LocalPreferences().getPrimaryCurrency(),
+    );
   }
 
   Future<ExchangeRates> fetchRates(
@@ -52,16 +53,22 @@ class ExchangeRatesService {
     Map<String, dynamic>? jsonResponse;
 
     try {
-      final response = await http.get(Uri.parse(
-          "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.json"));
+      final response = await http.get(
+        Uri.parse(
+          "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.json",
+        ),
+      );
       jsonResponse = jsonDecode(response.body);
     } catch (e) {
       log("Failed to fetch exchange rates from side source", error: e);
     }
 
     try {
-      final response = await http.get(Uri.parse(
-          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.json"));
+      final response = await http.get(
+        Uri.parse(
+          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.json",
+        ),
+      );
       jsonResponse = jsonDecode(response.body);
     } catch (e) {
       log("Failed to fetch exchange rates from main source", error: e);
@@ -85,8 +92,10 @@ class ExchangeRatesService {
     try {
       log("[ExchangeRates] Fetching exchange rates for $baseCurrency");
 
-      final ExchangeRates exchangeRates =
-          await fetchRates(baseCurrency, dateTime);
+      final ExchangeRates exchangeRates = await fetchRates(
+        baseCurrency,
+        dateTime,
+      );
 
       return exchangeRates;
     } catch (e) {
@@ -103,9 +112,7 @@ class ExchangeRatesService {
     ExchangeRatesSet? current = exchangeRatesCache.value;
 
     if (current == null) {
-      current = ExchangeRatesSet({
-        baseCurrency: exchangeRates,
-      });
+      current = ExchangeRatesSet({baseCurrency: exchangeRates});
     } else {
       current.set(baseCurrency, exchangeRates);
     }

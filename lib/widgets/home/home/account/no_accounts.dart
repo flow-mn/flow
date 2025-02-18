@@ -31,10 +31,7 @@ class NoAccounts extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Button(
-              trailing: const Icon(
-                Symbols.add_rounded,
-                weight: 600.0,
-              ),
+              trailing: const Icon(Symbols.add_rounded, weight: 600.0),
               child: Text("account.new".t(context)),
               onTap: () => context.push("/account/new"),
             ),

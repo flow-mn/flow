@@ -27,9 +27,10 @@ class GreetingsBar extends StatelessWidget {
             ProfilePicture(
               filePath: profile?.imagePath,
               size: 36.0,
-              onTap: profile != null
-                  ? () => context.push("/profile/${profile.id}")
-                  : null,
+              onTap:
+                  profile != null
+                      ? () => context.push("/profile/${profile.id}")
+                      : null,
             ),
             const SizedBox(width: 12.0),
             Expanded(

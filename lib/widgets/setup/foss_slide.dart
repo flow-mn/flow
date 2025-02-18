@@ -53,15 +53,17 @@ class FossSlide extends StatelessWidget {
                     height: 1.0,
                     color: context.colorScheme.primary,
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = (() => openUrl(flowGitHubRepoLink)),
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = (() => openUrl(flowGitHubRepoLink)),
                 ),
                 const TextSpan(text: " "),
                 TextSpan(
                   text: "setup.slides.foss.seeRepo".t(context),
                   style: TextStyle(color: context.colorScheme.primary),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = (() => openUrl(flowGitHubRepoLink)),
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = (() => openUrl(flowGitHubRepoLink)),
                 ),
               ],
             ),

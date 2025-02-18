@@ -5,7 +5,8 @@ import "package:flow/data/money_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/home/info_card.dart";
@@ -35,43 +36,46 @@ class _FlowCardsState extends State<FlowCards> {
     abbreviate = !LocalPreferences().preferFullAmounts.get();
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
 
-    excludeTransferFromFlow = LocalPreferences().excludeTransferFromFlow.get();
-    LocalPreferences()
-        .excludeTransferFromFlow
-        .addListener(_updateExcludeTransferFromFlow);
+    excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
+    UserPreferencesService().valueNotiifer.addListener(
+      _updateExcludeTransferFromFlow,
+    );
   }
 
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
-    LocalPreferences()
-        .excludeTransferFromFlow
-        .removeListener(_updateExcludeTransferFromFlow);
+    UserPreferencesService().valueNotiifer.removeListener(
+      _updateExcludeTransferFromFlow,
+    );
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MoneyFlow? flow = excludeTransferFromFlow
-        ? widget.transactions?.nonPending.nonTransfers.flow
-        : widget.transactions?.nonPending.flow;
+    final MoneyFlow? flow =
+        excludeTransferFromFlow
+            ? widget.transactions?.nonPending.nonTransfers.flow
+            : widget.transactions?.nonPending.flow;
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final Money? totalExpense = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getExpenseByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalExpense(exchangeRates, primaryCurrency),
+      (MoneyFlow moneyFlow, null) => moneyFlow.getExpenseByCurrency(
+        primaryCurrency,
+      ),
+      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) => moneyFlow
+          .getTotalExpense(exchangeRates, primaryCurrency),
     };
 
     final Money? totalIncome = switch ((flow, widget.rates)) {
       (null, _) => null,
-      (MoneyFlow moneyFlow, null) =>
-        moneyFlow.getIncomeByCurrency(primaryCurrency),
-      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) =>
-        moneyFlow.getTotalIncome(exchangeRates, primaryCurrency),
+      (MoneyFlow moneyFlow, null) => moneyFlow.getIncomeByCurrency(
+        primaryCurrency,
+      ),
+      (MoneyFlow moneyFlow, ExchangeRates exchangeRates) => moneyFlow
+          .getTotalIncome(exchangeRates, primaryCurrency),
     };
 
     return Row(
@@ -131,7 +135,7 @@ class _FlowCardsState extends State<FlowCards> {
   }
 
   _updateExcludeTransferFromFlow() {
-    excludeTransferFromFlow = !LocalPreferences().excludeTransferFromFlow.get();
+    excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
 
     if (mounted) setState(() {});
   }

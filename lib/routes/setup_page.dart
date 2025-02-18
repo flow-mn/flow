@@ -47,11 +47,7 @@ class _SetupPageState extends State<SetupPage> {
       body: SafeArea(
         child: PageView(
           controller: _pageController,
-          children: const [
-            WelcomeSlide(),
-            FossSlide(),
-            OfflineSlide(),
-          ],
+          children: const [WelcomeSlide(), FossSlide(), OfflineSlide()],
         ),
       ),
       bottomNavigationBar: SafeArea(
@@ -70,20 +66,23 @@ class _SetupPageState extends State<SetupPage> {
                   radius: 12.0,
                   spacing: 6.0,
                 ),
-                onDotClicked: (index) => _pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                ),
+                onDotClicked:
+                    (index) => _pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                    ),
               ),
               const Spacer(),
               Button(
                 onTap: next,
                 trailing: const Icon(Symbols.chevron_right_rounded),
-                child: Text(lastSlide
-                    ? "setup.getStarted".t(context)
-                    : "setup.next".t(context)),
-              )
+                child: Text(
+                  lastSlide
+                      ? "setup.getStarted".t(context)
+                      : "setup.next".t(context),
+                ),
+              ),
             ],
           ),
         ),

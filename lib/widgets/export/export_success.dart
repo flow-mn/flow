@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
@@ -27,7 +29,8 @@ class ExportSuccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showFilePath = flowDebugMode || isDesktop();
+    final bool showFilePath =
+        flowDebugMode || Platform.isWindows || Platform.isLinux;
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -54,15 +57,18 @@ class ExportSuccess extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                        text: "sync.export.success.filePath[0]".t(context)),
+                      text: "sync.export.success.filePath[0]".t(context),
+                    ),
                     TextSpan(
                       text: '"$filePath"',
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => copyPath(context),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () => copyPath(context),
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     TextSpan(
-                        text: "sync.export.success.filePath[1]".t(context)),
+                      text: "sync.export.success.filePath[1]".t(context),
+                    ),
                   ],
                   style: context.textTheme.bodyMedium?.semi(context),
                 ),
@@ -72,17 +78,13 @@ class ExportSuccess extends StatelessWidget {
             ),
           const Spacer(),
           const SizedBox(height: 16.0),
-          InfoText(
-            child: Text("sync.export.onDeviceWarning".t(context)),
-          ),
+          InfoText(child: Text("sync.export.onDeviceWarning".t(context))),
           const SizedBox(height: 24.0),
           Button(
             onTap: shareFn,
             leading: const Icon(Symbols.save_alt_rounded),
-            child: Text(
-              "sync.export.save".t(context, mode.name),
-            ),
-          )
+            child: Text("sync.export.save".t(context, mode.name)),
+          ),
         ],
       ),
     );

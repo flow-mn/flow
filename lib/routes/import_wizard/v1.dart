@@ -30,46 +30,45 @@ class _ImportWizardV1PageState extends State<ImportWizardV1Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("sync.import".t(context)),
-      ),
+      appBar: AppBar(title: Text("sync.import".t(context))),
       body: SafeArea(
         child: ValueListenableBuilder(
           valueListenable: importer.progressNotifier,
-          builder: (context, value, child) => switch (value) {
-            ImportV1Progress.waitingConfirmation => BackupInfo(
-                importer: importer,
-                onClickStart: _start,
-              ),
-            ImportV1Progress.error => Text(error.toString()),
-            ImportV1Progress.success => ImportSuccess(
-                onDone: () {
-                  if (widget.setupMode) {
-                    GoRouter.of(context).popUntil(
-                      (route) => route.path == "/setup",
-                    );
-
-                    context.pushReplacement("/");
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            _ => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Spinner.center(),
-                    Center(
-                      child: Text(
-                        value.localizedNameContext(context),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+          builder:
+              (context, value, child) => switch (value) {
+                ImportV1Progress.waitingConfirmation => BackupInfo(
+                  importer: importer,
+                  onClickStart: _start,
                 ),
-              ),
-          },
+                ImportV1Progress.error => Text(error.toString()),
+                ImportV1Progress.success => ImportSuccess(
+                  onDone: () {
+                    if (widget.setupMode) {
+                      GoRouter.of(
+                        context,
+                      ).popUntil((route) => route.path == "/setup");
+
+                      context.pushReplacement("/");
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
+                _ => Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Spinner.center(),
+                      Center(
+                        child: Text(
+                          value.localizedNameContext(context),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              },
         ),
       ),
     );

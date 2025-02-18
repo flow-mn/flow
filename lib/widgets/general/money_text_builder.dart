@@ -1,5 +1,5 @@
 import "package:flow/data/money.dart";
-import "package:flow/prefs.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
 
@@ -10,12 +10,9 @@ class MoneyTextBuilder extends StatefulWidget {
 
   final String Function(
     Money money,
-    ({
-      bool abbreviate,
-      bool obscure,
-      bool useCurrencySymbol,
-    }) options,
-  )? customFormatter;
+    ({bool abbreviate, bool obscure, bool useCurrencySymbol}) options,
+  )?
+  customFormatter;
 
   /// Defaults to [false]
   final bool abbreviate;
@@ -70,10 +67,12 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
     overrideUseCurrencySymbol = widget.overrideUseCurrencySymbol;
     abbreviate = widget.abbreviate;
 
-    LocalPreferences().sessionPrivacyMode.addListener(_privacyModeUpdate);
+    TransitiveLocalPreferences().sessionPrivacyMode.addListener(
+      _privacyModeUpdate,
+    );
     LocalPreferences().useCurrencySymbol.addListener(_useCurrencySymbolUpdate);
 
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
   }
 
@@ -96,10 +95,12 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
 
   @override
   void dispose() {
-    LocalPreferences().sessionPrivacyMode.removeListener(_privacyModeUpdate);
-    LocalPreferences()
-        .useCurrencySymbol
-        .removeListener(_useCurrencySymbolUpdate);
+    TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
+      _privacyModeUpdate,
+    );
+    LocalPreferences().useCurrencySymbol.removeListener(
+      _useCurrencySymbolUpdate,
+    );
 
     super.dispose();
   }
@@ -112,7 +113,7 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
   }
 
   _privacyModeUpdate() {
-    globalPrivacyMode = LocalPreferences().sessionPrivacyMode.get();
+    globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
   }
@@ -134,14 +135,11 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
         overrideUseCurrencySymbol ?? globalUseCurrencySymbol;
 
     if (widget.customFormatter != null) {
-      return widget.customFormatter!(
-        money,
-        (
-          abbreviate: abbreviate,
-          obscure: obscure,
-          useCurrencySymbol: useCurrencySymbol
-        ),
-      );
+      return widget.customFormatter!(money, (
+        abbreviate: abbreviate,
+        obscure: obscure,
+        useCurrencySymbol: useCurrencySymbol,
+      ));
     }
 
     final String text = money.formatMoney(
