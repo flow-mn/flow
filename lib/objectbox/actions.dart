@@ -515,33 +515,11 @@ extension TransactionActions on Transaction {
             "Couldn't delete transfer transaction properly due to missing transfer data",
           );
         } else {
-          final Query<Transaction> relatedTransactionQuery =
-              ObjectBox()
-                  .box<Transaction>()
-                  .query(
-                    Transaction_.uuid.equals(
-                      transfer.relatedTransactionUuid ?? Namespace.nil.value,
-                    ),
-                  )
-                  .build();
-
-          final Transaction? relatedTransaction =
-              relatedTransactionQuery.findFirst();
-
-          relatedTransactionQuery.close();
-
           try {
-            if (relatedTransaction == null) {
-              throw Exception("Related transaction not found");
-            }
-
-            relatedTransaction.isPending = !confirm;
-            if (updateTransactionDate && isPending != true) {
-              relatedTransaction.transactionDate = Moment.now();
-            }
-            ObjectBox().box<Transaction>().put(
-              relatedTransaction,
-              mode: PutMode.update,
+            TransactionsService().confirmTransactionSync(
+              transfer.relatedTransactionUuid,
+              confirm: confirm,
+              updateTransactionDate: updateTransactionDate,
             );
           } catch (e) {
             log("Couldn't delete transfer transaction properly due to: $e");
@@ -549,13 +527,11 @@ extension TransactionActions on Transaction {
         }
       }
 
-      isPending = !confirm;
-      if (updateTransactionDate && isPending != true) {
-        transactionDate = Moment.now();
-      }
-
-      TransactionsService().updateOne(this);
-      return true;
+      return TransactionsService().confirmTransactionSync(
+        this,
+        confirm: confirm,
+        updateTransactionDate: updateTransactionDate,
+      );
     } catch (e) {
       log("Failed to confirm transaction: $e");
       return false;

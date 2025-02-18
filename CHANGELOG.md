@@ -20,6 +20,7 @@
 * Slidable actions no longer preserve open panes when another opens in the same group
 * Backup history entry now shows file size with extra decimal precision (e.g., 1mb -> 1.2mb)
 * Modal pages will now respond to back buttons/gestures
+* Confirming transfers no longer leaves the other transaction stranded
 
 ### Fixes
 
