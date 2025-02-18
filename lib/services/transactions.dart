@@ -263,6 +263,28 @@ class TransactionsService {
     return true;
   }
 
+  bool confirmTransactionSync(
+    dynamic identifier, {
+    bool confirm = true,
+    bool updateTransactionDate = true,
+  }) {
+    final Transaction? transaction = findByIdentifierSync(identifier);
+
+    if (transaction == null) {
+      return false;
+    }
+
+    transaction.isPending = !confirm;
+
+    if (updateTransactionDate) {
+      transaction.transactionDate = Moment.now();
+    }
+
+    updateOneSync(transaction);
+
+    return true;
+  }
+
   Future<void> clearStaleTrashBinEntries() async {
     final int? keepDays = UserPreferencesService().trashBinRetentionDays;
 
