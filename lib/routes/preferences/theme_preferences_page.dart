@@ -29,7 +29,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     final String currentTheme = LocalPreferences().getCurrentTheme();
 
-    groups.entries
+    selectedGroup =
+        groups.entries
             .firstWhereOrNull(
               (entry) => entry.value.any((group) => group.name == currentTheme),
             )
