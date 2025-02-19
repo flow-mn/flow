@@ -435,7 +435,9 @@ class _TransactionPageState extends State<TransactionPage> {
                               ListTile(
                                 leading: Icon(Symbols.restore_page_rounded),
                                 title: Text(
-                                  "transaction.moveToTrash.restore".t(context),
+                                  "transaction.moveToTrashBin.restore".t(
+                                    context,
+                                  ),
                                 ),
                                 onTap: () => _restoreTransaction(),
                               ),
@@ -911,7 +913,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (mounted) {
       context.showToast(
-        text: "transaction.moveToTrashBin.recover.success".t(context),
+        text: "transaction.moveToTrashBin.restore.success".t(context),
       );
       pop();
     }

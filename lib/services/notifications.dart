@@ -2,6 +2,7 @@ import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
@@ -225,6 +226,11 @@ class NotificationsService {
         "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
         details,
+        payload:
+            FlowNotificationPayload(
+              itemType: FlowNotificationPayloadItemType.transaction,
+              id: transaction.id.toString(),
+            ).serialized,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } catch (e) {

@@ -94,10 +94,14 @@ class _HomePageState extends State<HomePage>
             response.payload!,
           );
 
-          if (parsed.itemType == FlowNotificationPayloadItemType.transaction) {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              context.push("/transaction/${parsed.id}");
-            });
+          switch (parsed.itemType) {
+            case FlowNotificationPayloadItemType.transaction:
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                context.push("/transaction/${parsed.id}");
+              });
+              return;
+            case FlowNotificationPayloadItemType.reminder:
+              return;
           }
         }
       } catch (e) {
