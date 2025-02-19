@@ -150,7 +150,10 @@ class NotificationsService {
   /// Upon failure, returns an empty list
   Future<List<PendingNotificationRequest>> fetchAllNotification() async {
     try {
-      return await pluginInstance.pendingNotificationRequests();
+      final List<PendingNotificationRequest> result =
+          await pluginInstance.pendingNotificationRequests();
+      _count = result.length;
+      return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
     }
@@ -159,17 +162,10 @@ class NotificationsService {
   /// Upon failure, does nothing
   Future<void> cancelAllNotifications() async {
     try {
-      return await pluginInstance.cancelAll();
+      await pluginInstance.cancelAll();
+      _count = 0;
     } catch (e) {
       // Silent fail
-    }
-  }
-
-  Future<List<PendingNotificationRequest>> getSchedules() async {
-    try {
-      return await pluginInstance.pendingNotificationRequests();
-    } catch (e) {
-      return [];
     }
   }
 
