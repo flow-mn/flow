@@ -8,7 +8,7 @@
 
 ### Fixes
 
-* Fixed notifications wasn't working on Android
+* Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
 
 ## Beta 0.12.0
 

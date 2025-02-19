@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
@@ -8,10 +7,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:timezone/data/latest.dart" as tz;
 import "package:timezone/timezone.dart";
 import "package:window_manager/window_manager.dart";
+
+final Logger _log = Logger("NotificationsService");
 
 class NotificationsService {
   static NotificationsService? _instance;
@@ -54,7 +56,7 @@ class NotificationsService {
       _timezone = await FlutterTimezone.getLocalTimezone();
     } catch (error) {
       _timezone = _fallbackTimezone;
-      log("[NotificationsService] Failed to get local timezone", error: error);
+      _log.severe("Failed to get local timezone", error);
     }
 
     try {
@@ -109,15 +111,12 @@ class NotificationsService {
                 ? launchDetails
                 : null;
 
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails",
+        _log.info(
+          "NotificationAppLaunchDetails: $notificationAppLaunchDetails",
         );
       } catch (e) {
         notificationAppLaunchDetails = null;
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails failed",
-          error: e,
-        );
+        _log.info("NotificationAppLaunchDetails failed", e);
       }
     } finally {
       _ready = true;
@@ -135,10 +134,7 @@ class NotificationsService {
           requestPermissions();
         }
       } catch (e) {
-        log(
-          "[NotificationsService] Failed to check or request permissions",
-          error: e,
-        );
+        _log.warning("Failed to check or request permissions", e);
       }
     }
 
@@ -176,7 +172,9 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      log("[NotificationsService] ignoring scheduling for past date");
+      _log.info(
+        "ignoring scheduling for past date (Transaction ${transaction.uuid} @ ${transaction.transactionDate.toIso8601String()})",
+      );
       return;
     }
 
@@ -230,7 +228,7 @@ class NotificationsService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
@@ -264,7 +262,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
@@ -284,7 +282,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to show notification", error: e);
+      _log.warning("Failed to show notification", e);
     }
   }
 
@@ -311,30 +309,21 @@ class NotificationsService {
               }
             })
             .catchError((error) {
-              log(
-                "[NotificationsService] Failed to check window focus",
-                error: error,
-              );
+              _log.warning("Failed to check window focus", error);
             });
       }
     } catch (e) {
-      log(
-        "[NotificationsService] Failed to check/request window focus",
-        error: e,
-      );
+      _log.warning("Failed to check/request window focus", e);
     }
 
     for (final callback in _registeredCallbacks) {
       try {
         callback(response);
-        log(
+        _log.info(
           "response.actionId: ${response.actionId}, ${response.id}, $response",
         );
       } catch (error) {
-        log(
-          "[NotificationsService] Failed to call notification callback",
-          error: error,
-        );
+        _log.warning("Failed to call notification callback", error);
       }
     }
   }
@@ -348,6 +337,12 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
+      await androidImplementation?.requestExactAlarmsPermission().catchError((
+        error,
+      ) {
+        _log.warning("Failed to request exact alarms permission", error);
+        return false;
+      });
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<
