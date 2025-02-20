@@ -337,17 +337,18 @@ class TransactionsService {
           0,
     );
 
-    if (earlyReminder.inSeconds > 0) {
-      await Future.wait(
-        pendingTransactions.map(
-          (transaction) =>
-              NotificationsService().scheduleForPlannedTransaction(transaction),
-        ),
-      ).catchError((error) {
-        log("Failed to schedule planned notifications", error: error);
-        return [];
-      });
-    }
+    /// If the reminder is less than a minute, don't schedule it
+    if (earlyReminder.inSeconds < 60) return;
+
+    await Future.wait(
+      pendingTransactions.map(
+        (transaction) =>
+            NotificationsService().scheduleForPlannedTransaction(transaction),
+      ),
+    ).catchError((error) {
+      log("Failed to schedule planned notifications", error: error);
+      return [];
+    });
   }
 
   /// Has no effect if it's already paused
