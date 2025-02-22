@@ -48,8 +48,7 @@ class _PendingTransactionPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              Frame(
                 child: InfoText(
                   child: Text(
                     "preferences.pendingTransactions.requireConfirmation.description"
@@ -140,7 +139,7 @@ class _PendingTransactionPreferencesPageState
                           onChanged: updateNotify,
                         ),
                         if (!notificationsPermissionGranted) ...[
-                          const SizedBox(height: 8.8),
+                          const SizedBox(height: 8.0),
                           Frame(
                             child: InfoText(
                               icon: Symbols.warning_rounded,
@@ -151,7 +150,7 @@ class _PendingTransactionPreferencesPageState
                           ),
                         ],
                         if (showSchedulingUnsupportedNotice) ...[
-                          const SizedBox(height: 8.8),
+                          const SizedBox(height: 8.0),
                           Frame(
                             child: InfoText(
                               child: Text(

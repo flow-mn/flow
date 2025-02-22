@@ -9,8 +9,8 @@ environment:
   sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
-  app_settings: ^5.1.1
-  archive: ^4.0.2
+  app_settings: ^5.2.0
+  archive: ^4.0.3
   auto_size_text: ^3.0.0
   crop_image: ^1.0.12
   cross_file: ^0.3.3+8

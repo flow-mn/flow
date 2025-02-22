@@ -1,7 +1,9 @@
+import "dart:async";
 import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
@@ -232,6 +234,97 @@ class NotificationsService {
       );
     } catch (e) {
       log("[NotificationsService] Failed to schedule notification", error: e);
+    }
+  }
+
+  Future<void> clearDailyReminders() async {
+    final List<PendingNotificationRequest> scheduledNotifications =
+        await getSchedules();
+
+    final List<PendingNotificationRequest> reminders =
+        scheduledNotifications.where((x) {
+          if (x.payload == null) return false;
+          try {
+            final FlowNotificationPayload parsedPayload =
+                FlowNotificationPayload.parse(x.payload!);
+
+            return parsedPayload.itemType ==
+                FlowNotificationPayloadItemType.reminder;
+          } catch (e) {
+            return false;
+          }
+        }).toList();
+
+    await Future.wait(
+      reminders.map((reminder) async {
+        try {
+          await pluginInstance.cancel(reminder.id);
+        } catch (e) {
+          log("[NotificationsService] Failed to cancel reminder", error: e);
+        }
+      }),
+    );
+  }
+
+  Future<void> scheduleDailyReminder(Duration time) async {
+    unawaited(clearDailyReminders());
+
+    final int h = time.abs().inHours;
+    final int m = time.abs().inMinutes.remainder(60).toInt();
+
+    final int offset = math.Random().nextInt(7);
+
+    for (int i = 0; i < 7; i++) {
+      final TZDateTime dateTime = _getTZDateTime(
+        Moment.startOfToday()
+            .add(Duration(days: i))
+            .copyWith(hour: h, minute: m),
+      );
+
+      if (dateTime.isBefore(Moment.now())) {
+        log("[NotificationsService] ignoring scheduling for past date");
+        continue;
+      }
+
+      try {
+        final NotificationDetails details = NotificationDetails(
+          android: AndroidNotificationDetails(
+            "flow-daily-reminder",
+            "Daily Reminder",
+            channelDescription: "Reminds you to track your expenses",
+            importance: Importance.max,
+            priority: Priority.high,
+            category: AndroidNotificationCategory.reminder,
+            styleInformation: DefaultStyleInformation(false, false),
+          ),
+          iOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          macOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          linux: LinuxNotificationDetails(
+            icon: AssetsLinuxIcon("assets/images/flow.png"),
+            urgency: LinuxNotificationUrgency.normal,
+            category: LinuxNotificationCategory.imReceived,
+            actions: [LinuxNotificationAction(key: "open", label: "Open Flow")],
+          ),
+          windows: WindowsNotificationDetails(),
+        );
+
+        await pluginInstance.zonedSchedule(
+          _count++,
+          "notifications.reminderText#${1 + ((i + offset) % 7)}",
+          null,
+          dateTime,
+          details,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        );
+      } catch (e) {
+        log("[NotificationsService] Failed to schedule notification", error: e);
+      }
     }
   }
 

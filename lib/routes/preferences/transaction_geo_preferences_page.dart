@@ -4,6 +4,7 @@ import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/extensions/toast.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
@@ -49,8 +50,7 @@ class _TransactionGeoPreferencesPageState
                   onChanged: updateAutoAttachTransactionGeo,
                 ),
                 const SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                Frame(
                   child: InfoText(
                     child: Text(
                       "preferences.transactionGeo.auto.description".t(context),
