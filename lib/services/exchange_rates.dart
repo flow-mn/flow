@@ -1,12 +1,15 @@
 import "dart:convert";
-import "dart:developer";
+
 import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flutter/widgets.dart";
 import "package:http/http.dart" as http;
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("ExchangeRatesService");
 
 class ExchangeRatesService {
   final ValueNotifier<ExchangeRatesSet?> exchangeRatesCache =
@@ -60,7 +63,7 @@ class ExchangeRatesService {
       );
       jsonResponse = jsonDecode(response.body);
     } catch (e) {
-      log("Failed to fetch exchange rates from side source", error: e);
+      _log.warning("Failed to fetch exchange rates from side source", e);
     }
 
     try {
@@ -71,7 +74,7 @@ class ExchangeRatesService {
       );
       jsonResponse = jsonDecode(response.body);
     } catch (e) {
-      log("Failed to fetch exchange rates from main source", error: e);
+      _log.warning("Failed to fetch exchange rates from main source", e);
     }
 
     if (jsonResponse == null) {
@@ -90,7 +93,7 @@ class ExchangeRatesService {
     DateTime? dateTime,
   ]) async {
     try {
-      log("[ExchangeRates] Fetching exchange rates for $baseCurrency");
+      _log.warning("Fetching exchange rates for $baseCurrency");
 
       final ExchangeRates exchangeRates = await fetchRates(
         baseCurrency,
@@ -99,10 +102,7 @@ class ExchangeRatesService {
 
       return exchangeRates;
     } catch (e) {
-      log(
-        "[ExchangeRates] Failed to fetch exchange rates ($baseCurrency)",
-        error: e,
-      );
+      _log.warning("Failed to fetch exchange rates ($baseCurrency)", e);
 
       return exchangeRatesCache.value?.get(baseCurrency);
     }
@@ -122,7 +122,7 @@ class ExchangeRatesService {
     try {
       LocalPreferences().exchangeRatesCache.set(current);
     } catch (e) {
-      log("Failed to update exchange rates cache", error: e);
+      _log.warning("Failed to update exchange rates cache", e);
     }
   }
 

@@ -387,7 +387,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         InfoText(
-                                          singleLine: true,
                                           child: Text(
                                             "transaction.location.edit".t(
                                               context,

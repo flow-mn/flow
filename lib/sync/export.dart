@@ -1,10 +1,10 @@
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 import "dart:typed_data";
 
 import "package:flow/entity/backup_entry.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/sync/export/export_v1.dart";
 import "package:flow/sync/export/export_v2.dart";
@@ -62,7 +62,10 @@ Future<ExportStatus> export({
           ),
         )
         .catchError((error) {
-          log("[Export] Failed to add BackupEntry due to: $error");
+          syncLogger.warning(
+            "After a successful backup, failed to add BackupEntry for it",
+            error,
+          );
           return -1;
         }),
   );
@@ -90,7 +93,7 @@ Future<String> saveBackupFile(
   );
   final String filename = generateBackupFileName(fileExt);
 
-  log("[Flow Sync] Writing to ${path.join(saveDir.path, filename)}");
+  syncLogger.fine("Writing to ${path.join(saveDir.path, filename)}");
 
   final File f = File(path.join(saveDir.path, subfolder ?? "", filename));
   f.createSync(recursive: true);
@@ -108,7 +111,7 @@ Future<String> saveBackupFile(
       throw UnimplementedError();
   }
 
-  log("[Flow Sync] Write successful. See file at: ${f.path}");
+  syncLogger.fine("Write successful. See file at: ${f.path}");
 
   return f.path;
 }
@@ -136,7 +139,7 @@ Future<ExportStatus> showFileSaveDialog(
 
   final uri = Uri(scheme: "file", path: path.dirname(savedFilePath));
 
-  log("[Flow Sync] shareSuccess $shareSuccess $uri");
+  syncLogger.fine("shareSuccess $shareSuccess $uri");
 
   return (shareDialogSucceeded: shareSuccess, filePath: savedFilePath);
 }

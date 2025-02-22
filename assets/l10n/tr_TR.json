@@ -248,6 +248,12 @@
     "preferences.moneyFormatting.preferFull.description": "Mümkün olduğunca sayıları kısaltmayın",
     "preferences.moneyFormatting.useCurrencySymbol": "Para birimi simgesini kullan",
     "preferences.moneyFormatting.useCurrencySymbol.description": "örneğin, \"5$\" yerine \"5 ABD Doları\"",
+    "preferences.reminders": "Hatırlatıcı",
+    "preferences.reminders.remindDaily": "Remind daily",
+    "preferences.reminders.remindDaily.description": "Remind to track expenses daily",
+    "preferences.reminders.remindDaily.time": "Remind me at",
+    "preferences.reminders.remindDaily.expiryWarning": "Flow'u 7 gün boyunca açmazsanız hatırlatıcılar durdurulacaktır",
+    "preferences.reminders.unsupportedPlatform": "Bildirim planlaması bu platformda desteklenmiyor",
 
     "tabs.home": "Ev",
     "tabs.home.greetings": "Merhaba, {name}!",
@@ -329,6 +335,13 @@
 
     "notifications.permissionNotGranted": "Bildirim izni verilmedi",
     "notifications.openSettingsToGrantPermission": "Bildirim iznini sistem ayarlarından verin",
+    "notifications.reminderText#1": "Bugün harcamalarınızı takip ettiniz mi?",
+    "notifications.reminderText#2": "İşlemlerinizi kaydetmeyi unutmayın!",
+    "notifications.reminderText#3": "Bugünkü harcamalarınızı kaydetme zamanı.",
+    "notifications.reminderText#4": "Mali durumunuzu kontrol altında tutun, işlemlerinizi ekleyin!",
+    "notifications.reminderText#5": "Flow harcamalarınızı takip etmenizi hatırlatıyor!",
+    "notifications.reminderText#6": "İşlemlerinizi güncelleyin ve mali durumunuzu takipte kalın.",
+    "notifications.reminderText#7": "Bugün işlemlerinizi eklemeyi unutmayın!",
 
     "sync.import": "İçe aktarmak",
     "sync.import.pickFile": "Bir dosya seçin",

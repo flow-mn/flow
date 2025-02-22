@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
@@ -15,6 +14,9 @@ import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("ImportV1");
 
 /// Used to report current status to user
 enum ImportV1Progress implements LocalizedEnum {
@@ -123,7 +125,7 @@ class ImportV1 extends Importer {
                 transaction = _resolveAccountForTransaction(transaction);
               } catch (e) {
                 if (e is ImportException) {
-                  log(e.toString());
+                  _log.warning(e.toString());
                 }
                 return null;
               }
@@ -132,7 +134,7 @@ class ImportV1 extends Importer {
                 transaction = _resolveCategoryForTransaction(transaction);
               } catch (e) {
                 if (e is ImportException) {
-                  log(e.toString());
+                  _log.warning(e.toString());
                 }
                 // Still proceed without category
               }
@@ -149,9 +151,9 @@ class ImportV1 extends Importer {
       TransitiveLocalPreferences().updateTransitiveProperties().catchError((
         error,
       ) {
-        log(
+        _log.warning(
           "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
-          error: error,
+          error,
         );
       }),
     );

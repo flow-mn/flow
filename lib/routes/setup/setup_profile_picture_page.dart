@@ -1,9 +1,9 @@
-import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 import "dart:ui" as ui;
 
 import "package:flow/l10n/extensions.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -104,8 +104,8 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
       await FileImage(file).evict();
       _profilePictureUpdateCounter++;
     } catch (e) {
-      log(
-        "[Flow] Setup Profile Photo Page > Failed to evict profile FileImage cache due to:\n$e",
+      mainLogger.warning(
+        "Setup Profile Photo Page > Failed to evict profile FileImage cache due to:\n$e",
       );
     }
 

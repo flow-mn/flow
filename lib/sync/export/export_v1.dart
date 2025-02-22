@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:developer";
 
 import "package:csv/csv.dart";
 import "package:flow/constants.dart";
@@ -9,6 +8,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/transactions.dart";
@@ -19,19 +19,19 @@ import "package:moment_dart/moment_dart.dart";
 
 Future<String> generateBackupContentV1() async {
   const int versionCode = 1;
-  log("[Flow Sync] Initiating export, version code = $versionCode");
+  syncLogger.fine("Initiating export, version code = $versionCode");
 
   final List<Transaction> transactions = await TransactionsService().findMany(
     TransactionFilter.all,
   );
-  log("[Flow Sync] Finished fetching transactions");
+  syncLogger.fine("Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
-  log("[Flow Sync] Finished fetching accounts");
+  syncLogger.fine("Finished fetching accounts");
 
   final List<Category> categories =
       await ObjectBox().box<Category>().getAllAsync();
-  log("[Flow Sync] Finished fetching categories");
+  syncLogger.fine("Finished fetching categories");
 
   final DateTime exportDate = DateTime.now().toUtc();
 

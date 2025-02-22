@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 
 import "package:flow/data/currencies.dart";
@@ -21,7 +20,10 @@ import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
+import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
+
+final Logger _log = Logger("ImportV2");
 
 /// Used to report current status to user
 enum ImportV2Progress implements LocalizedEnum {
@@ -145,7 +147,7 @@ class ImportV2 extends Importer {
                 transaction = _resolveAccountForTransaction(transaction);
               } catch (e) {
                 if (e is ImportException) {
-                  log(e.toString());
+                  _log.warning(e.toString());
                 }
                 return null;
               }
@@ -154,7 +156,7 @@ class ImportV2 extends Importer {
                 transaction = _resolveCategoryForTransaction(transaction);
               } catch (e) {
                 if (e is ImportException) {
-                  log(e.toString());
+                  _log.warning(e.toString());
                 }
                 // Still proceed without category
               }
@@ -178,10 +180,7 @@ class ImportV2 extends Importer {
       try {
         await ObjectBox().box<Profile>().removeAllAsync();
       } catch (e) {
-        log(
-          "[Flow Sync Import v2] Failed to remove existing profile, ignoring",
-          error: e,
-        );
+        _log.warning("Failed to remove existing profile, ignoring", e);
       }
 
       progressNotifier.value = ImportV2Progress.writingProfile;
@@ -192,10 +191,7 @@ class ImportV2 extends Importer {
       try {
         await ObjectBox().box<UserPreferences>().removeAllAsync();
       } catch (e) {
-        log(
-          "[Flow Sync Import v2] Failed to remove existing user preferences, ignoring",
-          error: e,
-        );
+        _log.warning("Failed to remove existing user preferences, ignoring", e);
       }
 
       progressNotifier.value = ImportV2Progress.writingUserPreferences;
@@ -208,10 +204,7 @@ class ImportV2 extends Importer {
       try {
         await LocalPreferences().primaryCurrency.set(data.primaryCurrency!);
       } catch (e) {
-        log(
-          "[Flow Sync Import v2] Failed to set primary currency, ignoring",
-          error: e,
-        );
+        _log.warning("Failed to set primary currency, ignoring", e);
       }
     }
 
@@ -219,10 +212,7 @@ class ImportV2 extends Importer {
       TransitiveLocalPreferences().updateTransitiveProperties().catchError((
         error,
       ) {
-        log(
-          "[Flow Sync Import v2] Failed to update transitive properties, ignoring",
-          error: error,
-        );
+        _log.warning("Failed to update transitive properties, ignoring", error);
       }),
     );
 
@@ -246,19 +236,16 @@ class ImportV2 extends Importer {
             try {
               await File(asset.path).copy(targetPath);
             } catch (e) {
-              log(
-                "[Flow Sync Import v2] Failed to copy asset: $assetName",
-                error: e,
-              );
+              _log.warning("Failed to copy asset: $assetName", e);
             }
           } else {
-            log(
-              "[Flow Sync Import v2] Skipping non-PNG asset: ${path.basename(asset.path)}",
+            _log.warning(
+              "Skipping non-PNG asset: ${path.basename(asset.path)}",
             );
           }
         }
       } catch (e) {
-        log("[Flow Sync Import v2] Failed to copy assets, ignoring", error: e);
+        _log.warning("Failed to copy assets, ignoring", e);
       }
     }
 
@@ -302,7 +289,7 @@ class ImportV2 extends Importer {
     try {
       await Directory(cleanupFolder!).delete(recursive: true);
     } catch (e) {
-      log("[Flow Sync Import v2] Failed to delete cleanup folder", error: e);
+      _log.warning("Failed to delete cleanup folder", e);
     }
   }
 

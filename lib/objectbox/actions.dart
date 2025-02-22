@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
@@ -25,8 +24,11 @@ import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
+
+final Logger _log = Logger("ObjectBoxActions");
 
 typedef RelevanceScoredTitle = ({String title, double relevancy});
 
@@ -275,7 +277,9 @@ extension MainActions on ObjectBox {
               }).toList(),
         )
         .catchError((error) {
-          log("Failed to fetch transactions for title suggestions: $error");
+          _log.severe(
+            "Failed to fetch transactions for title suggestions: $error",
+          );
           return <Transaction>[];
         });
 
@@ -423,7 +427,7 @@ extension TransactionActions on Transaction {
       final Transfer? transfer = extensions.transfer;
 
       if (transfer == null) {
-        log(
+        _log.severe(
           "Couldn't delete transfer transaction properly due to missing transfer data",
         );
       } else {
@@ -443,7 +447,9 @@ extension TransactionActions on Transaction {
             throw Exception("Failed to remove related transaction");
           }
         } catch (e) {
-          log("Couldn't delete transfer transaction properly due to: $e");
+          _log.severe(
+            "Couldn't delete transfer transaction properly due to: $e",
+          );
         }
       }
     }
@@ -456,14 +462,14 @@ extension TransactionActions on Transaction {
       final Transfer? transfer = extensions.transfer;
 
       if (transfer == null) {
-        log(
+        _log.severe(
           "Couldn't delete transfer transaction properly due to missing transfer data",
         );
       } else {
         try {
           TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
         } catch (e) {
-          log(
+          _log.severe(
             "Couldn't move transfer transaction to trash bin properly due to: $e",
           );
         }
@@ -473,7 +479,7 @@ extension TransactionActions on Transaction {
     try {
       TransactionsService().moveToBinSync(this);
     } catch (e) {
-      log("Failed to move transaction to trash bin: $e");
+      _log.severe("Failed to move transaction to trash bin: $e");
     }
   }
 
@@ -482,7 +488,7 @@ extension TransactionActions on Transaction {
       final Transfer? transfer = extensions.transfer;
 
       if (transfer == null) {
-        log(
+        _log.severe(
           "Couldn't delete transfer transaction properly due to missing transfer data",
         );
       } else {
@@ -491,7 +497,7 @@ extension TransactionActions on Transaction {
             transfer.relatedTransactionUuid,
           );
         } catch (e) {
-          log(
+          _log.severe(
             "Couldn't move transfer transaction to trash bin properly due to: $e",
           );
         }
@@ -501,7 +507,7 @@ extension TransactionActions on Transaction {
     try {
       TransactionsService().recoverFromBinSync(this);
     } catch (e) {
-      log("Failed to move transaction to trash bin: $e");
+      _log.severe("Failed to move transaction to trash bin: $e");
     }
   }
 
@@ -511,7 +517,7 @@ extension TransactionActions on Transaction {
         final Transfer? transfer = extensions.transfer;
 
         if (transfer == null) {
-          log(
+          _log.severe(
             "Couldn't delete transfer transaction properly due to missing transfer data",
           );
         } else {
@@ -522,7 +528,9 @@ extension TransactionActions on Transaction {
               updateTransactionDate: updateTransactionDate,
             );
           } catch (e) {
-            log("Couldn't delete transfer transaction properly due to: $e");
+            _log.severe(
+              "Couldn't delete transfer transaction properly due to: $e",
+            );
           }
         }
       }
@@ -533,7 +541,7 @@ extension TransactionActions on Transaction {
         updateTransactionDate: updateTransactionDate,
       );
     } catch (e) {
-      log("Failed to confirm transaction: $e");
+      _log.severe("Failed to confirm transaction: $e");
       return false;
     }
   }
@@ -849,10 +857,10 @@ extension AccountActions on Account {
     final List<TransactionExtension>? applicableExtensions =
         extensions
             ?.map((ext) {
-              log(
+              _log.fine(
                 "Adding extension to Transaction($uuidOverride): ${ext.runtimeType}(${ext.uuid})",
               );
-              log("Checking extension: ${ext.runtimeType}");
+              _log.fine("Checking extension: ${ext.runtimeType}");
 
               if (ext.relatedTransactionUuid == null) {
                 return ext..setRelatedTransactionUuid(uuid);
@@ -887,7 +895,7 @@ extension AccountActions on Account {
         );
       }
     } catch (e) {
-      log("Failed to update frecency data for transaction ($id)");
+      _log.warning("Failed to update frecency data for transaction ($id)");
     }
 
     return id;

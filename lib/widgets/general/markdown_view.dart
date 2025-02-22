@@ -1,5 +1,3 @@
-import "dart:developer";
-
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/toast.dart";
@@ -7,6 +5,9 @@ import "package:flow/utils/open_url.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
 import "package:flutter_markdown/flutter_markdown.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("MarkdownView");
 
 class MarkdownView extends StatelessWidget {
   final TextEditingController controller;
@@ -57,16 +58,16 @@ class MarkdownView extends StatelessWidget {
 
   void tryFlipCheckbox(int index, bool value) {
     if (!allowTogglingCheckboxes) {
-      log("[Flow] Cannot flip checkbox when toggling is disabled");
+      _log.warning("Cannot flip checkbox when toggling is disabled");
       return;
     }
 
     if (controller.text.contains("```")) {
-      log("[Flow] Cannot flip checkbox when markdown contains a code block");
+      _log.warning("Cannot flip checkbox when markdown contains a code block");
       return;
     }
 
-    log("[Flow] Flipping checkbox at [$index] to $value");
+    _log.info("Flipping checkbox at [$index] to $value");
 
     try {
       final RegExpMatch match = RegExp(
@@ -92,7 +93,7 @@ class MarkdownView extends StatelessWidget {
         onChanged!(newText);
       }
     } catch (e) {
-      log("[Flow] Failed to flip checkbox at [$index]", error: e);
+      _log.warning("Failed to flip checkbox at [$index]", e);
     }
   }
 
@@ -102,7 +103,7 @@ class MarkdownView extends StatelessWidget {
     String? href,
     String title,
   ) {
-    log("[Flow] Tapped link: $text, $href, $title");
+    _log.warning("Tapped link: $text, $href, $title");
 
     if (href == null) {
       context.showErrorToast(error: "error.url.cannotOpen".t(context));

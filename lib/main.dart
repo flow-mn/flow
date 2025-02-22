@@ -24,6 +24,7 @@ import "package:flow/constants.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
@@ -39,15 +40,32 @@ import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
+import "package:logging_appenders/logging_appenders.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:path/path.dart" as path;
+import "package:path_provider/path_provider.dart"
+    show getApplicationSupportDirectory;
 import "package:window_manager/window_manager.dart";
-
-final Logger _startupLog = Logger("Flow Startup");
-final Logger _themeLog = Logger("Theme");
 
 void main() async {
   Logger.root.level = Level.ALL;
+  if (flowDebugMode) {
+    PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+  }
+  unawaited(
+    getApplicationSupportDirectory().then((value) {
+      final String logsDir = path.join(value.path, "logs");
+      Directory(logsDir).createSync(recursive: true);
+      RotatingFileAppender(
+        baseFilePath: path.join(
+          logsDir,
+          flowDebugMode ? "flow_debug.log" : "flow.log",
+        ),
+        keepRotateCount: 5,
+      ).attachToLogger(Logger.root);
+    }),
+  );
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -65,7 +83,7 @@ void main() async {
                   "${value.version}+${value.buildNumber}$debugBuildSuffix",
         )
         .catchError((e) {
-          _startupLog.warning(
+          startupLog.warning(
             "An error was occured while fetching app version",
             e,
           );
@@ -88,12 +106,21 @@ void main() async {
 
   unawaited(
     TransactionsService().synchronizeNotifications().catchError((error) {
-      _startupLog.severe("Failed to synchronize notifications", error);
+      startupLog.severe("Failed to synchronize notifications", error);
     }),
   );
+  if (UserPreferencesService().remindDailyAt case Duration requireRemindAt) {
+    unawaited(
+      NotificationsService().scheduleDailyReminder(requireRemindAt).catchError((
+        error,
+      ) {
+        startupLog.severe("Failed to schedule reminder notifications", error);
+      }),
+    );
+  }
   unawaited(
     TransactionsService().clearStaleTrashBinEntries().catchError((error) {
-      _startupLog.severe("Failed to clear stale trash bin entries", error);
+      startupLog.severe("Failed to clear stale trash bin entries", error);
     }),
   );
 
@@ -106,7 +133,7 @@ void main() async {
       ),
     );
   } catch (e) {
-    _startupLog.severe(
+    startupLog.severe(
       "Failed to add listener updates prefs.sessionPrivacyMode",
     );
   }
@@ -114,7 +141,7 @@ void main() async {
   try {
     UserPreferencesService().initialize();
   } catch (e) {
-    _startupLog.severe("Failed to initialize UserPreferencesService", e);
+    startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
   runApp(const Flow());
@@ -204,7 +231,7 @@ class FlowState extends State<Flow> {
   void _reloadTheme() {
     final String? themeName = LocalPreferences().theme.themeName.value;
 
-    _themeLog.info("Reloading $themeName");
+    themeLogger.info("Reloading $themeName");
 
     FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
@@ -256,7 +283,7 @@ class FlowState extends State<Flow> {
 
   void _synchronizePlannedNotifications() {
     TransactionsService().synchronizeNotifications().catchError((error) {
-      _startupLog.severe("Failed to synchronize notifications", error);
+      startupLog.severe("Failed to synchronize notifications", error);
     });
   }
 }

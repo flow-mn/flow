@@ -1,5 +1,3 @@
-import "dart:developer";
-
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/extensions.dart";
@@ -10,7 +8,10 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("CreateFilterPresetSheet");
 
 class CreateFilterPresetSheet extends StatefulWidget {
   final String? initialName;
@@ -103,7 +104,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
 
       pop();
     } catch (e) {
-      log("Failed to save filter preset", error: e);
+      _log.severe("Failed to save filter preset", e);
     }
   }
 

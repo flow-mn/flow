@@ -38,6 +38,25 @@ class UserPreferences implements EntityBase {
   /// Le UUID of it
   String? defaultFilterPreset;
 
+  /// It's a added to a start of the day
+  ///
+  /// e.g., to set a daily reminder at 9:00 AM, set it to 9 hours
+  @Transient()
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  Duration? get remindDailyAt =>
+      remindDailyAtRelativeSeconds == null
+          ? null
+          : Duration(seconds: remindDailyAtRelativeSeconds!);
+
+  set remindDailyAt(Duration? duration) {
+    remindDailyAtRelativeSeconds = duration?.inSeconds;
+  }
+
+  /// It's a added to a start of the day
+  ///
+  /// e.g., to set a daily reminder at 9:00 AM, set it to 9 hours
+  int? remindDailyAtRelativeSeconds;
+
   UserPreferences({
     this.id = 0,
     DateTime? createdDate,

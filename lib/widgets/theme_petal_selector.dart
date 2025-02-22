@@ -1,4 +1,3 @@
-import "dart:developer" show log;
 import "dart:math" as math;
 
 import "package:flow/data/flow_icon.dart";
@@ -8,6 +7,9 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/theme_petal_selector/theme_petal_painter.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("ThemePetalSelector");
 
 class ThemePetalSelector extends StatefulWidget {
   final bool playInitialAnimation;
@@ -268,10 +270,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
       await LocalPreferences().theme.themeName.set(themeName);
     } catch (e) {
-      log(
-        "[Theme Petal Selector] Something went wrong with the theme petal selector.",
-        error: e,
-      );
+      _log.warning("Something went wrong with the theme petal selector.", e);
     } finally {
       busy = false;
       if (mounted) {
