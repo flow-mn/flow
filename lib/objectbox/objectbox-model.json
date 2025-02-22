@@ -309,7 +309,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "6:6538022804139410219",
+      "lastPropertyId": "7:2985299148024776274",
       "name": "UserPreferences",
       "properties": [
         {
@@ -343,6 +343,11 @@
         {
           "id": "6:6538022804139410219",
           "name": "trashBinRetentionDays",
+          "type": 6
+        },
+        {
+          "id": "7:2985299148024776274",
+          "name": "remindDailyAtRelativeSeconds",
           "type": 6
         }
       ],
