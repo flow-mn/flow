@@ -110,10 +110,12 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  InfoText(
-                    child: Text(
-                      "preferences.reminders.remindDaily.expiryWarning".t(
-                        context,
+                  Frame(
+                    child: InfoText(
+                      child: Text(
+                        "preferences.reminders.remindDaily.expiryWarning".t(
+                          context,
+                        ),
                       ),
                     ),
                   ),
@@ -148,7 +150,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
       initialTime: initialTime,
     );
 
-    if (newTod == null) {
+    if (newTod == null || !mounted) {
       return;
     }
 
@@ -156,5 +158,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
       hours: newTod.hour,
       minutes: newTod.minute,
     );
+
+    setState(() {});
   }
 }

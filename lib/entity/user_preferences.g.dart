@@ -16,10 +16,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
       )
       ..uuid = json['uuid'] as String
-      ..remindDailyAt = _$JsonConverterFromJson<int, Duration>(
-        json['remindDailyAt'],
-        const DurationConverter().fromJson,
-      );
+      ..remindDailyAtRelativeSeconds =
+          (json['remindDailyAtRelativeSeconds'] as num?)?.toInt();
 
 Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
     <String, dynamic>{
@@ -28,18 +26,5 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'excludeTransfersFromFlow': instance.excludeTransfersFromFlow,
       'trashBinRetentionDays': instance.trashBinRetentionDays,
       'defaultFilterPreset': instance.defaultFilterPreset,
-      'remindDailyAt': _$JsonConverterToJson<int, Duration>(
-        instance.remindDailyAt,
-        const DurationConverter().toJson,
-      ),
+      'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) => json == null ? null : fromJson(json as Json);
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) => value == null ? null : toJson(value);
