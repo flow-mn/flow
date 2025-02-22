@@ -248,6 +248,10 @@
     "preferences.moneyFormatting.preferFull.description": "Тоог хураахгүй бүтнээр нь харуулах",
     "preferences.moneyFormatting.useCurrencySymbol": "Тэмдэгт ашиглах",
     "preferences.moneyFormatting.useCurrencySymbol.description": "Жишээлбэл, \"MNT 3,200\" гэхийн оронд \"3,200₮\"",
+    "preferences.dailyReminder": "Сануулга",
+    "preferences.dailyReminder.description": "Өдөр бүр гүйлгээгээ бүртгэхийг сануулах",
+    "preferences.dailyReminder.time": "Цаг",
+    "preferences.dailyReminder.unsupportedPlatform": "Энэ үйлдлйин системд мэдэгдэл илгээх боломжгүй",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",

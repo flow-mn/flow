@@ -248,6 +248,10 @@
     "preferences.moneyFormatting.preferFull.description": "Ne pas abréger les nombres lorsque c'est possible",
     "preferences.moneyFormatting.useCurrencySymbol": "Utiliser le symbole de la devise",
     "preferences.moneyFormatting.useCurrencySymbol.description": "par exemple, \"5 €\" au lieu de \"5 EUR\"",
+    "preferences.dailyReminder": "Rappel quotidien",
+    "preferences.dailyReminder.description": "Me rappeler d'enregistrer mes transactions quotidiennement",
+    "preferences.dailyReminder.time": "Me rappeler à",
+    "preferences.dailyReminder.unsupportedPlatform": "La planification des notifications n'est pas prise en charge sur cette plateforme",
 
     "tabs.home": "Accueil",
     "tabs.home.greetings": "Salut, {name}!",

@@ -248,6 +248,9 @@
     "preferences.moneyFormatting.preferFull.description": "Mümkün olduğunca sayıları kısaltmayın",
     "preferences.moneyFormatting.useCurrencySymbol": "Para birimi simgesini kullan",
     "preferences.moneyFormatting.useCurrencySymbol.description": "örneğin, \"5$\" yerine \"5 ABD Doları\"",
+    "preferences.dailyReminder": "Hatırlatıcı",
+    "preferences.dailyReminder.description": "Günlük işlemlerimi kaydetmemi hatırlat",
+    "preferences.dailyReminder.time": "Bana şu saatte hatırlat",
 
     "tabs.home": "Ev",
     "tabs.home.greetings": "Merhaba, {name}!",

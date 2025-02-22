@@ -19,6 +19,9 @@ class NotificationsService {
   static final String windowsNotificationGuid =
       "f342887a-2ea1-41b1-94cf-51d70a46ce73";
 
+  static bool get schedulingSupported =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+
   bool _ready = false;
   bool get ready => _ready;
 

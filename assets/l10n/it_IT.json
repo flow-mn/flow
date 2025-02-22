@@ -248,6 +248,10 @@
     "preferences.moneyFormatting.preferFull.description": "Non abbreviare i numeri quando possibile",
     "preferences.moneyFormatting.useCurrencySymbol": "Usa simbolo valuta",
     "preferences.moneyFormatting.useCurrencySymbol.description": "Ad esempio, \"€5\" invece di \"5 EUR\"",
+    "preferences.dailyReminder": "Promemoria giornaliero",
+    "preferences.dailyReminder.description": "Ricordami di registrare le mie transazioni ogni giorno",
+    "preferences.dailyReminder.time": "Ricordami alle",
+    "preferences.dailyReminder.unsupportedPlatform": "La pianificazione delle notifiche non è supportata su questa piattaforma",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",

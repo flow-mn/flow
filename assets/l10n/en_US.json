@@ -248,6 +248,10 @@
     "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
     "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
     "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"$5\" instead of \"5 USD\"",
+    "preferences.dailyReminder": "Reminder",
+    "preferences.dailyReminder.description": "Remind me to record my transactions daily",
+    "preferences.dailyReminder.time": "Remind me at",
+    "preferences.dailyReminder.unsupportedPlatform": "Scheduling notifications is not supported on this platform",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",
