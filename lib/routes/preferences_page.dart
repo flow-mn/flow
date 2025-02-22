@@ -1,4 +1,3 @@
-import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
@@ -16,7 +15,10 @@ import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("PreferencesPage");
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -180,14 +182,14 @@ class PreferencesPageState extends State<PreferencesPage> {
   void _updateLanguage() async {
     if (Platform.isIOS) {
       await LocalPreferences().localeOverride.remove().catchError((e) {
-        log("[PreferencesPage] failed to remove locale override: $e");
+        _log.warning("Failed to remove locale override: $e");
         return false;
       });
       try {
         await AppSettings.openAppSettings(type: AppSettingsType.appLocale);
         return;
       } catch (e) {
-        log("[PreferencesPage] failed to open system app settings on iOS: $e");
+        _log.warning("Failed to open system app settings on iOS: $e", e);
       }
     }
 

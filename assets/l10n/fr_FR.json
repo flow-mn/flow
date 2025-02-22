@@ -483,7 +483,5 @@
     "error.transaction.missingAccount": "Veuillez sélectionner un compte",
     "error.url.cannotOpen": "Impossible d'ouvrir le lien",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Échec de la récupération des taux de change, les données de transaction peuvent ne pas être entièrement précises",
-    "error.exchangeRates.cannotFetch": "Échec de la récupération, veuillez vérifier votre connexion internet.",
-    "error.missingPermission.geo": "La permission de localisation n'est pas accordée. Vous pouvez l'activer dans les paramètres système si vous le souhaitez.",
-    "error.missingPermission.notification": "La permission de notifications n'est pas accordée. Vous pouvez l'activer dans les paramètres système si vous le souhaitez."
+    "error.exchangeRates.cannotFetch": "Échec de la récupération, veuillez vérifier votre connexion internet."
 }

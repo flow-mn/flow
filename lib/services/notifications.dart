@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 import "dart:io";
 import "dart:math" as math;
 
@@ -9,10 +8,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:timezone/data/latest.dart" as tz;
 import "package:timezone/timezone.dart";
 import "package:window_manager/window_manager.dart";
+
+final Logger _log = Logger("NotificationsService");
 
 class NotificationsService {
   static NotificationsService? _instance;
@@ -58,7 +60,7 @@ class NotificationsService {
       _timezone = await FlutterTimezone.getLocalTimezone();
     } catch (error) {
       _timezone = _fallbackTimezone;
-      log("[NotificationsService] Failed to get local timezone", error: error);
+      _log.severe("Failed to get local timezone", error);
     }
 
     try {
@@ -105,6 +107,10 @@ class NotificationsService {
       );
 
       try {
+        if (Platform.isLinux) {
+          throw Exception("Linux doesn't support notification app launch");
+        }
+
         final NotificationAppLaunchDetails? launchDetails =
             await pluginInstance.getNotificationAppLaunchDetails();
 
@@ -112,16 +118,9 @@ class NotificationsService {
             launchDetails?.didNotificationLaunchApp == true
                 ? launchDetails
                 : null;
-
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails",
-        );
       } catch (e) {
         notificationAppLaunchDetails = null;
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails failed",
-          error: e,
-        );
+        _log.info("NotificationAppLaunchDetails failed", e);
       }
     } finally {
       _ready = true;
@@ -139,10 +138,7 @@ class NotificationsService {
           requestPermissions();
         }
       } catch (e) {
-        log(
-          "[NotificationsService] Failed to check or request permissions",
-          error: e,
-        );
+        _log.warning("Failed to check or request permissions", e);
       }
     }
 
@@ -184,7 +180,7 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      log("[NotificationsService] ignoring scheduling for past date");
+      _log.info("Ignoring scheduling for past date");
       return;
     }
 
@@ -233,7 +229,7 @@ class NotificationsService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
@@ -260,7 +256,7 @@ class NotificationsService {
         try {
           await pluginInstance.cancel(reminder.id);
         } catch (e) {
-          log("[NotificationsService] Failed to cancel reminder", error: e);
+          _log.warning("Failed to cancel reminder", e);
         }
       }),
     );
@@ -268,6 +264,11 @@ class NotificationsService {
 
   Future<void> scheduleDailyReminder(Duration time) async {
     unawaited(clearDailyReminders());
+
+    if (!schedulingSupported) {
+      _log.warning("Scheduling not supported on this platform");
+      return;
+    }
 
     final int h = time.abs().inHours;
     final int m = time.abs().inMinutes.remainder(60).toInt();
@@ -282,7 +283,7 @@ class NotificationsService {
       );
 
       if (dateTime.isBefore(Moment.now())) {
-        log("[NotificationsService] ignoring scheduling for past date");
+        _log.info("Ignoring scheduling for past date");
         continue;
       }
 
@@ -323,7 +324,7 @@ class NotificationsService {
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         );
       } catch (e) {
-        log("[NotificationsService] Failed to schedule notification", error: e);
+        _log.warning("Failed to schedule notification", e);
       }
     }
   }
@@ -358,7 +359,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
@@ -378,7 +379,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to show notification", error: e);
+      _log.warning("Failed to show notification", e);
     }
   }
 
@@ -405,30 +406,18 @@ class NotificationsService {
               }
             })
             .catchError((error) {
-              log(
-                "[NotificationsService] Failed to check window focus",
-                error: error,
-              );
+              _log.warning("Failed to check window focus", error);
             });
       }
     } catch (e) {
-      log(
-        "[NotificationsService] Failed to check/request window focus",
-        error: e,
-      );
+      _log.warning("Failed to check/request window focus", e);
     }
 
     for (final callback in _registeredCallbacks) {
       try {
         callback(response);
-        log(
-          "response.actionId: ${response.actionId}, ${response.id}, $response",
-        );
       } catch (error) {
-        log(
-          "[NotificationsService] Failed to call notification callback",
-          error: error,
-        );
+        _log.warning("Failed to call notification callback", error);
       }
     }
   }

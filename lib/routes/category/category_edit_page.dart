@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -207,7 +206,6 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   }
 
   void _updateIcon(FlowIconData? data) {
-    log("_updateIcon_updateIcon_updateIcon_updateIcon");
     _iconData = data;
     setState(() {});
   }

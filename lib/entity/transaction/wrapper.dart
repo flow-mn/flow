@@ -1,10 +1,12 @@
 import "dart:convert";
-import "dart:developer";
 
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/utils/utils.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("ExtensionsWrapper");
 
 class ExtensionsWrapper {
   Transfer? get transfer =>
@@ -59,7 +61,7 @@ class ExtensionsWrapper {
             .toList(),
       );
     } catch (e) {
-      log("[ExtensionsWrapper] An error occured during deserializing: $e");
+      _log.warning("An error occured during deserializing: $e");
       return const ExtensionsWrapper.empty();
     }
   }

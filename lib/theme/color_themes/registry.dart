@@ -1,6 +1,6 @@
-import "dart:developer";
 import "dart:io";
 
+import "package:flow/logging.dart";
 import "package:flow/theme/color_themes/catppuccin/frappe.dart";
 import "package:flow/theme/color_themes/catppuccin/macchiato.dart";
 import "package:flow/theme/color_themes/catppuccin/mocha.dart";
@@ -51,7 +51,7 @@ FlowColorScheme getTheme(String? themeName, {bool preferDark = false}) {
   final FlowColorScheme? scheme = allThemes[themeName ?? ""];
 
   if (scheme == null) {
-    log("Unknown theme: $themeName");
+    themeLogger.warning("Unknown theme: $themeName");
     return preferDark ? flowDarks.schemes.first : flowDarks.schemes.first;
   }
 
@@ -67,7 +67,7 @@ void trySetAppIcon(String? iconName) async {
   final String? currentIcon = await FlutterDynamicIconPlus.alternateIconName;
 
   if (currentIcon != null && currentIcon == iconName) {
-    log(
+    themeLogger.fine(
       "Cancelling changing app icon into $iconName since it's the current one already",
     );
     return;
@@ -76,6 +76,6 @@ void trySetAppIcon(String? iconName) async {
   try {
     await FlutterDynamicIconPlus.setAlternateIconName(iconName: iconName);
   } catch (e) {
-    log("Failed to set app icon: $e");
+    themeLogger.warning("Failed to set app icon: $e");
   }
 }

@@ -1,12 +1,13 @@
-import "dart:developer";
-
 import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("NotificationPermissionMissingReminder");
 
 class NotificationPermissionMissingReminder extends StatefulWidget {
   const NotificationPermissionMissingReminder({super.key});
@@ -56,8 +57,8 @@ class _NotificationPermissionMissingReminderState
   void openNotificationsSettings() {
     try {
       AppSettings.openAppSettings(type: AppSettingsType.location);
-    } catch (e) {
-      log("Failed to open app settings: $e", error: e);
+    } catch (error) {
+      _log.warning("Failed to open app settings: $error", error);
     }
   }
 }

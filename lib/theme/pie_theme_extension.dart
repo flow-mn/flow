@@ -1,5 +1,4 @@
-import "dart:developer";
-
+import "package:flow/logging.dart";
 import "package:flutter/material.dart";
 import "package:pie_menu/pie_menu.dart";
 
@@ -18,7 +17,9 @@ class PieThemeExtension extends ThemeExtension<PieThemeExtension> {
     ThemeExtension<PieThemeExtension>? other,
     double t,
   ) {
-    log("PieThemeExtension: lerp is not available for PieTheme");
+    mainLogger.warning(
+      "[PieThemeExtension] lerp is not available for PieTheme",
+    );
 
     return (t < 0.5 ? this : other) as PieThemeExtension;
   }
