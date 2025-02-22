@@ -1,4 +1,5 @@
 import "package:flow/entity/_base.dart";
+import "package:flow/utils/json/duration_convertor.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
@@ -7,7 +8,10 @@ import "package:uuid/uuid.dart";
 part "user_preferences.g.dart";
 
 @Entity()
-@JsonSerializable(explicitToJson: true, converters: [UTCDateTimeConverter()])
+@JsonSerializable(
+  explicitToJson: true,
+  converters: [UTCDateTimeConverter(), DurationConverter()],
+)
 class UserPreferences implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int id;
@@ -37,6 +41,11 @@ class UserPreferences implements EntityBase {
 
   /// Le UUID of it
   String? defaultFilterPreset;
+
+  /// It's a added to a start of the day
+  ///
+  /// e.g., to set a daily reminder at 9:00 AM, set it to 9 hours
+  Duration? remindDailyAt;
 
   UserPreferences({
     this.id = 0,

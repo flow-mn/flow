@@ -24,6 +24,8 @@ class ObjectBox {
 
   static String get imagesDirectory => path.join(appDataDirectory, "images");
 
+  static String kDebugDefaultSubdirectory = "__debug";
+
   /// A subdirectory to store app data.
   ///
   /// This is useful if you want to separate multiple user data or just
@@ -57,7 +59,7 @@ class ObjectBox {
     String? subdirectory,
   }) async {
     if (subdirectory == null && flowDebugMode) {
-      subdirectory = "__debug";
+      subdirectory = kDebugDefaultSubdirectory;
     }
 
     ObjectBox.subdirectory = subdirectory;

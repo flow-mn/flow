@@ -50,6 +50,12 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  Duration? get remindDailyAt => value.remindDailyAt;
+  set remindDailyAt(Duration? duration) {
+    value.remindDailyAt = duration?.abs();
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   TransactionFilterPreset? get defaultFilterPreset {
     if (defaultFilterPresetUuid == null) {
       return null;

@@ -4,6 +4,7 @@ import "dart:ui" as ui;
 
 import "package:flow/entity/profile.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/utils.dart";
@@ -149,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
         context.pop();
       }
     } catch (e) {
-      log("[Profile Page] failed to put $_profile due to $e");
+      mainLogger.severe("[Profile Page] failed to put $_profile due to $e");
     }
   }
 }

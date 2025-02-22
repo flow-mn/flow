@@ -248,6 +248,12 @@
     "preferences.moneyFormatting.preferFull.description": "Ne pas abréger les nombres lorsque c'est possible",
     "preferences.moneyFormatting.useCurrencySymbol": "Utiliser le symbole de la devise",
     "preferences.moneyFormatting.useCurrencySymbol.description": "par exemple, \"5 €\" au lieu de \"5 EUR\"",
+    "preferences.reminders": "Rappel quotidien",
+    "preferences.reminders.remindDaily": "Rappel quotidien",
+    "preferences.reminders.remindDaily.description": "Rappeler de suivre les dépenses quotidiennement",
+    "preferences.reminders.remindDaily.time": "Me rappeler à",
+    "preferences.reminders.remindDaily.expiryWarning": "Les rappels s'arrêteront si vous n'ouvrez pas Flow pendant 7 jours consécutifs",
+    "preferences.reminders.unsupportedPlatform": "La planification des notifications n'est pas prise en charge sur cette plateforme",
 
     "tabs.home": "Accueil",
     "tabs.home.greetings": "Salut, {name}!",
@@ -329,6 +335,13 @@
 
     "notifications.permissionNotGranted": "Notifications permission not granted",
     "notifications.openSettingsToGrantPermission": "Grant notification permission from system settings",
+    "notifications.reminderText#1": "Avez-vous suivi vos dépenses aujourd'hui ?",
+    "notifications.reminderText#2": "N'oubliez pas d'enregistrer vos transactions !",
+    "notifications.reminderText#3": "Il est temps d'enregistrer vos dépenses pour aujourd'hui.",
+    "notifications.reminderText#4": "Gardez vos finances sous contrôle, ajoutez vos transactions !",
+    "notifications.reminderText#5": "Flow vous rappelle de suivre vos dépenses !",
+    "notifications.reminderText#6": "Mettez à jour vos transactions et maîtrisez vos finances.",
+    "notifications.reminderText#7": "N'oubliez pas d'ajouter vos transactions aujourd'hui !",
 
     "sync.import": "Importer",
     "sync.import.pickFile": "Sélectionner un fichier",

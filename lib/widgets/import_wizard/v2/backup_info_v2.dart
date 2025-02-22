@@ -88,7 +88,6 @@ class BackupInfoV2 extends StatelessWidget {
               label: Text(primaryCurrency),
             ),
           ],
-          // TODO @sadespresso maybe show `UserPreferences`
           const Spacer(),
           InfoText(child: Text("sync.import.emergencyBackup".t(context))),
           const SizedBox(height: 16.0),
