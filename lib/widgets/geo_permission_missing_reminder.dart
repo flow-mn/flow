@@ -7,24 +7,24 @@ import "package:flutter/material.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-final Logger _log = Logger("NotificationPermissionMissingReminder");
+final Logger _log = Logger("GeoPermissionMissingReminder");
 
-class NotificationPermissionMissingReminder extends StatefulWidget {
-  const NotificationPermissionMissingReminder({super.key});
+class GeoPermissionMissingReminder extends StatefulWidget {
+  const GeoPermissionMissingReminder({super.key});
 
   @override
-  State<NotificationPermissionMissingReminder> createState() =>
-      _NotificationPermissionMissingReminderState();
+  State<GeoPermissionMissingReminder> createState() =>
+      _GeoPermissionMissingReminderState();
 }
 
-class _NotificationPermissionMissingReminderState
-    extends State<NotificationPermissionMissingReminder> {
+class _GeoPermissionMissingReminderState
+    extends State<GeoPermissionMissingReminder> {
   bool busy = false;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: openNotificationsSettings,
+      onTap: openGeoSettings,
       child: Frame.standalone(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,7 +41,9 @@ class _NotificationPermissionMissingReminderState
                 style: context.textTheme.bodyMedium!
                     .semi(context)
                     .copyWith(color: context.colorScheme.error),
-                child: Text("notifications.permissionNotGranted".t(context)),
+                child: Text(
+                  "preferences.transactionGeo.auto.permissionDenied".t(context),
+                ),
               ),
             ),
             const SizedBox(width: 12.0),
@@ -54,9 +56,9 @@ class _NotificationPermissionMissingReminderState
     );
   }
 
-  void openNotificationsSettings() {
+  void openGeoSettings() {
     try {
-      AppSettings.openAppSettings(type: AppSettingsType.notification);
+      AppSettings.openAppSettings(type: AppSettingsType.location);
     } catch (error) {
       _log.warning("Failed to open app settings: $error", error);
     }

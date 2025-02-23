@@ -19,16 +19,31 @@ class RemindersPreferencesPage extends StatefulWidget {
 }
 
 class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
-  bool? hasNotificationsPermissions;
+  late final AppLifecycleListener _listener;
+
+  late Future<bool?> _notificationsPermissionGranted;
 
   @override
   void initState() {
     super.initState();
 
-    NotificationsService().hasPermissions().then((value) {
-      hasNotificationsPermissions = value;
-      if (mounted) setState(() {});
-    });
+    _notificationsPermissionGranted = NotificationsService().hasPermissions();
+
+    _listener = AppLifecycleListener(
+      onShow: () {
+        _notificationsPermissionGranted =
+            NotificationsService().hasPermissions();
+        if (mounted) {
+          setState(() {});
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,86 +59,99 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
     return Scaffold(
       appBar: AppBar(title: Text("preferences.reminders".t(context))),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!NotificationsService.schedulingSupported) ...[
-                const SizedBox(height: 16.0),
-                Frame(
-                  child: InfoText(
-                    child: Text(
-                      "preferences.reminders.unsupportedPlatform".t(context),
-                    ),
-                  ),
-                ),
-              ],
-              if (NotificationsService.schedulingSupported &&
-                  hasNotificationsPermissions == false) ...[
-                const SizedBox(height: 16.0),
-                NotificationPermissionMissingReminder(),
-              ],
-              if (flowDebugMode &&
-                  !NotificationsService.schedulingSupported) ...[
-                const SizedBox(height: 16.0),
-                Frame(
-                  child: InfoText(
-                    child: Text(
-                      "You're seeing this section because you're in debug mode, and it still wouldn't work on this platform.",
-                    ),
-                  ),
-                ),
-              ],
-              if (flowDebugMode ||
-                  NotificationsService.schedulingSupported) ...[
-                const SizedBox(height: 16.0),
-                SwitchListTile(
-                  title: Text("preferences.reminders.remindDaily".t(context)),
-                  subtitle: Text(
-                    "preferences.reminders.remindDaily.description".t(context),
-                  ),
-                  value: enabled,
-                  onChanged: toggleRemindDaily,
-                ),
-                if (enabled) ...[
-                  const SizedBox(height: 16.0),
-                  ListHeader(
-                    "preferences.reminders.remindDaily.time".t(context),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Frame(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8.0),
-                      onTap: () => updateRemindDailyAt(h, m),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 12.0,
-                          horizontal: 16.0,
-                        ),
-                        width: double.infinity,
-                        alignment: Alignment.center,
+        child: FutureBuilder(
+          future: _notificationsPermissionGranted,
+          builder: (context, snapshot) {
+            final bool? hasNotificationsPermissions = snapshot.data;
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!NotificationsService.schedulingSupported) ...[
+                    const SizedBox(height: 16.0),
+                    Frame(
+                      child: InfoText(
                         child: Text(
-                          hhmm,
-                          style: context.textTheme.displayMedium,
+                          "preferences.reminders.unsupportedPlatform".t(
+                            context,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Frame(
-                    child: InfoText(
-                      child: Text(
-                        "preferences.reminders.remindDaily.expiryWarning".t(
+                  ],
+                  if (NotificationsService.schedulingSupported &&
+                      hasNotificationsPermissions == false) ...[
+                    const SizedBox(height: 16.0),
+                    NotificationPermissionMissingReminder(),
+                  ],
+                  if (flowDebugMode &&
+                      !NotificationsService.schedulingSupported) ...[
+                    const SizedBox(height: 16.0),
+                    Frame(
+                      child: InfoText(
+                        child: Text(
+                          "You're seeing this section because you're in debug mode, and it still wouldn't work on this platform.",
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (flowDebugMode ||
+                      NotificationsService.schedulingSupported) ...[
+                    const SizedBox(height: 16.0),
+                    SwitchListTile(
+                      title: Text(
+                        "preferences.reminders.remindDaily".t(context),
+                      ),
+                      subtitle: Text(
+                        "preferences.reminders.remindDaily.description".t(
                           context,
                         ),
                       ),
+                      value: enabled,
+                      onChanged: toggleRemindDaily,
                     ),
-                  ),
+                    if (enabled) ...[
+                      const SizedBox(height: 16.0),
+                      ListHeader(
+                        "preferences.reminders.remindDaily.time".t(context),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Frame(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8.0),
+                          onTap: () => updateRemindDailyAt(h, m),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 12.0,
+                              horizontal: 16.0,
+                            ),
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            child: Text(
+                              hhmm,
+                              style: context.textTheme.displayMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Frame(
+                        child: InfoText(
+                          child: Text(
+                            "preferences.reminders.remindDaily.expiryWarning".t(
+                              context,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16.0),
+                  ],
                 ],
-                const SizedBox(height: 16.0),
-              ],
-            ],
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -48,23 +48,29 @@ import "package:path_provider/path_provider.dart"
     show getApplicationSupportDirectory;
 import "package:window_manager/window_manager.dart";
 
+RotatingFileAppender? mainLogAppender;
+
 void main() async {
   Logger.root.level = Level.ALL;
   if (flowDebugMode) {
     PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
   }
   unawaited(
-    getApplicationSupportDirectory().then((value) {
-      final String logsDir = path.join(value.path, "logs");
-      Directory(logsDir).createSync(recursive: true);
-      RotatingFileAppender(
-        baseFilePath: path.join(
-          logsDir,
-          flowDebugMode ? "flow_debug.log" : "flow.log",
-        ),
-        keepRotateCount: 5,
-      ).attachToLogger(Logger.root);
-    }),
+    getApplicationSupportDirectory()
+        .then((value) {
+          final String logsDir = path.join(value.path, "logs");
+          Directory(logsDir).createSync(recursive: true);
+          mainLogAppender = RotatingFileAppender(
+            baseFilePath: path.join(
+              logsDir,
+              flowDebugMode ? "flow_debug.log" : "flow.log",
+            ),
+            keepRotateCount: 5,
+          )..attachToLogger(Logger.root);
+        })
+        .catchError((error) {
+          startupLog.severe("Failed to initialize log file appender", error);
+        }),
   );
 
   WidgetsFlutterBinding.ensureInitialized();

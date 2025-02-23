@@ -229,7 +229,7 @@
     "preferences.transactionGeo.auto.enable": "Otomatik ekleme",
     "preferences.transactionGeo.auto.enabled": "Otomatik ekleme etkin",
     "preferences.transactionGeo.auto.description": "Mevcut konumunuzu yeni işlemlere otomatik olarak ekleyin. Bu özelliği kapatmış olsanız bile, eklemek için haritada bir konum seçebilirsiniz.",
-    "preferences.transactionGeo.auto.permissionDenied": "Konum izni reddedildi. Dilerseniz ayarlarınızdan etkinleştirebilirsiniz.",
+    "preferences.transactionGeo.auto.permissionDenied": "Konum izni verilmedi",
     "preferences.pendingTransactions": "Bekleyen işlemler",
     "preferences.pendingTransactions.homeTimeframe": "Ana sayfada göster",
     "preferences.pendingTransactions.requireConfirmation": "Onay gerektir",

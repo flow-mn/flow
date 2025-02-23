@@ -16,7 +16,7 @@ import "package:material_symbols_icons/symbols.dart";
 
 class ExportSuccess extends StatelessWidget {
   final ExportMode mode;
-  final VoidCallback shareFn;
+  final Function(RenderObject? renderObject) shareFn;
 
   final String filePath;
 
@@ -80,10 +80,14 @@ class ExportSuccess extends StatelessWidget {
           const SizedBox(height: 16.0),
           InfoText(child: Text("sync.export.onDeviceWarning".t(context))),
           const SizedBox(height: 24.0),
-          Button(
-            onTap: shareFn,
-            leading: const Icon(Symbols.save_alt_rounded),
-            child: Text("sync.export.save".t(context, mode.name)),
+          Builder(
+            builder: (context) {
+              return Button(
+                onTap: () => shareFn(context.findRenderObject()),
+                leading: const Icon(Symbols.save_alt_rounded),
+                child: Text("sync.export.save".t(context, mode.name)),
+              );
+            },
           ),
         ],
       ),

@@ -173,6 +173,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ListHeader("preferences.hapticFeedback".t(context)),
             const SizedBox(height: 8.0),
             const Haptics(),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),
