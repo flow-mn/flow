@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.12.1+141"
+version: "0.12.1+142"
 
 environment:
   sdk: ">=3.7.0 <4.0.0"
@@ -52,8 +52,8 @@ dependencies:
   objectbox_flutter_libs: ^4.1.0
   package_info_plus: ^8.2.1
   path: ^1.8.3
-  path_provider: ^2.1.1
-  pie_menu: ^3.2.0
+  path_provider: ^2.1.5
+  pie_menu: ^3.2.7
   share_plus: ^10.0.0
   shared_preferences: ^2.5.2
   simple_icons: ^10.1.3

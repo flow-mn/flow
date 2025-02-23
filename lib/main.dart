@@ -99,25 +99,33 @@ void main() async {
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
   await LocalPreferences.initialize();
-  unawaited(NotificationsService().initialize());
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
 
   unawaited(
-    TransactionsService().synchronizeNotifications().catchError((error) {
-      startupLog.severe("Failed to synchronize notifications", error);
+    NotificationsService().initialize().then((_) {
+      unawaited(
+        TransactionsService().synchronizeNotifications().catchError((error) {
+          startupLog.severe("Failed to synchronize notifications", error);
+        }),
+      );
+      if (UserPreferencesService().remindDailyAt
+          case Duration requireRemindAt) {
+        unawaited(
+          NotificationsService()
+              .scheduleDailyReminder(requireRemindAt)
+              .catchError((error) {
+                startupLog.severe(
+                  "Failed to schedule reminder notifications",
+                  error,
+                );
+              }),
+        );
+      }
     }),
   );
-  if (UserPreferencesService().remindDailyAt case Duration requireRemindAt) {
-    unawaited(
-      NotificationsService().scheduleDailyReminder(requireRemindAt).catchError((
-        error,
-      ) {
-        startupLog.severe("Failed to schedule reminder notifications", error);
-      }),
-    );
-  }
+
   unawaited(
     TransactionsService().clearStaleTrashBinEntries().catchError((error) {
       startupLog.severe("Failed to clear stale trash bin entries", error);
