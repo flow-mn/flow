@@ -49,6 +49,7 @@ class _ExportOptionsPageState extends State<ExportOptionsPage> {
                 title: "sync.export.history".t(context),
                 subtitle: "sync.export.history.description".t(context),
               ),
+              const SizedBox(height: 16.0),
             ],
           ),
         ),

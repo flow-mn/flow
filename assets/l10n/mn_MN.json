@@ -229,7 +229,7 @@
     "preferences.transactionGeo.auto.enable": "Автоматаар хавсаргах",
     "preferences.transactionGeo.auto.enabled": "Автоматаар хавсаргах идэвхжсэн",
     "preferences.transactionGeo.auto.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
-    "preferences.transactionGeo.auto.permissionDenied": "Байршил авах эрх олгоогүй байна. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
+    "preferences.transactionGeo.auto.permissionDenied": "Байршил авах эрх олгоогүй байна",
     "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
     "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
     "preferences.pendingTransactions.requireConfirmation.description": "Баталгаажуулаагүй гүйлгээнүүд орлого, зарлага, дансны үлдэгдэлд тооцогдохгүй",

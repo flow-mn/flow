@@ -129,7 +129,7 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
   void emptyTrashBin() async {
     if (busy) return;
 
-    final bool? confirmation = await context.showConfirmDialog(
+    final bool? confirmation = await context.showConfirmationSheet(
       isDeletionConfirmation: true,
       title: "preferences.trashBin.emptyBin".t(context),
       child: Text("preferences.trashBin.emptyBin.description".t(context)),

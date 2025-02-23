@@ -4,8 +4,8 @@ import "package:flow/services/notifications.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/notifications_permission_missing_reminder.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class PendingTransactionPreferencesPage extends StatefulWidget {
@@ -18,13 +18,31 @@ class PendingTransactionPreferencesPage extends StatefulWidget {
 
 class _PendingTransactionPreferencesPageState
     extends State<PendingTransactionPreferencesPage> {
-  late final Future<bool?> _notificationsPermissionGranted;
+  late final AppLifecycleListener _listener;
+
+  late Future<bool?> _notificationsPermissionGranted;
 
   @override
   void initState() {
     super.initState();
 
     _notificationsPermissionGranted = NotificationsService().hasPermissions();
+
+    _listener = AppLifecycleListener(
+      onShow: () {
+        _notificationsPermissionGranted =
+            NotificationsService().hasPermissions();
+        if (mounted) {
+          setState(() {});
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
   }
 
   @override
@@ -130,25 +148,18 @@ class _PendingTransactionPreferencesPageState
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CheckboxListTile /*.adaptive*/ (
-                          title: Text(
-                            "preferences.pendingTransactions.notify".t(context),
-                          ),
-                          enabled: notificationsPermissionGranted,
-                          value: notificationsPermissionGranted && notify,
-                          onChanged: updateNotify,
-                        ),
-                        if (!notificationsPermissionGranted) ...[
-                          const SizedBox(height: 8.0),
-                          Frame(
-                            child: InfoText(
-                              icon: Symbols.warning_rounded,
-                              child: Text(
-                                "notifications.permissionNotGranted".t(context),
+                        notificationsPermissionGranted
+                            ? CheckboxListTile /*.adaptive*/ (
+                              title: Text(
+                                "preferences.pendingTransactions.notify".t(
+                                  context,
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+                              enabled: notificationsPermissionGranted,
+                              value: notificationsPermissionGranted && notify,
+                              onChanged: updateNotify,
+                            )
+                            : NotificationPermissionMissingReminder(),
                         if (showSchedulingUnsupportedNotice) ...[
                           const SizedBox(height: 8.0),
                           Frame(

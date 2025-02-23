@@ -233,7 +233,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     final int txnCount = TransactionsService().countMany(filter);
 
-    final bool? confirmation = await context.showConfirmDialog(
+    final bool? confirmation = await context.showConfirmationSheet(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, _currentlyEditing.name),
       child: Text("category.delete.description".t(context, txnCount)),

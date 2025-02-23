@@ -1,5 +1,23 @@
 # Changelog
 
+## Beta 0.12.1
+
+### New features
+
+* Now you can setup daily reminders, so you won't forget to track your expenses
+
+### Changes and improvements
+
+* Now Flow shows warnings for ungranted notification/location permissions
+* Flow now saves logs on-device. Logs contain information about certain actions being
+  executed, and information about failures and errors in the app, and could be used
+  for debugging.
+
+  You can find logs at the end of Backup > Backup history page
+
+  > At the moment, most sensitive information stored on the app is transaction UUID,
+  > which doesn't reveal any sensitive information without the data.
+
 ## Beta 0.12.0
 
 ### New features

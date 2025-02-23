@@ -41,7 +41,7 @@ class FormCloseButton extends StatelessWidget {
       return;
     }
 
-    final bool? confirmPop = await context.showConfirmDialog(
+    final bool? confirmPop = await context.showConfirmationSheet(
       title: "general.delete.unsavedProgress".t(context),
       child: Text("general.delete.unsavedProgress.description".t(context)),
     );

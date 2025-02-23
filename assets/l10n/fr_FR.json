@@ -229,7 +229,7 @@
     "preferences.transactionGeo.auto.enable": "Attacher automatiquement",
     "preferences.transactionGeo.auto.enabled": "Attachement automatique activé",
     "preferences.transactionGeo.auto.description": "Attache automatiquement votre position actuelle aux nouvelles transactions. Même si vous avez désactivé cette option, vous pouvez toujours choisir un lieu sur une carte pour l'attacher.",
-    "preferences.transactionGeo.auto.permissionDenied": "La permission de localisation a été refusée. Vous pouvez l'activer dans vos paramètres si vous le souhaitez.",
+    "preferences.transactionGeo.auto.permissionDenied": "L'autorisation de localisation n'est pas accordée",
     "preferences.pendingTransactions": "Transactions en attente",
     "preferences.pendingTransactions.homeTimeframe": "Afficher sur l'accueil",
     "preferences.pendingTransactions.requireConfirmation": "Nécessite une confirmation",
