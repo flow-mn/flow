@@ -317,7 +317,7 @@ class NotificationsService {
 
         await pluginInstance.zonedSchedule(
           _count++,
-          "notifications.reminderText#${1 + ((i + offset) % 7)}",
+          "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
           null,
           dateTime,
           details,
