@@ -37,7 +37,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
     final bool enabled = remindDailyAt != null;
 
     final int h = remindDailyAt?.inHours ?? 0;
-    final int m = remindDailyAt?.inMinutes.remainder(60).toInt() ?? 0;
+    final int m = (remindDailyAt?.inMinutes ?? 0) % 60;
 
     final String hhmm = DateTime(1970, 1, 1, h, m).toMoment().LT;
 

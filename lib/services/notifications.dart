@@ -263,7 +263,7 @@ class NotificationsService {
   }
 
   Future<void> scheduleDailyReminder(Duration time) async {
-    unawaited(clearDailyReminders());
+    await clearDailyReminders();
 
     if (!schedulingSupported) {
       _log.warning("Scheduling not supported on this platform");
@@ -271,7 +271,7 @@ class NotificationsService {
     }
 
     final int h = time.abs().inHours;
-    final int m = time.abs().inMinutes.remainder(60).toInt();
+    final int m = time.abs().inMinutes % 60;
 
     final int offset = math.Random().nextInt(7);
 
