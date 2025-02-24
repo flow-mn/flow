@@ -76,6 +76,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    startupLog.fine("Initializing window manager");
     await windowManager.ensureInitialized();
   }
 
@@ -83,11 +84,15 @@ void main() async {
 
   unawaited(
     PackageInfo.fromPlatform()
-        .then(
-          (value) =>
-              appVersion =
-                  "${value.version}+${value.buildNumber}$debugBuildSuffix",
-        )
+        .then((value) {
+          appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+
+          startupLog.fine("Loaded package info");
+          startupLog.fine("App version: $appVersion");
+          startupLog.fine("Store: ${value.installerStore}");
+
+          return appVersion;
+        })
         .catchError((e) {
           startupLog.warning(
             "An error was occured while fetching app version",
@@ -101,13 +106,17 @@ void main() async {
     FlowLocalizations.printMissingKeys();
   }
 
+  startupLog.fine("Initializing ObjectBox database");
+
   /// [ObjectBox] MUST initialize before [LocalPreferences] because prefs
   /// access [ObjectBox] upon initialization.
   await ObjectBox.initialize();
+  startupLog.fine("Initializing local preferences (shared prefs)");
   await LocalPreferences.initialize();
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
+  startupLog.fine("Updating account order list");
 
   unawaited(
     NotificationsService().initialize().then((_) {
@@ -118,26 +127,33 @@ void main() async {
       );
       if (UserPreferencesService().remindDailyAt
           case Duration requireRemindAt) {
+        startupLog.info(
+          "Scheduling daily reminder notifications at ${requireRemindAt.inMinutes} minutes past midnight",
+        );
         unawaited(
           NotificationsService()
               .scheduleDailyReminder(requireRemindAt)
               .catchError((error) {
                 startupLog.severe(
-                  "Failed to schedule reminder notifications",
+                  "Failed to schedule daily reminder notifications",
                   error,
                 );
               }),
         );
+      } else {
+        startupLog.fine("No daily reminder set, skipping scheduling");
       }
     }),
   );
 
+  startupLog.fine("Clearing stale transactions from trash bin");
   unawaited(
     TransactionsService().clearStaleTrashBinEntries().catchError((error) {
       startupLog.severe("Failed to clear stale trash bin entries", error);
     }),
   );
 
+  startupLog.fine("Initializing exchange rates service");
   ExchangeRatesService().init();
 
   try {
@@ -153,11 +169,13 @@ void main() async {
   }
 
   try {
+    startupLog.fine("Initializing user preferences service");
     UserPreferencesService().initialize();
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
+  startupLog.fine("Finally telling Flutter to run the app widget");
   runApp(const Flow());
 }
 
