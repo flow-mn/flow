@@ -4,11 +4,9 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
-import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
-import "package:go_router/go_router.dart";
 
 class ExportHistoryPage extends StatefulWidget {
   const ExportHistoryPage({super.key});
@@ -42,31 +40,13 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
               (0, true) => const NoBackups(),
               (_, true) => SlidableAutoCloseBehavior(
                 child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    if (index == backupEntires.length) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 16.0),
-                          Frame(
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: TextButton(
-                                onPressed: () => context.push("/_debug/logs"),
-                                child: Text("View debug logs"),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return BackupEntryCard(
-                      entry: backupEntires[index],
-                      dismissibleKey: ValueKey(backupEntires[index].id),
-                    );
-                  },
+                  itemBuilder:
+                      (context, index) => BackupEntryCard(
+                        entry: backupEntires[index],
+                        dismissibleKey: ValueKey(backupEntires[index].id),
+                      ),
                   separatorBuilder: (context, index) => separator,
-                  itemCount: backupEntires!.length + 1,
+                  itemCount: backupEntires!.length,
                 ),
               ),
               (_, false) => const Spinner.center(),
