@@ -51,6 +51,8 @@ import "package:window_manager/window_manager.dart";
 RotatingFileAppender? mainLogAppender;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Logger.root.level = Level.ALL;
   if (flowDebugMode) {
     PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
@@ -72,8 +74,6 @@ void main() async {
           startupLog.severe("Failed to initialize log file appender", error);
         }),
   );
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     startupLog.fine("Initializing window manager");
