@@ -7,6 +7,7 @@ import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
 import "package:flow/routes/debug/debug_logs_page.dart";
+import "package:flow/routes/debug/debug_scheduled_notifications_page.dart";
 import "package:flow/routes/debug/debug_theme_page.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/routes/export/export_history_page.dart";
@@ -370,6 +371,10 @@ final router = GoRouter(
     GoRoute(
       path: "/_debug/theme",
       builder: (context, state) => DebugThemePage(),
+    ),
+    GoRoute(
+      path: "/_debug/scheduledNotifications",
+      builder: (context, state) => DebugScheduledNotificationsPage(),
     ),
     GoRoute(path: "/_debug/logs", builder: (context, state) => DebugLogsPage()),
   ],
