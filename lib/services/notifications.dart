@@ -1,16 +1,20 @@
-import "dart:developer";
+import "dart:async";
 import "dart:io";
 import "dart:math" as math;
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:timezone/data/latest.dart" as tz;
 import "package:timezone/timezone.dart";
 import "package:window_manager/window_manager.dart";
+
+final Logger _log = Logger("NotificationsService");
 
 class NotificationsService {
   static NotificationsService? _instance;
@@ -18,6 +22,9 @@ class NotificationsService {
 
   static final String windowsNotificationGuid =
       "f342887a-2ea1-41b1-94cf-51d70a46ce73";
+
+  static bool get schedulingSupported =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 
   bool _ready = false;
   bool get ready => _ready;
@@ -53,7 +60,7 @@ class NotificationsService {
       _timezone = await FlutterTimezone.getLocalTimezone();
     } catch (error) {
       _timezone = _fallbackTimezone;
-      log("[NotificationsService] Failed to get local timezone", error: error);
+      _log.severe("Failed to get local timezone", error);
     }
 
     try {
@@ -100,6 +107,10 @@ class NotificationsService {
       );
 
       try {
+        if (Platform.isLinux) {
+          throw Exception("Linux doesn't support notification app launch");
+        }
+
         final NotificationAppLaunchDetails? launchDetails =
             await pluginInstance.getNotificationAppLaunchDetails();
 
@@ -107,16 +118,9 @@ class NotificationsService {
             launchDetails?.didNotificationLaunchApp == true
                 ? launchDetails
                 : null;
-
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails: $notificationAppLaunchDetails",
-        );
       } catch (e) {
         notificationAppLaunchDetails = null;
-        log(
-          "[NotificationsService] NotificationAppLaunchDetails failed",
-          error: e,
-        );
+        _log.info("NotificationAppLaunchDetails failed", e);
       }
     } finally {
       _ready = true;
@@ -134,10 +138,7 @@ class NotificationsService {
           requestPermissions();
         }
       } catch (e) {
-        log(
-          "[NotificationsService] Failed to check or request permissions",
-          error: e,
-        );
+        _log.warning("Failed to check or request permissions", e);
       }
     }
 
@@ -179,7 +180,7 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      log("[NotificationsService] ignoring scheduling for past date");
+      _log.info("Ignoring scheduling for past date");
       return;
     }
 
@@ -228,14 +229,115 @@ class NotificationsService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
-  void debugSchedule() async {
-    final TZDateTime dateTime = _getTZDateTime(
-      Moment.now().startOfNextMinute(),
+  Future<void> clearPayloadlessNotifications() async =>
+      await _clearByType(null);
+
+  Future<void> clearByType(FlowNotificationPayloadItemType type) async =>
+      await _clearByType(type);
+
+  /// Omitting [type] would delete notifications that do not fit into any
+  /// [FlowNotificationPayloadItemType]
+  Future<void> _clearByType(FlowNotificationPayloadItemType? type) async {
+    final List<PendingNotificationRequest> scheduledNotifications =
+        await getSchedules();
+
+    final List<PendingNotificationRequest> reminders =
+        scheduledNotifications.where((x) {
+          if (x.payload == null) return type == null;
+          try {
+            final FlowNotificationPayload parsedPayload =
+                FlowNotificationPayload.parse(x.payload!);
+
+            return parsedPayload.itemType == type;
+          } catch (e) {
+            return type == null;
+          }
+        }).toList();
+
+    await Future.wait(
+      reminders.map((reminder) async {
+        try {
+          await pluginInstance.cancel(reminder.id);
+        } catch (e) {
+          _log.warning("Failed to cancel reminder", e);
+        }
+      }),
     );
+  }
+
+  Future<void> scheduleDailyReminders(Duration time) async {
+    await clearByType(FlowNotificationPayloadItemType.reminder);
+
+    if (!schedulingSupported) {
+      _log.warning("Scheduling not supported on this platform");
+      return;
+    }
+
+    final int h = time.abs().inHours;
+    final int m = time.abs().inMinutes % 60;
+
+    final int offset = math.Random().nextInt(7);
+
+    for (int i = 0; i < 7; i++) {
+      final TZDateTime dateTime = _getTZDateTime(
+        Moment.startOfToday()
+            .add(Duration(days: i))
+            .copyWith(hour: h, minute: m),
+      );
+
+      if (dateTime.isBefore(Moment.now())) {
+        _log.info("Ignoring scheduling for past date");
+        continue;
+      }
+
+      try {
+        final NotificationDetails details = NotificationDetails(
+          android: AndroidNotificationDetails(
+            "flow-daily-reminder",
+            "Daily Reminder",
+            channelDescription: "Reminds you to track your expenses",
+            importance: Importance.max,
+            priority: Priority.high,
+            category: AndroidNotificationCategory.reminder,
+            styleInformation: DefaultStyleInformation(false, false),
+          ),
+          iOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          macOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          linux: LinuxNotificationDetails(
+            icon: AssetsLinuxIcon("assets/images/flow.png"),
+            urgency: LinuxNotificationUrgency.normal,
+            category: LinuxNotificationCategory.imReceived,
+            actions: [LinuxNotificationAction(key: "open", label: "Open Flow")],
+          ),
+          windows: WindowsNotificationDetails(),
+        );
+
+        await pluginInstance.zonedSchedule(
+          _count++,
+          "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
+          null,
+          dateTime,
+          details,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        );
+      } catch (e) {
+        _log.warning("Failed to schedule notification", e);
+      }
+    }
+  }
+
+  Future<void> debugSchedule(DateTime scheduleAt) async {
+    final TZDateTime dateTime = _getTZDateTime(scheduleAt);
 
     try {
       await pluginInstance.zonedSchedule(
@@ -262,7 +364,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to schedule notification", error: e);
+      _log.warning("Failed to schedule notification", e);
     }
   }
 
@@ -282,7 +384,7 @@ class NotificationsService {
         payload: "/profile",
       );
     } catch (e) {
-      log("[NotificationsService] Failed to show notification", error: e);
+      _log.warning("Failed to show notification", e);
     }
   }
 
@@ -309,30 +411,18 @@ class NotificationsService {
               }
             })
             .catchError((error) {
-              log(
-                "[NotificationsService] Failed to check window focus",
-                error: error,
-              );
+              _log.warning("Failed to check window focus", error);
             });
       }
     } catch (e) {
-      log(
-        "[NotificationsService] Failed to check/request window focus",
-        error: e,
-      );
+      _log.warning("Failed to check/request window focus", e);
     }
 
     for (final callback in _registeredCallbacks) {
       try {
         callback(response);
-        log(
-          "response.actionId: ${response.actionId}, ${response.id}, $response",
-        );
       } catch (error) {
-        log(
-          "[NotificationsService] Failed to call notification callback",
-          error: error,
-        );
+        _log.warning("Failed to call notification callback", error);
       }
     }
   }

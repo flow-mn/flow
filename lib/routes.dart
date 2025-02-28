@@ -6,6 +6,8 @@ import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
+import "package:flow/routes/debug/debug_logs_page.dart";
+import "package:flow/routes/debug/debug_scheduled_notifications_page.dart";
 import "package:flow/routes/debug/debug_theme_page.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/routes/export/export_history_page.dart";
@@ -18,7 +20,8 @@ import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
-import "package:flow/routes/preferences/pending_transactions.dart";
+import "package:flow/routes/preferences/pending_transactions_preferences_page.dart";
+import "package:flow/routes/preferences/reminders_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
@@ -180,6 +183,10 @@ final router = GoRouter(
         GoRoute(
           path: "transfer",
           builder: (context, state) => const TransferPreferencesPage(),
+        ),
+        GoRoute(
+          path: "reminders",
+          builder: (context, state) => const RemindersPreferencesPage(),
         ),
         GoRoute(
           path: "transactionButtonOrder",
@@ -365,5 +372,10 @@ final router = GoRouter(
       path: "/_debug/theme",
       builder: (context, state) => DebugThemePage(),
     ),
+    GoRoute(
+      path: "/_debug/scheduledNotifications",
+      builder: (context, state) => DebugScheduledNotificationsPage(),
+    ),
+    GoRoute(path: "/_debug/logs", builder: (context, state) => DebugLogsPage()),
   ],
 );

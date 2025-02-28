@@ -387,7 +387,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         InfoText(
-                                          singleLine: true,
                                           child: Text(
                                             "transaction.location.edit".t(
                                               context,
@@ -925,7 +924,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final String txnTitle =
         _currentlyEditing.title ?? "transaction.fallbackTitle".t(context);
 
-    final confirmation = await context.showConfirmDialog(
+    final confirmation = await context.showConfirmationSheet(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, txnTitle),
     );

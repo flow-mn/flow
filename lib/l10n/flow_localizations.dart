@@ -3,9 +3,13 @@ import "dart:developer";
 
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
+import "package:logging/logging.dart";
 
 import "extensions.dart";
+
 export "extensions.dart";
+
+final Logger _log = Logger("FlowLocalizations");
 
 class FlowLocalizations {
   final Locale locale;
@@ -105,16 +109,16 @@ class FlowLocalizations {
         (element) => !languages[key]!.keys.contains(element),
       );
       if (missingKeys.isEmpty) {
-        log("[Gegee Language Service] $key has no missing keys");
+        _log.fine("[Gegee Language Service] $key has no missing keys");
       } else {
-        log(
+        _log.warning(
           "[Gegee Language Service] $key has ${missingKeys.length} missing keys",
         );
         for (var element in missingKeys) {
           log(element);
         }
       }
-      log("-------------------");
+      _log.finest("-------------------");
     }
   }
 

@@ -1,4 +1,4 @@
-export "extensions/custom_dialogs.dart";
+export "extensions/custom_popups.dart";
 export "extensions/go_router.dart";
 export "extensions/iterables.dart";
 export "extensions/num.dart";

@@ -1,8 +1,9 @@
-import "dart:developer";
-
 import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:intl/intl.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("Money");
 
 class Money {
   final double amount;
@@ -101,7 +102,7 @@ class Money {
   /// Compare doesn't work for [Money]s of different currencies
   int tryCompareTo(Money other) {
     if (currency != other.currency) {
-      log("Cannot compare Money of different currencies, returning 0");
+      _log.warning("Cannot compare Money of different currencies, returning 0");
       return 0;
     }
 
