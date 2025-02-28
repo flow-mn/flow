@@ -28,7 +28,7 @@ class PendingTransactionsHeader extends StatelessWidget {
       resolveNonPrimaryCurrencies: false,
       titleOverride: Row(
         children: [
-          Text("transactions.pending".t(context)),
+          Text("transaction.pending".t(context)),
           if (badgeCount != null && badgeCount! > 0)
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
