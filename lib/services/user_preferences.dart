@@ -1,5 +1,6 @@
 import "dart:math";
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
@@ -56,9 +57,11 @@ class UserPreferencesService {
     value.remindDailyAt = duration?.abs();
     ObjectBox().box<UserPreferences>().put(value);
     if (duration == null) {
-      NotificationsService().clearDailyReminders();
+      NotificationsService().clearByType(
+        FlowNotificationPayloadItemType.reminder,
+      );
     } else {
-      NotificationsService().scheduleDailyReminder(duration);
+      NotificationsService().scheduleDailyReminders(duration);
     }
   }
 

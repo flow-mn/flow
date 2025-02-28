@@ -233,21 +233,28 @@ class NotificationsService {
     }
   }
 
-  Future<void> clearDailyReminders() async {
+  Future<void> clearPayloadlessNotifications() async =>
+      await _clearByType(null);
+
+  Future<void> clearByType(FlowNotificationPayloadItemType type) async =>
+      await _clearByType(type);
+
+  /// Omitting [type] would delete notifications that do not fit into any
+  /// [FlowNotificationPayloadItemType]
+  Future<void> _clearByType(FlowNotificationPayloadItemType? type) async {
     final List<PendingNotificationRequest> scheduledNotifications =
         await getSchedules();
 
     final List<PendingNotificationRequest> reminders =
         scheduledNotifications.where((x) {
-          if (x.payload == null) return false;
+          if (x.payload == null) return type == null;
           try {
             final FlowNotificationPayload parsedPayload =
                 FlowNotificationPayload.parse(x.payload!);
 
-            return parsedPayload.itemType ==
-                FlowNotificationPayloadItemType.reminder;
+            return parsedPayload.itemType == type;
           } catch (e) {
-            return false;
+            return type == null;
           }
         }).toList();
 
@@ -262,8 +269,8 @@ class NotificationsService {
     );
   }
 
-  Future<void> scheduleDailyReminder(Duration time) async {
-    await clearDailyReminders();
+  Future<void> scheduleDailyReminders(Duration time) async {
+    await clearByType(FlowNotificationPayloadItemType.reminder);
 
     if (!schedulingSupported) {
       _log.warning("Scheduling not supported on this platform");

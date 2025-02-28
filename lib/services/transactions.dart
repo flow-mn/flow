@@ -1,3 +1,4 @@
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
@@ -320,7 +321,9 @@ class TransactionsService {
     final List<Transaction> pendingTransactions = qb.find();
     qb.close();
 
-    await NotificationsService().cancelAllNotifications();
+    await NotificationsService().clearByType(
+      FlowNotificationPayloadItemType.transaction,
+    );
 
     await Future.wait(
       pendingTransactions.map(
