@@ -132,7 +132,7 @@ void main() async {
         );
         unawaited(
           NotificationsService()
-              .scheduleDailyReminder(requireRemindAt)
+              .scheduleDailyReminders(requireRemindAt)
               .catchError((error) {
                 startupLog.severe(
                   "Failed to schedule daily reminder notifications",
