@@ -297,10 +297,21 @@ class FlowState extends State<Flow> {
       overriddenLocale.languageCode,
       overriddenLocale.countryCode,
     );
-    Moment.setGlobalLocalization(
-      MomentLocalizations.byLocale(overriddenLocale.code) ??
-          MomentLocalizations.enUS(),
+
+    mainLogger.fine("Setting locale to ${_locale.code}");
+
+    final MomentLocalization newMomentLocalization =
+        MomentLocalizations.byLocale(overriddenLocale.code) ??
+        MomentLocalizations.byLanguage(
+          overriddenLocale.languageCode.toLowerCase(),
+        ) ??
+        MomentLocalizations.enUS();
+
+    mainLogger.fine(
+      "Setting moment_dart localization to ${newMomentLocalization.locale}",
     );
+
+    Moment.setGlobalLocalization(newMomentLocalization);
 
     Intl.defaultLocale = overriddenLocale.code;
 
