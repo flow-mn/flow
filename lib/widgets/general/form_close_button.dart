@@ -8,11 +8,22 @@ import "package:material_symbols_icons/symbols.dart";
 ///
 /// If `canPop()` evaluates to `false`, a confirmation dialog will be shown,
 /// in which the user can choose to discard the unsaved changes.
-class FormCloseButton extends StatelessWidget {
+class FormCloseButton extends StatefulWidget {
   final bool Function() canPop;
   final bool center;
 
   const FormCloseButton({super.key, required this.canPop, this.center = true});
+
+  @override
+  State<FormCloseButton> createState() => _FormCloseButtonState();
+
+  static _pop(BuildContext context) {
+    context.pop();
+  }
+}
+
+class _FormCloseButtonState extends State<FormCloseButton> {
+  bool sheetShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,7 @@ class FormCloseButton extends StatelessWidget {
       ),
     );
 
-    if (center) {
+    if (widget.center) {
       return Center(child: child);
     }
 
@@ -36,24 +47,33 @@ class FormCloseButton extends StatelessWidget {
   }
 
   void onPressed(BuildContext context) async {
-    if (canPop()) {
+    if (widget.canPop()) {
       context.pop();
       return;
     }
 
-    final bool? confirmPop = await context.showConfirmationSheet(
-      title: "general.delete.unsavedProgress".t(context),
-      child: Text("general.delete.unsavedProgress.description".t(context)),
-    );
+    if (sheetShown) return;
 
-    if (confirmPop != true) return;
+    setState(() {
+      sheetShown = true;
+    });
 
-    if (context.mounted) {
-      _pop(context);
+    try {
+      final bool? confirmPop = await context.showConfirmationSheet(
+        title: "general.delete.unsavedProgress".t(context),
+        child: Text("general.delete.unsavedProgress.description".t(context)),
+      );
+
+      if (confirmPop != true) return;
+
+      if (context.mounted) {
+        FormCloseButton._pop(context);
+      }
+    } finally {
+      sheetShown = false;
+      if (context.mounted) {
+        setState(() {});
+      }
     }
-  }
-
-  static _pop(BuildContext context) {
-    context.pop();
   }
 }

@@ -5,6 +5,12 @@
 ### New features
 
 * Now you can setup daily reminders, so you won't forget to track your expenses
+* Added French (fr_FR), it's totally AI generated, but it'll help me cuz I'm trying to learn french
+
+### Fixes
+
+* In transaction/account/category, and other pages with forms, clicking back button multiple times
+  after changing data no longer shows multiple modal sheets. This mostly affected android.
 
 ### Changes and improvements
 
