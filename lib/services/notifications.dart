@@ -329,10 +329,8 @@ class NotificationsService {
     }
   }
 
-  void debugSchedule() async {
-    final TZDateTime dateTime = _getTZDateTime(
-      Moment.now().startOfNextMinute(),
-    );
+  Future<void> debugSchedule(DateTime scheduleAt) async {
+    final TZDateTime dateTime = _getTZDateTime(scheduleAt);
 
     try {
       await pluginInstance.zonedSchedule(
