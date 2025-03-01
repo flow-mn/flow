@@ -249,11 +249,6 @@ class FlowState extends State<Flow> {
 
   @override
   Widget build(BuildContext context) {
-    final bool locked =
-        LocalAuthService.platformSupported &&
-        LocalAuthService.available &&
-        _tempLock;
-
     return DynamicColorBuilder(
       builder: (dynamicLight, dynamicDark) {
         return MaterialApp.router(
@@ -274,7 +269,7 @@ class FlowState extends State<Flow> {
           builder: (context, child) {
             return GestureDetector(
               behavior:
-                  locked
+                  _tempLock
                       ? HitTestBehavior.opaque
                       : HitTestBehavior.deferToChild,
               onTap: _tryUnlockTempLock,
@@ -283,7 +278,7 @@ class FlowState extends State<Flow> {
                 child: Stack(
                   children: [
                     child ?? Container(),
-                    if (locked)
+                    if (_tempLock)
                       Positioned.fill(
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
@@ -380,6 +375,9 @@ class FlowState extends State<Flow> {
   void _tryUnlockTempLock() async {
     try {
       await LocalAuthService.initialize();
+      if (!LocalAuthService.available || !LocalAuthService.platformSupported) {
+        _tempLock = false;
+      }
       if (!_tempLock) {
         mainLogger.fine("Ignoring local auth initialization");
         return;
