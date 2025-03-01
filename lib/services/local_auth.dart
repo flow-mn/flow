@@ -38,10 +38,7 @@ class LocalAuthService {
 
     _localAuth = LocalAuthentication();
     _instance = LocalAuthService._internal();
-    _available =
-        platformSupported &&
-        await _localAuth.isDeviceSupported() &&
-        await _localAuth.canCheckBiometrics;
+    _available = platformSupported && await _localAuth.canCheckBiometrics;
 
     _log.fine("Local auth service initialized, available: $_available");
   }
