@@ -191,10 +191,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ListHeader("preferences.privacy".t(context)),
             const SizedBox(height: 8.0),
             const Privacy(),
-            if (!_showLockApp) ...[
-              const SizedBox(height: 8.0),
-              const LockApp(),
-            ],
+            if (_showLockApp) ...[const SizedBox(height: 8.0), const LockApp()],
             const SizedBox(height: 24.0),
             ListHeader("preferences.hapticFeedback".t(context)),
             const SizedBox(height: 8.0),

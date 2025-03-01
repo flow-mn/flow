@@ -38,7 +38,21 @@ class LocalAuthService {
 
     _localAuth = LocalAuthentication();
     _instance = LocalAuthService._internal();
-    _available = platformSupported && await _localAuth.canCheckBiometrics;
+    _available =
+        platformSupported &&
+        await _localAuth
+            .getAvailableBiometrics()
+            .then((biometrics) {
+              return biometrics.contains(BiometricType.fingerprint) ||
+                  biometrics.contains(BiometricType.face) ||
+                  biometrics.contains(BiometricType.strong);
+            })
+            .catchError((error) {
+              _log.severe(
+                "Error while checking biometrics availability: $error",
+              );
+              return false;
+            });
 
     _log.fine("Local auth service initialized, available: $_available");
   }
