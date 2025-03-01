@@ -6,7 +6,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
-import "package:flow/widgets/general/blur_on_busy.dart";
+import "package:flow/widgets/general/blur_backgorund.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -92,8 +92,8 @@ class _StatsTabState extends State<StatsTab>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlurOnBusy(
-                          busy: busy,
+                        BlurBackground(
+                          blur: busy,
                           child: Frame(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -138,13 +138,13 @@ class _StatsTabState extends State<StatsTab>
                           ),
                         ),
                         const SizedBox(height: 16.0),
-                        BlurOnBusy(
-                          busy: busy,
+                        BlurBackground(
+                          blur: busy,
                           child: RangeDailyChart(report: report!),
                         ),
                         const SizedBox(height: 24.0),
-                        BlurOnBusy(
-                          busy: busy,
+                        BlurBackground(
+                          blur: busy,
                           child: Frame(
                             child: Row(
                               children: [
