@@ -40,7 +40,7 @@ extension L10nStringHelper on String {
 
   /// Returns localized version of [this].
   ///
-  /// Same as calling context.l.get([this])
+  /// This does not require a context
   String tr([dynamic replace]) =>
       FlowLocalizations.getTransalation(this, replace: replace);
 }

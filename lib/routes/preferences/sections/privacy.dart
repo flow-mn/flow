@@ -18,7 +18,7 @@ class _PrivacyState extends State<Privacy> {
 
     return SwitchListTile /*.adaptive*/ (
       secondary: const Icon(Symbols.password_rounded),
-      title: Text("preferences.privacyMode.enableAtStartup".t(context)),
+      title: Text("preferences.privacy.maskAtStartup".t(context)),
       value: privacyMode,
       onChanged: updatePrivacyMode,
     );

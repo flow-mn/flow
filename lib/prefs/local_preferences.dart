@@ -51,6 +51,9 @@ class LocalPreferences {
 
   late final BoolSettingsEntry privacyMode;
 
+  /// This refers to biometric auth, passwords, pins from the operating system
+  late final BoolSettingsEntry requireLocalAuth;
+
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
@@ -118,6 +121,12 @@ class LocalPreferences {
 
     privacyMode = BoolSettingsEntry(
       key: "privacyMode",
+      preferences: _prefs,
+      initialValue: false,
+    );
+
+    requireLocalAuth = BoolSettingsEntry(
+      key: "requireLocalAuth",
       preferences: _prefs,
       initialValue: false,
     );
