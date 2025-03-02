@@ -12,10 +12,13 @@ import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart";
+
+final Logger _log = Logger("ObjectBox-Flow");
 
 class ObjectBox {
   static ObjectBox? _instance;
@@ -44,6 +47,7 @@ class ObjectBox {
 
   factory ObjectBox() {
     if (_instance == null) {
+      _log.severe("You must initialize ObjectBox by calling initialize().");
       throw Exception("You must initialize ObjectBox by calling initialize().");
     }
 
@@ -69,13 +73,22 @@ class ObjectBox {
 
     final dir = Directory(ObjectBox.appDataDirectory);
     if (!(await dir.exists())) {
+      _log.fine("Creating app data directory at ${dir.path}");
       await dir.create(recursive: true);
     }
 
-    final store = await openStore(
-      directory: appDataDirectory,
-      macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
-    );
+    late final Store store;
+
+    if (Store.isOpen(appDataDirectory)) {
+      _log.fine("Reusing existing ObjectBox store at $appDataDirectory");
+      store = Store.attach(getObjectBoxModel(), appDataDirectory);
+    } else {
+      _log.fine("Opening ObjectBox store at $appDataDirectory");
+      store = await openStore(
+        directory: appDataDirectory,
+        macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
+      );
+    }
 
     return _instance = ObjectBox._internal(store);
   }
@@ -217,6 +230,8 @@ class ObjectBox {
   /// * Profile
   /// * BackupEntry
   Future<void> eraseMainData() async {
+    _log.severe("Erasing all data, except for Profile and BackupEntry");
+
     try {
       await Future.wait([
         box<Transaction>().removeAllAsync(),
