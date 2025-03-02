@@ -21,6 +21,7 @@ import "dart:ui";
 
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
+import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -30,17 +31,20 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
 import "package:logging_appenders/logging_appenders.dart";
+import "package:material_symbols_icons/material_symbols_icons.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:path/path.dart" as path;
@@ -197,6 +201,8 @@ class FlowState extends State<Flow> {
 
   ThemeMode get themeMode => _themeMode;
 
+  late bool _tempLock;
+
   bool get useDarkTheme =>
       (_themeMode == ThemeMode.system
           ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
@@ -213,6 +219,8 @@ class FlowState extends State<Flow> {
     LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
+    _tempLock = LocalPreferences().requireLocalAuth.get();
+
     TransactionsService().addListener(_synchronizePlannedNotifications);
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
@@ -221,8 +229,11 @@ class FlowState extends State<Flow> {
       // To migrate profile image path from old to new (since 0.10.0)
       nonImportantMigrateProfileImagePath();
     }
+
     migrateLocalPrefsUserPreferencesRegardingTransferStuff();
     migrateLocalPrefsRequirePendingTransactionConfrimation();
+
+    _tryUnlockTempLock();
   }
 
   @override
@@ -255,6 +266,37 @@ class FlowState extends State<Flow> {
           theme: _themeFactory.materialTheme,
           themeMode: _themeMode,
           debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            return GestureDetector(
+              behavior:
+                  _tempLock
+                      ? HitTestBehavior.opaque
+                      : HitTestBehavior.deferToChild,
+              onTap: _tryUnlockTempLock,
+              child: IgnorePointer(
+                ignoring: _tempLock,
+                child: Stack(
+                  children: [
+                    child ?? Container(),
+                    if (_tempLock)
+                      Positioned.fill(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                          child: SizedBox.expand(
+                            child: Center(
+                              child: FlowIcon(
+                                FlowIconData.icon(Symbols.lock_rounded),
+                                size: 80.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -328,5 +370,26 @@ class FlowState extends State<Flow> {
     TransactionsService().synchronizeNotifications().catchError((error) {
       startupLog.severe("Failed to synchronize notifications", error);
     });
+  }
+
+  void _tryUnlockTempLock() async {
+    try {
+      await LocalAuthService.initialize();
+      if (!LocalAuthService.available || !LocalAuthService.platformSupported) {
+        _tempLock = false;
+      }
+      if (!_tempLock) {
+        mainLogger.fine("Ignoring local auth initialization");
+        return;
+      }
+      final authenticated = await LocalAuthService().authenticate();
+      _tempLock = !authenticated;
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      mainLogger.severe("Failed to initialize LocalAuthService", e);
+    }
   }
 }

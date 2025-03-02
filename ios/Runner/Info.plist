@@ -59,6 +59,8 @@
 		<true />
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false />
+		<key>NSFaceIDUsageDescription</key>
+		<string>Flow uses Face ID if you choose to require Face ID to open the app for authentication</string>
 		<key>UIFileSharingEnabled</key>
 		<true />
 		<key>NSPhotoLibraryUsageDescription</key>

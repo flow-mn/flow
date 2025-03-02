@@ -6,7 +6,9 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/routes/preferences/sections/haptics.dart";
+import "package:flow/routes/preferences/sections/lock_app.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
+import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
@@ -35,6 +37,25 @@ class PreferencesPage extends StatefulWidget {
 class PreferencesPageState extends State<PreferencesPage> {
   bool _currencyBusy = false;
   bool _languageBusy = false;
+
+  bool _showLockApp = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalAuthService.initialize()
+        .then((_) {
+          _showLockApp = LocalAuthService.available;
+
+          if (mounted) {
+            setState(() {});
+          }
+        })
+        .catchError((_) {
+          _log.warning("Failed to initialize local auth service");
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,9 +188,10 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             const SizedBox(height: 24.0),
-            ListHeader("preferences.privacyMode".t(context)),
+            ListHeader("preferences.privacy".t(context)),
             const SizedBox(height: 8.0),
             const Privacy(),
+            if (_showLockApp) ...[const SizedBox(height: 8.0), const LockApp()],
             const SizedBox(height: 24.0),
             ListHeader("preferences.hapticFeedback".t(context)),
             const SizedBox(height: 8.0),

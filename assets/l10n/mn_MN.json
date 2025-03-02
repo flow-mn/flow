@@ -31,6 +31,7 @@
     "general.selectLocation": "Байршил сонгох",
     "general.nextNDays": "Ирэх {} хоног",
     "general.flow": "Урсгал",
+    "general.unlockToOpen": "Flow-г нээхийн тулд түгжээг тайлна уу",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",
@@ -241,8 +242,11 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "Байхгүй",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Flow-г нээээгүй үед мэдэгдэл илгээх боломжгүй",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Мэдэгдэл товлох нь зөвхөн Android, iOS, macOS системд боломжтой",
-    "preferences.privacyMode": "Нууцлалын горим",
-    "preferences.privacyMode.enableAtStartup": "Эхлэх үед идэвхжүүлэх",
+    "preferences.privacy": "Нууцлал",
+    "preferences.privacy.maskAtStartup": "Эхлэх үед мөнгөн дүнг одлох",
+    "preferences.privacy.appLock": "Апп түгжих",
+    "preferences.privacy.appLock.description#iOS": "Аппыг нээхийн тулд Face ID эсвэл Touch ID шаардах",
+    "preferences.privacy.appLock.description#Android": "Аппыг нээхийн тулд биометрик түгжээ ашиглаж өөрийгөө баталгаажуулах",
     "preferences.moneyFormatting": "Мөнгөний хэлбэр",
     "preferences.moneyFormatting.preferFull": "Бүтэн дүнг харуулах",
     "preferences.moneyFormatting.preferFull.description": "Тоог хураахгүй бүтнээр нь харуулах",
@@ -483,5 +487,6 @@
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу",
     "error.url.cannotOpen": "Холбоосыг нээхэд алдаа гарлаа",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Ханшийн мэдээлэл татахад асуудал гарсан тул гүйлгээний мэдээлэл зөрөх магадлалтай",
-    "error.exchangeRates.cannotFetch": "Мэдээлэл татахад алдаа гарлаа. Холболтоо шалгаад дахин оролдоно уу."
+    "error.exchangeRates.cannotFetch": "Мэдээлэл татахад алдаа гарлаа. Холболтоо шалгаад дахин оролдоно уу.",
+    "error.failedLocalAuth": "Баталгаажуулалт амжилтгүй боллоо, дахин оролдоно уу."
 }

@@ -31,6 +31,7 @@
     "general.selectLocation": "Choose location",
     "general.nextNDays": "Next {} day(s)",
     "general.flow": "Flow",
+    "general.unlockToOpen": "Unlock to open Flow",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
@@ -241,8 +242,11 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "None",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Notifications won't work when Flow isn't open",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Scheduled notifications are only available on Android, iOS, and macOS",
-    "preferences.privacyMode": "Privacy mode",
-    "preferences.privacyMode.enableAtStartup": "Enable at startup",
+    "preferences.privacy": "Privacy",
+    "preferences.privacy.maskAtStartup": "Mask numbers (*) at startup",
+    "preferences.privacy.appLock": "Lock app",
+    "preferences.privacy.appLock.description#iOS": "Require Face ID or Touch ID to open the app",
+    "preferences.privacy.appLock.description#Android": "Require biometric authentication to open the app",
     "preferences.moneyFormatting": "Money formatting",
     "preferences.moneyFormatting.preferFull": "Prefer full amounts",
     "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
@@ -483,5 +487,6 @@
     "error.transaction.missingAccount": "Please select an account",
     "error.url.cannotOpen": "Can't open the link",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Failed to fetch exchange rates, transaction data might not be fully accurate",
-    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection."
+    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection.",
+    "error.failedLocalAuth": "Authentication failed, please try again."
 }

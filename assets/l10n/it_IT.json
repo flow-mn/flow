@@ -31,6 +31,7 @@
     "general.selectLocation": "Scegli la posizione",
     "general.nextNDays": "Prossimi {} giorni",
     "general.flow": "Flusso",
+    "general.unlockToOpen": "Sblocca per aprire Flow",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",
@@ -241,8 +242,11 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "Nessuno",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Le notifiche non funzioneranno quando Flow non è aperto",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Le notifiche programmate sono disponibili solo su Android, iOS e macOS",
-    "preferences.privacyMode": "Modalità privacy",
-    "preferences.privacyMode.enableAtStartup": "Attiva all'avvio",
+    "preferences.privacy": "Privacy",
+    "preferences.privacy.maskAtStartup": "Nascondi i numeri (*) all'avvio",
+    "preferences.privacy.appLock": "Blocca app",
+    "preferences.privacy.appLock.description#iOS": "Richiedi Face ID o Touch ID per aprire l'app",
+    "preferences.privacy.appLock.description#Android": "Richiedi autenticazione biometrica per aprire l'app",
     "preferences.moneyFormatting": "Formato valuta",
     "preferences.moneyFormatting.preferFull": "Preferisci importo completo",
     "preferences.moneyFormatting.preferFull.description": "Non abbreviare i numeri quando possibile",
@@ -483,5 +487,6 @@
     "error.transaction.missingAccount": "Selezionare un account",
     "error.url.cannotOpen": "Impossibile aprire il collegamento",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Impossibile recuperare i tassi di cambio, i dati delle transazioni potrebbero non essere completamente accurati.",
-    "error.exchangeRates.cannotFetch": "Impossibile recuperare i dati, si prega di verificare la connessione internet."
+    "error.exchangeRates.cannotFetch": "Impossibile recuperare i dati, si prega di verificare la connessione internet.",
+    "error.failedLocalAuth": "Autenticazione fallita, riprova."
 }

@@ -31,6 +31,7 @@
     "general.selectLocation": "Choisir un lieu",
     "general.nextNDays": "Prochain(s) {} jour(s)",
     "general.flow": "Flow",
+    "general.unlockToOpen": "Déverrouiller pour ouvrir Flow",
 
     "setup.getStarted": "Commencer",
     "setup.next": "Suivant",
@@ -241,8 +242,11 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "Aucun",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Les notifications ne fonctionneront pas lorsque Flow n'est pas ouvert",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Les notifications programmées ne sont disponibles que sur Android, iOS et macOS",
-    "preferences.privacyMode": "Mode confidentialité",
-    "preferences.privacyMode.enableAtStartup": "Activer au démarrage",
+    "preferences.privacy": "Confidentialité",
+    "preferences.privacy.maskAtStartup": "Masquer les nombres (*) au démarrage",
+    "preferences.privacy.appLock": "Verrouiller l'application",
+    "preferences.privacy.appLock.description#iOS": "Exiger Face ID ou Touch ID pour ouvrir l'application",
+    "preferences.privacy.appLock.description#Android": "Exiger l'authentification biométrique pour ouvrir l'application",
     "preferences.moneyFormatting": "Formatage de l'argent",
     "preferences.moneyFormatting.preferFull": "Préférer les montants complets",
     "preferences.moneyFormatting.preferFull.description": "Ne pas abréger les nombres lorsque c'est possible",
@@ -483,5 +487,6 @@
     "error.transaction.missingAccount": "Veuillez sélectionner un compte",
     "error.url.cannotOpen": "Impossible d'ouvrir le lien",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Échec de la récupération des taux de change, les données de transaction peuvent ne pas être entièrement précises",
-    "error.exchangeRates.cannotFetch": "Échec de la récupération, veuillez vérifier votre connexion internet."
+    "error.exchangeRates.cannotFetch": "Échec de la récupération, veuillez vérifier votre connexion internet.",
+    "error.failedLocalAuth": "L'authentification a échoué, veuillez réessayer."
 }
