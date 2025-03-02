@@ -6,6 +6,7 @@ import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
+import "package:flow/routes/debug/debug_log_page.dart";
 import "package:flow/routes/debug/debug_logs_page.dart";
 import "package:flow/routes/debug/debug_scheduled_notifications_page.dart";
 import "package:flow/routes/debug/debug_theme_page.dart";
@@ -377,5 +378,15 @@ final router = GoRouter(
       builder: (context, state) => DebugScheduledNotificationsPage(),
     ),
     GoRoute(path: "/_debug/logs", builder: (context, state) => DebugLogsPage()),
+    GoRoute(
+      path: "/_debug/logs/view",
+      builder: (context, state) {
+        if (state.extra case String path) {
+          return DebugLogPage(path: path);
+        }
+
+        return ErrorPage(error: "Provide path as route extra");
+      },
+    ),
   ],
 );

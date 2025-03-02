@@ -4,6 +4,7 @@ import "package:flow/main.dart" show mainLogAppender;
 import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flow/utils/extensions/num.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart" as path;
@@ -51,6 +52,11 @@ class _DebugLogsPageState extends State<DebugLogsPage> {
                                   file.statSync().size.humanReadableBinarySize,
                                 ].join(" • "),
                               ),
+                              onLongPress:
+                                  () => context.push(
+                                    "/_debug/logs/view",
+                                    extra: file.path,
+                                  ),
                               trailing: Builder(
                                 builder: (context) {
                                   return IconButton(
