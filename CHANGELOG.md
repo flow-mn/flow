@@ -6,6 +6,7 @@
 
 * Now you can setup daily reminders, so you won't forget to track your expenses
 * Added French (fr_FR), it's totally AI generated, but it'll help me cuz I'm trying to learn french
+* Added App lock in response to a popular request, closes [#348](https://github.com/flow-mn/flow/issues/348)
 
 ### Fixes
 
@@ -13,6 +14,7 @@
   after changing data no longer shows multiple modal sheets. This mostly affected android.
 * Platforms other than iOS no longer shows "App icon follows theme" option as it's not available, closes [#345](https://github.com/flow-mn/flow/issues/345)
 * App no longer hangs when re-opening in some cases, closes [#370](https://github.com/flow-mn/flow/issues/370)
+  * Thanks @tossj for submitting a fix
 
 ### Changes and improvements
 

@@ -5,7 +5,7 @@ import "dart:math" as math;
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
 import "package:logging/logging.dart";
@@ -32,8 +32,6 @@ class NotificationsService {
   bool? _available;
   bool get available => _available == true;
 
-  int _count = 0;
-
   String? _timezone;
 
   final List<Function(NotificationResponse)> _registeredCallbacks = [];
@@ -53,6 +51,14 @@ class NotificationsService {
 
   void removeCallback(Function(NotificationResponse) callback) {
     _registeredCallbacks.remove(callback);
+  }
+
+  int _getNextId() {
+    final int current = LocalPreferences().notificationsIssuedCount.get() ?? 0;
+
+    unawaited(LocalPreferences().notificationsIssuedCount.set(current + 1));
+
+    return current + 1;
   }
 
   Future<void> initialize() async {
@@ -141,10 +147,6 @@ class NotificationsService {
         _log.warning("Failed to check or request permissions", e);
       }
     }
-
-    _count = await fetchAllNotification()
-        .then((x) => x.length)
-        .catchError((error) => 0);
   }
 
   /// Upon failure, returns an empty list
@@ -221,7 +223,7 @@ class NotificationsService {
       );
 
       await pluginInstance.zonedSchedule(
-        _count++,
+        _getNextId(),
         transaction.title ?? "transaction.fallbackTitle".tr(),
         "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
@@ -242,6 +244,8 @@ class NotificationsService {
   /// Omitting [type] would delete notifications that do not fit into any
   /// [FlowNotificationPayloadItemType]
   Future<void> _clearByType(FlowNotificationPayloadItemType? type) async {
+    _log.fine("Clearing notifications by type $type");
+
     final List<PendingNotificationRequest> scheduledNotifications =
         await getSchedules();
 
@@ -258,12 +262,22 @@ class NotificationsService {
           }
         }).toList();
 
+    _log.fine(
+      "Attempting to clear ${reminders.length} reminders of type $type",
+    );
+
     await Future.wait(
       reminders.map((reminder) async {
         try {
           await pluginInstance.cancel(reminder.id);
+          _log.fine(
+            "Cancelled reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
+          );
         } catch (e) {
-          _log.warning("Failed to cancel reminder", e);
+          _log.warning(
+            "Failed to cancel reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
+            e,
+          );
         }
       }),
     );
@@ -323,13 +337,14 @@ class NotificationsService {
         );
 
         await pluginInstance.zonedSchedule(
-          _count++,
+          _getNextId(),
+          "Flow",
           "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
-          null,
           dateTime,
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         );
+        _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
       } catch (e) {
         _log.warning("Failed to schedule notification", e);
       }

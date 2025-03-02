@@ -61,6 +61,11 @@ class LocalPreferences {
   late final ThemeLocalPreferences theme;
   late final TransitiveLocalPreferences transitive;
 
+  /// Number of notifications issued by the app
+  ///
+  /// Used to prevent id collisions
+  late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
+
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
 
@@ -146,6 +151,12 @@ class LocalPreferences {
       key: "lastRequestedAppStoreReview",
       preferences: _prefs,
       initialValue: null,
+    );
+
+    notificationsIssuedCount = PrimitiveSettingsEntry<int>(
+      key: "notificationsIssuedCount",
+      preferences: _prefs,
+      initialValue: 0,
     );
 
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(
