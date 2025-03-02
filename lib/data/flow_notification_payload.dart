@@ -1,5 +1,11 @@
-import "package:flow/utils/extensions.dart";
+import "dart:convert";
 
+import "package:flow/utils/extensions.dart";
+import "package:json_annotation/json_annotation.dart";
+
+part "flow_notification_payload.g.dart";
+
+@JsonEnum(valueField: "value")
 enum FlowNotificationPayloadItemType {
   transaction("txn"),
   reminder("rmd");
@@ -25,6 +31,7 @@ enum FlowNotificationPayloadItemType {
   }
 }
 
+@JsonSerializable()
 class FlowNotificationPayload {
   final FlowNotificationPayloadItemType itemType;
 
@@ -40,19 +47,19 @@ class FlowNotificationPayload {
     this.extra,
   });
 
-  String get serialized => "${itemType.value}|$id|${extra ?? ""}";
+  String get serialized => jsonEncode(toJson());
 
-  static FlowNotificationPayload parse(String serialized) {
+  factory FlowNotificationPayload.parse(String serialized) {
     try {
-      final List<String> parts = serialized.split("|");
+      final json = jsonDecode(serialized);
 
-      return FlowNotificationPayload(
-        itemType: FlowNotificationPayloadItemType.parse(parts[0]),
-        id: parts[1].isNotEmpty ? parts[1] : null,
-        extra: parts[2].isNotEmpty ? parts[2] : null,
-      );
+      return FlowNotificationPayload.fromJson(json);
     } catch (e) {
-      throw ArgumentError("Invalid serialized payload: $serialized");
+      throw ArgumentError("Invalid serialized data: $serialized");
     }
   }
+
+  factory FlowNotificationPayload.fromJson(Map<String, dynamic> json) =>
+      _$FlowNotificationPayloadFromJson(json);
+  Map<String, dynamic> toJson() => _$FlowNotificationPayloadToJson(this);
 }
