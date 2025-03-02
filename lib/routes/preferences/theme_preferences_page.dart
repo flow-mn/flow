@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -86,13 +88,6 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 Center(child: Text(currentThemeName)),
                 const SizedBox(height: 12.0),
               ],
-              CheckboxListTile /*.adaptive*/ (
-                title: Text("preferences.theme.themeChangesAppIcon".t(context)),
-                value: themeChangesAppIcon,
-                onChanged: changeThemeChangesAppIcon,
-                secondary: Icon(Symbols.photo_prints_rounded),
-                activeColor: context.colorScheme.primary,
-              ),
               // CheckboxListTile/*.adaptive*/(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
@@ -100,7 +95,18 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               //   secondary: Icon(Symbols.palette),
               //   activeColor: context.colorScheme.primary,
               // ),
-              const SizedBox(height: 16.0),
+              if (Platform.isIOS) ...[
+                CheckboxListTile /*.adaptive*/ (
+                  title: Text(
+                    "preferences.theme.themeChangesAppIcon".t(context),
+                  ),
+                  value: themeChangesAppIcon,
+                  onChanged: changeThemeChangesAppIcon,
+                  secondary: Icon(Symbols.photo_prints_rounded),
+                  activeColor: context.colorScheme.primary,
+                ),
+                const SizedBox(height: 16.0),
+              ],
               ListHeader("preferences.theme.other".t(context)),
               const SizedBox(height: 8.0),
               ...standaloneThemes.entries.map(
