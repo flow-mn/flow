@@ -12,6 +12,7 @@
 * In transaction/account/category, and other pages with forms, clicking back button multiple times
   after changing data no longer shows multiple modal sheets. This mostly affected android.
 * Platforms other than iOS no longer shows "App icon follows theme" option as it's not available, closes [#345](https://github.com/flow-mn/flow/issues/345)
+* App no longer hangs when re-opening in some cases, closes [#370](https://github.com/flow-mn/flow/issues/370)
 
 ### Changes and improvements
 
