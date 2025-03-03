@@ -229,6 +229,11 @@ class NotificationsService {
         dateTime,
         details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload:
+            FlowNotificationPayload(
+              itemType: FlowNotificationPayloadItemType.transaction,
+              id: transaction.uuid,
+            ).serialized,
       );
     } catch (e) {
       _log.warning("Failed to schedule notification", e);
@@ -343,6 +348,11 @@ class NotificationsService {
           dateTime,
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload:
+              FlowNotificationPayload(
+                itemType: FlowNotificationPayloadItemType.reminder,
+                id: null,
+              ).serialized,
         );
         _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
       } catch (e) {
@@ -451,6 +461,7 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
+      await androidImplementation?.requestExactAlarmsPermission();
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<
