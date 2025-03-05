@@ -31,6 +31,7 @@
     "general.selectLocation": "Scegli la posizione",
     "general.nextNDays": "Prossimi {} giorni",
     "general.flow": "Flusso",
+    "general.unlockToOpen": "Sblocca per aprire Flow",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",
@@ -241,13 +242,22 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "Nessuno",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Le notifiche non funzioneranno quando Flow non è aperto",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Le notifiche programmate sono disponibili solo su Android, iOS e macOS",
-    "preferences.privacyMode": "Modalità privacy",
-    "preferences.privacyMode.enableAtStartup": "Attiva all'avvio",
+    "preferences.privacy": "Privacy",
+    "preferences.privacy.maskAtStartup": "Nascondi i numeri (*) all'avvio",
+    "preferences.privacy.appLock": "Blocca app",
+    "preferences.privacy.appLock.description#iOS": "Richiedi Face ID o Touch ID per aprire l'app",
+    "preferences.privacy.appLock.description#Android": "Richiedi autenticazione biometrica per aprire l'app",
     "preferences.moneyFormatting": "Formato valuta",
     "preferences.moneyFormatting.preferFull": "Preferisci importo completo",
     "preferences.moneyFormatting.preferFull.description": "Non abbreviare i numeri quando possibile",
     "preferences.moneyFormatting.useCurrencySymbol": "Usa simbolo valuta",
     "preferences.moneyFormatting.useCurrencySymbol.description": "Ad esempio, \"€5\" invece di \"5 EUR\"",
+    "preferences.reminders": "Promemoria giornaliero",
+    "preferences.reminders.remindDaily": "Ricorda quotidianamente",
+    "preferences.reminders.remindDaily.description": "Ricorda di tenere traccia delle spese quotidianamente",
+    "preferences.reminders.remindDaily.time": "Ricordami alle",
+    "preferences.reminders.remindDaily.expiryWarning": "I promemoria si interromperanno se non apri Flow per 7 giorni consecutivi",
+    "preferences.reminders.unsupportedPlatform": "La pianificazione delle notifiche non è supportata su questa piattaforma",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Ciao, {name}!",
@@ -329,6 +339,13 @@
 
     "notifications.permissionNotGranted": "Permesso di notifica non concesso",
     "notifications.openSettingsToGrantPermission": "Concedi il permesso di notifica dalle impostazioni di sistema",
+    "notifications.reminderText#1": "Hai registrato le tue spese oggi?",
+    "notifications.reminderText#2": "Non dimenticare di registrare le tue transazioni!",
+    "notifications.reminderText#3": "È ora di registrare le tue spese per oggi.",
+    "notifications.reminderText#4": "Tieni sotto controllo le tue finanze, aggiungi le tue transazioni!",
+    "notifications.reminderText#5": "Flow ti ricorda di tenere traccia delle tue spese!",
+    "notifications.reminderText#6": "Aggiorna le tue transazioni e tieni sotto controllo le tue finanze.",
+    "notifications.reminderText#7": "Non dimenticare di aggiungere le tue transazioni oggi!",
 
     "sync.import": "Importa",
     "sync.import.pickFile": "Seleziona un file",
@@ -470,5 +487,6 @@
     "error.transaction.missingAccount": "Selezionare un account",
     "error.url.cannotOpen": "Impossibile aprire il collegamento",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Impossibile recuperare i tassi di cambio, i dati delle transazioni potrebbero non essere completamente accurati.",
-    "error.exchangeRates.cannotFetch": "Impossibile recuperare i dati, si prega di verificare la connessione internet."
+    "error.exchangeRates.cannotFetch": "Impossibile recuperare i dati, si prega di verificare la connessione internet.",
+    "error.failedLocalAuth": "Autenticazione fallita, riprova."
 }

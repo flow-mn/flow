@@ -75,7 +75,7 @@ class _ImportWizardV1PageState extends State<ImportWizardV1Page> {
   }
 
   void _start() async {
-    final bool? confirm = await context.showConfirmDialog(
+    final bool? confirm = await context.showConfirmationSheet(
       title: "sync.import.eraseWarning".t(context),
       isDeletionConfirmation: true,
       mainActionLabelOverride: "general.confirm".t(context),

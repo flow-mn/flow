@@ -149,7 +149,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
   }
 
   Future<bool> delete(TransactionFilterPreset preset) async {
-    final bool? confirmation = await context.showConfirmDialog(
+    final bool? confirmation = await context.showConfirmationSheet(
       isDeletionConfirmation: true,
       title: "transactionFilterPreset.delete".t(context),
       child: Text("general.delete.permanentWarning".t(context)),

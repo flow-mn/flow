@@ -27,7 +27,7 @@ extension NumberFormatter on num {
   /// `0.42.percent2 => "42.00%"`
   String get percent2 => percent(2);
 
-  String get binarySize {
+  String get humanReadableBinarySize {
     const log1024 = 6.931471805599453;
     const formats = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"];
 

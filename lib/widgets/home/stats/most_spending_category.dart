@@ -9,7 +9,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
-import "package:flow/widgets/general/blur_on_busy.dart";
+import "package:flow/widgets/general/blur_backgorund.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
@@ -69,8 +69,8 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
               : (() => context.push(
                 "/category/${category?.id}?range=${Uri.encodeQueryComponent(range.encodeShort())}",
               )),
-      child: BlurOnBusy(
-        busy: busy,
+      child: BlurBackground(
+        blur: busy,
         child: Surface(
           shape: RoundedRectangleBorder(
             borderRadius: widget.borderRadius as BorderRadiusGeometry,

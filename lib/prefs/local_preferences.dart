@@ -51,12 +51,20 @@ class LocalPreferences {
 
   late final BoolSettingsEntry privacyMode;
 
+  /// This refers to biometric auth, passwords, pins from the operating system
+  late final BoolSettingsEntry requireLocalAuth;
+
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
   late final PendingTransactionsLocalPreferences pendingTransactions;
   late final ThemeLocalPreferences theme;
   late final TransitiveLocalPreferences transitive;
+
+  /// Number of notifications issued by the app
+  ///
+  /// Used to prevent id collisions
+  late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
 
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
@@ -122,6 +130,12 @@ class LocalPreferences {
       initialValue: false,
     );
 
+    requireLocalAuth = BoolSettingsEntry(
+      key: "requireLocalAuth",
+      preferences: _prefs,
+      initialValue: false,
+    );
+
     preferFullAmounts = BoolSettingsEntry(
       key: "preferFullAmounts",
       preferences: _prefs,
@@ -137,6 +151,12 @@ class LocalPreferences {
       key: "lastRequestedAppStoreReview",
       preferences: _prefs,
       initialValue: null,
+    );
+
+    notificationsIssuedCount = PrimitiveSettingsEntry<int>(
+      key: "notificationsIssuedCount",
+      preferences: _prefs,
+      initialValue: 0,
     );
 
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(
