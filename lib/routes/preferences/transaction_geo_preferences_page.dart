@@ -80,7 +80,6 @@ class _TransactionGeoPreferencesPageState
                       title: Text(
                         "preferences.transactionGeo.auto.enable".t(context),
                       ),
-                      enabled: hasPermission,
                       value: autoAttachTransactionGeo,
                       onChanged: updateAutoAttachTransactionGeo,
                     ),
@@ -125,12 +124,12 @@ class _TransactionGeoPreferencesPageState
       case LocationPermission.always:
         return true;
       case LocationPermission.deniedForever:
+      case LocationPermission.unableToDetermine:
         if (!retryAfterOpeningSettings) return false;
 
         await AppSettings.openAppSettings(type: AppSettingsType.location);
         return await tryRequestPermission(false);
       case LocationPermission.denied:
-      case LocationPermission.unableToDetermine:
         break;
     }
 
