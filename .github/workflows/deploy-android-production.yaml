@@ -1,8 +1,8 @@
-name: Deploy Beta build for Android
+name: Deploy Production build for Android
 on:
   push:
     branches:
-      - "beta"
+      - "main"
 jobs:
   build:
     runs-on: "ubuntu-latest"
@@ -35,7 +35,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
           packageName: mn.flow.flow
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: beta
+          track: production
           status: draft
       - name: Clean up
         run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
