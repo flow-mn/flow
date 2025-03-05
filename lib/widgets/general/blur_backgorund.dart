@@ -2,16 +2,16 @@ import "dart:ui";
 
 import "package:flutter/material.dart";
 
-class BlurOnBusy extends StatelessWidget {
-  final bool busy;
+class BlurBackground extends StatelessWidget {
+  final bool blur;
   final Widget child;
 
   final double sigmaX;
   final double sigmaY;
 
-  const BlurOnBusy({
+  const BlurBackground({
     super.key,
-    required this.busy,
+    required this.blur,
     required this.child,
     this.sigmaX = 2.0,
     this.sigmaY = 2.0,
@@ -23,7 +23,7 @@ class BlurOnBusy extends StatelessWidget {
       child: Stack(
         children: [
           child,
-          if (busy)
+          if (blur)
             Positioned.fill(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),

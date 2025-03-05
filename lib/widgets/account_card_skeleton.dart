@@ -1,3 +1,4 @@
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
@@ -29,7 +30,7 @@ class AccountCardSkeleton extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Create an account",
+                      "account.new".t(context),
                       style: context.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8.0),

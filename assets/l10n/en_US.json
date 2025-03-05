@@ -31,6 +31,7 @@
     "general.selectLocation": "Choose location",
     "general.nextNDays": "Next {} day(s)",
     "general.flow": "Flow",
+    "general.unlockToOpen": "Unlock to open Flow",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",
@@ -229,7 +230,7 @@
     "preferences.transactionGeo.auto.enable": "Auto-attach",
     "preferences.transactionGeo.auto.enabled": "Auto-attach enabled",
     "preferences.transactionGeo.auto.description": "Automatically attach your current location to new transactions. Even if you have this turned off, you can still choose a location on a map to attach it.",
-    "preferences.transactionGeo.auto.permissionDenied": "Location permission was denied. You can enable it from your settings if you wish.",
+    "preferences.transactionGeo.auto.permissionDenied": "Location permission isn't granted",
     "preferences.pendingTransactions": "Pending transactions",
     "preferences.pendingTransactions.homeTimeframe": "Show on home",
     "preferences.pendingTransactions.requireConfirmation": "Require confirmation",
@@ -241,13 +242,22 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "None",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Notifications won't work when Flow isn't open",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Scheduled notifications are only available on Android, iOS, and macOS",
-    "preferences.privacyMode": "Privacy mode",
-    "preferences.privacyMode.enableAtStartup": "Enable at startup",
+    "preferences.privacy": "Privacy",
+    "preferences.privacy.maskAtStartup": "Mask numbers (*) at startup",
+    "preferences.privacy.appLock": "Lock app",
+    "preferences.privacy.appLock.description#iOS": "Require Face ID or Touch ID to open the app",
+    "preferences.privacy.appLock.description#Android": "Require biometric authentication to open the app",
     "preferences.moneyFormatting": "Money formatting",
     "preferences.moneyFormatting.preferFull": "Prefer full amounts",
     "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
     "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
     "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"$5\" instead of \"5 USD\"",
+    "preferences.reminders": "Reminder",
+    "preferences.reminders.remindDaily": "Remind daily",
+    "preferences.reminders.remindDaily.description": "Remind to track expenses daily",
+    "preferences.reminders.remindDaily.time": "Remind me at",
+    "preferences.reminders.remindDaily.expiryWarning": "Reminders will stop if you don't open Flow for 7 consecutive days",
+    "preferences.reminders.unsupportedPlatform": "Scheduling notifications is not supported on this platform",
 
     "tabs.home": "Home",
     "tabs.home.greetings": "Hi, {name}!",
@@ -329,6 +339,13 @@
 
     "notifications.permissionNotGranted": "Notifications permission not granted",
     "notifications.openSettingsToGrantPermission": "Grant notification permission from system settings",
+    "notifications.reminderText#1": "Did you track your expenses today?",
+    "notifications.reminderText#2": "Don't forget to record your transactions!",
+    "notifications.reminderText#3": "Time to record your expenses for today.",
+    "notifications.reminderText#4": "Keep your finances in check, add your transactions!",
+    "notifications.reminderText#5": "Flow reminds you to track your expenses!",
+    "notifications.reminderText#6": "Update your transactions and stay on top of your finances.",
+    "notifications.reminderText#7": "Don't forget to add your transactions today!",
 
     "sync.import": "Import",
     "sync.import.pickFile": "Select a file",
@@ -470,5 +487,6 @@
     "error.transaction.missingAccount": "Please select an account",
     "error.url.cannotOpen": "Can't open the link",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Failed to fetch exchange rates, transaction data might not be fully accurate",
-    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection."
+    "error.exchangeRates.cannotFetch": "Failed to fetch, please check your internet connection.",
+    "error.failedLocalAuth": "Authentication failed, please try again."
 }

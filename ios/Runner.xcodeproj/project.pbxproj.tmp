@@ -10,35 +10,18 @@
 	<string>54</string>
 	<key>objects</key>
 	<dict>
-		<key>003C6C93C375795123224E40</key>
+		<key>0C1DBEFF99B8389DA11999B0</key>
 		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
 			<key>includeInIndex</key>
-			<string>1</string>
+			<string>0</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-RunnerTests.profile.xcconfig</string>
 			<key>path</key>
-			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig</string>
+			<string>Pods_RunnerTests.framework</string>
 			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0800932876C5EF8330BB10F9</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.profile.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
 		<key>1498D2321E8E86230040F4C2</key>
 		<dict>
@@ -138,7 +121,7 @@
 				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
 				<string>YES</string>
 				<key>ENABLE_USER_SCRIPT_SANDBOXING</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
 				<string>gnu99</string>
 				<key>GCC_NO_COMMON_BLOCKS</key>
@@ -183,8 +166,14 @@
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
@@ -198,6 +187,8 @@
 				<string>mn.flow.flow</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -209,6 +200,34 @@
 			<string>XCBuildConfiguration</string>
 			<key>name</key>
 			<string>Profile</string>
+		</dict>
+		<key>2C95C2C1064154F5713B5FDA</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-RunnerTests.release.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>2F7D63EA2CD8F63D00B8BE47</key>
+		<dict>
+			<key>explicitFileTypes</key>
+			<dict/>
+			<key>explicitFolders</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXFileSystemSynchronizedRootGroup</string>
+			<key>path</key>
+			<string>LauncherIcons</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>331C807B294A618700263BE5</key>
 		<dict>
@@ -251,7 +270,7 @@
 			<string>331C8087294A63A400263BE5</string>
 			<key>buildPhases</key>
 			<array>
-				<string>7126D036A07C51B1E23D86B4</string>
+				<string>D33DE28923F18ED4F3D739CA</string>
 				<string>331C807D294A63A400263BE5</string>
 				<string>331C807F294A63A400263BE5</string>
 				<string>E62CA967487F1E60876302F4</string>
@@ -339,15 +358,19 @@
 		<key>331C8088294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>C61B04AD89D535DD715F22F2</string>
+			<string>3E985F1769516D9AA2C265B6</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Batmend Ganbaatar (NJH37247C9)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>GENERATE_INFOPLIST_FILE</key>
 				<string>YES</string>
 				<key>MARKETING_VERSION</key>
@@ -373,15 +396,19 @@
 		<key>331C8089294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>9FAFC99801CB4E026A4F91DD</string>
+			<string>2C95C2C1064154F5713B5FDA</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Batmend Ganbaatar (NJH37247C9)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>GENERATE_INFOPLIST_FILE</key>
 				<string>YES</string>
 				<key>MARKETING_VERSION</key>
@@ -403,15 +430,19 @@
 		<key>331C808A294A63A400263BE5</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>003C6C93C375795123224E40</string>
+			<string>B89C6AF156E357E9426AA1B1</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>BUNDLE_LOADER</key>
 				<string>$(TEST_HOST)</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Distribution: Batmend Ganbaatar (NJH37247C9)</string>
 				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
+				<string>Manual</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>1</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>GENERATE_INFOPLIST_FILE</key>
 				<string>YES</string>
 				<key>MARKETING_VERSION</key>
@@ -484,72 +515,50 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>41BCE8EABE8A7E6182C9E7D3</key>
+		<key>3E985F1769516D9AA2C265B6</key>
 		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
 			<key>includeInIndex</key>
-			<string>0</string>
+			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Pods_RunnerTests.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>531FB570FC86720639890D6A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>AFBF3D67AD7680B20F9B6226</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>57BCA8E9F5920174713E2D8E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>41BCE8EABE8A7E6182C9E7D3</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>7126D036A07C51B1E23D86B4</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>inputFileListPaths</key>
-			<array/>
-			<key>inputPaths</key>
-			<array>
-				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
-				<string>${PODS_ROOT}/Manifest.lock</string>
-			</array>
-			<key>isa</key>
-			<string>PBXShellScriptBuildPhase</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
 			<key>name</key>
-			<string>[CP] Check Pods Manifest.lock</string>
-			<key>outputFileListPaths</key>
-			<array/>
-			<key>outputPaths</key>
-			<array>
-				<string>$(DERIVED_FILE_DIR)/Pods-RunnerTests-checkManifestLockResult.txt</string>
-			</array>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-			<key>shellPath</key>
-			<string>/bin/sh</string>
-			<key>shellScript</key>
-			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
-if [ $? != 0 ] ; then
-    # print error to STDERR
-    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
-    exit 1
-fi
-# This output is used by Xcode 'outputs' to avoid re-running this script phase.
-echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
-</string>
-			<key>showEnvVarsInLog</key>
-			<string>0</string>
+			<string>Pods-RunnerTests.debug.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>5845463D775957D46283E893</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.profile.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>62311F195931F1477DBC37F3</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.debug.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>74858FAD1ED2DC5600515810</key>
 		<dict>
@@ -582,6 +591,34 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>74973DC39E34278F81012E8C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0C1DBEFF99B8389DA11999B0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>781AD8BC2B33823900A9FFBB</key>
+		<dict>
+			<key>isa</key>
+			<string>XCLocalSwiftPackageReference</string>
+			<key>relativePath</key>
+			<string>Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage</string>
+		</dict>
+		<key>78A3181F2AECB46A00862997</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>FlutterGeneratedPluginSwiftPackage</string>
+		</dict>
+		<key>78A318202AECB46A00862997</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>78A3181F2AECB46A00862997</string>
+		</dict>
 		<key>7AFA3C8E1D35360C0083082E</key>
 		<dict>
 			<key>isa</key>
@@ -595,7 +632,50 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>7B076A37255AF2021EF2D914</key>
+		<key>8B604B80169FAE2637C063C9</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputFileListPaths</key>
+			<array>
+				<string>${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist</string>
+			</array>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Embed Pods Frameworks</string>
+			<key>outputFileListPaths</key>
+			<array>
+				<string>${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>8CB1A8690386B1AF1EB00291</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-Runner.release.xcconfig</string>
+			<key>path</key>
+			<string>Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8CC2A70C38EA65906A2E07F3</key>
 		<dict>
 			<key>buildActionMask</key>
 			<string>2147483647</string>
@@ -730,7 +810,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>97C146EF1CF9000F007C117D</string>
 				<string>331C8082294A63A400263BE5</string>
 				<string>E1AB3C1E4377F2943B0BE319</string>
-				<string>F15967F3B35E3A6F40075C4E</string>
+				<string>FCC27C749BDD15262BC40DEE</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -753,6 +833,8 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 					<dict>
 						<key>CreatedOnToolsVersion</key>
 						<string>14.0</string>
+						<key>DevelopmentTeam</key>
+						<string>NJH37247C9</string>
 						<key>TestTargetID</key>
 						<string>97C146ED1CF9000F007C117D</string>
 					</dict>
@@ -782,6 +864,10 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			</array>
 			<key>mainGroup</key>
 			<string>97C146E51CF9000F007C117D</string>
+			<key>packageReferences</key>
+			<array>
+				<string>781AD8BC2B33823900A9FFBB</string>
+			</array>
 			<key>productRefGroup</key>
 			<string>97C146EF1CF9000F007C117D</string>
 			<key>projectDirPath</key>
@@ -829,7 +915,8 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>531FB570FC86720639890D6A</string>
+				<string>78A318202AECB46A00862997</string>
+				<string>FB76F9C85D98C7D99794B5F8</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -858,22 +945,31 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<string>97C147051CF9000F007C117D</string>
 			<key>buildPhases</key>
 			<array>
-				<string>7B076A37255AF2021EF2D914</string>
+				<string>8CC2A70C38EA65906A2E07F3</string>
 				<string>9740EEB61CF901F6004384FC</string>
 				<string>97C146EA1CF9000F007C117D</string>
 				<string>97C146EB1CF9000F007C117D</string>
 				<string>97C146EC1CF9000F007C117D</string>
 				<string>9705A1C41CF9048500538489</string>
 				<string>3B06AD1E1E4923F5004D2608</string>
+				<string>8B604B80169FAE2637C063C9</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
 			<key>dependencies</key>
 			<array/>
+			<key>fileSystemSynchronizedGroups</key>
+			<array>
+				<string>2F7D63EA2CD8F63D00B8BE47</string>
+			</array>
 			<key>isa</key>
 			<string>PBXNativeTarget</string>
 			<key>name</key>
 			<string>Runner</string>
+			<key>packageProductDependencies</key>
+			<array>
+				<string>78A3181F2AECB46A00862997</string>
+			</array>
 			<key>productName</key>
 			<string>Runner</string>
 			<key>productReference</key>
@@ -912,6 +1008,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 		<dict>
 			<key>children</key>
 			<array>
+				<string>2F7D63EA2CD8F63D00B8BE47</string>
 				<string>97C146FA1CF9000F007C117D</string>
 				<string>97C146FD1CF9000F007C117D</string>
 				<string>97C146FF1CF9000F007C117D</string>
@@ -1090,7 +1187,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>ENABLE_TESTABILITY</key>
 				<string>YES</string>
 				<key>ENABLE_USER_SCRIPT_SANDBOXING</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
 				<string>gnu99</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
@@ -1199,7 +1296,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
 				<string>YES</string>
 				<key>ENABLE_USER_SCRIPT_SANDBOXING</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
 				<string>gnu99</string>
 				<key>GCC_NO_COMMON_BLOCKS</key>
@@ -1263,8 +1360,14 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
@@ -1278,6 +1381,8 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>mn.flow.flow</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_OPTIMIZATION_LEVEL</key>
@@ -1302,8 +1407,14 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>AppIcon</string>
 				<key>CLANG_ENABLE_MODULES</key>
 				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>Apple Development</string>
+				<key>CODE_SIGN_STYLE</key>
+				<string>Automatic</string>
 				<key>CURRENT_PROJECT_VERSION</key>
 				<string>$(FLUTTER_BUILD_NUMBER)</string>
+				<key>DEVELOPMENT_TEAM</key>
+				<string>NJH37247C9</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
@@ -1317,6 +1428,8 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>mn.flow.flow</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE_SPECIFIER</key>
+				<string></string>
 				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
 				<string>Runner/Runner-Bridging-Header.h</string>
 				<key>SWIFT_VERSION</key>
@@ -1329,7 +1442,7 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<key>name</key>
 			<string>Release</string>
 		</dict>
-		<key>9FAFC99801CB4E026A4F91DD</key>
+		<key>B89C6AF156E357E9426AA1B1</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1338,80 +1451,62 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<key>lastKnownFileType</key>
 			<string>text.xcconfig</string>
 			<key>name</key>
-			<string>Pods-RunnerTests.release.xcconfig</string>
+			<string>Pods-RunnerTests.profile.xcconfig</string>
 			<key>path</key>
-			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig</string>
+			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>AFBF3D67AD7680B20F9B6226</key>
+		<key>D33DE28923F18ED4F3D739CA</key>
 		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputFileListPaths</key>
+			<array/>
+			<key>inputPaths</key>
+			<array>
+				<string>${PODS_PODFILE_DIR_PATH}/Podfile.lock</string>
+				<string>${PODS_ROOT}/Manifest.lock</string>
+			</array>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>[CP] Check Pods Manifest.lock</string>
+			<key>outputFileListPaths</key>
+			<array/>
+			<key>outputPaths</key>
+			<array>
+				<string>$(DERIVED_FILE_DIR)/Pods-RunnerTests-checkManifestLockResult.txt</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Pods_Runner.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>B308FE551E2CDB6BBA7EFD0D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.release.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C61B04AD89D535DD715F22F2</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-RunnerTests.debug.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C921AD05313B7F79C8525919</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>name</key>
-			<string>Pods-Runner.debug.xcconfig</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [ $? != 0 ] ; then
+    # print error to STDERR
+    echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." &gt;&amp;2
+    exit 1
+fi
+# This output is used by Xcode 'outputs' to avoid re-running this script phase.
+echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 		</dict>
 		<key>E1AB3C1E4377F2943B0BE319</key>
 		<dict>
 			<key>children</key>
 			<array>
-				<string>C921AD05313B7F79C8525919</string>
-				<string>B308FE551E2CDB6BBA7EFD0D</string>
-				<string>0800932876C5EF8330BB10F9</string>
-				<string>C61B04AD89D535DD715F22F2</string>
-				<string>9FAFC99801CB4E026A4F91DD</string>
-				<string>003C6C93C375795123224E40</string>
+				<string>62311F195931F1477DBC37F3</string>
+				<string>8CB1A8690386B1AF1EB00291</string>
+				<string>5845463D775957D46283E893</string>
+				<string>3E985F1769516D9AA2C265B6</string>
+				<string>2C95C2C1064154F5713B5FDA</string>
+				<string>B89C6AF156E357E9426AA1B1</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -1426,19 +1521,26 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>57BCA8E9F5920174713E2D8E</string>
+				<string>74973DC39E34278F81012E8C</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
 		</dict>
-		<key>F15967F3B35E3A6F40075C4E</key>
+		<key>FB76F9C85D98C7D99794B5F8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>FE95B23EAA62B849DC8F3352</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>FCC27C749BDD15262BC40DEE</key>
 		<dict>
 			<key>children</key>
 			<array>
-				<string>AFBF3D67AD7680B20F9B6226</string>
-				<string>41BCE8EABE8A7E6182C9E7D3</string>
+				<string>FE95B23EAA62B849DC8F3352</string>
+				<string>0C1DBEFF99B8389DA11999B0</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -1446,6 +1548,19 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 			<string>Frameworks</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FE95B23EAA62B849DC8F3352</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_Runner.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>

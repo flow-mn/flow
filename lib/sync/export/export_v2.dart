@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:developer";
 import "dart:io";
 
 import "package:archive/archive_io.dart";
@@ -11,6 +10,7 @@ import "package:flow/entity/profile.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
@@ -22,19 +22,19 @@ import "package:path/path.dart" as path;
 
 Future<String> generateBackupJSONContentV2() async {
   const int versionCode = 2;
-  log("[Flow Sync] Initiating export, version code = $versionCode");
+  syncLogger.fine("Initiating export, version code = $versionCode");
 
   final List<Transaction> transactions = await TransactionsService().findMany(
     TransactionFilter.all,
   );
-  log("[Flow Sync] Finished fetching transactions");
+  syncLogger.fine("Finished fetching transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
-  log("[Flow Sync] Finished fetching accounts");
+  syncLogger.fine("Finished fetching accounts");
 
   final List<Category> categories =
       await ObjectBox().box<Category>().getAllAsync();
-  log("[Flow Sync] Finished fetching categories");
+  syncLogger.fine("Finished fetching categories");
 
   final DateTime exportDate = DateTime.now().toUtc();
 
@@ -113,16 +113,16 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
         (png) => png.copy(path.join(imagesDir.path, path.basename(png.path))),
       ),
     ).catchError((error) {
-      log(
-        "[Flow Sync] Failed to copy some or all of the images to temp directory",
-        error: error,
+      syncLogger.warning(
+        "Failed to copy some or all of the images to temp directory",
+        error,
       );
       return <File>[];
     });
   } catch (e) {
-    log(
-      "[Flow Sync] Failed to copy some or all of the images to temp directory",
-      error: e,
+    syncLogger.warning(
+      "Failed to copy some or all of the images to temp directory",
+      e,
     );
   }
 

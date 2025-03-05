@@ -1,9 +1,11 @@
 import "dart:math";
 
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/notifications.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
@@ -48,6 +50,19 @@ class UserPreferencesService {
 
     value.defaultFilterPreset = uuid;
     ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  Duration? get remindDailyAt => value.remindDailyAt;
+  set remindDailyAt(Duration? duration) {
+    value.remindDailyAt = duration?.abs();
+    ObjectBox().box<UserPreferences>().put(value);
+    if (duration == null) {
+      NotificationsService().clearByType(
+        FlowNotificationPayloadItemType.reminder,
+      );
+    } else {
+      NotificationsService().scheduleDailyReminders(duration);
+    }
   }
 
   TransactionFilterPreset? get defaultFilterPreset {

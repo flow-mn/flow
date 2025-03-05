@@ -1,14 +1,12 @@
-import "dart:io";
-
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/sync/export/mode.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/export/export_success.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
-import "package:share_plus/share_plus.dart";
 
 class ExportPage extends StatefulWidget {
   final ExportMode mode;
@@ -55,7 +53,7 @@ class _ExportPageState extends State<ExportPage> {
 
     return ExportSuccess(
       mode: widget.mode,
-      shareFn: () => showShareSheet(),
+      shareFn: showShareSheet,
       filePath: filePath!,
     );
   }
@@ -80,25 +78,17 @@ class _ExportPageState extends State<ExportPage> {
     }
   }
 
-  Future<void> showShareSheet() async {
-    if (Platform.isLinux) {
-      // openUrl(Uri.parse("file://$filePath"));
-      Process.runSync("xdg-open", [File(filePath!).parent.path]);
-      return;
-    }
+  Future<void> showShareSheet(RenderObject? renderObject) async {
+    final RenderBox? renderBox =
+        renderObject is RenderBox ? renderObject : null;
 
-    final box = context.findRenderObject() as RenderBox?;
-
-    final origin =
-        box == null ? Rect.zero : box.localToGlobal(Offset.zero) & box.size;
-
-    await Share.shareXFiles(
-      [XFile(filePath!)],
-      sharePositionOrigin: origin,
+    await context.showShareSheet(
       subject: "sync.export.save.shareTitle".t(context, {
         "type": widget.mode.name,
         "date": Moment.now().lll,
       }),
+      filePath: filePath!,
+      renderBox: renderBox,
     );
   }
 }
