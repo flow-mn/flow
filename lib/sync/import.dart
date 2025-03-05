@@ -11,7 +11,6 @@ import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
-import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/utils/utils.dart";
@@ -29,10 +28,7 @@ export "package:flow/sync/model/model_v1.dart";
 ///
 /// We need to resolve [Transaction]s last cause it references both [Account] and
 /// [Category] UUID.
-Future<Importer> importBackup({
-  ImportMode mode = ImportMode.eraseAndWrite,
-  File? backupFile,
-}) async {
+Future<Importer> importBackup({File? backupFile}) async {
   final file = backupFile ?? await pickJsonOrZipFile();
 
   if (file == null) {
@@ -43,13 +39,13 @@ Future<Importer> importBackup({
   }
 
   final String ext = path.extension(file.path).toLowerCase();
-  final bool isSupportedExtension = [".json", ".zip"].contains(ext);
+  final bool isSupportedExtension = [".json", ".zip", ".csv"].contains(ext);
 
   if (!isSupportedExtension) {
     throw const ImportException(
       "No file was picked to proceed with the import",
       l10nKey: "error.input.wrongFileType",
-      l10nArgs: "JSON, ZIP",
+      l10nArgs: "JSON, ZIP, CSV",
     );
   }
 
@@ -103,10 +99,9 @@ Future<Importer> importBackup({
   }
 
   return switch (parsed["versionCode"]) {
-    1 => ImportV1(SyncModelV1.fromJson(parsed), mode: mode),
+    1 => ImportV1(SyncModelV1.fromJson(parsed)),
     2 => ImportV2(
       SyncModelV2.fromJson(parsed),
-      mode: mode,
       cleanupFolder: cleanupPath,
       assetsRoot: assetsRoot,
     ),

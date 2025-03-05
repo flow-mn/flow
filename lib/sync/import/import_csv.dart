@@ -16,16 +16,16 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/model/model_v2.dart";
+import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
 
-final Logger _log = Logger("ImportV2");
+final Logger _log = Logger("ImportCSV");
 
 /// Used to report current status to user
-enum ImportV2Progress implements LocalizedEnum {
+enum ImportCSVProgress implements LocalizedEnum {
   waitingConfirmation,
   erasing,
   writingCategories,
@@ -43,26 +43,34 @@ enum ImportV2Progress implements LocalizedEnum {
   @override
   String get localizationEnumValue => name;
   @override
-  String get localizationEnumName => "ImportV2Progress";
+  String get localizationEnumName => "ImportCSVProgress";
 }
 
-class ImportV2 extends Importer {
+class ImportCSV extends Importer {
   @override
-  final SyncModelV2 data;
+  final File data;
   final String? assetsRoot;
   final String? cleanupFolder;
 
   dynamic error;
 
+  @override
+  final ImportMode mode;
+
   final Map<String, int> memoizeAccounts = {};
   final Map<String, int> memoizeCategories = {};
 
   @override
-  final ValueNotifier<ImportV2Progress> progressNotifier = ValueNotifier(
-    ImportV2Progress.waitingConfirmation,
+  final ValueNotifier<ImportCSVProgress> progressNotifier = ValueNotifier(
+    ImportCSVProgress.waitingConfirmation,
   );
 
-  ImportV2(this.data, {this.cleanupFolder, this.assetsRoot});
+  ImportCSV(
+    this.data, {
+    this.cleanupFolder,
+    this.assetsRoot,
+    this.mode = ImportMode.merge,
+  });
 
   @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
@@ -87,9 +95,16 @@ class ImportV2 extends Importer {
     try {
       TransactionsService().pauseListeners();
 
-      await _eraseAndWrite();
+      switch (mode) {
+        case ImportMode.eraseAndWrite:
+          await _eraseAndWrite();
+          break;
+        case ImportMode.merge:
+          await _merge();
+          break;
+      }
     } catch (e) {
-      progressNotifier.value = ImportV2Progress.error;
+      progressNotifier.value = ImportCSVProgress.error;
       rethrow;
     } finally {
       if (cleanupFolder != null) {
@@ -109,21 +124,21 @@ class ImportV2 extends Importer {
   /// 3. [Transaction] (Account, Category)
   Future<void> _eraseAndWrite() async {
     // 0. Erase current data
-    progressNotifier.value = ImportV2Progress.erasing;
+    progressNotifier.value = ImportCSVProgress.erasing;
     await ObjectBox().eraseMainData();
 
     // 1. Resurrect [Category]s
-    progressNotifier.value = ImportV2Progress.writingCategories;
+    progressNotifier.value = ImportCSVProgress.writingCategories;
     await ObjectBox().box<Category>().putManyAsync(data.categories);
 
     // 2. Resurrect [Account]s
-    progressNotifier.value = ImportV2Progress.writingAccounts;
+    progressNotifier.value = ImportCSVProgress.writingAccounts;
     await ObjectBox().box<Account>().putManyAsync(data.accounts);
 
     // 3. Resurrect [Transaction]s
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
-    progressNotifier.value = ImportV2Progress.resolvingTransactions;
+    progressNotifier.value = ImportCSVProgress.resolvingTransactions;
     final transformedTransactions =
         data.transactions
             .map((transaction) {
@@ -150,11 +165,12 @@ class ImportV2 extends Importer {
             .nonNulls
             .toList();
 
-    progressNotifier.value = ImportV2Progress.writingTransactions;
+    progressNotifier.value = ImportCSVProgress.writingTransactions;
     await TransactionsService().upsertMany(transformedTransactions);
 
     if (data.transactionFilterPresets?.isNotEmpty == true) {
-      progressNotifier.value = ImportV2Progress.writingTranscationFilterPresets;
+      progressNotifier.value =
+          ImportCSVProgress.writingTranscationFilterPresets;
       await ObjectBox().box<TransactionFilterPreset>().putManyAsync(
         data.transactionFilterPresets!,
       );
@@ -167,7 +183,7 @@ class ImportV2 extends Importer {
         _log.warning("Failed to remove existing profile, ignoring", e);
       }
 
-      progressNotifier.value = ImportV2Progress.writingProfile;
+      progressNotifier.value = ImportCSVProgress.writingProfile;
       await ObjectBox().box<Profile>().putAsync(data.profile!);
     }
 
@@ -178,13 +194,13 @@ class ImportV2 extends Importer {
         _log.warning("Failed to remove existing user preferences, ignoring", e);
       }
 
-      progressNotifier.value = ImportV2Progress.writingUserPreferences;
+      progressNotifier.value = ImportCSVProgress.writingUserPreferences;
       await ObjectBox().box<UserPreferences>().putAsync(data.userPreferences!);
     }
 
     if (data.primaryCurrency != null &&
         isCurrencyCodeValid(data.primaryCurrency!)) {
-      progressNotifier.value = ImportV2Progress.settingPrimaryCurrency;
+      progressNotifier.value = ImportCSVProgress.settingPrimaryCurrency;
       try {
         await LocalPreferences().primaryCurrency.set(data.primaryCurrency!);
       } catch (e) {
@@ -201,7 +217,7 @@ class ImportV2 extends Importer {
     );
 
     if (assetsRoot != null) {
-      progressNotifier.value = ImportV2Progress.copyingImages;
+      progressNotifier.value = ImportCSVProgress.copyingImages;
       try {
         final List<FileSystemEntity> assetsList = Directory(
           path.join(assetsRoot!, "images"),
@@ -233,7 +249,36 @@ class ImportV2 extends Importer {
       }
     }
 
-    progressNotifier.value = ImportV2Progress.success;
+    progressNotifier.value = ImportCSVProgress.success;
+  }
+
+  Future<void> _merge() async {
+    // Here, we might have an interactive selection screen for resolving
+    // conflicts. For now, we'll ignore this.
+
+    throw UnimplementedError();
+
+    // // 1. Resurrect [Category]s
+    // progressNotifier.value = ImportV1Progress.loadingCategories;
+    // final currentCategories = await ObjectBox().box<Category>().getAllAsync();
+    // await ObjectBox().box<Category>().putManyAsync(data.categories
+    //     .where((incomingCategory) => !currentCategories.any(
+    //         (currentCategory) => currentCategory.uuid == incomingCategory.uuid))
+    //     .toList());
+
+    // // 2. Resurrect [Account]s
+    // progressNotifier.value = ImportV1Progress.loadingAccounts;
+    // final currentAccounts = await ObjectBox().box<Account>().getAllAsync();
+    // await ObjectBox().box<Account>().putManyAsync(data.accounts
+    //     .where((incomingAccount) => !currentAccounts.any((currentAccount) =>
+    //         currentAccount.uuid == incomingAccount.uuid ||
+    //         currentAccount.name == incomingAccount.name))
+    //     .toList());
+
+    // // 3. Resurrect [Transaction]s
+    // progressNotifier.value = ImportV1Progress.loadingTransactions;
+    // final currentTransactions =
+    //     await TransactionsService().getAll();
   }
 
   Future<void> _cleanup() async {

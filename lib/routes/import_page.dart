@@ -1,6 +1,6 @@
-import "dart:developer";
 import "dart:io";
 
+import "package:cross_file/cross_file.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
@@ -9,8 +9,10 @@ import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import/file_select_area.dart";
 import "package:flutter/material.dart";
-import "package:cross_file/cross_file.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("ImportPage");
 
 class ImportPage extends StatefulWidget {
   final bool? setupMode;
@@ -68,6 +70,12 @@ class _ImportPageState extends State<ImportPage> {
               extra: importV2,
             );
             break;
+          case ImportCSV importCSV:
+            context.pushReplacement(
+              "/import/wizard/csv?setupMode=${widget.setupMode}",
+              extra: importCSV,
+            );
+            break;
           case null:
             context.showErrorToast(
               error: "error.input.noFilePicked".t(context),
@@ -81,7 +89,7 @@ class _ImportPageState extends State<ImportPage> {
         }
       }
     } catch (e) {
-      log("[Flow Import Page] An error was thrown from `importBackupV1`:\n $e");
+      _log.severe("An error was thrown from `importBackupV1`", e);
       if (mounted) {
         context.showErrorToast(error: e);
       }
@@ -94,12 +102,12 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   Future<void> initiateImportFromDroppedFile(XFile? file) async {
-    log("file: $file");
-
     if (file == null) {
       context.showErrorToast(error: "error.input.noFilePicked".t(context));
       return;
     }
+
+    _log.fine("Trying to import from dragged file: ${file.path}");
 
     final backupFile = File(file.path);
 
