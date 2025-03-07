@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.12.1+161"
+version: "0.12.1+162"
 
 environment:
   sdk: ">=3.7.0 <4.0.0"
@@ -24,7 +24,7 @@ dependencies:
     sdk: flutter
   flutter_dynamic_icon_plus: ^1.2.1
   flutter_floating_bottom_bar: ^1.2.0
-  flutter_local_notifications: ^19.0.0-dev.5
+  flutter_local_notifications: ^19.0.0-dev.7
   flutter_localizations:
     sdk: flutter
   flutter_map: ^8.0.0
