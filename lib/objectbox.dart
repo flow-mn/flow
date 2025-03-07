@@ -77,23 +77,18 @@ class ObjectBox {
       await dir.create(recursive: true);
     }
 
-    // late final Store store;
+    late final Store store;
 
-    // if (Store.isOpen(appDataDirectory)) {
-    //   _log.fine("Reusing existing ObjectBox store at $appDataDirectory");
-    //   store = Store.attach(getObjectBoxModel(), appDataDirectory);
-    // } else {
-    //   _log.fine("Opening ObjectBox store at $appDataDirectory");
-    //   store = await openStore(
-    //     directory: appDataDirectory,
-    //     macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
-    //   );
-    // }
-
-    final Store store = await openStore(
-      directory: appDataDirectory,
-      macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
-    );
+    if (Store.isOpen(appDataDirectory)) {
+      _log.fine("Reusing existing ObjectBox store at $appDataDirectory");
+      store = Store.attach(getObjectBoxModel(), appDataDirectory);
+    } else {
+      _log.fine("Opening ObjectBox store at $appDataDirectory");
+      store = await openStore(
+        directory: appDataDirectory,
+        macosApplicationGroup: Platform.isMacOS ? "NJH37247C9.flow" : null,
+      );
+    }
 
     return _instance = ObjectBox._internal(store);
   }
