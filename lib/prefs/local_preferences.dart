@@ -226,8 +226,11 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    _instance ??= LocalPreferences._internal(
-      await SharedPreferences.getInstance(),
-    );
+    if (_instance != null) return;
+
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+
+    _instance = LocalPreferences._internal(sharedPreferences);
   }
 }
