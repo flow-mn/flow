@@ -227,10 +227,6 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    final withCache = await SharedPreferencesWithCache.create(
-      cacheOptions: SharedPreferencesWithCacheOptions(),
-    );
-
     try {
       await _migrateFromLegacy("migrate-d6bf17de-7a59-493c-aa79-30bcd848021e");
     } catch (e) {
@@ -239,6 +235,10 @@ class LocalPreferences {
         e,
       );
     }
+
+    final withCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
+    );
 
     _instance ??= LocalPreferences._internal(withCache);
   }
@@ -285,7 +285,6 @@ class LocalPreferences {
     }
 
     await neuePrefs.setBool(migrationCompletedKey, true);
-    await neuePrefs.reloadCache();
 
     return;
   }
