@@ -1,5 +1,11 @@
 # Changelog
 
+## Beta 0.12.2
+
+### Fixes
+
+* Fixed some Android devices were unable to open the app
+
 ## Beta 0.12.1
 
 ### New features

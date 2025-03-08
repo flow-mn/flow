@@ -3,7 +3,7 @@ import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 class ThemeLocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   static ThemeLocalPreferences? _instance;
 
@@ -35,6 +35,7 @@ class ThemeLocalPreferences {
     );
   }
 
-  static ThemeLocalPreferences initialize(SharedPreferences instance) =>
-      _instance ??= ThemeLocalPreferences._internal(instance);
+  static ThemeLocalPreferences initialize(
+    SharedPreferencesWithCache instance,
+  ) => _instance ??= ThemeLocalPreferences._internal(instance);
 }
