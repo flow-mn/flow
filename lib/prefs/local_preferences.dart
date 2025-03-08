@@ -13,8 +13,6 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:shared_preferences/util/legacy_to_async_migration_util.dart"
-    show migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary;
 
 export "./pending_transactions.dart";
 export "./theme.dart";
@@ -234,14 +232,7 @@ class LocalPreferences {
     );
 
     try {
-      const SharedPreferencesOptions sharedPreferencesOptions =
-          SharedPreferencesOptions();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        legacySharedPreferencesInstance: prefs,
-        sharedPreferencesAsyncOptions: sharedPreferencesOptions,
-        migrationCompletedKey: "migrate-3c3190ac-2bce-4397-ab7c-9a0cf369d752",
-      );
+      await _migrateFromLegacy("migrate-d6bf17de-7a59-493c-aa79-30bcd848021e");
     } catch (e) {
       startupLog.severe(
         "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
@@ -250,5 +241,52 @@ class LocalPreferences {
     }
 
     _instance ??= LocalPreferences._internal(withCache);
+  }
+
+  static Future<void> _migrateFromLegacy(String migrationCompletedKey) async {
+    final SharedPreferences legacy = await SharedPreferences.getInstance();
+
+    final SharedPreferencesWithCache neuePrefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    if (neuePrefs.get(migrationCompletedKey) == true) {
+      return;
+    }
+
+    await legacy.reload();
+    final Set<String> keys = legacy.getKeys();
+
+    for (final String key in keys) {
+      final Object? value = legacy.get(key);
+      switch (value.runtimeType) {
+        case const (bool):
+          await neuePrefs.setBool(key, value! as bool);
+        case const (int):
+          await neuePrefs.setInt(key, value! as int);
+        case const (double):
+          await neuePrefs.setDouble(key, value! as double);
+        case const (String):
+          await neuePrefs.setString(key, value! as String);
+        case const (List<String>):
+        case const (List<String?>):
+        case const (List<Object?>):
+        case const (List<dynamic>):
+          try {
+            await neuePrefs.setStringList(
+              key,
+              (value! as List<Object?>).cast<String>(),
+            );
+          } on TypeError catch (
+            _
+          ) {} // Pass over Lists containing non-String values.
+      }
+    }
+
+    await neuePrefs.setBool(migrationCompletedKey, true);
+    await neuePrefs.reloadCache();
+
+    return;
   }
 }
