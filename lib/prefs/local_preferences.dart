@@ -242,6 +242,7 @@ class LocalPreferences {
         sharedPreferencesAsyncOptions: sharedPreferencesOptions,
         migrationCompletedKey: "migrate-3c3190ac-2bce-4397-ab7c-9a0cf369d752",
       );
+      await withCache.reloadCache();
     } catch (e) {
       startupLog.severe(
         "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
