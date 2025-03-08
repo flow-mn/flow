@@ -236,7 +236,6 @@ class LocalPreferences {
     try {
       const SharedPreferencesOptions sharedPreferencesOptions =
           SharedPreferencesOptions();
-      SharedPreferences.setPrefix("flow.");
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: prefs,
