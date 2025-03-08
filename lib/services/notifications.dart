@@ -140,8 +140,10 @@ class NotificationsService {
 
         if (permissionGranted == null) return;
 
-        if (!permissionGranted) {
-          requestPermissions();
+        if (permissionGranted) {
+          _log.fine("Permission has been granted");
+        } else {
+          _log.warning("Permission has not been granted");
         }
       } catch (e) {
         _log.warning("Failed to check or request permissions", e);
@@ -179,6 +181,8 @@ class NotificationsService {
     Transaction transaction, [
     Duration? earlyReminder,
   ]) async {
+    await _checkSupportAndPermission();
+
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
@@ -289,6 +293,8 @@ class NotificationsService {
   }
 
   Future<void> scheduleDailyReminders(Duration time) async {
+    await _checkSupportAndPermission();
+
     await clearByType(FlowNotificationPayloadItemType.reminder);
 
     if (!schedulingSupported) {
@@ -525,5 +531,17 @@ class NotificationsService {
       return true;
     }
     return null;
+  }
+
+  Future<void> _checkSupportAndPermission() async {
+    if (!available) {
+      _log.warning("Notifications not available");
+      throw Exception("Notifications not available");
+    }
+
+    if (await hasPermissions() != true) {
+      _log.warning("Notifications not permitted");
+      throw Exception("Notifications not permitted");
+    }
   }
 }

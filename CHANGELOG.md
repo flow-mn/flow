@@ -1,5 +1,23 @@
 # Changelog
 
+## Beta 0.12.2
+
+### Fixes
+
+* Fixed some Android devices were unable to open the app
+
+### Notice
+
+If you were **unable to open the app** in the previous update (0.12.1),
+please do the following. Non-android users, and those who didn't suffer from the
+problem can ignore this.
+
+* You will be greeted with a setup page. This is fine, you can proceed,
+  or close the app and reopen. Your data shouldn't be affected by this.
+* You can backup your data now if you want
+* Please reconfigure your preferences. You may see your theme, money formatting
+  and/or other preference you've set disappeared.
+
 ## Beta 0.12.1
 
 ### New features
