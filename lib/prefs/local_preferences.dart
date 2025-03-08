@@ -236,11 +236,12 @@ class LocalPreferences {
     try {
       const SharedPreferencesOptions sharedPreferencesOptions =
           SharedPreferencesOptions();
+      SharedPreferences.setPrefix("flow.");
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: prefs,
         sharedPreferencesAsyncOptions: sharedPreferencesOptions,
-        migrationCompletedKey: "whyNotIncreaseMajorVerIfBreakingChange",
+        migrationCompletedKey: "migrate-4161e174-72fd-466a-a684-1b8947f4697d",
       );
     } catch (e) {
       startupLog.severe(
