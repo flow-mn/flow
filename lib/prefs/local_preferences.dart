@@ -240,7 +240,7 @@ class LocalPreferences {
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: prefs,
         sharedPreferencesAsyncOptions: sharedPreferencesOptions,
-        migrationCompletedKey: "migrate-4161e174-72fd-466a-a684-1b8947f4697d",
+        migrationCompletedKey: "migrate-3c3190ac-2bce-4397-ab7c-9a0cf369d752",
       );
     } catch (e) {
       startupLog.severe(
