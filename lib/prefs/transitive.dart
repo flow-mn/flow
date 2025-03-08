@@ -18,7 +18,7 @@ import "package:shared_preferences/shared_preferences.dart";
 final Logger _log = Logger("TransitiveLocalPreferences");
 
 class TransitiveLocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   static TransitiveLocalPreferences? _instance;
 
@@ -213,6 +213,7 @@ class TransitiveLocalPreferences {
     }
   }
 
-  static TransitiveLocalPreferences initialize(SharedPreferences instance) =>
-      _instance ??= TransitiveLocalPreferences._internal(instance);
+  static TransitiveLocalPreferences initialize(
+    SharedPreferencesWithCache instance,
+  ) => _instance ??= TransitiveLocalPreferences._internal(instance);
 }

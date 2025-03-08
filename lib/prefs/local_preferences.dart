@@ -3,6 +3,7 @@ import "dart:async";
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/pending_transactions.dart";
@@ -12,6 +13,8 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:shared_preferences/util/legacy_to_async_migration_util.dart"
+    show migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary;
 
 export "./pending_transactions.dart";
 export "./theme.dart";
@@ -21,7 +24,7 @@ export "./transitive.dart";
 /// device. Such as user preferences and per-device
 /// settings
 class LocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -226,11 +229,27 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    if (_instance != null) return;
+    final withCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
+    );
 
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
+    try {
+      const SharedPreferencesOptions sharedPreferencesOptions =
+          SharedPreferencesOptions();
+      SharedPreferences.setPrefix("flow.");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+        legacySharedPreferencesInstance: prefs,
+        sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+        migrationCompletedKey: "migrate-4161e174-72fd-466a-a684-1b8947f4697d",
+      );
+    } catch (e) {
+      startupLog.severe(
+        "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
+        e,
+      );
+    }
 
-    _instance = LocalPreferences._internal(sharedPreferences);
+    _instance ??= LocalPreferences._internal(withCache);
   }
 }
