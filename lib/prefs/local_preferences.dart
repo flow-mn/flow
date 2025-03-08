@@ -13,8 +13,6 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:shared_preferences/util/legacy_to_async_migration_util.dart"
-    show migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary;
 
 export "./pending_transactions.dart";
 export "./theme.dart";
@@ -229,20 +227,8 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    final withCache = await SharedPreferencesWithCache.create(
-      cacheOptions: SharedPreferencesWithCacheOptions(),
-    );
-
     try {
-      const SharedPreferencesOptions sharedPreferencesOptions =
-          SharedPreferencesOptions();
-      SharedPreferences.setPrefix("flow.");
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        legacySharedPreferencesInstance: prefs,
-        sharedPreferencesAsyncOptions: sharedPreferencesOptions,
-        migrationCompletedKey: "migrate-4161e174-72fd-466a-a684-1b8947f4697d",
-      );
+      await _migrateFromLegacy("migrate-d6bf17de-7a59-493c-aa79-30bcd848021e");
     } catch (e) {
       startupLog.severe(
         "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
@@ -250,6 +236,56 @@ class LocalPreferences {
       );
     }
 
+    final withCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
+    );
+
     _instance ??= LocalPreferences._internal(withCache);
+  }
+
+  static Future<void> _migrateFromLegacy(String migrationCompletedKey) async {
+    final SharedPreferences legacy = await SharedPreferences.getInstance();
+
+    final SharedPreferencesWithCache neuePrefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    if (neuePrefs.get(migrationCompletedKey) == true) {
+      return;
+    }
+
+    await legacy.reload();
+    final Set<String> keys = legacy.getKeys();
+
+    for (final String key in keys) {
+      final Object? value = legacy.get(key);
+      switch (value.runtimeType) {
+        case const (bool):
+          await neuePrefs.setBool(key, value! as bool);
+        case const (int):
+          await neuePrefs.setInt(key, value! as int);
+        case const (double):
+          await neuePrefs.setDouble(key, value! as double);
+        case const (String):
+          await neuePrefs.setString(key, value! as String);
+        case const (List<String>):
+        case const (List<String?>):
+        case const (List<Object?>):
+        case const (List<dynamic>):
+          try {
+            await neuePrefs.setStringList(
+              key,
+              (value! as List<Object?>).cast<String>(),
+            );
+          } on TypeError catch (
+            _
+          ) {} // Pass over Lists containing non-String values.
+      }
+    }
+
+    await neuePrefs.setBool(migrationCompletedKey, true);
+
+    return;
   }
 }
