@@ -2,7 +2,7 @@ import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 class PendingTransactionsLocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   static PendingTransactionsLocalPreferences? _instance;
 
@@ -67,6 +67,6 @@ class PendingTransactionsLocalPreferences {
   }
 
   static PendingTransactionsLocalPreferences initialize(
-    SharedPreferences instance,
+    SharedPreferencesWithCache instance,
   ) => _instance ??= PendingTransactionsLocalPreferences._internal(instance);
 }
