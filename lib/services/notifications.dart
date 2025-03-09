@@ -156,7 +156,6 @@ class NotificationsService {
     try {
       final List<PendingNotificationRequest> result =
           await pluginInstance.pendingNotificationRequests();
-      _count = result.length;
       return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
@@ -167,7 +166,6 @@ class NotificationsService {
   Future<void> cancelAllNotifications() async {
     try {
       await pluginInstance.cancelAll();
-      _count = 0;
     } catch (e) {
       // Silent fail
     }
@@ -230,11 +228,6 @@ class NotificationsService {
         "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
         details,
-        payload:
-            FlowNotificationPayload(
-              itemType: FlowNotificationPayloadItemType.transaction,
-              id: transaction.id.toString(),
-            ).serialized,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload:
             FlowNotificationPayload(
@@ -259,7 +252,7 @@ class NotificationsService {
     _log.fine("Clearing notifications by type $type");
 
     final List<PendingNotificationRequest> scheduledNotifications =
-        await getSchedules();
+        await fetchAllNotification();
 
     final List<PendingNotificationRequest> reminders =
         scheduledNotifications.where((x) {
