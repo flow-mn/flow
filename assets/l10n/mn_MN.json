@@ -129,6 +129,7 @@
     "transaction.transfer.to.select": "Хүлээн авах данс",
     "transaction.transfer.to.title": "{account}-руу",
     "transaction.transfer.fromToTitle": "{from}-с {to} руу",
+    "transaction.transfer.conversionRate": "Хөрвүүлэх ханш",
     "transaction.description": "Тэмдэглэл",
     "transaction.description.add": "Тэмдэглэл нэмэх",
     "transaction.description.markdownSupported": "Markdown ашиглах боломжтой",

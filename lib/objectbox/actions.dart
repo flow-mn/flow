@@ -3,7 +3,6 @@ import "dart:math" as math;
 
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
-import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
@@ -679,27 +678,6 @@ extension TransactionListActions on Iterable<Transaction> {
 }
 
 extension AccountActions on Account {
-  static Memoizer<String, String?>? accountNameToUuid;
-
-  static String nameByUuid(String uuid) {
-    accountNameToUuid ??= Memoizer(compute: _nameByUuid);
-
-    return accountNameToUuid!.get(uuid) ?? "???";
-  }
-
-  static String _nameByUuid(String uuid) {
-    final query =
-        ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();
-
-    try {
-      return query.findFirst()?.name ?? "???";
-    } catch (e) {
-      return "???";
-    } finally {
-      query.close();
-    }
-  }
-
   /// Upserts a transaction (creates if not exists, updates if exists)
   ///
   /// Returns transaction id from [Box.put]
@@ -750,6 +728,14 @@ extension AccountActions on Account {
   /// First transaction represents money going out of [this] account
   ///
   /// Second transaction represents money incoming to the target account
+  ///
+  /// [this]' [currency] will be used as the anchor. Not that if [amount] is
+  /// less than zero, the from and to will be reversed roles, and [conversionRate]
+  /// will be inversed.
+  ///
+  /// [conversionRate] is used to multiple the `to`'s amount.
+  ///
+  /// e.g., for transfers from USD to MNT, it may be something like 3450.0.
   (int from, int to) transferTo({
     String? title,
     String? description,
@@ -761,7 +747,12 @@ extension AccountActions on Account {
     double? longitude,
     List<TransactionExtension>? extensions,
     bool? isPending,
+    double? conversionRate = 1.0,
   }) {
+    if (conversionRate == 0) {
+      throw Exception("Conversion rate cannot be zero, use 1.0 instead");
+    }
+
     if (amount <= 0) {
       return targetAccount.transferTo(
         targetAccount: this,
@@ -774,6 +765,7 @@ extension AccountActions on Account {
         longitude: longitude,
         extensions: extensions,
         isPending: isPending,
+        conversionRate: 1.0 / (conversionRate ?? 1.0),
       );
     }
 
@@ -785,6 +777,7 @@ extension AccountActions on Account {
       fromAccountUuid: uuid,
       toAccountUuid: targetAccount.uuid,
       relatedTransactionUuid: toTransactionUuid,
+      conversionRate: conversionRate,
     );
 
     final String resolvedTitle =
@@ -808,7 +801,7 @@ extension AccountActions on Account {
       isPending: isPending,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
-      amount: amount,
+      amount: amount * (conversionRate ?? 1.0),
       title: resolvedTitle,
       description: description,
       extensions: [

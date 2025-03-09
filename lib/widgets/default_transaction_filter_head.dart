@@ -9,6 +9,8 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
+import "package:flow/providers/categories.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/select_multi_currency_sheet.dart";
@@ -89,13 +91,6 @@ class _DefaultTransactionsFilterHeadState
   QueryBuilder<TransactionFilterPreset> transactionFilterPresetsQb() =>
       ObjectBox().box<TransactionFilterPreset>().query();
 
-  QueryBuilder<Account> accountsQb() => ObjectBox()
-      .box<Account>()
-      .query(Account_.archived.isNull().or(Account_.archived.notEquals(true)))
-      .order(Account_.sortOrder);
-
-  QueryBuilder<Category> categoriesQb() => ObjectBox().box<Category>().query();
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<TransactionFilterPreset>>(
@@ -103,148 +98,135 @@ class _DefaultTransactionsFilterHeadState
           .watch(triggerImmediately: true)
           .map((event) => event.find()),
       builder: (context, transactionPresetsSnapshot) {
-        return StreamBuilder<List<Account>>(
-          stream: accountsQb()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, accountsSnapshot) {
-            return StreamBuilder<List<Category>>(
-              stream: categoriesQb()
-                  .watch(triggerImmediately: true)
-                  .map((event) => event.find()),
-              builder: (context, categoriesSnapshot) {
-                final int differentFieldCount = widget.defaultFilter
-                    .calculateDifferentFieldCount(_filter);
+        {
+          final int differentFieldCount = widget.defaultFilter
+              .calculateDifferentFieldCount(_filter);
 
-                if (accountsSnapshot.hasData &&
-                    categoriesSnapshot.hasData &&
-                    !_filter.validate(
-                      accounts:
-                          accountsSnapshot.requireData
-                              .map((account) => account.uuid)
-                              .toList(),
-                      categories:
-                          categoriesSnapshot.requireData
-                              .map((category) => category.uuid)
-                              .toList(),
-                    )) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    filter = widget.defaultFilter;
-                    if (mounted) {
-                      setState(() {});
-                    }
-                  });
-                }
+          final List<Account>? activeAccounts =
+              AccountsProvider.of(context).ready
+                  ? AccountsProvider.of(context).activeAccounts
+                  : null;
+          final List<Category>? categories =
+              CategoriesProvider.of(context).ready
+                  ? CategoriesProvider.of(context).categories
+                  : null;
 
-                return TransactionFilterHead(
-                  padding: widget.padding,
-                  filterChips: [
-                    if (transactionPresetsSnapshot.hasData)
-                      FilterChip(
-                        showCheckmark: false,
-                        label: Text(differentFieldCount.toString()),
-                        selected: differentFieldCount > 0,
-                        avatar: const Icon(Symbols.filter_list_rounded),
-                        onSelected:
-                            (_) => _showFilterPresetSelectionSheet(
-                              transactionPresetsSnapshot.requireData,
+          if (activeAccounts != null &&
+              categories != null &&
+              !_filter.validate(
+                accounts: activeAccounts.map((account) => account.uuid).toSet(),
+                categories: categories.map((category) => category.uuid).toSet(),
+              )) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              filter = widget.defaultFilter;
+              if (mounted) {
+                setState(() {});
+              }
+            });
+          }
+
+          return TransactionFilterHead(
+            padding: widget.padding,
+            filterChips: [
+              if (transactionPresetsSnapshot.hasData)
+                FilterChip(
+                  showCheckmark: false,
+                  label: Text(differentFieldCount.toString()),
+                  selected: differentFieldCount > 0,
+                  avatar: const Icon(Symbols.filter_list_rounded),
+                  onSelected:
+                      (_) => _showFilterPresetSelectionSheet(
+                        transactionPresetsSnapshot.requireData,
+                      ),
+                ),
+              TransactionFilterChip<TransactionSearchData>(
+                translationKey: "transactions.query.filter.keyword",
+                avatar: const Icon(Symbols.search_rounded),
+                onSelect: onSearch,
+                defaultValue: widget.defaultFilter.searchData,
+                value: _filter.searchData,
+                highlightOverride: _filter.searchData.normalizedKeyword != null,
+              ),
+              TransactionFilterChip<TransactionFilterTimeRange>(
+                translationKey: "transactions.query.filter.timeRange",
+                avatar: const Icon(Symbols.history_rounded),
+                onSelect: onSelectRange,
+                defaultValue: widget.defaultFilter.range,
+                value: _filter.range,
+              ),
+              if (activeAccounts != null)
+                TransactionFilterChip<Set<Account>>(
+                  translationKey: "transactions.query.filter.accounts",
+                  avatar: const Icon(Symbols.wallet_rounded),
+                  onSelect: onSelectAccounts,
+                  defaultValue:
+                      widget.defaultFilter.accounts
+                          ?.map(
+                            (uuid) => activeAccounts.firstWhere(
+                              (account) => account.uuid == uuid,
                             ),
-                      ),
-                    TransactionFilterChip<TransactionSearchData>(
-                      translationKey: "transactions.query.filter.keyword",
-                      avatar: const Icon(Symbols.search_rounded),
-                      onSelect: onSearch,
-                      defaultValue: widget.defaultFilter.searchData,
-                      value: _filter.searchData,
-                      highlightOverride:
-                          _filter.searchData.normalizedKeyword != null,
-                    ),
-                    TransactionFilterChip<TransactionFilterTimeRange>(
-                      translationKey: "transactions.query.filter.timeRange",
-                      avatar: const Icon(Symbols.history_rounded),
-                      onSelect: onSelectRange,
-                      defaultValue: widget.defaultFilter.range,
-                      value: _filter.range,
-                    ),
-                    if (accountsSnapshot.hasData)
-                      TransactionFilterChip<Set<Account>>(
-                        translationKey: "transactions.query.filter.accounts",
-                        avatar: const Icon(Symbols.wallet_rounded),
-                        onSelect: onSelectAccounts,
-                        defaultValue:
-                            widget.defaultFilter.accounts
-                                ?.map(
-                                  (uuid) =>
-                                      accountsSnapshot.requireData.firstWhere(
-                                        (account) => account.uuid == uuid,
-                                      ),
-                                )
-                                .toSet(),
-                        value:
-                            _filter.accounts?.isNotEmpty == true
-                                ? _filter.accounts
-                                    ?.map(
-                                      (uuid) => accountsSnapshot.requireData
-                                          .firstWhereOrNull(
-                                            (account) => account.uuid == uuid,
-                                          ),
-                                    )
-                                    .nonNulls
-                                    .toSet()
-                                : null,
-                      ),
-                    TransactionFilterChip<Set<Category>>(
-                      translationKey: "transactions.query.filter.categories",
-                      avatar: const Icon(Symbols.category_rounded),
-                      onSelect: onSelectCategories,
-                      defaultValue:
-                          widget.defaultFilter.categories
+                          )
+                          .toSet(),
+                  value:
+                      _filter.accounts?.isNotEmpty == true
+                          ? _filter.accounts
                               ?.map(
-                                (uuid) =>
-                                    categoriesSnapshot.requireData.firstWhere(
-                                      (category) => category.uuid == uuid,
-                                    ),
+                                (uuid) => AccountsProvider.of(
+                                  context,
+                                ).activeAccounts.firstWhereOrNull(
+                                  (account) => account.uuid == uuid,
+                                ),
                               )
-                              .toSet(),
-                      value:
-                          _filter.categories?.isNotEmpty == true
-                              ? _filter.categories
-                                  ?.map(
-                                    (uuid) => categoriesSnapshot.requireData
-                                        .firstWhereOrNull(
-                                          (category) => category.uuid == uuid,
-                                        ),
-                                  )
-                                  .nonNulls
-                                  .toSet()
-                              : null,
-                    ),
-                    if (showCurrencyFilterChip)
-                      TransactionFilterChip<List<String>>(
-                        translationKey: "transactions.query.filter.currency",
-                        avatar: const Icon(
-                          Symbols.universal_currency_alt_rounded,
-                        ),
-                        onSelect: onSelectCurrency,
-                        defaultValue: widget.defaultFilter.currencies,
-                        value:
-                            _filter.currencies?.isNotEmpty == true
-                                ? _filter.currencies
-                                : null,
-                      ),
-                    TransactionFilterChip<TransactionGroupRange>(
-                      translationKey: "transactions.query.filter.groupBy",
-                      avatar: const Icon(Symbols.atr_rounded),
-                      onSelect: onSelectGroupBy,
-                      defaultValue: widget.defaultFilter.groupBy,
-                      value: _filter.groupBy,
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        );
+                              .nonNulls
+                              .toSet()
+                          : null,
+                ),
+              if (categories != null)
+                TransactionFilterChip<Set<Category>>(
+                  translationKey: "transactions.query.filter.categories",
+                  avatar: const Icon(Symbols.category_rounded),
+                  onSelect: onSelectCategories,
+                  defaultValue:
+                      widget.defaultFilter.categories
+                          ?.map(
+                            (uuid) => categories.firstWhere(
+                              (category) => category.uuid == uuid,
+                            ),
+                          )
+                          .toSet(),
+                  value:
+                      _filter.categories?.isNotEmpty == true
+                          ? _filter.categories
+                              ?.map(
+                                (uuid) => categories.firstWhereOrNull(
+                                  (category) => category.uuid == uuid,
+                                ),
+                              )
+                              .nonNulls
+                              .toSet()
+                          : null,
+                ),
+              if (showCurrencyFilterChip)
+                TransactionFilterChip<List<String>>(
+                  translationKey: "transactions.query.filter.currency",
+                  avatar: const Icon(Symbols.universal_currency_alt_rounded),
+                  onSelect: onSelectCurrency,
+                  defaultValue: widget.defaultFilter.currencies,
+                  value:
+                      _filter.currencies?.isNotEmpty == true
+                          ? _filter.currencies
+                          : null,
+                ),
+              TransactionFilterChip<TransactionGroupRange>(
+                translationKey: "transactions.query.filter.groupBy",
+                avatar: const Icon(Symbols.atr_rounded),
+                onSelect: onSelectGroupBy,
+                defaultValue: widget.defaultFilter.groupBy,
+                value: _filter.groupBy,
+              ),
+            ],
+          );
+        }
       },
     );
   }

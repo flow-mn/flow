@@ -4,7 +4,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/providers/accounts_provider.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -30,115 +30,97 @@ class _AccountsTabState extends State<AccountsTab>
     with AutomaticKeepAliveClientMixin {
   bool _reordering = false;
 
-  QueryBuilder<Account> qb() => ObjectBox()
-      .box<Account>()
-      .query(Account_.archived.isNull().or(Account_.archived.notEquals(true)))
-      .order(Account_.sortOrder);
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
     return TransactionWatcher(
-      builder:
-          (context, _, __) => StreamBuilder<List<Account>>(
-            stream: qb()
-                .watch(triggerImmediately: true)
-                .map((event) => event.find()),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Spinner.center();
-              }
+      builder: (context, _, __) {
+        final accounts = AccountsProvider.of(context).activeAccounts;
+        final bool ready = AccountsProvider.of(context).ready;
 
-              final List<Account> accounts = snapshot.requireData;
+        if (!ready) {
+          return const Spinner();
+        }
 
-              return switch (accounts.length) {
-                0 => const NoAccounts(),
-                _ => Column(
-                  children: [
-                    const SizedBox(height: 16.0),
-                    Frame(child: buildHeader(context)),
-                    ValueListenableBuilder(
-                      valueListenable: UserPreferencesService().valueNotiifer,
-                      builder: (context, userPreferences, child) {
-                        final bool excludeTransfersInTotal =
-                            userPreferences.excludeTransfersFromFlow;
+        return switch (accounts.length) {
+          0 => const NoAccounts(),
+          _ => Column(
+            children: [
+              const SizedBox(height: 16.0),
+              Frame(child: buildHeader(context)),
+              ValueListenableBuilder(
+                valueListenable: UserPreferencesService().valueNotiifer,
+                builder: (context, userPreferences, child) {
+                  final bool excludeTransfersInTotal =
+                      userPreferences.excludeTransfersFromFlow;
 
-                        return Expanded(
-                          child:
-                              _reordering
-                                  ? Frame(
-                                    child: ReorderableListView.builder(
+                  return Expanded(
+                    child:
+                        _reordering
+                            ? Frame(
+                              child: ReorderableListView.builder(
+                                padding: const EdgeInsets.only(bottom: 96.0),
+                                itemBuilder:
+                                    (context, index) => Padding(
+                                      key: ValueKey(accounts[index].uuid),
                                       padding: const EdgeInsets.only(
-                                        bottom: 96.0,
+                                        bottom: 16.0,
                                       ),
-                                      itemBuilder:
-                                          (context, index) => Padding(
-                                            key: ValueKey(accounts[index].uuid),
-                                            padding: const EdgeInsets.only(
-                                              bottom: 16.0,
-                                            ),
-                                            child: AccountCard(
-                                              account: accounts[index],
-                                              useCupertinoContextMenu: false,
-                                              excludeTransfersInTotal:
-                                                  excludeTransfersInTotal ==
-                                                  true,
-                                            ),
-                                          ),
-                                      proxyDecorator: proxyDecorator,
-                                      itemCount: accounts.length,
-                                      onReorder:
-                                          (oldIndex, newIndex) => onReorder(
-                                            accounts,
-                                            oldIndex,
-                                            newIndex,
-                                          ),
+                                      child: AccountCard(
+                                        account: accounts[index],
+                                        useCupertinoContextMenu: false,
+                                        excludeTransfersInTotal:
+                                            excludeTransfersInTotal == true,
+                                      ),
                                     ),
-                                  )
-                                  : ListView(
-                                    padding: const EdgeInsets.all(16.0),
-                                    children: [
-                                      TotalBalance(),
-                                      const SizedBox(height: 16.0),
-                                      Divider(),
-                                      const SizedBox(height: 16.0),
-                                      ...accounts.map(
-                                        (account) => Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 16.0,
-                                          ),
-                                          child: AccountCard(
-                                            account: account,
-                                            useCupertinoContextMenu:
-                                                Platform.isIOS,
-                                            excludeTransfersInTotal:
-                                                excludeTransfersInTotal == true,
-                                            onTapOverride: Optional(() async {
-                                              await context.push(
-                                                "/account/${account.id}",
-                                              );
-                                              setState(() {});
-                                            }),
-                                          ),
-                                        ),
-                                      ),
-                                      AccountCardSkeleton(
-                                        onTap:
-                                            () => context.push("/account/new"),
-                                      ),
-                                      const SizedBox(height: 16.0),
-                                      const SizedBox(height: 64.0),
-                                    ],
+                                proxyDecorator: proxyDecorator,
+                                itemCount: accounts.length,
+                                onReorder:
+                                    (oldIndex, newIndex) =>
+                                        onReorder(accounts, oldIndex, newIndex),
+                              ),
+                            )
+                            : ListView(
+                              padding: const EdgeInsets.all(16.0),
+                              children: [
+                                TotalBalance(),
+                                const SizedBox(height: 16.0),
+                                Divider(),
+                                const SizedBox(height: 16.0),
+                                ...accounts.map(
+                                  (account) => Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
+                                    child: AccountCard(
+                                      account: account,
+                                      useCupertinoContextMenu: Platform.isIOS,
+                                      excludeTransfersInTotal:
+                                          excludeTransfersInTotal == true,
+                                      onTapOverride: Optional(() async {
+                                        await context.push(
+                                          "/account/${account.id}",
+                                        );
+                                        setState(() {});
+                                      }),
+                                    ),
                                   ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              };
-            },
+                                ),
+                                AccountCardSkeleton(
+                                  onTap: () => context.push("/account/new"),
+                                ),
+                                const SizedBox(height: 16.0),
+                                const SizedBox(height: 64.0),
+                              ],
+                            ),
+                  );
+                },
+              ),
+            ],
           ),
+        };
+      },
     );
   }
 

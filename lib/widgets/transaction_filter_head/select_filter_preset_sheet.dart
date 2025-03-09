@@ -4,7 +4,8 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/objectbox/actions.dart";
+import "package:flow/providers/accounts_provider.dart";
+import "package:flow/providers/categories.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -70,10 +71,10 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
               final List<TransactionFilterPreset> presets =
                   presetsSnapshot.requireData;
 
-              final List<Account> accounts = ObjectBox().getAccounts(false);
-              final List<Category> categories = ObjectBox().getCategories(
-                false,
-              );
+              final List<Account> accounts =
+                  AccountsProvider.of(context).activeAccounts;
+              final List<Category> categories =
+                  CategoriesProvider.of(context).categories;
 
               final bool flowDefaultSelected =
                   widget.selected?.calculateDifferentFieldCount(
@@ -101,8 +102,8 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
                             ?.calculateDifferentFieldCount(preset.filter);
 
                         final bool valid = preset.filter.validate(
-                          accounts: accounts.map((x) => x.uuid).toList(),
-                          categories: categories.map((x) => x.uuid).toList(),
+                          accounts: accounts.map((x) => x.uuid).toSet(),
+                          categories: categories.map((x) => x.uuid).toSet(),
                         );
 
                         if (differenceCount == 0) {
