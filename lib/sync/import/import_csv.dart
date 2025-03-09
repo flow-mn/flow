@@ -16,7 +16,6 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
@@ -48,14 +47,11 @@ enum ImportCSVProgress implements LocalizedEnum {
 
 class ImportCSV extends Importer {
   @override
-  final File data;
+  final List<List<dynamic>> data;
   final String? assetsRoot;
   final String? cleanupFolder;
 
   dynamic error;
-
-  @override
-  final ImportMode mode;
 
   final Map<String, int> memoizeAccounts = {};
   final Map<String, int> memoizeCategories = {};
@@ -65,12 +61,7 @@ class ImportCSV extends Importer {
     ImportCSVProgress.waitingConfirmation,
   );
 
-  ImportCSV(
-    this.data, {
-    this.cleanupFolder,
-    this.assetsRoot,
-    this.mode = ImportMode.merge,
-  });
+  ImportCSV(this.data, {this.cleanupFolder, this.assetsRoot});
 
   @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
@@ -95,14 +86,7 @@ class ImportCSV extends Importer {
     try {
       TransactionsService().pauseListeners();
 
-      switch (mode) {
-        case ImportMode.eraseAndWrite:
-          await _eraseAndWrite();
-          break;
-        case ImportMode.merge:
-          await _merge();
-          break;
-      }
+      await _eraseAndWrite();
     } catch (e) {
       progressNotifier.value = ImportCSVProgress.error;
       rethrow;
