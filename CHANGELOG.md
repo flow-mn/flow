@@ -1,5 +1,15 @@
 # Changelog
 
+## Beta 0.12.1
+
+### Improvements
+
+* Launching Flow from a notification now opens the relevant page if available
+
+### Fixes
+
+* Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
+=======
 ## Beta 0.12.2
 
 ### Fixes

@@ -154,7 +154,10 @@ class NotificationsService {
   /// Upon failure, returns an empty list
   Future<List<PendingNotificationRequest>> fetchAllNotification() async {
     try {
-      return await pluginInstance.pendingNotificationRequests();
+      final List<PendingNotificationRequest> result =
+          await pluginInstance.pendingNotificationRequests();
+      _count = result.length;
+      return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
     }
@@ -163,17 +166,10 @@ class NotificationsService {
   /// Upon failure, does nothing
   Future<void> cancelAllNotifications() async {
     try {
-      return await pluginInstance.cancelAll();
+      await pluginInstance.cancelAll();
+      _count = 0;
     } catch (e) {
       // Silent fail
-    }
-  }
-
-  Future<List<PendingNotificationRequest>> getSchedules() async {
-    try {
-      return await pluginInstance.pendingNotificationRequests();
-    } catch (e) {
-      return [];
     }
   }
 
@@ -186,7 +182,9 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      _log.info("Ignoring scheduling for past date");
+      _log.info(
+        "ignoring scheduling for past date (Transaction ${transaction.uuid} @ ${transaction.transactionDate.toIso8601String()})",
+      );
       return;
     }
 
@@ -232,6 +230,11 @@ class NotificationsService {
         "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
         details,
+        payload:
+            FlowNotificationPayload(
+              itemType: FlowNotificationPayloadItemType.transaction,
+              id: transaction.id.toString(),
+            ).serialized,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload:
             FlowNotificationPayload(
@@ -467,7 +470,12 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
-      await androidImplementation?.requestExactAlarmsPermission();
+      await androidImplementation?.requestExactAlarmsPermission().catchError((
+        error,
+      ) {
+        _log.warning("Failed to request exact alarms permission", error);
+        return false;
+      });
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<
