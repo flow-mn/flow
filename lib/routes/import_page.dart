@@ -70,12 +70,6 @@ class _ImportPageState extends State<ImportPage> {
               extra: importV2,
             );
             break;
-          case ImportCSV importCSV:
-            context.pushReplacement(
-              "/import/wizard/csv?setupMode=${widget.setupMode}",
-              extra: importCSV,
-            );
-            break;
           case null:
             context.showErrorToast(
               error: "error.input.noFilePicked".t(context),

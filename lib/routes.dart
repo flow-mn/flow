@@ -297,19 +297,6 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: "/import/wizard/csv",
-      builder: (context, state) {
-        if (state.extra case ImportCSV importCSV) {
-          return ImportWizardCSVPage(
-            importer: importCSV,
-            setupMode: state.uri.queryParameters["setupMode"] == "true",
-          );
-        }
-
-        return ErrorPage(error: "error.sync.invalidBackupFile".t(context));
-      },
-    ),
-    GoRoute(
       path: "/export/history",
       builder: (context, state) => const ExportHistoryPage(),
     ),

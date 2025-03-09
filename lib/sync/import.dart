@@ -4,13 +4,11 @@ import "dart:io";
 import "dart:typed_data";
 
 import "package:archive/archive_io.dart";
-import "package:csv/csv.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
 import "package:flow/sync/model/model_v1.dart";
@@ -43,8 +41,6 @@ Future<Importer> importBackup({File? backupFile}) async {
   final String ext = path.extension(file.path).toLowerCase();
 
   switch (ext.toLowerCase()) {
-    case ".csv":
-      return await _importCsv(file: file);
     case ".json":
       return await _importJson(file: file);
     case ".zip":
@@ -56,30 +52,6 @@ Future<Importer> importBackup({File? backupFile}) async {
         l10nArgs: "JSON, ZIP, CSV",
       );
   }
-}
-
-Future<Importer> _importCsv({required File file}) async {
-  final Stream<List<int>> input = file.openRead();
-  final List<List<dynamic>> rows =
-      await input
-          .transform(utf8.decoder)
-          .transform(
-            CsvToListConverter(
-              convertEmptyTo: null,
-              shouldParseNumbers: false,
-              allowInvalid: true,
-            ),
-          )
-          .toList();
-
-  if (rows.length <= 1) {
-    throw ImportException(
-      "The CSV file is empty",
-      l10nKey: "error.input.emptyCsv",
-    );
-  }
-
-  return ImportCSV(rows);
 }
 
 Future<Importer> _importZip({required File file}) async {
