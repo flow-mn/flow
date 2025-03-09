@@ -154,7 +154,9 @@ class NotificationsService {
   /// Upon failure, returns an empty list
   Future<List<PendingNotificationRequest>> fetchAllNotification() async {
     try {
-      return await pluginInstance.pendingNotificationRequests();
+      final List<PendingNotificationRequest> result =
+          await pluginInstance.pendingNotificationRequests();
+      return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
     }
@@ -163,17 +165,9 @@ class NotificationsService {
   /// Upon failure, does nothing
   Future<void> cancelAllNotifications() async {
     try {
-      return await pluginInstance.cancelAll();
+      await pluginInstance.cancelAll();
     } catch (e) {
       // Silent fail
-    }
-  }
-
-  Future<List<PendingNotificationRequest>> getSchedules() async {
-    try {
-      return await pluginInstance.pendingNotificationRequests();
-    } catch (e) {
-      return [];
     }
   }
 
@@ -186,7 +180,9 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      _log.info("Ignoring scheduling for past date");
+      _log.info(
+        "ignoring scheduling for past date (Transaction ${transaction.uuid} @ ${transaction.transactionDate.toIso8601String()})",
+      );
       return;
     }
 
@@ -256,7 +252,7 @@ class NotificationsService {
     _log.fine("Clearing notifications by type $type");
 
     final List<PendingNotificationRequest> scheduledNotifications =
-        await getSchedules();
+        await fetchAllNotification();
 
     final List<PendingNotificationRequest> reminders =
         scheduledNotifications.where((x) {
@@ -467,7 +463,12 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
-      await androidImplementation?.requestExactAlarmsPermission();
+      await androidImplementation?.requestExactAlarmsPermission().catchError((
+        error,
+      ) {
+        _log.warning("Failed to request exact alarms permission", error);
+        return false;
+      });
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<

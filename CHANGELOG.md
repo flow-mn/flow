@@ -1,10 +1,36 @@
 # Changelog
 
+## Next
+
+### New features
+
+* Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
+
+### Fixes
+
+* Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
+
+### Changes and improvements
+
+* Launching Flow from a notification now opens the relevant page if available
+
 ## Beta 0.12.2
 
 ### Fixes
 
 * Fixed some Android devices were unable to open the app
+
+### Notice
+
+If you were **unable to open the app** in the previous update (0.12.1),
+please do the following. Non-android users, and those who didn't suffer from the
+problem can ignore this.
+
+* You will be greeted with a setup page. This is fine, you can proceed,
+  or close the app and reopen. Your data shouldn't be affected by this.
+* You can backup your data now if you want
+* Please reconfigure your preferences. You may see your theme, money formatting
+  and/or other preference you've set disappeared.
 
 ## Beta 0.12.1
 
@@ -29,7 +55,7 @@
   executed, and information about failures and errors in the app, and could be used
   for debugging.
 
-  You can find logs at the end of Backup > Backup history page
+  You can find logs at the end of the Preferences page
 
   > At the moment, most sensitive information stored on the app is transaction UUID,
   > which doesn't reveal any sensitive information without the data.

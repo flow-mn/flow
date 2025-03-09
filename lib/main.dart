@@ -28,6 +28,8 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
+import "package:flow/providers/categories.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
@@ -192,30 +194,36 @@ class FlowState extends State<Flow> {
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
-        return GestureDetector(
-          behavior:
-              _tempLock ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
-          onTap: _tryUnlockTempLock,
-          child: IgnorePointer(
-            ignoring: _tempLock,
-            child: Stack(
-              children: [
-                child ?? Container(),
-                if (_tempLock)
-                  Positioned.fill(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                      child: SizedBox.expand(
-                        child: Center(
-                          child: FlowIcon(
-                            FlowIconData.icon(Symbols.lock_rounded),
-                            size: 80.0,
+        return AccountsProviderScope(
+          child: CategoriesProviderScope(
+            child: GestureDetector(
+              behavior:
+                  _tempLock
+                      ? HitTestBehavior.opaque
+                      : HitTestBehavior.deferToChild,
+              onTap: _tryUnlockTempLock,
+              child: IgnorePointer(
+                ignoring: _tempLock,
+                child: Stack(
+                  children: [
+                    child ?? Container(),
+                    if (_tempLock)
+                      Positioned.fill(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                          child: SizedBox.expand(
+                            child: Center(
+                              child: FlowIcon(
+                                FlowIconData.icon(Symbols.lock_rounded),
+                                size: 80.0,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         );

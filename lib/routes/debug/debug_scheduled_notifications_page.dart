@@ -17,7 +17,7 @@ class _DebugScheduledNotificationsPageState
   @override
   void initState() {
     super.initState();
-    _scheduledNotifications = NotificationsService().getSchedules();
+    _scheduledNotifications = NotificationsService().fetchAllNotification();
   }
 
   @override

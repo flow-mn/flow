@@ -43,6 +43,8 @@ class InputAmountSheet extends StatefulWidget {
   /// Whether this numpad should have a calculator button
   final bool hasCalculator;
 
+  final int? overrideDecimalPrecision;
+
   const InputAmountSheet({
     super.key,
     this.title,
@@ -53,6 +55,7 @@ class InputAmountSheet extends StatefulWidget {
     this.hideCurrencySymbol = false,
     this.allowNegative = true,
     this.lockSign = false,
+    this.overrideDecimalPrecision,
   });
 
   @override
@@ -81,6 +84,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     super.initState();
 
     _numberOfDecimals =
+        widget.overrideDecimalPrecision ??
         NumberFormat.simpleCurrency(
           name: widget.currency ?? LocalPreferences().getPrimaryCurrency(),
         ).decimalDigits ??
