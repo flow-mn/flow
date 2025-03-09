@@ -1455,6 +1455,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  sqlite3:
+    dependency: "direct main"
+    description:
+      name: sqlite3
+      sha256: "310af39c40dd0bb2058538333c9d9840a2725ae0b9f77e4fd09ad6696aa8f66e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.5"
   stack_trace:
     dependency: transitive
     description:

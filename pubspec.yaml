@@ -59,6 +59,7 @@ dependencies:
   shared_preferences: ^2.5.2
   simple_icons: ^14.6.1
   smooth_page_indicator: ^1.1.0
+  sqlite3: ^2.7.5
   timezone: ^0.10.0
   toastification: ^3.0.1
   url_launcher: ^6.2.3
