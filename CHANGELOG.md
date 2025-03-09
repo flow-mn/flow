@@ -51,7 +51,7 @@ problem can ignore this.
   executed, and information about failures and errors in the app, and could be used
   for debugging.
 
-  You can find logs at the end of Backup > Backup history page
+  You can find logs at the end of the Preferences page
 
   > At the moment, most sensitive information stored on the app is transaction UUID,
   > which doesn't reveal any sensitive information without the data.
