@@ -162,7 +162,8 @@ class TransactionListTile extends StatelessWidget {
                       ),
                       overrideObscure: overrideObscure,
                     ),
-                    if (transaction.extensions.transfer?.conversionRate !=
+                    if (AccountsProvider.of(context).ready &&
+                        transaction.extensions.transfer?.conversionRate !=
                             null &&
                         transaction.extensions.transfer?.conversionRate != 1.0)
                       MoneyText(

@@ -1,10 +1,9 @@
-import "dart:async";
-
 import "package:flow/entity/account.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/utils/extensions/iterables.dart";
+import "package:flow/widgets/transaction_watcher.dart";
 import "package:flutter/material.dart";
 
 class AccountsProviderScope extends StatefulWidget {
@@ -19,33 +18,20 @@ class AccountsProviderScope extends StatefulWidget {
 class _AccountsProviderScopeState extends State<AccountsProviderScope> {
   QueryBuilder<Account> _queryBuilder() =>
       ObjectBox().box<Account>().query().order(Account_.sortOrder);
-  late final StreamSubscription _subscription;
-
-  List<Account>? _accounts;
 
   @override
-  void initState() {
-    super.initState();
-    _subscription = _queryBuilder()
-        .watch(triggerImmediately: true)
-        .listen(onData);
-  }
+  Widget build(BuildContext context) => TransactionWatcher(
+    builder: (context, _, __) {
+      return StreamBuilder<Query<Account>>(
+        stream: _queryBuilder().watch(triggerImmediately: true),
+        builder: (context, snapshot) {
+          final List<Account>? accounts = snapshot.data?.find();
 
-  void onData(Query<Account> query) {
-    setState(() {
-      _accounts = query.find();
-    });
-  }
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      AccountsProvider(_accounts, child: widget.child);
+          return AccountsProvider(accounts, child: widget.child);
+        },
+      );
+    },
+  );
 }
 
 class AccountsProvider extends InheritedWidget {
