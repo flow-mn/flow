@@ -140,8 +140,10 @@ class NotificationsService {
 
         if (permissionGranted == null) return;
 
-        if (!permissionGranted) {
-          requestPermissions();
+        if (permissionGranted) {
+          _log.fine("Permission has been granted");
+        } else {
+          _log.warning("Permission has not been granted");
         }
       } catch (e) {
         _log.warning("Failed to check or request permissions", e);
@@ -152,7 +154,9 @@ class NotificationsService {
   /// Upon failure, returns an empty list
   Future<List<PendingNotificationRequest>> fetchAllNotification() async {
     try {
-      return await pluginInstance.pendingNotificationRequests();
+      final List<PendingNotificationRequest> result =
+          await pluginInstance.pendingNotificationRequests();
+      return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
     }
@@ -161,17 +165,9 @@ class NotificationsService {
   /// Upon failure, does nothing
   Future<void> cancelAllNotifications() async {
     try {
-      return await pluginInstance.cancelAll();
+      await pluginInstance.cancelAll();
     } catch (e) {
       // Silent fail
-    }
-  }
-
-  Future<List<PendingNotificationRequest>> getSchedules() async {
-    try {
-      return await pluginInstance.pendingNotificationRequests();
-    } catch (e) {
-      return [];
     }
   }
 
@@ -179,10 +175,14 @@ class NotificationsService {
     Transaction transaction, [
     Duration? earlyReminder,
   ]) async {
+    await _checkSupportAndPermission();
+
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      _log.info("Ignoring scheduling for past date");
+      _log.info(
+        "ignoring scheduling for past date (Transaction ${transaction.uuid} @ ${transaction.transactionDate.toIso8601String()})",
+      );
       return;
     }
 
@@ -252,7 +252,7 @@ class NotificationsService {
     _log.fine("Clearing notifications by type $type");
 
     final List<PendingNotificationRequest> scheduledNotifications =
-        await getSchedules();
+        await fetchAllNotification();
 
     final List<PendingNotificationRequest> reminders =
         scheduledNotifications.where((x) {
@@ -289,6 +289,8 @@ class NotificationsService {
   }
 
   Future<void> scheduleDailyReminders(Duration time) async {
+    await _checkSupportAndPermission();
+
     await clearByType(FlowNotificationPayloadItemType.reminder);
 
     if (!schedulingSupported) {
@@ -461,7 +463,12 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
-      await androidImplementation?.requestExactAlarmsPermission();
+      await androidImplementation?.requestExactAlarmsPermission().catchError((
+        error,
+      ) {
+        _log.warning("Failed to request exact alarms permission", error);
+        return false;
+      });
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<
@@ -525,5 +532,17 @@ class NotificationsService {
       return true;
     }
     return null;
+  }
+
+  Future<void> _checkSupportAndPermission() async {
+    if (!available) {
+      _log.warning("Notifications not available");
+      throw Exception("Notifications not available");
+    }
+
+    if (await hasPermissions() != true) {
+      _log.warning("Notifications not permitted");
+      throw Exception("Notifications not permitted");
+    }
   }
 }

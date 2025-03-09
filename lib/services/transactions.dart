@@ -350,7 +350,7 @@ class TransactionsService {
           0,
     );
 
-    if (earlyReminder.inSeconds > 0) {
+    if (earlyReminder.inSeconds > 60) {
       await Future.wait(
         pendingTransactions.map(
           (transaction) => NotificationsService()
