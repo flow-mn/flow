@@ -11,7 +11,6 @@ import "package:flow/prefs/transitive.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
@@ -41,9 +40,6 @@ class ImportV1 extends Importer {
 
   dynamic error;
 
-  @override
-  final ImportMode mode;
-
   final Map<String, int> memoizeAccounts = {};
   final Map<String, int> memoizeCategories = {};
 
@@ -52,7 +48,7 @@ class ImportV1 extends Importer {
     ImportV1Progress.waitingConfirmation,
   );
 
-  ImportV1(this.data, {this.mode = ImportMode.merge});
+  ImportV1(this.data);
 
   @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
@@ -78,14 +74,7 @@ class ImportV1 extends Importer {
     try {
       TransactionsService().pauseListeners();
 
-      switch (mode) {
-        case ImportMode.eraseAndWrite:
-          await _eraseAndWrite();
-          break;
-        case ImportMode.merge:
-          await _merge();
-          break;
-      }
+      await _eraseAndWrite();
     } catch (e) {
       progressNotifier.value = ImportV1Progress.error;
       rethrow;
@@ -159,35 +148,6 @@ class ImportV1 extends Importer {
     );
 
     progressNotifier.value = ImportV1Progress.success;
-  }
-
-  Future<void> _merge() async {
-    // Here, we might have an interactive selection screen for resolving
-    // conflicts. For now, we'll ignore this.
-
-    throw UnimplementedError();
-
-    // // 1. Resurrect [Category]s
-    // progressNotifier.value = ImportV1Progress.loadingCategories;
-    // final currentCategories = await ObjectBox().box<Category>().getAllAsync();
-    // await ObjectBox().box<Category>().putManyAsync(data.categories
-    //     .where((incomingCategory) => !currentCategories.any(
-    //         (currentCategory) => currentCategory.uuid == incomingCategory.uuid))
-    //     .toList());
-
-    // // 2. Resurrect [Account]s
-    // progressNotifier.value = ImportV1Progress.loadingAccounts;
-    // final currentAccounts = await ObjectBox().box<Account>().getAllAsync();
-    // await ObjectBox().box<Account>().putManyAsync(data.accounts
-    //     .where((incomingAccount) => !currentAccounts.any((currentAccount) =>
-    //         currentAccount.uuid == incomingAccount.uuid ||
-    //         currentAccount.name == incomingAccount.name))
-    //     .toList());
-
-    // // 3. Resurrect [Transaction]s
-    // progressNotifier.value = ImportV1Progress.loadingTransactions;
-    // final currentTransactions =
-    //     await TransactionsService().getAll();
   }
 
   Transaction _resolveAccountForTransaction(Transaction transaction) {
