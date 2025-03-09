@@ -56,7 +56,7 @@ class BackupEntryCard extends StatelessWidget {
                     [
                       entry.createdDate.toMoment().calendar(),
                       entry.fileExt,
-                      fileSize?.binarySize,
+                      fileSize?.humanReadableBinarySize,
                     ].nonNulls.join(" • "),
                     style: context.textTheme.bodyMedium?.semi(context),
                     maxLines: 2,
@@ -129,7 +129,7 @@ class BackupEntryCard extends StatelessWidget {
   Future<void> delete(BuildContext context) async {
     final String title = entry.backupEntryType.localizedNameContext(context);
 
-    final confirmation = await context.showConfirmDialog(
+    final confirmation = await context.showConfirmationSheet(
       isDeletionConfirmation: true,
       title: "general.delete.confirmName".t(context, title),
     );

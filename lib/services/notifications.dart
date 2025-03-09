@@ -1,10 +1,11 @@
+import "dart:async";
 import "dart:io";
 import "dart:math" as math;
 
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/pending_transactions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
 import "package:logging/logging.dart";
@@ -22,13 +23,14 @@ class NotificationsService {
   static final String windowsNotificationGuid =
       "f342887a-2ea1-41b1-94cf-51d70a46ce73";
 
+  static bool get schedulingSupported =>
+      Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+
   bool _ready = false;
   bool get ready => _ready;
 
   bool? _available;
   bool get available => _available == true;
-
-  int _count = 0;
 
   String? _timezone;
 
@@ -49,6 +51,14 @@ class NotificationsService {
 
   void removeCallback(Function(NotificationResponse) callback) {
     _registeredCallbacks.remove(callback);
+  }
+
+  int _getNextId() {
+    final int current = LocalPreferences().notificationsIssuedCount.get() ?? 0;
+
+    unawaited(LocalPreferences().notificationsIssuedCount.set(current + 1));
+
+    return current + 1;
   }
 
   Future<void> initialize() async {
@@ -103,6 +113,10 @@ class NotificationsService {
       );
 
       try {
+        if (Platform.isLinux) {
+          throw Exception("Linux doesn't support notification app launch");
+        }
+
         final NotificationAppLaunchDetails? launchDetails =
             await pluginInstance.getNotificationAppLaunchDetails();
 
@@ -110,10 +124,6 @@ class NotificationsService {
             launchDetails?.didNotificationLaunchApp == true
                 ? launchDetails
                 : null;
-
-        _log.info(
-          "NotificationAppLaunchDetails: $notificationAppLaunchDetails",
-        );
       } catch (e) {
         notificationAppLaunchDetails = null;
         _log.info("NotificationAppLaunchDetails failed", e);
@@ -130,17 +140,15 @@ class NotificationsService {
 
         if (permissionGranted == null) return;
 
-        if (!permissionGranted) {
-          requestPermissions();
+        if (permissionGranted) {
+          _log.fine("Permission has been granted");
+        } else {
+          _log.warning("Permission has not been granted");
         }
       } catch (e) {
         _log.warning("Failed to check or request permissions", e);
       }
     }
-
-    _count = await fetchAllNotification()
-        .then((x) => x.length)
-        .catchError((error) => 0);
   }
 
   /// Upon failure, returns an empty list
@@ -169,6 +177,8 @@ class NotificationsService {
     Transaction transaction, [
     Duration? earlyReminder,
   ]) async {
+    await _checkSupportAndPermission();
+
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
@@ -215,7 +225,7 @@ class NotificationsService {
       );
 
       await pluginInstance.zonedSchedule(
-        _count++,
+        _getNextId(),
         transaction.title ?? "transaction.fallbackTitle".tr(),
         "${transaction.money.formatMoney()}, ${now.from(now)}",
         dateTime,
@@ -226,16 +236,142 @@ class NotificationsService {
               id: transaction.id.toString(),
             ).serialized,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload:
+            FlowNotificationPayload(
+              itemType: FlowNotificationPayloadItemType.transaction,
+              id: transaction.uuid,
+            ).serialized,
       );
     } catch (e) {
       _log.warning("Failed to schedule notification", e);
     }
   }
 
-  void debugSchedule() async {
-    final TZDateTime dateTime = _getTZDateTime(
-      Moment.now().startOfNextMinute(),
+  Future<void> clearPayloadlessNotifications() async =>
+      await _clearByType(null);
+
+  Future<void> clearByType(FlowNotificationPayloadItemType type) async =>
+      await _clearByType(type);
+
+  /// Omitting [type] would delete notifications that do not fit into any
+  /// [FlowNotificationPayloadItemType]
+  Future<void> _clearByType(FlowNotificationPayloadItemType? type) async {
+    _log.fine("Clearing notifications by type $type");
+
+    final List<PendingNotificationRequest> scheduledNotifications =
+        await getSchedules();
+
+    final List<PendingNotificationRequest> reminders =
+        scheduledNotifications.where((x) {
+          if (x.payload == null) return type == null;
+          try {
+            final FlowNotificationPayload parsedPayload =
+                FlowNotificationPayload.parse(x.payload!);
+
+            return parsedPayload.itemType == type;
+          } catch (e) {
+            return type == null;
+          }
+        }).toList();
+
+    _log.fine(
+      "Attempting to clear ${reminders.length} reminders of type $type",
     );
+
+    await Future.wait(
+      reminders.map((reminder) async {
+        try {
+          await pluginInstance.cancel(reminder.id);
+          _log.fine(
+            "Cancelled reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
+          );
+        } catch (e) {
+          _log.warning(
+            "Failed to cancel reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
+            e,
+          );
+        }
+      }),
+    );
+  }
+
+  Future<void> scheduleDailyReminders(Duration time) async {
+    await _checkSupportAndPermission();
+
+    await clearByType(FlowNotificationPayloadItemType.reminder);
+
+    if (!schedulingSupported) {
+      _log.warning("Scheduling not supported on this platform");
+      return;
+    }
+
+    final int h = time.abs().inHours;
+    final int m = time.abs().inMinutes % 60;
+
+    final int offset = math.Random().nextInt(7);
+
+    for (int i = 0; i < 7; i++) {
+      final TZDateTime dateTime = _getTZDateTime(
+        Moment.startOfToday()
+            .add(Duration(days: i))
+            .copyWith(hour: h, minute: m),
+      );
+
+      if (dateTime.isBefore(Moment.now())) {
+        _log.info("Ignoring scheduling for past date");
+        continue;
+      }
+
+      try {
+        final NotificationDetails details = NotificationDetails(
+          android: AndroidNotificationDetails(
+            "flow-daily-reminder",
+            "Daily Reminder",
+            channelDescription: "Reminds you to track your expenses",
+            importance: Importance.max,
+            priority: Priority.high,
+            category: AndroidNotificationCategory.reminder,
+            styleInformation: DefaultStyleInformation(false, false),
+          ),
+          iOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          macOS: DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive,
+            categoryIdentifier: "flow-daily-reminder",
+          ),
+          linux: LinuxNotificationDetails(
+            icon: AssetsLinuxIcon("assets/images/flow.png"),
+            urgency: LinuxNotificationUrgency.normal,
+            category: LinuxNotificationCategory.imReceived,
+            actions: [LinuxNotificationAction(key: "open", label: "Open Flow")],
+          ),
+          windows: WindowsNotificationDetails(),
+        );
+
+        await pluginInstance.zonedSchedule(
+          _getNextId(),
+          "Flow",
+          "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
+          dateTime,
+          details,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload:
+              FlowNotificationPayload(
+                itemType: FlowNotificationPayloadItemType.reminder,
+                id: null,
+              ).serialized,
+        );
+        _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
+      } catch (e) {
+        _log.warning("Failed to schedule notification", e);
+      }
+    }
+  }
+
+  Future<void> debugSchedule(DateTime scheduleAt) async {
+    final TZDateTime dateTime = _getTZDateTime(scheduleAt);
 
     try {
       await pluginInstance.zonedSchedule(
@@ -319,9 +455,6 @@ class NotificationsService {
     for (final callback in _registeredCallbacks) {
       try {
         callback(response);
-        _log.info(
-          "response.actionId: ${response.actionId}, ${response.id}, $response",
-        );
       } catch (error) {
         _log.warning("Failed to call notification callback", error);
       }
@@ -406,5 +539,17 @@ class NotificationsService {
       return true;
     }
     return null;
+  }
+
+  Future<void> _checkSupportAndPermission() async {
+    if (!available) {
+      _log.warning("Notifications not available");
+      throw Exception("Notifications not available");
+    }
+
+    if (await hasPermissions() != true) {
+      _log.warning("Notifications not permitted");
+      throw Exception("Notifications not permitted");
+    }
   }
 }

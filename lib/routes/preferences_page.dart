@@ -1,20 +1,27 @@
-import "dart:developer";
 import "dart:io";
 
 import "package:app_settings/app_settings.dart";
+import "package:flow/constants.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
 import "package:flow/routes/preferences/sections/haptics.dart";
+import "package:flow/routes/preferences/sections/lock_app.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
+import "package:flow/services/local_auth.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/names.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("PreferencesPage");
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -30,6 +37,25 @@ class PreferencesPage extends StatefulWidget {
 class PreferencesPageState extends State<PreferencesPage> {
   bool _currencyBusy = false;
   bool _languageBusy = false;
+
+  bool _showLockApp = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    LocalAuthService.initialize()
+        .then((_) {
+          _showLockApp = LocalAuthService.available;
+
+          if (mounted) {
+            setState(() {});
+          }
+        })
+        .catchError((_) {
+          _log.warning("Failed to initialize local auth service");
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +74,13 @@ class PreferencesPageState extends State<PreferencesPage> {
       body: SafeArea(
         child: ListView(
           children: [
+            if (flowDebugMode || NotificationsService.schedulingSupported)
+              ListTile(
+                title: Text("preferences.reminders".t(context)),
+                leading: const Icon(Symbols.notifications_rounded),
+                onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+              ),
             ListTile(
               title: Text("preferences.pendingTransactions".t(context)),
               subtitle: Text(
@@ -56,8 +89,9 @@ class PreferencesPageState extends State<PreferencesPage> {
                     : "general.disabled".t(context),
               ),
               leading: const Icon(Symbols.schedule_rounded),
-              onTap: _openPendingTransactionsPrefs,
-              // subtitle: Text(FlowLocalizations.of(context).locale.endonym),
+              onTap:
+                  () =>
+                      _pushAndRefreshAfter("/preferences/pendingTransactions"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
@@ -69,6 +103,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ),
             ListTile(
               title: Text("preferences.primaryCurrency".t(context)),
+
               leading: const Icon(Symbols.universal_currency_alt_rounded),
               onTap: () => _updatePrimaryCurrency(),
               subtitle: Text(LocalPreferences().getPrimaryCurrency()),
@@ -94,7 +129,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ListTile(
               title: Text("preferences.transactionGeo".t(context)),
               leading: const Icon(Symbols.location_pin_rounded),
-              onTap: _openTransactionGeo,
+              onTap: () => _pushAndRefreshAfter("/preferences/transactionGeo"),
               subtitle: Text(
                 enableGeo
                     ? (autoAttachTransactionGeo
@@ -153,13 +188,25 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             const SizedBox(height: 24.0),
-            ListHeader("preferences.privacyMode".t(context)),
+            ListHeader("preferences.privacy".t(context)),
             const SizedBox(height: 8.0),
             const Privacy(),
+            if (_showLockApp) ...[const SizedBox(height: 8.0), const LockApp()],
             const SizedBox(height: 24.0),
             ListHeader("preferences.hapticFeedback".t(context)),
             const SizedBox(height: 8.0),
             const Haptics(),
+            const SizedBox(height: 16.0),
+            Frame(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: () => context.push("/_debug/logs"),
+                  child: Text("View debug logs"),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),
@@ -169,14 +216,13 @@ class PreferencesPageState extends State<PreferencesPage> {
   void _updateLanguage() async {
     if (Platform.isIOS) {
       await LocalPreferences().localeOverride.remove().catchError((e) {
-        log("[PreferencesPage] failed to remove locale override: $e");
-        return false;
+        _log.warning("Failed to remove locale override: $e");
       });
       try {
         await AppSettings.openAppSettings(type: AppSettingsType.appLocale);
         return;
       } catch (e) {
-        log("[PreferencesPage] failed to open system app settings on iOS: $e");
+        _log.warning("Failed to open system app settings on iOS: $e", e);
       }
     }
 
@@ -234,20 +280,6 @@ class PreferencesPageState extends State<PreferencesPage> {
 
   void _pushAndRefreshAfter(String path) async {
     await context.push(path);
-
-    // Rebuild to update description text
-    if (mounted) setState(() {});
-  }
-
-  void _openTransactionGeo() async {
-    await context.push("/preferences/transactionGeo");
-
-    // Rebuild to update description text
-    if (mounted) setState(() {});
-  }
-
-  void _openPendingTransactionsPrefs() async {
-    await context.push("/preferences/pendingTransactions");
 
     // Rebuild to update description text
     if (mounted) setState(() {});

@@ -31,6 +31,7 @@
     "general.selectLocation": "Байршил сонгох",
     "general.nextNDays": "Ирэх {} хоног",
     "general.flow": "Урсгал",
+    "general.unlockToOpen": "Flow-г нээхийн тулд түгжээг тайлна уу",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",
@@ -229,7 +230,7 @@
     "preferences.transactionGeo.auto.enable": "Автоматаар хавсаргах",
     "preferences.transactionGeo.auto.enabled": "Автоматаар хавсаргах идэвхжсэн",
     "preferences.transactionGeo.auto.description": "Гүйлгээ хийх үед утасны байршлын мэдээллийг автоматаар хавсаргана. Энэ тохиргоог асаагаагүй үед газрын зураг ашиглан өөрөө байршил оруулах боломжтой.",
-    "preferences.transactionGeo.auto.permissionDenied": "Байршлын эрх авч чадсангүй. Хүсвэл утасны тохиргооноос идэвхжүүлэх боломжтой.",
+    "preferences.transactionGeo.auto.permissionDenied": "Байршил авах эрх олгоогүй байна",
     "preferences.pendingTransactions": "Хүлээгдэж буй гүйлгээнүүд",
     "preferences.pendingTransactions.requireConfirmation": "Баталгаажуулалт шаардах",
     "preferences.pendingTransactions.requireConfirmation.description": "Баталгаажуулаагүй гүйлгээнүүд орлого, зарлага, дансны үлдэгдэлд тооцогдохгүй",
@@ -241,13 +242,22 @@
     "preferences.pendingTransactions.notify.earlyReminder.none": "Байхгүй",
     "preferences.pendingTransactions.notify.schedulingUnsupported": "Flow-г нээээгүй үед мэдэгдэл илгээх боломжгүй",
     "preferences.pendingTransactions.notify.schedulingUnsupported.description": "Мэдэгдэл товлох нь зөвхөн Android, iOS, macOS системд боломжтой",
-    "preferences.privacyMode": "Нууцлалын горим",
-    "preferences.privacyMode.enableAtStartup": "Эхлэх үед идэвхжүүлэх",
+    "preferences.privacy": "Нууцлал",
+    "preferences.privacy.maskAtStartup": "Эхлэх үед мөнгөн дүнг одлох",
+    "preferences.privacy.appLock": "Апп түгжих",
+    "preferences.privacy.appLock.description#iOS": "Аппыг нээхийн тулд Face ID эсвэл Touch ID шаардах",
+    "preferences.privacy.appLock.description#Android": "Аппыг нээхийн тулд биометрик түгжээ ашиглаж өөрийгөө баталгаажуулах",
     "preferences.moneyFormatting": "Мөнгөний хэлбэр",
     "preferences.moneyFormatting.preferFull": "Бүтэн дүнг харуулах",
     "preferences.moneyFormatting.preferFull.description": "Тоог хураахгүй бүтнээр нь харуулах",
     "preferences.moneyFormatting.useCurrencySymbol": "Тэмдэгт ашиглах",
     "preferences.moneyFormatting.useCurrencySymbol.description": "Жишээлбэл, \"MNT 3,200\" гэхийн оронд \"3,200₮\"",
+    "preferences.reminders": "Сануулга",
+    "preferences.reminders.remindDaily": "Өдөр бүр сануулах",
+    "preferences.reminders.remindDaily.description": "Гүйлгээгээ бүртгэхийг сануулах",
+    "preferences.reminders.remindDaily.time": "Цаг",
+    "preferences.reminders.remindDaily.expiryWarning": "Та 7 хоног дараалалж аппыг нээгээгүй тохиолдолд сануулга зогсох болно",
+    "preferences.reminders.unsupportedPlatform": "Энэ үйлдлйин системд мэдэгдэл илгээх боломжгүй",
 
     "tabs.home": "Нүүр",
     "tabs.home.greetings": "Сайн уу, {name}?",
@@ -329,6 +339,13 @@
 
     "notifications.permissionNotGranted": "Мэдэгдэл илгээх зөвшөөрөл олгоогүй байна",
     "notifications.openSettingsToGrantPermission": "Системийн тохиргооны хэсэгт орж мэдэгдэл илгээх зөвшөөрлийг олгоно уу",
+    "notifications.reminderText#1": "Та өнөөдөр зардлаа бүртгэсэн үү?",
+    "notifications.reminderText#2": "Гүйлгээгээ бүртгэхээ мартуузай!",
+    "notifications.reminderText#3": "Өнөөдрийн зардлаа бүртгэх цаг боллоо.",
+    "notifications.reminderText#4": "Санхүүгээ хянаж гүйлгээгээ бүртгээрэй!",
+    "notifications.reminderText#5": "Flow танд зардлаа бүртгэхийг сануулж байна!",
+    "notifications.reminderText#6": "Гүйлгээгээ нэмж санхүүгээ гартаа атгаарай.",
+    "notifications.reminderText#7": "Өнөөдрийн гүйлгээгээ нэмэхээ мартуузай!",
 
     "sync.import": "Сэргээх",
     "sync.import.pickFile": "Файл сонгох",
@@ -470,5 +487,6 @@
     "error.transaction.missingAccount": "Гүйлгээ хийх данс сонгоно уу",
     "error.url.cannotOpen": "Холбоосыг нээхэд алдаа гарлаа",
     "error.exchangeRates.inaccurateDataDueToMissingRates": "Ханшийн мэдээлэл татахад асуудал гарсан тул гүйлгээний мэдээлэл зөрөх магадлалтай",
-    "error.exchangeRates.cannotFetch": "Мэдээлэл татахад алдаа гарлаа. Холболтоо шалгаад дахин оролдоно уу."
+    "error.exchangeRates.cannotFetch": "Мэдээлэл татахад алдаа гарлаа. Холболтоо шалгаад дахин оролдоно уу.",
+    "error.failedLocalAuth": "Баталгаажуулалт амжилтгүй боллоо, дахин оролдоно уу."
 }

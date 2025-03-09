@@ -1,5 +1,3 @@
-import "dart:developer";
-
 import "package:flow/data/currencies.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
@@ -329,8 +327,6 @@ class _DefaultTransactionsFilterHeadState
               ),
           isScrollControlled: true,
         );
-
-    log("newCurrencies $newCurrencies");
 
     if (newCurrencies != null) {
       setState(() {

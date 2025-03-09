@@ -1,5 +1,4 @@
-import "dart:developer";
-
+import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
@@ -8,7 +7,10 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("TransactionsService");
 
 /// Call [disableUpdates] to pause listeners and [enableUpdates] to resume them.
 class TransactionsService {
@@ -311,7 +313,7 @@ class TransactionsService {
 
     staleTrashBinTxns.close();
 
-    log("Deleted $deletedCount stale trash bin entries");
+    _log.fine("Deleted $deletedCount stale trash bin entries");
   }
 
   Future<void> synchronizeNotifications() async {
@@ -319,15 +321,26 @@ class TransactionsService {
     final List<Transaction> pendingTransactions = qb.find();
     qb.close();
 
-    await NotificationsService().cancelAllNotifications();
+    await NotificationsService().clearByType(
+      FlowNotificationPayloadItemType.transaction,
+    );
 
     await Future.wait(
       pendingTransactions.map(
-        (transaction) =>
-            NotificationsService().scheduleForPlannedTransaction(transaction),
+        (transaction) => NotificationsService()
+            .scheduleForPlannedTransaction(transaction)
+            .catchError((error) {
+              _log.severe(
+                "Failed to schedule exact reminder for transaction ${transaction.uuid}",
+                error,
+              );
+            }),
       ),
     ).catchError((error) {
-      log("Failed to schedule notifications", error: error);
+      _log.warning(
+        "Scheduling for one or more transactions have been failed",
+        error,
+      );
       return [];
     });
 
@@ -337,18 +350,26 @@ class TransactionsService {
           0,
     );
 
-    /// If the reminder is less than a minute, don't schedule it
-    if (earlyReminder.inSeconds < 60) return;
-
-    await Future.wait(
-      pendingTransactions.map(
-        (transaction) =>
-            NotificationsService().scheduleForPlannedTransaction(transaction),
-      ),
-    ).catchError((error) {
-      log("Failed to schedule planned notifications", error: error);
-      return [];
-    });
+    if (earlyReminder.inSeconds > 60) {
+      await Future.wait(
+        pendingTransactions.map(
+          (transaction) => NotificationsService()
+              .scheduleForPlannedTransaction(transaction)
+              .catchError((error) {
+                _log.warning(
+                  "Failed to schedule an early reminder notification for transaction ${transaction.uuid}",
+                  error,
+                );
+              }),
+        ),
+      ).catchError((error) {
+        _log.warning(
+          "Scheduling early reminder for one or more transactions have been failed",
+          error,
+        );
+        return [];
+      });
+    }
   }
 
   /// Has no effect if it's already paused

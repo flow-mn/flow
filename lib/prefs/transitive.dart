@@ -1,6 +1,5 @@
 import "dart:async";
 import "dart:convert";
-import "dart:developer";
 
 import "package:flow/data/prefs/frecency.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -12,11 +11,14 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/services/transactions.dart";
 import "package:local_settings/local_settings.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
+final Logger _log = Logger("TransitiveLocalPreferences");
+
 class TransitiveLocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   static TransitiveLocalPreferences? _instance;
 
@@ -69,7 +71,7 @@ class TransitiveLocalPreferences {
 
       await transitiveUsesSingleCurrency.set(usesSingleCurrency);
     } catch (e) {
-      log("[LocalPreferences] cannot update transitive properties due to: $e");
+      _log.warning("Cannot update transitive properties", e);
     }
 
     try {
@@ -166,7 +168,7 @@ class TransitiveLocalPreferences {
           ),
         );
       } catch (e) {
-        log("Failed to build category FrecencyData for $category due to: $e");
+        _log.warning("Failed to build category FrecencyData for $category", e);
       }
     }
   }
@@ -206,11 +208,12 @@ class TransitiveLocalPreferences {
           ),
         );
       } catch (e) {
-        log("Failed to build account FrecencyData for $account due to: $e");
+        _log.warning("Failed to build account FrecencyData for $account", e);
       }
     }
   }
 
-  static TransitiveLocalPreferences initialize(SharedPreferences instance) =>
-      _instance ??= TransitiveLocalPreferences._internal(instance);
+  static TransitiveLocalPreferences initialize(
+    SharedPreferencesWithCache instance,
+  ) => _instance ??= TransitiveLocalPreferences._internal(instance);
 }

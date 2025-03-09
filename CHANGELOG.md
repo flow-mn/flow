@@ -9,6 +9,52 @@
 ### Fixes
 
 * Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
+=======
+## Beta 0.12.2
+
+### Fixes
+
+* Fixed some Android devices were unable to open the app
+
+### Notice
+
+If you were **unable to open the app** in the previous update (0.12.1),
+please do the following. Non-android users, and those who didn't suffer from the
+problem can ignore this.
+
+* You will be greeted with a setup page. This is fine, you can proceed,
+  or close the app and reopen. Your data shouldn't be affected by this.
+* You can backup your data now if you want
+* Please reconfigure your preferences. You may see your theme, money formatting
+  and/or other preference you've set disappeared.
+
+## Beta 0.12.1
+
+### New features
+
+* Now you can setup daily reminders, so you won't forget to track your expenses
+* Added French (fr_FR), it's totally AI generated, but it'll help me cuz I'm trying to learn french
+* Added App lock in response to a popular request, closes [#348](https://github.com/flow-mn/flow/issues/348)
+
+### Fixes
+
+* In transaction/account/category, and other pages with forms, clicking back button multiple times
+  after changing data no longer shows multiple modal sheets. This mostly affected android.
+* Platforms other than iOS no longer shows "App icon follows theme" option as it's not available, closes [#345](https://github.com/flow-mn/flow/issues/345)
+* App no longer hangs when re-opening in some cases, closes [#370](https://github.com/flow-mn/flow/issues/370)
+  * Thanks @tossj for submitting a fix
+
+### Changes and improvements
+
+* Now Flow shows warnings for ungranted notification/location permissions
+* Flow now saves logs on-device. Logs contain information about certain actions being
+  executed, and information about failures and errors in the app, and could be used
+  for debugging.
+
+  You can find logs at the end of Backup > Backup history page
+
+  > At the moment, most sensitive information stored on the app is transaction UUID,
+  > which doesn't reveal any sensitive information without the data.
 
 ## Beta 0.12.0
 

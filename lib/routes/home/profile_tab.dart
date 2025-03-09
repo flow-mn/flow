@@ -13,6 +13,7 @@ import "package:flow/widgets/home/preferences/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:simple_icons/simple_icons.dart";
 
@@ -88,9 +89,25 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => context.push("/_debug/theme"),
             ),
             ListTile(
+              title: const Text("View scheduled notifications"),
+              leading: const Icon(Symbols.notifications_rounded),
+              onTap: () => context.push("/_debug/scheduledNotifications"),
+            ),
+            ListTile(
               title: const Text("Schedule debug notification"),
               leading: const Icon(Symbols.notification_add_rounded),
-              onTap: () => NotificationsService().debugSchedule(),
+              onTap: () {
+                NotificationsService()
+                    .debugSchedule(Moment.now().startOfNextMinute())
+                    .then((_) {
+                      if (context.mounted) {
+                        context.showToast(
+                          text:
+                              "Debug notification scheduled at the start of next minute",
+                        );
+                      }
+                    });
+              },
             ),
             ListTile(
               title: const Text("Show debug notification"),
