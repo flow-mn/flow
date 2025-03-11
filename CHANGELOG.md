@@ -2,6 +2,10 @@
 
 ## Next
 
+### New features
+
+* Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
+
 ### Fixes
 
 * Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)

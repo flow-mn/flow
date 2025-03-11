@@ -1,9 +1,10 @@
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/objectbox/actions.dart";
+import "package:flow/providers/accounts_provider.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -63,7 +64,7 @@ class TransactionListTile extends StatelessWidget {
 
     if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
-        transaction.amount.isNegative) {
+        !transaction.amount.isNegative) {
       return Container();
     }
 
@@ -129,8 +130,10 @@ class TransactionListTile extends StatelessWidget {
                       Text(
                         [
                           (transaction.isTransfer && combineTransfers)
-                              ? "${AccountActions.nameByUuid(transfer!.fromAccountUuid)} → ${AccountActions.nameByUuid(transfer.toAccountUuid)}"
-                              : transaction.account.target?.name,
+                              ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
+                              : AccountsProvider.of(
+                                context,
+                              ).getName(transaction.accountUuid),
                           dateString,
                           if (transaction.transactionDate.isFuture)
                             transaction.isPending == true
@@ -145,15 +148,42 @@ class TransactionListTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8.0),
-                MoneyText(
-                  transaction.money,
-                  displayAbsoluteAmount:
-                      transaction.isTransfer && combineTransfers,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: transaction.type.color(context),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overrideObscure: overrideObscure,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    MoneyText(
+                      transaction.money,
+                      displayAbsoluteAmount:
+                          transaction.isTransfer && combineTransfers,
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: transaction.type.color(context),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overrideObscure: overrideObscure,
+                    ),
+                    if (combineTransfers &&
+                        AccountsProvider.of(context).ready &&
+                        transaction.extensions.transfer?.conversionRate !=
+                            null &&
+                        transaction.extensions.transfer?.conversionRate != 1.0)
+                      MoneyText(
+                        Money(
+                          transaction.money.amount *
+                              transaction.extensions.transfer!.conversionRate!,
+                          AccountsProvider.of(context)
+                              .get(
+                                transaction.extensions.transfer!.toAccountUuid,
+                              )!
+                              .currency,
+                        ),
+                        displayAbsoluteAmount: true,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: context.colorScheme.onSurface.withAlpha(0x80),
+                        ),
+                        overrideObscure: overrideObscure,
+                      ),
+                  ],
                 ),
               ],
             ),

@@ -11,6 +11,7 @@ Transfer _$TransferFromJson(Map<String, dynamic> json) => Transfer(
   fromAccountUuid: json['fromAccountUuid'] as String,
   toAccountUuid: json['toAccountUuid'] as String,
   relatedTransactionUuid: json['relatedTransactionUuid'] as String?,
+  conversionRate: (json['conversionRate'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$TransferToJson(Transfer instance) => <String, dynamic>{
@@ -18,5 +19,6 @@ Map<String, dynamic> _$TransferToJson(Transfer instance) => <String, dynamic>{
   'key': instance.key,
   'fromAccountUuid': instance.fromAccountUuid,
   'toAccountUuid': instance.toAccountUuid,
+  'conversionRate': instance.conversionRate,
   'relatedTransactionUuid': instance.relatedTransactionUuid,
 };

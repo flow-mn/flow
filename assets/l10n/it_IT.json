@@ -129,6 +129,7 @@
     "transaction.transfer.to.select": "Trasferisci a",
     "transaction.transfer.to.title": "A {account}",
     "transaction.transfer.fromToTitle": "Da {from} a {to}",
+    "transaction.transfer.conversionRate": "Tasso di conversione",
     "transaction.description": "Note",
     "transaction.description.add": "Aggiungi note",
     "transaction.description.markdownSupported": "Markdown supportato",

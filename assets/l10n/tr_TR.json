@@ -129,6 +129,7 @@
     "transaction.transfer.to.select": "Aktarım Konumu",
     "transaction.transfer.to.title": "Hedef {account}",
     "transaction.transfer.fromToTitle": "Başlangıç {from} {to}",
+    "transaction.transfer.conversionRate": "Dönüşüm oranı",
     "transaction.description": "Notlar",
     "transaction.description.add": "Not ekleme",
     "transaction.description.markdownSupported": "Markdown desteklenir",

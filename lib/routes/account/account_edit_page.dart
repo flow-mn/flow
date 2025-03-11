@@ -258,12 +258,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     onChanged: updateArchived,
                     title: Text("account.archive".t(context)),
                   ),
-                const SizedBox(height: 8.0),
-                Frame(
-                  child: InfoText(
-                    child: Text("account.archive.description".t(context)),
+                if (!widget.isNewAccount) ...[
+                  const SizedBox(height: 8.0),
+                  Frame(
+                    child: InfoText(
+                      child: Text("account.archive.description".t(context)),
+                    ),
                   ),
-                ),
+                ],
                 if (widget.isNewAccount)
                   ListTile(
                     title: Text("currency".t(context)),
