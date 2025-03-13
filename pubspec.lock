@@ -690,6 +690,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  icloud_storage_sync:
+    dependency: "direct main"
+    description:
+      name: icloud_storage_sync
+      sha256: b715d2c30d68682ebf038a03394606a5879ba096d3db8d1d81fc2d24f7208f37
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   iconsax_flutter:
     dependency: transitive
     description:
