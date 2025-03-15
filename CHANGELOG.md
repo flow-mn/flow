@@ -14,6 +14,8 @@
 ### Changes and improvements
 
 * Launching Flow from a notification now opens the relevant page if available
+* CSV no longer includes deleted transactions
+* CSV now includes ISO 8601 format transaction date for upcoming CSV import feature
 
 ## Beta 0.12.2
 
