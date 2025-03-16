@@ -6,6 +6,7 @@ import "dart:typed_data";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/sync/export/export_csv.dart";
 import "package:flow/sync/export/export_v1.dart";
 import "package:flow/sync/export/export_v2.dart";
 import "package:flow/sync/export/mode.dart";
@@ -35,9 +36,8 @@ Future<ExportStatus> export({
   final bool isShareSupported = !(Platform.isLinux || Platform.isFuchsia);
 
   final backupContent = switch ((mode, latestSyncModelVersion)) {
-    (ExportMode.csv, 1) => await generateCSVContentV1(),
+    (ExportMode.csv, _) => await generateCSVContent(),
     (ExportMode.json, 1) => await generateBackupContentV1(),
-    (ExportMode.csv, 2) => await generateCSVContentV2(),
     (ExportMode.json, 2) => await generateBackupJSONContentV2(),
     (ExportMode.zip, 2) => await generateBackupZipV2(),
     _ => throw UnimplementedError(),

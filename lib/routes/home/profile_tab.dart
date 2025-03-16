@@ -236,8 +236,10 @@ class _ProfileTabState extends State<ProfileTab> {
 
     try {
       if (confirm == true) {
-        final instance = await SharedPreferences.getInstance();
-        await instance.clear();
+        final instanceAvecCache = await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+        await instanceAvecCache.clear();
       }
     } finally {
       _debugPrefsBusy = false;

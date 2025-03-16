@@ -14,6 +14,7 @@ enum CSVHeadersV1 implements LocalizedEnum {
   subtype,
   createdDate,
   transactionDate,
+  transactionDateIso8601,
   latitude,
   longitude,
   extra;

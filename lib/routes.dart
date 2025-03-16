@@ -16,6 +16,7 @@ import "package:flow/routes/export_options_page.dart";
 import "package:flow/routes/export_page.dart";
 import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
+import "package:flow/routes/import_wizard/csv.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
@@ -43,6 +44,7 @@ import "package:flow/routes/transactions_page.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
+import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/utils.dart";
@@ -289,6 +291,19 @@ final router = GoRouter(
         if (state.extra case ImportV2 importV2) {
           return ImportWizardV2Page(
             importer: importV2,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
+        }
+
+        return ErrorPage(error: "error.sync.invalidBackupFile".t(context));
+      },
+    ),
+    GoRoute(
+      path: "/import/wizard/csv",
+      builder: (context, state) {
+        if (state.extra case ImportCSV importCSV) {
+          return ImportWizardCSVPage(
+            importer: importCSV,
             setupMode: state.uri.queryParameters["setupMode"] == "true",
           );
         }

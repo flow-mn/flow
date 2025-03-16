@@ -24,28 +24,6 @@ import "package:path/path.dart" as path;
 
 final Logger _log = Logger("ImportV2");
 
-/// Used to report current status to user
-enum ImportV2Progress implements LocalizedEnum {
-  waitingConfirmation,
-  erasing,
-  writingCategories,
-  writingAccounts,
-  resolvingTransactions,
-  writingTransactions,
-  writingTranscationFilterPresets,
-  writingProfile,
-  writingUserPreferences,
-  settingPrimaryCurrency,
-  copyingImages,
-  success,
-  error;
-
-  @override
-  String get localizationEnumValue => name;
-  @override
-  String get localizationEnumName => "ImportV2Progress";
-}
-
 class ImportV2 extends Importer {
   @override
   final SyncModelV2 data;
@@ -309,4 +287,26 @@ class ImportV2 extends Importer {
 
     return transaction;
   }
+}
+
+/// Used to report current status to user
+enum ImportV2Progress implements LocalizedEnum {
+  waitingConfirmation,
+  erasing,
+  writingCategories,
+  writingAccounts,
+  resolvingTransactions,
+  writingTransactions,
+  writingTranscationFilterPresets,
+  writingProfile,
+  writingUserPreferences,
+  settingPrimaryCurrency,
+  copyingImages,
+  success,
+  error;
+
+  @override
+  String get localizationEnumValue => name;
+  @override
+  String get localizationEnumName => "ImportV2Progress";
 }
