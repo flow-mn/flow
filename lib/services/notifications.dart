@@ -64,9 +64,9 @@ class NotificationsService {
   Future<void> initialize() async {
     try {
       _timezone = await FlutterTimezone.getLocalTimezone();
-    } catch (error) {
+    } catch (error, stackTrace) {
       _timezone = _fallbackTimezone;
-      _log.severe("Failed to get local timezone", error);
+      _log.severe("Failed to get local timezone", error, stackTrace);
     }
 
     try {

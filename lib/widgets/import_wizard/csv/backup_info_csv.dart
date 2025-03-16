@@ -131,14 +131,14 @@ class _BackupInfoCSVState extends State<BackupInfoCSV> {
       isScrollControlled: true,
     );
 
-    if (currency != null) {
-      if (widget.importer.accountCurrencies.isEmpty) {
-        for (final String name in widget.importer.data.accountNames) {
-          widget.importer.accountCurrencies[name] = currency;
-        }
-      } else {
+    if (currency == null) return;
+
+    if (widget.importer.accountCurrencies.isEmpty) {
+      for (final String name in widget.importer.data.accountNames) {
         widget.importer.accountCurrencies[name] = currency;
       }
+    } else {
+      widget.importer.accountCurrencies[name] = currency;
     }
 
     if (mounted) {

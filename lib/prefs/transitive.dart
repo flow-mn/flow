@@ -70,8 +70,8 @@ class TransitiveLocalPreferences {
           accounts.map((e) => e.currency).toSet().length == 1;
 
       await transitiveUsesSingleCurrency.set(usesSingleCurrency);
-    } catch (e) {
-      _log.warning("Cannot update transitive properties", e);
+    } catch (e, stackTrace) {
+      _log.warning("Cannot update transitive properties", e, stackTrace);
     }
 
     try {
@@ -167,8 +167,12 @@ class TransitiveLocalPreferences {
             ),
           ),
         );
-      } catch (e) {
-        _log.warning("Failed to build category FrecencyData for $category", e);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to build category FrecencyData for $category",
+          e,
+          stackTrace,
+        );
       }
     }
   }
@@ -207,8 +211,12 @@ class TransitiveLocalPreferences {
             ),
           ),
         );
-      } catch (e) {
-        _log.warning("Failed to build account FrecencyData for $account", e);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to build account FrecencyData for $account",
+          e,
+          stackTrace,
+        );
       }
     }
   }

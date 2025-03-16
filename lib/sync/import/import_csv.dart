@@ -7,6 +7,8 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
@@ -18,6 +20,7 @@ import "package:flow/utils/extensions/iterables.dart";
 import "package:flutter/material.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:uuid/uuid.dart";
 import "package:uuid/v4.dart";
 
 final Logger _log = Logger("ImportCSV");
@@ -137,29 +140,86 @@ class ImportCSV extends Importer {
       (account) => account.uuid,
     );
 
+    final String? newPrimaryCurrency = insertedAccounts.firstOrNull?.currency;
+
+    if (newPrimaryCurrency != null) {
+      unawaited(
+        LocalPreferences().primaryCurrency
+            .set(newPrimaryCurrency)
+            .then((value) {
+              _log.fine("Primary currency set to $newPrimaryCurrency");
+            })
+            .catchError((error, stackTrace) {
+              _log.warning(
+                "Failed to set primary currency, ignoring",
+                error,
+                stackTrace,
+              );
+            }),
+      );
+    }
     // 3. Create [Transaction]s
     progressNotifier.value = ImportCSVProgress.creatingTransactions;
+    final List<Transaction> transformedTransactions =
+        data.transactions.map((csvt) {
+          final Account resolvedAccount =
+              accountsCache[accountNameUuidMapping[csvt.account]!]!;
+
+          final Transaction transaction =
+              Transaction(
+                  uuid: UuidV4().generate(),
+                  amount: csvt.amount,
+                  title: csvt.title,
+                  description: csvt.notes,
+                  transactionDate: csvt.transactionDate,
+                  currency: resolvedAccount.currency,
+                )
+                ..setAccount(resolvedAccount)
+                ..setCategory(
+                  categoriesCache[categoryNameUuidMapping[csvt.category]],
+                );
+
+          return transaction;
+        }).toList();
+
+    for (int i = 0; i < transformedTransactions.length; i++) {
+      final Transaction? previousTransaction =
+          i > 0 ? transformedTransactions[i - 1] : null;
+
+      if (previousTransaction == null) continue;
+
+      final Transaction transaction = transformedTransactions[i];
+
+      if (transaction.transactionDate
+              .difference(previousTransaction.transactionDate)
+              .abs() >
+          const Duration(seconds: 1, milliseconds: 200)) {
+        continue;
+      }
+      if (transaction.amount != -previousTransaction.amount) {
+        continue;
+      }
+      if (transaction.accountUuid == previousTransaction.accountUuid) {
+        continue;
+      }
+
+      previousTransaction.account.target!.transferTo(
+        amount: previousTransaction.amount,
+        targetAccount: transaction.account.target!,
+        transactionDate: previousTransaction.transactionDate,
+        title: previousTransaction.title,
+        description: previousTransaction.description,
+      );
+
+      transformedTransactions[i].uuid = Namespace.nil.value;
+      transformedTransactions[i - 1].uuid = Namespace.nil.value;
+      i++;
+    }
+
     await ObjectBox().box<Transaction>().putManyAsync(
-      data.transactions.map((csvt) {
-        final Account resolvedAccount =
-            accountsCache[accountNameUuidMapping[csvt.account]!]!;
-
-        final Transaction transaction =
-            Transaction(
-                uuid: UuidV4().generate(),
-                amount: csvt.amount,
-                title: csvt.title,
-                description: csvt.notes,
-                transactionDate: csvt.transactionDate,
-                currency: resolvedAccount.currency,
-              )
-              ..setAccount(resolvedAccount)
-              ..setCategory(
-                categoriesCache[categoryNameUuidMapping[csvt.category]],
-              );
-
-        return transaction;
-      }).toList(),
+      transformedTransactions
+          .where((t) => t.uuid != Namespace.nil.value)
+          .toList(),
     );
 
     unawaited(
