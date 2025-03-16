@@ -275,9 +275,11 @@ extension MainActions on ObjectBox {
                 return true;
               }).toList(),
         )
-        .catchError((error) {
+        .catchError((error, stackTrace) {
           _log.severe(
-            "Failed to fetch transactions for title suggestions: $error",
+            "Failed to fetch transactions for title suggestions",
+            error,
+            stackTrace,
           );
           return <Transaction>[];
         });
@@ -445,9 +447,11 @@ extension TransactionActions on Transaction {
           if (!removedRelated) {
             throw Exception("Failed to remove related transaction");
           }
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't delete transfer transaction properly due to: $e",
+            "Couldn't delete transfer transaction properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -467,9 +471,11 @@ extension TransactionActions on Transaction {
       } else {
         try {
           TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't move transfer transaction to trash bin properly due to: $e",
+            "Couldn't move transfer transaction to trash bin properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -477,8 +483,8 @@ extension TransactionActions on Transaction {
 
     try {
       TransactionsService().moveToBinSync(this);
-    } catch (e) {
-      _log.severe("Failed to move transaction to trash bin: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
     }
   }
 
@@ -495,9 +501,11 @@ extension TransactionActions on Transaction {
           TransactionsService().recoverFromBinSync(
             transfer.relatedTransactionUuid,
           );
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't move transfer transaction to trash bin properly due to: $e",
+            "Couldn't move transfer transaction to trash bin properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -505,8 +513,8 @@ extension TransactionActions on Transaction {
 
     try {
       TransactionsService().recoverFromBinSync(this);
-    } catch (e) {
-      _log.severe("Failed to move transaction to trash bin: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
     }
   }
 
@@ -526,9 +534,11 @@ extension TransactionActions on Transaction {
               confirm: confirm,
               updateTransactionDate: updateTransactionDate,
             );
-          } catch (e) {
+          } catch (e, stackTrace) {
             _log.severe(
-              "Couldn't delete transfer transaction properly due to: $e",
+              "Couldn't delete transfer transaction properly",
+              e,
+              stackTrace,
             );
           }
         }
@@ -539,8 +549,8 @@ extension TransactionActions on Transaction {
         confirm: confirm,
         updateTransactionDate: updateTransactionDate,
       );
-    } catch (e) {
-      _log.severe("Failed to confirm transaction: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to confirm transaction", e, stackTrace);
       return false;
     }
   }
@@ -790,6 +800,8 @@ extension AccountActions on Account {
     final List<TransactionExtension> filteredExtensions =
         extensions?.where((ext) => ext is! Transfer).toList() ?? [];
 
+    transactionDate ??= DateTime.now();
+
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
@@ -887,8 +899,12 @@ extension AccountActions on Account {
           category.uuid,
         );
       }
-    } catch (e) {
-      _log.warning("Failed to update frecency data for transaction ($id)");
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to update frecency data for transaction ($id)",
+        e,
+        stackTrace,
+      );
     }
 
     return id;

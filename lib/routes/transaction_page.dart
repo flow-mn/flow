@@ -525,17 +525,17 @@ class _TransactionPageState extends State<TransactionPage> {
 
           if (mounted) setState(() => {});
         })
-        .catchError((e) {
-          _log.warning("Failed to get last known location", e);
+        .catchError((e, stackTrace) {
+          _log.warning("Failed to get last known location", e, stackTrace);
         });
 
     Geolocator.getCurrentPosition()
         .then((current) {
           _geo = Geo.fromPosition(current);
         })
-        .catchError((e) {
+        .catchError((e, stackTrace) {
           locationFailed = true;
-          _log.warning("Failed to get current location", e);
+          _log.warning("Failed to get current location", e, stackTrace);
         })
         .whenComplete(() {
           if (mounted) setState(() => {});
@@ -854,8 +854,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
         _currentlyEditing.permanentlyDelete(true);
         context.pop();
-      } catch (e) {
-        _log.severe("Failed to update transfer transaction", e);
+      } catch (e, stackTrace) {
+        _log.severe("Failed to update transfer transaction", e, stackTrace);
       }
       return;
     }

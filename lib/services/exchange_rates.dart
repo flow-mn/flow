@@ -62,8 +62,12 @@ class ExchangeRatesService {
         ),
       );
       jsonResponse = jsonDecode(response.body);
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates from main source", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates from main source",
+        e,
+        stackTrace,
+      );
     }
 
     try {
@@ -73,8 +77,12 @@ class ExchangeRatesService {
         ),
       );
       jsonResponse = jsonDecode(response.body);
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates from side source", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates from side source",
+        e,
+        stackTrace,
+      );
     }
 
     if (jsonResponse == null) {
@@ -101,8 +109,12 @@ class ExchangeRatesService {
       );
 
       return exchangeRates;
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates ($baseCurrency)", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates ($baseCurrency)",
+        e,
+        stackTrace,
+      );
 
       return exchangeRatesCache.value?.get(baseCurrency);
     }
@@ -121,8 +133,8 @@ class ExchangeRatesService {
 
     try {
       LocalPreferences().exchangeRatesCache.set(current);
-    } catch (e) {
-      _log.warning("Failed to update exchange rates cache", e);
+    } catch (e, stackTrace) {
+      _log.warning("Failed to update exchange rates cache", e, stackTrace);
     }
   }
 

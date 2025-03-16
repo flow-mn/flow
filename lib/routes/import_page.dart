@@ -89,8 +89,8 @@ class _ImportPageState extends State<ImportPage> {
             break;
         }
       }
-    } catch (e) {
-      _log.severe("Importer error", e);
+    } catch (e, stackTrace) {
+      _log.severe("Importer error", e, stackTrace);
       if (mounted) {
         context.showErrorToast(error: e);
       }

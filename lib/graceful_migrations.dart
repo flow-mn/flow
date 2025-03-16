@@ -30,8 +30,8 @@ void nonImportantMigrateProfileImagePath() async {
     await old.copy(path.join(ObjectBox.imagesDirectory, "$profileUuid.png"));
 
     await old.delete();
-  } catch (e) {
-    _log.info("Failed to migrate profile image path", e);
+  } catch (e, stackTrace) {
+    _log.info("Failed to migrate profile image path", e, stackTrace);
   }
 }
 
@@ -47,8 +47,12 @@ void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
     await LocalPreferences().pendingTransactions.requireConfrimation.set(
       oldValue,
     );
-  } catch (e) {
-    _log.info("Failed to migrate requirePendingTransactionConfrimation", e);
+  } catch (e, stackTrace) {
+    _log.info(
+      "Failed to migrate requirePendingTransactionConfrimation",
+      e,
+      stackTrace,
+    );
   }
 }
 
@@ -75,10 +79,11 @@ void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
     }
 
     ObjectBox().box<UserPreferences>().put(userPreferences);
-  } catch (e) {
+  } catch (e, stackTrace) {
     _log.warning(
       "Failed to migrate user preferences regarding transfer stuff",
       e,
+      stackTrace,
     );
   }
 }

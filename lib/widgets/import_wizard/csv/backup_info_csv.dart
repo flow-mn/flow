@@ -1,5 +1,8 @@
+import "dart:async";
+
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/sync/import/import_csv.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/extensions/toast.dart";
@@ -131,14 +134,21 @@ class _BackupInfoCSVState extends State<BackupInfoCSV> {
       isScrollControlled: true,
     );
 
-    if (currency != null) {
-      if (widget.importer.accountCurrencies.isEmpty) {
-        for (final String name in widget.importer.data.accountNames) {
-          widget.importer.accountCurrencies[name] = currency;
-        }
-      } else {
+    if (currency == null) return;
+
+    if (widget.importer.accountCurrencies.isEmpty) {
+      for (final String name in widget.importer.data.accountNames) {
         widget.importer.accountCurrencies[name] = currency;
       }
+    } else {
+      widget.importer.accountCurrencies[name] = currency;
+      print("currency -> $currency");
+      unawaited(
+        LocalPreferences().primaryCurrency.set(currency).catchError((error) {
+          // Silent fail
+          return "---";
+        }),
+      );
     }
 
     if (mounted) {
