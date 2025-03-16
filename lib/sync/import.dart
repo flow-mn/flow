@@ -13,6 +13,7 @@ import "package:flow/sync/import/base.dart";
 import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
+import "package:flow/sync/model/csv/parsed_data.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/utils/utils.dart";
@@ -129,5 +130,5 @@ Future<Importer> _importCsv({required File file}) async {
           .transform(CsvToListConverter())
           .toList();
 
-  return ImportCSV(rows);
+  return ImportCSV(CSVParsedData(rows));
 }

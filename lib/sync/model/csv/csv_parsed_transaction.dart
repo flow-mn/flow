@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/sync/import/import_csv/parsers.dart";
+import "package:flow/sync/model/csv/parsers.dart";
 import "package:flutter/material.dart";
 
 class CSVParsedTransaction {
@@ -22,54 +22,48 @@ class CSVParsedTransaction {
 
   static CSVParsedTransaction parse(
     List<dynamic> data,
-    List<CSVCellParser> parsers,
+    List<CSVCellParser?> parsers,
   ) {
     assert(data.length == parsers.length);
 
-    late final String? title;
-    late final String? notes;
+    String? title;
+    String? notes;
     DateTime? transactionDate;
     DateTime? transactionDateIso8601;
     TimeOfDay? transactionTime;
-    late final double amount;
 
+    late final double amount;
     late final String account;
+
     String? category;
 
     for (int i = 0; i < data.length; i++) {
-      if (data is! String) continue;
+      final String? cell = data[i]?.toString().trim();
 
-      final String trimmed = (data as String).trim();
+      if (cell == null || cell.isEmpty) continue;
 
-      if (trimmed.isEmpty) continue;
+      final CSVCellParser? parser = parsers[i];
+      if (parser == null) continue;
 
-      final CSVCellParser parser = parsers[i];
+      final parsed = parser.parse(cell);
 
       switch (parser.column) {
         case CSVParserColumn.title:
-          title = parser.parse(trimmed);
-          break;
+          title = parsed;
         case CSVParserColumn.notes:
-          notes = parser.parse(trimmed);
-          break;
+          notes = parsed;
         case CSVParserColumn.account:
-          account = parser.parse(trimmed);
-          break;
+          account = parsed;
         case CSVParserColumn.amount:
-          amount = parser.parse(trimmed);
-          break;
+          amount = parsed;
         case CSVParserColumn.transactionDate:
-          transactionDate = parser.parse(trimmed);
-          break;
+          transactionDate = parsed;
         case CSVParserColumn.transactionTime:
-          transactionTime = parser.parse(trimmed);
-          break;
+          transactionTime = parsed;
         case CSVParserColumn.transactionDateIso8601:
-          transactionDateIso8601 = parser.parse(trimmed);
-          break;
+          transactionDateIso8601 = parsed;
         case CSVParserColumn.category:
-          category = parser.parse(trimmed);
-          break;
+          category = parsed;
       }
     }
 

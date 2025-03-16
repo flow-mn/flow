@@ -1,79 +1,177 @@
+import "dart:async";
+
+import "package:flow/data/flow_icon.dart";
+import "package:flow/data/icons.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/backup_entry.dart";
+import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/prefs/transitive.dart";
+import "package:flow/services/transactions.dart";
+import "package:flow/sync/exception.dart";
+import "package:flow/sync/export.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/import/import_csv/parsers.dart";
-import "package:flow/sync/import/import_progress_generic.dart";
-import "package:flutter/foundation.dart";
+import "package:flow/sync/model/csv/parsed_data.dart";
+import "package:flow/sync/model/csv/parsers.dart";
+import "package:flow/utils/extensions/iterables.dart";
+import "package:flutter/material.dart";
+import "package:logging/logging.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:uuid/v4.dart";
+
+final Logger _log = Logger("ImportCSV");
 
 /// See format:
 ///
 /// https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing
 class ImportCSV extends Importer {
   @override
-  final List<List<dynamic>> data;
+  final CSVParsedData data;
 
   final Map<String, String> accountCurrencies = {};
-  final Set<String> categories = <String>{};
-
-  Set<String> get accounts => accountCurrencies.keys.toSet();
 
   /// `null` for irrelevant columns
   final List<CSVCellParser?> orderedParserList = [];
 
-  ImportCSV(this.data) : assert(data.length > 1);
+  final ValueNotifier<String?> primaryCurrencyCandidate = ValueNotifier(null);
 
-  void parse() {
-    _prepareParsers();
-  }
-
-  /// This methods recognizes the promised format headers, and prepares parsers
-  /// for each column according to the order of the headers.
-  void _prepareParsers() {
-    orderedParserList.clear();
-    for (dynamic header in data.first) {
-      switch (header?.toString()) {
-        case "flow_title":
-        case "Title":
-          orderedParserList.add(StringParser(CSVParserColumn.title));
-          break;
-        case "flow_notes":
-        case "Notes":
-          orderedParserList.add(StringParser(CSVParserColumn.notes));
-          break;
-        case "flow_account_name":
-        case "Account":
-          orderedParserList.add(StringParser(CSVParserColumn.account));
-          break;
-        case "flow_amount":
-        case "Amount":
-          orderedParserList.add(AmountParser(CSVParserColumn.title));
-          break;
-        case "flow_date_of_transaction":
-          orderedParserList.add(DateParser(CSVParserColumn.transactionDate));
-          break;
-        case "flow_time_of_transaction_optional":
-        case "Time":
-          orderedParserList.add(TimeParser(CSVParserColumn.transactionTime));
-          break;
-        case "flow_date_of_transaction_iso_8601":
-        case "Transaction date (ISO 8601)":
-          orderedParserList.add(
-            DateParser(CSVParserColumn.transactionDateIso8601),
-          );
-          break;
-        case "flow_category_optional":
-        case "Category":
-          orderedParserList.add(StringParser(CSVParserColumn.category));
-          break;
-        default:
-          orderedParserList.add(null);
-      }
-    }
-  }
+  ImportCSV(this.data);
 
   @override
-  Future<String?> execute({bool ignoreSafetyBackupFail = false}) {
-    // TODO: implement execute
-    throw UnimplementedError();
+  Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
+    String? safetyBackupFilePath;
+
+    try {
+      // Backup data before ruining everything
+      await export(
+        subfolder: "automated_backups",
+        showShareDialog: false,
+        type: BackupEntryType.preImport,
+      ).then((value) => safetyBackupFilePath = value.filePath);
+    } catch (e) {
+      if (!ignoreSafetyBackupFail) {
+        throw const ImportException(
+          "Safety backup failed, aborting mission",
+          l10nKey: "error.sync.safetyBackupFailed",
+        );
+      }
+    }
+
+    try {
+      TransactionsService().pauseListeners();
+
+      await _eraseAndWrite();
+    } catch (e) {
+      progressNotifier.value = ImportCSVProgress.error;
+      rethrow;
+    } finally {
+      TransactionsService().resumeListeners();
+    }
+
+    return safetyBackupFilePath;
+  }
+
+  Future<void> _eraseAndWrite() async {
+    // 0. Erase current data
+    progressNotifier.value = ImportCSVProgress.erasing;
+    await ObjectBox().eraseMainData();
+
+    // 1. Resurrect [Category]s
+    final Map<String, String> categoryNameUuidMapping = {
+      for (final String key in data.categoryNames.nonNulls)
+        key: UuidV4().generate(),
+    };
+
+    progressNotifier.value = ImportCSVProgress.creatingCategories;
+    final List<int> insertedCategoryIds = await ObjectBox()
+        .box<Category>()
+        .putManyAsync(
+          categoryNameUuidMapping.keys.map((name) {
+            final IconData iconCandidate =
+                queryMaterialSymbols(name).firstOrNull ??
+                Symbols.category_rounded;
+
+            return Category.preset(
+              name: name,
+              uuid: categoryNameUuidMapping[name]!,
+              iconCode: IconFlowIcon(iconCandidate).toString(),
+            );
+          }).toList(),
+        );
+
+    final List<Category> insertedCategories =
+        (await ObjectBox().box<Category>().getManyAsync(
+          insertedCategoryIds,
+        )).nonNulls.toList();
+    final Map<String, Category> categoriesCache = insertedCategories
+        .mapBy<String>((account) => account.uuid);
+
+    // 2. Create [Account]s
+    final Map<String, String> accountNameUuidMapping = {
+      for (final String key in data.accountNames.nonNulls)
+        key: UuidV4().generate(),
+    };
+
+    progressNotifier.value = ImportCSVProgress.creatingAccounts;
+    final List<int> insertedAccountIds = await ObjectBox()
+        .box<Account>()
+        .putManyAsync(
+          accountNameUuidMapping.keys
+              .map(
+                (name) => Account.preset(
+                  name: name,
+                  uuid: accountNameUuidMapping[name]!,
+                  iconCode: IconFlowIcon(Symbols.wallet).toString(),
+                  currency: accountCurrencies[name]!,
+                ),
+              )
+              .toList(),
+        );
+
+    final List<Account> insertedAccounts =
+        (await ObjectBox().box<Account>().getManyAsync(
+          insertedAccountIds,
+        )).nonNulls.toList();
+    final Map<String, Account> accountsCache = insertedAccounts.mapBy<String>(
+      (account) => account.uuid,
+    );
+
+    // 3. Create [Transaction]s
+    progressNotifier.value = ImportCSVProgress.creatingTransactions;
+    await ObjectBox().box<Transaction>().putManyAsync(
+      data.transactions.map((csvt) {
+        final Account resolvedAccount =
+            accountsCache[accountNameUuidMapping[csvt.account]!]!;
+
+        final Transaction transaction =
+            Transaction(
+                uuid: UuidV4().generate(),
+                amount: csvt.amount,
+                title: csvt.title,
+                description: csvt.notes,
+                transactionDate: csvt.transactionDate,
+                currency: resolvedAccount.currency,
+              )
+              ..setAccount(resolvedAccount)
+              ..setCategory(
+                categoriesCache[categoryNameUuidMapping[csvt.category]],
+              );
+
+        return transaction;
+      }).toList(),
+    );
+
+    unawaited(
+      TransitiveLocalPreferences().updateTransitiveProperties().catchError((
+        error,
+      ) {
+        _log.warning("Failed to update transitive properties, ignoring", error);
+      }),
+    );
+
+    progressNotifier.value = ImportCSVProgress.success;
   }
 
   @override
