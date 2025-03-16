@@ -144,12 +144,18 @@ class ImportCSV extends Importer {
 
     if (newPrimaryCurrency != null) {
       unawaited(
-        LocalPreferences().primaryCurrency.set(newPrimaryCurrency).catchError((
-          error,
-        ) {
-          // Silent fail
-          return "---";
-        }),
+        LocalPreferences().primaryCurrency
+            .set(newPrimaryCurrency)
+            .then((value) {
+              _log.fine("Primary currency set to $newPrimaryCurrency");
+            })
+            .catchError((error, stackTrace) {
+              _log.warning(
+                "Failed to set primary currency, ignoring",
+                error,
+                stackTrace,
+              );
+            }),
       );
     }
     // 3. Create [Transaction]s
