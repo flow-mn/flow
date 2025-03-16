@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/icons.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
@@ -36,6 +35,8 @@ class ImportCSV extends Importer {
   final List<CSVCellParser?> orderedParserList = [];
 
   final ValueNotifier<String?> primaryCurrencyCandidate = ValueNotifier(null);
+
+  bool get ready => accountCurrencies.values.length >= data.accountNames.length;
 
   ImportCSV(this.data);
 
@@ -88,17 +89,15 @@ class ImportCSV extends Importer {
     final List<int> insertedCategoryIds = await ObjectBox()
         .box<Category>()
         .putManyAsync(
-          categoryNameUuidMapping.keys.map((name) {
-            final IconData iconCandidate =
-                queryMaterialSymbols(name).firstOrNull ??
-                Symbols.category_rounded;
-
-            return Category.preset(
-              name: name,
-              uuid: categoryNameUuidMapping[name]!,
-              iconCode: IconFlowIcon(iconCandidate).toString(),
-            );
-          }).toList(),
+          categoryNameUuidMapping.keys
+              .map(
+                (name) => Category.preset(
+                  name: name,
+                  uuid: categoryNameUuidMapping[name]!,
+                  iconCode: IconFlowIcon(Symbols.category_rounded).toString(),
+                ),
+              )
+              .toList(),
         );
 
     final List<Category> insertedCategories =
