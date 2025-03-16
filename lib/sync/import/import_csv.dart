@@ -8,6 +8,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
@@ -139,6 +140,18 @@ class ImportCSV extends Importer {
       (account) => account.uuid,
     );
 
+    final String? newPrimaryCurrency = insertedAccounts.firstOrNull?.currency;
+
+    if (newPrimaryCurrency != null) {
+      unawaited(
+        LocalPreferences().primaryCurrency.set(newPrimaryCurrency).catchError((
+          error,
+        ) {
+          // Silent fail
+          return "---";
+        }),
+      );
+    }
     // 3. Create [Transaction]s
     progressNotifier.value = ImportCSVProgress.creatingTransactions;
     final List<Transaction> transformedTransactions =
