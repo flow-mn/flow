@@ -9,7 +9,6 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
-import "package:flow/prefs/transitive.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/export.dart";
