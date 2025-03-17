@@ -43,7 +43,6 @@
     "setup.profile.setup": "Quel est votre nom?",
     "setup.profile.addPhoto": "Ajouter une photo",
     "setup.profile.addPhoto.skip": "Passer",
-    "setup.profile.addPhoto.description": "C'est optionnel. Votre photo sera stockée uniquement sur votre appareil et ne sera pas incluse dans les sauvegardes.",
     "setup.primaryCurrency.setup": "Sélectionnez une devise",
     "setup.primaryCurrency.description": "Ce sera votre devise principale. Vous pouvez changer cela plus tard dans le menu \"Préférences\".",
     "setup.primaryCurrency.choose": "Choisissez une devise",

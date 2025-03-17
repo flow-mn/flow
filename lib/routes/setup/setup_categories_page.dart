@@ -1,11 +1,8 @@
-import "dart:async";
-
 import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/add_category_card.dart";
 import "package:flow/widgets/category_card.dart";
@@ -218,12 +215,8 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
       );
 
       if (mounted) {
-        GoRouter.of(context).popUntil((route) => route.path == "/setup");
-
-        context.pushReplacement("/");
+        await context.push("/setup/profile");
       }
-
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
     } finally {
       busy = false;
       if (mounted) {

@@ -43,4 +43,12 @@ extension Casings on String {
   }
 
   String get digitsObscured => replaceAll(RegExp(r"\d"), "*");
+
+  /// Removes leading zeroes from a string.
+  ///
+  /// e.g.,
+  /// 0a -> a
+  /// 02 -> 2
+  /// 03xe -> 3xe
+  String get withoutLeadingZeroes => replaceAll(RegExp(r"^0*"), "");
 }

@@ -43,7 +43,6 @@
     "setup.profile.setup": "Come ti chiami?",
     "setup.profile.addPhoto": "Aggiungi una foto",
     "setup.profile.addPhoto.skip": "Salta",
-    "setup.profile.addPhoto.description": "Questo è facoltativo. La tua foto sarà memorizzata solo sul tuo dispositivo e non sarà inclusa nei backup.",
     "setup.primaryCurrency.setup": "Seleziona una valuta",
     "setup.primaryCurrency.description": "Questa sarà la tua valuta principale. Puoi cambiarla in seguito nel menu \"Preferenze\".",
     "setup.primaryCurrency.choose": "Scegli una valuta",

@@ -8,7 +8,6 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import_wizard/backup_info.dart";
 import "package:flow/widgets/import_wizard/import_success.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
 
 class ImportWizardCSVPage extends StatefulWidget {
   final ImportCSV importer;
@@ -44,17 +43,7 @@ class _ImportWizardCSVPageState extends State<ImportWizardCSVPage> {
                 ),
                 ImportCSVProgress.error => Text(error.toString()),
                 ImportCSVProgress.success => ImportSuccess(
-                  onDone: () {
-                    if (widget.setupMode) {
-                      GoRouter.of(
-                        context,
-                      ).popUntil((route) => route.path == "/setup");
-
-                      context.pushReplacement("/");
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  },
+                  setupMode: widget.setupMode,
                 ),
                 _ => Center(
                   child: Column(

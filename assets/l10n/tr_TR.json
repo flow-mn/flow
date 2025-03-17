@@ -43,7 +43,6 @@
     "setup.profile.setup": "Adınız nedir?",
     "setup.profile.addPhoto": "Fotoğraf ekleme",
     "setup.profile.addPhoto.skip": "Atlamak",
-    "setup.profile.addPhoto.description": "Bu isteğe bağlıdır. Fotoğrafınız yalnızca cihazınızda saklanacak ve yedeklemelere dahil edilmeyecektir.",
     "setup.primaryCurrency.setup": "Bir para birimi seçin",
     "setup.primaryCurrency.description": "Bu sizin birincil para biriminiz olacaktır. Bunu daha sonra \"Tercihler\" menüsünden değiştirebilirsiniz.",
     "setup.primaryCurrency.choose": "Bir para birimi seçin",

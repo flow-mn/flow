@@ -8,7 +8,6 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import_wizard/backup_info.dart";
 import "package:flow/widgets/import_wizard/import_success.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
 
 class ImportWizardV2Page extends StatefulWidget {
   final ImportV2 importer;
@@ -44,17 +43,7 @@ class _ImportWizardV2PageState extends State<ImportWizardV2Page> {
                 ),
                 ImportV2Progress.error => Text(error.toString()),
                 ImportV2Progress.success => ImportSuccess(
-                  onDone: () {
-                    if (widget.setupMode) {
-                      GoRouter.of(
-                        context,
-                      ).popUntil((route) => route.path == "/setup");
-
-                      context.pushReplacement("/");
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  },
+                  setupMode: widget.setupMode,
                 ),
                 _ => Center(
                   child: Column(

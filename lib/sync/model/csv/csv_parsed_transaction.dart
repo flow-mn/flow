@@ -24,7 +24,7 @@ class CSVParsedTransaction {
     List<dynamic> data,
     List<CSVCellParser?> parsers,
   ) {
-    assert(data.length == parsers.length);
+    assert(data.length <= parsers.length);
 
     String? title;
     String? notes;
