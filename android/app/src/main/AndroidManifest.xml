@@ -13,8 +13,8 @@
 
     <application
         android:label="Flow"
-        android:icon="@mipmap/ic_launcher">
-        android:supportsRtl="true">  <!-- Added RTL Support -->
+        android:icon="@mipmap/ic_launcher"
+        android:supportsRtl="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
