@@ -43,7 +43,6 @@
     "setup.profile.setup": "Таныг хэн гэдэг вэ?",
     "setup.profile.addPhoto": "Зураг нэмэх",
     "setup.profile.addPhoto.skip": "Алгасах",
-    "setup.profile.addPhoto.description": "Зураг оруулах шаардлагагүй. Таны зураг зөвхөн таны төхөөрөмж дээр хадгалагдах бөгөөд нөөцлөх үед хамт нөөцлөгдөхгүй.",
     "setup.primaryCurrency.setup": "Валют сонгох",
     "setup.primaryCurrency.description": "Энэ таны үндсэн валют болох бөгөөд та үүнийг \"Тохиргоо\" цэсээс өөрчлөх боломжтой.",
     "setup.primaryCurrency.choose": "Үндсэн валют сонгох",

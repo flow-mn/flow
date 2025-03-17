@@ -339,17 +339,6 @@ final router = GoRouter(
           builder: (context, state) => const SetupOnboardingPage(),
         ),
         GoRoute(
-          path: "profile",
-          builder: (context, state) => const SetupProfilePage(),
-        ),
-        GoRoute(
-          path: "profile/photo",
-          builder:
-              (context, state) => SetupProfilePhotoPage(
-                profileImagePath: state.extra as String,
-              ),
-        ),
-        GoRoute(
           path: "currency",
           builder: (context, state) => const SetupCurrencyPage(),
         ),
@@ -360,6 +349,17 @@ final router = GoRouter(
         GoRoute(
           path: "categories",
           builder: (context, state) => const SetupCategoriesPage(),
+        ),
+        GoRoute(
+          path: "profile",
+          builder: (context, state) => const SetupProfilePage(),
+        ),
+        GoRoute(
+          path: "profile/photo",
+          builder:
+              (context, state) => SetupProfilePhotoPage(
+                profileImagePath: state.extra as String,
+              ),
         ),
       ],
     ),

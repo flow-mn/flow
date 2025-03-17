@@ -1,5 +1,9 @@
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("CSVCellParser");
 
 /// Used to report current status to user
 enum CSVCellParserError implements LocalizedEnum {
@@ -44,9 +48,9 @@ class StringParser implements CSVCellParser<String> {
 }
 
 class DateParser implements CSVCellParser<DateTime> {
-  /// Test -> https://regex101.com/r/XaDJOw/1
+  /// Test -> https://regex101.com/r/XaDJOw/2
   static final RegExp dateRegex = RegExp(
-    r"^\s*(?<y>(1|2)\d{3})[./-](?<m>(0?\d)|10|11|12)[./-](?<d>[1,2,3]?\d)\s*$",
+    r"^\s*(?<y>(1|2)\d{3})[./-](?<m>(0?\d)|10|11|12)[./-](?<d>[0,1,2,3]?\d)\s*$",
   );
 
   @override
@@ -59,15 +63,22 @@ class DateParser implements CSVCellParser<DateTime> {
     try {
       final RegExpMatch match = dateRegex.allMatches(cell).single;
 
-      final int y = int.parse(match.namedGroup("y") ?? "~");
-      final int m = int.parse(match.namedGroup("m") ?? "~");
-      final int d = int.parse(match.namedGroup("d") ?? "~");
+      final int y = int.parse(
+        match.namedGroup("y")?.withoutLeadingZeroes ?? "~",
+      );
+      final int m = int.parse(
+        match.namedGroup("m")?.withoutLeadingZeroes ?? "~",
+      );
+      final int d = int.parse(
+        match.namedGroup("d")?.withoutLeadingZeroes ?? "~",
+      );
 
       if (m < 1 || m > 12) throw "bad month part";
       if (d < 1 || d > 31) throw "bad day part";
 
       return DateTime(y, m, d);
     } catch (e) {
+      _log.severe("Cannot parse regular date - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -89,8 +100,12 @@ class TimeParser implements CSVCellParser<TimeOfDay> {
     try {
       final RegExpMatch match = timeRegex.allMatches(cell).single;
 
-      final int h = int.parse(match.namedGroup("h") ?? "~");
-      final int m = int.parse(match.namedGroup("m") ?? "~");
+      final int h = int.parse(
+        match.namedGroup("h")?.withoutLeadingZeroes ?? "~",
+      );
+      final int m = int.parse(
+        match.namedGroup("m")?.withoutLeadingZeroes ?? "~",
+      );
       final bool? isPM = match
           .namedGroup("meridiem")
           ?.toLowerCase()
@@ -101,6 +116,7 @@ class TimeParser implements CSVCellParser<TimeOfDay> {
 
       return TimeOfDay(hour: (h + (isPM == true ? 12 : 0)) % 24, minute: m);
     } catch (e) {
+      _log.severe("Cannot parse regular time - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -115,9 +131,13 @@ class AmountParser implements CSVCellParser<double> {
   @override
   double parse(String cell) {
     try {
-      final String normalized = cell.trim().replaceAll(r"[^\d.e+-]", "");
+      final String normalized = cell.trim().withoutLeadingZeroes.replaceAll(
+        r"[^\d.e+-]",
+        "",
+      );
       return double.parse(normalized);
     } catch (e) {
+      _log.severe("Cannot parse amount - $cell");
       throw CSVCellParserError.invalidAmount;
     }
   }
@@ -134,6 +154,7 @@ class ISO8601DateParser implements CSVCellParser<DateTime> {
     try {
       return DateTime.parse(cell);
     } catch (e) {
+      _log.severe("Cannot parse iso8601 date - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }

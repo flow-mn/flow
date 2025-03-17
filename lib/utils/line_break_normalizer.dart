@@ -1,20 +1,23 @@
 import "dart:convert";
 
-/// Converts all line breaks to [terminator]
+/// Converts all line breaks to [terminator], and get rid of empty lines.
 class LineBreakNormalizer extends Converter<String, String> {
   static const String terminator = "\n";
 
   const LineBreakNormalizer();
 
   @override
-  String convert(String input) {
-    return input.replaceAll("\r\n", terminator).replaceAll("\r", terminator);
-  }
+  String convert(String input) => _normalize(input);
 
   @override
   Sink<String> startChunkedConversion(Sink<String> sink) {
     return LineBreakNormalizerSink(sink);
   }
+
+  static String _normalize(String input) => input
+      .replaceAll("\r\n", terminator)
+      .replaceAll("\r", terminator)
+      .replaceAll(RegExp(r"\s+$", multiLine: true), "");
 }
 
 class LineBreakNormalizerSink implements ChunkedConversionSink<String> {
@@ -29,10 +32,6 @@ class LineBreakNormalizerSink implements ChunkedConversionSink<String> {
 
   @override
   void add(String chunk) {
-    _sink.add(
-      chunk
-          .replaceAll("\r\n", LineBreakNormalizer.terminator)
-          .replaceAll("\r", LineBreakNormalizer.terminator),
-    );
+    _sink.add(LineBreakNormalizer._normalize(chunk));
   }
 }
