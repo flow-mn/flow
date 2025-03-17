@@ -1,6 +1,5 @@
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/utils.dart";
-import "package:flutter/material.dart";
 import "package:logging/logging.dart";
 
 final Logger _log = Logger("CSVCellParser");
@@ -84,10 +83,10 @@ class DateParser implements CSVCellParser<DateTime> {
   }
 }
 
-class TimeParser implements CSVCellParser<TimeOfDay> {
-  /// Test -> https://regex101.com/r/qqG35K/1
+class TimeParser implements CSVCellParser<(int, int, int?)> {
+  /// Test -> https://regex101.com/r/qqG35K/3
   static final RegExp timeRegex = RegExp(
-    r"^\s*(?<h>\d?\d)(:|\.)(?<m>\d?\d)\s*(?<meridiem>(a\.?m|p\.?m).?)?\s*$",
+    r"^\s*(?<h>\d?\d)(:|\.)(?<m>\d?\d)((:|\.)(?<s>\d?\d))?\s*(?<meridiem>(a\.?m|p\.?m).?)?\s*$",
   );
 
   @override
@@ -96,25 +95,33 @@ class TimeParser implements CSVCellParser<TimeOfDay> {
   const TimeParser(this.column);
 
   @override
-  TimeOfDay parse(String cell) {
+  (int, int, int?) parse(String cell) {
     try {
       final RegExpMatch match = timeRegex.allMatches(cell).single;
 
-      final int h = int.parse(
+      final int rawH = int.parse(
         match.namedGroup("h")?.withoutLeadingZeroes ?? "~",
       );
       final int m = int.parse(
         match.namedGroup("m")?.withoutLeadingZeroes ?? "~",
       );
+      final int? s = int.tryParse(
+        match.namedGroup("s")?.withoutLeadingZeroes ?? "~",
+      );
+
+      if (rawH < 0) throw "bad hour part";
+
       final bool? isPM = match
           .namedGroup("meridiem")
           ?.toLowerCase()
           .contains("p");
 
-      if (h < 0 || h > 24) throw "bad hour part";
-      if (m < 0 || m > 59) throw "bad minute part";
+      final int h = rawH + (isPM == true ? 12 : 0);
 
-      return TimeOfDay(hour: (h + (isPM == true ? 12 : 0)) % 24, minute: m);
+      if (m < 0 || m > 59) throw "bad minute part";
+      if (s != null && (s < 0 || s > 59)) throw "bad second part";
+
+      return (h, m, s);
     } catch (e) {
       _log.severe("Cannot parse regular time - $cell");
       throw CSVCellParserError.invalidDate;
