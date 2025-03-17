@@ -50,6 +50,7 @@ class _ImportWizardCSVPageState extends State<ImportWizardCSVPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Spinner.center(),
+                      const SizedBox(height: 8.0),
                       Center(
                         child: Text(
                           value.localizedNameContext(context),
