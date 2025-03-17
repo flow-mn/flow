@@ -1,6 +1,5 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/model/csv/parsers.dart";
-import "package:flutter/material.dart";
 
 class CSVParsedTransaction {
   final String title;
@@ -30,7 +29,7 @@ class CSVParsedTransaction {
     String? notes;
     DateTime? transactionDate;
     DateTime? transactionDateIso8601;
-    TimeOfDay? transactionTime;
+    (int, int, int?)? transactionTime;
 
     late final double amount;
     late final String account;
@@ -73,8 +72,9 @@ class CSVParsedTransaction {
       finalizedTxnDate = transactionDateIso8601;
     } else {
       finalizedTxnDate = (transactionDate ?? DateTime.now()).copyWith(
-        hour: transactionTime?.hour ?? 0,
-        minute: transactionTime?.minute ?? 0,
+        hour: transactionTime?.$1,
+        minute: transactionTime?.$2,
+        second: transactionTime?.$3,
       );
     }
 

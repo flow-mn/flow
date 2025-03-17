@@ -50,6 +50,7 @@ class _ImportWizardV2PageState extends State<ImportWizardV2Page> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Spinner.center(),
+                      const SizedBox(height: 8.0),
                       Center(
                         child: Text(
                           value.localizedNameContext(context),
