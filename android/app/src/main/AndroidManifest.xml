@@ -14,6 +14,7 @@
     <application
         android:label="Flow"
         android:icon="@mipmap/ic_launcher">
+        android:supportsRtl="true">  <!-- Added RTL Support -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
