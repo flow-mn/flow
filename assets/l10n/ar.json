@@ -1,0 +1,465 @@
+{
+  "appName": "Flow",
+  "appShortDesc": "متتبع التمويل الشخصي الخاص بك",
+  "visitGitHubRepo": "زيارة المستودع على جيثب",
+  "general.back": "العودة",
+  "general.delete": "حذف",
+  "general.delete.permanentWarning": "هذا الإجراء لا يمكن التراجع عنه",
+  "general.delete.confirmName": "تأكيد حذف {name}؟",
+  "general.delete.unsavedProgress": "إغلاق بدون حفظ؟",
+  "general.delete.unsavedProgress.description": "جميع التغييرات ستضيع.",
+  "general.areYouSure": "هل أنت متأكد؟",
+  "general.edit": "تحرير",
+  "general.save": "حفظ",
+  "general.done": "تم",
+  "general.confirm": "تأكيد",
+  "general.cancel": "إلغاء",
+  "general.select": "اختيار",
+  "general.select.all": "اختيار الكل",
+  "general.delete.all": "حذف الكل",
+  "general.copy": "نسخ",
+  "general.copy.success": "تم النسخ إلى الحافظة",
+  "general.copy.clickToCopy": "انقر للنسخ",
+  "general.paste": "لصق",
+  "general.timeSelector.select.month": "اختر شهرًا",
+  "general.timeSelector.select.year": "اختر سنة",
+  "general.timeSelector.now": "الآن",
+  "general.enabled": "مُفعّل",
+  "general.disabled": "معطل",
+  "general.selectLocation": "اختر الموقع",
+  "general.nextNDays": "الأيام القادمة {}",
+  "general.flow": "Flow",
+  "general.unlockToOpen": "افتح القفل لاستخدام Flow",
+  "setup.getStarted": "ابدأ الآن",
+  "setup.next": "التالي",
+  "setup.slides.foss.title": "مجاني ومفتوح المصدر",
+  "setup.slides.foss.description": "مجاني تمامًا والكود المصدري متاح للجميع.",
+  "setup.slides.foss.seeRepo": "عرض المشروع على جيثب",
+  "setup.slides.offline": "بياناتك ملكك",
+  "setup.slides.offline.description": "يتم تخزين جميع بياناتك على جهازك فقط، مع خيارات تصدير كاملة متاحة",
+  "setup.profile.setup": "ما اسمك؟",
+  "setup.profile.addPhoto": "إضافة صورة",
+  "setup.profile.addPhoto.skip": "تخطي",
+  "setup.profile.addPhoto.description": "هذا اختياري. سيتم تخزين صورتك على جهازك فقط، ولن تُضمن في النسخ الاحتياطية.",
+  "setup.primaryCurrency.setup": "اختر عملة",
+  "setup.primaryCurrency.description": "هذه ستكون عملتك الأساسية. يمكنك تغييرها لاحقًا من قائمة \"التفضيلات\".",
+  "setup.primaryCurrency.choose": "اختر عملة",
+  "setup.accounts.setup": "إعداد الحسابات",
+  "setup.accounts.description": "قم بإنشاء حسابات جديدة، أو أضف من الإعدادات المسبقة. يمكنك تغيير ذلك لاحقًا في علامة التبويب \"الحسابات\".",
+  "setup.accounts.addAccount": "إضافة حساب جديد",
+  "setup.accounts.preset.main": "رئيسي",
+  "setup.accounts.preset.cash": "نقدي",
+  "setup.accounts.preset.savings": "مدخرات",
+  "setup.categories.setup": "إعداد الفئات",
+  "setup.categories.description": "أنشئ فئات جديدة، أو أضف من الإعدادات المسبقة. يمكنك تغيير ذلك لاحقًا من قائمة \"الملف الشخصي > الفئات\".",
+  "setup.categories.preset.eatingOut": "تناول الطعام خارجًا",
+  "setup.categories.preset.groceries": "البقالة",
+  "setup.categories.preset.drinks": "المشروبات",
+  "setup.categories.preset.education": "التعليم",
+  "setup.categories.preset.health": "الصحة",
+  "setup.categories.preset.transport": "المواصلات",
+  "setup.categories.preset.petrol": "الوقود",
+  "setup.categories.preset.shopping": "التسوق",
+  "setup.categories.preset.entertainment": "الترفيه",
+  "setup.categories.preset.onlineServices": "الاشتراكات الإلكترونية",
+  "setup.categories.preset.gifts": "الهدايا",
+  "setup.categories.preset.rent": "الإيجار",
+  "setup.categories.preset.utils": "المرافق",
+  "setup.categories.preset.taxes": "الضرائب",
+  "setup.categories.preset.paychecks": "الراتب",
+  "setup.onboarding": "لنبدأ",
+  "setup.onboarding.freshStart": "بدء جديد",
+  "setup.onboarding.freshStart.description": "أنا أستخدم Flow لأول مرة",
+  "setup.onboarding.importExisting": "استيراد من نسخة احتياطية",
+  "setup.onboarding.importExisting.description": "استعادة البيانات من نسخة احتياطية سابقة لـ Flow",
+  "account": "حساب",
+  "account.name": "اسم الحساب",
+  "account.balance": "الرصيد",
+  "account.balance.upcomingDescription": "المعاملات القادمة لا تؤثر على الرصيد الحالي",
+  "account.archive": "إلغاء التنشيط",
+  "account.archive.description": "إلغاء تنشيط الحساب يخفيه من كل الأماكن باستثناء التقارير. يمكنك حذف الحساب نهائيًا مع المعاملات المرتبطة به بعد إلغاء التنشيط.",
+  "account.archived": "غير نشط",
+  "account.excludeFromTotalBalance": "استبعاد من الرصيد الكلي",
+  "account.excludeFromTotalBalance.description": "إذا قمت بتحديد هذا الخيار، فلن يتم احتساب رصيد هذا الحساب ضمن الرصيد الكلي. مفيد للحسابات الادخارية أو غير الشخصية.",
+  "account.updateBalance": "تحديث الرصيد",
+  "account.updateBalance.transactionTitle": "تحديث الرصيد",
+  "account.updateBalance.chooseUpdateMode": "اختر وضع التحديث",
+  "account.updateBalance.updateCurrent": "تحديث الرصيد الحالي",
+  "account.updateBalance.updateAtDate": "مزامنة الرصيد حسب التاريخ",
+  "account.updateBalance.updateAtDate.description": "مثالي إذا كنت تعرف الرصيد الدقيق في تاريخ معين",
+  "account.new": "إضافة حساب",
+  "account.edit": "تعديل الحساب",
+  "account.edit.selectCurrency": "اختر عملة",
+  "account.transactions": "المعاملات",
+  "account.transactions.title": "المعاملات لـ \"{account}\"",
+  "account.delete": "حذف الحساب",
+  "account.delete.description": "حذف هذا الحساب سيؤدي أيضًا إلى حذف {transactionCount} من المعاملات المرتبطة به. هذا الإجراء لا يمكن التراجع عنه ويتخطى سلة المهملات!",
+  "account.noAccounts": "ليس لديك أي حسابات!",
+  "account.thisMonth": "هذا الشهر",
+  "account.postTransactionBalance": "الرصيد بعد هذه المعاملة",
+  "accounts": "الحسابات",
+  "transaction": "معاملة",
+  "transaction.new": "معاملة جديدة",
+  "transaction.edit": "تعديل المعاملة",
+  "transaction.edit.selectAccount": "اختر حسابًا",
+  "transaction.edit.selectAccount.multiple": "اختر الحسابات",
+  "transaction.edit.selectAccount.noPossibleChoice": "لا يوجد حساب للاختيار",
+  "transaction.edit.selectCategory": "اختر فئة",
+  "transaction.edit.selectCategory.multiple": "اختر الفئات",
+  "transaction.actions": "الإجراءات",
+  "transaction.date": "تاريخ المعاملة",
+  "transaction.createdDate": "تم الإنشاء في",
+  "transaction.fallbackTitle": "معاملة بدون عنوان",
+  "transaction.delete": "حذف المعاملة",
+  "transaction.moveToTrashBin": "نقل إلى سلة المهملات",
+  "transaction.moveToTrashBin.recover": "استعادة المعاملة",
+  "transaction.moveToTrashBin.recover.success": "تم استعادة المعاملة",
+  "transaction.moveToTrashBin.success": "تم نقل المعاملة إلى سلة المهملات",
+  "transaction.duplicate": "نسخ المعاملة",
+  "transaction.duplicate.success": "تم نسخ المعاملة",
+  "transaction.transfer.from": "الحساب المرسل",
+  "transaction.transfer.from.select": "التحويل من",
+  "transaction.transfer.from.title": "من {account}",
+  "transaction.transfer.to": "الحساب المستقبل",
+  "transaction.transfer.to.select": "التحويل إلى",
+  "transaction.transfer.to.title": "إلى {account}",
+  "transaction.transfer.fromToTitle": "من {from} إلى {to}",
+  "transaction.description": "الملاحظات",
+  "transaction.description.add": "أضف ملاحظات",
+  "transaction.description.markdownSupported": "يدعم Markdown",
+  "transaction.description.preview": "معاينة",
+  "transaction.location": "الموقع",
+  "transaction.location.add": "أضف موقعًا",
+  "transaction.location.edit": "اضغط على الخريطة للتعديل",
+  "transaction.deleted": "تم حذفه مؤخرًا",
+  "transaction.pending": "معلّقة",
+  "transaction.pending.preapproved": "موافقة مسبقة",
+  "transactions.all": "كل المعاملات",
+  "transactions.pending": "المعاملات المعلقة",
+  "transactions.query.noResult": "لا توجد معاملات للعرض",
+  "transactions.query.noResult.description": "حاول تحديث الفلاتر",
+  "transactions.query.clearAll": "مسح الفلاتر",
+  "transactions.query.clearSelection": "مسح الاختيارات",
+  "transactions.query.filter.keyword": "بحث",
+  "transactions.query.filter.keyword.all": "بحث",
+  "transactions.query.filter.keyword.hint": "ابحث بالعنوان...",
+  "transactions.query.filter.keyword.clear": "مسح",
+  "transactions.query.filter.keyword.includeDescription": "تضمين الوصف",
+  "transactions.query.filter.timeRange": "النطاق الزمني",
+  "transactions.query.filter.timeRange.all": "كل الفترات",
+  "transactions.query.filter.accounts": "الحسابات",
+  "transactions.query.filter.accounts.n": "{} حسابات",
+  "transactions.query.filter.accounts.all": "كل الحسابات",
+  "transactions.query.filter.categories": "الفئات",
+  "transactions.query.filter.categories.n": "{} فئات",
+  "transactions.query.filter.categories.all": "كل الفئات",
+  "transactions.query.filter.groupBy": "تجميع حسب",
+  "transactions.query.filter.sort": "ترتيب",
+  "transactions.query.filter.currency": "العملة",
+  "transactions.count": "{} معاملة",
+  "transactionFilterPreset": "إعداد التصفية",
+  "transactionFilterPreset.saveAsNew": "حفظ كإعداد جديد",
+  "transactionFilterPreset.saveAsNew.name": "اسم الإعداد",
+  "transactionFilterPreset.saveAsNew.guide": "لحفظ إعداد جديد، قم بتغيير الفلاتر ثم عد إلى هنا",
+  "transactionFilterPreset.delete": "حذف الإعداد",
+  "transactionFilterPreset.invalid": "غير صالح",
+  "transactionFilterPreset.invalid.description": "بعض الحسابات/الفئات في هذا الإعداد مفقودة. يرجى إعادة إنشائه أو حذفه",
+  "transactionFilterPreset.default": "الإعداد الافتراضي",
+  "transactionFilterPreset.makeDefault": "اجعله افتراضيًا",
+  "category": "فئة",
+  "category.name": "اسم الفئة",
+  "category.new": "إضافة فئة",
+  "category.delete": "حذف الفئة",
+  "category.delete.description": "حذف هذه الفئة سيترك {transactionCount} معاملة بدون فئة. هذا الإجراء لا يمكن التراجع عنه!",
+  "category.skip": "بدون فئة",
+  "category.none": "لا فئة",
+  "categories": "الفئات",
+  "categories.noCategories": "ليس لديك أي فئات",
+  "profile.name": "الاسم",
+  "currency": "العملة",
+  "currency.searchHint": "ابحث... (الدولة، العملة، الرمز)",
+  "preferences": "التفضيلات",
+  "preferences.appearance": "المظهر",
+  "preferences.primaryCurrency": "العملة الأساسية",
+  "preferences.language": "اللغة",
+  "preferences.language.choose": "اختر لغة",
+  "preferences.theme": "السمة",
+  "preferences.theme.choose": "اختر سمة",
+  "preferences.theme.other": "سمات أخرى",
+  "preferences.theme.themeChangesAppIcon": "أيقونة التطبيق تتبع السمة",
+  "preferences.theme.enableDynamicTheme": "سمة ديناميكية",
+  "preferences.theme.enableOledTheme": "استخدام سمة OLED",
+  "preferences.numpad": "لوحة الأرقام",
+  "preferences.numpad.layout": "تخطيط لوحة الأرقام",
+  "preferences.numpad.layout.classic": "كلاسيكي",
+  "preferences.numpad.layout.modern": "حديث",
+  "preferences.hapticFeedback": "ردود فعل الأزرار",
+  "preferences.hapticFeedback.description": "صوت/اهتزاز عند الضغط",
+  "preferences.transactionButtonOrder": "ترتيب الأزرار",
+  "preferences.transactionButtonOrder.description": "تغيير موقع زر المعاملة الجديدة",
+  "preferences.transactionButtonOrder.guide": "اسحب الأزرار لإعادة ترتيبها",
+  "preferences.transfer": "التحويلات",
+  "preferences.transfer.description": "ادمجها في معاملة واحدة، واستبعدها من المصروفات/الإيرادات",
+  "preferences.transfer.combineTransferTransaction": "التخطيط",
+  "preferences.transfer.combineTransferTransaction.combine": "دمج",
+  "preferences.transfer.combineTransferTransaction.separate": "فصل",
+  "preferences.transfer.combineTransferTransaction.filterDescription": "عند استخدام الفلاتر، ستظهر التحويلات بشكل منفصل دائمًا",
+  "preferences.transfer.excludeTransferFromFlow": "استبعاد من الإجمالي",
+  "preferences.transfer.excludeTransferFromFlow.description": "لا تُحتسب ضمن المصروفات/الإيرادات الإجمالية",
+  "preferences.trashBin": "سلة المهملات",
+  "preferences.trashBin.seeItems": "عرض العناصر",
+  "preferences.trashBin.emptyBin": "إفراغ سلة المهملات",
+  "preferences.trashBin.emptyBin.description": "حذف جميع العناصر في سلة المهملات بشكل دائم. هذا الإجراء لا يمكن التراجع عنه",
+  "preferences.trashBin.retention": "مدة الاحتفاظ",
+  "preferences.trashBin.retention.description": "يتم حذف المعاملات تلقائيًا بعد فترة الاحتفاظ",
+  "preferences.trashBin.retention.forever": "إلى الأبد",
+  "preferences.transactionGeo": "موقع المعاملة",
+  "preferences.transactionGeo.enable": "تفعيل",
+  "preferences.transactionGeo.disableInstructions": "يمكنك إخفاء هذا القسم من الإعدادات",
+  "preferences.transactionGeo.auto.enable": "الإرفاق التلقائي",
+  "preferences.transactionGeo.auto.enabled": "تم تفعيل الإرفاق التلقائي",
+  "preferences.transactionGeo.auto.description": "إرفاق موقعك الحالي تلقائيًا مع المعاملات الجديدة. حتى لو قمت بإيقاف هذه الخاصية، يمكنك اختيار موقع على الخريطة لإرفاقه.",
+  "preferences.transactionGeo.auto.permissionDenied": "إذن الموقع غير ممنوح",
+  "preferences.pendingTransactions": "المعاملات المعلقة",
+  "preferences.pendingTransactions.homeTimeframe": "عرضها على الصفحة الرئيسية",
+  "preferences.pendingTransactions.requireConfirmation": "تطلب تأكيد",
+  "preferences.pendingTransactions.requireConfirmation.description": "لن تُحتسب المعاملات المعلقة ضمن الإيرادات، المصروفات، ورصيد الحساب",
+  "preferences.pendingTransactions.updateDateUponConfirmation": "تحديث التاريخ عند التأكيد",
+  "preferences.pendingTransactions.updateDateUponConfirmation.description": "تعطيل للاحتفاظ بتاريخ المعاملة الأصلي",
+  "preferences.pendingTransactions.notify": "إعلام",
+  "preferences.pendingTransactions.notify.earlyReminder": "تذكير مبكر",
+  "preferences.pendingTransactions.notify.earlyReminder.none": "لا شيء",
+  "preferences.pendingTransactions.notify.schedulingUnsupported": "الإشعارات لن تعمل عندما لا يكون Flow مفتوحًا",
+  "preferences.pendingTransactions.notify.schedulingUnsupported.description": "الإشعارات المجدولة متوفرة فقط على Android، iOS، وmacOS",
+  "preferences.privacy": "الخصوصية",
+  "preferences.privacy.maskAtStartup": "إخفاء الأرقام (*) عند بدء التشغيل",
+  "preferences.privacy.appLock": "قفل التطبيق",
+  "preferences.privacy.appLock.description#iOS": "يتطلب Face ID أو Touch ID لفتح التطبيق",
+  "preferences.privacy.appLock.description#Android": "يتطلب التحقق البيومتري لفتح التطبيق",
+  "preferences.moneyFormatting": "تنسيق الأموال",
+  "preferences.moneyFormatting.preferFull": "يفضل الأرقام الكاملة",
+  "preferences.moneyFormatting.preferFull.description": "لا تقصر الأرقام إذا أمكن",
+  "preferences.moneyFormatting.useCurrencySymbol": "استخدام رمز العملة",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً، \"$5\" بدلاً من \"5 USD\"",
+  "preferences.reminders": "التذكير",
+  "preferences.reminders.remindDaily": "تذكير يومي",
+  "preferences.reminders.remindDaily.description": "تذكير بتتبع المصروفات يوميًا",
+  "preferences.reminders.remindDaily.time": "ذكرني في",
+  "preferences.reminders.remindDaily.expiryWarning": "ستتوقف التذكيرات إذا لم تفتح Flow لمدة 7 أيام متتالية",
+  "preferences.reminders.unsupportedPlatform": "جدولة الإشعارات غير مدعومة على هذه المنصة",
+  "tabs.home": "الرئيسية",
+  "tabs.home.greetings": "مرحبًا، {name}!",
+  "tabs.home.noTransactions": "لا توجد معاملات تطابق المعايير",
+  "tabs.home.noTransactions.addSome": "انقر على زر (+) أدناه لإضافة معاملة جديدة",
+  "tabs.home.noTransactions.tryChangingFilters": "حاول تغيير الفلاتر",
+  "tabs.home.pendingTransactions": "معلقة ({count})",
+  "tabs.home.pendingTransactions.needAttention": "{} معاملات تحتاج للتأكيد",
+  "tabs.home.pendingTransactions.seeAll": "عرض الكل",
+  "tabs.home.transactionsCount": "{count} معاملة",
+  "tabs.home.last7days": "آخر 7 أيام",
+  "tabs.home.totalBalance": "الرصيد الإجمالي",
+  "tabs.home.flow": "التدفق",
+  "tabs.stats": "الإحصائيات",
+  "tabs.stats.timeRange.select": "اختر نطاقًا",
+  "tabs.stats.timeRange.changeMode": "خيارات أكثر",
+  "tabs.stats.timeRange.presets": "خيارات شائعة",
+  "tabs.stats.timeRange.last30days": "آخر 30 يومًا",
+  "tabs.stats.timeRange.thisWeek": "هذا الأسبوع",
+  "tabs.stats.timeRange.thisMonth": "هذا الشهر",
+  "tabs.stats.timeRange.thisYear": "هذا العام",
+  "tabs.stats.timeRange.allTime": "كل الوقت",
+  "tabs.stats.timeRange.mode.custom": "نطاق مخصص",
+  "tabs.stats.timeRange.mode.byWeek": "حسب الأسبوع",
+  "tabs.stats.timeRange.mode.byMonth": "حسب الشهر",
+  "tabs.stats.timeRange.mode.byYear": "حسب العام",
+  "tabs.stats.chart.total": "الإجمالي",
+  "tabs.stats.chart.noData": "لا توجد بيانات للعرض",
+  "tabs.stats.chart.select.clickToSelect": "انقر للاختيار",
+  "tabs.stats.chart.noExchangeRatesWarning": "بيانات أسعار الصرف مفقودة. المعاملات بعملات غير العملة الأساسية لن تُعرض.",
+  "tabs.stats.chart.noExchangeRatesWarning.retry": "أعد المحاولة",
+  "tabs.stats.dailyReport.dailyAvgExpense": "متوسط المصروف اليومي",
+  "tabs.stats.dailyReport.dailyAvgIncome": "متوسط الدخل اليومي",
+  "tabs.stats.dailyReport.forecastFor": "توقعات المصروفات لـ {}",
+  "tabs.stats.dailyReport.totalExpenseFor": "{} إجمالي المصروفات",
+  "tabs.stats.summaryByAccount": "ملخص حسب الحساب",
+  "tabs.stats.summaryByCategory": "ملخص حسب الفئة",
+  "tabs.stats.topSpendingCategory": "أعلى فئة إنفاق",
+  "tabs.stats.otherStats": "إحصائيات أخرى",
+  "tabs.accounts": "الحسابات",
+  "tabs.accounts.reorder": "إعادة ترتيب الحسابات",
+  "tabs.accounts.reorder.guide": "اضغط مطولاً واسحب",
+  "tabs.profile": "الملف الشخصي",
+  "tabs.profile.preferences": "التفضيلات",
+  "tabs.profile.community": "المجتمع",
+  "tabs.profile.support": "دعم Flow",
+  "tabs.profile.joinDiscord": "انضم إلى Discord الخاص بـ Flow",
+  "tabs.profile.backup": "النسخ الاحتياطي",
+  "tabs.profile.import": "الاستيراد",
+  "tabs.profile.withLoveFromTheCreator": "مع 🤍 من sadespresso",
+  "support": "الدعم",
+  "support.description": "Flow هو نتيجة جهد مبني بحب، ومتاح مجانًا ومفتوح للجميع. إذا وجدت Flow ذا قيمة، فكر في مساعدة المشروع على النمو! إليك بعض الطرق للقيام بذلك:",
+  "support.leaveAReview": "اترك تقييمًا",
+  "support.leaveAReview.description": "يمكنك تقييم Flow وترك مراجعة على {appStore}",
+  "support.leaveAReview.action": "قيم Flow",
+  "support.starOnGitHub": "أضف نجمة على جيثب",
+  "support.starOnGitHub.description": "إضافة نجمة لـ Flow على جيثب تساعد الآخرين في اكتشافه",
+  "support.requestFeatures": "اقترح أفكارًا",
+  "support.requestFeatures.description": "يمكنك أيضًا دعمنا بتقديم الملاحظات وأفكار الاقتراحات لتحسين Flow.",
+  "support.requestFeatures.action": "زيارة متعقب القضايا",
+  "support.contribute": "ساهم بالكود",
+  "support.contribute.description": "إذا كنت مطورًا، يمكنك المشاركة في تطوير Flow. قائمة المساهمين تنتظر إضافة اسمك.",
+  "support.donateDeveloper": "قدّر المبدع",
+  "support.donateDeveloper.description": "جميع ميزات Flow متاحة مجانًا، وتقدير المطور لن يفتح ميزات إضافية",
+  "support.donateDeveloper.action": "اشترِ للمبدع قهوة",
+  "flowIcon.change": "تغيير الأيقونة",
+  "flowIcon.type.icon": "أيقونة",
+  "flowIcon.type.icon.brands": "العلامات التجارية والشعارات",
+  "flowIcon.type.icon.symbols": "الرموز",
+  "flowIcon.type.icon.search": "ابحث عن أيقونات...",
+  "flowIcon.type.image": "صورة",
+  "flowIcon.type.image.pick": "اختر صورة",
+  "flowIcon.type.image.description": "اختر صورة لاستخدامها كأيقونة",
+  "flowIcon.type.character": "حرف",
+  "flowIcon.type.character.description": "أدخل رمز تعبيري أو حرف لاستخدامه كأيقونة",
+  "notifications.permissionNotGranted": "إذن الإشعارات غير ممنوح",
+  "notifications.openSettingsToGrantPermission": "امنح إذن الإشعارات من إعدادات النظام",
+  "notifications.reminderText#1": "هل قمت بتتبع مصروفاتك اليوم؟",
+  "notifications.reminderText#2": "لا تنسَ تسجيل معاملاتك!",
+  "notifications.reminderText#3": "حان وقت تسجيل مصروفاتك لليوم.",
+  "notifications.reminderText#4": "حافظ على توازن ماليتك، أضف معاملاتك!",
+  "notifications.reminderText#5": "Flow يذكرك بتتبع مصروفاتك!",
+  "notifications.reminderText#6": "حدث معاملاتك وابقَ على اطلاع على ماليتك.",
+  "notifications.reminderText#7": "لا تنسَ إضافة معاملاتك اليوم!",
+  "sync.import": "استيراد",
+  "sync.import.pickFile": "اختر ملفًا",
+  "sync.import.pickFile.pickOrDrop": "اختر أو اسقط ملفًا",
+  "sync.import.pickFile.dropzone.active": "أسقط هنا",
+  "sync.import.pickFile.description": "اختر ملف نسخ احتياطي لـ Flow للاستعادة. يجب أن يكون ملف JSON أو ZIP.",
+  "sync.import.syncData.olderBackupWarning": "نظرًا لأن هذا النسخ الاحتياطي تم إنشاؤه في إصدار قديم من التطبيق، قد تحدث بعض المشاكل!",
+  "sync.import.syncData.createdDate": "تاريخ النسخ الاحتياطي",
+  "sync.import.syncData.parsedEstimate": "البيانات المقدرة للاستعادة",
+  "sync.import.syncData.parsedEstimate.accountCount": "{count} حساب(ات)",
+  "sync.import.syncData.parsedEstimate.transactionCount": "{count} معاملة",
+  "sync.import.syncData.parsedEstimate.categoryCount": "{count} فئة",
+  "sync.import.syncData.parsedEstimate.transactionFilterPresets": "{count} إعداد فلتر معاملات",
+  "sync.import.eraseWarning": "الاستمرار سيؤدي إلى مسح جميع البيانات الحالية",
+  "sync.import.emergencyBackup": "كإجراء احترازي، سيحاول Flow عمل نسخ احتياطي للبيانات الحالية إلى جهازك قبل المتابعة",
+  "sync.import.emergencyBackup.successful": "تم عمل نسخة احتياطية للبيانات السابقة. يمكنك حفظ ملف النسخ الاحتياطي من النسخ الاحتياطي > سجل النسخ الاحتياطية",
+  "sync.import.start": "ابدأ الاستيراد",
+  "sync.import.zipWarning": "تأكد من استيراد ملف ZIP المنتج بواسطة تطبيق Flow!",
+  "sync.import.success": "تم الاستيراد بنجاح!",
+  "sync.export": "تصدير",
+  "sync.export.type": "تصدير ({type})",
+  "sync.export.asCSV": "كملف CSV",
+  "sync.export.asCSV.description": "لا يمكن استخدامه للاستعادة/الاستيراد! مثالي للفتح في برامج مثل Google Sheets",
+  "sync.export.asZIP": "كنسخة احتياطية (zip)",
+  "sync.export.asZIP.description": "يمكن استعادته بالكامل لاحقًا",
+  "sync.export.asJSON": "كنسخة احتياطية (json)",
+  "sync.export.asJSON.description": "يمكن استعادته جزئيًا. يستبعد البيانات غير الضرورية (مثل صورة الحساب)",
+  "sync.export.autoBackup": "النسخ الاحتياطي التلقائي",
+  "sync.export.autoBackup.iCloudAlreadySyncs": "إذا كنت تستخدم Flow على iOS أو macOS، سيتم مزامنة بياناتك مع iCloud",
+  "sync.export.onDeviceWarning": "جميع النسخ الاحتياطية مخزنة على الجهاز، مما يعني أنه عند إلغاء تثبيت Flow أو إعادة ضبط جهازك، ستختفي جميع النسخ الاحتياطية!",
+  "sync.export.history": "سجل النسخ الاحتياطية",
+  "sync.export.history.empty": "ليس لديك نسخ احتياطية",
+  "sync.export.history.empty.description": "سيتم سرد النسخ الاحتياطية التي تم إنشاؤها يدويًا وتلقائيًا هنا",
+  "sync.export.history.description": "عرض النسخ الاحتياطية التي قمت بإنشائها، والتي تم إنشاؤها تلقائيًا",
+  "sync.export.success": "تم التصدير بنجاح!",
+  "sync.export.success.filePath[0]": "تم الحفظ في ",
+  "sync.export.success.filePath[1]": "",
+  "sync.export.save": "حفظ النسخ الاحتياطي",
+  "sync.export.save.shareTitle": "نسخة احتياطية لـ Flow ({type}, {date})",
+  "sync.export.fileDeleted": "الملف غير موجود",
+  "enum.TransactionSubtype": "النوع",
+  "enum.TransactionSubtype#null": "افتراضي",
+  "enum.TransactionSubtype@transactionFee": "رسوم المعاملة",
+  "enum.TransactionSubtype@givenLoan": "قرض (مُمنوح)",
+  "enum.TransactionSubtype@receivedLoan": "قرض (مستلم)",
+  "enum.TransactionSubtype@updateBalance": "تحديث الرصيد",
+  "enum.TransactionType": "نوع المعاملة",
+  "enum.TransactionType@income": "إيراد",
+  "enum.TransactionType@expense": "مصروف",
+  "enum.TransactionType@transfer": "تحويل",
+  "enum.CSVHeadersV1": "رؤوس CSV",
+  "enum.CSVHeadersV1@uuid": "المعرف",
+  "enum.CSVHeadersV1@title": "العنوان",
+  "enum.CSVHeadersV1@notes": "الملاحظات",
+  "enum.CSVHeadersV1@amount": "المبلغ",
+  "enum.CSVHeadersV1@currency": "العملة",
+  "enum.CSVHeadersV1@account": "الحساب",
+  "enum.CSVHeadersV1@accountUuid": "معرف الحساب",
+  "enum.CSVHeadersV1@category": "الفئة",
+  "enum.CSVHeadersV1@categoryUuid": "معرف الفئة",
+  "enum.CSVHeadersV1@type": "النوع",
+  "enum.CSVHeadersV1@subtype": "فئة المعاملة",
+  "enum.CSVHeadersV1@createdDate": "تاريخ الإنشاء",
+  "enum.CSVHeadersV1@transactionDate": "تاريخ المعاملة",
+  "enum.CSVHeadersV1@latitude": "خط العرض",
+  "enum.CSVHeadersV1@longitude": "خط الطول",
+  "enum.CSVHeadersV1@extra": "إضافي (JSON)",
+  "enum.ImportV1Progress@waitingConfirmation": "في انتظار التأكيد",
+  "enum.ImportV1Progress@erasing": "يجري مسح البيانات الحالية",
+  "enum.ImportV1Progress@writingCategories": "يجري كتابة الفئات",
+  "enum.ImportV1Progress@writingAccounts": "يجري كتابة الحسابات",
+  "enum.ImportV1Progress@resolvingTransactions": "يجري فرز المعاملات",
+  "enum.ImportV1Progress@writingTransactions": "يجري كتابة المعاملات",
+  "enum.ImportV1Progress@success": "نجاح",
+  "enum.ImportV1Progress@error": "حدث خطأ ({error})",
+  "enum.ImportV2Progress@waitingConfirmation": "في انتظار التأكيد",
+  "enum.ImportV2Progress@erasing": "يجري مسح البيانات الحالية",
+  "enum.ImportV2Progress@writingCategories": "يجري كتابة الفئات",
+  "enum.ImportV2Progress@writingAccounts": "يجري كتابة الحسابات",
+  "enum.ImportV2Progress@resolvingTransactions": "يجري فرز المعاملات",
+  "enum.ImportV2Progress@writingTransactions": "يجري كتابة المعاملات",
+  "enum.ImportV2Progress@writingTranscationFilterPresets": "يجري كتابة إعدادات فلترة المعاملات",
+  "enum.ImportV2Progress@writingProfile": "يجري كتابة بيانات الملف الشخصي",
+  "enum.ImportV2Progress@writingUserPreferences": "يجري كتابة تفضيلات المستخدم",
+  "enum.ImportV2Progress@settingPrimaryCurrency": "يجري تحديد العملة الأساسية",
+  "enum.ImportV2Progress@copyingImages": "يجري نسخ الصور",
+  "enum.ImportV2Progress@success": "نجاح",
+  "enum.ImportV2Progress@error": "حدث خطأ ({error})",
+  "enum.BackupEntryType@manual": "يدوي",
+  "enum.BackupEntryType@manual.description": "نسخة احتياطية أنشأها المستخدم",
+  "enum.BackupEntryType@automated": "نسخة احتياطية تلقائية",
+  "enum.BackupEntryType@automated.description": "نسخة احتياطية أنشئت تلقائيًا (أي مجدولة)",
+  "enum.BackupEntryType@preAccountDeletion": "إجراء وقائي (قبل حذف الحساب)",
+  "enum.BackupEntryType@preAccountDeletion.description": "نسخة احتياطية أنشئت كإجراء وقائي قبل أن يقوم المستخدم بحذف الحساب",
+  "enum.BackupEntryType@preImport": "إجراء وقائي (قبل الاستيراد)",
+  "enum.BackupEntryType@preImport.description": "نسخة احتياطية أنشئت كإجراء وقائي قبل الاستيراد من نسخة احتياطية سابقة",
+  "enum.BackupEntryType@other": "نسخة احتياطية أخرى",
+  "enum.BackupEntryType@other.description": "نسخة احتياطية أخرى",
+  "enum.TransactionSearchMode": "وضع البحث",
+  "enum.TransactionSearchMode@smart": "ذكي",
+  "enum.TransactionSearchMode@substring": "مطابقة جزئية",
+  "enum.TransactionSearchMode@exact": "مطابقة تامة",
+  "enum.TransactionGroupRange": "وحدة التجميع",
+  "enum.TransactionGroupRange@hour": "ساعة",
+  "enum.TransactionGroupRange@day": "يوم",
+  "enum.TransactionGroupRange@week": "أسبوع",
+  "enum.TransactionGroupRange@month": "شهر",
+  "enum.TransactionGroupRange@year": "سنة",
+  "enum.TransactionGroupRange@allTime": "كل الوقت",
+  "enum.TransactionFilterRangePreset@last30Days": "آخر 30 يومًا",
+  "enum.TransactionFilterRangePreset@thisWeek": "هذا الأسبوع",
+  "enum.TransactionFilterRangePreset@thisMonth": "هذا الشهر",
+  "enum.TransactionFilterRangePreset@thisYear": "هذا العام",
+  "enum.TransactionFilterRangePreset@allTime": "كل الوقت",
+  "error.route.404": "الصفحة غير موجودة",
+  "error.route.400": "فشل في تحميل الصفحة",
+  "error.input.mustBeNotEmpty": "يرجى ملء هذا الحقل",
+  "error.input.duplicate.accountName": "الاسم \"{}\" مستخدم بالفعل. جرب اسمًا مختلفًا.",
+  "error.input.noFilePicked": "لم يتم اختيار ملف",
+  "error.input.noImagePicked": "لم يتم اختيار صورة",
+  "error.input.cropFailed": "حدث خطأ أثناء قص الصورة",
+  "error.input.wrongFileType": "يرجى اختيار ملف من نوع {type}",
+  "error.input.invalidZip": "ملف ZIP غير صالح لـ Flow",
+  "error.sync.invalidBackupFile": "ملف نسخ احتياطي غير صالح",
+  "error.input.pasteFormatMismatch": "غير قادر على التحليل",
+  "error.sync.safetyBackupFailed": "غير قادر على بدء الاستيراد",
+  "error.sync.exportFailed": "فشل في التصدير، يرجى الاتصال بالمطور.",
+  "error.sync.fileDeleteFailed": "حدث خطأ أثناء حذف النسخة الاحتياطية",
+  "error.transaction.missingAccount": "يرجى اختيار حساب",
+  "error.url.cannotOpen": "لا يمكن فتح الرابط",
+  "error.exchangeRates.inaccurateDataDueToMissingRates": "فشل في جلب أسعار الصرف، قد لا تكون بيانات المعاملات دقيقة تمامًا",
+  "error.exchangeRates.cannotFetch": "فشل في الجلب، يرجى التحقق من اتصالك بالإنترنت.",
+  "error.failedLocalAuth": "فشل التوثيق، يرجى المحاولة مرة أخرى."
+}
