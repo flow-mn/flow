@@ -1,5 +1,10 @@
+import "dart:convert";
+import "dart:io";
+
+import "package:csv/csv.dart";
 import "package:flow/sync/model/csv/csv_parsed_transaction.dart";
 import "package:flow/sync/model/csv/parsers.dart";
+import "package:flow/utils/line_break_normalizer.dart";
 
 class CSVParsedData {
   /// `null` for irrelevant columns
@@ -86,5 +91,18 @@ class CSVParsedData {
     }
 
     return value;
+  }
+
+  static Future<CSVParsedData> fromFile(File file) async {
+    final Stream<List<int>> readStream = file.openRead();
+
+    final List<List<dynamic>> rows =
+        await readStream
+            .transform(utf8.decoder)
+            .transform(LineBreakNormalizer())
+            .transform(CsvToListConverter(eol: LineBreakNormalizer.terminator))
+            .toList();
+
+    return CSVParsedData(rows);
   }
 }

@@ -1,0 +1,21 @@
+flow_title,flow_notes,flow_account_name,flow_amount,flow_date_of_transaction,flow_time_of_transaction_optional,flow_date_of_transaction_iso_8601,flow_category_optional
+iCloud+,,Golomt bank,-250.00,2024-02-24,13:58:24,,Online expenses
+Salary,Received it little early due to upcoming holidays,Golomt bank,680,2025.3.24,01:13 p.m.,,Paycheck
+Keychron K8,,Savings,-89.2,2025.3.26,21:00:00,,Shopping
+From Main to Savings,,Main,-250,,,2025-03-14T08:25:56.887Z,
+From Main to Savings,,Savings,250,,,2025-03-14T08:25:56.887Z,
+Gift for Stella,,Main,-99.01,,,2025-03-14T08:25:56.494Z,Gifts
+Paycheck (last month),,Main,680.98,,,2025-03-14T08:25:56.485Z,Paycheck
+Iced Mocha,,Main,-6.5,,,2025-03-13T08:25:56.475Z,Drinks & Beverages
+Iced Mocha,,Main,-6.5,,,2025-03-12T08:25:56.466Z,Drinks & Beverages
+Iced Mocha,,Main,-6.5,,,2025-03-11T08:25:56.457Z,Drinks & Beverages
+Netflix,,Main,-15.49,,,2025-03-11T08:25:56.447Z,Online subscriptions
+iCloud,,Main,-1.99,,,2025-03-11T08:25:56.437Z,Online subscriptions
+Initial balance,,Main,420.69,,,2025-03-10T08:25:56.419Z,
+Rent,,Savings,-1960,,,2025-03-09T08:25:56.512Z,Rent
+Savings initial balance,,Savings,69420,,,2025-03-09T08:25:56.503Z,
+A transfer,,Savings,-500,,,2025-03-09T08:25:56.503Z,
+This doesn't matter,doesn't matter,Main,500,,,2025-03-09T08:25:56.503Z,
+Ice cream,,Main,-6570,,,2025-03-15T07:25:56.503Z,Food
+Another transfer,,Savings,6541,,,2025-03-15T07:25:59.503Z,
+Another transfer,,Golomt bank,-6541,,,2025-03-15T07:25:58.503Z,
