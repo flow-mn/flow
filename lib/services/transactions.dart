@@ -354,7 +354,12 @@ class TransactionsService {
       await Future.wait(
         pendingTransactions.map(
           (transaction) => NotificationsService()
-              .scheduleForPlannedTransaction(transaction)
+              .scheduleForPlannedTransaction(transaction, earlyReminder)
+              .then((_) {
+                _log.info(
+                  "Scheduled early reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid}",
+                );
+              })
               .catchError((error) {
                 _log.warning(
                   "Failed to schedule an early reminder notification for transaction ${transaction.uuid}",
@@ -362,13 +367,7 @@ class TransactionsService {
                 );
               }),
         ),
-      ).catchError((error) {
-        _log.warning(
-          "Scheduling early reminder for one or more transactions have been failed",
-          error,
-        );
-        return [];
-      });
+      );
     }
   }
 
