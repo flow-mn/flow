@@ -235,6 +235,10 @@ class NotificationsService {
               id: transaction.uuid,
             ).serialized,
       );
+
+      _log.info(
+        "Scheduled a reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${dateTime.toString()}",
+      );
     } catch (e) {
       _log.warning("Failed to schedule notification", e);
     }
@@ -356,7 +360,7 @@ class NotificationsService {
                 id: null,
               ).serialized,
         );
-        _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
+        _log.info("Scheduled a reminder at ${dateTime.toString()}, $i");
       } catch (e) {
         _log.warning("Failed to schedule notification", e);
       }

@@ -30,8 +30,8 @@ void nonImportantMigrateProfileImagePath() async {
     await old.copy(path.join(ObjectBox.imagesDirectory, "$profileUuid.png"));
 
     await old.delete();
-  } catch (e, stackTrace) {
-    _log.info("Failed to migrate profile image path", e, stackTrace);
+  } catch (e) {
+    _log.info("Cannot migrate old profile, ignoring", e);
   }
 }
 
