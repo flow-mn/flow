@@ -1,6 +1,9 @@
+import "dart:async";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -42,6 +45,9 @@ class _PendingTransactionPreferencesPageState
   @override
   void dispose() {
     _listener.dispose();
+
+    unawaited(TransactionsService().synchronizeNotifications());
+
     super.dispose();
   }
 
