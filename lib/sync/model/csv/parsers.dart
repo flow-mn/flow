@@ -1,5 +1,4 @@
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/utils/utils.dart";
 import "package:logging/logging.dart";
 
 final Logger _log = Logger("CSVCellParser");
@@ -62,15 +61,9 @@ class DateParser implements CSVCellParser<DateTime> {
     try {
       final RegExpMatch match = dateRegex.allMatches(cell).single;
 
-      final int y = int.parse(
-        match.namedGroup("y")?.withoutLeadingZeroes ?? "~",
-      );
-      final int m = int.parse(
-        match.namedGroup("m")?.withoutLeadingZeroes ?? "~",
-      );
-      final int d = int.parse(
-        match.namedGroup("d")?.withoutLeadingZeroes ?? "~",
-      );
+      final int y = int.parse(match.namedGroup("y") ?? "~");
+      final int m = int.parse(match.namedGroup("m") ?? "~");
+      final int d = int.parse(match.namedGroup("d") ?? "~");
 
       if (m < 1 || m > 12) throw "bad month part";
       if (d < 1 || d > 31) throw "bad day part";
@@ -99,15 +92,9 @@ class TimeParser implements CSVCellParser<(int, int, int?)> {
     try {
       final RegExpMatch match = timeRegex.allMatches(cell).single;
 
-      final int rawH = int.parse(
-        match.namedGroup("h")?.withoutLeadingZeroes ?? "~",
-      );
-      final int m = int.parse(
-        match.namedGroup("m")?.withoutLeadingZeroes ?? "~",
-      );
-      final int? s = int.tryParse(
-        match.namedGroup("s")?.withoutLeadingZeroes ?? "~",
-      );
+      final int rawH = int.parse(match.namedGroup("h") ?? "~");
+      final int m = int.parse(match.namedGroup("m") ?? "~");
+      final int? s = int.tryParse(match.namedGroup("s") ?? "~");
 
       if (rawH < 0) throw "bad hour part";
 
@@ -138,10 +125,7 @@ class AmountParser implements CSVCellParser<double> {
   @override
   double parse(String cell) {
     try {
-      final String normalized = cell.trim().withoutLeadingZeroes.replaceAll(
-        r"[^\d.e+-]",
-        "",
-      );
+      final String normalized = cell.trim().replaceAll(r"[^\d.e+-]", "");
       return double.parse(normalized);
     } catch (e) {
       _log.severe("Cannot parse amount - $cell");

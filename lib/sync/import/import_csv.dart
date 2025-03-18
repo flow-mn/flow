@@ -181,6 +181,7 @@ class ImportCSV extends Importer {
           return transaction;
         }).toList();
 
+    // Transfers
     for (int i = 0; i < transformedTransactions.length; i++) {
       final Transaction? previousTransaction =
           i > 0 ? transformedTransactions[i - 1] : null;
@@ -202,13 +203,23 @@ class ImportCSV extends Importer {
         continue;
       }
 
-      previousTransaction.account.target!.transferTo(
-        amount: previousTransaction.amount,
-        targetAccount: transaction.account.target!,
-        transactionDate: previousTransaction.transactionDate,
-        title: previousTransaction.title,
-        description: previousTransaction.description,
-      );
+      if (previousTransaction.amount < 0) {
+        previousTransaction.account.target!.transferTo(
+          amount: previousTransaction.amount,
+          targetAccount: transaction.account.target!,
+          transactionDate: previousTransaction.transactionDate,
+          title: previousTransaction.title,
+          description: previousTransaction.description,
+        );
+      } else {
+        transaction.account.target!.transferTo(
+          amount: transaction.amount,
+          targetAccount: previousTransaction.account.target!,
+          transactionDate: transaction.transactionDate,
+          title: transaction.title,
+          description: transaction.description,
+        );
+      }
 
       transformedTransactions[i].uuid = Namespace.nil.value;
       transformedTransactions[i - 1].uuid = Namespace.nil.value;
