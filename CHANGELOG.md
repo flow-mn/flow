@@ -10,6 +10,7 @@
 
 * Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
 * Account tab total income/expense no longer includes deleted transactions
+* Early reminders now work correctly
 
 ### Changes and improvements
 
