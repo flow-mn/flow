@@ -203,9 +203,9 @@ class ImportCSV extends Importer {
         continue;
       }
 
-      if (previousTransaction.amount < 0) {
+      if (previousTransaction.amount <= 0) {
         previousTransaction.account.target!.transferTo(
-          amount: previousTransaction.amount,
+          amount: previousTransaction.amount.abs(),
           targetAccount: transaction.account.target!,
           transactionDate: previousTransaction.transactionDate,
           title: previousTransaction.title,
@@ -213,7 +213,7 @@ class ImportCSV extends Importer {
         );
       } else {
         transaction.account.target!.transferTo(
-          amount: transaction.amount,
+          amount: transaction.amount.abs(),
           targetAccount: previousTransaction.account.target!,
           transactionDate: transaction.transactionDate,
           title: transaction.title,

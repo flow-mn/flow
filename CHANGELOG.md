@@ -8,6 +8,7 @@
 * Now you can import from CSVs. (This doesn't support multi-currency transactions for the same account)
   * See template on Google Sheets: <https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing>
   * You can use another software as long as you provide CSV. All major spreadsheet software supports it.
+* Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
 
 ### Fixes
 
