@@ -58,8 +58,7 @@ class UserPreferences implements EntityBase {
   int? remindDailyAtRelativeSeconds;
 
   bool useCategoryNameForUntitledTransactions;
-
-  bool ignoreTitlesInRecordFlow;
+  bool showCategoryInListTile;
 
   UserPreferences({
     this.id = 0,
@@ -67,7 +66,7 @@ class UserPreferences implements EntityBase {
     this.combineTransfers = true,
     this.excludeTransfersFromFlow = true,
     this.useCategoryNameForUntitledTransactions = false,
-    this.ignoreTitlesInRecordFlow = false,
+    this.showCategoryInListTile = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
   }) : uuid = const Uuid().v4();

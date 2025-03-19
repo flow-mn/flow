@@ -1,6 +1,8 @@
 import "dart:io";
 
+import "package:path/path.dart" as path;
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class DebugLogPage extends StatefulWidget {
@@ -25,7 +27,13 @@ class _DebugLogPageState extends State<DebugLogPage> {
     contents = file.readAsString();
     _controller = ScrollController(
       onAttach: (_) {
-        _controller.jumpTo(_controller.position.maxScrollExtent);
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          try {
+            _controller.jumpTo(_controller.position.maxScrollExtent);
+          } catch (e) {
+            // Silent fail
+          }
+        });
       },
     );
   }
@@ -39,7 +47,7 @@ class _DebugLogPageState extends State<DebugLogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Log - ${widget.path}")),
+      appBar: AppBar(title: Text(path.basename(widget.path ?? "unknown.log"))),
       body: FutureBuilder<String>(
         future: contents,
         builder: (context, snapshot) {

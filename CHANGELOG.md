@@ -22,6 +22,8 @@
 * CSV no longer includes deleted transactions
 * CSV now includes ISO 8601 format transaction date
 * UX enhancements regarding setup flow
+* Profile tab now shows pending and deleted transactions
+* Added an option show category name for untitled transactions
 
 ## Beta 0.12.2
 

@@ -2,9 +2,12 @@ import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/user_preferences.dart";
+import "package:flow/widgets/add_category_card.dart";
 import "package:flow/widgets/categories/no_categories.dart";
 import "package:flow/widgets/category_card.dart";
-import "package:flow/widgets/add_category_card.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 
@@ -16,8 +19,31 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
+  late bool usesSingleCurrency;
+
   QueryBuilder<Category> qb() =>
       ObjectBox().box<Category>().query().order(Category_.createdDate);
+
+  @override
+  void initState() {
+    super.initState();
+    TransitiveLocalPreferences().transitiveUsesSingleCurrency.addListener(
+      _updateUsesSingleCurrency,
+    );
+    _updateUsesSingleCurrency();
+
+    if (!usesSingleCurrency) {
+      ExchangeRatesService().getPrimaryCurrencyRates();
+    }
+  }
+
+  @override
+  void dispose() {
+    TransitiveLocalPreferences().transitiveUsesSingleCurrency.removeListener(
+      _updateUsesSingleCurrency,
+    );
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,28 +63,57 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
             return switch (categories.length) {
               0 => const NoCategories(),
-              _ => SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 16.0),
-                      child: AddCategoryCard(),
-                    ),
-                    ...categories.map(
-                      (category) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: CategoryCard(category: category),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                  ],
-                ),
+              _ => ValueListenableBuilder(
+                valueListenable: ExchangeRatesService().exchangeRatesCache,
+                builder: (context, exchangeRatesCache, _) {
+                  return ValueListenableBuilder(
+                    valueListenable: UserPreferencesService().valueNotiifer,
+                    builder: (context, userPreferences, child) {
+                      final bool excludeTransfersInTotal =
+                          userPreferences.excludeTransfersFromFlow;
+                      final String primaryCurrency =
+                          LocalPreferences().getPrimaryCurrency();
+
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 16.0),
+                              child: AddCategoryCard(),
+                            ),
+                            ...categories.map(
+                              (category) => Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: CategoryCard(
+                                  category: category,
+                                  excludeTransfersInTotal:
+                                      excludeTransfersInTotal,
+                                  rates: exchangeRatesCache?.get(
+                                    primaryCurrency,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16.0),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             };
           },
         ),
       ),
     );
+  }
+
+  void _updateUsesSingleCurrency() {
+    setState(() {
+      usesSingleCurrency =
+          TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
+    });
   }
 }

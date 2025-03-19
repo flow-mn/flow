@@ -71,15 +71,12 @@ class TransactionListTile extends StatelessWidget {
       return Container();
     }
 
-    final bool missingTitle = transaction.title?.isNotEmpty == false;
-
     final String resolvedTitle =
-        missingTitle
-            ? ((useCategoryNameForUntitledTransactions
-                    ? transaction.category.target?.name
-                    : null) ??
-                "transaction.fallbackTitle".t(context))
-            : transaction.title!;
+        transaction.title ??
+        ((useCategoryNameForUntitledTransactions
+                ? transaction.category.target?.name
+                : null) ??
+            "transaction.fallbackTitle".t(context));
 
     final Transfer? transfer =
         transaction.isTransfer ? transaction.extensions.transfer : null;

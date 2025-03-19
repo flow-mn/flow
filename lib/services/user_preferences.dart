@@ -56,11 +56,11 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
-  bool get ignoreTitlesInRecordFlow => value.ignoreTitlesInRecordFlow;
-  set ignoreTitlesInRecordFlow(bool newIgnoreTitlesInRecordFlow) {
+  bool get showCategoryInListTile => value.showCategoryInListTile;
+  set showCategoryInListTile(bool newShowCategoryInListTile) {
     if (value.id == 0) return;
 
-    value.ignoreTitlesInRecordFlow = newIgnoreTitlesInRecordFlow;
+    value.showCategoryInListTile = newShowCategoryInListTile;
     ObjectBox().box<UserPreferences>().put(value);
   }
 

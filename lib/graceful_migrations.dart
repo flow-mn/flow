@@ -1,89 +1,58 @@
-import "dart:io";
-
-import "package:flow/entity/profile.dart";
-import "package:flow/entity/user_preferences.dart";
+import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:logging/logging.dart";
-import "package:path/path.dart" as path;
 import "package:shared_preferences/shared_preferences.dart";
 
 final Logger _log = Logger("GracefulMigrations");
 
-void nonImportantMigrateProfileImagePath() async {
+void migrateRemoveTitleFromUntitledTransactions() async {
+  const String migrationUuid = "1504cb1e-2dff-4912-8f1a-04a83d83c32a";
+
   try {
-    final String? profileUuid =
-        ObjectBox().box<Profile>().getAll().firstOrNull?.uuid;
+    final SharedPreferencesWithCache prefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
 
-    if (profileUuid == null) {
-      throw "Profile UUID is null";
+    final ok = prefs.getString("flow.migration.$migrationUuid");
+
+    if (ok != null) return;
+
+    try {
+      final String exactUntitled = "transaction.fallbackTitle".tr();
+
+      Query<Transaction> untitleds =
+          ObjectBox()
+              .box<Transaction>()
+              .query(Transaction_.title.equals(exactUntitled))
+              .build();
+
+      final List<Transaction> transactions = untitleds.find();
+
+      _log.info(
+        "Migrating ${transactions.length} transactions for migration $migrationUuid",
+      );
+
+      await ObjectBox().box<Transaction>().putManyAsync(
+        transactions.map((t) {
+          t.title = null;
+          return t;
+        }).toList(),
+      );
+
+      await prefs.setString("flow.migration.$migrationUuid", "ok");
+    } catch (e) {
+      _log.warning(
+        "Failed to migrate transactions for migration $migrationUuid",
+        e,
+      );
     }
-
-    final File old = File(
-      path.join(ObjectBox.appDataDirectory, "$profileUuid.png"),
-    );
-
-    if (!old.existsSync()) {
-      throw "Old profile image path doesn't exist";
-    }
-
-    await old.copy(path.join(ObjectBox.imagesDirectory, "$profileUuid.png"));
-
-    await old.delete();
   } catch (e) {
-    _log.info("Cannot migrate old profile, ignoring", e);
-  }
-}
-
-void migrateLocalPrefsRequirePendingTransactionConfrimation() async {
-  try {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool? oldValue = prefs.getBool(
-      "flow.requirePendingTransactionConfrimation",
-    );
-
-    if (oldValue == null) return;
-
-    await LocalPreferences().pendingTransactions.requireConfrimation.set(
-      oldValue,
-    );
-  } catch (e, stackTrace) {
-    _log.info(
-      "Failed to migrate requirePendingTransactionConfrimation",
-      e,
-      stackTrace,
-    );
-  }
-}
-
-void migrateLocalPrefsUserPreferencesRegardingTransferStuff() async {
-  try {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    final bool? combineTransfers = prefs.getBool(
-      "flow.combineTransferTransactions",
-    );
-    final bool? excludeTransfersFromFlow = prefs.getBool(
-      "flow.excludeTransferFromFlow",
-    );
-
-    final UserPreferences userPreferences =
-        ObjectBox().box<UserPreferences>().getAll().firstOrNull ??
-        UserPreferences();
-
-    if (combineTransfers != null) {
-      userPreferences.combineTransfers = combineTransfers;
-    }
-    if (excludeTransfersFromFlow != null) {
-      userPreferences.excludeTransfersFromFlow = excludeTransfersFromFlow;
-    }
-
-    ObjectBox().box<UserPreferences>().put(userPreferences);
-  } catch (e, stackTrace) {
     _log.warning(
-      "Failed to migrate user preferences regarding transfer stuff",
+      "Failed to read migration status for migration $migrationUuid",
       e,
-      stackTrace,
     );
   }
 }

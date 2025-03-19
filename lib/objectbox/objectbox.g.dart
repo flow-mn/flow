@@ -387,7 +387,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(7, 2985299148024776274),
+    lastPropertyId: const obx_int.IdUid(9, 577162958135049929),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -431,6 +431,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(7, 2985299148024776274),
         name: 'remindDailyAtRelativeSeconds',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 8609498027521636604),
+        name: 'useCategoryNameForUntitledTransactions',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 577162958135049929),
+        name: 'showCategoryInListTile',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1015,7 +1027,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(8);
+        fbb.startTable(10);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1023,6 +1035,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(4, defaultFilterPresetOffset);
         fbb.addInt64(5, object.trashBinRetentionDays);
         fbb.addInt64(6, object.remindDailyAtRelativeSeconds);
+        fbb.addBool(7, object.useCategoryNameForUntitledTransactions);
+        fbb.addBool(8, object.showCategoryInListTile);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1047,6 +1061,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
+        final useCategoryNameForUntitledTransactionsParam =
+            const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
+        final showCategoryInListTileParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          20,
+          false,
+        );
         final trashBinRetentionDaysParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
@@ -1057,6 +1079,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 id: idParam,
                 combineTransfers: combineTransfersParam,
                 excludeTransfersFromFlow: excludeTransfersFromFlowParam,
+                useCategoryNameForUntitledTransactions:
+                    useCategoryNameForUntitledTransactionsParam,
+                showCategoryInListTile: showCategoryInListTileParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
               )
@@ -1366,4 +1391,12 @@ class UserPreferences_ {
   /// See [UserPreferences.remindDailyAtRelativeSeconds].
   static final remindDailyAtRelativeSeconds =
       obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[6]);
+
+  /// See [UserPreferences.useCategoryNameForUntitledTransactions].
+  static final useCategoryNameForUntitledTransactions =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[7]);
+
+  /// See [UserPreferences.showCategoryInListTile].
+  static final showCategoryInListTile =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[8]);
 }
