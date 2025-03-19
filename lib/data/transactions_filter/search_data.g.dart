@@ -31,4 +31,5 @@ const _$TransactionSearchModeEnumMap = {
   TransactionSearchMode.smart: 'smart',
   TransactionSearchMode.substring: 'substring',
   TransactionSearchMode.exact: 'exact',
+  TransactionSearchMode.none: 'none',
 };
