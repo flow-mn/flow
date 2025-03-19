@@ -390,6 +390,7 @@
     "sync.export.success.filePath[1]": "-т хадгаллаа",
     "sync.export.save": "Нөөц хадгалах",
     "sync.export.save.shareTitle": "Flow нөөц ({type}, {date})",
+    "sync.export.savedTo": "Файлыг {path}-д хадгаллаа",
     "sync.export.fileDeleted": "Файл олдсонгүй",
 
     "enum.TransactionSubtype": "Төрөл",

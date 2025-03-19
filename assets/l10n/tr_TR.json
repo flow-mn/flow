@@ -390,6 +390,7 @@
     "sync.export.success.filePath[1]": "",
     "sync.export.save": "Yedeklemeyi kaydet",
     "sync.export.save.shareTitle": "Flow yedekleme ({type}, {date})",
+    "sync.export.savedTo": "Kaydedildiği yer {path}",
     "sync.export.fileDeleted": "Dosya bulunamadı",
 
     "enum.TransactionSubtype": "Tür",

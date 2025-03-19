@@ -390,6 +390,7 @@
     "sync.export.success.filePath[1]": "",
     "sync.export.save": "Enregistrer la sauvegarde",
     "sync.export.save.shareTitle": "Sauvegarde Flow ({type}, {date})",
+    "sync.export.savedTo": "Enregistré dans {path}",
     "sync.export.fileDeleted": "Fichier non trouvé",
 
     "enum.TransactionSubtype": "Type",

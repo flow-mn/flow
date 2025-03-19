@@ -390,6 +390,7 @@
     "sync.export.success.filePath[1]": "",
     "sync.export.save": "حفظ النسخ الاحتياطي",
     "sync.export.save.shareTitle": "نسخة احتياطية لـ Flow ({type}, {date})",
+    "sync.export.savedTo": "تم الحفظ في {path}",
     "sync.export.fileDeleted": "الملف غير موجود",
 
     "enum.TransactionSubtype": "النوع",
