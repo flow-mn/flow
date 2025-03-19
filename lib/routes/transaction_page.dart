@@ -21,6 +21,7 @@ import "package:flow/routes/new_transaction/select_category_sheet.dart";
 import "package:flow/routes/new_transaction/title_input.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -599,7 +600,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (!mounted) return;
 
-    if (widget.isNewTransaction && result != null) {
+    if (widget.isNewTransaction &&
+        result != null &&
+        !UserPreferencesService().ignoreTitlesInRecordFlow) {
       FocusScope.of(context).requestFocus(_titleFocusNode);
     }
   }
@@ -823,7 +826,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void update({
-    required String formattedTitle,
+    required String? formattedTitle,
     required String? formattedDescription,
   }) async {
     if (_currentlyEditing == null) return;
@@ -890,8 +893,8 @@ class _TransactionPageState extends State<TransactionPage> {
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     final String trimmedTitle = _titleController.text.trim();
-    final String formattedTitle =
-        trimmedTitle.isNotEmpty ? trimmedTitle : fallbackTitle;
+    final String? formattedTitle =
+        trimmedTitle.isNotEmpty ? trimmedTitle : null;
 
     final String trimmedDescription = _descriptionController.text.trim();
     final String? formattedDescription =

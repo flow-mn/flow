@@ -117,6 +117,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     final bool combineTransfers =
         widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
+    final bool useCategoryNameForUntitledTransactions =
+        UserPreferencesService().useCategoryNameForUntitledTransactions;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -166,6 +168,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
         duplicateFn: () => transaction.duplicate(),
         overrideObscure: widget.overrideObscure,
         groupRange: widget.groupBy,
+        useCategoryNameForUntitledTransactions:
+            useCategoryNameForUntitledTransactions,
       ),
       (_) => Container(),
     };

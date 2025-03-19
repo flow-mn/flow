@@ -31,13 +31,17 @@ abstract class CSVCellParser<T> {
   T parse(String cell);
 
   CSVParserColumn get column;
+  int get row;
 }
 
 class StringParser implements CSVCellParser<String> {
   @override
   final CSVParserColumn column;
 
-  const StringParser(this.column);
+  @override
+  final int row;
+
+  const StringParser(this.column, this.row);
 
   @override
   String parse(String cell) {
@@ -54,7 +58,10 @@ class DateParser implements CSVCellParser<DateTime> {
   @override
   final CSVParserColumn column;
 
-  const DateParser(this.column);
+  @override
+  final int row;
+
+  const DateParser(this.column, this.row);
 
   @override
   DateTime parse(String cell) {
@@ -70,7 +77,7 @@ class DateParser implements CSVCellParser<DateTime> {
 
       return DateTime(y, m, d);
     } catch (e) {
-      _log.severe("Cannot parse regular date - $cell");
+      _log.severe("Cannot parse regular date on row $row - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -85,7 +92,10 @@ class TimeParser implements CSVCellParser<(int, int, int?)> {
   @override
   final CSVParserColumn column;
 
-  const TimeParser(this.column);
+  @override
+  final int row;
+
+  const TimeParser(this.column, this.row);
 
   @override
   (int, int, int?) parse(String cell) {
@@ -110,7 +120,7 @@ class TimeParser implements CSVCellParser<(int, int, int?)> {
 
       return (h, m, s);
     } catch (e) {
-      _log.severe("Cannot parse regular time - $cell");
+      _log.severe("Cannot parse regular time on row $row - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -120,7 +130,10 @@ class AmountParser implements CSVCellParser<double> {
   @override
   final CSVParserColumn column;
 
-  const AmountParser(this.column);
+  @override
+  final int row;
+
+  const AmountParser(this.column, this.row);
 
   @override
   double parse(String cell) {
@@ -128,7 +141,7 @@ class AmountParser implements CSVCellParser<double> {
       final String normalized = cell.trim().replaceAll(r"[^\d.e+-]", "");
       return double.parse(normalized);
     } catch (e) {
-      _log.severe("Cannot parse amount - $cell");
+      _log.severe("Cannot parse amount on row $row - $cell");
       throw CSVCellParserError.invalidAmount;
     }
   }
@@ -138,14 +151,17 @@ class ISO8601DateParser implements CSVCellParser<DateTime> {
   @override
   final CSVParserColumn column;
 
-  const ISO8601DateParser(this.column);
+  @override
+  final int row;
+
+  const ISO8601DateParser(this.column, this.row);
 
   @override
   DateTime parse(String cell) {
     try {
       return DateTime.parse(cell);
     } catch (e) {
-      _log.severe("Cannot parse iso8601 date - $cell");
+      _log.severe("Cannot parse iso8601 date on row $row - $cell");
       throw CSVCellParserError.invalidDate;
     }
   }

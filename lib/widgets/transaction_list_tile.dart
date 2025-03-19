@@ -30,6 +30,8 @@ class TransactionListTile extends StatelessWidget {
 
   final bool? overrideObscure;
 
+  final bool useCategoryNameForUntitledTransactions;
+
   /// Determines what date/time to show. i.e.:
   ///
   /// * [TransactionGroupRange.hour] - Hour and minute
@@ -53,6 +55,7 @@ class TransactionListTile extends StatelessWidget {
     this.duplicateFn,
     this.dismissibleKey,
     this.overrideObscure,
+    this.useCategoryNameForUntitledTransactions = false,
   });
 
   @override
@@ -68,7 +71,15 @@ class TransactionListTile extends StatelessWidget {
       return Container();
     }
 
-    final bool missingTitle = transaction.title == null;
+    final bool missingTitle = transaction.title?.isNotEmpty == false;
+
+    final String resolvedTitle =
+        missingTitle
+            ? ((useCategoryNameForUntitledTransactions
+                    ? transaction.category.target?.name
+                    : null) ??
+                "transaction.fallbackTitle".t(context))
+            : transaction.title!;
 
     final Transfer? transfer =
         transaction.isTransfer ? transaction.extensions.transfer : null;
@@ -115,12 +126,7 @@ class TransactionListTile extends StatelessWidget {
                               ),
                               TextSpan(text: " "),
                             ],
-                            TextSpan(
-                              text:
-                                  (missingTitle
-                                      ? "transaction.fallbackTitle".t(context)
-                                      : transaction.title!),
-                            ),
+                            TextSpan(text: resolvedTitle),
                           ],
                           style: context.textTheme.bodyMedium,
                         ),

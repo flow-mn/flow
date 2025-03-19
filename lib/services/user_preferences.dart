@@ -44,6 +44,26 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get useCategoryNameForUntitledTransactions =>
+      value.useCategoryNameForUntitledTransactions;
+  set useCategoryNameForUntitledTransactions(
+    bool newUseCategoryNameForUntitledTransactions,
+  ) {
+    if (value.id == 0) return;
+
+    value.useCategoryNameForUntitledTransactions =
+        newUseCategoryNameForUntitledTransactions;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get ignoreTitlesInRecordFlow => value.ignoreTitlesInRecordFlow;
+  set ignoreTitlesInRecordFlow(bool newIgnoreTitlesInRecordFlow) {
+    if (value.id == 0) return;
+
+    value.ignoreTitlesInRecordFlow = newIgnoreTitlesInRecordFlow;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   String? get defaultFilterPresetUuid => value.defaultFilterPreset;
   set defaultFilterPresetUuid(String? uuid) {
     if (value.id == 0) return;
