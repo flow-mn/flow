@@ -28,23 +28,19 @@ enum CSVParserColumn {
 
 /// https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing
 abstract class CSVCellParser<T> {
-  T parse(String cell);
+  T parse(String cell, {int? row});
 
   CSVParserColumn get column;
-  int get row;
 }
 
 class StringParser implements CSVCellParser<String> {
   @override
   final CSVParserColumn column;
 
-  @override
-  final int row;
-
-  const StringParser(this.column, this.row);
+  const StringParser(this.column);
 
   @override
-  String parse(String cell) {
+  String parse(String cell, {int? row}) {
     return cell.trim();
   }
 }
@@ -58,13 +54,10 @@ class DateParser implements CSVCellParser<DateTime> {
   @override
   final CSVParserColumn column;
 
-  @override
-  final int row;
-
-  const DateParser(this.column, this.row);
+  const DateParser(this.column);
 
   @override
-  DateTime parse(String cell) {
+  DateTime parse(String cell, {int? row}) {
     try {
       final RegExpMatch match = dateRegex.allMatches(cell).single;
 
@@ -92,13 +85,10 @@ class TimeParser implements CSVCellParser<(int, int, int?)> {
   @override
   final CSVParserColumn column;
 
-  @override
-  final int row;
-
-  const TimeParser(this.column, this.row);
+  const TimeParser(this.column);
 
   @override
-  (int, int, int?) parse(String cell) {
+  (int, int, int?) parse(String cell, {int? row}) {
     try {
       final RegExpMatch match = timeRegex.allMatches(cell).single;
 
@@ -130,13 +120,10 @@ class AmountParser implements CSVCellParser<double> {
   @override
   final CSVParserColumn column;
 
-  @override
-  final int row;
-
-  const AmountParser(this.column, this.row);
+  const AmountParser(this.column);
 
   @override
-  double parse(String cell) {
+  double parse(String cell, {int? row}) {
     try {
       final String normalized = cell.trim().replaceAll(r"[^\d.e+-]", "");
       return double.parse(normalized);
@@ -151,13 +138,10 @@ class ISO8601DateParser implements CSVCellParser<DateTime> {
   @override
   final CSVParserColumn column;
 
-  @override
-  final int row;
-
-  const ISO8601DateParser(this.column, this.row);
+  const ISO8601DateParser(this.column);
 
   @override
-  DateTime parse(String cell) {
+  DateTime parse(String cell, {int? row}) {
     try {
       return DateTime.parse(cell);
     } catch (e) {
