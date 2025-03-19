@@ -48,7 +48,11 @@ class CSVParsedData {
     transactions =
         data
             .sublist(1)
-            .map((row) => CSVParsedTransaction.parse(row, orderedParserList))
+            .indexed
+            .map(
+              (row) =>
+                  CSVParsedTransaction.parse(row.$2, orderedParserList, row.$1),
+            )
             .toList();
   }
 
