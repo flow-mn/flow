@@ -7,7 +7,8 @@
 * Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
 * Now you can import from CSVs. (This doesn't support multi-currency transactions for the same account)
   * See template on Google Sheets: <https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing>
-  * You can use another software as long as you provide CSV. All major spreadsheet software supports it.
+
+    The template cells will turn red if you provide incorrect datetime format
 * Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
 
 ### Fixes
@@ -25,7 +26,7 @@
 * CSV now includes ISO 8601 format transaction date
 * UX enhancements regarding setup flow
 * Profile tab now shows pending and deleted transactions
-* Added an option show category name for untitled transactions
+* Added an option show category name for untitled transactions, closes [#416](https://github.com/flow-mn/flow/issues/416)
 
 ## Beta 0.12.2
 
