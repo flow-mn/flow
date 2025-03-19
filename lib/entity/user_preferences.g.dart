@@ -11,6 +11,10 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         combineTransfers: json['combineTransfers'] as bool? ?? true,
         excludeTransfersFromFlow:
             json['excludeTransfersFromFlow'] as bool? ?? true,
+        useCategoryNameForUntitledTransactions:
+            json['useCategoryNameForUntitledTransactions'] as bool? ?? false,
+        showCategoryInListTile:
+            json['showCategoryInListTile'] as bool? ?? false,
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
@@ -27,4 +31,7 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'trashBinRetentionDays': instance.trashBinRetentionDays,
       'defaultFilterPreset': instance.defaultFilterPreset,
       'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
+      'useCategoryNameForUntitledTransactions':
+          instance.useCategoryNameForUntitledTransactions,
+      'showCategoryInListTile': instance.showCategoryInListTile,
     };

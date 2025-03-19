@@ -22,6 +22,7 @@ class CSVParsedTransaction {
   static CSVParsedTransaction parse(
     List<dynamic> data,
     List<CSVCellParser?> parsers,
+    int? row,
   ) {
     assert(data.length <= parsers.length);
 
@@ -44,7 +45,7 @@ class CSVParsedTransaction {
       final CSVCellParser? parser = parsers[i];
       if (parser == null) continue;
 
-      final parsed = parser.parse(cell);
+      final parsed = parser.parse(cell, row: row);
 
       switch (parser.column) {
         case CSVParserColumn.title:

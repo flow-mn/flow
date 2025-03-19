@@ -52,3 +52,4 @@ app.*.map.json
 # Objectbox library
 
 /download
+lib/libobjectbox.dylib

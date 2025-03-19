@@ -4,7 +4,6 @@ import "dart:io";
 import "dart:typed_data";
 
 import "package:archive/archive_io.dart";
-import "package:csv/csv.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -16,7 +15,6 @@ import "package:flow/sync/import/import_v2.dart";
 import "package:flow/sync/model/csv/parsed_data.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
-import "package:flow/utils/line_break_normalizer.dart";
 import "package:flow/utils/utils.dart";
 import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart";
@@ -124,14 +122,5 @@ Future<Importer> _importJson({required File file}) async {
 }
 
 Future<Importer> _importCsv({required File file}) async {
-  final Stream<List<int>> readStream = file.openRead();
-
-  final List<List<dynamic>> rows =
-      await readStream
-          .transform(utf8.decoder)
-          .transform(LineBreakNormalizer())
-          .transform(CsvToListConverter(eol: LineBreakNormalizer.terminator))
-          .toList();
-
-  return ImportCSV(CSVParsedData(rows));
+  return ImportCSV(await CSVParsedData.fromFile(file));
 }

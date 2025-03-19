@@ -9,6 +9,7 @@
 			<string>it</string>
 			<string>tr</string>
 			<string>fr</string>
+			<string>ar</string>
 		</array>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>

@@ -823,7 +823,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void update({
-    required String formattedTitle,
+    required String? formattedTitle,
     required String? formattedDescription,
   }) async {
     if (_currentlyEditing == null) return;
@@ -890,8 +890,8 @@ class _TransactionPageState extends State<TransactionPage> {
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     final String trimmedTitle = _titleController.text.trim();
-    final String formattedTitle =
-        trimmedTitle.isNotEmpty ? trimmedTitle : fallbackTitle;
+    final String? formattedTitle =
+        trimmedTitle.isNotEmpty ? trimmedTitle : null;
 
     final String trimmedDescription = _descriptionController.text.trim();
     final String? formattedDescription =

@@ -55,7 +55,7 @@ class _TransactionGeoPreferencesPageState
         LocalPreferences().autoAttachTransactionGeo.get();
 
     return Scaffold(
-      appBar: AppBar(title: Text("preferences.transactionGeo".t(context))),
+      appBar: AppBar(title: Text("preferences.transactions.geo".t(context))),
       body: SafeArea(
         child: FutureBuilder(
           future: _geoPermissionGranted,
@@ -70,7 +70,9 @@ class _TransactionGeoPreferencesPageState
                 children: [
                   const SizedBox(height: 16.0),
                   CheckboxListTile /*.adaptive*/ (
-                    title: Text("preferences.transactionGeo.enable".t(context)),
+                    title: Text(
+                      "preferences.transactions.geo.enable".t(context),
+                    ),
                     value: enableGeo,
                     onChanged: updateEnableGeo,
                   ),
@@ -78,7 +80,7 @@ class _TransactionGeoPreferencesPageState
                     const SizedBox(height: 16.0),
                     CheckboxListTile /*.adaptive*/ (
                       title: Text(
-                        "preferences.transactionGeo.auto.enable".t(context),
+                        "preferences.transactions.geo.auto.enable".t(context),
                       ),
                       value: autoAttachTransactionGeo,
                       onChanged: updateAutoAttachTransactionGeo,
@@ -91,7 +93,7 @@ class _TransactionGeoPreferencesPageState
                     Frame(
                       child: InfoText(
                         child: Text(
-                          "preferences.transactionGeo.auto.description".t(
+                          "preferences.transactions.geo.auto.description".t(
                             context,
                           ),
                         ),
@@ -165,7 +167,9 @@ class _TransactionGeoPreferencesPageState
 
       if (!granted) {
         context.showErrorToast(
-          error: "preferences.transactionGeo.auto.permissionDenied".t(context),
+          error: "preferences.transactions.geo.auto.permissionDenied".t(
+            context,
+          ),
         );
 
         await LocalPreferences().autoAttachTransactionGeo.set(false);

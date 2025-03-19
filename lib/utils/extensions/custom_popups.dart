@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:file_saver/file_saver.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/button.dart";
@@ -7,6 +8,7 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:path/path.dart";
 import "package:share_plus/share_plus.dart";
 
 extension CustomPopups on BuildContext {
@@ -65,14 +67,24 @@ extension CustomPopups on BuildContext {
     return result;
   }
 
-  Future<void> showShareSheet({
+  /// Returns the saved path on desktop, null on mobile
+  Future<String?> showShareSheet({
     required String subject,
     required String filePath,
     required RenderBox? renderBox,
   }) async {
-    if (Platform.isLinux) {
-      Process.runSync("xdg-open", [File(filePath).parent.path]);
-      return;
+    if (Platform.isMacOS || Platform.isLinux) {
+      final String savedPath = await FileSaver.instance.saveFile(
+        filePath: filePath,
+        name: basename(filePath),
+      );
+      if (Platform.isLinux) {
+        Process.runSync("xdg-open", [File(savedPath).parent.path]);
+      }
+      if (Platform.isMacOS) {
+        Process.runSync("open", [File(savedPath).parent.path]);
+      }
+      return savedPath;
     }
 
     final origin =
@@ -85,5 +97,7 @@ extension CustomPopups on BuildContext {
       sharePositionOrigin: origin,
       subject: subject,
     );
+
+    return null;
   }
 }

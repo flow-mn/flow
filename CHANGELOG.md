@@ -15,6 +15,7 @@
 * Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
 * Account tab total income/expense no longer includes deleted transactions
 * Early reminders now work correctly
+* "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
 
 ### Changes and improvements
 
@@ -22,6 +23,8 @@
 * CSV no longer includes deleted transactions
 * CSV now includes ISO 8601 format transaction date
 * UX enhancements regarding setup flow
+* Profile tab now shows pending and deleted transactions
+* Added an option show category name for untitled transactions
 
 ## Beta 0.12.2
 

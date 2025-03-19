@@ -44,6 +44,26 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get useCategoryNameForUntitledTransactions =>
+      value.useCategoryNameForUntitledTransactions;
+  set useCategoryNameForUntitledTransactions(
+    bool newUseCategoryNameForUntitledTransactions,
+  ) {
+    if (value.id == 0) return;
+
+    value.useCategoryNameForUntitledTransactions =
+        newUseCategoryNameForUntitledTransactions;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get showCategoryInListTile => value.showCategoryInListTile;
+  set showCategoryInListTile(bool newShowCategoryInListTile) {
+    if (value.id == 0) return;
+
+    value.showCategoryInListTile = newShowCategoryInListTile;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   String? get defaultFilterPresetUuid => value.defaultFilterPreset;
   set defaultFilterPresetUuid(String? uuid) {
     if (value.id == 0) return;

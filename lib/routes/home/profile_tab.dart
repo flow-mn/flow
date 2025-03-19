@@ -49,6 +49,16 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => context.push("/categories"),
           ),
           ListTile(
+            title: Text("preferences.transactions.pending".t(context)),
+            leading: const Icon(Symbols.schedule_rounded),
+            onTap: () => context.push("/transactions/pending"),
+          ),
+          ListTile(
+            title: Text("transaction.deleted".t(context)),
+            leading: const Icon(Symbols.delete_rounded),
+            onTap: () => context.push("/transactions/deleted"),
+          ),
+          ListTile(
             title: Text("tabs.profile.preferences".t(context)),
             leading: const Icon(Symbols.settings_rounded),
             onTap: () => context.push("/preferences"),
