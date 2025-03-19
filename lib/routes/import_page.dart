@@ -4,6 +4,7 @@ import "package:cross_file/cross_file.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
+import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/spinner.dart";
@@ -70,6 +71,12 @@ class _ImportPageState extends State<ImportPage> {
               extra: importV2,
             );
             break;
+          case ImportCSV importCSV:
+            context.pushReplacement(
+              "/import/wizard/csv?setupMode=${widget.setupMode}",
+              extra: importCSV,
+            );
+            break;
           case null:
             context.showErrorToast(
               error: "error.input.noFilePicked".t(context),
@@ -82,8 +89,8 @@ class _ImportPageState extends State<ImportPage> {
             break;
         }
       }
-    } catch (e) {
-      _log.severe("An error was thrown from `importBackupV1`", e);
+    } catch (e, stackTrace) {
+      _log.severe("Importer error", e, stackTrace);
       if (mounted) {
         context.showErrorToast(error: e);
       }

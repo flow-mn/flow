@@ -41,6 +41,7 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
@@ -154,13 +155,11 @@ class FlowState extends State<Flow> {
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
-    } else {
-      // To migrate profile image path from old to new (since 0.10.0)
-      nonImportantMigrateProfileImagePath();
     }
 
-    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
-    migrateLocalPrefsRequirePendingTransactionConfrimation();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      migrateRemoveTitleFromUntitledTransactions();
+    });
 
     _tryUnlockTempLock();
   }

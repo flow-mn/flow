@@ -5,16 +5,27 @@
 ### New features
 
 * Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
+* Now you can import from CSVs. (This doesn't support multi-currency transactions for the same account)
+  * See template on Google Sheets: <https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing>
+  * You can use another software as long as you provide CSV. All major spreadsheet software supports it.
+* Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
 
 ### Fixes
 
 * Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
 * Account tab total income/expense no longer includes deleted transactions
 * Early reminders now work correctly
+* "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
+* Category card in categories page now shows current month flow (used to show all-time)
 
 ### Changes and improvements
 
 * Launching Flow from a notification now opens the relevant page if available
+* CSV no longer includes deleted transactions
+* CSV now includes ISO 8601 format transaction date
+* UX enhancements regarding setup flow
+* Profile tab now shows pending and deleted transactions
+* Added an option show category name for untitled transactions
 
 ## Beta 0.12.2
 

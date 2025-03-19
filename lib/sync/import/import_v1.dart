@@ -17,23 +17,6 @@ import "package:logging/logging.dart";
 
 final Logger _log = Logger("ImportV1");
 
-/// Used to report current status to user
-enum ImportV1Progress implements LocalizedEnum {
-  waitingConfirmation,
-  erasing,
-  writingCategories,
-  writingAccounts,
-  resolvingTransactions,
-  writingTransactions,
-  success,
-  error;
-
-  @override
-  String get localizationEnumValue => name;
-  @override
-  String get localizationEnumName => "ImportV1Progress";
-}
-
 class ImportV1 extends Importer {
   @override
   final SyncModelV1 data;
@@ -213,4 +196,21 @@ class ImportV1 extends Importer {
 
     return transaction;
   }
+}
+
+/// Used to report current status to user
+enum ImportV1Progress implements LocalizedEnum {
+  waitingConfirmation,
+  erasing,
+  writingCategories,
+  writingAccounts,
+  resolvingTransactions,
+  writingTransactions,
+  success,
+  error;
+
+  @override
+  String get localizationEnumValue => name;
+  @override
+  String get localizationEnumName => "ImportV1Progress";
 }

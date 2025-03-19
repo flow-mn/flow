@@ -16,6 +16,7 @@ import "package:flow/routes/export_options_page.dart";
 import "package:flow/routes/export_page.dart";
 import "package:flow/routes/home_page.dart";
 import "package:flow/routes/import_page.dart";
+import "package:flow/routes/import_wizard/csv.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
@@ -43,6 +44,7 @@ import "package:flow/routes/transactions_page.dart";
 import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/sync/export/mode.dart";
+import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
 import "package:flow/utils/utils.dart";
@@ -297,6 +299,19 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: "/import/wizard/csv",
+      builder: (context, state) {
+        if (state.extra case ImportCSV importCSV) {
+          return ImportWizardCSVPage(
+            importer: importCSV,
+            setupMode: state.uri.queryParameters["setupMode"] == "true",
+          );
+        }
+
+        return ErrorPage(error: "error.sync.invalidBackupFile".t(context));
+      },
+    ),
+    GoRoute(
       path: "/export/history",
       builder: (context, state) => const ExportHistoryPage(),
     ),
@@ -324,17 +339,6 @@ final router = GoRouter(
           builder: (context, state) => const SetupOnboardingPage(),
         ),
         GoRoute(
-          path: "profile",
-          builder: (context, state) => const SetupProfilePage(),
-        ),
-        GoRoute(
-          path: "profile/photo",
-          builder:
-              (context, state) => SetupProfilePhotoPage(
-                profileImagePath: state.extra as String,
-              ),
-        ),
-        GoRoute(
           path: "currency",
           builder: (context, state) => const SetupCurrencyPage(),
         ),
@@ -345,6 +349,17 @@ final router = GoRouter(
         GoRoute(
           path: "categories",
           builder: (context, state) => const SetupCategoriesPage(),
+        ),
+        GoRoute(
+          path: "profile",
+          builder: (context, state) => const SetupProfilePage(),
+        ),
+        GoRoute(
+          path: "profile/photo",
+          builder:
+              (context, state) => SetupProfilePhotoPage(
+                profileImagePath: state.extra as String,
+              ),
         ),
       ],
     ),

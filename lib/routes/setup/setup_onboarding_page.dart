@@ -18,7 +18,7 @@ class SetupOnboardingPage extends StatelessWidget {
           child: Column(
             children: [
               ActionCard(
-                onTap: () => context.push("/setup/profile"),
+                onTap: () => context.push("/setup/currency"),
                 icon: FlowIconData.icon(Symbols.book_4_spark_rounded),
                 title: "setup.onboarding.freshStart".t(context),
                 subtitle: "setup.onboarding.freshStart.description".t(context),

@@ -81,6 +81,7 @@ class _FileSelectAreaState extends State<FileSelectArea> {
                                   Text(
                                     "sync.import.pickFile.description".t(
                                       context,
+                                      "ZIP, JSON, CSV",
                                     ),
                                     style: context.textTheme.bodyMedium?.semi(
                                       context,
