@@ -12,8 +12,8 @@ void main() {
 
     expect(valid, isNotNull);
     expect(valid?.accountNames.length, 3);
-    expect(valid?.categoryNames.nonNulls.length, 8);
-    expect(valid?.transactions.length, 20);
+    expect(valid?.categoryNames.nonNulls.length, 24);
+    expect(valid?.transactions.length, 81);
   });
   test("An invalid csv", () async {
     final invalid = await CSVParsedData.fromFile(
