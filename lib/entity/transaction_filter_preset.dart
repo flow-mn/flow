@@ -33,6 +33,7 @@ class TransactionFilterPreset implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @Transient()
   static TransactionFilter defaultFilter = TransactionFilter(
     range: TransactionFilterTimeRange.last30Days,
   );
