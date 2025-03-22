@@ -309,7 +309,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "9:577162958135049929",
+      "lastPropertyId": "10:1110624065651948179",
       "name": "UserPreferences",
       "properties": [
         {
@@ -359,6 +359,11 @@
           "id": "9:577162958135049929",
           "name": "showCategoryInListTile",
           "type": 1
+        },
+        {
+          "id": "10:1110624065651948179",
+          "name": "autoBackupIntervalInHours",
+          "type": 6
         }
       ],
       "relations": []

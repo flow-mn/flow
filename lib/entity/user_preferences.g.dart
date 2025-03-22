@@ -18,6 +18,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
+        autoBackupIntervalInHours:
+            (json['autoBackupIntervalInHours'] as num?)?.toInt(),
       )
       ..uuid = json['uuid'] as String
       ..remindDailyAtRelativeSeconds =
@@ -34,4 +36,5 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'useCategoryNameForUntitledTransactions':
           instance.useCategoryNameForUntitledTransactions,
       'showCategoryInListTile': instance.showCategoryInListTile,
+      'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
     };

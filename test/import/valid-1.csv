@@ -1,7 +1,10 @@
 flow_title,flow_notes,flow_account_name,flow_amount,flow_date_of_transaction,flow_time_of_transaction_optional,flow_date_of_transaction_iso_8601,flow_category_optional
+Apple music,,Golomt bank,-152.00,2022-02-24,23:59:59,,Online expenses
 iCloud+,,Golomt bank,-250.00,2024-02-24,13:58:24,,Online expenses
 Salary,Received it little early due to upcoming holidays,Golomt bank,680,2025.3.24,01:13 p.m.,,Paycheck
 Keychron K8,,Savings,-89.2,2025.3.26,21:00:00,,Shopping
+Iced Matcha Latte,,Golomt bank,-5.2,2025.3.26,11:54:59,,Drinks & Beverages
+Aoaoao,,Savings,-81.2,2022.12.31,12:59:59,,Shopping
 From Main to Savings,,Main,-250,,,2025-03-14T08:25:56.887Z,
 From Main to Savings,,Savings,250,,,2025-03-14T08:25:56.887Z,
 Gift for Stella,,Main,-99.01,,,2025-03-14T08:25:56.494Z,Gifts
@@ -19,3 +22,61 @@ This doesn't matter,doesn't matter,Main,500,,,2025-03-09T08:25:56.503Z,
 Ice cream,,Main,-6570,,,2025-03-15T07:25:56.503Z,Food
 Another transfer,,Savings,6541,,,2025-03-15T07:25:59.503Z,
 Another transfer,,Golomt bank,-6541,,,2025-03-15T07:25:58.503Z,
+Groceries,,Main,-125.67,,,2025-03-16T09:15:22.123Z,Food
+Dinner with friends,,Main,-78.50,,,2025-03-16T19:45:12.345Z,Food
+Gas station,,Main,-45.30,,,2025-03-17T14:22:33.456Z,Transportation
+Movie tickets,,Main,-24.99,,,2025-03-18T20:30:45.678Z,Entertainment
+Amazon purchase,,Main,-67.89,,,2025-03-19T11:28:37.890Z,Shopping
+Coffee shop,,Main,-4.75,,,2025-03-19T08:15:42.123Z,Drinks & Beverages
+Pharmacy,,Main,-32.47,,,2025-03-20T16:45:21.234Z,Health
+Monthly bonus,,Main,150.00,,,2025-03-21T08:30:56.345Z,Paycheck
+Uber ride,,Main,-18.25,,,2025-03-21T23:15:27.456Z,Transportation
+Book store,,Main,-29.99,,,2025-03-22T14:25:38.567Z,Entertainment
+Haircut,,Main,-35.00,,,2025-03-23T13:20:49.678Z,Personal care
+Spotify,,Main,-9.99,,,2025-03-24T00:01:50.789Z,Online subscriptions
+Transfer to Savings,,Main,-300.00,,,2025-03-24T09:45:51.890Z,
+Transfer from Main,,Savings,300.00,,,2025-03-24T09:45:51.890Z,
+Gym membership,,Main,-49.99,,,2025-03-25T07:30:52.901Z,Health
+Restaurant lunch,,Main,-22.50,,,2025-03-25T12:15:53.012Z,Food
+Electricity bill,,Main,-85.32,,,2025-03-26T15:40:54.123Z,Utilities
+Internet bill,,Main,-59.99,,,2025-03-26T15:45:55.234Z,Utilities
+Phone bill,,Main,-75.00,,,2025-03-26T15:50:56.345Z,Utilities
+Birthday gift,,Main,-45.75,,,2025-03-27T17:25:57.456Z,Gifts
+Online course,,Main,-199.00,,,2025-03-28T10:10:58.567Z,Education
+Bakery,,Main,-12.50,,,2025-03-28T08:35:59.678Z,Food
+Side gig income,,Main,250.00,,,2025-03-29T16:20:00.789Z,Other income
+Hardware store,,Main,-78.23,,,2025-03-30T14:15:01.890Z,Home
+Pet supplies,,Main,-62.47,,,2025-03-31T11:30:02.901Z,Pets
+Donation,,Main,-25.00,,,2025-04-01T09:45:03.012Z,Charity
+Tax refund,,Main,750.00,,,2025-04-02T13:20:04.123Z,Other income
+Car maintenance,,Main,-210.75,,,2025-04-03T15:35:05.234Z,Transportation
+Concert tickets,,Main,-85.00,,,2025-04-04T18:50:06.345Z,Entertainment
+Clothing store,,Main,-145.67,,,2025-04-05T12:25:07.456Z,Shopping
+Dividend payment,,Savings,37.80,,,2025-04-06T00:01:08.567Z,Investment
+Interest earned,,Savings,12.45,,,2025-04-06T00:05:09.678Z,Interest
+Plumber service,,Main,-175.00,,,2025-04-07T11:30:10.789Z,Home
+Office supplies,,Main,-28.99,,,2025-04-08T14:45:11.890Z,Work
+Parking fee,,Main,-15.00,,,2025-04-09T09:20:12.901Z,Transportation
+Video game purchase,,Main,-59.99,,,2025-04-10T19:15:13.012Z,Entertainment
+Dentist appointment,,Main,-125.00,,,2025-04-11T10:30:14.123Z,Health
+Freelance payment,,Main,350.00,,,2025-04-12T16:45:15.234Z,Other income
+Cash withdrawal,,Main,-100.00,,,2025-04-13T11:50:16.345Z,Cash
+Bookstore purchase,,Main,-42.99,2025-04-14,15:30:45,,Books
+Grocery shopping,,Main,-87.54,2025-04-15,18:25:12,,Food
+Monthly subscription,,Main,-12.99,2025-04-16,00:01:30,,Online subscriptions
+Bus ticket,,Main,-2.50,2025-04-16,08:15:22,,Transportation
+Lunch with colleagues,,Main,-28.75,2025-04-16,12:30:45,,Food
+Savings transfer,,Main,-200.00,2025-04-17,09:00:00,,
+Savings deposit,,Savings,200.00,2025-04-17,09:00:00,,
+Mobile app purchase,,Main,-4.99,2025-04-18,19:45:33,,Entertainment
+Coffee shop visit,,Main,-5.25,2025-04-19,10:15:00,,Drinks & Beverages
+Weekend groceries,,Main,-65.32,2025-04-20,11:20:15,,Food
+Home insurance,,Main,-42.50,2025-04-21,08:00:00,,Insurance
+Water bill,,Main,-38.75,2025-04-22,14:30:00,,Utilities
+Gift for mom,,Main,-75.00,2025-04-23,16:45:22,,Gifts
+Salary deposit,,Main,2450.00,2025-04-25,09:15:00,,Paycheck
+Furniture purchase,,Savings,-350.00,2025-04-26,13:20:45,,Home
+Pharmacy items,,Main,-18.99,2025-04-27,15:30:00,,Health
+Fast food lunch,,Main,-12.50,2025-04-28,12:45:15,,Food
+Train ticket,,Main,-22.50,2025-04-29,07:30:00,,Transportation
+Birthday money,,Main,50.00,2025-04-30,10:00:00,,Gifts

@@ -60,6 +60,9 @@ class UserPreferences implements EntityBase {
   bool useCategoryNameForUntitledTransactions;
   bool showCategoryInListTile;
 
+  /// In hours, set as `null` to disable
+  int? autoBackupIntervalInHours;
+
   UserPreferences({
     this.id = 0,
     DateTime? createdDate,
@@ -69,6 +72,7 @@ class UserPreferences implements EntityBase {
     this.showCategoryInListTile = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
+    this.autoBackupIntervalInHours,
   }) : uuid = const Uuid().v4();
 
   factory UserPreferences.fromJson(Map<String, dynamic> json) =>
