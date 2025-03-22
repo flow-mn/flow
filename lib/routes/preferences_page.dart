@@ -116,6 +116,12 @@ class PreferencesPageState extends State<PreferencesPage> {
             ),
 
             ListTile(
+              title: Text("preferences.sync.autoBackup".t(context)),
+              leading: const Icon(Symbols.sync_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/autoBackup"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),

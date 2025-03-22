@@ -10,6 +10,11 @@
 
     The template cells will turn red if you provide incorrect datetime format
 * Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
+* Now you can set up "Auto-backup". When enabled, Flow creates a backup if the
+  specified duration has passed since the last successful auto-backup. Backups
+  are created when you open the app.
+
+  You have to save the created backups.
 
 ### Fixes
 

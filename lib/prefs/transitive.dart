@@ -27,6 +27,9 @@ class TransitiveLocalPreferences {
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
+  late final DateTimeSettingsEntry lastAutoBackupRanAt;
+  late final PrimitiveSettingsEntry<String> lastAutoBackupPath;
+
   late final BoolSettingsEntry sessionPrivacyMode;
 
   factory TransitiveLocalPreferences() {
@@ -50,6 +53,16 @@ class TransitiveLocalPreferences {
 
     transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
       key: "transitive.lastTimeFrecencyUpdated",
+      preferences: _prefs,
+    );
+
+    lastAutoBackupRanAt = DateTimeSettingsEntry(
+      key: "transitive.lastAutoBackupRanAt",
+      preferences: _prefs,
+    );
+
+    lastAutoBackupPath = PrimitiveSettingsEntry<String>(
+      key: "transitive.lastAutoBackupPath",
       preferences: _prefs,
     );
 
