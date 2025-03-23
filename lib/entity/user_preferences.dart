@@ -72,7 +72,7 @@ class UserPreferences implements EntityBase {
     this.showCategoryInListTile = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
-    this.autoBackupIntervalInHours,
+    this.autoBackupIntervalInHours = 72,
   }) : uuid = const Uuid().v4();
 
   factory UserPreferences.fromJson(Map<String, dynamic> json) =>
