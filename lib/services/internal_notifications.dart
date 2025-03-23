@@ -90,7 +90,7 @@ class InternalNotificationsService {
 
         if (lastRateAppShowedAt == null ||
             lastRateAppShowedAt.isBefore(
-              Moment.now().subtract(Duration(days: 30)),
+              Moment.now().subtract(Duration(days: 75)),
             )) {
           add(
             RateApp(
@@ -118,7 +118,7 @@ class InternalNotificationsService {
 
       if (lastStarOnGitHubShowedAt == null ||
           lastStarOnGitHubShowedAt.isBefore(
-            Moment.now().subtract(Duration(days: 30)),
+            Moment.now().subtract(Duration(days: 120)),
           )) {
         add(StarOnGitHub());
         await TransitiveLocalPreferences().lastStarOnGitHubShowedAt.set(
