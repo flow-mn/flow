@@ -19,6 +19,8 @@ final Uri maintainerGitHubLink = Uri.parse("https://github.com/sadespresso");
 const double sukhbaatarSquareCenterLat = 47.918828;
 const double sukhbaatarSquareCenterLong = 106.917604;
 
+const String appleAppStoreId = "6477741670";
+
 const LatLng sukhbaatarSquareCenter = LatLng(
   sukhbaatarSquareCenterLat,
   sukhbaatarSquareCenterLong,
