@@ -97,6 +97,28 @@ class TransactionsService {
     return deletedCount;
   }
 
+  Future<Transaction?> findTransferRelatedTransaction(
+    Transaction transaction,
+  ) async {
+    if (!transaction.isTransfer) {
+      return null;
+    }
+
+    return await findByIdentifier(
+      transaction.extensions.transfer?.relatedTransactionUuid,
+    );
+  }
+
+  Transaction? findTransferRelatedTransactionSync(Transaction transaction) {
+    if (!transaction.isTransfer) {
+      return null;
+    }
+
+    return findByIdentifierSync(
+      transaction.extensions.transfer?.relatedTransactionUuid,
+    );
+  }
+
   Future<List<Transaction>> findMany(TransactionFilter filter) async {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
@@ -240,6 +262,16 @@ class TransactionsService {
 
     updateOneSync(transaction);
 
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.deletedDate = DateTime.now();
+      relatedTransferTransaction.isDeleted = true;
+
+      updateOneSync(relatedTransferTransaction);
+    }
+
     return true;
   }
 
@@ -262,6 +294,15 @@ class TransactionsService {
 
     updateOneSync(transaction);
 
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.isDeleted = false;
+
+      updateOneSync(relatedTransferTransaction);
+    }
+
     return true;
   }
 
@@ -283,6 +324,19 @@ class TransactionsService {
     }
 
     updateOneSync(transaction);
+
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.isPending = !confirm;
+
+      if (updateTransactionDate) {
+        relatedTransferTransaction.transactionDate = Moment.now();
+      }
+
+      updateOneSync(relatedTransferTransaction);
+    }
 
     return true;
   }
