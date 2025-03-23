@@ -366,6 +366,8 @@
     "notifications.reminderText#7": "Bugün işlemlerinizi eklemeyi unutmayın!",
 
     "sync.import": "İçe aktarmak",
+    "sync.import.other": "Diğer seçenekler",
+    "sync.import.getCSVTemplate": "CSV şablonunu al",
     "sync.import.pickFile": "Bir dosya seçin",
     "sync.import.pickFile.pickOrDrop": "Bir dosyayı seçin veya bırakın",
     "sync.import.pickFile.dropzone.active": "Buraya bırak",

@@ -31,7 +31,7 @@ class RateAppNotification extends StatelessWidget {
           if (notification.payload) {
             InAppReview.instance.requestReview();
           } else {
-            InAppReview.instance.openStoreListing();
+            InAppReview.instance.openStoreListing(appStoreId: appleAppStoreId);
           }
         },
         child: Text("tabs.home.reminders.rateApp.action".t(context)),

@@ -366,6 +366,8 @@
     "notifications.reminderText#7": "Don't forget to add your transactions today!",
 
     "sync.import": "Import",
+    "sync.import.other": "Other options",
+    "sync.import.getCSVTemplate": "Get CSV template",
     "sync.import.pickFile": "Select a file",
     "sync.import.pickFile.pickOrDrop": "Select or drop a file",
     "sync.import.pickFile.dropzone.active": "Drop here",

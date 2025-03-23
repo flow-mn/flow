@@ -366,6 +366,8 @@
     "notifications.reminderText#7": "Өнөөдрийн гүйлгээгээ нэмэхээ мартуузай!",
 
     "sync.import": "Сэргээх",
+    "sync.import.other": "Бусад сонголтууд",
+    "sync.import.getCSVTemplate": "CSV загвар татаж авах",
     "sync.import.pickFile": "Файл сонгох",
     "sync.import.pickFile.pickOrDrop": "Файл сонгох (эсвэл чирж авчрах)",
     "sync.import.pickFile.dropzone.active": "Надруу чир",

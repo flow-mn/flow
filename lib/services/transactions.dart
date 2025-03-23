@@ -379,5 +379,6 @@ class TransactionsService {
   /// Has no effect if it's already resumed
   void resumeListeners() {
     _disableUpdates = false;
+    _onChange();
   }
 }
