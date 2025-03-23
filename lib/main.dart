@@ -358,6 +358,7 @@ void initializePackageVersion() async {
 
     final value = await PackageInfo.fromPlatform();
     appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+    downloadedFrom = value.installerStore;
 
     startupLog.fine("Loaded package info");
     startupLog.fine("App version: $appVersion");

@@ -1,4 +1,5 @@
 import "package:flow/data/flow_icon.dart";
+import "package:flow/entity/backup_entry.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:simple_icons/simple_icons.dart";
 
@@ -34,25 +35,27 @@ class StarOnGitHub extends InternalNotification<Null> {
       InternalNotificationPriority.low;
 }
 
-class RateApp extends InternalNotification<Null> {
+class RateApp extends InternalNotification<bool> {
   @override
   final FlowIconData icon = const IconFlowIcon(Symbols.star_rounded);
 
+  /// Whether the app can open in-app sheet
   @override
-  final Null payload = null;
+  final bool payload;
 
   @override
   final InternalNotificationPriority priority =
       InternalNotificationPriority.medium;
+
+  RateApp({required this.payload});
 }
 
-class AutoBackupReminder extends InternalNotification<String> {
+class AutoBackupReminder extends InternalNotification<BackupEntry?> {
   @override
   final FlowIconData icon = const IconFlowIcon(Symbols.cloud_upload);
 
-  /// Path to the generated backup file
   @override
-  final String payload;
+  final BackupEntry? payload;
 
   @override
   final InternalNotificationPriority priority =
