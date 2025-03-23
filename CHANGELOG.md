@@ -4,12 +4,12 @@
 
 ### New features
 
+* Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
 * Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
 * Now you can import from CSVs. (This doesn't support multi-currency transactions for the same account)
   * See template on Google Sheets: <https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing>
 
     The template cells will turn red if you provide incorrect datetime format
-* Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
 * Now you can set up "Auto-backup". Defaults to every 72 hour.
 
   IMPORTANT: Backups are made only when you open the app! And you have to save
@@ -27,6 +27,7 @@
 * Early reminders now work correctly
 * "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
 * Category card in categories page now shows current month flow (used to show all-time)
+* Importing no longer results in outdated data in some part of the interface
 
 ### Changes and improvements
 
