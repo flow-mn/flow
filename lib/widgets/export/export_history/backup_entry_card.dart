@@ -64,15 +64,23 @@ class BackupEntryCard extends StatelessWidget {
             ),
             const SizedBox(width: 8.0),
             IconButton(
-              onPressed:
-                  () => context.showShareSheet(
-                    subject: "sync.export.save.shareTitle".t(context, {
-                      "type": entry.fileExt,
-                      "date": entry.createdDate.toMoment().lll,
-                    }),
-                    filePath: entry.filePath,
-                    renderBox: context.findRenderObject() as RenderBox?,
-                  ),
+              onPressed: () {
+                if (fileSize == null) {
+                  context.showErrorToast(
+                    error: "error.sync.fileNotFound".t(context),
+                  );
+                  return;
+                }
+
+                context.showShareSheet(
+                  subject: "sync.export.save.shareTitle".t(context, {
+                    "type": entry.fileExt,
+                    "date": entry.createdDate.toMoment().lll,
+                  }),
+                  filePath: entry.filePath,
+                  renderBox: context.findRenderObject() as RenderBox?,
+                );
+              },
               icon:
                   fileSize != null
                       ? const Icon(Symbols.save_alt_rounded)

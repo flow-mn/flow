@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## 0.13.0
 
 ### New features
 
@@ -15,6 +15,11 @@
   are created when you open the app.
 
   You have to save the created backups.
+* Now Flow asks you to:
+  * Save the latest auto-backup if you haven't. This doesn't get dismissed until
+    you save the latest backup
+  * Rate the app every 75 days (this can be disabled by the system on iOS and macOS)
+  * Give a star on GitHub every 120 days
 
 ### Fixes
 

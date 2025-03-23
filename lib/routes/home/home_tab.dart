@@ -1,6 +1,7 @@
 import "dart:async";
 
 import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/internal_nofications/internal_notification.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/transaction.dart";
@@ -8,6 +9,7 @@ import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/internal_notifications.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
@@ -18,6 +20,7 @@ import "package:flow/widgets/grouped_transaction_list.dart";
 import "package:flow/widgets/home/greetings_bar.dart";
 import "package:flow/widgets/home/home/flow_cards.dart";
 import "package:flow/widgets/home/home/no_transactions.dart";
+import "package:flow/widgets/internal_notifications/internal_notification_section.dart";
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
@@ -40,6 +43,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late TransactionFilter defaultFilter;
   DateTime dateKey = Moment.startOfToday();
+
+  InternalNotification? _internalNotification;
 
   late TransactionFilter currentFilter;
 
@@ -90,6 +95,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     );
 
     UserPreferencesService().valueNotiifer.addListener(_rawUpdateDefaultFilter);
+    InternalNotificationsService().notifications.addListener(
+      _updateInternalNotification,
+    );
+    _updateInternalNotification();
   }
 
   @override
@@ -101,6 +110,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     _timer.cancel();
     UserPreferencesService().valueNotiifer.removeListener(
       _rawUpdateDefaultFilter,
+    );
+    InternalNotificationsService().notifications.removeListener(
+      _updateInternalNotification,
     );
     super.dispose();
   }
@@ -150,6 +162,18 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 ],
               ),
             ),
+            if (_internalNotification != null) ...[
+              const SliverToBoxAdapter(child: SizedBox(height: 12.0)),
+              SliverToBoxAdapter(
+                child: InternalNotificationSection(
+                  notification: _internalNotification!,
+                  onDismiss:
+                      () => setState(() {
+                        _internalNotification = null;
+                      }),
+                ),
+              ),
+            ],
             switch ((transactions?.length ?? 0, snapshot.hasData)) {
               (0, true) => SliverFillRemaining(
                 child: NoTransactions(isFilterModified: isFilterModified),
@@ -272,6 +296,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         UserPreferencesService().defaultFilterPreset?.filter
             .copyWithOptional() ??
         TransactionFilterPreset.defaultFilter;
+  }
+
+  void _updateInternalNotification() {
+    if (_internalNotification != null) return;
+
+    _internalNotification = InternalNotificationsService().consume();
+
+    setState(() {});
   }
 
   @override

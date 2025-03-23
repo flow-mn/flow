@@ -30,7 +30,7 @@ class InfoCardWithDelta extends StatelessWidget {
   Widget build(BuildContext context) {
     return InfoCard(
       title: title,
-      moneyText: MoneyText(
+      money: MoneyText(
         money,
         tapToToggleAbbreviation: true,
         initiallyAbbreviated: !LocalPreferences().preferFullAmounts.get(),
