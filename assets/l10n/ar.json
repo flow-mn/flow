@@ -366,6 +366,8 @@
     "notifications.reminderText#7": "لا تنسَ إضافة معاملاتك اليوم!",
 
     "sync.import": "استيراد",
+    "sync.import.other": "خيارات أخرى",
+    "sync.import.getCSVTemplate": "احصل على قالب CSV",
     "sync.import.pickFile": "اختر ملفًا",
     "sync.import.pickFile.pickOrDrop": "اختر أو اسقط ملفًا",
     "sync.import.pickFile.dropzone.active": "أسقط هنا",

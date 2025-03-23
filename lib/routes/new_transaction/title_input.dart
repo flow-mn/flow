@@ -1,4 +1,5 @@
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
@@ -69,11 +70,18 @@ class TitleInput extends StatelessWidget {
 
   Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
     String query,
-  ) async => ObjectBox().transactionTitleSuggestions(
-    currentInput: query,
-    accountId: selectedAccountId,
-    categoryId: selectedCategoryId,
-    type: transactionType,
-    limit: 5,
-  );
+  ) async => ObjectBox()
+      .transactionTitleSuggestions(
+        currentInput: query,
+        accountId: selectedAccountId,
+        categoryId: selectedCategoryId,
+        type: transactionType,
+        limit: 5,
+      )
+      .then(
+        (results) =>
+            results
+                .where((item) => item.title != "transaction.fallbackTitle".tr())
+                .toList(),
+      );
 }
