@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.12.3+187"
+version: "0.13.0+188"
 
 environment:
   sdk: ">=3.7.0 <4.0.0"
