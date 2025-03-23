@@ -81,130 +81,146 @@ class TransactionListTile extends StatelessWidget {
     final Transfer? transfer =
         transaction.isTransfer ? transaction.extensions.transfer : null;
 
-    final Widget listTile = InkWell(
-      onTap: () => context.push("/transaction/${transaction.id}"),
-      child: Padding(
-        padding: padding,
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FlowIcon(
-                  transaction.isTransfer
-                      ? FlowIconData.icon(Symbols.sync_alt_rounded)
-                      : transaction.category.target?.icon ??
-                          FlowIconData.icon(Symbols.circle_rounded),
-                  plated: true,
-                  fill: transaction.category.target != null ? 1.0 : 0.0,
-                ),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            if (transaction.transactionDate.isFuture) ...[
-                              WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: Icon(
-                                  Symbols.schedule_rounded,
-                                  size: context.textTheme.bodyMedium!.fontSize!,
-                                  fill: 0.0,
-                                  color:
-                                      transaction.isPending == true
-                                          ? context.colorScheme.onSurface
-                                              .withAlpha(0xc0)
-                                          : context.flowColors.income,
-                                ),
-                              ),
-                              TextSpan(text: " "),
-                            ],
-                            TextSpan(text: resolvedTitle),
-                          ],
-                          style: context.textTheme.bodyMedium,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        [
-                          (transaction.isTransfer && combineTransfers)
-                              ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
-                              : AccountsProvider.of(
-                                context,
-                              ).getName(transaction.accountUuid),
-                          dateString,
-                          if (transaction.transactionDate.isFuture)
-                            transaction.isPending == true
-                                ? "transaction.pending".t(context)
-                                : "transaction.pending.preapproved".t(context),
-                        ].join(" • "),
-                        style: context.textTheme.labelSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+    final Widget listTile = Material(
+      type: MaterialType.card,
+      color: kTransparent,
+      child: InkWell(
+        onTap: () => context.push("/transaction/${transaction.id}"),
+        child: Padding(
+          padding: padding,
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FlowIcon(
+                    transaction.isTransfer
+                        ? FlowIconData.icon(Symbols.sync_alt_rounded)
+                        : transaction.category.target?.icon ??
+                            FlowIconData.icon(Symbols.circle_rounded),
+                    plated: true,
+                    fill: transaction.category.target != null ? 1.0 : 0.0,
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    MoneyText(
-                      transaction.money,
-                      displayAbsoluteAmount:
-                          transaction.isTransfer && combineTransfers,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: transaction.type.color(context),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overrideObscure: overrideObscure,
-                    ),
-                    if (combineTransfers &&
-                        AccountsProvider.of(context).ready &&
-                        transaction.extensions.transfer?.conversionRate !=
-                            null &&
-                        transaction.extensions.transfer?.conversionRate != 1.0)
-                      MoneyText(
-                        Money(
-                          transaction.money.amount *
-                              transaction.extensions.transfer!.conversionRate!,
-                          AccountsProvider.of(context)
-                              .get(
-                                transaction.extensions.transfer!.toAccountUuid,
-                              )!
-                              .currency,
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              if (transaction.transactionDate.isFuture) ...[
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Icon(
+                                    Symbols.schedule_rounded,
+                                    size:
+                                        context.textTheme.bodyMedium!.fontSize!,
+                                    fill: 0.0,
+                                    color:
+                                        transaction.isPending == true
+                                            ? context.colorScheme.onSurface
+                                                .withAlpha(0xc0)
+                                            : context.flowColors.income,
+                                  ),
+                                ),
+                                TextSpan(text: " "),
+                              ],
+                              TextSpan(text: resolvedTitle),
+                            ],
+                            style: context.textTheme.bodyMedium,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        displayAbsoluteAmount: true,
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colorScheme.onSurface.withAlpha(0x80),
+                        Text(
+                          [
+                            (transaction.isTransfer && combineTransfers)
+                                ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
+                                : AccountsProvider.of(
+                                  context,
+                                ).getName(transaction.accountUuid),
+                            dateString,
+                            if (transaction.transactionDate.isFuture)
+                              transaction.isPending == true
+                                  ? "transaction.pending".t(context)
+                                  : "transaction.pending.preapproved".t(
+                                    context,
+                                  ),
+                          ].join(" • "),
+                          style: context.textTheme.labelSmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      MoneyText(
+                        transaction.money,
+                        displayAbsoluteAmount:
+                            transaction.isTransfer && combineTransfers,
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: transaction.type.color(context),
+                          fontWeight: FontWeight.bold,
                         ),
                         overrideObscure: overrideObscure,
                       ),
-                  ],
-                ),
-              ],
-            ),
-            if (showPendingConfirmation) ...[
-              const SizedBox(height: 4.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton.icon(
-                    onPressed: () => confirmFn!(),
-                    label: Text("general.confirm".t(context)),
-                    icon: Icon(Symbols.check_rounded),
+                      if (combineTransfers &&
+                          AccountsProvider.of(context).ready &&
+                          transaction.extensions.transfer?.conversionRate !=
+                              null &&
+                          transaction.extensions.transfer?.conversionRate !=
+                              1.0)
+                        MoneyText(
+                          Money(
+                            transaction.money.amount *
+                                transaction
+                                    .extensions
+                                    .transfer!
+                                    .conversionRate!,
+                            AccountsProvider.of(context)
+                                .get(
+                                  transaction
+                                      .extensions
+                                      .transfer!
+                                      .toAccountUuid,
+                                )!
+                                .currency,
+                          ),
+                          displayAbsoluteAmount: true,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: context.colorScheme.onSurface.withAlpha(
+                              0x80,
+                            ),
+                          ),
+                          overrideObscure: overrideObscure,
+                        ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 12.0),
+              if (showPendingConfirmation) ...[
+                const SizedBox(height: 4.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () => confirmFn!(),
+                      label: Text("general.confirm".t(context)),
+                      icon: Icon(Symbols.check_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12.0),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
