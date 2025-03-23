@@ -6,6 +6,7 @@ import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
@@ -34,6 +35,24 @@ class UserPreferencesService {
     }
 
     ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  int? get autoBackupIntervalInHours => value.autoBackupIntervalInHours;
+  set autoBackupIntervalInHours(int? newAutobackupIntervalInHours) {
+    if (value.id == 0) return;
+
+    if (newAutobackupIntervalInHours == null) {
+      value.autoBackupIntervalInHours = null;
+    } else {
+      value.autoBackupIntervalInHours = min(
+        max(0, newAutobackupIntervalInHours),
+        8760,
+      );
+    }
+
+    ObjectBox().box<UserPreferences>().put(value);
+
+    SyncService().triggerAutoBackup();
   }
 
   bool get excludeTransfersFromFlow => value.excludeTransfersFromFlow;

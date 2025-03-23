@@ -34,6 +34,7 @@ import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -107,6 +108,13 @@ void main() async {
     UserPreferencesService().initialize();
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
+  }
+
+  try {
+    startupLog.fine("Initializing SyncService");
+    SyncService();
+  } catch (e, stackTrace) {
+    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
   }
 
   startupLog.fine("Finally telling Flutter to run the app widget");
@@ -350,6 +358,7 @@ void initializePackageVersion() async {
 
     final value = await PackageInfo.fromPlatform();
     appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+    downloadedFrom = value.installerStore;
 
     startupLog.fine("Loaded package info");
     startupLog.fine("App version: $appVersion");

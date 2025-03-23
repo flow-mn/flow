@@ -387,7 +387,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(9, 577162958135049929),
+    lastPropertyId: const obx_int.IdUid(10, 1110624065651948179),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -443,6 +443,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(9, 577162958135049929),
         name: 'showCategoryInListTile',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 1110624065651948179),
+        name: 'autoBackupIntervalInHours',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -1027,7 +1033,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(10);
+        fbb.startTable(11);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1037,6 +1043,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(6, object.remindDailyAtRelativeSeconds);
         fbb.addBool(7, object.useCategoryNameForUntitledTransactions);
         fbb.addBool(8, object.showCategoryInListTile);
+        fbb.addInt64(9, object.autoBackupIntervalInHours);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1074,6 +1081,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final defaultFilterPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
+        final autoBackupIntervalInHoursParam = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 22);
         final object =
             UserPreferences(
                 id: idParam,
@@ -1084,6 +1093,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 showCategoryInListTile: showCategoryInListTileParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
+                autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
@@ -1399,4 +1409,8 @@ class UserPreferences_ {
   /// See [UserPreferences.showCategoryInListTile].
   static final showCategoryInListTile =
       obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[8]);
+
+  /// See [UserPreferences.autoBackupIntervalInHours].
+  static final autoBackupIntervalInHours =
+      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[9]);
 }

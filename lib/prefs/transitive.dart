@@ -27,7 +27,15 @@ class TransitiveLocalPreferences {
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
+  late final DateTimeSettingsEntry lastAutoBackupRanAt;
+  late final PrimitiveSettingsEntry<String> lastAutoBackupPath;
+
   late final BoolSettingsEntry sessionPrivacyMode;
+
+  // For internal notifications
+  late final PrimitiveSettingsEntry<String> lastSavedAutoBackupPath;
+  late final DateTimeSettingsEntry lastRateAppShowedAt;
+  late final DateTimeSettingsEntry lastStarOnGitHubShowedAt;
 
   factory TransitiveLocalPreferences() {
     if (_instance == null) {
@@ -53,10 +61,35 @@ class TransitiveLocalPreferences {
       preferences: _prefs,
     );
 
+    lastAutoBackupRanAt = DateTimeSettingsEntry(
+      key: "transitive.lastAutoBackupRanAt",
+      preferences: _prefs,
+    );
+
+    lastAutoBackupPath = PrimitiveSettingsEntry<String>(
+      key: "transitive.lastAutoBackupPath",
+      preferences: _prefs,
+    );
+
     sessionPrivacyMode = BoolSettingsEntry(
       key: "transitive.sessionPrivacyMode",
       preferences: _prefs,
       initialValue: false,
+    );
+
+    lastRateAppShowedAt = DateTimeSettingsEntry(
+      key: "transitive.lastRateAppShowedAt",
+      preferences: _prefs,
+    );
+
+    lastStarOnGitHubShowedAt = DateTimeSettingsEntry(
+      key: "transitive.lastStarOnGitHubShowedAt",
+      preferences: _prefs,
+    );
+
+    lastSavedAutoBackupPath = PrimitiveSettingsEntry<String>(
+      key: "transitive.lastSavedAutoBackupPath",
+      preferences: _prefs,
     );
 
     unawaited(updateTransitiveProperties());

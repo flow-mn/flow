@@ -5,7 +5,7 @@ import "package:flutter/cupertino.dart";
 class InfoCard extends StatelessWidget {
   final String title;
 
-  final Widget? moneyText;
+  final Widget? money;
   final Widget? delta;
 
   final Widget? icon;
@@ -14,7 +14,7 @@ class InfoCard extends StatelessWidget {
     super.key,
     required this.title,
     this.icon,
-    this.moneyText,
+    this.money,
     this.delta,
   });
 
@@ -47,7 +47,7 @@ class InfoCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (moneyText != null) moneyText!,
+                if (money != null) money!,
                 if (delta != null) delta!,
               ],
             ),
