@@ -24,6 +24,7 @@ import "package:flow/widgets/internal_notifications/internal_notification_sectio
 import "package:flow/widgets/rates_missing_warning.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class HomeTab extends StatefulWidget {
@@ -165,12 +166,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             if (_internalNotification != null) ...[
               const SliverToBoxAdapter(child: SizedBox(height: 12.0)),
               SliverToBoxAdapter(
-                child: InternalNotificationSection(
-                  notification: _internalNotification!,
-                  onDismiss:
-                      () => setState(() {
-                        _internalNotification = null;
-                      }),
+                child: SlidableAutoCloseBehavior(
+                  child: InternalNotificationSection(
+                    notification: _internalNotification!,
+                    onDismiss:
+                        () => setState(() {
+                          _internalNotification = null;
+                        }),
+                  ),
                 ),
               ),
             ],
@@ -240,7 +243,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         currentFilter.accounts?.isNotEmpty != true;
 
     return GroupedTransactionList(
-      sliver: true,
+      listType: GroupedTransactionListType.sliverReorderable,
       header: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
