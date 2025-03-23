@@ -1,7 +1,9 @@
 import "dart:async";
 
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
 import "package:logging/logging.dart";
@@ -24,7 +26,7 @@ class SyncService {
           UserPreferencesService().autoBackupIntervalInHours;
 
       if (intervalHours == null) {
-        _log.fine("Auto backup is disabled");
+        _log.info("Auto backup is disabled");
         return;
       }
 
@@ -33,8 +35,15 @@ class SyncService {
 
       if ((lastBackup ?? Moment.minValue).add(Duration(hours: intervalHours)) >
           Moment.now()) {
-        _log.fine(
+        _log.info(
           "Auto backup is not due yet (last ran at: ${lastBackup?.toIso8601String()})",
+        );
+        return;
+      }
+
+      if (TransactionsService().countMany(TransactionFilter.empty) == 0) {
+        _log.info(
+          "Auto backup is cancelled due to having no transactions (last ran at: ${lastBackup?.toIso8601String()})",
         );
         return;
       }

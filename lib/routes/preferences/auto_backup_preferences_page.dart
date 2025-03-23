@@ -20,7 +20,7 @@ class _AutoBackupPreferencesPageState extends State<AutoBackupPreferencesPage> {
     final int? autobackupIntervalInHours =
         UserPreferencesService().autoBackupIntervalInHours;
 
-    final List<int?> options = [null, 12, 24, 48, 168];
+    final List<int?> options = [null, 12, 24, 48, 72, 168];
 
     if (autobackupIntervalInHours != null &&
         !options.contains(autobackupIntervalInHours)) {
