@@ -75,8 +75,8 @@ class TransactionFilter implements Jasonable {
   /// Returns whether this [filter] contains any references that isn't
   /// resolvable to existing [Account] and/or [Category].
   bool validate({
-    required List<String> accounts,
-    required List<String> categories,
+    required Set<String> accounts,
+    required Set<String> categories,
   }) {
     if (this.accounts?.isNotEmpty == true &&
         this.accounts!.any((accountUuid) => !accounts.contains(accountUuid))) {

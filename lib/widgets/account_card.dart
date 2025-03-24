@@ -38,7 +38,10 @@ class AccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
 
-    final Iterable<Transaction> transactions = account.transactions.nonPending
+    final Iterable<Transaction> transactions = account
+        .transactions
+        .nonPending
+        .nonDeleted
         .where((x) => x.transactionDate.isAtSameMonthAs(now));
 
     final MoneyFlow flow =

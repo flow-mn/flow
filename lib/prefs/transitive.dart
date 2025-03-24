@@ -27,7 +27,15 @@ class TransitiveLocalPreferences {
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
+  late final DateTimeSettingsEntry lastAutoBackupRanAt;
+  late final PrimitiveSettingsEntry<String> lastAutoBackupPath;
+
   late final BoolSettingsEntry sessionPrivacyMode;
+
+  // For internal notifications
+  late final PrimitiveSettingsEntry<String> lastSavedAutoBackupPath;
+  late final DateTimeSettingsEntry lastRateAppShowedAt;
+  late final DateTimeSettingsEntry lastStarOnGitHubShowedAt;
 
   factory TransitiveLocalPreferences() {
     if (_instance == null) {
@@ -53,10 +61,35 @@ class TransitiveLocalPreferences {
       preferences: _prefs,
     );
 
+    lastAutoBackupRanAt = DateTimeSettingsEntry(
+      key: "transitive.lastAutoBackupRanAt",
+      preferences: _prefs,
+    );
+
+    lastAutoBackupPath = PrimitiveSettingsEntry<String>(
+      key: "transitive.lastAutoBackupPath",
+      preferences: _prefs,
+    );
+
     sessionPrivacyMode = BoolSettingsEntry(
       key: "transitive.sessionPrivacyMode",
       preferences: _prefs,
       initialValue: false,
+    );
+
+    lastRateAppShowedAt = DateTimeSettingsEntry(
+      key: "transitive.lastRateAppShowedAt",
+      preferences: _prefs,
+    );
+
+    lastStarOnGitHubShowedAt = DateTimeSettingsEntry(
+      key: "transitive.lastStarOnGitHubShowedAt",
+      preferences: _prefs,
+    );
+
+    lastSavedAutoBackupPath = PrimitiveSettingsEntry<String>(
+      key: "transitive.lastSavedAutoBackupPath",
+      preferences: _prefs,
     );
 
     unawaited(updateTransitiveProperties());
@@ -70,8 +103,8 @@ class TransitiveLocalPreferences {
           accounts.map((e) => e.currency).toSet().length == 1;
 
       await transitiveUsesSingleCurrency.set(usesSingleCurrency);
-    } catch (e) {
-      _log.warning("Cannot update transitive properties", e);
+    } catch (e, stackTrace) {
+      _log.warning("Cannot update transitive properties", e, stackTrace);
     }
 
     try {
@@ -167,8 +200,12 @@ class TransitiveLocalPreferences {
             ),
           ),
         );
-      } catch (e) {
-        _log.warning("Failed to build category FrecencyData for $category", e);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to build category FrecencyData for $category",
+          e,
+          stackTrace,
+        );
       }
     }
   }
@@ -207,8 +244,12 @@ class TransitiveLocalPreferences {
             ),
           ),
         );
-      } catch (e) {
-        _log.warning("Failed to build account FrecencyData for $account", e);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to build account FrecencyData for $account",
+          e,
+          stackTrace,
+        );
       }
     }
   }

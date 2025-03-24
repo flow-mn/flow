@@ -309,7 +309,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "7:2985299148024776274",
+      "lastPropertyId": "10:1110624065651948179",
       "name": "UserPreferences",
       "properties": [
         {
@@ -348,6 +348,21 @@
         {
           "id": "7:2985299148024776274",
           "name": "remindDailyAtRelativeSeconds",
+          "type": 6
+        },
+        {
+          "id": "8:8609498027521636604",
+          "name": "useCategoryNameForUntitledTransactions",
+          "type": 1
+        },
+        {
+          "id": "9:577162958135049929",
+          "name": "showCategoryInListTile",
+          "type": 1
+        },
+        {
+          "id": "10:1110624065651948179",
+          "name": "autoBackupIntervalInHours",
           "type": 6
         }
       ],

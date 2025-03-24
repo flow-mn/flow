@@ -82,13 +82,29 @@ class _ExportPageState extends State<ExportPage> {
     final RenderBox? renderBox =
         renderObject is RenderBox ? renderObject : null;
 
-    await context.showShareSheet(
-      subject: "sync.export.save.shareTitle".t(context, {
-        "type": widget.mode.name,
-        "date": Moment.now().lll,
-      }),
-      filePath: filePath!,
-      renderBox: renderBox,
-    );
+    await context
+        .showShareSheet(
+          subject: "sync.export.save.shareTitle".t(context, {
+            "type": widget.mode.name,
+            "date": Moment.now().lll,
+          }),
+          filePath: filePath!,
+          renderBox: renderBox,
+        )
+        .then((savedPath) {
+          if (savedPath == null || !isDesktop()) {
+            return;
+          }
+          if (!mounted) return;
+
+          context.showToast(
+            text: "sync.export.savedTo".t(context, {"path": savedPath}),
+          );
+        })
+        .catchError((error) {
+          if (mounted) {
+            context.showErrorToast(error: error?.toString());
+          }
+        });
   }
 }

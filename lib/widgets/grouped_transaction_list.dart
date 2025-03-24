@@ -2,11 +2,22 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
-import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
+
+enum GroupedTransactionListType {
+  list(false),
+  sliver(true),
+  reorderable(false),
+  sliverReorderable(true);
+
+  final bool isSliver;
+
+  const GroupedTransactionListType(this.isSliver);
+}
 
 class GroupedTransactionList extends StatefulWidget {
   final EdgeInsets listPadding;
@@ -59,7 +70,7 @@ class GroupedTransactionList extends StatefulWidget {
   /// Set this to [null] to use the default behavior
   final bool? overrideObscure;
 
-  final bool? sliver;
+  final GroupedTransactionListType listType;
 
   const GroupedTransactionList({
     super.key,
@@ -73,6 +84,7 @@ class GroupedTransactionList extends StatefulWidget {
     this.anchor,
     this.headerPadding,
     this.groupBy,
+    this.overrideObscure,
     this.listPadding = const EdgeInsets.symmetric(vertical: 16.0),
     this.itemPadding = const EdgeInsets.symmetric(
       horizontal: 16.0,
@@ -80,8 +92,7 @@ class GroupedTransactionList extends StatefulWidget {
     ),
     this.firstHeaderTopPadding = 8.0,
     this.shouldCombineTransferIfNeeded = false,
-    this.overrideObscure,
-    this.sliver = false,
+    this.listType = GroupedTransactionListType.list,
   });
 
   @override
@@ -117,6 +128,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     final bool combineTransfers =
         widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
+    final bool useCategoryNameForUntitledTransactions =
+        UserPreferencesService().useCategoryNameForUntitledTransactions;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -142,56 +155,111 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
       BuildContext context,
       int index,
     ) => switch (flattened[index]) {
-      (Padding widgetWithPadding) => widgetWithPadding,
+      (Padding widgetWithPadding) => Container(
+        key: ValueKey("padding-$index-${widgetWithPadding.hashCode}"),
+        child: widgetWithPadding,
+      ),
       (Widget header) => Padding(
+        key: ValueKey("header-$index-${header.hashCode}"),
         padding: headerPadding.copyWith(
           top: index == 0 ? widget.firstHeaderTopPadding : headerPadding.top,
         ),
         child: header,
       ),
-      (Transaction transaction) => TransactionListTile(
-        combineTransfers: combineTransfers,
-        transaction: transaction,
-        padding: widget.itemPadding,
-        dismissibleKey: ValueKey(transaction.id),
-        moveToTrashFn: () => transaction.moveToTrashBin(),
-        recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
-        confirmFn: ([bool confirm = true]) {
-          final bool updateTransactionDate =
-              LocalPreferences().pendingTransactions.updateDateUponConfirmation
-                  .get();
+      (Transaction transaction) => ReorderableDelayedDragStartListener(
+        index: index,
+        key: ValueKey(transaction.uuid),
+        child: TransactionListTile(
+          combineTransfers: combineTransfers,
+          transaction: transaction,
+          padding: widget.itemPadding,
+          dismissibleKey: ValueKey(transaction.id),
+          moveToTrashFn: () => transaction.moveToTrashBin(),
+          recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
+          confirmFn: ([bool confirm = true]) {
+            final bool updateTransactionDate =
+                LocalPreferences()
+                    .pendingTransactions
+                    .updateDateUponConfirmation
+                    .get();
 
-          transaction.confirm(confirm, updateTransactionDate);
-        },
-        duplicateFn: () => transaction.duplicate(),
-        overrideObscure: widget.overrideObscure,
-        groupRange: widget.groupBy,
+            transaction.confirm(confirm, updateTransactionDate);
+          },
+          duplicateFn: () => transaction.duplicate(),
+          overrideObscure: widget.overrideObscure,
+          groupRange: widget.groupBy,
+          useCategoryNameForUntitledTransactions:
+              useCategoryNameForUntitledTransactions,
+        ),
       ),
       (_) => Container(),
     };
 
-    if (widget.sliver == true) {
-      return SlidableAutoCloseBehavior(
-        child: SliverList.builder(
+    switch (widget.listType) {
+      case GroupedTransactionListType.list:
+        return ListView.builder(
+          controller: widget.controller,
+          padding: widget.listPadding,
           itemBuilder: itemBuilder,
           itemCount: flattened.length,
-        ),
-      );
+        );
+      case GroupedTransactionListType.sliver:
+        return SliverList.builder(
+          itemBuilder: itemBuilder,
+          itemCount: flattened.length,
+        );
+      case GroupedTransactionListType.reorderable:
+        return ReorderableListView.builder(
+          itemBuilder: itemBuilder,
+          buildDefaultDragHandles: false,
+          itemCount: flattened.length,
+          onReorder: (i, j) => _onReorder(i, j, flattened),
+        );
+      case GroupedTransactionListType.sliverReorderable:
+        return SliverReorderableList(
+          itemBuilder: itemBuilder,
+          itemCount: flattened.length,
+          onReorder: (i, j) => _onReorder(i, j, flattened),
+        );
     }
-
-    return SlidableAutoCloseBehavior(
-      child: ListView.builder(
-        controller: widget.controller,
-        padding: widget.listPadding,
-        itemBuilder: itemBuilder,
-        itemCount: flattened.length,
-      ),
-    );
   }
 
   _privacyModeUpdate() {
     globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     if (!mounted) return;
     setState(() {});
+  }
+
+  void _onReorder(int oldIndex, int newIndex, List flattened) {
+    if (oldIndex == newIndex) return;
+
+    final a = flattened[oldIndex];
+    dynamic b = flattened[newIndex];
+
+    final int direction = oldIndex - newIndex;
+
+    final List priorities = [];
+
+    if (direction > 0) {
+      priorities.add(flattened[newIndex]);
+      if (newIndex < flattened.length - 2) {
+        priorities.add(flattened[newIndex - 1]);
+      }
+    } else {
+      if (newIndex >= 1) {
+        priorities.add(flattened[newIndex - 1]);
+      }
+
+      priorities.add(flattened[newIndex]);
+    }
+
+    priorities.add(b);
+
+    for (var p in priorities) {
+      if (p is Transaction) {
+        TransactionsService().updateTransactionDateSync(a, p.transactionDate);
+        return;
+      }
+    }
   }
 }

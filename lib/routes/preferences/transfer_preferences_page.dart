@@ -57,7 +57,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
               Frame(
                 child: InfoText(
                   child: Text(
-                    "preferences.transfer.combineTransferTransaction.filterDescription"
+                    "preferences.transfer.combineTransferTransaction.combineSupportDisclaimer"
                         .t(context),
                   ),
                 ),

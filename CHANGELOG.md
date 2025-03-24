@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.13.0
+
+### New features
+
+* Arabic language support thanks to [@Ultrate](https://github.com/Ultrate)
+* Now you can transfer between accounts of different currency. Closes [#400](https://github.com/flow-mn/flow/issues/400)
+* Now you can long press and drag to change transaction date, closes [#346](https://github.com/flow-mn/flow/issues/346)
+* Now you can import from CSVs. (This doesn't support multi-currency transactions for the same account)
+  * See template on Google Sheets: <https://docs.google.com/spreadsheets/d/1wxdJ1T8PSvzayxvGs7bVyqQ9Zu0DPQ1YwiBLy1FluqE/edit?usp=sharing>
+
+    The template cells will turn red if you provide incorrect datetime format
+* Now you can set up "Auto-backup". Defaults to every 72 hour.
+
+  IMPORTANT: Backups are made only when you open the app! And you have to save
+  them manually
+* Now Flow asks you to:
+  * Save the latest auto-backup if you haven't. This doesn't get dismissed until
+    you save the latest backup
+  * Rate the app every 75 days (this can be disabled by the system on iOS and macOS)
+  * Give a star on GitHub every 120 days
+
+### Fixes
+
+* Fixed notifications wasn't working on Android 14 (maybe 13 also, and potentially all androids... hehe)
+* Account tab total income/expense no longer includes deleted transactions
+* Early reminders now work correctly
+* "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
+* Category card in categories page now shows current month flow (used to show all-time)
+* Importing no longer results in outdated data in some part of the interface
+* Home tab now updates after fetching the exchange rates
+* Exchange rate missing warning no longer incorrectly show for those who use only one currency
+
+### Changes and improvements
+
+* Launching Flow from a notification now opens the relevant page if available
+* CSV no longer includes deleted transactions
+* CSV now includes ISO 8601 format transaction date
+* UX enhancements regarding setup flow
+* Profile tab now shows pending and deleted transactions
+* Added an option show category name for untitled transactions, closes [#416](https://github.com/flow-mn/flow/issues/416)
+
 ## Beta 0.12.2
 
 ### Fixes

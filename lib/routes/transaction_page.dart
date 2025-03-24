@@ -1,6 +1,7 @@
 import "dart:io";
 
 import "package:flow/constants.dart";
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
@@ -18,6 +19,7 @@ import "package:flow/routes/new_transaction/section.dart";
 import "package:flow/routes/new_transaction/select_account_sheet.dart";
 import "package:flow/routes/new_transaction/select_category_sheet.dart";
 import "package:flow/routes/new_transaction/title_input.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -70,6 +72,8 @@ class _TransactionPageState extends State<TransactionPage> {
   late final TextEditingController _descriptionController;
   late double _amount;
 
+  double _conversionRate = 1.0;
+
   late final Transaction? _currentlyEditing;
 
   final FocusNode _titleFocusNode = FocusNode();
@@ -99,6 +103,12 @@ class _TransactionPageState extends State<TransactionPage> {
   late final bool enableGeo;
 
   late final MapController? _mapController;
+
+  bool get crossCurrencyTransfer =>
+      isTransfer &&
+      _selectedAccount != null &&
+      _selectedAccountTransferTo != null &&
+      _selectedAccount!.currency != _selectedAccountTransferTo!.currency;
 
   @override
   void initState() {
@@ -142,6 +152,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _currentlyEditing?.extensions.transfer?.toAccountUuid,
       );
       _geo = _currentlyEditing?.extensions.geo;
+      if (_currentlyEditing?.isTransfer == true) {
+        _conversionRate =
+            _currentlyEditing!.extensions.transfer?.conversionRate ?? 1.0;
+      }
     }
 
     enableGeo = LocalPreferences().enableGeo.get();
@@ -281,7 +295,7 @@ class _TransactionPageState extends State<TransactionPage> {
                     ),
                     const SizedBox(height: 24.0),
                     // To account
-                    if (isTransfer)
+                    if (isTransfer) ...[
                       Section(
                         title: "transaction.transfer.to".t(context),
                         child: ListTile(
@@ -304,6 +318,26 @@ class _TransactionPageState extends State<TransactionPage> {
                           focusNode: _selectAccountTransferToFocusNode,
                         ),
                       ),
+                      if (crossCurrencyTransfer) ...[
+                        const SizedBox(height: 24.0),
+                        Section(
+                          title: "transaction.transfer.conversionRate".t(
+                            context,
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              "${Money(1.0, _selectedAccount!.currency).formatMoney()} = ${Money(_conversionRate, _selectedAccountTransferTo!.currency).formatMoney()}",
+                            ),
+                            onTap: () => inputPostConversionAmount(),
+                            trailing:
+                                _selectedAccountTransferTo == null
+                                    ? const Icon(Symbols.chevron_right)
+                                    : null,
+                            focusNode: _selectAccountTransferToFocusNode,
+                          ),
+                        ),
+                      ],
+                    ],
                     // Category
                     if (!isTransfer)
                       Section(
@@ -434,7 +468,9 @@ class _TransactionPageState extends State<TransactionPage> {
                               ListTile(
                                 leading: Icon(Symbols.restore_page_rounded),
                                 title: Text(
-                                  "transaction.moveToTrash.restore".t(context),
+                                  "transaction.moveToTrashBin.restore".t(
+                                    context,
+                                  ),
                                 ),
                                 onTap: () => _restoreTransaction(),
                               ),
@@ -489,17 +525,17 @@ class _TransactionPageState extends State<TransactionPage> {
 
           if (mounted) setState(() => {});
         })
-        .catchError((e) {
-          _log.warning("Failed to get last known location", e);
+        .catchError((e, stackTrace) {
+          _log.warning("Failed to get last known location", e, stackTrace);
         });
 
     Geolocator.getCurrentPosition()
         .then((current) {
           _geo = Geo.fromPosition(current);
         })
-        .catchError((e) {
+        .catchError((e, stackTrace) {
           locationFailed = true;
-          _log.warning("Failed to get current location", e);
+          _log.warning("Failed to get current location", e, stackTrace);
         })
         .whenComplete(() {
           if (mounted) setState(() => {});
@@ -557,9 +593,44 @@ class _TransactionPageState extends State<TransactionPage> {
       _amount = resultAmount ?? _amount;
     });
 
-    if (mounted && widget.isNewTransaction && result != null) {
+    if (!mounted) return;
+
+    await inputPostConversionAmount();
+
+    if (!mounted) return;
+
+    if (widget.isNewTransaction && result != null) {
       FocusScope.of(context).requestFocus(_titleFocusNode);
     }
+  }
+
+  Future<void> inputPostConversionAmount() async {
+    if (!crossCurrencyTransfer) return;
+
+    final double initialAmount = _amount * _conversionRate;
+
+    // In the currency of [to]
+    final double? postConversionAmount = await showModalBottomSheet<double>(
+      context: context,
+      builder:
+          (context) => InputAmountSheet(
+            initialAmount: initialAmount,
+            currency: _selectedAccountTransferTo?.currency,
+            overrideDecimalPrecision: 8,
+            hideCurrencySymbol: false,
+            title:
+                "${Money(_amount, _selectedAccount!.currency).formatMoney()} =",
+            lockSign: true,
+            allowNegative: false,
+          ),
+      isScrollControlled: true,
+    );
+
+    if (postConversionAmount != null) {
+      _conversionRate = postConversionAmount / _amount;
+    }
+
+    setState(() {});
   }
 
   void selectAccount() async {
@@ -599,13 +670,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
   void selectAccountTransferTo() async {
     final List<Account> toAccounts =
-        accounts
-            .where(
-              (element) =>
-                  element.currency == _selectedAccount?.currency &&
-                  element.id != _selectedAccount?.id,
-            )
-            .toList();
+        accounts.where((element) {
+          return element.id != _selectedAccount?.id;
+        }).toList();
 
     final Account? result =
         toAccounts.length == 1
@@ -625,6 +692,24 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {
       _selectedAccountTransferTo = result ?? _selectedAccountTransferTo;
     });
+
+    final bool crossCurrency =
+        _selectedAccount != null &&
+        _selectedAccountTransferTo != null &&
+        _selectedAccount!.currency != _selectedAccountTransferTo!.currency;
+
+    if (crossCurrency && widget.isNewTransaction) {
+      final ExchangeRates? rates =
+          ExchangeRatesService().getPrimaryCurrencyRates();
+
+      if (rates != null) {
+        _conversionRate =
+            Money(
+              1.0,
+              _selectedAccount!.currency,
+            ).convert(_selectedAccountTransferTo!.currency, rates).amount;
+      }
+    }
 
     if (widget.isNewTransaction && result != null) inputAmount();
   }
@@ -738,7 +823,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void update({
-    required String formattedTitle,
+    required String? formattedTitle,
     required String? formattedDescription,
   }) async {
     if (_currentlyEditing == null) return;
@@ -764,12 +849,13 @@ class _TransactionPageState extends State<TransactionPage> {
           extensions:
               _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
           isPending: isPending,
+          conversionRate: crossCurrencyTransfer ? _conversionRate : null,
         );
 
         _currentlyEditing.permanentlyDelete(true);
         context.pop();
-      } catch (e) {
-        _log.severe("Failed to update transfer transaction", e);
+      } catch (e, stackTrace) {
+        _log.severe("Failed to update transfer transaction", e, stackTrace);
       }
       return;
     }
@@ -804,8 +890,8 @@ class _TransactionPageState extends State<TransactionPage> {
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     final String trimmedTitle = _titleController.text.trim();
-    final String formattedTitle =
-        trimmedTitle.isNotEmpty ? trimmedTitle : fallbackTitle;
+    final String? formattedTitle =
+        trimmedTitle.isNotEmpty ? trimmedTitle : null;
 
     final String trimmedDescription = _descriptionController.text.trim();
     final String? formattedDescription =
@@ -836,6 +922,7 @@ class _TransactionPageState extends State<TransactionPage> {
         description: formattedDescription,
         extensions: extensions,
         isPending: isPending,
+        conversionRate: crossCurrencyTransfer ? _conversionRate : null,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -910,7 +997,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (mounted) {
       context.showToast(
-        text: "transaction.moveToTrashBin.recover.success".t(context),
+        text: "transaction.moveToTrashBin.restore.success".t(context),
       );
       pop();
     }

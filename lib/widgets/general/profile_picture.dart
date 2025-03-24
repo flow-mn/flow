@@ -76,7 +76,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
             onTap: widget.onTap,
             borderRadius: BorderRadius.circular(999.9),
             child: AnimatedOpacity(
-              opacity: showOverlay ? 1.0 : 0,
+              opacity:
+                  widget.showOverlayUponHover ? (showOverlay ? 1.0 : 0.5) : 0.0,
               duration: const Duration(milliseconds: 200),
               child: DecoratedBox(
                 decoration: const BoxDecoration(

@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 import "dart:math" as math;
 import "dart:ui" as ui;
@@ -5,9 +6,9 @@ import "dart:ui" as ui;
 import "package:flow/l10n/extensions.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
-import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/profile_picture.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -46,10 +47,6 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InfoText(
-                  child: Text("setup.profile.addPhoto.description".t(context)),
-                ),
-                const SizedBox(height: 24.0),
                 ProfilePicture(
                   key: ValueKey(_profilePictureUpdateCounter),
                   filePath: widget.profileImagePath,
@@ -120,6 +117,12 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
   }
 
   void save() {
-    context.push("/setup/currency");
+    if (mounted) {
+      GoRouter.of(context).popUntil((route) => route.path == "/setup");
+
+      context.pushReplacement("/");
+    }
+
+    unawaited(LocalPreferences().completedInitialSetup.set(true));
   }
 }
