@@ -218,6 +218,31 @@ class TransactionsService {
     );
   }
 
+  Future<void> updateTransactionDate(
+    Transaction transaction,
+    DateTime dateTime,
+  ) async {
+    transaction.transactionDate = dateTime;
+    final other = await findTransferRelatedTransaction(transaction);
+    if (other != null) {
+      other.transactionDate = transaction.transactionDate;
+      await updateOne(other);
+    }
+    await updateOne(transaction);
+  }
+
+  void updateTransactionDateSync(Transaction transaction, DateTime dateTime) {
+    transaction.transactionDate = dateTime;
+    final other = TransactionsService().findTransferRelatedTransactionSync(
+      transaction,
+    );
+    if (other != null) {
+      other.transactionDate = transaction.transactionDate;
+      updateOneSync(other);
+    }
+    updateOneSync(transaction);
+  }
+
   Future<Transaction?> getOne(int id) async {
     return ObjectBox().box<Transaction>().getAsync(id);
   }

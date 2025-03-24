@@ -29,6 +29,8 @@
 * "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
 * Category card in categories page now shows current month flow (used to show all-time)
 * Importing no longer results in outdated data in some part of the interface
+* Home tab now updates after fetching the exchange rates
+* Exchange rate missing warning no longer incorrectly show for those who use only one currency
 
 ### Changes and improvements
 

@@ -100,6 +100,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       _updateInternalNotification,
     );
     _updateInternalNotification();
+
+    ExchangeRatesService().getPrimaryCurrencyRates();
   }
 
   @override
@@ -135,8 +137,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           ),
       builder: (context, snapshot) {
         final DateTime now = Moment.now().startOfNextMinute();
-        final ExchangeRates? rates =
-            ExchangeRatesService().getPrimaryCurrencyRates();
         final List<Transaction>? transactions = snapshot.data;
 
         final Widget header = DefaultTransactionsFilterHead(
@@ -181,12 +181,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               (0, true) => SliverFillRemaining(
                 child: NoTransactions(isFilterModified: isFilterModified),
               ),
-              (_, true) => buildGroupedList(
-                context,
-                now,
-                transactions ?? [],
-                rates,
-              ),
+              (_, true) => buildGroupedList(context, now, transactions ?? []),
               (_, false) => const SliverFillRemaining(
                 child: Center(
                   child: CircularProgressIndicator /*.adaptive*/ (),
@@ -204,76 +199,84 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     BuildContext context,
     DateTime now,
     List<Transaction> transactions,
-    ExchangeRates? rates,
   ) {
-    final bool showMissingExchangeRatesWarning =
-        rates == null &&
-        TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
-
-    final Map<TimeRange, List<Transaction>> grouped = transactions
-        .where(
-          (transaction) =>
-              !transaction.transactionDate.isAfter(now) &&
-              transaction.isPending != true,
-        )
-        .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
-
-    final List<Transaction> pendingTransactions =
-        transactions
-            .where(
-              (transaction) =>
-                  transaction.transactionDate.isAfter(now) ||
-                  transaction.isPending == true,
-            )
-            .toList();
-
-    final int actionNeededCount =
-        pendingTransactions
-            .where((transaction) => transaction.confirmable())
-            .length;
-
-    final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
-        pendingTransactions.groupByRange(
-          rangeFn:
-              (transaction) =>
-                  CustomTimeRange(Moment.minValue, Moment.maxValue),
+    return ValueListenableBuilder(
+      valueListenable: ExchangeRatesService().exchangeRatesCache,
+      builder: (context, ratesSet, _) {
+        final ExchangeRates? rates = ratesSet?.get(
+          LocalPreferences().getPrimaryCurrency(),
         );
 
-    final bool shouldCombineTransferIfNeeded =
-        currentFilter.accounts?.isNotEmpty != true;
+        final bool showMissingExchangeRatesWarning =
+            rates == null &&
+            !TransitiveLocalPreferences().transitiveUsesSingleCurrency.get();
 
-    return GroupedTransactionList(
-      listType: GroupedTransactionListType.sliverReorderable,
-      header: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12.0),
-          FlowCards(transactions: transactions, rates: rates),
-          if (showMissingExchangeRatesWarning) ...[
-            const SizedBox(height: 12.0),
-            RatesMissingWarning(),
-          ],
-        ],
-      ),
-      controller: widget.scrollController,
-      transactions: grouped,
-      groupBy: currentFilter.groupBy,
-      pendingTransactions: pendingTransactionsGrouped,
-      shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
-      pendingDivider: const WavyDivider(),
-      listPadding: const EdgeInsets.only(top: 0, bottom: 80.0),
-      headerBuilder: (pendingGroup, range, transactions) {
-        if (pendingGroup) {
-          return PendingTransactionsHeader(
-            transactions: transactions,
-            range: range,
-            badgeCount: actionNeededCount,
-          );
-        }
+        final Map<TimeRange, List<Transaction>> grouped = transactions
+            .where(
+              (transaction) =>
+                  !transaction.transactionDate.isAfter(now) &&
+                  transaction.isPending != true,
+            )
+            .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
 
-        return TransactionListDateHeader(
-          transactions: transactions,
-          range: range,
+        final List<Transaction> pendingTransactions =
+            transactions
+                .where(
+                  (transaction) =>
+                      transaction.transactionDate.isAfter(now) ||
+                      transaction.isPending == true,
+                )
+                .toList();
+
+        final int actionNeededCount =
+            pendingTransactions
+                .where((transaction) => transaction.confirmable())
+                .length;
+
+        final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
+            pendingTransactions.groupByRange(
+              rangeFn:
+                  (transaction) =>
+                      CustomTimeRange(Moment.minValue, Moment.maxValue),
+            );
+
+        final bool shouldCombineTransferIfNeeded =
+            currentFilter.accounts?.isNotEmpty != true;
+
+        return GroupedTransactionList(
+          listType: GroupedTransactionListType.sliverReorderable,
+          header: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12.0),
+              FlowCards(transactions: transactions, rates: rates),
+              if (showMissingExchangeRatesWarning) ...[
+                const SizedBox(height: 12.0),
+                RatesMissingWarning(),
+              ],
+            ],
+          ),
+          controller: widget.scrollController,
+          transactions: grouped,
+          groupBy: currentFilter.groupBy,
+          pendingTransactions: pendingTransactionsGrouped,
+          shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
+          pendingDivider: const WavyDivider(),
+          listPadding: const EdgeInsets.only(top: 0, bottom: 80.0),
+          headerBuilder: (pendingGroup, range, transactions) {
+            if (pendingGroup) {
+              return PendingTransactionsHeader(
+                transactions: transactions,
+                range: range,
+                badgeCount: actionNeededCount,
+              );
+            }
+
+            return TransactionListDateHeader(
+              transactions: transactions,
+              range: range,
+            );
+          },
         );
       },
     );
