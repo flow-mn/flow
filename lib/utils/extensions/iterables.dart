@@ -5,6 +5,21 @@ extension Iterables<E> on Iterable<E> {
         map..putIfAbsent(keyFunction(element), () => <E>[]).add(element),
   );
 
+  /// Creates map from [Iterable] by unique id. Will throw [StateError] if
+  /// duplicate key is found.
+  Map<K, E> mapBy<K>(K Function(E) keyFunction) =>
+      fold(<K, E>{}, (Map<K, E> map, E element) {
+        final K key = keyFunction(element);
+
+        if (map[key] != null) {
+          throw StateError("Duplicate key found: $key");
+        }
+
+        map[key] = element;
+
+        return map;
+      });
+
   E? firstWhereOrNull(bool Function(E element) test) {
     for (var element in this) {
       if (test(element)) return element;

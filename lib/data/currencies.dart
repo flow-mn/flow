@@ -734,6 +734,8 @@ final Map<String, CurrencyData> iso4217CurrenciesGrouped = iso4217Currencies
       );
     });
 
+/// [currencyCode] must be all uppercase
 bool isCurrencyCodeValid(String currencyCode) {
-  return iso4217CurrenciesGrouped.containsKey(currencyCode.toUpperCase());
+  assert(currencyCode.toUpperCase() == currencyCode);
+  return iso4217CurrenciesGrouped.containsKey(currencyCode);
 }

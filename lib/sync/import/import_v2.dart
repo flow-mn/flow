@@ -16,7 +16,6 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
-import "package:flow/sync/import/mode.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
 import "package:flutter/widgets.dart";
@@ -24,28 +23,6 @@ import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
 
 final Logger _log = Logger("ImportV2");
-
-/// Used to report current status to user
-enum ImportV2Progress implements LocalizedEnum {
-  waitingConfirmation,
-  erasing,
-  writingCategories,
-  writingAccounts,
-  resolvingTransactions,
-  writingTransactions,
-  writingTranscationFilterPresets,
-  writingProfile,
-  writingUserPreferences,
-  settingPrimaryCurrency,
-  copyingImages,
-  success,
-  error;
-
-  @override
-  String get localizationEnumValue => name;
-  @override
-  String get localizationEnumName => "ImportV2Progress";
-}
 
 class ImportV2 extends Importer {
   @override
@@ -55,9 +32,6 @@ class ImportV2 extends Importer {
 
   dynamic error;
 
-  @override
-  final ImportMode mode;
-
   final Map<String, int> memoizeAccounts = {};
   final Map<String, int> memoizeCategories = {};
 
@@ -66,12 +40,7 @@ class ImportV2 extends Importer {
     ImportV2Progress.waitingConfirmation,
   );
 
-  ImportV2(
-    this.data, {
-    this.cleanupFolder,
-    this.assetsRoot,
-    this.mode = ImportMode.merge,
-  });
+  ImportV2(this.data, {this.cleanupFolder, this.assetsRoot});
 
   @override
   Future<String?> execute({bool ignoreSafetyBackupFail = false}) async {
@@ -96,14 +65,7 @@ class ImportV2 extends Importer {
     try {
       TransactionsService().pauseListeners();
 
-      switch (mode) {
-        case ImportMode.eraseAndWrite:
-          await _eraseAndWrite();
-          break;
-        case ImportMode.merge:
-          await _merge();
-          break;
-      }
+      await _eraseAndWrite();
     } catch (e) {
       progressNotifier.value = ImportV2Progress.error;
       rethrow;
@@ -252,35 +214,6 @@ class ImportV2 extends Importer {
     progressNotifier.value = ImportV2Progress.success;
   }
 
-  Future<void> _merge() async {
-    // Here, we might have an interactive selection screen for resolving
-    // conflicts. For now, we'll ignore this.
-
-    throw UnimplementedError();
-
-    // // 1. Resurrect [Category]s
-    // progressNotifier.value = ImportV1Progress.loadingCategories;
-    // final currentCategories = await ObjectBox().box<Category>().getAllAsync();
-    // await ObjectBox().box<Category>().putManyAsync(data.categories
-    //     .where((incomingCategory) => !currentCategories.any(
-    //         (currentCategory) => currentCategory.uuid == incomingCategory.uuid))
-    //     .toList());
-
-    // // 2. Resurrect [Account]s
-    // progressNotifier.value = ImportV1Progress.loadingAccounts;
-    // final currentAccounts = await ObjectBox().box<Account>().getAllAsync();
-    // await ObjectBox().box<Account>().putManyAsync(data.accounts
-    //     .where((incomingAccount) => !currentAccounts.any((currentAccount) =>
-    //         currentAccount.uuid == incomingAccount.uuid ||
-    //         currentAccount.name == incomingAccount.name))
-    //     .toList());
-
-    // // 3. Resurrect [Transaction]s
-    // progressNotifier.value = ImportV1Progress.loadingTransactions;
-    // final currentTransactions =
-    //     await TransactionsService().getAll();
-  }
-
   Future<void> _cleanup() async {
     if (cleanupFolder == null) {
       return;
@@ -354,4 +287,26 @@ class ImportV2 extends Importer {
 
     return transaction;
   }
+}
+
+/// Used to report current status to user
+enum ImportV2Progress implements LocalizedEnum {
+  waitingConfirmation,
+  erasing,
+  writingCategories,
+  writingAccounts,
+  resolvingTransactions,
+  writingTransactions,
+  writingTranscationFilterPresets,
+  writingProfile,
+  writingUserPreferences,
+  settingPrimaryCurrency,
+  copyingImages,
+  success,
+  error;
+
+  @override
+  String get localizationEnumValue => name;
+  @override
+  String get localizationEnumName => "ImportV2Progress";
 }

@@ -64,9 +64,9 @@ class NotificationsService {
   Future<void> initialize() async {
     try {
       _timezone = await FlutterTimezone.getLocalTimezone();
-    } catch (error) {
+    } catch (error, stackTrace) {
       _timezone = _fallbackTimezone;
-      _log.severe("Failed to get local timezone", error);
+      _log.severe("Failed to get local timezone", error, stackTrace);
     }
 
     try {
@@ -154,7 +154,9 @@ class NotificationsService {
   /// Upon failure, returns an empty list
   Future<List<PendingNotificationRequest>> fetchAllNotification() async {
     try {
-      return await pluginInstance.pendingNotificationRequests();
+      final List<PendingNotificationRequest> result =
+          await pluginInstance.pendingNotificationRequests();
+      return result;
     } catch (e) {
       return <PendingNotificationRequest>[];
     }
@@ -163,17 +165,9 @@ class NotificationsService {
   /// Upon failure, does nothing
   Future<void> cancelAllNotifications() async {
     try {
-      return await pluginInstance.cancelAll();
+      await pluginInstance.cancelAll();
     } catch (e) {
       // Silent fail
-    }
-  }
-
-  Future<List<PendingNotificationRequest>> getSchedules() async {
-    try {
-      return await pluginInstance.pendingNotificationRequests();
-    } catch (e) {
-      return [];
     }
   }
 
@@ -186,7 +180,9 @@ class NotificationsService {
     final Moment now = Moment.now();
 
     if (transaction.transactionDate.isBefore(now)) {
-      _log.info("Ignoring scheduling for past date");
+      _log.info(
+        "ignoring scheduling for past date (Transaction ${transaction.uuid} @ ${transaction.transactionDate.toIso8601String()})",
+      );
       return;
     }
 
@@ -239,6 +235,10 @@ class NotificationsService {
               id: transaction.uuid,
             ).serialized,
       );
+
+      _log.info(
+        "Scheduled a reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${dateTime.toString()}",
+      );
     } catch (e) {
       _log.warning("Failed to schedule notification", e);
     }
@@ -256,7 +256,7 @@ class NotificationsService {
     _log.fine("Clearing notifications by type $type");
 
     final List<PendingNotificationRequest> scheduledNotifications =
-        await getSchedules();
+        await fetchAllNotification();
 
     final List<PendingNotificationRequest> reminders =
         scheduledNotifications.where((x) {
@@ -360,7 +360,7 @@ class NotificationsService {
                 id: null,
               ).serialized,
         );
-        _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
+        _log.info("Scheduled a reminder at ${dateTime.toString()}, $i");
       } catch (e) {
         _log.warning("Failed to schedule notification", e);
       }
@@ -467,7 +467,12 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
-      await androidImplementation?.requestExactAlarmsPermission();
+      await androidImplementation?.requestExactAlarmsPermission().catchError((
+        error,
+      ) {
+        _log.warning("Failed to request exact alarms permission", error);
+        return false;
+      });
     } else if (Platform.isIOS || Platform.isMacOS) {
       await pluginInstance
           .resolvePlatformSpecificImplementation<

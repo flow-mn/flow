@@ -6,6 +6,7 @@ import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
@@ -36,11 +37,49 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  int? get autoBackupIntervalInHours => value.autoBackupIntervalInHours;
+  set autoBackupIntervalInHours(int? newAutobackupIntervalInHours) {
+    if (value.id == 0) return;
+
+    if (newAutobackupIntervalInHours == null) {
+      value.autoBackupIntervalInHours = null;
+    } else {
+      value.autoBackupIntervalInHours = min(
+        max(0, newAutobackupIntervalInHours),
+        8760,
+      );
+    }
+
+    ObjectBox().box<UserPreferences>().put(value);
+
+    SyncService().triggerAutoBackup();
+  }
+
   bool get excludeTransfersFromFlow => value.excludeTransfersFromFlow;
   set excludeTransfersFromFlow(bool newExcludeTransfersFromFlow) {
     if (value.id == 0) return;
 
     value.excludeTransfersFromFlow = newExcludeTransfersFromFlow;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get useCategoryNameForUntitledTransactions =>
+      value.useCategoryNameForUntitledTransactions;
+  set useCategoryNameForUntitledTransactions(
+    bool newUseCategoryNameForUntitledTransactions,
+  ) {
+    if (value.id == 0) return;
+
+    value.useCategoryNameForUntitledTransactions =
+        newUseCategoryNameForUntitledTransactions;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get showCategoryInListTile => value.showCategoryInListTile;
+  set showCategoryInListTile(bool newShowCategoryInListTile) {
+    if (value.id == 0) return;
+
+    value.showCategoryInListTile = newShowCategoryInListTile;
     ObjectBox().box<UserPreferences>().put(value);
   }
 

@@ -46,7 +46,7 @@ class ExchangeRatesService {
   ]) async {
     final String normalizedCurrency = baseCurrency.trim().toLowerCase();
 
-    if (!isCurrencyCodeValid(normalizedCurrency)) {
+    if (!isCurrencyCodeValid(normalizedCurrency.toUpperCase())) {
       throw FormatException("Invalid currency code: $baseCurrency");
     }
 
@@ -58,23 +58,31 @@ class ExchangeRatesService {
     try {
       final response = await http.get(
         Uri.parse(
-          "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.json",
+          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.min.json",
         ),
       );
       jsonResponse = jsonDecode(response.body);
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates from side source", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates from main source",
+        e,
+        stackTrace,
+      );
     }
 
     try {
       final response = await http.get(
         Uri.parse(
-          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.json",
+          "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.min.json",
         ),
       );
       jsonResponse = jsonDecode(response.body);
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates from main source", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates from side source",
+        e,
+        stackTrace,
+      );
     }
 
     if (jsonResponse == null) {
@@ -101,8 +109,12 @@ class ExchangeRatesService {
       );
 
       return exchangeRates;
-    } catch (e) {
-      _log.warning("Failed to fetch exchange rates ($baseCurrency)", e);
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to fetch exchange rates ($baseCurrency)",
+        e,
+        stackTrace,
+      );
 
       return exchangeRatesCache.value?.get(baseCurrency);
     }
@@ -121,8 +133,8 @@ class ExchangeRatesService {
 
     try {
       LocalPreferences().exchangeRatesCache.set(current);
-    } catch (e) {
-      _log.warning("Failed to update exchange rates cache", e);
+    } catch (e, stackTrace) {
+      _log.warning("Failed to update exchange rates cache", e, stackTrace);
     }
   }
 

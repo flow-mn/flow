@@ -1,10 +1,7 @@
-import "package:flow/sync/import/mode.dart";
-import "package:flow/sync/model/base.dart";
 import "package:flutter/material.dart";
 
-abstract class Importer {
-  ImportMode get mode;
-  SyncModelBase get data;
+abstract class Importer<T> {
+  T get data;
   ValueNotifier get progressNotifier;
 
   /// Before starting the import, it'll perform a safety backup, stored in

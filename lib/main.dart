@@ -28,10 +28,13 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
+import "package:flow/providers/categories.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -39,6 +42,7 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
@@ -106,6 +110,13 @@ void main() async {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
+  try {
+    startupLog.fine("Initializing SyncService");
+    SyncService();
+  } catch (e, stackTrace) {
+    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
+  }
+
   startupLog.fine("Finally telling Flutter to run the app widget");
   runApp(const Flow());
 }
@@ -152,13 +163,11 @@ class FlowState extends State<Flow> {
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
-    } else {
-      // To migrate profile image path from old to new (since 0.10.0)
-      nonImportantMigrateProfileImagePath();
     }
 
-    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
-    migrateLocalPrefsRequirePendingTransactionConfrimation();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      migrateRemoveTitleFromUntitledTransactions();
+    });
 
     _tryUnlockTempLock();
   }
@@ -192,30 +201,36 @@ class FlowState extends State<Flow> {
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
-        return GestureDetector(
-          behavior:
-              _tempLock ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
-          onTap: _tryUnlockTempLock,
-          child: IgnorePointer(
-            ignoring: _tempLock,
-            child: Stack(
-              children: [
-                child ?? Container(),
-                if (_tempLock)
-                  Positioned.fill(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                      child: SizedBox.expand(
-                        child: Center(
-                          child: FlowIcon(
-                            FlowIconData.icon(Symbols.lock_rounded),
-                            size: 80.0,
+        return AccountsProviderScope(
+          child: CategoriesProviderScope(
+            child: GestureDetector(
+              behavior:
+                  _tempLock
+                      ? HitTestBehavior.opaque
+                      : HitTestBehavior.deferToChild,
+              onTap: _tryUnlockTempLock,
+              child: IgnorePointer(
+                ignoring: _tempLock,
+                child: Stack(
+                  children: [
+                    child ?? Container(),
+                    if (_tempLock)
+                      Positioned.fill(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                          child: SizedBox.expand(
+                            child: Center(
+                              child: FlowIcon(
+                                FlowIconData.icon(Symbols.lock_rounded),
+                                size: 80.0,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -343,6 +358,7 @@ void initializePackageVersion() async {
 
     final value = await PackageInfo.fromPlatform();
     appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+    downloadedFrom = value.installerStore;
 
     startupLog.fine("Loaded package info");
     startupLog.fine("App version: $appVersion");

@@ -1,16 +1,23 @@
-import "dart:developer";
 import "dart:io";
 
+import "package:cross_file/cross_file.dart";
+import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
+import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v2.dart";
-import "package:flow/utils/extensions/toast.dart";
+import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import/file_select_area.dart";
 import "package:flutter/material.dart";
-import "package:cross_file/cross_file.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
+import "package:material_symbols_icons/symbols.dart";
+import "package:simple_icons/simple_icons.dart";
+
+final Logger _log = Logger("ImportPage");
 
 class ImportPage extends StatefulWidget {
   final bool? setupMode;
@@ -36,9 +43,25 @@ class _ImportPageState extends State<ImportPage> {
         child:
             busy
                 ? const Spinner.center()
-                : FileSelectArea(
-                  onFileDropped: initiateImportFromDroppedFile,
-                  onTap: initiateImport,
+                : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FileSelectArea(
+                        onFileDropped: initiateImportFromDroppedFile,
+                        onTap: initiateImport,
+                      ),
+                      const SizedBox(height: 16.0),
+                      ListHeader("sync.import.other".t(context)),
+                      const SizedBox(height: 8.0),
+                      ListTile(
+                        leading: Icon(SimpleIcons.googlesheets),
+                        trailing: Icon(Symbols.chevron_right_rounded),
+                        title: Text("sync.import.getCSVTemplate".t(context)),
+                        onTap: () => openUrl(csvImportTemplateUrl),
+                      ),
+                    ],
+                  ),
                 ),
       ),
     );
@@ -68,6 +91,12 @@ class _ImportPageState extends State<ImportPage> {
               extra: importV2,
             );
             break;
+          case ImportCSV importCSV:
+            context.pushReplacement(
+              "/import/wizard/csv?setupMode=${widget.setupMode}",
+              extra: importCSV,
+            );
+            break;
           case null:
             context.showErrorToast(
               error: "error.input.noFilePicked".t(context),
@@ -80,8 +109,8 @@ class _ImportPageState extends State<ImportPage> {
             break;
         }
       }
-    } catch (e) {
-      log("[Flow Import Page] An error was thrown from `importBackupV1`:\n $e");
+    } catch (e, stackTrace) {
+      _log.severe("Importer error", e, stackTrace);
       if (mounted) {
         context.showErrorToast(error: e);
       }
@@ -94,12 +123,12 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   Future<void> initiateImportFromDroppedFile(XFile? file) async {
-    log("file: $file");
-
     if (file == null) {
       context.showErrorToast(error: "error.input.noFilePicked".t(context));
       return;
     }
+
+    _log.fine("Trying to import from dragged file: ${file.path}");
 
     final backupFile = File(file.path);
 

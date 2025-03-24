@@ -16,7 +16,6 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/export.dart";
-import "package:flow/sync/export/export_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:path/path.dart" as path;
 
@@ -137,6 +136,3 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
 
   return result;
 }
-
-/// I mean what there is to say, it's the same thing.
-Future<String> generateCSVContentV2() async => await generateCSVContentV1();

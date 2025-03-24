@@ -215,6 +215,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               ),
               _ => GroupedTransactionList(
+                listType: GroupedTransactionListType.reorderable,
                 header: header,
                 transactions: grouped,
                 pendingTransactions: pendingTransactionsGrouped,

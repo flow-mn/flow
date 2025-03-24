@@ -3,7 +3,6 @@ import "dart:math" as math;
 
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
-import "package:flow/data/memo.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/money_flow.dart";
 import "package:flow/data/prefs/frecency_group.dart";
@@ -276,9 +275,11 @@ extension MainActions on ObjectBox {
                 return true;
               }).toList(),
         )
-        .catchError((error) {
+        .catchError((error, stackTrace) {
           _log.severe(
-            "Failed to fetch transactions for title suggestions: $error",
+            "Failed to fetch transactions for title suggestions",
+            error,
+            stackTrace,
           );
           return <Transaction>[];
         });
@@ -446,9 +447,11 @@ extension TransactionActions on Transaction {
           if (!removedRelated) {
             throw Exception("Failed to remove related transaction");
           }
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't delete transfer transaction properly due to: $e",
+            "Couldn't delete transfer transaction properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -468,9 +471,11 @@ extension TransactionActions on Transaction {
       } else {
         try {
           TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't move transfer transaction to trash bin properly due to: $e",
+            "Couldn't move transfer transaction to trash bin properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -478,8 +483,8 @@ extension TransactionActions on Transaction {
 
     try {
       TransactionsService().moveToBinSync(this);
-    } catch (e) {
-      _log.severe("Failed to move transaction to trash bin: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
     }
   }
 
@@ -496,9 +501,11 @@ extension TransactionActions on Transaction {
           TransactionsService().recoverFromBinSync(
             transfer.relatedTransactionUuid,
           );
-        } catch (e) {
+        } catch (e, stackTrace) {
           _log.severe(
-            "Couldn't move transfer transaction to trash bin properly due to: $e",
+            "Couldn't move transfer transaction to trash bin properly",
+            e,
+            stackTrace,
           );
         }
       }
@@ -506,8 +513,8 @@ extension TransactionActions on Transaction {
 
     try {
       TransactionsService().recoverFromBinSync(this);
-    } catch (e) {
-      _log.severe("Failed to move transaction to trash bin: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
     }
   }
 
@@ -527,9 +534,11 @@ extension TransactionActions on Transaction {
               confirm: confirm,
               updateTransactionDate: updateTransactionDate,
             );
-          } catch (e) {
+          } catch (e, stackTrace) {
             _log.severe(
-              "Couldn't delete transfer transaction properly due to: $e",
+              "Couldn't delete transfer transaction properly",
+              e,
+              stackTrace,
             );
           }
         }
@@ -540,8 +549,8 @@ extension TransactionActions on Transaction {
         confirm: confirm,
         updateTransactionDate: updateTransactionDate,
       );
-    } catch (e) {
-      _log.severe("Failed to confirm transaction: $e");
+    } catch (e, stackTrace) {
+      _log.severe("Failed to confirm transaction", e, stackTrace);
       return false;
     }
   }
@@ -679,27 +688,6 @@ extension TransactionListActions on Iterable<Transaction> {
 }
 
 extension AccountActions on Account {
-  static Memoizer<String, String?>? accountNameToUuid;
-
-  static String nameByUuid(String uuid) {
-    accountNameToUuid ??= Memoizer(compute: _nameByUuid);
-
-    return accountNameToUuid!.get(uuid) ?? "???";
-  }
-
-  static String _nameByUuid(String uuid) {
-    final query =
-        ObjectBox().box<Account>().query(Account_.uuid.equals(uuid)).build();
-
-    try {
-      return query.findFirst()?.name ?? "???";
-    } catch (e) {
-      return "???";
-    } finally {
-      query.close();
-    }
-  }
-
   /// Upserts a transaction (creates if not exists, updates if exists)
   ///
   /// Returns transaction id from [Box.put]
@@ -750,6 +738,14 @@ extension AccountActions on Account {
   /// First transaction represents money going out of [this] account
   ///
   /// Second transaction represents money incoming to the target account
+  ///
+  /// [this]' [currency] will be used as the anchor. Not that if [amount] is
+  /// less than zero, the from and to will be reversed roles, and [conversionRate]
+  /// will be inversed.
+  ///
+  /// [conversionRate] is used to multiple the `to`'s amount.
+  ///
+  /// e.g., for transfers from USD to MNT, it may be something like 3450.0.
   (int from, int to) transferTo({
     String? title,
     String? description,
@@ -761,7 +757,12 @@ extension AccountActions on Account {
     double? longitude,
     List<TransactionExtension>? extensions,
     bool? isPending,
+    double? conversionRate = 1.0,
   }) {
+    if (conversionRate == 0) {
+      throw Exception("Conversion rate cannot be zero, use 1.0 instead");
+    }
+
     if (amount <= 0) {
       return targetAccount.transferTo(
         targetAccount: this,
@@ -774,6 +775,7 @@ extension AccountActions on Account {
         longitude: longitude,
         extensions: extensions,
         isPending: isPending,
+        conversionRate: 1.0 / (conversionRate ?? 1.0),
       );
     }
 
@@ -785,6 +787,7 @@ extension AccountActions on Account {
       fromAccountUuid: uuid,
       toAccountUuid: targetAccount.uuid,
       relatedTransactionUuid: toTransactionUuid,
+      conversionRate: conversionRate,
     );
 
     final String resolvedTitle =
@@ -797,6 +800,8 @@ extension AccountActions on Account {
     final List<TransactionExtension> filteredExtensions =
         extensions?.where((ext) => ext is! Transfer).toList() ?? [];
 
+    transactionDate ??= DateTime.now();
+
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
@@ -808,7 +813,7 @@ extension AccountActions on Account {
       isPending: isPending,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
-      amount: amount,
+      amount: amount * (conversionRate ?? 1.0),
       title: resolvedTitle,
       description: description,
       extensions: [
@@ -894,8 +899,12 @@ extension AccountActions on Account {
           category.uuid,
         );
       }
-    } catch (e) {
-      _log.warning("Failed to update frecency data for transaction ($id)");
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Failed to update frecency data for transaction ($id)",
+        e,
+        stackTrace,
+      );
     }
 
     return id;
