@@ -1,12 +1,11 @@
+import "dart:convert";
 import "dart:io";
 
-import "package:path/path.dart" as path;
 import "package:flutter/material.dart";
-import "package:flutter/scheduler.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:path/path.dart" as path;
 
 class DebugLogPage extends StatefulWidget {
-  final String? path;
+  final String path;
 
   const DebugLogPage({super.key, required this.path});
 
@@ -15,27 +14,16 @@ class DebugLogPage extends StatefulWidget {
 }
 
 class _DebugLogPageState extends State<DebugLogPage> {
-  late final Future<String> contents;
-  late final ScrollController _controller;
+  List<String> _lines = [];
+
+  bool _ready = false;
+
+  final ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
-
-    final File file = File(widget.path ?? "~");
-
-    contents = file.readAsString();
-    _controller = ScrollController(
-      onAttach: (_) {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          try {
-            _controller.jumpTo(_controller.position.maxScrollExtent);
-          } catch (e) {
-            // Silent fail
-          }
-        });
-      },
-    );
+    _load();
   }
 
   @override
@@ -47,40 +35,36 @@ class _DebugLogPageState extends State<DebugLogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(path.basename(widget.path ?? "unknown.log"))),
-      body: FutureBuilder<String>(
-        future: contents,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Symbols.error_rounded),
-                  Text(snapshot.error.toString()),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.hasData) {
-            return SingleChildScrollView(
-              controller: _controller,
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                snapshot.data ?? "",
-                softWrap: true,
+      appBar: AppBar(title: Text(path.basename(widget.path))),
+      body:
+          _ready
+              ? DefaultTextStyle(
                 style: TextStyle(
                   fontFamily: "monospace",
                   fontFamilyFallback: ["Poppins"],
                 ),
-              ),
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+                child: ListView.builder(
+                  itemCount: _lines.length,
+                  itemBuilder: (context, i) => Text(_lines[i]),
+                  controller: _controller,
+                  padding: EdgeInsets.all(16.0),
+                ),
+              )
+              : const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  void _load() async {
+    _lines = await File(widget.path)
+        .openRead()
+        .transform(utf8.decoder)
+        .transform(LineSplitter())
+        .toList()
+        .then((lines) => lines.reversed.toList());
+
+    _ready = true;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
