@@ -309,7 +309,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "10:1110624065651948179",
+      "lastPropertyId": "12:4693852392718311453",
       "name": "UserPreferences",
       "properties": [
         {
@@ -356,14 +356,19 @@
           "type": 1
         },
         {
-          "id": "9:577162958135049929",
-          "name": "showCategoryInListTile",
-          "type": 1
-        },
-        {
           "id": "10:1110624065651948179",
           "name": "autoBackupIntervalInHours",
           "type": 6
+        },
+        {
+          "id": "11:9083345045177209971",
+          "name": "transactionListTileShowCategoryName",
+          "type": 1
+        },
+        {
+          "id": "12:4693852392718311453",
+          "name": "transactionListTileShowAccountForLeading",
+          "type": 1
         }
       ],
       "relations": []
@@ -415,7 +420,8 @@
     6426832099320622373,
     4688691313482515602,
     8178664360494427777,
-    9181400211872351108
+    9181400211872351108,
+    577162958135049929
   ],
   "retiredRelationUids": [],
   "version": 1

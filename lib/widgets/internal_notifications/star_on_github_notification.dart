@@ -24,7 +24,12 @@ class StarOnGithubNotification extends StatelessWidget {
       title: "tabs.home.reminders.starOnGitHub".t(context),
       subtitle: "⭐⭐⭐⭐⭐",
       action: TextButton.icon(
-        onPressed: () => openUrl(flowGitHubRepoLink),
+        onPressed: () {
+          if (onDismiss != null) {
+            onDismiss!();
+          }
+          openUrl(flowGitHubRepoLink);
+        },
         label: Text("GitHub"),
         icon: Icon(Symbols.open_in_new_rounded),
       ),

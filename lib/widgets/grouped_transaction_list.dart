@@ -112,6 +112,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     TransitiveLocalPreferences().sessionPrivacyMode.addListener(
       _privacyModeUpdate,
     );
+    UserPreferencesService().valueNotiifer.addListener(_rerender);
   }
 
   @override
@@ -119,6 +120,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
       _privacyModeUpdate,
     );
+
+    UserPreferencesService().valueNotiifer.removeListener(_rerender);
 
     super.dispose();
   }
@@ -130,6 +133,10 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
         UserPreferencesService().combineTransfers;
     final bool useCategoryNameForUntitledTransactions =
         UserPreferencesService().useCategoryNameForUntitledTransactions;
+    final bool useAccountIconForLeading =
+        UserPreferencesService().transactionListTileShowAccountForLeading;
+    final bool showCategory =
+        UserPreferencesService().transactionListTileShowCategoryName;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -190,6 +197,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
           groupRange: widget.groupBy,
           useCategoryNameForUntitledTransactions:
               useCategoryNameForUntitledTransactions,
+          useAccountIconForLeading: useAccountIconForLeading,
+          showCategory: showCategory,
         ),
       ),
       (_) => Container(),
@@ -234,33 +243,37 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     if (oldIndex == newIndex) return;
 
     final a = flattened[oldIndex];
-    dynamic b;
+    dynamic b = flattened[newIndex];
 
-    if (newIndex < oldIndex) {
-      for (int j = newIndex; j >= 0; j--) {
-        if (flattened[j] is Transaction) {
-          b = flattened[j];
-          break;
-        }
+    final int direction = oldIndex - newIndex;
+
+    final List priorities = [];
+
+    if (direction > 0) {
+      priorities.add(flattened[newIndex]);
+      if (newIndex < flattened.length - 2) {
+        priorities.add(flattened[newIndex - 1]);
       }
     } else {
-      for (int j = newIndex; j < flattened.length; j++) {
-        if (flattened[j] is Transaction) {
-          b = flattened[j];
-          break;
-        }
+      if (newIndex >= 1) {
+        priorities.add(flattened[newIndex - 1]);
+      }
+
+      priorities.add(flattened[newIndex]);
+    }
+
+    priorities.add(b);
+
+    for (var p in priorities) {
+      if (p is Transaction) {
+        TransactionsService().updateTransactionDateSync(a, p.transactionDate);
+        return;
       }
     }
+  }
 
-    if (a is! Transaction) return;
-    if (b is! Transaction) return;
-
-    a.transactionDate = b.transactionDate;
-    final other = TransactionsService().findTransferRelatedTransactionSync(a);
-    if (other != null) {
-      other.transactionDate = a.transactionDate;
-      TransactionsService().updateOneSync(other);
-    }
-    TransactionsService().updateOneSync(a);
+  _rerender() {
+    if (!mounted) return;
+    setState(() {});
   }
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.13.1
+
+### Changes & Improvements
+
+* Now you can customize some aspects of transaction list item
+* Money formatting preferences page will now show an example
+* Now you can add category presets after the setup, closes [#104](https://github.com/flow-mn/flow/issues/104)
+  * Also added few more presets
+
+### Fixes
+
+* Minor UI fixes
+
 ## 0.13.0
 
 ### New features
@@ -29,6 +42,8 @@
 * "Save backup" now saves files into "Downloads" folder on desktop (macOS, Linux, and Windows), closes [#326](https://github.com/flow-mn/flow/issues/326)
 * Category card in categories page now shows current month flow (used to show all-time)
 * Importing no longer results in outdated data in some part of the interface
+* Home tab now updates after fetching the exchange rates
+* Exchange rate missing warning no longer incorrectly show for those who use only one currency
 
 ### Changes and improvements
 

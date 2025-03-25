@@ -1,3 +1,4 @@
+import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
@@ -5,11 +6,13 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
-import "package:flow/widgets/add_category_card.dart";
 import "package:flow/widgets/categories/no_categories.dart";
 import "package:flow/widgets/category_card.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -59,7 +62,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
               return const Spinner.center();
             }
 
-            final categories = snapshot.requireData;
+            final List<Category> categories = snapshot.requireData;
+
+            final bool showPresetsButton =
+                !getCategoryPresets().every(
+                  (preset) => categories.any(
+                    (category) => category.uuid == preset.uuid,
+                  ),
+                );
 
             return switch (categories.length) {
               0 => const NoCategories(),
@@ -77,22 +87,42 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       return SingleChildScrollView(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          spacing: 16.0,
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 16.0),
-                              child: AddCategoryCard(),
-                            ),
-                            ...categories.map(
-                              (category) => Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: CategoryCard(
-                                  category: category,
-                                  excludeTransfersInTotal:
-                                      excludeTransfersInTotal,
-                                  rates: exchangeRatesCache?.get(
-                                    primaryCurrency,
+                            Row(
+                              spacing: 12.0,
+                              children: [
+                                Expanded(
+                                  child: Button(
+                                    onTap: () => context.push("/category/new"),
+                                    leading: Icon(Symbols.add_rounded),
+                                    child: Text("category.new".t(context)),
                                   ),
                                 ),
+                                if (showPresetsButton)
+                                  Expanded(
+                                    child: Button(
+                                      trailing: Icon(
+                                        Symbols.chevron_right_rounded,
+                                      ),
+                                      onTap: () {
+                                        context.push(
+                                          "/setup/categories?standalone=true&selectAll=false",
+                                        );
+                                      },
+                                      child: Text(
+                                        "categories.addFromPresets".t(context),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            ...categories.map(
+                              (category) => CategoryCard(
+                                category: category,
+                                excludeTransfersInTotal:
+                                    excludeTransfersInTotal,
+                                rates: exchangeRatesCache?.get(primaryCurrency),
                               ),
                             ),
                             const SizedBox(height: 16.0),

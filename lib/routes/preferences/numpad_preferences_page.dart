@@ -27,24 +27,29 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
               const SizedBox(height: 16.0),
               ListHeader("preferences.numpad.layout".t(context)),
               const SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: NumpadSelectorRadio.classic(
-                        onTap: () => updateLayoutPreference(false),
-                        currentlyUsingPhoneLayout: usePhoneNumpadLayout,
-                      ),
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 600.0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      spacing: 16.0,
+                      children: [
+                        Expanded(
+                          child: NumpadSelectorRadio.classic(
+                            onTap: () => updateLayoutPreference(false),
+                            currentlyUsingPhoneLayout: usePhoneNumpadLayout,
+                          ),
+                        ),
+                        Expanded(
+                          child: NumpadSelectorRadio.phone(
+                            onTap: () => updateLayoutPreference(true),
+                            currentlyUsingPhoneLayout: usePhoneNumpadLayout,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: NumpadSelectorRadio.phone(
-                        onTap: () => updateLayoutPreference(true),
-                        currentlyUsingPhoneLayout: usePhoneNumpadLayout,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: 32.0),
