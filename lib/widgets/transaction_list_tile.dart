@@ -31,6 +31,8 @@ class TransactionListTile extends StatelessWidget {
   final bool? overrideObscure;
 
   final bool useCategoryNameForUntitledTransactions;
+  final bool useAccountIconForLeading;
+  final bool showCategory;
 
   /// Determines what date/time to show. i.e.:
   ///
@@ -56,6 +58,8 @@ class TransactionListTile extends StatelessWidget {
     this.dismissibleKey,
     this.overrideObscure,
     this.useCategoryNameForUntitledTransactions = false,
+    this.useAccountIconForLeading = false,
+    this.showCategory = false,
   });
 
   @override
@@ -93,14 +97,7 @@ class TransactionListTile extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FlowIcon(
-                    transaction.isTransfer
-                        ? FlowIconData.icon(Symbols.sync_alt_rounded)
-                        : transaction.category.target?.icon ??
-                            FlowIconData.icon(Symbols.circle_rounded),
-                    plated: true,
-                    fill: transaction.category.target != null ? 1.0 : 0.0,
-                  ),
+                  buildLeading(context),
                   const SizedBox(width: 8.0),
                   Expanded(
                     child: Column(
@@ -138,9 +135,13 @@ class TransactionListTile extends StatelessWidget {
                           [
                             (transaction.isTransfer && combineTransfers)
                                 ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
-                                : AccountsProvider.of(
-                                  context,
-                                ).getName(transaction.accountUuid),
+                                : (AccountsProvider.of(
+                                      context,
+                                    ).getName(transaction.accountUuid) ??
+                                    transaction.account.target?.name),
+                            if (showCategory &&
+                                transaction.category.target != null)
+                              transaction.category.target!.name,
                             dateString,
                             if (transaction.transactionDate.isFuture)
                               transaction.isPending == true
@@ -283,6 +284,29 @@ class TransactionListTile extends StatelessWidget {
               )
               : null,
       child: listTile,
+    );
+  }
+
+  FlowIcon buildLeading(BuildContext context) {
+    late final FlowIconData iconData;
+
+    if (transaction.isTransfer) {
+      iconData = FlowIconData.icon(Symbols.sync_alt_rounded);
+    } else if (useAccountIconForLeading) {
+      iconData =
+          AccountsProvider.of(context).get(transaction.accountUuid)?.icon ??
+          transaction.account.target?.icon ??
+          FlowIconData.icon(Symbols.circle_rounded);
+    } else if (transaction.category.target != null) {
+      iconData = transaction.category.target!.icon;
+    } else {
+      iconData = FlowIconData.icon(Symbols.circle_rounded);
+    }
+
+    return FlowIcon(
+      iconData,
+      plated: true,
+      fill: transaction.category.target != null ? 1.0 : 0.0,
     );
   }
 

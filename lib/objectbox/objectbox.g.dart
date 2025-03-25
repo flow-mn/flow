@@ -387,7 +387,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(10, 1110624065651948179),
+    lastPropertyId: const obx_int.IdUid(12, 4693852392718311453),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -440,15 +440,21 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(9, 577162958135049929),
-        name: 'showCategoryInListTile',
+        id: const obx_int.IdUid(10, 1110624065651948179),
+        name: 'autoBackupIntervalInHours',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 9083345045177209971),
+        name: 'transactionListTileShowCategoryName',
         type: 1,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(10, 1110624065651948179),
-        name: 'autoBackupIntervalInHours',
-        type: 6,
+        id: const obx_int.IdUid(12, 4693852392718311453),
+        name: 'transactionListTileShowAccountForLeading',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -540,6 +546,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       4688691313482515602,
       8178664360494427777,
       9181400211872351108,
+      577162958135049929,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -1033,7 +1040,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(11);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1042,8 +1049,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(5, object.trashBinRetentionDays);
         fbb.addInt64(6, object.remindDailyAtRelativeSeconds);
         fbb.addBool(7, object.useCategoryNameForUntitledTransactions);
-        fbb.addBool(8, object.showCategoryInListTile);
         fbb.addInt64(9, object.autoBackupIntervalInHours);
+        fbb.addBool(10, object.transactionListTileShowCategoryName);
+        fbb.addBool(11, object.transactionListTileShowAccountForLeading);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1070,12 +1078,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         );
         final useCategoryNameForUntitledTransactionsParam =
             const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
-        final showCategoryInListTileParam = const fb.BoolReader().vTableGet(
-          buffer,
-          rootOffset,
-          20,
-          false,
-        );
+        final transactionListTileShowCategoryNameParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 24, false);
+        final transactionListTileShowAccountForLeadingParam =
+            const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false);
         final trashBinRetentionDaysParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
@@ -1090,7 +1096,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 excludeTransfersFromFlow: excludeTransfersFromFlowParam,
                 useCategoryNameForUntitledTransactions:
                     useCategoryNameForUntitledTransactionsParam,
-                showCategoryInListTile: showCategoryInListTileParam,
+                transactionListTileShowCategoryName:
+                    transactionListTileShowCategoryNameParam,
+                transactionListTileShowAccountForLeading:
+                    transactionListTileShowAccountForLeadingParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
@@ -1406,11 +1415,15 @@ class UserPreferences_ {
   static final useCategoryNameForUntitledTransactions =
       obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[7]);
 
-  /// See [UserPreferences.showCategoryInListTile].
-  static final showCategoryInListTile =
-      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[8]);
-
   /// See [UserPreferences.autoBackupIntervalInHours].
   static final autoBackupIntervalInHours =
-      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[9]);
+      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[8]);
+
+  /// See [UserPreferences.transactionListTileShowCategoryName].
+  static final transactionListTileShowCategoryName =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[9]);
+
+  /// See [UserPreferences.transactionListTileShowAccountForLeading].
+  static final transactionListTileShowAccountForLeading =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[10]);
 }

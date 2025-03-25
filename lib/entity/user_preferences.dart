@@ -58,7 +58,9 @@ class UserPreferences implements EntityBase {
   int? remindDailyAtRelativeSeconds;
 
   bool useCategoryNameForUntitledTransactions;
-  bool showCategoryInListTile;
+
+  bool transactionListTileShowCategoryName;
+  bool transactionListTileShowAccountForLeading;
 
   /// In hours, set as `null` to disable
   int? autoBackupIntervalInHours;
@@ -69,7 +71,8 @@ class UserPreferences implements EntityBase {
     this.combineTransfers = true,
     this.excludeTransfersFromFlow = true,
     this.useCategoryNameForUntitledTransactions = false,
-    this.showCategoryInListTile = false,
+    this.transactionListTileShowCategoryName = false,
+    this.transactionListTileShowAccountForLeading = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
     this.autoBackupIntervalInHours = 72,
