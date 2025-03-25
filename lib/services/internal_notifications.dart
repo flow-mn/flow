@@ -5,6 +5,7 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
 import "package:flutter/foundation.dart";
 import "package:in_app_review/in_app_review.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -88,10 +89,10 @@ class InternalNotificationsService {
         final DateTime? lastRateAppShowedAt =
             TransitiveLocalPreferences().lastRateAppShowedAt.get();
 
-        if (lastRateAppShowedAt == null ||
-            lastRateAppShowedAt.isBefore(
-              Moment.now().subtract(Duration(days: 75)),
-            )) {
+        if (shouldExecuteScheduledTask(
+          Duration(days: 75),
+          lastRateAppShowedAt,
+        )) {
           add(
             RateApp(
               payload: await InAppReview.instance.isAvailable().catchError(
@@ -116,10 +117,10 @@ class InternalNotificationsService {
       final DateTime? lastStarOnGitHubShowedAt =
           TransitiveLocalPreferences().lastStarOnGitHubShowedAt.get();
 
-      if (lastStarOnGitHubShowedAt == null ||
-          lastStarOnGitHubShowedAt.isBefore(
-            Moment.now().subtract(Duration(days: 120)),
-          )) {
+      if (shouldExecuteScheduledTask(
+        Duration(days: 120),
+        lastStarOnGitHubShowedAt,
+      )) {
         add(StarOnGitHub());
         await TransitiveLocalPreferences().lastStarOnGitHubShowedAt.set(
           Moment.now(),

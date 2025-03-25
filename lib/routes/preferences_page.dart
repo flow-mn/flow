@@ -5,7 +5,6 @@ import "package:flow/constants.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences/language_selection_sheet.dart";
-import "package:flow/routes/preferences/sections/category_replace_untitled_transaction.dart";
 import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/lock_app.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
@@ -75,6 +74,12 @@ class PreferencesPageState extends State<PreferencesPage> {
       body: SafeArea(
         child: ListView(
           children: [
+            ListTile(
+              title: Text("preferences.sync.autoBackup".t(context)),
+              leading: const Icon(Symbols.sync_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/autoBackup"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
             if (flowDebugMode || NotificationsService.schedulingSupported)
               ListTile(
                 title: Text("preferences.reminders".t(context)),
@@ -114,13 +119,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-
-            ListTile(
-              title: Text("preferences.sync.autoBackup".t(context)),
-              leading: const Icon(Symbols.sync_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/autoBackup"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
             ListTile(
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
@@ -158,7 +156,15 @@ class PreferencesPageState extends State<PreferencesPage> {
               ),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
-            UntitledTransactionFallback(),
+            ListTile(
+              leading: const Icon(Symbols.list_rounded),
+              title: Text("preferences.transactions.listTile".t(context)),
+              onTap:
+                  () => _pushAndRefreshAfter(
+                    "/preferences/transactionListItemAppearance",
+                  ),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.appearance".t(context)),
             const SizedBox(height: 8.0),
