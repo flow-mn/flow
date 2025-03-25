@@ -41,6 +41,7 @@ class SyncService {
         _log.info(
           "Auto backup is not due yet (last ran at: ${lastBackup?.toIso8601String()})",
         );
+        return;
       }
 
       if (TransactionsService().countMany(TransactionFilter.empty) == 0) {
