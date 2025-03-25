@@ -75,11 +75,27 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
-  bool get showCategoryInListTile => value.showCategoryInListTile;
-  set showCategoryInListTile(bool newShowCategoryInListTile) {
+  bool get transactionListTileShowCategoryName =>
+      value.transactionListTileShowCategoryName;
+  set transactionListTileShowCategoryName(
+    bool newTransactionListTileShowCategoryName,
+  ) {
     if (value.id == 0) return;
 
-    value.showCategoryInListTile = newShowCategoryInListTile;
+    value.transactionListTileShowCategoryName =
+        newTransactionListTileShowCategoryName;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get transactionListTileShowAccountForLeading =>
+      value.transactionListTileShowAccountForLeading;
+  set transactionListTileShowAccountForLeading(
+    bool newTransactionListTileShowAccountForLeading,
+  ) {
+    if (value.id == 0) return;
+
+    value.transactionListTileShowAccountForLeading =
+        newTransactionListTileShowAccountForLeading;
     ObjectBox().box<UserPreferences>().put(value);
   }
 

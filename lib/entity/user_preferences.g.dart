@@ -13,13 +13,15 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['excludeTransfersFromFlow'] as bool? ?? true,
         useCategoryNameForUntitledTransactions:
             json['useCategoryNameForUntitledTransactions'] as bool? ?? false,
-        showCategoryInListTile:
-            json['showCategoryInListTile'] as bool? ?? false,
+        transactionListTileShowCategoryName:
+            json['transactionListTileShowCategoryName'] as bool? ?? false,
+        transactionListTileShowAccountForLeading:
+            json['transactionListTileShowAccountForLeading'] as bool? ?? false,
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
         autoBackupIntervalInHours:
-            (json['autoBackupIntervalInHours'] as num?)?.toInt(),
+            (json['autoBackupIntervalInHours'] as num?)?.toInt() ?? 72,
       )
       ..uuid = json['uuid'] as String
       ..remindDailyAtRelativeSeconds =
@@ -35,6 +37,9 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
       'useCategoryNameForUntitledTransactions':
           instance.useCategoryNameForUntitledTransactions,
-      'showCategoryInListTile': instance.showCategoryInListTile,
+      'transactionListTileShowCategoryName':
+          instance.transactionListTileShowCategoryName,
+      'transactionListTileShowAccountForLeading':
+          instance.transactionListTileShowAccountForLeading,
       'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
     };

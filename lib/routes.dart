@@ -27,6 +27,7 @@ import "package:flow/routes/preferences/pending_transactions_preferences_page.da
 import "package:flow/routes/preferences/reminders_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
+import "package:flow/routes/preferences/transaction_list_item_appearance_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
 import "package:flow/routes/preferences/trash_bin_preferences_page.dart";
 import "package:flow/routes/preferences_page.dart";
@@ -211,6 +212,12 @@ final router = GoRouter(
         GoRoute(
           path: "autoBackup",
           builder: (context, state) => const AutoBackupPreferencesPage(),
+        ),
+        GoRoute(
+          path: "transactionListItemAppearance",
+          builder:
+              (context, state) =>
+                  const TransactionListItemAppearancePreferencesPage(),
         ),
       ],
     ),

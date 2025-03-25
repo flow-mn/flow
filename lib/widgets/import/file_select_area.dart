@@ -36,52 +36,48 @@ class _FileSelectAreaState extends State<FileSelectArea> {
       onDragExited: (detail) => setState(() => _dragging = false),
       child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: InkWell(
-                  onTap: widget.onTap,
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Surface(
-                    builder:
-                        (context) => Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              FlowIcon(
-                                FlowIconData.icon(Symbols.cloud_upload_rounded),
-                                size: 80.0,
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: InkWell(
+                onTap: widget.onTap,
+                borderRadius: BorderRadius.circular(16.0),
+                child: Surface(
+                  builder:
+                      (context) => Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FlowIcon(
+                              FlowIconData.icon(Symbols.cloud_upload_rounded),
+                              size: 80.0,
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              showDropText
+                                  ? "sync.import.pickFile.pickOrDrop".t(context)
+                                  : "sync.import.pickFile".t(context),
+                              style: context.textTheme.headlineSmall,
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "sync.import.pickFile.description".t(
+                                context,
+                                "ZIP, JSON, CSV",
                               ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                showDropText
-                                    ? "sync.import.pickFile.pickOrDrop".t(
-                                      context,
-                                    )
-                                    : "sync.import.pickFile".t(context),
-                                style: context.textTheme.headlineSmall,
-                                textAlign: TextAlign.center,
+                              style: context.textTheme.bodyMedium?.semi(
+                                context,
                               ),
-                              Text(
-                                "sync.import.pickFile.description".t(
-                                  context,
-                                  "ZIP, JSON, CSV",
-                                ),
-                                style: context.textTheme.bodyMedium?.semi(
-                                  context,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
-                  ),
+                      ),
                 ),
               ),
-            ],
+            ),
           ),
           Positioned.fill(
             child: IgnorePointer(
