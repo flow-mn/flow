@@ -112,6 +112,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     TransitiveLocalPreferences().sessionPrivacyMode.addListener(
       _privacyModeUpdate,
     );
+    UserPreferencesService().valueNotiifer.addListener(_rerender);
   }
 
   @override
@@ -119,6 +120,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
       _privacyModeUpdate,
     );
+
+    UserPreferencesService().valueNotiifer.removeListener(_rerender);
 
     super.dispose();
   }
@@ -130,6 +133,10 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
         UserPreferencesService().combineTransfers;
     final bool useCategoryNameForUntitledTransactions =
         UserPreferencesService().useCategoryNameForUntitledTransactions;
+    final bool useAccountIconForLeading =
+        UserPreferencesService().transactionListTileShowAccountForLeading;
+    final bool showCategory =
+        UserPreferencesService().transactionListTileShowCategoryName;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -190,6 +197,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
           groupRange: widget.groupBy,
           useCategoryNameForUntitledTransactions:
               useCategoryNameForUntitledTransactions,
+          useAccountIconForLeading: useAccountIconForLeading,
+          showCategory: showCategory,
         ),
       ),
       (_) => Container(),
@@ -261,5 +270,10 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
         return;
       }
     }
+  }
+
+  _rerender() {
+    if (!mounted) return;
+    setState(() {});
   }
 }
