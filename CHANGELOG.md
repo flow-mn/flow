@@ -2,16 +2,16 @@
 
 ## 0.13.1
 
-### Fixes
-
-* Minor UI fixes
-
 ### Changes & Improvements
 
 * Now you can customize some aspects of transaction list item
 * Money formatting preferences page will now show an example
 * Now you can add category presets after the setup, closes [#104](https://github.com/flow-mn/flow/issues/104)
   * Also added few more presets
+
+### Fixes
+
+* Minor UI fixes
 
 ## 0.13.0
 
