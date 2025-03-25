@@ -353,7 +353,11 @@ final router = GoRouter(
         ),
         GoRoute(
           path: "categories",
-          builder: (context, state) => const SetupCategoriesPage(),
+          builder:
+              (context, state) => SetupCategoriesPage(
+                standalone: state.uri.queryParameters["standalone"] == "true",
+                selectAll: state.uri.queryParameters["selectAll"] != "false",
+              ),
         ),
         GoRoute(
           path: "profile",
