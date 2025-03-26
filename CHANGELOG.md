@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+
+* Added "Recommend Flow" button
+
 ## 0.13.1
 
 ### Changes & Improvements
