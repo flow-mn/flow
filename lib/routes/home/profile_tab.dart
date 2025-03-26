@@ -85,6 +85,14 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(Symbols.favorite_rounded),
             onTap: () => context.push("/support"),
           ),
+          Builder(
+            builder:
+                (context) => ListTile(
+                  title: Text("tabs.profile.recommend".t(context)),
+                  leading: const Icon(Symbols.share_rounded),
+                  onTap: () => context.showUriShareSheet(uri: website),
+                ),
+          ),
           ListTile(
             title: Text("visitGitHubRepo".t(context)),
             leading: const Icon(SimpleIcons.github),

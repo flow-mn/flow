@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import '../entity/account.dart';
 import '../entity/backup_entry.dart';
+import '../entity/budget.dart';
 import '../entity/category.dart';
 import '../entity/profile.dart';
 import '../entity/transaction.dart';
@@ -461,6 +462,74 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(11, 4948078457888921031),
+    name: 'Budget',
+    lastPropertyId: const obx_int.IdUid(9, 6886515900911773491),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 8548068689938827083),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 5437558016134721268),
+        name: 'uuid',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(19, 806092094099867187),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 4554850236746747495),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 473869210125712621),
+        name: 'name',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(20, 8336098329051704990),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 6253789882700699652),
+        name: 'amount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 1298695079656779768),
+        name: 'currency',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 801892318627771901),
+        name: 'categoryId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(21, 7291423328418584896),
+        relationTarget: 'Category',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 4590726328503721316),
+        name: 'categoryUuid',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 6886515900911773491),
+        name: 'range',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -501,8 +570,8 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(10, 7829328581176695647),
-    lastIndexId: const obx_int.IdUid(18, 256441942731857355),
+    lastEntityId: const obx_int.IdUid(11, 4948078457888921031),
+    lastIndexId: const obx_int.IdUid(21, 7291423328418584896),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
@@ -1113,6 +1182,88 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    Budget: obx_int.EntityDefinition<Budget>(
+      model: _entities[7],
+      toOneRelations: (Budget object) => [object.category],
+      toManyRelations: (Budget object) => {},
+      getId: (Budget object) => object.id,
+      setId: (Budget object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Budget object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final nameOffset = fbb.writeString(object.name);
+        final currencyOffset = fbb.writeString(object.currency);
+        final categoryUuidOffset =
+            object.categoryUuid == null
+                ? null
+                : fbb.writeString(object.categoryUuid!);
+        final rangeOffset = fbb.writeString(object.range);
+        fbb.startTable(10);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+        fbb.addOffset(3, nameOffset);
+        fbb.addFloat64(4, object.amount);
+        fbb.addOffset(5, currencyOffset);
+        fbb.addInt64(6, object.category.targetId);
+        fbb.addOffset(7, categoryUuidOffset);
+        fbb.addOffset(8, rangeOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final nameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final amountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
+        final currencyParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
+        final rangeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 20, '');
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+        );
+        final object =
+            Budget(
+                id: idParam,
+                name: nameParam,
+                amount: amountParam,
+                currency: currencyParam,
+                range: rangeParam,
+                createdDate: createdDateParam,
+              )
+              ..uuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGet(buffer, rootOffset, 6, '')
+              ..categoryUuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 18);
+        object.category.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          0,
+        );
+        object.category.attach(store);
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1426,4 +1577,52 @@ class UserPreferences_ {
   /// See [UserPreferences.transactionListTileShowAccountForLeading].
   static final transactionListTileShowAccountForLeading =
       obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[10]);
+}
+
+/// [Budget] entity fields to define ObjectBox queries.
+class Budget_ {
+  /// See [Budget.id].
+  static final id = obx.QueryIntegerProperty<Budget>(
+    _entities[7].properties[0],
+  );
+
+  /// See [Budget.uuid].
+  static final uuid = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[1],
+  );
+
+  /// See [Budget.createdDate].
+  static final createdDate = obx.QueryDateProperty<Budget>(
+    _entities[7].properties[2],
+  );
+
+  /// See [Budget.name].
+  static final name = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[3],
+  );
+
+  /// See [Budget.amount].
+  static final amount = obx.QueryDoubleProperty<Budget>(
+    _entities[7].properties[4],
+  );
+
+  /// See [Budget.currency].
+  static final currency = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[5],
+  );
+
+  /// See [Budget.category].
+  static final category = obx.QueryRelationToOne<Budget, Category>(
+    _entities[7].properties[6],
+  );
+
+  /// See [Budget.categoryUuid].
+  static final categoryUuid = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[7],
+  );
+
+  /// See [Budget.range].
+  static final range = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[8],
+  );
 }

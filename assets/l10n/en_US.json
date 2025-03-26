@@ -344,6 +344,7 @@
     "tabs.profile.preferences": "Preferences",
     "tabs.profile.community": "Community",
     "tabs.profile.support": "Support Flow",
+    "tabs.profile.recommend": "Recommend Flow",
     "tabs.profile.joinDiscord": "Join Flow Discord",
     "tabs.profile.backup": "Backup",
     "tabs.profile.import": "Import",

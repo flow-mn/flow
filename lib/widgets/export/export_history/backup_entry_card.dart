@@ -63,31 +63,34 @@ class BackupEntryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8.0),
-            IconButton(
-              onPressed: () {
-                if (fileSize == null) {
-                  context.showErrorToast(
-                    error: "error.sync.fileNotFound".t(context),
-                  );
-                  return;
-                }
+            Builder(
+              builder: (context) {
+                return IconButton(
+                  onPressed: () {
+                    if (fileSize == null) {
+                      context.showErrorToast(
+                        error: "error.sync.fileNotFound".t(context),
+                      );
+                      return;
+                    }
 
-                context.showShareSheet(
-                  subject: "sync.export.save.shareTitle".t(context, {
-                    "type": entry.fileExt,
-                    "date": entry.createdDate.toMoment().lll,
-                  }),
-                  filePath: entry.filePath,
-                  renderBox: context.findRenderObject() as RenderBox?,
+                    context.showFileShareSheet(
+                      subject: "sync.export.save.shareTitle".t(context, {
+                        "type": entry.fileExt,
+                        "date": entry.createdDate.toMoment().lll,
+                      }),
+                      filePath: entry.filePath,
+                    );
+                  },
+                  icon:
+                      fileSize != null
+                          ? const Icon(Symbols.save_alt_rounded)
+                          : Icon(
+                            Symbols.error_circle_rounded,
+                            color: context.flowColors.expense,
+                          ),
                 );
               },
-              icon:
-                  fileSize != null
-                      ? const Icon(Symbols.save_alt_rounded)
-                      : Icon(
-                        Symbols.error_circle_rounded,
-                        color: context.flowColors.expense,
-                      ),
             ),
             const SizedBox(width: 8.0),
           ],
