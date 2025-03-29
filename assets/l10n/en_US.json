@@ -32,6 +32,7 @@
     "general.nextNDays": "Next {} day(s)",
     "general.flow": "Flow",
     "general.unlockToOpen": "Unlock to open Flow",
+    "general.search": "Search...",
 
     "setup.getStarted": "Get started",
     "setup.next": "Next",

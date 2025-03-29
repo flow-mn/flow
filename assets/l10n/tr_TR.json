@@ -32,6 +32,7 @@
     "general.nextNDays": "Sonraki {} gün",
     "general.flow": "Akış",
     "general.unlockToOpen": "Flow'u açmak için kilidi aç",
+    "general.search": "Ara...",
 
     "setup.getStarted": "Başlayın",
     "setup.next": "Sonraki",
@@ -202,7 +203,7 @@
     "profile.name": "Ad",
 
     "currency": "Para birimi",
-    "currency.searchHint": "Aramak... (ülke, para birimi, kod)",
+    "currency.searchHint": "Ara... (ülke, para birimi, kod)",
 
     "preferences": "Tercihler",
     "preferences.appearance": "Görünüm",

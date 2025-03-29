@@ -32,6 +32,7 @@
     "general.nextNDays": "Prochain(s) {} jour(s)",
     "general.flow": "Flow",
     "general.unlockToOpen": "Déverrouiller pour ouvrir Flow",
+    "general.search": "Rechercher...",
 
     "setup.getStarted": "Commencer",
     "setup.next": "Suivant",

@@ -1,5 +1,8 @@
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/utils/simple_query_sorter.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
@@ -11,10 +14,14 @@ class SelectMultiCategorySheet extends StatefulWidget {
   final List<Category> categories;
   final List<String>? selectedUuids;
 
+  /// Defaults to [true] when there are more than 8 categories.
+  final bool? showSearchBar;
+
   const SelectMultiCategorySheet({
     super.key,
     required this.categories,
     this.selectedUuids,
+    this.showSearchBar,
   });
 
   @override
@@ -23,6 +30,8 @@ class SelectMultiCategorySheet extends StatefulWidget {
 }
 
 class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
+  String _query = "";
+
   late Set<String> selectedUuids;
 
   @override
@@ -41,6 +50,11 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showSearchBar =
+        widget.showSearchBar ?? widget.categories.length > 8;
+
+    final List<Category> results = simpleSortByQuery(widget.categories, _query);
+
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory.multiple".t(context)),
       trailing: ModalOverflowBar(
@@ -62,11 +76,27 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ...widget.categories.map(
+            if (showSearchBar) ...[
+              Frame(
+                child: TextField(
+                  autofocus: true,
+                  onChanged: (value) => setState(() => _query = value),
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    hintText: "general.search".t(context),
+                    prefixIcon: const Icon(Symbols.search_rounded),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.0),
+            ],
+            ...results.map(
               (category) => CheckboxListTile /*.adaptive*/ (
+                key: ValueKey(category.uuid),
                 title: Text(category.name),
                 value: selectedUuids.contains(category.uuid),
                 onChanged: (value) => select(category.uuid, value),
+                secondary: FlowIcon(category.icon),
               ),
             ),
           ],

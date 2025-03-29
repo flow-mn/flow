@@ -663,6 +663,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             ? "transaction.transfer.from.select".t(context)
                             : null,
                     showBalance: true,
+                    showTrailing: widget.isNewTransaction,
                   ),
               isScrollControlled: true,
             );
@@ -742,6 +743,7 @@ class _TransactionPageState extends State<TransactionPage> {
               (context) => SelectCategorySheet(
                 categories: categories,
                 currentlySelectedCategoryId: _selectedCategory?.id,
+                showTrailing: widget.isNewTransaction,
               ),
           isScrollControlled: true,
         );
