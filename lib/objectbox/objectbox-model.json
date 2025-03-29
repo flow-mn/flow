@@ -372,10 +372,71 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "11:4948078457888921031",
+      "lastPropertyId": "9:6886515900911773491",
+      "name": "Budget",
+      "properties": [
+        {
+          "id": "1:8548068689938827083",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5437558016134721268",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "19:806092094099867187"
+        },
+        {
+          "id": "3:4554850236746747495",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:473869210125712621",
+          "name": "name",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "20:8336098329051704990"
+        },
+        {
+          "id": "5:6253789882700699652",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "6:1298695079656779768",
+          "name": "currency",
+          "type": 9
+        },
+        {
+          "id": "7:801892318627771901",
+          "name": "categoryId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "21:7291423328418584896",
+          "relationTarget": "Category"
+        },
+        {
+          "id": "8:4590726328503721316",
+          "name": "categoryUuid",
+          "type": 9
+        },
+        {
+          "id": "9:6886515900911773491",
+          "name": "range",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "10:7829328581176695647",
-  "lastIndexId": "18:256441942731857355",
+  "lastEntityId": "11:4948078457888921031",
+  "lastIndexId": "21:7291423328418584896",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

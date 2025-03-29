@@ -32,6 +32,7 @@
     "general.nextNDays": "Prossimi {} giorni",
     "general.flow": "Flusso",
     "general.unlockToOpen": "Sblocca per aprire Flow",
+    "general.search": "Cerca...",
 
     "setup.getStarted": "Iniziare",
     "setup.next": "Avanti",
@@ -344,6 +345,7 @@
     "tabs.profile.preferences": "Preferenze",
     "tabs.profile.community": "Comunità",
     "tabs.profile.support": "Supporta Flow",
+    "tabs.profile.recommend": "Raccomanda Flow",
     "tabs.profile.joinDiscord": "Unisciti a Flow Discord",
     "tabs.profile.backup": "Backup",
     "tabs.profile.import": "Importa",

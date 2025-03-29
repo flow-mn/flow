@@ -32,6 +32,7 @@
     "general.nextNDays": "الأيام القادمة {}",
     "general.flow": "Flow",
     "general.unlockToOpen": "افتح القفل لاستخدام Flow",
+    "general.search": "ابحث...",
 
     "setup.getStarted": "ابدأ الآن",
     "setup.next": "التالي",
@@ -344,6 +345,7 @@
     "tabs.profile.preferences": "التفضيلات",
     "tabs.profile.community": "المجتمع",
     "tabs.profile.support": "دعم Flow",
+    "tabs.profile.recommend": "أوصي بـ Flow",
     "tabs.profile.joinDiscord": "انضم إلى Discord الخاص بـ Flow",
     "tabs.profile.backup": "النسخ الاحتياطي",
     "tabs.profile.import": "الاستيراد",

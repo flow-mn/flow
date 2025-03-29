@@ -32,6 +32,7 @@
     "general.nextNDays": "Ирэх {} хоног",
     "general.flow": "Урсгал",
     "general.unlockToOpen": "Flow-г нээхийн тулд түгжээг тайлна уу",
+    "general.search": "Хайх...",
 
     "setup.getStarted": "Эхэлцгээе",
     "setup.next": "Үргэлжлүүлэх",
@@ -344,6 +345,7 @@
     "tabs.profile.preferences": "Тохиргоо",
     "tabs.profile.community": "Холбоо",
     "tabs.profile.support": "Flow-г дэмжих",
+    "tabs.profile.recommend": "Flow-г санал болгох",
     "tabs.profile.joinDiscord": "Discord-д нэгдэх",
     "tabs.profile.backup": "Нөөцлөх",
     "tabs.profile.import": "Сэргээх",

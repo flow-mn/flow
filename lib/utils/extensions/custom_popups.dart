@@ -68,10 +68,9 @@ extension CustomPopups on BuildContext {
   }
 
   /// Returns the saved path on desktop, null on mobile
-  Future<String?> showShareSheet({
+  Future<String?> showFileShareSheet({
     required String subject,
     required String filePath,
-    required RenderBox? renderBox,
   }) async {
     if (Platform.isMacOS || Platform.isLinux) {
       final String savedPath = await FileSaver.instance.saveFile(
@@ -87,6 +86,8 @@ extension CustomPopups on BuildContext {
       return savedPath;
     }
 
+    final RenderBox? renderBox = findRenderObject() as RenderBox?;
+
     final origin =
         renderBox == null
             ? Rect.zero
@@ -99,5 +100,19 @@ extension CustomPopups on BuildContext {
     );
 
     return null;
+  }
+
+  Future<ShareResult> showUriShareSheet({required Uri uri}) async {
+    final RenderBox? renderBox = findRenderObject() as RenderBox?;
+    final origin =
+        renderBox == null
+            ? Rect.zero
+            : renderBox.localToGlobal(Offset.zero) & renderBox.size;
+
+    if (Platform.isIOS || Platform.isAndroid) {
+      return await Share.shareUri(uri, sharePositionOrigin: origin);
+    }
+
+    return await Share.share(uri.toString(), sharePositionOrigin: origin);
   }
 }

@@ -58,7 +58,7 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Wrap(
               spacing: 12.0,
-              runSpacing: 8.0,
+              runSpacing: 12.0,
               children: [
                 ActionChip(
                   label: Text("tabs.stats.timeRange.last30days".t(context)),
@@ -83,18 +83,21 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 12.0),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.byMonth".t(context)),
             onTap: () => context.pop(TimeRangeMode.byMonth),
+            trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.byYear".t(context)),
             onTap: () => context.pop(TimeRangeMode.byYear),
+            trailing: const Icon(Symbols.chevron_right_rounded),
           ),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.custom".t(context)),
             onTap: () => context.pop(TimeRangeMode.custom),
+            trailing: const Icon(Symbols.chevron_right_rounded),
           ),
         ],
       ),

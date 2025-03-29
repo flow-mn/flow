@@ -22,11 +22,11 @@ class Geo extends TransactionExtension implements Jasonable {
   @override
   void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
-  final double? latitude;
-  final double? longitude;
-  final double? altitude;
-  final DateTime? timestamp;
-  final bool isMocked;
+  double? latitude;
+  double? longitude;
+  double? altitude;
+  DateTime? timestamp;
+  bool isMocked;
 
   String? toSexagesimal() {
     if (latitude == null || longitude == null) return null;
