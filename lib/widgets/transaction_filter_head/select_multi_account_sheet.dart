@@ -48,7 +48,6 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
       title: Text(
         widget.titleOverride ?? "transaction.edit.selectAccount".t(context),
       ),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [

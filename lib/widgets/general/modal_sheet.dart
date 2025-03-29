@@ -39,6 +39,9 @@ class ModalSheet extends StatelessWidget {
        scrollableContentMaxHeight = 0,
        minScrollableContentHeight = 0;
 
+  /// [scrollableContentMaxHeight] defaults to 50% of the screen height.
+  ///
+  /// Setting [scrollableContentMaxHeight] to `0.0` will result in the default behaviour.
   const ModalSheet.scrollable({
     super.key,
     this.title,
@@ -50,7 +53,7 @@ class ModalSheet extends StatelessWidget {
     this.titleSpacing = 16.0,
     this.leadingSpacing = 8.0,
     this.trailingSpacing = 8.0,
-    required this.scrollableContentMaxHeight,
+    this.scrollableContentMaxHeight = 0.0,
   }) : scrollable = true;
 
   @override
@@ -75,13 +78,18 @@ class ModalSheet extends StatelessWidget {
       ),
       (Widget scrollableChild, true) => LayoutBuilder(
         builder: (context, constraints) {
+          final double maxScrollableContentHeight =
+              scrollableContentMaxHeight == 0.0
+                  ? (MediaQuery.of(context).size.height * 0.5)
+                  : scrollableContentMaxHeight;
+
           return AnimatedContainer(
             constraints: BoxConstraints.loose(
               Size(
                 double.infinity,
                 // TODO move this to the parent widget (down below)
                 min(
-                  max(minScrollableContentHeight, scrollableContentMaxHeight),
+                  max(minScrollableContentHeight, maxScrollableContentHeight),
                   constraints.maxHeight,
                 ),
               ),

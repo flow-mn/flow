@@ -41,7 +41,6 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
           ),
         ],
       ),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.5,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,7 +2,7 @@ import "dart:developer";
 
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/routes/new_transaction/section.dart";
+import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/routes/utils/edit_markdown_page.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/toast.dart";

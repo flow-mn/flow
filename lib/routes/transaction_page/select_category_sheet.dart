@@ -33,7 +33,6 @@ class SelectCategorySheet extends StatelessWidget {
           ),
         ],
       ),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.5,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

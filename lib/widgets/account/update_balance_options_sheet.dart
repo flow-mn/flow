@@ -13,7 +13,6 @@ class UpdateBalanceOptionsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text("account.updateBalance.chooseUpdateMode".t(context)),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.5,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

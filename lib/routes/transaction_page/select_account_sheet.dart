@@ -30,7 +30,6 @@ class SelectAccountSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text(titleOverride ?? "transaction.edit.selectAccount".t(context)),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing:
           accounts.isEmpty
               ? ModalOverflowBar(
