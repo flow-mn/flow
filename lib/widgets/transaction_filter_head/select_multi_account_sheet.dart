@@ -77,14 +77,10 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
           ),
         ],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showSearchBar) ...[
-              Frame(
+      leading:
+          showSearchBar
+              ? Frame(
                 child: TextField(
-                  autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
@@ -92,9 +88,12 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
                     prefixIcon: const Icon(Symbols.search_rounded),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-            ],
+              )
+              : null,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             if (results.isEmpty)
               Container(
                 width: double.infinity,

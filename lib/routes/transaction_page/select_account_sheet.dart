@@ -69,7 +69,6 @@ class _SelectAccountSheetState extends State<SelectAccountSheet> {
           showSearchBar
               ? Frame(
                 child: TextField(
-                  autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(

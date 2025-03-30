@@ -58,7 +58,6 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
           showSearchBar
               ? Frame(
                 child: TextField(
-                  autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
