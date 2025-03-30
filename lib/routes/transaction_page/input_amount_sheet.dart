@@ -116,7 +116,6 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         autofocus: true,
         child: ModalSheet.scrollable(
           scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.85,
-          topSpacing: 0.0,
           child: LayoutBuilder(
             builder: (context, size) {
               final double width = min(size.maxWidth, 440.0);
@@ -126,7 +125,6 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                   constraints: BoxConstraints.tightFor(width: width),
                   child: Column(
                     children: [
-                      const SizedBox(height: 16.0),
                       if (widget.title != null) ...[
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),

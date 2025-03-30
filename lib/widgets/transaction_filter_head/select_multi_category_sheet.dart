@@ -72,12 +72,9 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           ),
         ],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showSearchBar) ...[
-              Frame(
+      leading:
+          showSearchBar
+              ? Frame(
                 child: TextField(
                   autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
@@ -87,9 +84,12 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
                     prefixIcon: const Icon(Symbols.search_rounded),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-            ],
+              )
+              : null,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ...results.map(
               (category) => CheckboxListTile /*.adaptive*/ (
                 key: ValueKey(category.uuid),
