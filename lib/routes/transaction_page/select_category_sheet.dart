@@ -54,12 +54,9 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
           ),
         ],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showSearchBar) ...[
-              Frame(
+      leading:
+          showSearchBar
+              ? Frame(
                 child: TextField(
                   autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
@@ -69,9 +66,12 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
                     prefixIcon: const Icon(Symbols.search_rounded),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-            ],
+              )
+              : null,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ...results.map(
               (category) => ListTile(
                 key: ValueKey(category.uuid),
