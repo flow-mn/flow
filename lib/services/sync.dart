@@ -8,7 +8,9 @@ import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
+import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
+import "package:icloud_storage/icloud_storage.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:objectbox/objectbox.dart";
@@ -61,7 +63,27 @@ class SyncService {
         showShareDialog: false,
       );
 
-      unawaited(saveToICloud(result));
+      try {
+        final int? id = await result.objectBoxId;
+
+        if (id == null || id < 1) {
+          throw Exception("Failed to get objectBoxId from export result");
+        }
+
+        final BackupEntry? entry = ObjectBox().box<BackupEntry>().get(id);
+
+        if (entry == null) {
+          throw Exception("Failed to get BackupEntry from objectBoxId: $id");
+        }
+
+        unawaited(saveBackupToICloud(entry: entry, parent: "autobackups"));
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to upload backup to iCloud: ${result.filePath}",
+          e,
+          stackTrace,
+        );
+      }
 
       final Moment now = Moment.now();
 
@@ -75,42 +97,85 @@ class SyncService {
     }
   }
 
-  Future<void> saveToICloud(ExportResult result) async {
-    try {
-      final String extension = path.extension(result.filePath);
+  Future<void> saveBackupToICloud({
+    required BackupEntry entry,
+    required String parent,
+    Function(Stream<double>)? onProgress,
+  }) async {
+    if (!UserPreferencesService().enableICloudSync) {
+      _log.info("Cancelling iCloud upload since user hasn't enabled it");
+      return;
+    }
 
-      final String tempPath = await ICloudSyncService().upload(
-        filePath: result.filePath,
-        destinationRelativePath: "temp-autobackup-$extension",
+    if (entry.iCloudRelativePath != null &&
+        ICloudSyncService().filesCache.value.firstWhereOrNull(
+              (file) =>
+                  file.isUploaded &&
+                  file.relativePath == entry.iCloudRelativePath &&
+                  file.contentChangeDate.startOfSecond() ==
+                      entry.iCloudChangeDate?.startOfSecond(),
+            ) !=
+            null) {
+      _log.info(
+        "Backup (${entry.iCloudRelativePath}) already uploaded to iCloud",
       );
+      return;
+    }
 
-      final String iCloudRelativePath = await ICloudSyncService().move(
-        from: tempPath,
-        to: "autobackup-$extension",
+    try {
+      final String fileBasename = path.basename(entry.filePath);
+
+      final String iCloudRelativePath = await ICloudSyncService().upload(
+        filePath: entry.filePath,
+        destinationRelativePath: "$parent/$fileBasename",
+        onProgress: onProgress,
       );
 
       _log.info(
-        "Auto backup successfully uploaded to iCloud -> ${result.filePath}",
+        "Auto backup successfully uploaded to iCloud -> ${entry.filePath}",
       );
 
+      final ICloudFile? updateFile = await ICloudSyncService()
+          .gather()
+          .then(
+            (files) => files.firstWhereOrNull(
+              (file) => file.relativePath == iCloudRelativePath,
+            ),
+          )
+          .catchError((_) => null);
+
       try {
-        final int? objectBoxId = await result.objectBoxId;
+        final DateTime? lastSuccessfulICloudSyncAt =
+            updateFile?.contentChangeDate;
 
-        if (objectBoxId == null) {
-          throw Exception("objectBoxId is null");
-        }
-
-        final BackupEntry? entry = ObjectBox().box<BackupEntry>().get(
-          objectBoxId,
-        );
-
-        if (entry == null) {
+        if (lastSuccessfulICloudSyncAt == null) {
           throw Exception(
-            "BackupEntry not found for objectBoxId: $objectBoxId",
+            "Failed to get lastSuccessfulICloudSyncAt from iCloud",
           );
         }
 
-        entry.iCloudRelativePath = iCloudRelativePath;
+        unawaited(
+          TransitiveLocalPreferences().lastSuccessfulICloudSyncAt.set(
+            lastSuccessfulICloudSyncAt,
+          ),
+        );
+      } catch (e) {
+        _log.warning("Failed to set lastSuccessfulICloudSyncAt", e);
+      }
+
+      if (updateFile == null) {
+        throw Exception(
+          "Failed to find uploaded file in iCloud: $iCloudRelativePath",
+        );
+      }
+
+      try {
+        entry.iCloudRelativePath = updateFile.relativePath;
+        entry.iCloudChangeDate = updateFile.contentChangeDate;
+
+        _log.info(
+          "BackupEntry updated with iCloud information: ${entry.iCloudRelativePath}",
+        );
 
         ObjectBox().box<BackupEntry>().put(entry, mode: PutMode.update);
       } catch (e, stackTrace) {

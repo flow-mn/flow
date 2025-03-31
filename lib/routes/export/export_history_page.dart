@@ -1,12 +1,18 @@
+import "dart:async";
+import "dart:io";
+
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/icloud_sync.dart";
+import "package:flow/services/sync.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
+import "package:icloud_storage/models/icloud_file.dart";
 
 class ExportHistoryPage extends StatefulWidget {
   const ExportHistoryPage({super.key});
@@ -16,11 +22,25 @@ class ExportHistoryPage extends StatefulWidget {
 }
 
 class _ExportHistoryPageState extends State<ExportHistoryPage> {
+  bool uploadBusy = false;
+
+  (int uploadingId, double uploadProgress)? uploading;
+
   // Query for today's transaction, newest to oldest
   QueryBuilder<BackupEntry> qb() => ObjectBox()
       .box<BackupEntry>()
       .query()
       .order(BackupEntry_.createdDate, flags: Order.descending);
+
+  @override
+  void initState() {
+    super.initState();
+    ICloudSyncService().gather().then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +60,17 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
               (0, true) => const NoBackups(),
               (_, true) => SlidableAutoCloseBehavior(
                 child: ListView.separated(
-                  itemBuilder:
-                      (context, index) => BackupEntryCard(
-                        entry: backupEntires[index],
-                        dismissibleKey: ValueKey(backupEntires[index].id),
-                      ),
+                  itemBuilder: (context, index) {
+                    final BackupEntry entry = backupEntires[index];
+
+                    return BackupEntryCard(
+                      entry: entry,
+                      dismissibleKey: ValueKey(entry.id),
+                      onUpload: uploadBusy ? null : () => upload(entry),
+                      uploadProgress:
+                          uploading?.$1 == entry.id ? uploading?.$2 : null,
+                    );
+                  },
                   separatorBuilder: (context, index) => separator,
                   itemCount: backupEntires!.length,
                 ),
@@ -55,5 +81,66 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
         ),
       ),
     );
+  }
+
+  void upload(BackupEntry entry) async {
+    setState(() {
+      uploadBusy = true;
+    });
+
+    try {
+      final File file = File(entry.filePath);
+
+      final bool exists = await file.exists().catchError((_) => false);
+
+      if (!exists) return;
+
+      await SyncService().saveBackupToICloud(
+        entry: entry,
+        parent: "userbackups",
+        onProgress: (p) => onUploadProgress(entry, p),
+      );
+
+      await ICloudSyncService().gather().catchError((_) => <ICloudFile>[]);
+    } finally {
+      uploadBusy = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void onUploadProgress(BackupEntry entry, Stream<double> progress) {
+    late final StreamSubscription<double> subscription;
+
+    void cancel() {
+      uploading = null;
+      subscription.cancel();
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+
+    subscription = progress.listen(
+      (double progress) {
+        uploading = (entry.id, progress);
+
+        if (mounted) {
+          setState(() {});
+        }
+
+        if (progress >= 1.0) {
+          cancel();
+        }
+      },
+      onError: (_) => cancel(),
+      onDone: () => cancel(),
+      cancelOnError: true,
+    );
+
+    setState(() {
+      uploading = (entry.id, 0.0);
+    });
   }
 }

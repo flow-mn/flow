@@ -5,6 +5,10 @@
 * Added "Recommend Flow" button
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 
+### Changes & Improvements
+
+* Backup files naming convention has changed to comply with iCloud Drive file name requirements
+
 ## 0.13.1
 
 ### Changes & Improvements

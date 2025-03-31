@@ -1,6 +1,6 @@
 import "dart:async";
 import "dart:io";
-import "dart:math" as math;
+import "dart:math";
 import "dart:typed_data";
 
 import "package:flow/entity/backup_entry.dart";
@@ -152,7 +152,34 @@ Future<ExportResult> showFileSaveDialog(
 }
 
 String generateBackupFileName(String fileExt) {
-  final String dateTime = Moment.now().lll.replaceAll(RegExp("\\s"), "_");
-  final String randomValue = math.Random().nextInt(536870912).toRadixString(36);
-  return "flow_backup_${dateTime}_$randomValue.$fileExt";
+  final String dateTime = Moment.now().format("YYYY-MM-DD_HH-mm-ss");
+  final String tag = tags[Random().nextInt(tags.length)];
+  return "flow_backup_${tag}_$dateTime.$fileExt";
 }
+
+const List<String> tags = [
+  "americano",
+  "canadiano",
+  "espresso",
+  "latte",
+  "cappuccino",
+  "espresso_macchiato",
+  "mocha",
+  "flat_white",
+  "cortado",
+  "gibraltar",
+  "ristretto",
+  "lungo",
+  "cold_brew",
+  "affogato",
+  "turkish",
+  "vietnamese_iced",
+  "irish",
+  "vanilla_latte",
+  "caramel_macchiato",
+  "tiramisu",
+  "creme_brulee",
+  "coffee_cake",
+  "biscotti",
+  "with_ghee",
+];

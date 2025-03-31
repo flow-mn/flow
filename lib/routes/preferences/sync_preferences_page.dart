@@ -1,7 +1,6 @@
-import "dart:io";
-
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/preferences/sections/icloud.dart";
+import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -82,7 +81,7 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
                   ),
                 ),
               ),
-              if (Platform.isIOS || Platform.isMacOS) ...[
+              if (ICloudSyncService.supported) ...[
                 const SizedBox(height: 16.0),
                 ICloud(),
               ],

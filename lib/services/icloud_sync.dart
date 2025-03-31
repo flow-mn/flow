@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:io";
 
+import "package:flow/constants.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/utils/extensions/iterables.dart";
 import "package:flutter/foundation.dart";
@@ -26,10 +27,37 @@ class ICloudSyncService {
 
   ICloudSyncService._internal();
 
+  static Future<void> initialize() async {
+    if (_instance != null) return;
+
+    _instance = ICloudSyncService._internal();
+
+    _instance!._listenToMetadataChanges();
+  }
+
+  static bool get supported => Platform.isIOS || Platform.isMacOS;
+
   /// Updates the cache also
-  Future<List<ICloudFile>> gather() async {
+  void _listenToMetadataChanges() async {
+    if (!supported) return;
+
+    late final StreamSubscription<List<ICloudFile>> subscription;
+
     final List<ICloudFile> files = await ICloudStorage.gather(
       containerId: containerId,
+      onUpdate: (Stream<List<ICloudFile>> stream) {
+        subscription = stream.listen(
+          (data) => _filesCache.value = data,
+          onDone: () {
+            _log.info("ICloud metadata stream closed");
+            subscription.cancel();
+          },
+          onError: (error) {
+            _log.severe("ICloud metadata stream error", error);
+            subscription.cancel();
+          },
+        );
+      },
     ).catchError((e, stackTrace) {
       lastError = e;
       _log.warning("Error gathering iCloud files", e, stackTrace);
@@ -39,8 +67,26 @@ class ICloudSyncService {
     _log.fine("Gathered iCloud files: ${files.length}");
 
     _filesCache.value = files;
+    lastError = null;
+  }
 
-    return files;
+  Future<List<ICloudFile>> gather() async {
+    if (!supported) return <ICloudFile>[];
+
+    try {
+      final List<ICloudFile> files = await ICloudStorage.gather(
+        containerId: containerId,
+      );
+
+      _filesCache.value = files;
+      lastError = null;
+
+      return files;
+    } catch (e, stackTrace) {
+      lastError = e;
+      _log.severe("Failed to gather iCloud files", e, stackTrace);
+      return <ICloudFile>[];
+    }
   }
 
   Future<void> delete(ICloudFile file) async {
@@ -102,6 +148,14 @@ class ICloudSyncService {
     required String destinationRelativePath,
     Function(Stream<double>)? onProgress,
   }) async {
+    assert(filePath.isNotEmpty);
+    assert(destinationRelativePath.isNotEmpty);
+    assert(!destinationRelativePath.startsWith("/"));
+
+    if (flowDebugMode) {
+      destinationRelativePath = "debug/$destinationRelativePath";
+    }
+
     final Completer<String> completer = Completer<String>();
     late final StreamSubscription<double> subscription;
 
@@ -138,10 +192,22 @@ class ICloudSyncService {
       },
     );
 
+    lastError = null;
+
     return completer.future;
   }
 
   Future<String> move({required String from, required String to}) async {
+    assert(from.isNotEmpty);
+    assert(to.isNotEmpty);
+    assert(!from.startsWith("/"));
+    assert(!to.startsWith("/"));
+    assert(from != to);
+
+    if (flowDebugMode) {
+      to = "debug/$to";
+    }
+
     try {
       await gather();
 
@@ -162,10 +228,24 @@ class ICloudSyncService {
 
       _log.info("Moved $from to $to");
 
+      lastError = null;
+
       return to;
     } catch (e, stackTrace) {
       _log.severe("Failed to move $from to $to", e, stackTrace);
       rethrow;
     }
+  }
+
+  Future<void> debugPurge() async {
+    final List<ICloudFile> files = await gather();
+    final List<ICloudFile> debugFiles =
+        files.where((file) => file.relativePath.startsWith("debug/")).toList();
+
+    _log.info("Deleting ${debugFiles.length} debug files");
+    for (ICloudFile file in debugFiles) {
+      await delete(file);
+    }
+    _log.info("Debug files deleted successfully.");
   }
 }

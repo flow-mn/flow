@@ -10,11 +10,11 @@ import "package:flow/services/sync.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
-  final ValueNotifier<UserPreferences> valueNotiifer = ValueNotifier(
+  final ValueNotifier<UserPreferences> valueNotifier = ValueNotifier(
     UserPreferences(),
   );
 
-  UserPreferences get value => valueNotiifer.value;
+  UserPreferences get value => valueNotifier.value;
 
   bool get combineTransfers => value.combineTransfers;
   set combineTransfers(bool newCombineTransfers) {
@@ -167,7 +167,7 @@ class UserPreferencesService {
             return;
           }
 
-          valueNotiifer.value = userPreferences;
+          valueNotifier.value = userPreferences;
         });
   }
 }
