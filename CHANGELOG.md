@@ -3,6 +3,7 @@
 ## Next
 
 * Added "Recommend Flow" button
+* Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 
 ## 0.13.1
 
