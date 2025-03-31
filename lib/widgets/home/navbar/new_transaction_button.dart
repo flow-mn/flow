@@ -29,6 +29,10 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
       builder: (context, buttonOrder, child) {
         buttonOrder ??= TransactionType.values;
 
+        if (Directionality.maybeOf(context) == TextDirection.rtl) {
+          buttonOrder = buttonOrder.reversed.toList();
+        }
+
         return PieMenu(
           theme: context.pieTheme.copyWith(
             customAngle: 90.0,

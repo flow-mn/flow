@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import '../entity/account.dart';
 import '../entity/backup_entry.dart';
+import '../entity/budget.dart';
 import '../entity/category.dart';
 import '../entity/profile.dart';
 import '../entity/transaction.dart';
@@ -387,7 +388,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(7, 2985299148024776274),
+    lastPropertyId: const obx_int.IdUid(12, 4693852392718311453),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -431,6 +432,98 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(7, 2985299148024776274),
         name: 'remindDailyAtRelativeSeconds',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 8609498027521636604),
+        name: 'useCategoryNameForUntitledTransactions',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 1110624065651948179),
+        name: 'autoBackupIntervalInHours',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 9083345045177209971),
+        name: 'transactionListTileShowCategoryName',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 4693852392718311453),
+        name: 'transactionListTileShowAccountForLeading',
+        type: 1,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(11, 4948078457888921031),
+    name: 'Budget',
+    lastPropertyId: const obx_int.IdUid(9, 6886515900911773491),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 8548068689938827083),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 5437558016134721268),
+        name: 'uuid',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(19, 806092094099867187),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 4554850236746747495),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 473869210125712621),
+        name: 'name',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(20, 8336098329051704990),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 6253789882700699652),
+        name: 'amount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 1298695079656779768),
+        name: 'currency',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 801892318627771901),
+        name: 'categoryId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(21, 7291423328418584896),
+        relationTarget: 'Category',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 4590726328503721316),
+        name: 'categoryUuid',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 6886515900911773491),
+        name: 'range',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -477,8 +570,8 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(10, 7829328581176695647),
-    lastIndexId: const obx_int.IdUid(18, 256441942731857355),
+    lastEntityId: const obx_int.IdUid(11, 4948078457888921031),
+    lastIndexId: const obx_int.IdUid(21, 7291423328418584896),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
@@ -522,6 +615,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       4688691313482515602,
       8178664360494427777,
       9181400211872351108,
+      577162958135049929,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -1015,7 +1109,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(8);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1023,6 +1117,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(4, defaultFilterPresetOffset);
         fbb.addInt64(5, object.trashBinRetentionDays);
         fbb.addInt64(6, object.remindDailyAtRelativeSeconds);
+        fbb.addBool(7, object.useCategoryNameForUntitledTransactions);
+        fbb.addInt64(9, object.autoBackupIntervalInHours);
+        fbb.addBool(10, object.transactionListTileShowCategoryName);
+        fbb.addBool(11, object.transactionListTileShowAccountForLeading);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1047,18 +1145,33 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
+        final useCategoryNameForUntitledTransactionsParam =
+            const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
+        final transactionListTileShowCategoryNameParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 24, false);
+        final transactionListTileShowAccountForLeadingParam =
+            const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false);
         final trashBinRetentionDaysParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
+        final autoBackupIntervalInHoursParam = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 22);
         final object =
             UserPreferences(
                 id: idParam,
                 combineTransfers: combineTransfersParam,
                 excludeTransfersFromFlow: excludeTransfersFromFlowParam,
+                useCategoryNameForUntitledTransactions:
+                    useCategoryNameForUntitledTransactionsParam,
+                transactionListTileShowCategoryName:
+                    transactionListTileShowCategoryNameParam,
+                transactionListTileShowAccountForLeading:
+                    transactionListTileShowAccountForLeadingParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
+                autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
@@ -1066,6 +1179,88 @@ obx_int.ModelDefinition getObjectBoxModel() {
               ..remindDailyAtRelativeSeconds = const fb.Int64Reader()
                   .vTableGetNullable(buffer, rootOffset, 16);
 
+        return object;
+      },
+    ),
+    Budget: obx_int.EntityDefinition<Budget>(
+      model: _entities[7],
+      toOneRelations: (Budget object) => [object.category],
+      toManyRelations: (Budget object) => {},
+      getId: (Budget object) => object.id,
+      setId: (Budget object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Budget object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final nameOffset = fbb.writeString(object.name);
+        final currencyOffset = fbb.writeString(object.currency);
+        final categoryUuidOffset =
+            object.categoryUuid == null
+                ? null
+                : fbb.writeString(object.categoryUuid!);
+        final rangeOffset = fbb.writeString(object.range);
+        fbb.startTable(10);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+        fbb.addOffset(3, nameOffset);
+        fbb.addFloat64(4, object.amount);
+        fbb.addOffset(5, currencyOffset);
+        fbb.addInt64(6, object.category.targetId);
+        fbb.addOffset(7, categoryUuidOffset);
+        fbb.addOffset(8, rangeOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final nameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final amountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
+        final currencyParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
+        final rangeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 20, '');
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+        );
+        final object =
+            Budget(
+                id: idParam,
+                name: nameParam,
+                amount: amountParam,
+                currency: currencyParam,
+                range: rangeParam,
+                createdDate: createdDateParam,
+              )
+              ..uuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGet(buffer, rootOffset, 6, '')
+              ..categoryUuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 18);
+        object.category.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          0,
+        );
+        object.category.attach(store);
         return object;
       },
     ),
@@ -1366,4 +1561,68 @@ class UserPreferences_ {
   /// See [UserPreferences.remindDailyAtRelativeSeconds].
   static final remindDailyAtRelativeSeconds =
       obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[6]);
+
+  /// See [UserPreferences.useCategoryNameForUntitledTransactions].
+  static final useCategoryNameForUntitledTransactions =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[7]);
+
+  /// See [UserPreferences.autoBackupIntervalInHours].
+  static final autoBackupIntervalInHours =
+      obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[8]);
+
+  /// See [UserPreferences.transactionListTileShowCategoryName].
+  static final transactionListTileShowCategoryName =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[9]);
+
+  /// See [UserPreferences.transactionListTileShowAccountForLeading].
+  static final transactionListTileShowAccountForLeading =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[10]);
+}
+
+/// [Budget] entity fields to define ObjectBox queries.
+class Budget_ {
+  /// See [Budget.id].
+  static final id = obx.QueryIntegerProperty<Budget>(
+    _entities[7].properties[0],
+  );
+
+  /// See [Budget.uuid].
+  static final uuid = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[1],
+  );
+
+  /// See [Budget.createdDate].
+  static final createdDate = obx.QueryDateProperty<Budget>(
+    _entities[7].properties[2],
+  );
+
+  /// See [Budget.name].
+  static final name = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[3],
+  );
+
+  /// See [Budget.amount].
+  static final amount = obx.QueryDoubleProperty<Budget>(
+    _entities[7].properties[4],
+  );
+
+  /// See [Budget.currency].
+  static final currency = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[5],
+  );
+
+  /// See [Budget.category].
+  static final category = obx.QueryRelationToOne<Budget, Category>(
+    _entities[7].properties[6],
+  );
+
+  /// See [Budget.categoryUuid].
+  static final categoryUuid = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[7],
+  );
+
+  /// See [Budget.range].
+  static final range = obx.QueryStringProperty<Budget>(
+    _entities[7].properties[8],
+  );
 }

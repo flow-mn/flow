@@ -1,11 +1,11 @@
+import "dart:convert";
 import "dart:io";
 
-import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:path/path.dart" as path;
 
 class DebugLogPage extends StatefulWidget {
-  final String? path;
+  final String path;
 
   const DebugLogPage({super.key, required this.path});
 
@@ -14,57 +14,57 @@ class DebugLogPage extends StatefulWidget {
 }
 
 class _DebugLogPageState extends State<DebugLogPage> {
-  late final Future<String> contents;
+  List<String> _lines = [];
+
+  bool _ready = false;
+
+  final ScrollController _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _load();
+  }
 
-    final File file = File(widget.path ?? "~");
-
-    contents = file.readAsString();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Log - ${widget.path}")),
-      body: FutureBuilder<String>(
-        future: contents,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Symbols.error_rounded),
-                  Text(snapshot.error.toString()),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.hasData) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
-              child: Text(snapshot.data ?? "", softWrap: true),
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+      appBar: AppBar(title: Text(path.basename(widget.path))),
+      body:
+          _ready
+              ? DefaultTextStyle(
+                style: TextStyle(
+                  fontFamily: "monospace",
+                  fontFamilyFallback: ["Poppins"],
+                ),
+                child: ListView.builder(
+                  itemCount: _lines.length,
+                  itemBuilder: (context, i) => Text(_lines[i]),
+                  controller: _controller,
+                  padding: EdgeInsets.all(16.0),
+                ),
+              )
+              : const Center(child: CircularProgressIndicator()),
     );
   }
 
-  Future<void> showShareSheet(String path, RenderObject? renderObject) async {
-    final RenderBox? renderBox =
-        renderObject is RenderBox ? renderObject : null;
+  void _load() async {
+    _lines = await File(widget.path)
+        .openRead()
+        .transform(utf8.decoder)
+        .transform(LineSplitter())
+        .toList()
+        .then((lines) => lines.reversed.toList());
 
-    await context.showShareSheet(
-      subject: "Share log files",
-      filePath: path,
-      renderBox: renderBox,
-    );
+    _ready = true;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

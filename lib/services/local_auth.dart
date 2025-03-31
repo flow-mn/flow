@@ -47,9 +47,11 @@ class LocalAuthService {
                   biometrics.contains(BiometricType.face) ||
                   biometrics.contains(BiometricType.strong);
             })
-            .catchError((error) {
+            .catchError((error, stackTrace) {
               _log.severe(
-                "Error while checking biometrics availability: $error",
+                "Error while checking biometrics availability",
+                error,
+                stackTrace,
               );
               return false;
             });
@@ -73,8 +75,8 @@ class LocalAuthService {
       _log.fine("Authentication result: $success");
 
       return success;
-    } catch (e) {
-      _log.severe("Error while authenticating: $e");
+    } catch (error, stackTrace) {
+      _log.severe("Error while authenticating", error, stackTrace);
       return false;
     }
   }

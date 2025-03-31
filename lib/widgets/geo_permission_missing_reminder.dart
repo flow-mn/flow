@@ -42,7 +42,9 @@ class _GeoPermissionMissingReminderState
                     .semi(context)
                     .copyWith(color: context.colorScheme.error),
                 child: Text(
-                  "preferences.transactionGeo.auto.permissionDenied".t(context),
+                  "preferences.transactions.geo.auto.permissionDenied".t(
+                    context,
+                  ),
                 ),
               ),
             ),

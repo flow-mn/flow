@@ -1,16 +1,15 @@
-import "dart:async";
-
 import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/add_category_card.dart";
 import "package:flow/widgets/category_card.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/setup/categories/category_preset_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -18,7 +17,21 @@ import "package:local_hero/local_hero.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class SetupCategoriesPage extends StatefulWidget {
-  const SetupCategoriesPage({super.key});
+  /// When [true], the page will close itself upon completion.
+  ///
+  /// Defaults to [false]
+  final bool standalone;
+
+  /// When [true], all possible category presets will be selected after page loads
+  ///
+  /// Defaults to [true]
+  final bool selectAll;
+
+  const SetupCategoriesPage({
+    super.key,
+    this.standalone = false,
+    this.selectAll = true,
+  });
 
   @override
   State<SetupCategoriesPage> createState() => _SetupCategoriesPageState();
@@ -53,9 +66,11 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
             )
             .toList();
 
-    // Select all in upon loading
-    for (final preset in presetCategories) {
-      preset.id = 0;
+    if (widget.selectAll) {
+      // Select all in upon loading
+      for (final preset in presetCategories) {
+        preset.id = 0;
+      }
     }
   }
 
@@ -110,16 +125,6 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
                   const SizedBox(height: 16.0),
                   const AddCategoryCard(),
                   const SizedBox(height: 16.0),
-                  ...currentCategories.map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: CategoryCard(
-                        category: e,
-                        onTapOverride: const Optional(null),
-                        showAmount: false,
-                      ),
-                    ),
-                  ),
                   LocalHeroScope(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOut,
@@ -149,6 +154,27 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
                               .toList(),
                     ),
                   ),
+                  if (currentCategories.isNotEmpty) ...[
+                    const SizedBox(height: 16.0),
+                    WavyDivider(),
+                    const SizedBox(height: 16.0),
+                    ListHeader(
+                      "setup.categories.existing".t(context),
+                      padding: EdgeInsets.zero,
+                    ),
+                    const SizedBox(height: 8.0),
+                  ],
+                  ...currentCategories.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: CategoryCard(
+                        category: e,
+                        onTapOverride: const Optional(null),
+                        showAmount: false,
+                        trailing: Icon(Symbols.done_all_rounded),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -163,8 +189,14 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
               const Spacer(),
               Button(
                 onTap: busy ? null : save,
-                trailing: const Icon(Symbols.chevron_right_rounded),
-                child: Text("setup.next".t(context)),
+                trailing:
+                    widget.standalone
+                        ? const Icon(Symbols.check_rounded)
+                        : const Icon(Symbols.chevron_right_rounded),
+                child:
+                    widget.standalone
+                        ? Text("general.done".t(context))
+                        : Text("setup.next".t(context)),
               ),
             ],
           ),
@@ -218,12 +250,12 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
       );
 
       if (mounted) {
-        GoRouter.of(context).popUntil((route) => route.path == "/setup");
-
-        context.pushReplacement("/");
+        if (widget.standalone) {
+          context.pop();
+        } else {
+          await context.push("/setup/profile");
+        }
       }
-
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
     } finally {
       busy = false;
       if (mounted) {

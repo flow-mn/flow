@@ -49,6 +49,16 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => context.push("/categories"),
           ),
           ListTile(
+            title: Text("preferences.transactions.pending".t(context)),
+            leading: const Icon(Symbols.schedule_rounded),
+            onTap: () => context.push("/transactions/pending"),
+          ),
+          ListTile(
+            title: Text("transaction.deleted".t(context)),
+            leading: const Icon(Symbols.delete_rounded),
+            onTap: () => context.push("/transactions/deleted"),
+          ),
+          ListTile(
             title: Text("tabs.profile.preferences".t(context)),
             leading: const Icon(Symbols.settings_rounded),
             onTap: () => context.push("/preferences"),
@@ -74,6 +84,14 @@ class _ProfileTabState extends State<ProfileTab> {
             title: Text("tabs.profile.support".t(context)),
             leading: const Icon(Symbols.favorite_rounded),
             onTap: () => context.push("/support"),
+          ),
+          Builder(
+            builder:
+                (context) => ListTile(
+                  title: Text("tabs.profile.recommend".t(context)),
+                  leading: const Icon(Symbols.share_rounded),
+                  onTap: () => context.showUriShareSheet(uri: website),
+                ),
           ),
           ListTile(
             title: Text("visitGitHubRepo".t(context)),
@@ -236,8 +254,10 @@ class _ProfileTabState extends State<ProfileTab> {
 
     try {
       if (confirm == true) {
-        final instance = await SharedPreferences.getInstance();
-        await instance.clear();
+        final instanceAvecCache = await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+        await instanceAvecCache.clear();
       }
     } finally {
       _debugPrefsBusy = false;

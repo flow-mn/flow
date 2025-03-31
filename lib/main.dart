@@ -34,6 +34,7 @@ import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -41,6 +42,7 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
@@ -108,6 +110,13 @@ void main() async {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
+  try {
+    startupLog.fine("Initializing SyncService");
+    SyncService();
+  } catch (e, stackTrace) {
+    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
+  }
+
   startupLog.fine("Finally telling Flutter to run the app widget");
   runApp(const Flow());
 }
@@ -154,13 +163,11 @@ class FlowState extends State<Flow> {
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
-    } else {
-      // To migrate profile image path from old to new (since 0.10.0)
-      nonImportantMigrateProfileImagePath();
     }
 
-    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
-    migrateLocalPrefsRequirePendingTransactionConfrimation();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      migrateRemoveTitleFromUntitledTransactions();
+    });
 
     _tryUnlockTempLock();
   }
@@ -351,6 +358,7 @@ void initializePackageVersion() async {
 
     final value = await PackageInfo.fromPlatform();
     appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+    downloadedFrom = value.installerStore;
 
     startupLog.fine("Loaded package info");
     startupLog.fine("App version: $appVersion");

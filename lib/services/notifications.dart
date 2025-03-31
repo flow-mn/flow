@@ -64,9 +64,9 @@ class NotificationsService {
   Future<void> initialize() async {
     try {
       _timezone = await FlutterTimezone.getLocalTimezone();
-    } catch (error) {
+    } catch (error, stackTrace) {
       _timezone = _fallbackTimezone;
-      _log.severe("Failed to get local timezone", error);
+      _log.severe("Failed to get local timezone", error, stackTrace);
     }
 
     try {
@@ -235,6 +235,10 @@ class NotificationsService {
               id: transaction.uuid,
             ).serialized,
       );
+
+      _log.info(
+        "Scheduled a reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${dateTime.toString()}",
+      );
     } catch (e) {
       _log.warning("Failed to schedule notification", e);
     }
@@ -356,7 +360,7 @@ class NotificationsService {
                 id: null,
               ).serialized,
         );
-        _log.fine("Scheduled a reminder at ${dateTime.toString()}, $i");
+        _log.info("Scheduled a reminder at ${dateTime.toString()}, $i");
       } catch (e) {
         _log.warning("Failed to schedule notification", e);
       }

@@ -91,7 +91,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                     Frame(
                       child: InfoText(
                         child: Text(
-                          "You're seeing this section because you're in debug mode, and it still wouldn't work on this platform.",
+                          "Debug mode - this page was shown even though Flow doesn't support notifications on this platform",
                         ),
                       ),
                     ),

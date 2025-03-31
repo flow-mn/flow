@@ -97,6 +97,28 @@ class TransactionsService {
     return deletedCount;
   }
 
+  Future<Transaction?> findTransferRelatedTransaction(
+    Transaction transaction,
+  ) async {
+    if (!transaction.isTransfer) {
+      return null;
+    }
+
+    return await findByIdentifier(
+      transaction.extensions.transfer?.relatedTransactionUuid,
+    );
+  }
+
+  Transaction? findTransferRelatedTransactionSync(Transaction transaction) {
+    if (!transaction.isTransfer) {
+      return null;
+    }
+
+    return findByIdentifierSync(
+      transaction.extensions.transfer?.relatedTransactionUuid,
+    );
+  }
+
   Future<List<Transaction>> findMany(TransactionFilter filter) async {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
@@ -196,6 +218,31 @@ class TransactionsService {
     );
   }
 
+  Future<void> updateTransactionDate(
+    Transaction transaction,
+    DateTime dateTime,
+  ) async {
+    transaction.transactionDate = dateTime;
+    final other = await findTransferRelatedTransaction(transaction);
+    if (other != null) {
+      other.transactionDate = transaction.transactionDate;
+      await updateOne(other);
+    }
+    await updateOne(transaction);
+  }
+
+  void updateTransactionDateSync(Transaction transaction, DateTime dateTime) {
+    transaction.transactionDate = dateTime;
+    final other = TransactionsService().findTransferRelatedTransactionSync(
+      transaction,
+    );
+    if (other != null) {
+      other.transactionDate = transaction.transactionDate;
+      updateOneSync(other);
+    }
+    updateOneSync(transaction);
+  }
+
   Future<Transaction?> getOne(int id) async {
     return ObjectBox().box<Transaction>().getAsync(id);
   }
@@ -240,6 +287,16 @@ class TransactionsService {
 
     updateOneSync(transaction);
 
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.deletedDate = DateTime.now();
+      relatedTransferTransaction.isDeleted = true;
+
+      updateOneSync(relatedTransferTransaction);
+    }
+
     return true;
   }
 
@@ -262,6 +319,15 @@ class TransactionsService {
 
     updateOneSync(transaction);
 
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.isDeleted = false;
+
+      updateOneSync(relatedTransferTransaction);
+    }
+
     return true;
   }
 
@@ -283,6 +349,19 @@ class TransactionsService {
     }
 
     updateOneSync(transaction);
+
+    final Transaction? relatedTransferTransaction =
+        findTransferRelatedTransactionSync(transaction);
+
+    if (relatedTransferTransaction != null) {
+      relatedTransferTransaction.isPending = !confirm;
+
+      if (updateTransactionDate) {
+        relatedTransferTransaction.transactionDate = Moment.now();
+      }
+
+      updateOneSync(relatedTransferTransaction);
+    }
 
     return true;
   }
@@ -354,7 +433,12 @@ class TransactionsService {
       await Future.wait(
         pendingTransactions.map(
           (transaction) => NotificationsService()
-              .scheduleForPlannedTransaction(transaction)
+              .scheduleForPlannedTransaction(transaction, earlyReminder)
+              .then((_) {
+                _log.info(
+                  "Scheduled early reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid}",
+                );
+              })
               .catchError((error) {
                 _log.warning(
                   "Failed to schedule an early reminder notification for transaction ${transaction.uuid}",
@@ -362,13 +446,7 @@ class TransactionsService {
                 );
               }),
         ),
-      ).catchError((error) {
-        _log.warning(
-          "Scheduling early reminder for one or more transactions have been failed",
-          error,
-        );
-        return [];
-      });
+      );
     }
   }
 
@@ -380,5 +458,6 @@ class TransactionsService {
   /// Has no effect if it's already resumed
   void resumeListeners() {
     _disableUpdates = false;
+    _onChange();
   }
 }

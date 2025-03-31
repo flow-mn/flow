@@ -9,8 +9,10 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
+import "package:flow/sync/import/import_csv.dart";
 import "package:flow/sync/import/import_v1.dart";
 import "package:flow/sync/import/import_v2.dart";
+import "package:flow/sync/model/csv/parsed_data.dart";
 import "package:flow/sync/model/model_v1.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/utils/utils.dart";
@@ -41,6 +43,8 @@ Future<Importer> importBackup({File? backupFile}) async {
   final String ext = path.extension(file.path).toLowerCase();
 
   switch (ext.toLowerCase()) {
+    case ".csv":
+      return await _importCsv(file: file);
     case ".json":
       return await _importJson(file: file);
     case ".zip":
@@ -115,4 +119,8 @@ Future<Importer> _importJson({required File file}) async {
     2 => ImportV2(SyncModelV2.fromJson(parsed)),
     _ => throw UnimplementedError(),
   };
+}
+
+Future<Importer> _importCsv({required File file}) async {
+  return ImportCSV(await CSVParsedData.fromFile(file));
 }

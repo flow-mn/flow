@@ -16,5 +16,7 @@
 		<array>
 			<string>NJH37247C9.flow</string>
 		</array>
+		<key>com.apple.security.files.downloads.read-write</key>
+		<true />
 	</dict>
 </plist>

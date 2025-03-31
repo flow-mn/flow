@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:developer";
 
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
@@ -81,6 +80,7 @@ class FlowLocalizations {
     Locale("it", "IT"),
     Locale("tr", "TR"),
     Locale("fr", "FR"),
+    Locale("ar"),
   ];
 
   static FlowLocalizations of(BuildContext context) =>
@@ -115,7 +115,7 @@ class FlowLocalizations {
           "[Gegee Language Service] $key has ${missingKeys.length} missing keys",
         );
         for (var element in missingKeys) {
-          log(element);
+          _log.warning(element);
         }
       }
       _log.finest("-------------------");
