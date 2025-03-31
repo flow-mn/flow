@@ -281,6 +281,7 @@
     "preferences.reminders.remindDaily.time": "Ricordami alle",
     "preferences.reminders.remindDaily.expiryWarning": "I promemoria si interromperanno se non apri Flow per 7 giorni consecutivi",
     "preferences.reminders.unsupportedPlatform": "La pianificazione delle notifiche non è supportata su questa piattaforma",
+    "preferences.sync": "Sincronizzazione",
     "preferences.sync.autoBackup": "Backup automatico",
     "preferences.sync.autoBackup.interval": "Intervallo di backup",
     "preferences.sync.autoBackup.interval.description": "I backup vengono creati automaticamente quando apri l'app, a condizione che sia trascorso l'intervallo di tempo impostato dall'ultimo backup.",

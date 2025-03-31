@@ -281,6 +281,7 @@
     "preferences.reminders.remindDaily.time": "Remind me at",
     "preferences.reminders.remindDaily.expiryWarning": "Flow'u 7 gün boyunca açmazsanız hatırlatıcılar durdurulacaktır",
     "preferences.reminders.unsupportedPlatform": "Bildirim planlaması bu platformda desteklenmiyor",
+    "preferences.sync": "Senkranizasyon",
     "preferences.sync.autoBackup": "Otomatik yedekleme",
     "preferences.sync.autoBackup.interval": "Yedekleme aralığı",
     "preferences.sync.autoBackup.interval.description": "Son yedeklemeden bu yana belirlenen zaman aralığı geçtiği sürece, uygulamayı açtığınızda yedeklemeler otomatik olarak oluşturulur.",

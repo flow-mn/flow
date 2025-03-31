@@ -24,6 +24,14 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get enableICloudSync => value.enableICloudSync;
+  set enableICloudSync(bool newEnableICloudSync) {
+    if (value.id == 0) return;
+
+    value.enableICloudSync = newEnableICloudSync;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   int? get trashBinRetentionDays => value.trashBinRetentionDays;
   set trashBinRetentionDays(int? newTrashBinRetentionDays) {
     if (value.id == 0) return;

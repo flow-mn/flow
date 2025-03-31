@@ -281,6 +281,7 @@
     "preferences.reminders.remindDaily.time": "Цаг",
     "preferences.reminders.remindDaily.expiryWarning": "Та 7 хоног дараалалж аппыг нээгээгүй тохиолдолд сануулга зогсох болно",
     "preferences.reminders.unsupportedPlatform": "Энэ үйлдлйин системд мэдэгдэл илгээх боломжгүй",
+    "preferences.sync": "Нөөц",
     "preferences.sync.autoBackup": "Автоматаар нөөцлөх",
     "preferences.sync.autoBackup.interval": "Автоматаар нөөцлөх хугацаа",
     "preferences.sync.autoBackup.interval.description": "Апп нээхэд нөөц үүсэх бөгөөд сүүлийн нөөц үүссэнээс хойш дээрх хугацаа өнгрөөгүй бол үүсэхгүй.",

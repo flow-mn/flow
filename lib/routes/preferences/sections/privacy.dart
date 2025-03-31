@@ -16,7 +16,7 @@ class _PrivacyState extends State<Privacy> {
   Widget build(BuildContext context) {
     final bool privacyMode = LocalPreferences().privacyMode.get();
 
-    return SwitchListTile /*.adaptive*/ (
+    return SwitchListTile(
       secondary: const Icon(Symbols.password_rounded),
       title: Text("preferences.privacy.maskAtStartup".t(context)),
       value: privacyMode,

@@ -281,6 +281,7 @@
     "preferences.reminders.remindDaily.time": "Remind me at",
     "preferences.reminders.remindDaily.expiryWarning": "Reminders will stop if you don't open Flow for 7 consecutive days",
     "preferences.reminders.unsupportedPlatform": "Scheduling notifications is not supported on this platform",
+    "preferences.sync": "Sync",
     "preferences.sync.autoBackup": "Auto-backup",
     "preferences.sync.autoBackup.interval": "Backup interval",
     "preferences.sync.autoBackup.interval.description": "Backups are created automatically when you open the app, as long as the set time interval has passed since the last backup.",

@@ -183,9 +183,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               ),
               (_, true) => buildGroupedList(context, now, transactions ?? []),
               (_, false) => const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator /*.adaptive*/ (),
-                ),
+                child: Center(child: CircularProgressIndicator()),
               ),
             },
             SliverToBoxAdapter(child: const SizedBox(height: 96.0)),

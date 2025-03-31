@@ -20,6 +20,12 @@ class BackupEntry {
 
   String fileExt;
 
+  /// For iCloud files. This does not guarantee that the file is
+  /// actually in iCloud.
+  ///
+  /// This is set after a successful upload to iCloud, and never touched again.
+  String? iCloudRelativePath;
+
   @Property()
   String type;
 
@@ -60,6 +66,7 @@ class BackupEntry {
     this.syncModelVersion = latestSyncModelVersion,
     required this.type,
     required this.fileExt,
+    this.iCloudRelativePath,
   }) : createdDate = createdDate ?? DateTime.now();
 }
 

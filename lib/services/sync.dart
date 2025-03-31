@@ -2,13 +2,16 @@ import "dart:async";
 
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/backup_entry.dart";
+import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:objectbox/objectbox.dart";
 
 final Logger _log = Logger("SyncService");
 
@@ -19,6 +22,7 @@ class SyncService {
 
   SyncService._internal() {
     triggerAutoBackup();
+    unawaited(ICloudSyncService().gather());
   }
 
   Future<void> triggerAutoBackup() async {
@@ -56,6 +60,8 @@ class SyncService {
         showShareDialog: false,
       );
 
+      unawaited(saveToICloud(result));
+
       final Moment now = Moment.now();
 
       await TransitiveLocalPreferences().lastAutoBackupRanAt.set(now);
@@ -65,6 +71,44 @@ class SyncService {
       _log.info("Auto backup successfully ran at $now");
     } catch (e, stackTrace) {
       _log.severe("Failed to perform auto-backup", e, stackTrace);
+    }
+  }
+
+  Future<void> saveToICloud(ExportResult result) async {
+    try {
+      final String iCloudRelativePath = await ICloudSyncService().upload(
+        filePath: result.filePath,
+      );
+      _log.info(
+        "Auto backup successfully uploaded to iCloud -> ${result.filePath}",
+      );
+
+      try {
+        final int? objectBoxId = await result.objectBoxId;
+
+        if (objectBoxId == null) {
+          throw Exception("objectBoxId is null");
+        }
+
+        final BackupEntry? entry = ObjectBox().box<BackupEntry>().get(
+          objectBoxId,
+        );
+
+        if (entry == null) {
+          throw Exception(
+            "BackupEntry not found for objectBoxId: $objectBoxId",
+          );
+        }
+
+        entry.iCloudRelativePath = iCloudRelativePath;
+
+        ObjectBox().box<BackupEntry>().put(entry, mode: PutMode.update);
+      } catch (e, stackTrace) {
+        _log.warning("Failed to amend BackupEntry", e, stackTrace);
+      }
+    } catch (e, stackTrace) {
+      _log.severe("Failed to upload backup to iCloud", e, stackTrace);
+      return;
     }
   }
 }

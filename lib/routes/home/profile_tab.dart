@@ -195,7 +195,7 @@ class _ProfileTabState extends State<ProfileTab> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog /*.adaptive*/ (
+          (context) => AlertDialog(
             title: const Text("[dev] Reset database?"),
             actions: [
               Button(
@@ -233,7 +233,7 @@ class _ProfileTabState extends State<ProfileTab> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog /*.adaptive*/ (
+          (context) => AlertDialog(
             title: const Text("[dev] Clear Shared Preferences?"),
             actions: [
               Button(

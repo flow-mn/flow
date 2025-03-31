@@ -281,6 +281,7 @@
     "preferences.reminders.remindDaily.time": "ذكرني في",
     "preferences.reminders.remindDaily.expiryWarning": "ستتوقف التذكيرات إذا لم تفتح Flow لمدة 7 أيام متتالية",
     "preferences.reminders.unsupportedPlatform": "جدولة الإشعارات غير مدعومة على هذه المنصة",
+    "preferences.sync": "المزامنة",
     "preferences.sync.autoBackup": "النسخ الاحتياطي التلقائي",
     "preferences.sync.autoBackup.interval": "فاصل النسخ الاحتياطي",
     "preferences.sync.autoBackup.interval.description": "يتم إنشاء النسخ الاحتياطية تلقائيًا عند فتح التطبيق، طالما أن الفاصل الزمني المحدد قد مر منذ آخر نسخة احتياطية.",

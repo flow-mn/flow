@@ -20,7 +20,7 @@ class _HapticsState extends State<Haptics> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SwitchListTile /*.adaptive*/ (
+        SwitchListTile(
           secondary: const Icon(Symbols.vibration_rounded),
           title: Text("preferences.hapticFeedback.description".t(context)),
           value: enableHapticFeedback,

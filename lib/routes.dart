@@ -19,7 +19,7 @@ import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/csv.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/import_wizard/v2.dart";
-import "package:flow/routes/preferences/auto_backup_preferences_page.dart";
+import "package:flow/routes/preferences/sync_preferences_page.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
@@ -210,8 +210,8 @@ final router = GoRouter(
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
         ),
         GoRoute(
-          path: "autoBackup",
-          builder: (context, state) => const AutoBackupPreferencesPage(),
+          path: "sync",
+          builder: (context, state) => const SyncPreferencesPage(),
         ),
         GoRoute(
           path: "transactionListItemAppearance",
