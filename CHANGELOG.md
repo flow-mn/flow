@@ -2,12 +2,21 @@
 
 ## Next
 
-* Added "Recommend Flow" button
+### New features
+
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 
 ### Changes & Improvements
 
 * Backup files naming convention has changed to comply with iCloud Drive file name requirements
+* Added "Recommend Flow" button
+
+### Feature - iCloud checklist
+
+* [ ] Purge older files on iCloud
+* [ ] Show error on home screen when there's iCloud problem
+* [ ] Stop showing auto-backup save reminder when iCloud is enabled
+* [ ] Test @sadespresso
 
 ## 0.13.1
 
