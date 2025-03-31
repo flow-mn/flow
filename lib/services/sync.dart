@@ -12,6 +12,7 @@ import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:objectbox/objectbox.dart";
+import "package:path/path.dart" as path;
 
 final Logger _log = Logger("SyncService");
 
@@ -76,9 +77,18 @@ class SyncService {
 
   Future<void> saveToICloud(ExportResult result) async {
     try {
-      final String iCloudRelativePath = await ICloudSyncService().upload(
+      final String extension = path.extension(result.filePath);
+
+      final String tempPath = await ICloudSyncService().upload(
         filePath: result.filePath,
+        destinationRelativePath: "temp-autobackup-$extension",
       );
+
+      final String iCloudRelativePath = await ICloudSyncService().move(
+        from: tempPath,
+        to: "autobackup-$extension",
+      );
+
       _log.info(
         "Auto backup successfully uploaded to iCloud -> ${result.filePath}",
       );

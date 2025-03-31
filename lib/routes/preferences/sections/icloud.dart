@@ -1,6 +1,8 @@
 import "package:flow/l10n/extensions.dart";
+import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
@@ -19,6 +21,8 @@ class _ICloudState extends State<ICloud> {
   Widget build(BuildContext context) {
     final bool enableICloudSync = UserPreferencesService().enableICloudSync;
 
+    final dynamic error = ICloudSyncService().lastError;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: 8.0,
@@ -29,13 +33,18 @@ class _ICloudState extends State<ICloud> {
           value: enableICloudSync,
           onChanged: updateEnableICloudSync,
         ),
-        Frame(
-          child: InfoText(
-            child: Text(
-              "preferences.sync.autoBackup.syncToICloud.description".t(context),
+        if (error != null)
+          Frame(
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text(
+                "error.sync.iCloudFail".t(context),
+                style: context.textTheme.bodyMedium!.copyWith(
+                  color: context.colorScheme.error,
+                ),
+              ),
             ),
           ),
-        ),
         Frame(
           child: InfoText(
             child: Text(

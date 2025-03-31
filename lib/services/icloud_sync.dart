@@ -2,9 +2,13 @@ import "dart:async";
 import "dart:io";
 
 import "package:flow/objectbox.dart";
+import "package:flow/utils/extensions/iterables.dart";
 import "package:flutter/foundation.dart";
 import "package:icloud_storage/icloud_storage.dart";
+import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
+
+final Logger _log = Logger("ICloudSyncService");
 
 /// Requires [ObjectBox.appDataDirectory] to be set
 class ICloudSyncService {
@@ -18,13 +22,21 @@ class ICloudSyncService {
 
   factory ICloudSyncService() => _instance ??= ICloudSyncService._internal();
 
+  dynamic lastError;
+
   ICloudSyncService._internal();
 
   /// Updates the cache also
   Future<List<ICloudFile>> gather() async {
     final List<ICloudFile> files = await ICloudStorage.gather(
       containerId: containerId,
-    );
+    ).catchError((e, stackTrace) {
+      lastError = e;
+      _log.warning("Error gathering iCloud files", e, stackTrace);
+      return <ICloudFile>[];
+    });
+
+    _log.fine("Gathered iCloud files: ${files.length}");
 
     _filesCache.value = files;
 
@@ -87,31 +99,34 @@ class ICloudSyncService {
 
   Future<String> upload({
     required String filePath,
+    required String destinationRelativePath,
     Function(Stream<double>)? onProgress,
   }) async {
     final Completer<String> completer = Completer<String>();
     late final StreamSubscription<double> subscription;
 
-    final String destinationFileName = path.basename(filePath);
-
     void finish([bool success = true]) {
       subscription.cancel();
 
       if (success) {
-        completer.complete(destinationFileName);
+        completer.complete(destinationRelativePath);
+        _log.info("Upload has been completed: $destinationRelativePath");
       } else {
         completer.completeError(Exception("Failed to upload file: $filePath"));
+        _log.severe("Failed to upload file: $filePath");
       }
     }
 
     await ICloudStorage.upload(
       containerId: containerId,
       filePath: filePath,
-      destinationRelativePath: destinationFileName,
+      destinationRelativePath: destinationRelativePath,
       onProgress: (Stream<double> progress) {
         onProgress?.call(progress);
         subscription = progress.listen(
           (double progress) {
+            _log.finer("Upload progress for ($progress): $progress");
+
             if (progress >= 1.0) {
               finish();
             }
@@ -124,5 +139,33 @@ class ICloudSyncService {
     );
 
     return completer.future;
+  }
+
+  Future<String> move({required String from, required String to}) async {
+    try {
+      await gather();
+
+      ICloudFile? file = _filesCache.value.firstWhereOrNull(
+        (file) => file.relativePath == from,
+      );
+
+      if (file == null) {
+        _log.severe("Cannot move $from to $to; file not found");
+        throw Exception("Cannot move $from to $to; file not found");
+      }
+
+      await ICloudStorage.move(
+        containerId: containerId,
+        fromRelativePath: from,
+        toRelativePath: to,
+      );
+
+      _log.info("Moved $from to $to");
+
+      return to;
+    } catch (e, stackTrace) {
+      _log.severe("Failed to move $from to $to", e, stackTrace);
+      rethrow;
+    }
   }
 }
