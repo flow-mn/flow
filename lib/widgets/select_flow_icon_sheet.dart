@@ -25,7 +25,6 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       title: Text("flowIcon.change".t(context)),
       child: Column(
         mainAxisSize: MainAxisSize.min,

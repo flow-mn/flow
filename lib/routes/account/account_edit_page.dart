@@ -12,7 +12,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
-import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/theme/theme.dart";

@@ -239,7 +239,7 @@ extension MainActions on ObjectBox {
 
     assert(
       !flow.containsKey(Namespace.nil.value),
-      "There is no way you've managed to make a transaction without an account",
+      "There is no way you've managed to make a transaction without an account, but hey! Congratulations! You've just found a bug!",
     );
 
     return FlowAnalytics(flow: flow, range: range);

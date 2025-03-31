@@ -246,12 +246,19 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           header: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12.0),
+              // TODO @sadespresso want to analyze transactions shown in current
+              // view. For example, average amount of transaction, how often this
+              // happens, total txn count, etc
+              // if (defaultFilter != currentFilter) ...[
+              //   Text("transactions.count".t(context, transactions.length)),
+              //   const SizedBox(height: 4.0),
+              // ],
               FlowCards(transactions: transactions, rates: rates),
               if (showMissingExchangeRatesWarning) ...[
-                const SizedBox(height: 12.0),
+                SizedBox(height: 4.0),
                 RatesMissingWarning(),
               ],
+              SizedBox(height: 4.0),
             ],
           ),
           controller: widget.scrollController,

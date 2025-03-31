@@ -13,7 +13,6 @@ class LanguageSelectionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.language.choose".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
