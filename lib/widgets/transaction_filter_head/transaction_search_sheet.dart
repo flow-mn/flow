@@ -91,7 +91,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
               ),
             ),
             const SizedBox(height: 16.0),
-            CheckboxListTile /*.adaptive*/ (
+            CheckboxListTile(
               title: Text(
                 "transactions.query.filter.keyword.includeDescription".t(
                   context,

@@ -77,7 +77,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 valueListenable: ExchangeRatesService().exchangeRatesCache,
                 builder: (context, exchangeRatesCache, _) {
                   return ValueListenableBuilder(
-                    valueListenable: UserPreferencesService().valueNotiifer,
+                    valueListenable: UserPreferencesService().valueNotifier,
                     builder: (context, userPreferences, child) {
                       final bool excludeTransfersInTotal =
                           userPreferences.excludeTransfersFromFlow;

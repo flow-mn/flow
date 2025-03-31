@@ -20,6 +20,7 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
+        enableICloudSync: json['enableICloudSync'] as bool? ?? false,
         autoBackupIntervalInHours:
             (json['autoBackupIntervalInHours'] as num?)?.toInt() ?? 72,
       )
@@ -42,4 +43,5 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'transactionListTileShowAccountForLeading':
           instance.transactionListTileShowAccountForLeading,
       'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
+      'enableICloudSync': instance.enableICloudSync,
     };

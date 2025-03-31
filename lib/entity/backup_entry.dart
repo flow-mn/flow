@@ -20,6 +20,16 @@ class BackupEntry {
 
   String fileExt;
 
+  /// For iCloud files. This does not guarantee that the file is
+  /// actually in iCloud.
+  ///
+  /// This is set after a successful upload to iCloud, and never touched again.
+  String? iCloudRelativePath;
+
+  /// The date when the file was last changed in iCloud.
+  @Property(type: PropertyType.date)
+  DateTime? iCloudChangeDate;
+
   @Property()
   String type;
 
@@ -37,6 +47,7 @@ class BackupEntry {
 
   @Transient()
   FlowIconData get icon => switch (fileExt) {
+    "zip" => FlowIconData.icon(Symbols.hard_drive_rounded),
     "json" => FlowIconData.icon(Symbols.hard_drive_rounded),
     "csv" => FlowIconData.icon(Symbols.table_rounded),
     _ => FlowIconData.icon(Symbols.error_rounded),
@@ -60,6 +71,7 @@ class BackupEntry {
     this.syncModelVersion = latestSyncModelVersion,
     required this.type,
     required this.fileExt,
+    this.iCloudRelativePath,
   }) : createdDate = createdDate ?? DateTime.now();
 }
 

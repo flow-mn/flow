@@ -11,6 +11,23 @@ class RateAppNotification extends StatelessWidget {
   final RateApp notification;
   final VoidCallback? onDismiss;
 
+  static String getStoreName(String? downloadedFrom) {
+    switch (downloadedFrom?.toLowerCase()) {
+      case "com.android.vending":
+      case "play_store":
+        return "Google Play";
+      case "com.apple":
+      case "com.apple.simulator":
+        return "App Store";
+      case "com.apple.testflight":
+      case "testflight":
+        return "TestFlight";
+      case null:
+      default:
+        return Platform.isAndroid ? "Google Play" : "App Store";
+    }
+  }
+
   const RateAppNotification({
     super.key,
     required this.notification,
@@ -19,13 +36,13 @@ class RateAppNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String storeName =
-        downloadedFrom ?? (Platform.isAndroid ? "Google Play" : "App Store");
-
     return InternalNotificationListTile(
       onDismiss: onDismiss,
       icon: notification.icon,
-      title: "tabs.home.reminders.rateApp".t(context, storeName),
+      title: "tabs.home.reminders.rateApp".t(
+        context,
+        getStoreName(downloadedFrom),
+      ),
       action: TextButton(
         onPressed: () {
           if (notification.payload) {

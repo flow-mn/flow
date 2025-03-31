@@ -132,7 +132,7 @@
     },
     {
       "id": "6:5991227438386928245",
-      "lastPropertyId": "6:85022155315718452",
+      "lastPropertyId": "8:7012537446377796117",
       "name": "BackupEntry",
       "properties": [
         {
@@ -165,6 +165,16 @@
           "id": "6:85022155315718452",
           "name": "fileExt",
           "type": 9
+        },
+        {
+          "id": "7:2598696840666344158",
+          "name": "iCloudRelativePath",
+          "type": 9
+        },
+        {
+          "id": "8:7012537446377796117",
+          "name": "iCloudChangeDate",
+          "type": 10
         }
       ],
       "relations": []
@@ -309,7 +319,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "12:4693852392718311453",
+      "lastPropertyId": "13:6826663530484570285",
       "name": "UserPreferences",
       "properties": [
         {
@@ -368,6 +378,11 @@
         {
           "id": "12:4693852392718311453",
           "name": "transactionListTileShowAccountForLeading",
+          "type": 1
+        },
+        {
+          "id": "13:6826663530484570285",
+          "name": "enableICloudSync",
           "type": 1
         }
       ],

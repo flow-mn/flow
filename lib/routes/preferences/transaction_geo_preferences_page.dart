@@ -69,7 +69,7 @@ class _TransactionGeoPreferencesPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16.0),
-                  CheckboxListTile /*.adaptive*/ (
+                  CheckboxListTile(
                     title: Text(
                       "preferences.transactions.geo.enable".t(context),
                     ),
@@ -78,7 +78,7 @@ class _TransactionGeoPreferencesPageState
                   ),
                   if (geoSupported) ...[
                     const SizedBox(height: 16.0),
-                    CheckboxListTile /*.adaptive*/ (
+                    CheckboxListTile(
                       title: Text(
                         "preferences.transactions.geo.auto.enable".t(context),
                       ),

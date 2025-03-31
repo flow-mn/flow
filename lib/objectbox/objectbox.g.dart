@@ -184,7 +184,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(6, 5991227438386928245),
     name: 'BackupEntry',
-    lastPropertyId: const obx_int.IdUid(6, 85022155315718452),
+    lastPropertyId: const obx_int.IdUid(8, 7012537446377796117),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -221,6 +221,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(6, 85022155315718452),
         name: 'fileExt',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 2598696840666344158),
+        name: 'iCloudRelativePath',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7012537446377796117),
+        name: 'iCloudChangeDate',
+        type: 10,
         flags: 0,
       ),
     ],
@@ -388,7 +400,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(12, 4693852392718311453),
+    lastPropertyId: const obx_int.IdUid(13, 6826663530484570285),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -455,6 +467,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(12, 4693852392718311453),
         name: 'transactionListTileShowAccountForLeading',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 6826663530484570285),
+        name: 'enableICloudSync',
         type: 1,
         flags: 0,
       ),
@@ -848,19 +866,30 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final filePathOffset = fbb.writeString(object.filePath);
         final typeOffset = fbb.writeString(object.type);
         final fileExtOffset = fbb.writeString(object.fileExt);
-        fbb.startTable(7);
+        final iCloudRelativePathOffset =
+            object.iCloudRelativePath == null
+                ? null
+                : fbb.writeString(object.iCloudRelativePath!);
+        fbb.startTable(9);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.syncModelVersion);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
         fbb.addOffset(3, filePathOffset);
         fbb.addOffset(4, typeOffset);
         fbb.addOffset(5, fileExtOffset);
+        fbb.addOffset(6, iCloudRelativePathOffset);
+        fbb.addInt64(7, object.iCloudChangeDate?.millisecondsSinceEpoch);
         fbb.finish(fbb.endTable());
         return object.id;
       },
       objectFromFB: (obx.Store store, ByteData fbData) {
         final buffer = fb.BufferContext(fbData);
         final rootOffset = buffer.derefObject(0);
+        final iCloudChangeDateValue = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          18,
+        );
         final idParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -885,14 +914,22 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final fileExtParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 14, '');
+        final iCloudRelativePathParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 16);
         final object = BackupEntry(
-          id: idParam,
-          filePath: filePathParam,
-          createdDate: createdDateParam,
-          syncModelVersion: syncModelVersionParam,
-          type: typeParam,
-          fileExt: fileExtParam,
-        );
+            id: idParam,
+            filePath: filePathParam,
+            createdDate: createdDateParam,
+            syncModelVersion: syncModelVersionParam,
+            type: typeParam,
+            fileExt: fileExtParam,
+            iCloudRelativePath: iCloudRelativePathParam,
+          )
+          ..iCloudChangeDate =
+              iCloudChangeDateValue == null
+                  ? null
+                  : DateTime.fromMillisecondsSinceEpoch(iCloudChangeDateValue);
 
         return object;
       },
@@ -1109,7 +1146,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.defaultFilterPreset == null
                 ? null
                 : fbb.writeString(object.defaultFilterPreset!);
-        fbb.startTable(13);
+        fbb.startTable(14);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1121,6 +1158,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(9, object.autoBackupIntervalInHours);
         fbb.addBool(10, object.transactionListTileShowCategoryName);
         fbb.addBool(11, object.transactionListTileShowAccountForLeading);
+        fbb.addBool(12, object.enableICloudSync);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1156,6 +1194,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final defaultFilterPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
+        final enableICloudSyncParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          28,
+          false,
+        );
         final autoBackupIntervalInHoursParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 22);
         final object =
@@ -1171,6 +1215,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                     transactionListTileShowAccountForLeadingParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
+                enableICloudSync: enableICloudSyncParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
               )
               ..uuid = const fb.StringReader(
@@ -1409,6 +1454,16 @@ class BackupEntry_ {
   static final fileExt = obx.QueryStringProperty<BackupEntry>(
     _entities[3].properties[5],
   );
+
+  /// See [BackupEntry.iCloudRelativePath].
+  static final iCloudRelativePath = obx.QueryStringProperty<BackupEntry>(
+    _entities[3].properties[6],
+  );
+
+  /// See [BackupEntry.iCloudChangeDate].
+  static final iCloudChangeDate = obx.QueryDateProperty<BackupEntry>(
+    _entities[3].properties[7],
+  );
 }
 
 /// [Transaction] entity fields to define ObjectBox queries.
@@ -1577,6 +1632,11 @@ class UserPreferences_ {
   /// See [UserPreferences.transactionListTileShowAccountForLeading].
   static final transactionListTileShowAccountForLeading =
       obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[10]);
+
+  /// See [UserPreferences.enableICloudSync].
+  static final enableICloudSync = obx.QueryBooleanProperty<UserPreferences>(
+    _entities[6].properties[11],
+  );
 }
 
 /// [Budget] entity fields to define ObjectBox queries.
