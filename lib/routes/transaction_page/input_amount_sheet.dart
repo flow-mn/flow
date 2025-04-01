@@ -2,9 +2,9 @@ import "dart:math";
 
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
-import "package:flow/routes/new_transaction/amount_text.dart";
-import "package:flow/routes/new_transaction/input_amount_sheet/calculator_button.dart";
-import "package:flow/routes/new_transaction/input_amount_sheet/input_value.dart";
+import "package:flow/routes/transaction_page/amount_text.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet/calculator_button.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet/input_value.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
@@ -115,8 +115,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       child: Focus(
         autofocus: true,
         child: ModalSheet.scrollable(
-          scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.8,
-          topSpacing: 0.0,
+          scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.85,
           child: LayoutBuilder(
             builder: (context, size) {
               final double width = min(size.maxWidth, 440.0);
@@ -126,7 +125,6 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                   constraints: BoxConstraints.tightFor(width: width),
                   child: Column(
                     children: [
-                      const SizedBox(height: 16.0),
                       if (widget.title != null) ...[
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),

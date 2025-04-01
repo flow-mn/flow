@@ -88,7 +88,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 Center(child: Text(currentThemeName)),
                 const SizedBox(height: 12.0),
               ],
-              // CheckboxListTile/*.adaptive*/(
+              // CheckboxListTile(
               //   title: Text("preferences.theme.enableDynamicTheme".t(context)),
               //   value: enableDynamicTheme,
               //   onChanged: changeEnableDynamicTheme,
@@ -96,7 +96,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               //   activeColor: context.colorScheme.primary,
               // ),
               if (Platform.isIOS) ...[
-                CheckboxListTile /*.adaptive*/ (
+                CheckboxListTile(
                   title: Text(
                     "preferences.theme.themeChangesAppIcon".t(context),
                   ),
@@ -110,7 +110,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
               ListHeader("preferences.theme.other".t(context)),
               const SizedBox(height: 8.0),
               ...standaloneThemes.entries.map(
-                (entry) => RadioListTile /*.adaptive*/ (
+                (entry) => RadioListTile(
                   title: Text(themeNames[entry.value.name] ?? entry.value.name),
                   value: entry.key,
                   groupValue: currentTheme,

@@ -47,20 +47,22 @@ class _TransactionListItemAppearancePreferencesPageState
               ),
               const SizedBox(height: 8.0),
               ...getExampleTransactions().map(
-                (transaction) => TransactionListTile(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 4.0,
+                (transaction) => IgnorePointer(
+                  child: TransactionListTile(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 4.0,
+                    ),
+                    transaction: transaction,
+                    recoverFromTrashFn: null,
+                    moveToTrashFn: null,
+                    combineTransfers: false,
+                    useAccountIconForLeading:
+                        transactionListTileShowAccountForLeading,
+                    showCategory: transactionListTileShowCategoryName,
+                    useCategoryNameForUntitledTransactions:
+                        useCategoryNameForUntitledTransactions,
                   ),
-                  transaction: transaction,
-                  recoverFromTrashFn: null,
-                  moveToTrashFn: null,
-                  combineTransfers: false,
-                  useAccountIconForLeading:
-                      transactionListTileShowAccountForLeading,
-                  showCategory: transactionListTileShowCategoryName,
-                  useCategoryNameForUntitledTransactions:
-                      useCategoryNameForUntitledTransactions,
                 ),
               ),
               const SizedBox(height: 16.0),

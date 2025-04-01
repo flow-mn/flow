@@ -37,7 +37,7 @@ class _MoneyFormattingPreferencesPageState
                 ),
               ),
               const SizedBox(height: 16.0),
-              CheckboxListTile /*.adaptive*/ (
+              CheckboxListTile(
                 title: Text(
                   "preferences.moneyFormatting.preferFull".t(context),
                 ),
@@ -49,7 +49,7 @@ class _MoneyFormattingPreferencesPageState
                 value: preferFullAmounts,
                 onChanged: updatePreferFullAmounts,
               ),
-              CheckboxListTile /*.adaptive*/ (
+              CheckboxListTile(
                 title: Text(
                   "preferences.moneyFormatting.useCurrencySymbol".t(context),
                 ),

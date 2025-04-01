@@ -47,7 +47,7 @@ class _AccountsTabState extends State<AccountsTab>
           const SizedBox(height: 16.0),
           Frame(child: buildHeader(context)),
           ValueListenableBuilder(
-            valueListenable: UserPreferencesService().valueNotiifer,
+            valueListenable: UserPreferencesService().valueNotifier,
             builder: (context, userPreferences, child) {
               final bool excludeTransfersInTotal =
                   userPreferences.excludeTransfersFromFlow;

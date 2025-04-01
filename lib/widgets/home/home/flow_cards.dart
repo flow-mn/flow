@@ -37,7 +37,7 @@ class _FlowCardsState extends State<FlowCards> {
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
 
     excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
-    UserPreferencesService().valueNotiifer.addListener(
+    UserPreferencesService().valueNotifier.addListener(
       _updateExcludeTransferFromFlow,
     );
   }
@@ -45,7 +45,7 @@ class _FlowCardsState extends State<FlowCards> {
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
-    UserPreferencesService().valueNotiifer.removeListener(
+    UserPreferencesService().valueNotifier.removeListener(
       _updateExcludeTransferFromFlow,
     );
 

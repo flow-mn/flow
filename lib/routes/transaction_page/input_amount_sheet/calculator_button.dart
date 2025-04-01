@@ -1,6 +1,6 @@
 import "dart:math";
 
-import "package:flow/routes/new_transaction/input_amount_sheet.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/numpad_button.dart";
 import "package:flutter/material.dart";

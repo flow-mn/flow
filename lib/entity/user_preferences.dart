@@ -65,6 +65,8 @@ class UserPreferences implements EntityBase {
   /// In hours, set as `null` to disable
   int? autoBackupIntervalInHours;
 
+  bool enableICloudSync;
+
   UserPreferences({
     this.id = 0,
     DateTime? createdDate,
@@ -75,6 +77,7 @@ class UserPreferences implements EntityBase {
     this.transactionListTileShowAccountForLeading = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
+    this.enableICloudSync = false,
     this.autoBackupIntervalInHours = 72,
   }) : uuid = const Uuid().v4();
 

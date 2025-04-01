@@ -41,7 +41,6 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       title: Text("transactionFilterPreset".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -54,7 +53,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
         ],
       ),
       child: ValueListenableBuilder(
-        valueListenable: UserPreferencesService().valueNotiifer,
+        valueListenable: UserPreferencesService().valueNotifier,
         builder: (context, userPreferencesSnapshot, _) {
           final String? defaultPreset =
               userPreferencesSnapshot.defaultFilterPreset;

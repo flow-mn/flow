@@ -1,5 +1,8 @@
 import "package:flow/entity/account.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/utils/simple_query_sorter.dart";
+import "package:flow/widgets/general/flow_icon.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
@@ -13,11 +16,15 @@ class SelectMultiAccountSheet extends StatefulWidget {
 
   final String? titleOverride;
 
+  /// Defaults to [true] when there are more than 8 accounts.
+  final bool? showSearchBar;
+
   const SelectMultiAccountSheet({
     super.key,
     required this.accounts,
     this.titleOverride,
     this.selectedUuids,
+    this.showSearchBar,
   });
 
   @override
@@ -26,6 +33,8 @@ class SelectMultiAccountSheet extends StatefulWidget {
 }
 
 class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
+  String _query = "";
+
   late Set<String> selectedUuids;
 
   @override
@@ -44,11 +53,15 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showSearchBar =
+        widget.showSearchBar ?? widget.accounts.length > 8;
+
+    final List<Account> results = simpleSortByQuery(widget.accounts, _query);
+
     return ModalSheet.scrollable(
       title: Text(
         widget.titleOverride ?? "transaction.edit.selectAccount".t(context),
       ),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * .5,
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
@@ -64,11 +77,24 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
           ),
         ],
       ),
+      leading:
+          showSearchBar
+              ? Frame(
+                child: TextField(
+                  onChanged: (value) => setState(() => _query = value),
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    hintText: "general.search".t(context),
+                    prefixIcon: const Icon(Symbols.search_rounded),
+                  ),
+                ),
+              )
+              : null,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (widget.accounts.isEmpty)
+            if (results.isEmpty)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24.0),
@@ -77,11 +103,13 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            ...widget.accounts.map(
-              (account) => CheckboxListTile /*.adaptive*/ (
+            ...results.map(
+              (account) => CheckboxListTile(
+                key: ValueKey(account.uuid),
                 title: Text(account.name),
                 value: selectedUuids.contains(account.uuid),
                 onChanged: (value) => select(account.uuid, value),
+                secondary: FlowIcon(account.icon),
               ),
             ),
           ],

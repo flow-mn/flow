@@ -95,7 +95,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       (_) => refreshDateKeyAndDefaultFilter(),
     );
 
-    UserPreferencesService().valueNotiifer.addListener(_rawUpdateDefaultFilter);
+    UserPreferencesService().valueNotifier.addListener(_rawUpdateDefaultFilter);
     InternalNotificationsService().notifications.addListener(
       _updateInternalNotification,
     );
@@ -111,7 +111,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       _updatePlannedTransactionDays,
     );
     _timer.cancel();
-    UserPreferencesService().valueNotiifer.removeListener(
+    UserPreferencesService().valueNotifier.removeListener(
       _rawUpdateDefaultFilter,
     );
     InternalNotificationsService().notifications.removeListener(
@@ -163,6 +163,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                 ],
               ),
             ),
+            // TODO @sadespresso show iCloud errors if enabled, and platform is supported
             if (_internalNotification != null) ...[
               const SliverToBoxAdapter(child: SizedBox(height: 12.0)),
               SliverToBoxAdapter(
@@ -183,9 +184,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               ),
               (_, true) => buildGroupedList(context, now, transactions ?? []),
               (_, false) => const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator /*.adaptive*/ (),
-                ),
+                child: Center(child: CircularProgressIndicator()),
               ),
             },
             SliverToBoxAdapter(child: const SizedBox(height: 96.0)),
@@ -248,12 +247,19 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           header: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12.0),
+              // TODO @sadespresso want to analyze transactions shown in current
+              // view. For example, average amount of transaction, how often this
+              // happens, total txn count, etc
+              // if (defaultFilter != currentFilter) ...[
+              //   Text("transactions.count".t(context, transactions.length)),
+              //   const SizedBox(height: 4.0),
+              // ],
               FlowCards(transactions: transactions, rates: rates),
               if (showMissingExchangeRatesWarning) ...[
-                const SizedBox(height: 12.0),
+                SizedBox(height: 4.0),
                 RatesMissingWarning(),
               ],
+              SizedBox(height: 4.0),
             ],
           ),
           controller: widget.scrollController,

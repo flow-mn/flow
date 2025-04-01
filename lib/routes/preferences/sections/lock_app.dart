@@ -29,7 +29,7 @@ class _LockAppState extends State<LockApp> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SwitchListTile /*.adaptive*/ (
+        SwitchListTile(
           secondary: const Icon(Symbols.lock_rounded),
           title: Text("preferences.privacy.appLock".t(context)),
           value: requireLocalAuth,

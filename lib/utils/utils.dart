@@ -6,3 +6,4 @@ export "open_url.dart";
 export "optional.dart";
 export "pick_file.dart";
 export "shortcut.dart";
+export "simple_query_sorter.dart";

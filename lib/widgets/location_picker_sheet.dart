@@ -73,18 +73,15 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: SquareMap(
-            center: center,
-            onTap:
-                (pos) => setState(() {
-                  useCurrentLocationWhenAvailable = false;
-                  center = pos;
-                }),
-          ),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * .75,
+        child: OSMap(
+          center: center,
+          onTap:
+              (pos) => setState(() {
+                useCurrentLocationWhenAvailable = false;
+                center = pos;
+              }),
         ),
       ),
     );
