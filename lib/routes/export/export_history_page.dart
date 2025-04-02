@@ -33,50 +33,45 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
       .order(BackupEntry_.createdDate, flags: Order.descending);
 
   @override
-  void initState() {
-    super.initState();
-    ICloudSyncService().gather().then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("sync.export.history".t(context))),
       body: SafeArea(
-        child: StreamBuilder<List<BackupEntry>>(
-          stream: qb()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, snapshot) {
-            final List<BackupEntry>? backupEntires = snapshot.data;
+        child: ValueListenableBuilder(
+          valueListenable: ICloudSyncService().filesCache,
+          builder: (context, iCloudFiles, _) {
+            return StreamBuilder<List<BackupEntry>>(
+              stream: qb()
+                  .watch(triggerImmediately: true)
+                  .map((event) => event.find()),
+              builder: (context, snapshot) {
+                final List<BackupEntry>? backupEntires = snapshot.data;
 
-            const Widget separator = SizedBox(height: 16.0);
+                const Widget separator = SizedBox(height: 16.0);
 
-            return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
-              (0, true) => const NoBackups(),
-              (_, true) => SlidableAutoCloseBehavior(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final BackupEntry entry = backupEntires[index];
+                return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
+                  (0, true) => const NoBackups(),
+                  (_, true) => SlidableAutoCloseBehavior(
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        final BackupEntry entry = backupEntires[index];
 
-                    return BackupEntryCard(
-                      entry: entry,
-                      dismissibleKey: ValueKey(entry.id),
-                      onUpload: uploadBusy ? null : () => upload(entry),
-                      uploadProgress:
-                          uploading?.$1 == entry.id ? uploading?.$2 : null,
-                    );
-                  },
-                  separatorBuilder: (context, index) => separator,
-                  itemCount: backupEntires!.length,
-                ),
-              ),
-              (_, false) => const Spinner.center(),
-            };
+                        return BackupEntryCard(
+                          entry: entry,
+                          dismissibleKey: ValueKey(entry.id),
+                          onUpload: uploadBusy ? null : () => upload(entry),
+                          uploadProgress:
+                              uploading?.$1 == entry.id ? uploading?.$2 : null,
+                        );
+                      },
+                      separatorBuilder: (context, index) => separator,
+                      itemCount: backupEntires!.length,
+                    ),
+                  ),
+                  (_, false) => const Spinner.center(),
+                };
+              },
+            );
           },
         ),
       ),

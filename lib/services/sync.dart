@@ -10,7 +10,6 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
-import "package:icloud_storage/icloud_storage.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:objectbox/objectbox.dart";
@@ -25,7 +24,7 @@ class SyncService {
 
   SyncService._internal() {
     triggerAutoBackup();
-    unawaited(ICloudSyncService().gather());
+    unawaited(ICloudSyncService.initialize());
   }
 
   Future<void> triggerAutoBackup() async {
@@ -125,53 +124,30 @@ class SyncService {
     try {
       final String fileBasename = path.basename(entry.filePath);
 
+      final DateTime now = DateTime.now();
+
       final String iCloudRelativePath = await ICloudSyncService().upload(
         filePath: entry.filePath,
         destinationRelativePath: "$parent/$fileBasename",
         onProgress: onProgress,
+        modifiedDate: now,
       );
 
       _log.info(
         "Auto backup successfully uploaded to iCloud -> ${entry.filePath}",
       );
 
-      final ICloudFile? updateFile = await ICloudSyncService()
-          .gather()
-          .then(
-            (files) => files.firstWhereOrNull(
-              (file) => file.relativePath == iCloudRelativePath,
-            ),
-          )
-          .catchError((_) => null);
-
       try {
-        final DateTime? lastSuccessfulICloudSyncAt =
-            updateFile?.contentChangeDate;
-
-        if (lastSuccessfulICloudSyncAt == null) {
-          throw Exception(
-            "Failed to get lastSuccessfulICloudSyncAt from iCloud",
-          );
-        }
-
         unawaited(
-          TransitiveLocalPreferences().lastSuccessfulICloudSyncAt.set(
-            lastSuccessfulICloudSyncAt,
-          ),
+          TransitiveLocalPreferences().lastSuccessfulICloudSyncAt.set(now),
         );
       } catch (e) {
         _log.warning("Failed to set lastSuccessfulICloudSyncAt", e);
       }
 
-      if (updateFile == null) {
-        throw Exception(
-          "Failed to find uploaded file in iCloud: $iCloudRelativePath",
-        );
-      }
-
       try {
-        entry.iCloudRelativePath = updateFile.relativePath;
-        entry.iCloudChangeDate = updateFile.contentChangeDate;
+        entry.iCloudRelativePath = iCloudRelativePath;
+        entry.iCloudChangeDate = now;
 
         _log.info(
           "BackupEntry updated with iCloud information: ${entry.iCloudRelativePath}",

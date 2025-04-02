@@ -141,7 +141,6 @@ class ModalSheet extends StatelessWidget {
           constraints: BoxConstraints.loose(
             Size(
               double.infinity,
-              // TODO move this to the parent widget (down below)
               min(
                 max(minScrollableContentHeight, maxScrollableContentHeight),
                 constraints.maxHeight,

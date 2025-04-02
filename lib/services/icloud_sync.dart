@@ -8,6 +8,8 @@ import "package:flutter/foundation.dart";
 import "package:icloud_storage/icloud_storage.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
+import "package:path_provider/path_provider.dart";
+import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("ICloudSyncService");
 
@@ -17,6 +19,8 @@ class ICloudSyncService {
 
   static const String containerId = "iCloud.mn.flow.flow";
 
+  bool _listeningToMetadataChanges = false;
+
   final ValueNotifier<List<ICloudFile>> _filesCache =
       ValueNotifier<List<ICloudFile>>([]);
   ValueListenable<List<ICloudFile>> get filesCache => _filesCache;
@@ -25,14 +29,14 @@ class ICloudSyncService {
 
   dynamic lastError;
 
-  ICloudSyncService._internal();
+  ICloudSyncService._internal() {
+    _listenToMetadataChanges();
+  }
 
   static Future<void> initialize() async {
     if (_instance != null) return;
 
     _instance = ICloudSyncService._internal();
-
-    _instance!._listenToMetadataChanges();
   }
 
   static bool get supported => Platform.isIOS || Platform.isMacOS;
@@ -46,15 +50,18 @@ class ICloudSyncService {
     final List<ICloudFile> files = await ICloudStorage.gather(
       containerId: containerId,
       onUpdate: (Stream<List<ICloudFile>> stream) {
+        _listeningToMetadataChanges = true;
         subscription = stream.listen(
           (data) => _filesCache.value = data,
           onDone: () {
             _log.info("ICloud metadata stream closed");
             subscription.cancel();
+            _listeningToMetadataChanges = false;
           },
           onError: (error) {
             _log.severe("ICloud metadata stream error", error);
             subscription.cancel();
+            _listeningToMetadataChanges = false;
           },
         );
       },
@@ -68,12 +75,17 @@ class ICloudSyncService {
 
     _filesCache.value = files;
     lastError = null;
+    _listeningToMetadataChanges = true;
   }
 
   Future<List<ICloudFile>> gather() async {
     if (!supported) return <ICloudFile>[];
 
     try {
+      if (_listeningToMetadataChanges) {
+        return _filesCache.value;
+      }
+
       final List<ICloudFile> files = await ICloudStorage.gather(
         containerId: containerId,
       );
@@ -143,58 +155,29 @@ class ICloudSyncService {
     return completer.future;
   }
 
+  /// Uploads a file to iCloud
+  ///
+  /// Uses [uploadTemporary] to upload the file, and then moves it to the final location.
   Future<String> upload({
     required String filePath,
     required String destinationRelativePath,
     Function(Stream<double>)? onProgress,
+    DateTime? modifiedDate,
   }) async {
-    assert(filePath.isNotEmpty);
-    assert(destinationRelativePath.isNotEmpty);
-    assert(!destinationRelativePath.startsWith("/"));
-
-    if (flowDebugMode) {
-      destinationRelativePath = "debug/$destinationRelativePath";
-    }
-
-    final Completer<String> completer = Completer<String>();
-    late final StreamSubscription<double> subscription;
-
-    void finish([bool success = true]) {
-      subscription.cancel();
-
-      if (success) {
-        completer.complete(destinationRelativePath);
-        _log.info("Upload has been completed: $destinationRelativePath");
-      } else {
-        completer.completeError(Exception("Failed to upload file: $filePath"));
-        _log.severe("Failed to upload file: $filePath");
-      }
-    }
-
-    await ICloudStorage.upload(
-      containerId: containerId,
+    final String tempLocation = await uploadTemporary(
       filePath: filePath,
       destinationRelativePath: destinationRelativePath,
-      onProgress: (Stream<double> progress) {
-        onProgress?.call(progress);
-        subscription = progress.listen(
-          (double progress) {
-            _log.finer("Upload progress for ($progress): $progress");
-
-            if (progress >= 1.0) {
-              finish();
-            }
-          },
-          onError: (_) => finish(false),
-          onDone: () => finish(),
-          cancelOnError: true,
-        );
-      },
+      onProgress: onProgress,
+      modifiedDate: modifiedDate,
     );
 
-    lastError = null;
+    await ICloudStorage.move(
+      containerId: containerId,
+      fromRelativePath: tempLocation,
+      toRelativePath: destinationRelativePath,
+    );
 
-    return completer.future;
+    return destinationRelativePath;
   }
 
   Future<String> move({required String from, required String to}) async {
@@ -247,5 +230,97 @@ class ICloudSyncService {
       await delete(file);
     }
     _log.info("Debug files deleted successfully.");
+  }
+
+  /// It does:
+  /// * Copy file into a temporary location
+  /// * Set the temp file's last modified and last accessed date to now
+  /// * Upload the file to iCloud with the `.tmp` suffix
+  /// * Delete the temporary file
+  /// * Return the final relative path (still with ".tmp" suffix)
+  ///
+  /// You should move the file to the final location after uploading to avoid
+  /// potential corruption.
+  Future<String> uploadTemporary({
+    required String filePath,
+    required String destinationRelativePath,
+    Function(Stream<double>)? onProgress,
+    DateTime? modifiedDate,
+  }) async {
+    assert(filePath.isNotEmpty);
+    assert(destinationRelativePath.isNotEmpty);
+    assert(!destinationRelativePath.startsWith("/"));
+
+    final Directory tempDir = await getTemporaryDirectory();
+    final String tempFilePath = path.join(tempDir.path, Uuid().v4());
+
+    modifiedDate ??= DateTime.now();
+
+    final File tempFile = await File(filePath).copy(tempFilePath);
+    await tempFile.setLastModified(modifiedDate);
+    await tempFile.setLastAccessed(modifiedDate);
+
+    if (flowDebugMode) {
+      destinationRelativePath = "debug/$destinationRelativePath";
+    }
+
+    destinationRelativePath += ".tmp";
+
+    final Completer<String> completer = Completer<String>();
+    late final StreamSubscription<double> subscription;
+
+    void finish([bool success = true]) {
+      subscription.cancel();
+
+      if (success) {
+        completer.complete(destinationRelativePath);
+        _log.info("Upload has been completed: $destinationRelativePath");
+      } else {
+        completer.completeError(Exception("Failed to upload file: $filePath"));
+        _log.severe("Failed to upload file: $filePath");
+      }
+    }
+
+    try {
+      await ICloudStorage.upload(
+        containerId: containerId,
+        filePath: tempFile.path,
+        destinationRelativePath: destinationRelativePath,
+        onProgress: (Stream<double> progress) {
+          onProgress?.call(progress);
+          subscription = progress.listen(
+            (double progress) {
+              _log.finer("Upload progress for ($progress): $progress");
+
+              if (progress >= 1.0) {
+                finish();
+              }
+            },
+            onError: (_) => finish(false),
+            onDone: () => finish(),
+            cancelOnError: true,
+          );
+        },
+      );
+
+      lastError = null;
+
+      return completer.future;
+    } catch (e) {
+      lastError = e;
+      _log.severe("Failed to upload file: $filePath", e);
+      try {
+        completer.completeError(e);
+      } catch (e) {
+        // Silent fail
+      }
+      return completer.future;
+    } finally {
+      try {
+        await tempFile.delete();
+      } catch (e) {
+        _log.warning("Failed to delete temporary file: $tempFile", e);
+      }
+    }
   }
 }
