@@ -1046,10 +1046,10 @@ packages:
     dependency: "direct main"
     description:
       name: moment_dart
-      sha256: ce3309f2073d0456a1b476b2f9a8e04c2bcf194eafb648e73f7ede9b27dfe1b2
+      sha256: "5b3be1bded9d48337751511cfcf3b36f378179ed4940ecb8eece75c6065ac3f7"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.0"
+    version: "5.0.1"
   nm:
     dependency: transitive
     description:
@@ -1310,10 +1310,10 @@ packages:
     dependency: "direct main"
     description:
       name: recurrence
-      sha256: "55554aa44eeab01f305b7de787c60d3b5561491a246d3d2eb4c122a641d4dde7"
+      sha256: dcca07a9badb935c8487f49c05883cc00a9804b33397df1215ed8234764c31dd
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.4"
+    version: "0.0.6"
   screen_retriever:
     dependency: transitive
     description:
