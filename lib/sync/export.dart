@@ -6,6 +6,9 @@ import "dart:typed_data";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/services/icloud_sync.dart";
+import "package:flow/services/sync.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export/export_csv.dart";
 import "package:flow/sync/export/export_v1.dart";
 import "package:flow/sync/export/export_v2.dart";
@@ -51,15 +54,15 @@ Future<ExportResult> export({
     type: type,
   );
 
+  final BackupEntry entry = BackupEntry(
+    filePath: savedFilePath,
+    type: type.value,
+    fileExt: mode.fileExt,
+  );
+
   final Future<int> objectBoxId = ObjectBox()
       .box<BackupEntry>()
-      .putAsync(
-        BackupEntry(
-          filePath: savedFilePath,
-          type: type.value,
-          fileExt: mode.fileExt,
-        ),
-      )
+      .putAsync(entry)
       .catchError((error) {
         syncLogger.warning(
           "After a successful backup, failed to add BackupEntry for it",
@@ -67,6 +70,33 @@ Future<ExportResult> export({
         );
         return -1;
       });
+
+  if (ICloudSyncService.supported && type == BackupEntryType.manual) {
+    syncLogger.info("Trying to save manual backup to iCloud");
+
+    try {
+      if (!UserPreferencesService().enableICloudSync) {
+        throw Exception("User has disabled iCloud sync");
+      }
+
+      // Upload to iCloud if the user has enabled it
+      await SyncService().saveBackupToICloud(
+        entry: entry,
+        parent: SyncService.cloudUserBackupsFolder,
+        onProgress: (progress) {
+          syncLogger.fine(
+            "iCloud upload progress for manual backup: $progress",
+          );
+        },
+      );
+    } catch (e, stackTrace) {
+      syncLogger.warning(
+        "Failed to instantiate iCloud backups for manual",
+        e,
+        stackTrace,
+      );
+    }
+  }
 
   if (!showShareDialog) {
     return (

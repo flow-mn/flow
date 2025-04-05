@@ -24,11 +24,14 @@ class BackupEntryCard extends StatelessWidget {
 
   final double? uploadProgress;
 
+  final bool existsOnCloud;
+
   const BackupEntryCard({
     super.key,
     required this.entry,
     this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+    this.existsOnCloud = false,
     this.dismissibleKey,
     this.onUpload,
     this.uploadProgress,
@@ -213,27 +216,6 @@ class BackupEntryCard extends StatelessWidget {
           ?.sizeInBytes;
     } catch (e) {
       return null;
-    }
-  }
-
-  bool get existsOnCloud {
-    if (entry.iCloudRelativePath == null) {
-      return false;
-    }
-
-    if (!ICloudSyncService.supported) {
-      return false;
-    }
-
-    try {
-      return ICloudSyncService().filesCache.value.any(
-        (file) =>
-            file.relativePath == entry.iCloudRelativePath &&
-            file.contentChangeDate.startOfSecond().toUtc() ==
-                entry.iCloudChangeDate?.startOfSecond().toUtc(),
-      );
-    } catch (e) {
-      return false;
     }
   }
 }

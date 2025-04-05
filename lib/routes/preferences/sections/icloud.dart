@@ -4,6 +4,7 @@ import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
@@ -38,11 +39,12 @@ class _ICloudState extends State<ICloud> {
           value: enableICloudSync,
           onChanged: updateEnableICloudSync,
         ),
-
-        /// TODO @sadespresso add translation
         if (lastSuccessfulICloudSyncAt != null)
           Text(
-            "Last successful sync: ${lastSuccessfulICloudSyncAt.toMoment().lll}",
+            "preferences.sync.iCloud.lastSuccessfulSync".t(
+              context,
+              lastSuccessfulICloudSyncAt.toMoment().lll,
+            ),
           ),
         if (error != null)
           Frame(
@@ -58,11 +60,6 @@ class _ICloudState extends State<ICloud> {
           ),
         Frame(
           child: InfoText(
-            child: Text("preferences.sync.iCloud.disclaimer".t(context)),
-          ),
-        ),
-        Frame(
-          child: InfoText(
             child: Text("preferences.sync.iCloud.privacyNotice".t(context)),
           ),
         ),
@@ -72,6 +69,20 @@ class _ICloudState extends State<ICloud> {
 
   void updateEnableICloudSync(bool? newEnableICloudSync) async {
     if (newEnableICloudSync == null) return;
+
+    bool? confirm = false;
+
+    if (!newEnableICloudSync) {
+      confirm = true;
+    } else {
+      confirm = await context.showConfirmationSheet(
+        child: Text(
+          "preferences.sync.iCloud.singleDeviceSupportDisclaimer".t(context),
+        ),
+      );
+    }
+
+    if (confirm != true) return;
 
     UserPreferencesService().enableICloudSync = newEnableICloudSync;
 

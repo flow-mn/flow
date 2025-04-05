@@ -18,6 +18,11 @@ import "package:path/path.dart" as path;
 final Logger _log = Logger("SyncService");
 
 class SyncService {
+  static const String cloudAutobackupsFolder = "autobackups";
+  static const String cloudUserBackupsFolder = "userbackups";
+
+  static const String cloudFileBaseName = "latest";
+
   static SyncService? _instance;
 
   factory SyncService() => _instance ??= SyncService._internal();
@@ -75,7 +80,9 @@ class SyncService {
           throw Exception("Failed to get BackupEntry from objectBoxId: $id");
         }
 
-        unawaited(saveBackupToICloud(entry: entry, parent: "autobackups"));
+        unawaited(
+          saveBackupToICloud(entry: entry, parent: cloudAutobackupsFolder),
+        );
       } catch (e, stackTrace) {
         _log.warning(
           "Failed to upload backup to iCloud: ${result.filePath}",
@@ -106,11 +113,35 @@ class SyncService {
       return;
     }
 
+    final bool hasNewerBackup = ICloudSyncService().filesCache.value.any((
+      iCloudFile,
+    ) {
+      if (path.dirname(iCloudFile.relativePath) != "parent") return false;
+      if (path.extension(iCloudFile.relativePath) !=
+          path.extension(entry.filePath)) {
+        return false;
+      }
+
+      return iCloudFile.contentChangeDate.isAfter(
+        entry.createdDate.startOfSecond(),
+      );
+    });
+
+    if (hasNewerBackup) {
+      _log.info(
+        "Cancelling iCloud upload since user has newer backup for this parent folder, and type.",
+      );
+      throw Exception(
+        "User has newer backup for this parent folder, and type.",
+      );
+    }
+
     if (entry.iCloudRelativePath != null &&
         ICloudSyncService().filesCache.value.firstWhereOrNull(
               (file) =>
-                  file.isUploaded &&
-                  file.relativePath == entry.iCloudRelativePath &&
+                  path.dirname(file.relativePath) == parent &&
+                  path.extension(file.relativePath) ==
+                      path.extension(entry.filePath) &&
                   file.contentChangeDate.startOfSecond() ==
                       entry.iCloudChangeDate?.startOfSecond(),
             ) !=
@@ -122,13 +153,11 @@ class SyncService {
     }
 
     try {
-      final String fileBasename = path.basename(entry.filePath);
-
       final DateTime now = DateTime.now();
 
       final String iCloudRelativePath = await ICloudSyncService().upload(
         filePath: entry.filePath,
-        destinationRelativePath: "$parent/$fileBasename",
+        destinationRelativePath: "$parent/$cloudFileBaseName.${entry.fileExt}",
         onProgress: onProgress,
         modifiedDate: now,
       );
