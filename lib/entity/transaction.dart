@@ -137,9 +137,8 @@ class Transaction implements EntityBase {
 
   /// This won't be saved until you call `Box.put()`
   void setAccount(Account? newAccount) {
-    // TODO (sadespresso): When changing currencies, we can either ask
-    // the user to re-enter the amount, or do an automatic conversion
-
+    // The user will need to recreate the transaction if they want to change
+    // the currency of the transaction.
     if (currency != newAccount?.currency) {
       throw Exception("Cannot convert between currencies");
     }

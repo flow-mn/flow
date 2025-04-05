@@ -29,14 +29,14 @@ class _AccountsPageState extends State<AccountsPage> {
   void initState() {
     super.initState();
 
-    UserPreferencesService().valueNotiifer.addListener(
+    UserPreferencesService().valueNotifier.addListener(
       _updateExcludeTransfersInTotal,
     );
   }
 
   @override
   void dispose() {
-    UserPreferencesService().valueNotiifer.removeListener(
+    UserPreferencesService().valueNotifier.removeListener(
       _updateExcludeTransfersInTotal,
     );
     super.dispose();

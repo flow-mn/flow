@@ -5,6 +5,7 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
 import "package:flutter/foundation.dart";
 import "package:in_app_review/in_app_review.dart";
@@ -54,31 +55,7 @@ class InternalNotificationsService {
       return;
     }
 
-    try {
-      final String? savedPath =
-          TransitiveLocalPreferences().lastSavedAutoBackupPath.get();
-
-      final String? lastPath =
-          TransitiveLocalPreferences().lastAutoBackupPath.get();
-
-      if (lastPath != null && lastPath != savedPath) {
-        final Query<BackupEntry> query =
-            ObjectBox()
-                .box<BackupEntry>()
-                .query(BackupEntry_.filePath.equals(lastPath))
-                .build();
-
-        final BackupEntry? backupEntry = query.findFirst();
-
-        query.close();
-
-        if (backupEntry != null) {
-          add(AutoBackupReminder(payload: backupEntry));
-        }
-      }
-    } catch (e) {
-      // Silent fail
-    }
+    tryAddAutoBackupReminder();
 
     if (_notifications.value.isNotEmpty) {
       return;
@@ -133,5 +110,36 @@ class InternalNotificationsService {
 
   InternalNotificationsService._internal() {
     checkAndAddNotifications();
+  }
+
+  void tryAddAutoBackupReminder() {
+    // If user have set up any type of auto-save, no there's no point in reminding
+    if (UserPreferencesService().enableICloudSync) return;
+
+    try {
+      final String? savedPath =
+          TransitiveLocalPreferences().lastSavedAutoBackupPath.get();
+
+      final String? lastPath =
+          TransitiveLocalPreferences().lastAutoBackupPath.get();
+
+      if (lastPath != null && lastPath != savedPath) {
+        final Query<BackupEntry> query =
+            ObjectBox()
+                .box<BackupEntry>()
+                .query(BackupEntry_.filePath.equals(lastPath))
+                .build();
+
+        final BackupEntry? backupEntry = query.findFirst();
+
+        query.close();
+
+        if (backupEntry != null) {
+          add(AutoBackupReminder(payload: backupEntry));
+        }
+      }
+    } catch (e) {
+      // Silent fail
+    }
   }
 }

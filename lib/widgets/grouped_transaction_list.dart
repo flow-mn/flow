@@ -112,7 +112,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
     TransitiveLocalPreferences().sessionPrivacyMode.addListener(
       _privacyModeUpdate,
     );
-    UserPreferencesService().valueNotiifer.addListener(_rerender);
+    UserPreferencesService().valueNotifier.addListener(_rerender);
   }
 
   @override
@@ -121,7 +121,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
       _privacyModeUpdate,
     );
 
-    UserPreferencesService().valueNotiifer.removeListener(_rerender);
+    UserPreferencesService().valueNotifier.removeListener(_rerender);
 
     super.dispose();
   }

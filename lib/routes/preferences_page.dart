@@ -75,9 +75,9 @@ class PreferencesPageState extends State<PreferencesPage> {
         child: ListView(
           children: [
             ListTile(
-              title: Text("preferences.sync.autoBackup".t(context)),
+              title: Text("preferences.sync".t(context)),
               leading: const Icon(Symbols.sync_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/autoBackup"),
+              onTap: () => _pushAndRefreshAfter("/preferences/sync"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             if (flowDebugMode || NotificationsService.schedulingSupported)

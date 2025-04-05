@@ -1,4 +1,7 @@
+import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/routes/preferences/sections/icloud.dart";
+import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -6,21 +9,20 @@ import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class AutoBackupPreferencesPage extends StatefulWidget {
-  const AutoBackupPreferencesPage({super.key});
+class SyncPreferencesPage extends StatefulWidget {
+  const SyncPreferencesPage({super.key});
 
   @override
-  State<AutoBackupPreferencesPage> createState() =>
-      _AutoBackupPreferencesPageState();
+  State<SyncPreferencesPage> createState() => _SyncPreferencesPageState();
 }
 
-class _AutoBackupPreferencesPageState extends State<AutoBackupPreferencesPage> {
+class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final int? autobackupIntervalInHours =
         UserPreferencesService().autoBackupIntervalInHours;
 
-    final List<int?> options = [null, 12, 24, 48, 72, 168];
+    final List<int?> options = [null, 12, 24, 48, 72, 168, 336, 720];
 
     if (autobackupIntervalInHours != null &&
         !options.contains(autobackupIntervalInHours)) {
@@ -28,7 +30,7 @@ class _AutoBackupPreferencesPageState extends State<AutoBackupPreferencesPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text("preferences.sync.autoBackup".t(context))),
+      appBar: AppBar(title: Text("preferences.sync".t(context))),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -55,6 +57,10 @@ class _AutoBackupPreferencesPageState extends State<AutoBackupPreferencesPage> {
                                     )
                                     : Duration(hours: value).toDurationString(
                                       dropPrefixOrSuffix: true,
+                                      format:
+                                          value >= 24
+                                              ? DurationFormat.dh
+                                              : DurationFormat.hm,
                                     ),
                               ),
                               onSelected:
@@ -80,7 +86,18 @@ class _AutoBackupPreferencesPageState extends State<AutoBackupPreferencesPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24.0),
+              if (ICloudSyncService.supported || flowDebugMode) ...[
+                const SizedBox(height: 16.0),
+                if (!ICloudSyncService.supported)
+                  Frame(
+                    child: InfoText(
+                      child: Text(
+                        "DEBUG MODE: Even though your currenct device does not support iCloud, following section is shown because you are in debug mode.",
+                      ),
+                    ),
+                  ),
+                ICloud(),
+              ],
               const SizedBox(height: 16.0),
             ],
           ),

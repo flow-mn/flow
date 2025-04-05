@@ -53,7 +53,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
         ],
       ),
       child: ValueListenableBuilder(
-        valueListenable: UserPreferencesService().valueNotiifer,
+        valueListenable: UserPreferencesService().valueNotifier,
         builder: (context, userPreferencesSnapshot, _) {
           final String? defaultPreset =
               userPreferencesSnapshot.defaultFilterPreset;
