@@ -7,12 +7,15 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/sync.dart";
+import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:icloud_storage/models/icloud_file.dart";
+import "package:moment_dart/moment_dart.dart";
+import "package:path/path.dart" as path;
 
 class ExportHistoryPage extends StatefulWidget {
   const ExportHistoryPage({super.key});
@@ -45,27 +48,78 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
                   .watch(triggerImmediately: true)
                   .map((event) => event.find()),
               builder: (context, snapshot) {
-                final List<BackupEntry>? backupEntires = snapshot.data;
+                final List<BackupEntry>? backupEntries = snapshot.data;
 
                 const Widget separator = SizedBox(height: 16.0);
 
-                return switch ((backupEntires?.length ?? 0, snapshot.hasData)) {
+                final Map<String, ICloudFile?> iCloudFilesByType = {
+                  "zip": iCloudFiles.firstWhereOrNull(
+                    (file) => file.relativePath == "userbackups/latest.zip",
+                  ),
+                  "json": iCloudFiles.firstWhereOrNull(
+                    (file) => file.relativePath == "userbackups/latest.json",
+                  ),
+                  "csv": iCloudFiles.firstWhereOrNull(
+                    (file) => file.relativePath == "userbackups/latest.csv",
+                  ),
+                };
+
+                if (backupEntries != null) {
+                  backupEntries.addAll(
+                    iCloudFiles
+                        .where(
+                          (iCloudFile) => backupEntries.any(
+                            (file) =>
+                                file.iCloudChangeDate ==
+                                iCloudFile.contentChangeDate,
+                          ),
+                        )
+                        .map(
+                          (iCloudFile) => BackupEntry(
+                            filePath: iCloudFile.relativePath,
+                            type: BackupEntryType.other.value,
+                            fileExt:
+                                path
+                                    .extension(iCloudFile.relativePath)
+                                    .replaceAll(r"^\.", "")
+                                    .toLowerCase(),
+                          ),
+                        ),
+                  );
+                }
+
+                return switch ((backupEntries?.length ?? 0, snapshot.hasData)) {
                   (0, true) => const NoBackups(),
                   (_, true) => SlidableAutoCloseBehavior(
                     child: ListView.separated(
                       itemBuilder: (context, index) {
-                        final BackupEntry entry = backupEntires[index];
+                        final BackupEntry entry = backupEntries[index];
+
+                        final canUpload =
+                            !uploadBusy &&
+                            ICloudSyncService.supported &&
+                            (iCloudFilesByType[entry.fileExt] == null ||
+                                iCloudFilesByType[entry.fileExt]!
+                                        .contentChangeDate
+                                        .startOfSecond() <=
+                                    entry.createdDate.startOfSecond());
 
                         return BackupEntryCard(
                           entry: entry,
                           dismissibleKey: ValueKey(entry.id),
-                          onUpload: uploadBusy ? null : () => upload(entry),
+                          onUpload: canUpload ? (() => upload(entry)) : null,
                           uploadProgress:
                               uploading?.$1 == entry.id ? uploading?.$2 : null,
+                          existsOnCloud:
+                              entry.iCloudChangeDate != null &&
+                              iCloudFilesByType[entry.fileExt]
+                                      ?.contentChangeDate
+                                      .startOfSecond() ==
+                                  entry.iCloudChangeDate?.startOfSecond(),
                         );
                       },
                       separatorBuilder: (context, index) => separator,
-                      itemCount: backupEntires!.length,
+                      itemCount: backupEntries!.length,
                     ),
                   ),
                   (_, false) => const Spinner.center(),
@@ -92,7 +146,7 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
 
       await SyncService().saveBackupToICloud(
         entry: entry,
-        parent: "userbackups",
+        parent: SyncService.cloudUserBackupsFolder,
         onProgress: (p) => onUploadProgress(entry, p),
       );
 

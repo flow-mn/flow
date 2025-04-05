@@ -1,3 +1,4 @@
+import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/preferences/sections/icloud.dart";
 import "package:flow/services/icloud_sync.dart";
@@ -21,7 +22,7 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
     final int? autobackupIntervalInHours =
         UserPreferencesService().autoBackupIntervalInHours;
 
-    final List<int?> options = [null, 12, 24, 48, 72, 168];
+    final List<int?> options = [null, 12, 24, 48, 72, 168, 336, 720];
 
     if (autobackupIntervalInHours != null &&
         !options.contains(autobackupIntervalInHours)) {
@@ -56,6 +57,10 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
                                     )
                                     : Duration(hours: value).toDurationString(
                                       dropPrefixOrSuffix: true,
+                                      format:
+                                          value >= 24
+                                              ? DurationFormat.dh
+                                              : DurationFormat.hm,
                                     ),
                               ),
                               onSelected:
@@ -81,8 +86,16 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
                   ),
                 ),
               ),
-              if (ICloudSyncService.supported) ...[
+              if (ICloudSyncService.supported || flowDebugMode) ...[
                 const SizedBox(height: 16.0),
+                if (!ICloudSyncService.supported)
+                  Frame(
+                    child: InfoText(
+                      child: Text(
+                        "DEBUG MODE: Even though your currenct device does not support iCloud, following section is shown because you are in debug mode.",
+                      ),
+                    ),
+                  ),
                 ICloud(),
               ],
               const SizedBox(height: 16.0),

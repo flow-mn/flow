@@ -18,6 +18,9 @@ class BackupEntry {
 
   String filePath;
 
+  /// Does not have a leading dot.
+  ///
+  /// See [ExportMode]
   String fileExt;
 
   /// For iCloud files. This does not guarantee that the file is
