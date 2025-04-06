@@ -448,9 +448,53 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "12:800756592587838565",
+      "lastPropertyId": "7:1614599721077752206",
+      "name": "RecurringTransaction",
+      "properties": [
+        {
+          "id": "1:1478236043461226093",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2358830362322475217",
+          "name": "uuid",
+          "type": 9
+        },
+        {
+          "id": "3:7015715332193102336",
+          "name": "jsonTransactionTemplate",
+          "type": 9
+        },
+        {
+          "id": "4:863784590472248880",
+          "name": "range",
+          "type": 9
+        },
+        {
+          "id": "5:4856660607221068479",
+          "name": "rules",
+          "type": 30
+        },
+        {
+          "id": "6:6844871043566830898",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "7:1614599721077752206",
+          "name": "disabled",
+          "type": 1
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "11:4948078457888921031",
+  "lastEntityId": "12:800756592587838565",
   "lastIndexId": "21:7291423328418584896",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

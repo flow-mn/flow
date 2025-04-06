@@ -19,6 +19,7 @@ import '../entity/backup_entry.dart';
 import '../entity/budget.dart';
 import '../entity/category.dart';
 import '../entity/profile.dart';
+import '../entity/recurring_transaction.dart';
 import '../entity/transaction.dart';
 import '../entity/transaction_filter_preset.dart';
 import '../entity/user_preferences.dart';
@@ -548,6 +549,58 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(12, 800756592587838565),
+    name: 'RecurringTransaction',
+    lastPropertyId: const obx_int.IdUid(7, 1614599721077752206),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 1478236043461226093),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 2358830362322475217),
+        name: 'uuid',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 7015715332193102336),
+        name: 'jsonTransactionTemplate',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 863784590472248880),
+        name: 'range',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 4856660607221068479),
+        name: 'rules',
+        type: 30,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 6844871043566830898),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 1614599721077752206),
+        name: 'disabled',
+        type: 1,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -588,7 +641,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(11, 4948078457888921031),
+    lastEntityId: const obx_int.IdUid(12, 800756592587838565),
     lastIndexId: const obx_int.IdUid(21, 7291423328418584896),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -1309,6 +1362,78 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    RecurringTransaction: obx_int.EntityDefinition<RecurringTransaction>(
+      model: _entities[8],
+      toOneRelations: (RecurringTransaction object) => [],
+      toManyRelations: (RecurringTransaction object) => {},
+      getId: (RecurringTransaction object) => object.id,
+      setId: (RecurringTransaction object, int id) {
+        object.id = id;
+      },
+      objectToFB: (RecurringTransaction object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final jsonTransactionTemplateOffset = fbb.writeString(
+          object.jsonTransactionTemplate,
+        );
+        final rangeOffset =
+            object.range == null ? null : fbb.writeString(object.range!);
+        final rulesOffset = fbb.writeList(
+          object.rules.map(fbb.writeString).toList(growable: false),
+        );
+        fbb.startTable(8);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addOffset(2, jsonTransactionTemplateOffset);
+        fbb.addOffset(3, rangeOffset);
+        fbb.addOffset(4, rulesOffset);
+        fbb.addInt64(5, object.createdDate.millisecondsSinceEpoch);
+        fbb.addBool(6, object.disabled);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final disabledParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          false,
+        );
+        final rulesParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGet(buffer, rootOffset, 12, []);
+        final jsonTransactionTemplateParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 8, '');
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+        );
+        final rangeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final object = RecurringTransaction(
+            id: idParam,
+            disabled: disabledParam,
+            rules: rulesParam,
+            jsonTransactionTemplate: jsonTransactionTemplateParam,
+            createdDate: createdDateParam,
+            range: rangeParam,
+          )
+          ..uuid = const fb.StringReader(
+            asciiOptimization: true,
+          ).vTableGet(buffer, rootOffset, 6, '');
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1684,5 +1809,42 @@ class Budget_ {
   /// See [Budget.range].
   static final range = obx.QueryStringProperty<Budget>(
     _entities[7].properties[8],
+  );
+}
+
+/// [RecurringTransaction] entity fields to define ObjectBox queries.
+class RecurringTransaction_ {
+  /// See [RecurringTransaction.id].
+  static final id = obx.QueryIntegerProperty<RecurringTransaction>(
+    _entities[8].properties[0],
+  );
+
+  /// See [RecurringTransaction.uuid].
+  static final uuid = obx.QueryStringProperty<RecurringTransaction>(
+    _entities[8].properties[1],
+  );
+
+  /// See [RecurringTransaction.jsonTransactionTemplate].
+  static final jsonTransactionTemplate =
+      obx.QueryStringProperty<RecurringTransaction>(_entities[8].properties[2]);
+
+  /// See [RecurringTransaction.range].
+  static final range = obx.QueryStringProperty<RecurringTransaction>(
+    _entities[8].properties[3],
+  );
+
+  /// See [RecurringTransaction.rules].
+  static final rules = obx.QueryStringVectorProperty<RecurringTransaction>(
+    _entities[8].properties[4],
+  );
+
+  /// See [RecurringTransaction.createdDate].
+  static final createdDate = obx.QueryDateProperty<RecurringTransaction>(
+    _entities[8].properties[5],
+  );
+
+  /// See [RecurringTransaction.disabled].
+  static final disabled = obx.QueryBooleanProperty<RecurringTransaction>(
+    _entities[8].properties[6],
   );
 }
