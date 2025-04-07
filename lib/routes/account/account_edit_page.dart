@@ -53,6 +53,8 @@ class _AccountEditPageState extends State<AccountEditPage> {
   late FlowIconData? _iconData;
   late bool _excludeFromTotalBalance;
 
+  AccountType _accountType = AccountType.debit;
+
   late double _balance;
 
   /// Transaction date of the diff transaction is to be inserted with [_balance]
@@ -98,6 +100,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
       _excludeFromTotalBalance =
           _currentlyEditing?.excludeFromTotalBalance ?? false;
       _archived = _currentlyEditing?.archived ?? false;
+      _accountType = _currentlyEditing?.accountType ?? _accountType;
     }
 
     _editNameFocusNode.addListener(() {

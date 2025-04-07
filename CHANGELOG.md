@@ -5,6 +5,7 @@
 ### New features
 
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
+* [OPTIMISTIC] Now you can setup credit line accounts.
 
 ### Changes & Improvements
 

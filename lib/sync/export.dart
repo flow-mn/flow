@@ -79,15 +79,34 @@ Future<ExportResult> export({
         throw Exception("User has disabled iCloud sync");
       }
 
+      syncLogger.info(
+        "User has enabled iCloud sync, attempting to upload manual backup to iCloud (${entry.filePath})",
+      );
+
       // Upload to iCloud if the user has enabled it
-      await SyncService().saveBackupToICloud(
-        entry: entry,
-        parent: SyncService.cloudUserBackupsFolder,
-        onProgress: (progress) {
-          syncLogger.fine(
-            "iCloud upload progress for manual backup: $progress",
-          );
-        },
+      unawaited(
+        SyncService()
+            .saveBackupToICloud(
+              entry: entry,
+              parent: SyncService.cloudUserBackupsFolder,
+              onProgress: (progress) {
+                syncLogger.fine(
+                  "iCloud upload progress for manual backup (${entry.filePath}): $progress",
+                );
+              },
+            )
+            .then((_) {
+              syncLogger.info(
+                "Successfully uploaded manual backup to iCloud (${entry.filePath})",
+              );
+            })
+            .catchError((e, stackTrace) {
+              syncLogger.warning(
+                "Failed to upload manual backup to iCloud (${entry.filePath})",
+                e,
+                stackTrace,
+              );
+            }),
       );
     } catch (e, stackTrace) {
       syncLogger.warning(

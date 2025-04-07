@@ -8,15 +8,13 @@ part of 'recurring.dart';
 
 Recurring _$RecurringFromJson(Map<String, dynamic> json) => Recurring(
   relatedTransactionUuid: json['relatedTransactionUuid'] as String?,
-  range: json['range'] as String?,
-  rules: (json['rules'] as List<dynamic>).map((e) => e as String).toList(),
+  recurringTransactionUuid: json['recurringTransactionUuid'] as String,
   uuid: json['uuid'] as String,
 );
 
 Map<String, dynamic> _$RecurringToJson(Recurring instance) => <String, dynamic>{
   'uuid': instance.uuid,
   'relatedTransactionUuid': instance.relatedTransactionUuid,
-  'range': instance.range,
-  'rules': instance.rules,
+  'recurringTransactionUuid': instance.recurringTransactionUuid,
   'key': instance.key,
 };

@@ -21,6 +21,7 @@ List<Account> getAccountPresets(String currency) {
       name: "setup.accounts.preset.savings".tr(),
       currency: currency,
       iconCode: FlowIconData.icon(Symbols.savings_rounded).toString(),
+      excludeFromTotalBalance: true,
       uuid: "c04e1cdd-842f-48c1-9c6c-d07fb2b09193",
     ),
   ];
