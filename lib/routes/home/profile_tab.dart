@@ -88,7 +88,7 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => context.push("/support"),
           ),
           ListTile(
-            title: Text("tabs.profile.contributors".t(context)),
+            title: Text("contributors".t(context)),
             leading: const Icon(Symbols.groups_rounded),
             onTap: () => context.push("/community/contributors"),
           ),
