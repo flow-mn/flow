@@ -1,7 +1,6 @@
 # ![Flow logo](logo@32.png) Flow
 
 [![Buy me a coffee](https://img.shields.io/badge/buy_me_a_coffee-sadespresso-f5ccff?logo=buy-me-a-coffee&logoColor=white&style=for-the-badge)](https://buymeacoffee.com/sadespresso)
-[![Patreon](https://img.shields.io/badge/patreon-sadespresso-f5ccff?logo=patreon&logoColor=white&style=for-the-badge)](https://patreon.com/sadespresso)
 [![Website](https://img.shields.io/badge/Website-flow.gege.mn-f5ccff?style=for-the-badge)](https://flow.gege.mn)&nbsp;
 [![Flow's GitHub repo](https://img.shields.io/badge/GitHub-flow--mn/flow-f5ccff?logo=github&logoColor=white&style=for-the-badge)](https://github.com/flow-mn/flow)&nbsp;
 [![Join Flow Discord server](https://img.shields.io/badge/Discord-Flow-f5ccff?logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Ndh9VDeZa4)
@@ -46,7 +45,6 @@ income. Consider helping Flow! Here are some suggestions:
 * Leave a review on [Google Play](https://play.google.com/store/apps/details?id=mn.flow.flow) and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
 * Tell a friend
 * [Buy me a coffee](https://buymeacoffee.com/sadespresso)
-* [Patreon](https://patreon.com/sadespresso)
   
   Maintaining Flow on the App Store requires a substantial annual fee
   (see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
