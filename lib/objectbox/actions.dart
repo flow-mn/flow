@@ -27,9 +27,16 @@ import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
 
+class DebugR {
+  final double score;
+  final List<String> reasons;
+
+  const DebugR({required this.score, required this.reasons});
+}
+
 final Logger _log = Logger("ObjectBoxActions");
 
-typedef RelevanceScoredTitle = ({String title, double relevancy});
+typedef RelevanceScoredTitle = ({String title, DebugR relevancy});
 
 extension MainActions on ObjectBox {
   /// Returns the grand total of all accounts in primary currency in the primary currency
@@ -261,6 +268,12 @@ extension MainActions on ObjectBox {
         keyword: currentInput?.trim() ?? "",
         mode: TransactionSearchMode.substring,
       ),
+      range: TransactionFilterTimeRange(
+        CustomTimeRange(
+          Moment.now() - const Duration(days: 270),
+          Moment.startOfTomorrow(),
+        ).encodeShort(),
+      ),
     );
 
     final List<Transaction> transactions = await TransactionsService()
@@ -305,13 +318,17 @@ extension MainActions on ObjectBox {
             .cast<RelevanceScoredTitle>()
             .toList();
 
-    relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+    relevanceCalculatedList.sort(
+      (a, b) => b.relevancy.score.compareTo(a.relevancy.score),
+    );
 
     final List<RelevanceScoredTitle> scoredTitles = _mergeTitleRelevancy(
       relevanceCalculatedList,
     );
 
-    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+    scoredTitles.sort((a, b) => b.relevancy.score.compareTo(a.relevancy.score));
+
+    final k2 = scoredTitles.where((f) => f.title.contains("pro"));
 
     return scoredTitles.sublist(
       0,
@@ -324,19 +341,16 @@ extension MainActions on ObjectBox {
     List<RelevanceScoredTitle> scores,
   ) {
     final List<List<RelevanceScoredTitle>> grouped =
-        scores.groupBy((relevance) => relevance.title).values.toList();
+        scores
+            .groupBy((relevance) => relevance.title.toLowerCase())
+            .values
+            .toList();
 
     return grouped.map((items) {
-      final double sum = items
-          .map((x) => x.relevancy)
-          .fold<double>(0, (value, element) => value + element);
-
-      final double average = sum / items.length;
-
-      /// If an item occurs multiple times, its relevancy is increased
-      final double weight = 1 + (items.length * 0.085);
-
-      return (title: items.first.title, relevancy: average * weight);
+      final RelevanceScoredTitle max = items.reduce(
+        (a, b) => a.relevancy.score > b.relevancy.score ? a : b,
+      );
+      return max;
     }).toList();
   }
 }
@@ -346,17 +360,19 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
-  /// * If [transactionType] matches, score is increased by 100%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 50%
+  /// * If [transactionType] matches, score is increased by 50%
   /// * If [categoryId] matches, score is increased by 250%
-  /// * Depending on recency of [transactionDate], score is increased by 0% - 250%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 250%
+  ///   * If [categoryId] matches, depending on recency of [transactionDate], score is increased by 0% - 100%
   ///
   /// **Max multi.**: 7.25
   /// **Max score**: 797.5
   /// **Query only max score**: 110.0
+  /// **No query max score**: 72.5
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
-  double titleSuggestionScore({
+  DebugR titleSuggestionScore({
     String? query,
     int? accountId,
     int? categoryId,
@@ -367,6 +383,8 @@ extension TransactionActions on Transaction {
     String? currency,
     DateTime? transactionDate,
   }) {
+    final List<String> reasons = [];
+
     double score = 10.0;
 
     final String? normalizedTitle =
@@ -389,42 +407,53 @@ extension TransactionActions on Transaction {
 
     if (account.targetId == accountId) {
       multiplier += 0.25;
+      reasons.add("accountId matches, 25%");
 
       if (amountMatches) {
         multiplier += 0.5;
+        reasons.add("amount matches alongside accountId, 50%");
       }
     }
 
     if (transactionType != null && transactionType == type) {
       multiplier += 0.5;
+      reasons.add("transactionType matches, 50%");
     }
 
     if (category.targetId == categoryId) {
-      multiplier += 2.0;
+      multiplier += 2.5;
+      reasons.add("categoryId matches, 250%");
 
       if (amountMatches) {
-        multiplier += 1.5;
+        multiplier += 2.5;
+        reasons.add("amount matches alongside categoryId, 250%");
       }
+
+      final Duration? transactionDateDifference =
+          transactionDate?.difference(this.transactionDate).abs();
+
+      final double recencyScoreMultipler = switch (transactionDateDifference) {
+        null => 0,
+        >= const Duration(days: 180) => 0.1,
+        >= const Duration(days: 60) => 0.2,
+        >= const Duration(days: 14) => 0.3,
+        >= const Duration(days: 7) => 0.4,
+        >= const Duration(hours: 72) => 0.5,
+        >= const Duration(hours: 24) => 0.3,
+        >= const Duration(hours: 8) => 0.1,
+        _ => 0.0,
+      };
+
+      if (transactionDateDifference != null) {
+        reasons.add(
+          "transactionDate difference: ${transactionDateDifference.inDays} days, plus x $recencyScoreMultipler",
+        );
+      }
+
+      multiplier += recencyScoreMultipler;
     }
 
-    final Duration? transactionDateDifference =
-        transactionDate?.difference(this.transactionDate).abs();
-
-    final double recencyScoreMultipler = switch (transactionDateDifference) {
-      null => 0,
-      >= const Duration(days: 60) => 0.25,
-      >= const Duration(days: 30) => 0.5,
-      >= const Duration(days: 14) => 0.67,
-      >= const Duration(days: 7) => 0.875,
-      >= const Duration(hours: 72) => 1.25,
-      >= const Duration(hours: 24) => 1.75,
-      >= const Duration(hours: 8) => 2.25,
-      _ => 2.5,
-    };
-
-    multiplier += recencyScoreMultipler;
-
-    return score * multiplier;
+    return DebugR(score: score * multiplier, reasons: reasons);
   }
 
   /// When user makes a transfer, it actually creates two transactions.
