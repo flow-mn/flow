@@ -15,6 +15,10 @@ class TitleInput extends StatelessWidget {
   final int? selectedCategoryId;
   final TransactionType transactionType;
 
+  final double? amount;
+  final String? currency;
+  final DateTime? transactionDate;
+
   final String fallbackTitle;
 
   final Function(String) onSubmitted;
@@ -25,6 +29,9 @@ class TitleInput extends StatelessWidget {
     required this.controller,
     this.selectedAccountId,
     this.selectedCategoryId,
+    this.amount,
+    this.currency,
+    this.transactionDate,
     required this.transactionType,
     required this.fallbackTitle,
     required this.onSubmitted,
@@ -76,6 +83,9 @@ class TitleInput extends StatelessWidget {
         accountId: selectedAccountId,
         categoryId: selectedCategoryId,
         type: transactionType,
+        amount: amount,
+        currency: currency,
+        transactionDate: transactionDate,
         limit: 5,
       )
       .then(

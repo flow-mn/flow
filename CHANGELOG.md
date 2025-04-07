@@ -12,6 +12,7 @@
 
 * Backup files naming convention has changed to comply with iCloud Drive file name requirements
 * Added "Recommend Flow" button
+* Title suggestion now considers recency of a transaction
 
 ## 0.13.1
 
