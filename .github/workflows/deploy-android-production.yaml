@@ -2,7 +2,7 @@ name: Deploy Production build for Android
 on:
   push:
     branches:
-      - "main"
+      - "stable"
 jobs:
   build:
     runs-on: "ubuntu-latest"
