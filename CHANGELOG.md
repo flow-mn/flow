@@ -6,6 +6,7 @@
 
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 * [OPTIMISTIC] Now you can setup credit line accounts.
+* Added list of contributors, closes [#448](https://github.com/flow-mn/flow/issues/448)
 
 ### Changes & Improvements
 
