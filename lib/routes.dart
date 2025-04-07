@@ -6,6 +6,7 @@ import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
+import "package:flow/routes/community/contributors_page.dart";
 import "package:flow/routes/debug/debug_log_page.dart";
 import "package:flow/routes/debug/debug_logs_page.dart";
 import "package:flow/routes/debug/debug_scheduled_notifications_page.dart";
@@ -19,12 +20,12 @@ import "package:flow/routes/import_page.dart";
 import "package:flow/routes/import_wizard/csv.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/import_wizard/v2.dart";
-import "package:flow/routes/preferences/sync_preferences_page.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
 import "package:flow/routes/preferences/pending_transactions_preferences_page.dart";
 import "package:flow/routes/preferences/reminders_preferences_page.dart";
+import "package:flow/routes/preferences/sync_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_list_item_appearance_preferences_page.dart";
@@ -399,6 +400,10 @@ final router = GoRouter(
 
         return StatsByGroupPage(byCategory: false, initialRange: initialRange);
       },
+    ),
+    GoRoute(
+      path: "/community/contributors",
+      builder: (context, state) => const ContributorsPage(),
     ),
     GoRoute(
       path: "/_debug/theme",
