@@ -27,11 +27,11 @@ class RecurringTransaction extends EntityBase {
   /// required, and [Transaction.category] is ignored.
   ///
   /// Ignored fields include, but are not limited to:
-  /// * uuid
-  /// * createdDate
-  /// * transactionDate
-  /// * isDeleted
-  /// * deletedDate
+  /// * [Transaction.uuid]
+  /// * [Transaction.createdDate]
+  /// * [Transaction.transactionDate]
+  /// * [Transaction.isDeleted]
+  /// * [Transaction.deletedDate]
   String jsonTransactionTemplate;
 
   String? transferAccountToUuid;

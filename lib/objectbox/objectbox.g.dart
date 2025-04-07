@@ -30,7 +30,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 1185109045851542775),
     name: 'Account',
-    lastPropertyId: const obx_int.IdUid(12, 4032509736911472496),
+    lastPropertyId: const obx_int.IdUid(15, 4500989952725300589),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -87,6 +87,24 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(12, 4032509736911472496),
         name: 'archived',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 2639662940928154297),
+        name: 'creditLimit',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(14, 3842898167150913136),
+        name: 'showCreditLimit',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(15, 4500989952725300589),
+        name: 'type',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -552,7 +570,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 800756592587838565),
     name: 'RecurringTransaction',
-    lastPropertyId: const obx_int.IdUid(7, 1614599721077752206),
+    lastPropertyId: const obx_int.IdUid(8, 9125625889304953158),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -595,6 +613,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(7, 1614599721077752206),
         name: 'disabled',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 9125625889304953158),
+        name: 'transferAccountToUuid',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -716,7 +740,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final nameOffset = fbb.writeString(object.name);
         final currencyOffset = fbb.writeString(object.currency);
         final iconCodeOffset = fbb.writeString(object.iconCode);
-        fbb.startTable(13);
+        final typeOffset = fbb.writeString(object.type);
+        fbb.startTable(16);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -726,6 +751,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(9, object.excludeFromTotalBalance);
         fbb.addInt64(10, object.sortOrder);
         fbb.addBool(11, object.archived);
+        fbb.addFloat64(12, object.creditLimit);
+        fbb.addBool(13, object.showCreditLimit);
+        fbb.addOffset(14, typeOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -747,6 +775,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final iconCodeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 16, '');
+        final creditLimitParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          28,
+        );
         final excludeFromTotalBalanceParam = const fb.BoolReader().vTableGet(
           buffer,
           rootOffset,
@@ -765,6 +798,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
           24,
           0,
         );
+        final typeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 32, '');
+        final showCreditLimitParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          30,
+          false,
+        );
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
         );
@@ -773,9 +815,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
             name: nameParam,
             currency: currencyParam,
             iconCode: iconCodeParam,
+            creditLimit: creditLimitParam,
             excludeFromTotalBalance: excludeFromTotalBalanceParam,
             archived: archivedParam,
             sortOrder: sortOrderParam,
+            type: typeParam,
+            showCreditLimit: showCreditLimitParam,
             createdDate: createdDateParam,
           )
           ..uuid = const fb.StringReader(
@@ -1380,7 +1425,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final rulesOffset = fbb.writeList(
           object.rules.map(fbb.writeString).toList(growable: false),
         );
-        fbb.startTable(8);
+        final transferAccountToUuidOffset =
+            object.transferAccountToUuid == null
+                ? null
+                : fbb.writeString(object.transferAccountToUuid!);
+        fbb.startTable(9);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, jsonTransactionTemplateOffset);
@@ -1388,6 +1437,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(4, rulesOffset);
         fbb.addInt64(5, object.createdDate.millisecondsSinceEpoch);
         fbb.addBool(6, object.disabled);
+        fbb.addOffset(7, transferAccountToUuidOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1413,6 +1463,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final jsonTransactionTemplateParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
+        final transferAccountToUuidParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 18);
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
@@ -1424,6 +1477,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             disabled: disabledParam,
             rules: rulesParam,
             jsonTransactionTemplate: jsonTransactionTemplateParam,
+            transferAccountToUuid: transferAccountToUuidParam,
             createdDate: createdDateParam,
             range: rangeParam,
           )
@@ -1484,6 +1538,21 @@ class Account_ {
   /// See [Account.archived].
   static final archived = obx.QueryBooleanProperty<Account>(
     _entities[0].properties[8],
+  );
+
+  /// See [Account.creditLimit].
+  static final creditLimit = obx.QueryDoubleProperty<Account>(
+    _entities[0].properties[9],
+  );
+
+  /// See [Account.showCreditLimit].
+  static final showCreditLimit = obx.QueryBooleanProperty<Account>(
+    _entities[0].properties[10],
+  );
+
+  /// See [Account.type].
+  static final type = obx.QueryStringProperty<Account>(
+    _entities[0].properties[11],
   );
 
   /// see [Account.transactions]
@@ -1847,4 +1916,8 @@ class RecurringTransaction_ {
   static final disabled = obx.QueryBooleanProperty<RecurringTransaction>(
     _entities[8].properties[6],
   );
+
+  /// See [RecurringTransaction.transferAccountToUuid].
+  static final transferAccountToUuid =
+      obx.QueryStringProperty<RecurringTransaction>(_entities[8].properties[7]);
 }

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1185109045851542775",
-      "lastPropertyId": "12:4032509736911472496",
+      "lastPropertyId": "15:4500989952725300589",
       "name": "Account",
       "properties": [
         {
@@ -57,6 +57,21 @@
           "id": "12:4032509736911472496",
           "name": "archived",
           "type": 1
+        },
+        {
+          "id": "13:2639662940928154297",
+          "name": "creditLimit",
+          "type": 8
+        },
+        {
+          "id": "14:3842898167150913136",
+          "name": "showCreditLimit",
+          "type": 1
+        },
+        {
+          "id": "15:4500989952725300589",
+          "name": "type",
+          "type": 9
         }
       ],
       "relations": []
@@ -451,7 +466,7 @@
     },
     {
       "id": "12:800756592587838565",
-      "lastPropertyId": "7:1614599721077752206",
+      "lastPropertyId": "8:9125625889304953158",
       "name": "RecurringTransaction",
       "properties": [
         {
@@ -489,6 +504,11 @@
           "id": "7:1614599721077752206",
           "name": "disabled",
           "type": 1
+        },
+        {
+          "id": "8:9125625889304953158",
+          "name": "transferAccountToUuid",
+          "type": 9
         }
       ],
       "relations": []

@@ -12,6 +12,7 @@ RecurringTransaction _$RecurringTransactionFromJson(
   disabled: json['disabled'] as bool? ?? false,
   rules: (json['rules'] as List<dynamic>).map((e) => e as String).toList(),
   jsonTransactionTemplate: json['jsonTransactionTemplate'] as String,
+  transferAccountToUuid: json['transferAccountToUuid'] as String?,
   createdDate: _$JsonConverterFromJson<String, DateTime>(
     json['createdDate'],
     const UTCDateTimeConverter().fromJson,
@@ -24,6 +25,7 @@ Map<String, dynamic> _$RecurringTransactionToJson(
 ) => <String, dynamic>{
   'uuid': instance.uuid,
   'jsonTransactionTemplate': instance.jsonTransactionTemplate,
+  'transferAccountToUuid': instance.transferAccountToUuid,
   'range': instance.range,
   'rules': instance.rules,
   'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
