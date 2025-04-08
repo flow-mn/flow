@@ -328,8 +328,6 @@ extension MainActions on ObjectBox {
 
     scoredTitles.sort((a, b) => b.relevancy.score.compareTo(a.relevancy.score));
 
-    final k2 = scoredTitles.where((f) => f.title.contains("pro"));
-
     return scoredTitles.sublist(
       0,
       limit == null ? null : math.min(limit, scoredTitles.length),
