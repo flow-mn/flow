@@ -68,12 +68,16 @@ class DescriptionSection extends StatelessWidget {
                     focusNode: focusNode,
                     allowTogglingCheckboxes: true,
                   ),
-                  Positioned(
-                    right: 24.0,
+                  Positioned.directional(
+                    end: 24.0,
                     top: 8.0,
+                    textDirection: Directionality.of(context),
                     child: IconButton(
                       isSelected: true,
-                      icon: Icon(Symbols.edit_rounded),
+                      icon: Icon(
+                        Symbols.edit_rounded,
+                        textDirection: Directionality.of(context),
+                      ),
                       onPressed: () => showEditModal(context),
                       tooltip: "general.edit".t(context),
                     ),

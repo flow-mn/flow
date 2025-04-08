@@ -13,6 +13,7 @@
 * Backup files naming convention has changed to comply with iCloud Drive file name requirements
 * Added "Recommend Flow" button
 * Title suggestion now considers recency of a transaction
+* Improved RTL support in certain parts of the UI. Feel free to report more issues regarding RTL
 
 ## 0.13.1
 

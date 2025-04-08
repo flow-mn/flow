@@ -16,10 +16,15 @@ class Recurring extends TransactionExtension implements Jasonable {
 
   final String recurringTransactionUuid;
 
+  /// Indicates whether this transaction should be updated when the recurring
+  /// transaction is updated.
+  final bool locked;
+
   Recurring({
     required this.relatedTransactionUuid,
     required this.recurringTransactionUuid,
     required super.uuid,
+    this.locked = false,
   }) : super();
 
   @override

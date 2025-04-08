@@ -6,6 +6,7 @@ import "package:flow/services/icloud_sync.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/backup_entry.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
@@ -145,35 +146,31 @@ class BackupEntryCard extends StatelessWidget {
       ),
     );
 
-    return Slidable(
+    final List<SlidableAction> startActions = [
+      if (fileSize != null &&
+          fileSize > 0 &&
+          onUpload != null &&
+          entry.correspondingFile == null)
+        SlidableAction(
+          onPressed: (context) => onUpload!(),
+          icon: Symbols.cloud_upload_rounded,
+          backgroundColor: context.flowColors.income,
+        ),
+    ];
+
+    final List<SlidableAction> endActions = [
+      SlidableAction(
+        onPressed: (context) => delete(context),
+        icon: Symbols.delete_forever_rounded,
+        backgroundColor: context.flowColors.expense,
+      ),
+    ];
+
+    return DirectionalSlidable(
       key: dismissibleKey,
       groupTag: "backup_entry_card",
-      startActionPane:
-          (fileSize != null &&
-                  fileSize > 0 &&
-                  onUpload != null &&
-                  entry.correspondingFile == null)
-              ? ActionPane(
-                motion: const DrawerMotion(),
-                children: [
-                  SlidableAction(
-                    onPressed: (context) => onUpload!(),
-                    icon: Symbols.cloud_upload_rounded,
-                    backgroundColor: context.flowColors.income,
-                  ),
-                ],
-              )
-              : null,
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        children: [
-          SlidableAction(
-            onPressed: (context) => delete(context),
-            icon: Symbols.delete_forever_rounded,
-            backgroundColor: context.flowColors.expense,
-          ),
-        ],
-      ),
+      startActions: startActions,
+      endActions: endActions,
       child: listTile,
     );
   }
