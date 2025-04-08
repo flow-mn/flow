@@ -334,7 +334,7 @@ extension MainActions on ObjectBox {
       final double average = sum / items.length;
 
       /// If an item occurs multiple times, its relevancy is increased
-      final double weight = 1 + (items.length * 0.085);
+      final double weight = 1 + (items.length * 0.02);
 
       return (title: items.first.title, relevancy: average * weight);
     }).toList();
@@ -349,10 +349,10 @@ extension TransactionActions on Transaction {
   ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
   /// * If [transactionType] matches, score is increased by 100%
   /// * If [categoryId] matches, score is increased by 250%
-  /// * Depending on recency of [transactionDate], score is increased by 0% - 250%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
   ///
-  /// **Max multi.**: 7.25
-  /// **Max score**: 797.5
+  /// **Max multi.**: 5.15
+  /// **Max score**: 566.5
   /// **Query only max score**: 110.0
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
@@ -412,14 +412,12 @@ extension TransactionActions on Transaction {
 
     final double recencyScoreMultipler = switch (transactionDateDifference) {
       null => 0,
-      >= const Duration(days: 60) => 0.25,
-      >= const Duration(days: 30) => 0.5,
-      >= const Duration(days: 14) => 0.67,
-      >= const Duration(days: 7) => 0.875,
-      >= const Duration(hours: 72) => 1.25,
-      >= const Duration(hours: 24) => 1.75,
-      >= const Duration(hours: 8) => 2.25,
-      _ => 2.5,
+      >= const Duration(days: 60) => 0.025,
+      >= const Duration(days: 30) => 0.05,
+      >= const Duration(days: 14) => 0.1,
+      >= const Duration(days: 7) => 0.2,
+      >= const Duration(hours: 72) => 0.3,
+      _ => 0.4,
     };
 
     multiplier += recencyScoreMultipler;
