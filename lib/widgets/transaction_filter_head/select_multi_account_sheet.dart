@@ -16,7 +16,7 @@ class SelectMultiAccountSheet extends StatefulWidget {
 
   final String? titleOverride;
 
-  /// Defaults to [true] when there are more than 8 accounts.
+  /// Defaults to [true] when there are more than 6 accounts.
   final bool? showSearchBar;
 
   const SelectMultiAccountSheet({
@@ -54,7 +54,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
   @override
   Widget build(BuildContext context) {
     final bool showSearchBar =
-        widget.showSearchBar ?? widget.accounts.length > 8;
+        widget.showSearchBar ?? widget.accounts.length > 6;
 
     final List<Account> results = simpleSortByQuery(widget.accounts, _query);
 

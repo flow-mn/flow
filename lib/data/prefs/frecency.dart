@@ -33,10 +33,10 @@ class FrecencyData {
       >= const Duration(days: 30) => useCount * 0.5,
       >= const Duration(days: 14) => useCount * 0.67,
       >= const Duration(days: 7) => useCount * 0.875,
-      >= const Duration(hours: 72) => useCount.toDouble(),
-      >= const Duration(hours: 24) => useCount * 2,
-      >= const Duration(hours: 8) => useCount * 3,
-      _ => useCount.toDouble(),
+      >= const Duration(hours: 72) => useCount * 1.0,
+      >= const Duration(hours: 24) => useCount * 2.0,
+      >= const Duration(hours: 8) => useCount * 3.0,
+      _ => useCount * 4.0,
     };
   }
 

@@ -22,7 +22,7 @@ class PendingTransactionsLocalPreferences {
 
   late final BoolSettingsEntry requireConfrimation;
 
-  /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
+  /// Shows next [homeTimeframe] days of planned transactions in the home tab
   late final PrimitiveSettingsEntry<int> homeTimeframe;
 
   /// Whether to use date of confirmation for `transactionDate` for pending transactions

@@ -249,6 +249,9 @@ extension MainActions on ObjectBox {
     String? currentInput,
     int? accountId,
     int? categoryId,
+    double? amount,
+    String? currency,
+    DateTime? transactionDate,
     TransactionType? type,
     int? limit,
   }) async {
@@ -293,6 +296,9 @@ extension MainActions on ObjectBox {
                   accountId: accountId,
                   categoryId: categoryId,
                   transactionType: type,
+                  transactionDate: transactionDate,
+                  amount: amount,
+                  currency: currency,
                 ),
               ),
             )
@@ -328,7 +334,7 @@ extension MainActions on ObjectBox {
       final double average = sum / items.length;
 
       /// If an item occurs multiple times, its relevancy is increased
-      final double weight = 1 + (items.length * 0.025);
+      final double weight = 1 + (items.length * 0.085);
 
       return (title: items.first.title, relevancy: average * weight);
     }).toList();
@@ -340,10 +346,13 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  /// * If [transactionType] matches, score is increased by 75%
-  /// * If [categoryId] matches, score is increased by 275%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
+  /// * If [transactionType] matches, score is increased by 100%
+  /// * If [categoryId] matches, score is increased by 250%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 250%
   ///
-  /// **Max score**: 412.5
+  /// **Max multi.**: 7.25
+  /// **Max score**: 797.5
   /// **Query only max score**: 110.0
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
@@ -354,6 +363,9 @@ extension TransactionActions on Transaction {
     TransactionType? transactionType,
     bool fuzzyPartial = true,
     bool caseSensitive = false,
+    double? amount,
+    String? currency,
+    DateTime? transactionDate,
   }) {
     double score = 10.0;
 
@@ -367,21 +379,52 @@ extension TransactionActions on Transaction {
               : ratio(query!, normalizedTitle).toDouble();
     }
 
-    double multipler = 1.0;
+    final bool amountMatches =
+        amount != null &&
+        amount.abs() != 0 &&
+        this.amount == amount &&
+        this.currency == currency;
+
+    double multiplier = 1.0;
 
     if (account.targetId == accountId) {
-      multipler += 0.25;
+      multiplier += 0.25;
+
+      if (amountMatches) {
+        multiplier += 0.5;
+      }
     }
 
     if (transactionType != null && transactionType == type) {
-      multipler += 0.75;
+      multiplier += 0.5;
     }
 
     if (category.targetId == categoryId) {
-      multipler += 2.75;
+      multiplier += 2.0;
+
+      if (amountMatches) {
+        multiplier += 1.5;
+      }
     }
 
-    return score * multipler;
+    final Duration? transactionDateDifference =
+        transactionDate?.difference(this.transactionDate).abs();
+
+    final double recencyScoreMultipler = switch (transactionDateDifference) {
+      null => 0,
+      >= const Duration(days: 60) => 0.25,
+      >= const Duration(days: 30) => 0.5,
+      >= const Duration(days: 14) => 0.67,
+      >= const Duration(days: 7) => 0.875,
+      >= const Duration(hours: 72) => 1.25,
+      >= const Duration(hours: 24) => 1.75,
+      >= const Duration(hours: 8) => 2.25,
+      _ => 2.5,
+    };
+
+    multiplier += recencyScoreMultipler;
+
+    return score * multiplier;
   }
 
   /// When user makes a transfer, it actually creates two transactions.

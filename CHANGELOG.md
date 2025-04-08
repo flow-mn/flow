@@ -6,11 +6,13 @@
 
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 * [OPTIMISTIC] Now you can setup credit line accounts.
+* Added list of contributors, closes [#448](https://github.com/flow-mn/flow/issues/448)
 
 ### Changes & Improvements
 
 * Backup files naming convention has changed to comply with iCloud Drive file name requirements
 * Added "Recommend Flow" button
+* Title suggestion now considers recency of a transaction
 
 ## 0.13.1
 
