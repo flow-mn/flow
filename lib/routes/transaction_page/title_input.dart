@@ -85,7 +85,7 @@ class TitleInput extends StatelessWidget {
             amount: amount,
             currency: currency,
             transactionDate: transactionDate,
-            limit: 10,
+            limit: 5,
           )
           .then(
             (results) =>
