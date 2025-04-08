@@ -16,6 +16,11 @@
 * Improved RTL support in certain parts of the UI. Feel free to report more issues regarding RTL
 * Transfer transactions now shows account balance
 
+### Fixes
+
+* Categories page layout is no longer "suboptimal" on smaller screens
+* `Add category from presets` page no longer show presets with same name as any of your existing categories
+
 ## 0.13.1
 
 ### Changes & Improvements

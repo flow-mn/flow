@@ -7,7 +7,7 @@ import "package:flow/prefs/transitive.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/blur_backgorund.dart";
-import "package:flow/widgets/general/direction_chevron.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -210,7 +210,7 @@ class _StatsTabState extends State<StatsTab>
                             FlowIconData.icon(Symbols.wallet_rounded),
                             size: 24.0,
                           ),
-                          trailing: DirectionChevron(),
+                          trailing: DirectionalChevron(),
                         ),
                         const SizedBox(height: 96.0),
                       ],

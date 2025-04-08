@@ -2,8 +2,8 @@ import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-class DirectionChevron extends StatelessWidget {
-  const DirectionChevron({super.key});
+class DirectionalChevron extends StatelessWidget {
+  const DirectionalChevron({super.key});
 
   @override
   Widget build(BuildContext context) {

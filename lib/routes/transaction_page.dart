@@ -24,6 +24,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -344,7 +345,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               onTap: () => inputPostConversionAmount(),
                               trailing:
                                   _selectedAccountTransferTo == null
-                                      ? const Icon(Symbols.chevron_right)
+                                      ? DirectionalChevron()
                                       : null,
                               focusNode: _selectAccountTransferToFocusNode,
                             ),

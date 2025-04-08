@@ -9,7 +9,6 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/categories/no_categories.dart";
 import "package:flow/widgets/category_card.dart";
 import "package:flow/widgets/general/button.dart";
-import "package:flow/widgets/general/direction_chevron.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -89,6 +88,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           spacing: 16.0,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Button(
                               onTap: () => context.push("/category/new"),
@@ -97,7 +97,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             ),
                             if (showPresetsButton)
                               Button(
-                                trailing: DirectionChevron(),
+                                leading: Icon(Symbols.category_rounded),
                                 onTap: () {
                                   context.push(
                                     "/setup/categories?standalone=true&selectAll=false",

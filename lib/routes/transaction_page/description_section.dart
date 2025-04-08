@@ -54,7 +54,7 @@ class DescriptionSection extends StatelessWidget {
       child:
           noContent
               ? Align(
-                alignment: Alignment.topLeft,
+                alignment: AlignmentDirectional.topStart,
                 child: Frame(
                   child: TextButton(
                     onPressed: () => showEditModal(context),
