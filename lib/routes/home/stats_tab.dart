@@ -7,10 +7,12 @@ import "package:flow/prefs/transitive.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/blur_backgorund.dart";
+import "package:flow/widgets/general/direction_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/info_card_with_delta.dart";
 import "package:flow/widgets/home/stats/most_spending_category.dart";
@@ -194,7 +196,9 @@ class _StatsTabState extends State<StatsTab>
                             FlowIconData.icon(Symbols.category_rounded),
                             size: 24.0,
                           ),
-                          trailing: Icon(Symbols.chevron_right_rounded),
+                          trailing: RTLFlipper(
+                            child: Icon(Symbols.chevron_right_rounded),
+                          ),
                         ),
                         ListTile(
                           title: Text("tabs.stats.summaryByAccount".t(context)),
@@ -206,7 +210,7 @@ class _StatsTabState extends State<StatsTab>
                             FlowIconData.icon(Symbols.wallet_rounded),
                             size: 24.0,
                           ),
-                          trailing: Icon(Symbols.chevron_right_rounded),
+                          trailing: DirectionChevron(),
                         ),
                         const SizedBox(height: 96.0),
                       ],

@@ -32,6 +32,8 @@ class DescriptionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool noContent = controller.text.trim().isEmpty;
 
+    final TextDirection textDirection = Directionality.of(context);
+
     return Section(
       titleOverride: Row(
         mainAxisSize: MainAxisSize.min,
@@ -71,12 +73,12 @@ class DescriptionSection extends StatelessWidget {
                   Positioned.directional(
                     end: 24.0,
                     top: 8.0,
-                    textDirection: Directionality.of(context),
+                    textDirection: textDirection,
                     child: IconButton(
                       isSelected: true,
                       icon: Icon(
                         Symbols.edit_rounded,
-                        textDirection: Directionality.of(context),
+                        textDirection: textDirection,
                       ),
                       onPressed: () => showEditModal(context),
                       tooltip: "general.edit".t(context),

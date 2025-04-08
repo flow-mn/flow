@@ -14,6 +14,7 @@
 * Added "Recommend Flow" button
 * Title suggestion now considers recency of a transaction
 * Improved RTL support in certain parts of the UI. Feel free to report more issues regarding RTL
+* Transfer transactions now shows account balance
 
 ## 0.13.1
 

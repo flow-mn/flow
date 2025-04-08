@@ -191,7 +191,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final bool showPostTransactionBalance =
-        _selectedAccount != null && !isTransfer && !widget.isNewTransaction;
+        _selectedAccount != null && !widget.isNewTransaction;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -315,6 +315,14 @@ class _TransactionPageState extends State<TransactionPage> {
                               _selectedAccountTransferTo?.name ??
                                   "transaction.edit.selectAccount".t(context),
                             ),
+                            subtitle:
+                                _selectedAccountTransferTo != null
+                                    ? MoneyText(
+                                      _selectedAccountTransferTo!.balanceAt(
+                                        _transactionDate,
+                                      ),
+                                    )
+                                    : null,
                             onTap: () => selectAccountTransferTo(),
                             trailing:
                                 _selectedAccountTransferTo == null

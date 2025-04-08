@@ -9,6 +9,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/categories/no_categories.dart";
 import "package:flow/widgets/category_card.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/direction_chevron.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -89,34 +90,24 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         child: Column(
                           spacing: 16.0,
                           children: [
-                            Row(
-                              spacing: 12.0,
-                              children: [
-                                Expanded(
-                                  child: Button(
-                                    onTap: () => context.push("/category/new"),
-                                    leading: Icon(Symbols.add_rounded),
-                                    child: Text("category.new".t(context)),
-                                  ),
-                                ),
-                                if (showPresetsButton)
-                                  Expanded(
-                                    child: Button(
-                                      trailing: Icon(
-                                        Symbols.chevron_right_rounded,
-                                      ),
-                                      onTap: () {
-                                        context.push(
-                                          "/setup/categories?standalone=true&selectAll=false",
-                                        );
-                                      },
-                                      child: Text(
-                                        "categories.addFromPresets".t(context),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                            Button(
+                              onTap: () => context.push("/category/new"),
+                              leading: Icon(Symbols.add_rounded),
+                              child: Text("category.new".t(context)),
                             ),
+                            if (showPresetsButton)
+                              Button(
+                                trailing: DirectionChevron(),
+                                onTap: () {
+                                  context.push(
+                                    "/setup/categories?standalone=true&selectAll=false",
+                                  );
+                                },
+                                child: Text(
+                                  "categories.addFromPresets".t(context),
+                                ),
+                              ),
+                            const Divider(),
                             ...categories.map(
                               (category) => CategoryCard(
                                 category: category,

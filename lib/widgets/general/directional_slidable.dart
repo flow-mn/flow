@@ -1,3 +1,4 @@
+import "package:flow/utils/extensions/directionality.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 
@@ -19,12 +20,12 @@ class DirectionalSlidable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextDirection textDirection = Directionality.of(context);
+    final bool isLtr = context.isLtr;
 
     final List<SlidableAction>? directinalStartActions =
-        (textDirection == TextDirection.ltr ? startActions : endActions);
+        (isLtr ? startActions : endActions);
     final List<SlidableAction>? directinalEndActions =
-        (textDirection == TextDirection.ltr ? endActions : startActions);
+        (isLtr ? endActions : startActions);
 
     return Slidable(
       key: dismissibleKey,
