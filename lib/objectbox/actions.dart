@@ -261,6 +261,12 @@ extension MainActions on ObjectBox {
         keyword: currentInput?.trim() ?? "",
         mode: TransactionSearchMode.substring,
       ),
+      range: TransactionFilterTimeRange(
+        Moment.now()
+            .subtract(const Duration(days: 210))
+            .rangeTo(Moment.now())
+            .encodeShort(),
+      ),
     );
 
     final List<Transaction> transactions = await TransactionsService()
@@ -327,16 +333,9 @@ extension MainActions on ObjectBox {
         scores.groupBy((relevance) => relevance.title).values.toList();
 
     return grouped.map((items) {
-      final double sum = items
-          .map((x) => x.relevancy)
-          .fold<double>(0, (value, element) => value + element);
+      final double max = items.map((x) => x.relevancy).reduce(math.max);
 
-      final double average = sum / items.length;
-
-      /// If an item occurs multiple times, its relevancy is increased
-      final double weight = 1 + (items.length * 0.02);
-
-      return (title: items.first.title, relevancy: average * weight);
+      return (title: items.first.title, relevancy: max);
     }).toList();
   }
 }
@@ -346,13 +345,14 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 25%
   /// * If [transactionType] matches, score is increased by 100%
-  /// * If [categoryId] matches, score is increased by 250%
-  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
+  /// * If [categoryId] matches, score is increased by 150%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 150%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 30%
   ///
-  /// **Max multi.**: 5.15
-  /// **Max score**: 566.5
+  /// **Max multi.**: 7.15
+  /// **Max score**: 786.5
   /// **Query only max score**: 110.0
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
@@ -391,7 +391,7 @@ extension TransactionActions on Transaction {
       multiplier += 0.25;
 
       if (amountMatches) {
-        multiplier += 0.5;
+        multiplier += 1.0;
       }
     }
 
@@ -400,10 +400,10 @@ extension TransactionActions on Transaction {
     }
 
     if (category.targetId == categoryId) {
-      multiplier += 2.0;
+      multiplier += 1.5;
 
       if (amountMatches) {
-        multiplier += 1.5;
+        multiplier += 3.5;
       }
     }
 
@@ -412,11 +412,9 @@ extension TransactionActions on Transaction {
 
     final double recencyScoreMultipler = switch (transactionDateDifference) {
       null => 0,
-      >= const Duration(days: 60) => 0.025,
-      >= const Duration(days: 30) => 0.05,
-      >= const Duration(days: 14) => 0.1,
-      >= const Duration(days: 7) => 0.2,
-      >= const Duration(hours: 72) => 0.3,
+      > const Duration(days: 60) => 0.1,
+      > const Duration(days: 14) => 0.2,
+      > const Duration(days: 7) => 0.3,
       _ => 0.4,
     };
 

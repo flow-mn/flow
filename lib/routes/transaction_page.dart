@@ -24,6 +24,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -191,7 +192,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final bool showPostTransactionBalance =
-        _selectedAccount != null && !isTransfer && !widget.isNewTransaction;
+        _selectedAccount != null && !widget.isNewTransaction;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -315,6 +316,14 @@ class _TransactionPageState extends State<TransactionPage> {
                               _selectedAccountTransferTo?.name ??
                                   "transaction.edit.selectAccount".t(context),
                             ),
+                            subtitle:
+                                _selectedAccountTransferTo != null
+                                    ? MoneyText(
+                                      _selectedAccountTransferTo!.balanceAt(
+                                        _transactionDate,
+                                      ),
+                                    )
+                                    : null,
                             onTap: () => selectAccountTransferTo(),
                             trailing:
                                 _selectedAccountTransferTo == null
@@ -336,7 +345,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               onTap: () => inputPostConversionAmount(),
                               trailing:
                                   _selectedAccountTransferTo == null
-                                      ? const Icon(Symbols.chevron_right)
+                                      ? DirectionalChevron()
                                       : null,
                               focusNode: _selectAccountTransferToFocusNode,
                             ),

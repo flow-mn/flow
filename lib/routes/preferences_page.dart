@@ -13,8 +13,10 @@ import "package:flow/services/notifications.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/names.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
@@ -78,21 +80,23 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("preferences.sync".t(context)),
               leading: const Icon(Symbols.sync_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/sync"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             if (flowDebugMode || NotificationsService.schedulingSupported)
               ListTile(
                 title: Text("preferences.reminders".t(context)),
                 leading: const Icon(Symbols.notifications_rounded),
                 onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
-                trailing: const Icon(Symbols.chevron_right_rounded),
+                trailing: RTLFlipper(
+                  child: const Icon(Symbols.chevron_right_rounded),
+                ),
               ),
             ListTile(
               title: Text("preferences.language".t(context)),
               leading: const Icon(Symbols.language_rounded),
               onTap: () => _updateLanguage(),
               subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.primaryCurrency".t(context)),
@@ -100,7 +104,7 @@ class PreferencesPageState extends State<PreferencesPage> {
               leading: const Icon(Symbols.universal_currency_alt_rounded),
               onTap: () => _updatePrimaryCurrency(),
               subtitle: Text(LocalPreferences().getPrimaryCurrency()),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.transfer".t(context)),
@@ -111,19 +115,19 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.trashBin".t(context)),
               leading: const Icon(Symbols.delete_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
@@ -139,7 +143,7 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap:
                   () =>
                       _pushAndRefreshAfter("/preferences/pendingTransactions"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.transactions.geo".t(context)),
@@ -154,7 +158,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               leading: const Icon(Symbols.list_rounded),
@@ -163,7 +167,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                   () => _pushAndRefreshAfter(
                     "/preferences/transactionListItemAppearance",
                   ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.appearance".t(context)),
@@ -178,7 +182,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 themeNames[currentTheme.name] ?? currentTheme.name,
               ),
               onTap: _openTheme,
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.numpad".t(context)),
@@ -189,7 +193,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                     ? "preferences.numpad.layout.modern".t(context)
                     : "preferences.numpad.layout.classic".t(context),
               ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             ListTile(
               title: Text("preferences.transactionButtonOrder".t(context)),
@@ -203,7 +207,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: const Icon(Symbols.chevron_right_rounded),
+              trailing: DirectionalChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.privacy".t(context)),

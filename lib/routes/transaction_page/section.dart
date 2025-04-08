@@ -20,7 +20,7 @@ class Section extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Align(
-          alignment: Alignment.topLeft,
+          alignment: AlignmentDirectional.topStart,
           child: DefaultTextStyle(
             style: context.textTheme.labelMedium!.semi(context),
             child: Frame(child: titleOverride ?? Text(title ?? "A section")),

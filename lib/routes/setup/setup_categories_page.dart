@@ -61,7 +61,8 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
               (category) =>
                   !existingCategories.any(
                     (existingCategory) =>
-                        existingCategory.uuid == category.uuid,
+                        existingCategory.uuid == category.uuid ||
+                        existingCategory.name == category.name,
                   ),
             )
             .toList();

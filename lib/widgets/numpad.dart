@@ -62,7 +62,7 @@ class Numpad extends StatelessWidget {
             mainAxisSpacing: mainAxisSpacing,
             crossAxisSpacing: crossAxisSpacing,
             crossAxisCount: crossAxisCount,
-            children: children.map((child) => child).toList(),
+            children: children,
           ),
         ),
       ),

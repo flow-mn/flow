@@ -1,5 +1,6 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
@@ -27,19 +28,14 @@ class InternalNotificationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      endActionPane:
-          onDismiss != null
-              ? ActionPane(
-                motion: const DrawerMotion(),
-                children: [
-                  SlidableAction(
-                    onPressed: (BuildContext context) => onDismiss!(),
-                    icon: Symbols.close_rounded,
-                  ),
-                ],
-              )
-              : null,
+    return DirectionalSlidable(
+      endActions: [
+        if (onDismiss != null)
+          SlidableAction(
+            onPressed: (BuildContext context) => onDismiss!(),
+            icon: Symbols.close_rounded,
+          ),
+      ],
       child: Frame(
         child: Column(
           mainAxisSize: MainAxisSize.min,
