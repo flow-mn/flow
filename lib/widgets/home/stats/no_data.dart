@@ -35,7 +35,7 @@ class NoData extends StatelessWidget {
               Button(
                 trailing: const Icon(Symbols.history_rounded, weight: 600.0),
                 onTap: selectTimeRange,
-                child: Text("tabs.stats.timeRange.select".t(context)),
+                child: Text("select.timeRange".t(context)),
               ),
           ],
         ),

@@ -2,6 +2,7 @@ import "dart:convert";
 
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/utils/utils.dart";
 import "package:logging/logging.dart";
@@ -16,6 +17,11 @@ class ExtensionsWrapper {
 
   Geo? get geo => data.firstWhereOrNull((element) => element is Geo) as Geo?;
   set geo(Geo? newGeo) => _overrideSingle(newGeo, Geo.keyName);
+
+  Recurring? get recurring =>
+      data.firstWhereOrNull((element) => element is Recurring) as Recurring?;
+  set recurring(Recurring? newRecurring) =>
+      _overrideSingle(newRecurring, Recurring.keyName);
 
   final List<TransactionExtension> data;
 

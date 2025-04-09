@@ -330,7 +330,10 @@ extension MainActions on ObjectBox {
     List<RelevanceScoredTitle> scores,
   ) {
     final List<List<RelevanceScoredTitle>> grouped =
-        scores.groupBy((relevance) => relevance.title).values.toList();
+        scores
+            .groupBy((relevance) => relevance.title.toLowerCase())
+            .values
+            .toList();
 
     return grouped.map((items) {
       final double max = items.map((x) => x.relevancy).reduce(math.max);
@@ -345,15 +348,16 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  ///   * If [accountId] matches, and [amount] matches, score is increased by another 25%
-  /// * If [transactionType] matches, score is increased by 100%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
+  /// * If [transactionType] matches, score is increased by 50%
   /// * If [categoryId] matches, score is increased by 150%
-  ///   * If [categoryId] matches, and [amount] matches, score is increased by 150%
-  /// * Depending on recency of [transactionDate], score is increased by 0% - 30%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 350%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
   ///
   /// **Max multi.**: 7.15
   /// **Max score**: 786.5
   /// **Query only max score**: 110.0
+  /// **No query max score**: 72.5
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
   double titleSuggestionScore({
@@ -367,6 +371,8 @@ extension TransactionActions on Transaction {
     String? currency,
     DateTime? transactionDate,
   }) {
+    final List<String> reasons = [];
+
     double score = 10.0;
 
     final String? normalizedTitle =
@@ -389,6 +395,7 @@ extension TransactionActions on Transaction {
 
     if (account.targetId == accountId) {
       multiplier += 0.25;
+      reasons.add("accountId matches, 25%");
 
       if (amountMatches) {
         multiplier += 1.0;
@@ -397,6 +404,7 @@ extension TransactionActions on Transaction {
 
     if (transactionType != null && transactionType == type) {
       multiplier += 0.5;
+      reasons.add("transactionType matches, 50%");
     }
 
     if (category.targetId == categoryId) {
@@ -405,20 +413,20 @@ extension TransactionActions on Transaction {
       if (amountMatches) {
         multiplier += 3.5;
       }
+
+      final Duration? transactionDateDifference =
+          transactionDate?.difference(this.transactionDate).abs();
+
+      final double recencyScoreMultipler = switch (transactionDateDifference) {
+        null => 0,
+        > const Duration(days: 60) => 0.1,
+        > const Duration(days: 14) => 0.2,
+        > const Duration(days: 7) => 0.3,
+        _ => 0.4,
+      };
+
+      multiplier += recencyScoreMultipler;
     }
-
-    final Duration? transactionDateDifference =
-        transactionDate?.difference(this.transactionDate).abs();
-
-    final double recencyScoreMultipler = switch (transactionDateDifference) {
-      null => 0,
-      > const Duration(days: 60) => 0.1,
-      > const Duration(days: 14) => 0.2,
-      > const Duration(days: 7) => 0.3,
-      _ => 0.4,
-    };
-
-    multiplier += recencyScoreMultipler;
 
     return score * multiplier;
   }

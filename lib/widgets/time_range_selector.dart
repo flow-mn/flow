@@ -49,10 +49,10 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     final bool buildNextPrev = _timeRange is PageableRange;
 
     final String modeLabel = switch (_timeRange) {
-      LocalWeekTimeRange() => "tabs.stats.timeRange.mode.byWeek",
-      MonthTimeRange() => "tabs.stats.timeRange.mode.byMonth",
-      YearTimeRange() => "tabs.stats.timeRange.mode.byYear",
-      _ => "tabs.stats.timeRange.mode.custom",
+      LocalWeekTimeRange() => "select.timeRange.mode.byWeek",
+      MonthTimeRange() => "select.timeRange.mode.byMonth",
+      YearTimeRange() => "select.timeRange.mode.byYear",
+      _ => "select.timeRange.mode.custom",
     }.t(context);
 
     final TextDirection textDirection = Directionality.of(context);
@@ -156,7 +156,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
             Text(modeLabel),
             TextButton(
               onPressed: changeMode,
-              child: Text("tabs.stats.timeRange.changeMode".t(context)),
+              child: Text("select.timeRange.changeMode".t(context)),
             ),
           ],
         ),
