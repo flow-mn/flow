@@ -27,16 +27,9 @@ import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
 
-class DebugR {
-  final double score;
-  final List<String> reasons;
-
-  const DebugR({required this.score, required this.reasons});
-}
-
 final Logger _log = Logger("ObjectBoxActions");
 
-typedef RelevanceScoredTitle = ({String title, DebugR relevancy});
+typedef RelevanceScoredTitle = ({String title, double relevancy});
 
 extension MainActions on ObjectBox {
   /// Returns the grand total of all accounts in primary currency in the primary currency
@@ -318,15 +311,13 @@ extension MainActions on ObjectBox {
             .cast<RelevanceScoredTitle>()
             .toList();
 
-    relevanceCalculatedList.sort(
-      (a, b) => b.relevancy.score.compareTo(a.relevancy.score),
-    );
+    relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
     final List<RelevanceScoredTitle> scoredTitles = _mergeTitleRelevancy(
       relevanceCalculatedList,
     );
 
-    scoredTitles.sort((a, b) => b.relevancy.score.compareTo(a.relevancy.score));
+    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
 
     return scoredTitles.sublist(
       0,
@@ -369,7 +360,7 @@ extension TransactionActions on Transaction {
   /// **No query max score**: 72.5
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
-  DebugR titleSuggestionScore({
+  double titleSuggestionScore({
     String? query,
     int? accountId,
     int? categoryId,
@@ -423,21 +414,21 @@ extension TransactionActions on Transaction {
         multiplier += 3.5;
       }
 
-    final Duration? transactionDateDifference =
-        transactionDate?.difference(this.transactionDate).abs();
+      final Duration? transactionDateDifference =
+          transactionDate?.difference(this.transactionDate).abs();
 
-    final double recencyScoreMultipler = switch (transactionDateDifference) {
-      null => 0,
-      > const Duration(days: 60) => 0.1,
-      > const Duration(days: 14) => 0.2,
-      > const Duration(days: 7) => 0.3,
-      _ => 0.4,
-    };
+      final double recencyScoreMultipler = switch (transactionDateDifference) {
+        null => 0,
+        > const Duration(days: 60) => 0.1,
+        > const Duration(days: 14) => 0.2,
+        > const Duration(days: 7) => 0.3,
+        _ => 0.4,
+      };
 
       multiplier += recencyScoreMultipler;
     }
 
-    return DebugR(score: score * multiplier, reasons: reasons);
+    return score * multiplier;
   }
 
   /// When user makes a transfer, it actually creates two transactions.
