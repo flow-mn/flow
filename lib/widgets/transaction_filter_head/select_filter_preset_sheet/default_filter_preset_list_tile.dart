@@ -2,6 +2,7 @@ import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -49,7 +50,7 @@ class _DefaultFilterPresetListTileState
       selected: widget.selected,
     );
 
-    final List<SlidableAction> startActionPanes = [
+    final List<SlidableAction> startActions = [
       if (!widget.isDefault && widget.makeDefault != null)
         SlidableAction(
           onPressed: (context) => widget.makeDefault!(),
@@ -58,16 +59,10 @@ class _DefaultFilterPresetListTileState
         ),
     ];
 
-    return Slidable(
+    return DirectionalSlidable(
       key: widget.dismissibleKey,
       groupTag: "filter_preset_list_tile",
-      startActionPane:
-          startActionPanes.isNotEmpty
-              ? ActionPane(
-                motion: const DrawerMotion(),
-                children: startActionPanes,
-              )
-              : null,
+      startActions: startActions,
       child: listTile,
     );
   }

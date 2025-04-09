@@ -54,7 +54,7 @@ class TitleInput extends StatelessWidget {
               child: child,
             ),
         onSelected: (option) => controller.text = option.title,
-        suggestionsCallback: getAutocompleteOptions,
+        suggestionsCallback: (query) => getAutocompleteOptions(query),
         builder: (context, controller, focusNode) {
           return TextField(
             controller: controller,
@@ -75,23 +75,24 @@ class TitleInput extends StatelessWidget {
     );
   }
 
-  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
-    String query,
-  ) async => ObjectBox()
-      .transactionTitleSuggestions(
-        currentInput: query,
-        accountId: selectedAccountId,
-        categoryId: selectedCategoryId,
-        type: transactionType,
-        amount: amount,
-        currency: currency,
-        transactionDate: transactionDate,
-        limit: 5,
-      )
-      .then(
-        (results) =>
-            results
-                .where((item) => item.title != "transaction.fallbackTitle".tr())
-                .toList(),
-      );
+  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(String query) =>
+      ObjectBox()
+          .transactionTitleSuggestions(
+            currentInput: query,
+            accountId: selectedAccountId,
+            categoryId: selectedCategoryId,
+            type: transactionType,
+            amount: amount,
+            currency: currency,
+            transactionDate: transactionDate,
+            limit: 5,
+          )
+          .then(
+            (results) =>
+                results
+                    .where(
+                      (item) => item.title != "transaction.fallbackTitle".tr(),
+                    )
+                    .toList(),
+          );
 }

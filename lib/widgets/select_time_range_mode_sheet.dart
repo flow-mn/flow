@@ -1,5 +1,6 @@
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
@@ -87,17 +88,17 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
           ListTile(
             title: Text("tabs.stats.timeRange.mode.byMonth".t(context)),
             onTap: () => context.pop(TimeRangeMode.byMonth),
-            trailing: const Icon(Symbols.chevron_right_rounded),
+            trailing: DirectionalChevron(),
           ),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.byYear".t(context)),
             onTap: () => context.pop(TimeRangeMode.byYear),
-            trailing: const Icon(Symbols.chevron_right_rounded),
+            trailing: DirectionalChevron(),
           ),
           ListTile(
             title: Text("tabs.stats.timeRange.mode.custom".t(context)),
             onTap: () => context.pop(TimeRangeMode.custom),
-            trailing: const Icon(Symbols.chevron_right_rounded),
+            trailing: DirectionalChevron(),
           ),
         ],
       ),

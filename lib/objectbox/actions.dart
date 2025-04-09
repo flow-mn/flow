@@ -269,10 +269,10 @@ extension MainActions on ObjectBox {
         mode: TransactionSearchMode.substring,
       ),
       range: TransactionFilterTimeRange(
-        CustomTimeRange(
-          Moment.now() - const Duration(days: 270),
-          Moment.startOfTomorrow(),
-        ).encodeShort(),
+        Moment.now()
+            .subtract(const Duration(days: 210))
+            .rangeTo(Moment.now())
+            .encodeShort(),
       ),
     );
 
@@ -345,10 +345,9 @@ extension MainActions on ObjectBox {
             .toList();
 
     return grouped.map((items) {
-      final RelevanceScoredTitle max = items.reduce(
-        (a, b) => a.relevancy.score > b.relevancy.score ? a : b,
-      );
-      return max;
+      final double max = items.map((x) => x.relevancy).reduce(math.max);
+
+      return (title: items.first.title, relevancy: max);
     }).toList();
   }
 }
@@ -358,14 +357,14 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  ///   * If [accountId] matches, and [amount] matches, score is increased by another 50%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
   /// * If [transactionType] matches, score is increased by 50%
-  /// * If [categoryId] matches, score is increased by 250%
-  ///   * If [categoryId] matches, and [amount] matches, score is increased by 250%
-  ///   * If [categoryId] matches, depending on recency of [transactionDate], score is increased by 0% - 100%
+  /// * If [categoryId] matches, score is increased by 150%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 350%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
   ///
-  /// **Max multi.**: 7.25
-  /// **Max score**: 797.5
+  /// **Max multi.**: 7.15
+  /// **Max score**: 786.5
   /// **Query only max score**: 110.0
   /// **No query max score**: 72.5
   ///
@@ -408,8 +407,7 @@ extension TransactionActions on Transaction {
       reasons.add("accountId matches, 25%");
 
       if (amountMatches) {
-        multiplier += 0.5;
-        reasons.add("amount matches alongside accountId, 50%");
+        multiplier += 1.0;
       }
     }
 
@@ -419,34 +417,22 @@ extension TransactionActions on Transaction {
     }
 
     if (category.targetId == categoryId) {
-      multiplier += 2.5;
-      reasons.add("categoryId matches, 250%");
+      multiplier += 1.5;
 
       if (amountMatches) {
-        multiplier += 2.5;
-        reasons.add("amount matches alongside categoryId, 250%");
+        multiplier += 3.5;
       }
 
-      final Duration? transactionDateDifference =
-          transactionDate?.difference(this.transactionDate).abs();
+    final Duration? transactionDateDifference =
+        transactionDate?.difference(this.transactionDate).abs();
 
-      final double recencyScoreMultipler = switch (transactionDateDifference) {
-        null => 0,
-        >= const Duration(days: 180) => 0.1,
-        >= const Duration(days: 60) => 0.2,
-        >= const Duration(days: 14) => 0.3,
-        >= const Duration(days: 7) => 0.4,
-        >= const Duration(hours: 72) => 0.5,
-        >= const Duration(hours: 24) => 0.3,
-        >= const Duration(hours: 8) => 0.1,
-        _ => 0.0,
-      };
-
-      if (transactionDateDifference != null) {
-        reasons.add(
-          "transactionDate difference: ${transactionDateDifference.inDays} days, plus x $recencyScoreMultipler",
-        );
-      }
+    final double recencyScoreMultipler = switch (transactionDateDifference) {
+      null => 0,
+      > const Duration(days: 60) => 0.1,
+      > const Duration(days: 14) => 0.2,
+      > const Duration(days: 7) => 0.3,
+      _ => 0.4,
+    };
 
       multiplier += recencyScoreMultipler;
     }

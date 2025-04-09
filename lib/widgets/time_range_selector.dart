@@ -55,88 +55,98 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
       _ => "tabs.stats.timeRange.mode.custom",
     }.t(context);
 
+    final TextDirection textDirection = Directionality.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            if (buildNextPrev) ...[
-              IconButton(
-                icon: const Icon(Symbols.chevron_left),
-                onPressed: prev,
-              ),
-              const SizedBox(width: 12.0),
-            ],
-            Expanded(
-              child: Listener(
-                onPointerSignal: (event) {
-                  if (_timeRange is! PageableRange) return;
-                  if (event is! PointerScrollEvent) return;
-
-                  if (event.scrollDelta.dy < 0) {
-                    prev();
-                  } else if (event.scrollDelta.dy > 0) {
-                    next();
-                  }
-                },
-                child: GestureDetector(
-                  onHorizontalDragEnd: (details) {
-                    final double? velocity = details.primaryVelocity;
-                    if (velocity == null) return;
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            children: [
+              if (buildNextPrev) ...[
+                IconButton(
+                  icon: const Icon(Symbols.chevron_left),
+                  onPressed: prev,
+                ),
+                const SizedBox(width: 12.0),
+              ],
+              Expanded(
+                child: Listener(
+                  onPointerSignal: (event) {
                     if (_timeRange is! PageableRange) return;
+                    if (event is! PointerScrollEvent) return;
 
-                    if (velocity <= -_dragThreshold) {
-                      next();
-                    } else if (velocity >= _dragThreshold) {
+                    if (event.scrollDelta.dy < 0) {
                       prev();
+                    } else if (event.scrollDelta.dy > 0) {
+                      next();
                     }
                   },
-                  child: switch (_timeRange) {
-                    LocalWeekTimeRange localWeekTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    MonthTimeRange monthTimeRange => Button(
-                      onTap: pickMonth,
-                      child: Text(
-                        monthTimeRange.from.format(
-                          payload:
-                              monthTimeRange.from.isAtSameYearAs(DateTime.now())
-                                  ? "MMMM"
-                                  : "MMMM YYYY",
+                  child: Directionality(
+                    textDirection: textDirection,
+                    child: GestureDetector(
+                      onHorizontalDragEnd: (details) {
+                        final double? velocity = details.primaryVelocity;
+                        if (velocity == null) return;
+                        if (_timeRange is! PageableRange) return;
+
+                        if (velocity <= -_dragThreshold) {
+                          next();
+                        } else if (velocity >= _dragThreshold) {
+                          prev();
+                        }
+                      },
+                      child: switch (_timeRange) {
+                        LocalWeekTimeRange localWeekTimeRange => Button(
+                          onTap: selectRange,
+                          child: Text(
+                            "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                        MonthTimeRange monthTimeRange => Button(
+                          onTap: pickMonth,
+                          child: Text(
+                            monthTimeRange.from.format(
+                              payload:
+                                  monthTimeRange.from.isAtSameYearAs(
+                                        DateTime.now(),
+                                      )
+                                      ? "MMMM"
+                                      : "MMMM YYYY",
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        YearTimeRange yearTimeRange => Button(
+                          onTap: selectRange,
+                          child: Text(
+                            yearTimeRange.year.toString(),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        _ => Button(
+                          onTap: pickRange,
+                          child: Text(
+                            "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      },
                     ),
-                    YearTimeRange yearTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        yearTimeRange.year.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    _ => Button(
-                      onTap: pickRange,
-                      child: Text(
-                        "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  },
+                  ),
                 ),
               ),
-            ),
-            if (buildNextPrev) ...[
-              const SizedBox(width: 12.0),
-              IconButton(
-                icon: const Icon(Symbols.chevron_right),
-                onPressed: next,
-              ),
+              if (buildNextPrev) ...[
+                const SizedBox(width: 12.0),
+                IconButton(
+                  icon: const Icon(Symbols.chevron_right),
+                  onPressed: next,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
         const SizedBox(height: 4.0),
         Row(

@@ -4,6 +4,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/navbar_theme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/directionality.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:material_symbols_icons/symbols.dart";
 import "package:pie_menu/pie_menu.dart";
@@ -29,7 +30,7 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
       builder: (context, buttonOrder, child) {
         buttonOrder ??= TransactionType.values;
 
-        if (Directionality.maybeOf(context) == TextDirection.rtl) {
+        if (context.isRtl) {
           buttonOrder = buttonOrder.reversed.toList();
         }
 
