@@ -27,9 +27,16 @@ import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
 
+class DebugR {
+  final double score;
+  final List<String> reasons;
+
+  const DebugR({required this.score, required this.reasons});
+}
+
 final Logger _log = Logger("ObjectBoxActions");
 
-typedef RelevanceScoredTitle = ({String title, double relevancy});
+typedef RelevanceScoredTitle = ({String title, DebugR relevancy});
 
 extension MainActions on ObjectBox {
   /// Returns the grand total of all accounts in primary currency in the primary currency
@@ -311,13 +318,15 @@ extension MainActions on ObjectBox {
             .cast<RelevanceScoredTitle>()
             .toList();
 
-    relevanceCalculatedList.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+    relevanceCalculatedList.sort(
+      (a, b) => b.relevancy.score.compareTo(a.relevancy.score),
+    );
 
     final List<RelevanceScoredTitle> scoredTitles = _mergeTitleRelevancy(
       relevanceCalculatedList,
     );
 
-    scoredTitles.sort((a, b) => b.relevancy.compareTo(a.relevancy));
+    scoredTitles.sort((a, b) => b.relevancy.score.compareTo(a.relevancy.score));
 
     return scoredTitles.sublist(
       0,
@@ -330,7 +339,10 @@ extension MainActions on ObjectBox {
     List<RelevanceScoredTitle> scores,
   ) {
     final List<List<RelevanceScoredTitle>> grouped =
-        scores.groupBy((relevance) => relevance.title).values.toList();
+        scores
+            .groupBy((relevance) => relevance.title.toLowerCase())
+            .values
+            .toList();
 
     return grouped.map((items) {
       final double max = items.map((x) => x.relevancy).reduce(math.max);
@@ -345,18 +357,19 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  ///   * If [accountId] matches, and [amount] matches, score is increased by another 25%
-  /// * If [transactionType] matches, score is increased by 100%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
+  /// * If [transactionType] matches, score is increased by 50%
   /// * If [categoryId] matches, score is increased by 150%
-  ///   * If [categoryId] matches, and [amount] matches, score is increased by 150%
-  /// * Depending on recency of [transactionDate], score is increased by 0% - 30%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 350%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
   ///
   /// **Max multi.**: 7.15
   /// **Max score**: 786.5
   /// **Query only max score**: 110.0
+  /// **No query max score**: 72.5
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
-  double titleSuggestionScore({
+  DebugR titleSuggestionScore({
     String? query,
     int? accountId,
     int? categoryId,
@@ -367,6 +380,8 @@ extension TransactionActions on Transaction {
     String? currency,
     DateTime? transactionDate,
   }) {
+    final List<String> reasons = [];
+
     double score = 10.0;
 
     final String? normalizedTitle =
@@ -389,6 +404,7 @@ extension TransactionActions on Transaction {
 
     if (account.targetId == accountId) {
       multiplier += 0.25;
+      reasons.add("accountId matches, 25%");
 
       if (amountMatches) {
         multiplier += 1.0;
@@ -397,6 +413,7 @@ extension TransactionActions on Transaction {
 
     if (transactionType != null && transactionType == type) {
       multiplier += 0.5;
+      reasons.add("transactionType matches, 50%");
     }
 
     if (category.targetId == categoryId) {
@@ -405,7 +422,6 @@ extension TransactionActions on Transaction {
       if (amountMatches) {
         multiplier += 3.5;
       }
-    }
 
     final Duration? transactionDateDifference =
         transactionDate?.difference(this.transactionDate).abs();
@@ -418,9 +434,10 @@ extension TransactionActions on Transaction {
       _ => 0.4,
     };
 
-    multiplier += recencyScoreMultipler;
+      multiplier += recencyScoreMultipler;
+    }
 
-    return score * multiplier;
+    return DebugR(score: score * multiplier, reasons: reasons);
   }
 
   /// When user makes a transfer, it actually creates two transactions.

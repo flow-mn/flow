@@ -161,12 +161,12 @@ class TransactionSearchData {
   bool _smartMatching(Transaction t) {
     if (normalizedKeyword == null) return true;
 
-    final double score = t.titleSuggestionScore(
+    final DebugR debugR = t.titleSuggestionScore(
       query: normalizedKeyword,
       fuzzyPartial: true,
     );
 
-    return score >= smartMatchThreshold;
+    return debugR.score >= smartMatchThreshold;
   }
 
   bool _substringMatching(Transaction t) {
