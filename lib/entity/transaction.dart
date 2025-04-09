@@ -7,7 +7,9 @@ import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
+import "package:flutter/material.dart";
 import "package:json_annotation/json_annotation.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:objectbox/objectbox.dart";
 
 part "transaction.g.dart";
@@ -99,10 +101,28 @@ class Transaction implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isRecurring => extensions.recurring != null;
+
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
   TransactionType get type {
     if (isTransfer) return TransactionType.transfer;
 
     return amount.isNegative ? TransactionType.expense : TransactionType.income;
+  }
+
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  TransactionEditMode get editMode {
+    if (isRecurring) {
+      return TransactionEditMode.recurring;
+    }
+
+    if (isPending == true) {
+      return TransactionEditMode.pending;
+    }
+
+    return TransactionEditMode.normal;
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -206,4 +226,44 @@ enum TransactionSubtype implements LocalizedEnum {
   String get localizationEnumValue => name;
   @override
   String get localizationEnumName => "TransactionSubtype";
+}
+
+@JsonEnum(valueField: "value")
+enum TransactionEditMode implements LocalizedEnum {
+  normal("normal"),
+  pending("pending"),
+  recurring("recurring");
+
+  final String value;
+
+  const TransactionEditMode(this.value);
+
+  @override
+  final String localizationEnumName = "TransactionEditMode";
+
+  @override
+  String get localizationEnumValue => value;
+
+  static TransactionEditMode resolve(Transaction t) {
+    if (t.isRecurring) {
+      return TransactionEditMode.recurring;
+    }
+
+    if (t.isPending == true) {
+      return TransactionEditMode.pending;
+    }
+
+    return TransactionEditMode.normal;
+  }
+
+  IconData get icon {
+    switch (this) {
+      case TransactionEditMode.recurring:
+        return Symbols.repeat_rounded;
+      case TransactionEditMode.pending:
+        return Symbols.schedule_rounded;
+      default:
+        return Symbols.circle_rounded;
+    }
+  }
 }

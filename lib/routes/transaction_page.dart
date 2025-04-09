@@ -66,6 +66,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late TransactionType _transactionType;
+  late TransactionEditMode _transactionEditMode;
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
@@ -142,6 +143,8 @@ class _TransactionPageState extends State<TransactionPage> {
           _currentlyEditing?.type ??
           widget.initialTransactionType ??
           TransactionType.expense;
+      _transactionEditMode =
+          _currentlyEditing?.editMode ?? TransactionEditMode.normal;
       _amount =
           _currentlyEditing?.isTransfer == true
               ? _currentlyEditing!.amount.abs()
@@ -368,9 +371,6 @@ class _TransactionPageState extends State<TransactionPage> {
                               _selectedCategory?.name ??
                                   "transaction.edit.selectCategory".t(context),
                             ),
-                            // subtitle: _selectedAccount == null
-                            //     ? null
-                            //     : Text(_selectedAccount!.balance.money),
                             onTap: () => selectCategory(),
                             trailing:
                                 _selectedCategory == null
@@ -387,13 +387,58 @@ class _TransactionPageState extends State<TransactionPage> {
                       const SizedBox(height: 24.0),
                       Section(
                         title: "transaction.date".t(context),
-                        child: ListTile(
-                          title: Text(_transactionDate.toMoment().LLL),
-                          onTap: () => selectTransactionDate(),
-                          trailing:
-                              _selectedCategory == null
-                                  ? const Icon(Symbols.chevron_right)
-                                  : null,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 12.0,
+                          children: [
+                            SizedBox.shrink(),
+                            Align(
+                              alignment: AlignmentDirectional.topStart,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  spacing: 12.0,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox.shrink(),
+                                    ...TransactionEditMode.values
+                                        .where(
+                                          (mode) =>
+                                              mode !=
+                                              TransactionEditMode.normal,
+                                        )
+                                        .map(
+                                          (mode) => FilterChip(
+                                            label: Text(
+                                              mode.localizedNameContext(
+                                                context,
+                                              ),
+                                            ),
+                                            selected:
+                                                mode == _transactionEditMode,
+                                            avatar: Icon(mode.icon),
+                                            showCheckmark: false,
+                                            onSelected:
+                                                (selected) =>
+                                                    updateTransactionEditMode(
+                                                      selected ? mode : null,
+                                                    ),
+                                          ),
+                                        ),
+                                    SizedBox.shrink(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(_transactionDate.toMoment().LLL),
+                              onTap: () => selectTransactionDate(),
+                              trailing:
+                                  _selectedCategory == null
+                                      ? const Icon(Symbols.chevron_right)
+                                      : null,
+                            ),
+                          ],
                         ),
                       ),
                       if (_geo != null || enableGeo) ...[
@@ -585,6 +630,24 @@ class _TransactionPageState extends State<TransactionPage> {
     _amount = _amount.abs() * amountSign;
 
     setState(() {});
+  }
+
+  void updateTransactionEditMode(TransactionEditMode? mode) {
+    mode ??= TransactionEditMode.normal;
+    if (mode == _transactionEditMode) return;
+
+    _transactionEditMode = mode;
+
+    setState(() {});
+
+    switch (mode) {
+      case TransactionEditMode.pending:
+        selectTransactionDate();
+        break;
+      case TransactionEditMode.recurring:
+      case TransactionEditMode.normal:
+        break;
+    }
   }
 
   void inputAmount() async {
@@ -783,6 +846,8 @@ class _TransactionPageState extends State<TransactionPage> {
       _transactionDate = result ?? _transactionDate;
     });
 
+    _postSelectTransactionDate();
+
     if (!mounted || result == null) return;
 
     final TimeOfDay? timeResult = await showTimePicker(
@@ -801,6 +866,16 @@ class _TransactionPageState extends State<TransactionPage> {
         millisecond: 0,
       );
     });
+
+    _postSelectTransactionDate();
+  }
+
+  void _postSelectTransactionDate() async {
+    if (_transactionEditMode != TransactionEditMode.normal) return;
+
+    if (_transactionDate >= Moment.now().startOfNextMinute()) {
+      _transactionEditMode = TransactionEditMode.pending;
+    }
   }
 
   void selectLocation() async {

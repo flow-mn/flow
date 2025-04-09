@@ -3,7 +3,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
-import "package:flow/widgets/select_currency_sheet.dart";
+import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:go_router/go_router.dart";

@@ -27,12 +27,8 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double scrollableContentMaxHeight =
-        MediaQuery.of(context).size.height * 0.4;
-
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: scrollableContentMaxHeight,
-      title: Text("tabs.stats.timeRange.select".t(context)),
+      title: Text("select.timeRange".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
@@ -50,7 +46,7 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              "tabs.stats.timeRange.presets".t(context),
+              "select.timeRange.presets".t(context),
               style: context.textTheme.labelMedium,
             ),
           ),
@@ -62,23 +58,23 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
               runSpacing: 12.0,
               children: [
                 ActionChip(
-                  label: Text("tabs.stats.timeRange.last30days".t(context)),
+                  label: Text("select.timeRange.last30days".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.last30Days),
                 ),
                 ActionChip(
-                  label: Text("tabs.stats.timeRange.thisWeek".t(context)),
+                  label: Text("select.timeRange.thisWeek".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.thisWeek),
                 ),
                 ActionChip(
-                  label: Text("tabs.stats.timeRange.thisMonth".t(context)),
+                  label: Text("select.timeRange.thisMonth".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.thisMonth),
                 ),
                 ActionChip(
-                  label: Text("tabs.stats.timeRange.thisYear".t(context)),
+                  label: Text("select.timeRange.thisYear".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.thisYear),
                 ),
                 ActionChip(
-                  label: Text("tabs.stats.timeRange.allTime".t(context)),
+                  label: Text("select.timeRange.allTime".t(context)),
                   onPressed: () => context.pop(TimeRangeMode.allTime),
                 ),
               ],
@@ -86,17 +82,17 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
           ),
           const SizedBox(height: 12.0),
           ListTile(
-            title: Text("tabs.stats.timeRange.mode.byMonth".t(context)),
+            title: Text("select.timeRange.mode.byMonth".t(context)),
             onTap: () => context.pop(TimeRangeMode.byMonth),
             trailing: DirectionalChevron(),
           ),
           ListTile(
-            title: Text("tabs.stats.timeRange.mode.byYear".t(context)),
+            title: Text("select.timeRange.mode.byYear".t(context)),
             onTap: () => context.pop(TimeRangeMode.byYear),
             trailing: DirectionalChevron(),
           ),
           ListTile(
-            title: Text("tabs.stats.timeRange.mode.custom".t(context)),
+            title: Text("select.timeRange.mode.custom".t(context)),
             onTap: () => context.pop(TimeRangeMode.custom),
             trailing: DirectionalChevron(),
           ),

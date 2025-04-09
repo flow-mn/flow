@@ -6,7 +6,7 @@ part "recurring.g.dart";
 
 @JsonSerializable(explicitToJson: true)
 class Recurring extends TransactionExtension implements Jasonable {
-  static const String name = "@flow/default-recurring";
+  static const String keyName = "@flow/default-recurring";
 
   @override
   String? relatedTransactionUuid;
@@ -29,7 +29,7 @@ class Recurring extends TransactionExtension implements Jasonable {
 
   @override
   @JsonKey(includeToJson: true)
-  final String key = Recurring.name;
+  final String key = Recurring.keyName;
 
   factory Recurring.fromJson(Map<String, dynamic> json) =>
       _$RecurringFromJson(json);

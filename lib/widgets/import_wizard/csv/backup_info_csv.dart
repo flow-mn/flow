@@ -9,7 +9,7 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/import_wizard/csv/account_currency_list_tile.dart";
 import "package:flow/widgets/import_wizard/import_item_list_tile.dart";
-import "package:flow/widgets/select_currency_sheet.dart";
+import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
