@@ -139,7 +139,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                     ? "general.enabled".t(context)
                     : "general.disabled".t(context),
               ),
-              leading: const Icon(Symbols.schedule_rounded),
+              leading: const Icon(Symbols.search_activity_rounded),
               onTap:
                   () =>
                       _pushAndRefreshAfter("/preferences/pendingTransactions"),

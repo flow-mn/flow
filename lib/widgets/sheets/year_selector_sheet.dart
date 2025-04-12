@@ -36,7 +36,7 @@ class _YearSelectorSheetState extends State<YearSelectorSheet> {
   @override
   Widget build(BuildContext context) {
     return ModalSheet(
-      title: Text("general.timeSelector.select.year".t(context)),
+      title: Text("select.time.select.year".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
@@ -46,12 +46,13 @@ class _YearSelectorSheetState extends State<YearSelectorSheet> {
                   final DateTime now = DateTime.now();
                   _yearController.text = now.year.toString();
                 }),
-            child: Text("general.timeSelector.now".t(context)),
+            child: Text("select.time.now".t(context)),
           ),
           Button(onTap: pop, child: Text("general.done".t(context))),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _yearController,

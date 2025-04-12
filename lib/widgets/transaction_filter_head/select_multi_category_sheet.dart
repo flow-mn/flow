@@ -76,7 +76,6 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           showSearchBar
               ? Frame(
                 child: TextField(
-                  autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(

@@ -261,7 +261,7 @@ enum TransactionEditMode implements LocalizedEnum {
       case TransactionEditMode.recurring:
         return Symbols.repeat_rounded;
       case TransactionEditMode.pending:
-        return Symbols.schedule_rounded;
+        return Symbols.search_activity_rounded;
       default:
         return Symbols.circle_rounded;
     }

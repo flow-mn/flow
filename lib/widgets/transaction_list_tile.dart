@@ -134,7 +134,7 @@ class TransactionListTile extends StatelessWidget {
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
                                   child: Icon(
-                                    Symbols.schedule_rounded,
+                                    Symbols.search_activity_rounded,
                                     size:
                                         context.textTheme.bodyMedium!.fontSize!,
                                     fill: 0.0,
