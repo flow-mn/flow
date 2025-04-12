@@ -39,6 +39,7 @@ class SelectRecurrenceModeSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(width: double.infinity),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Wrap(

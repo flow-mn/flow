@@ -30,6 +30,7 @@ import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
+import "package:flow/widgets/sheets/select_recurrence_mode_sheet.dart";
 import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
 import "package:flutter/material.dart";
@@ -100,7 +101,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
   List<RelevanceScoredTitle>? autofillHints;
 
-  late DateTime _transactionDate;
+  DateTime? _transactionDate;
+
+  DateTime get transactionDate => _transactionDate ?? DateTime.now();
 
   late final bool enableGeo;
 
@@ -288,7 +291,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                   showPostTransactionBalance
                                       ? MoneyText(
                                         _selectedAccount!.balanceAt(
-                                          _transactionDate,
+                                          transactionDate,
                                         ),
                                       )
                                       : null,
@@ -323,7 +326,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                 _selectedAccountTransferTo != null
                                     ? MoneyText(
                                       _selectedAccountTransferTo!.balanceAt(
-                                        _transactionDate,
+                                        transactionDate,
                                       ),
                                     )
                                     : null,
@@ -403,9 +406,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                     SizedBox.shrink(),
                                     ...TransactionEditMode.values
                                         .where(
-                                          (mode) =>
-                                              mode !=
-                                              TransactionEditMode.normal,
+                                          (x) =>
+                                              x != TransactionEditMode.normal,
                                         )
                                         .map(
                                           (mode) => FilterChip(
@@ -431,7 +433,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               ),
                             ),
                             ListTile(
-                              title: Text(_transactionDate.toMoment().LLL),
+                              title: Text(transactionDate.toMoment().LLL),
                               onTap: () => selectTransactionDate(),
                               trailing:
                                   _selectedCategory == null
@@ -633,7 +635,12 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateTransactionEditMode(TransactionEditMode? mode) {
+    if (_transactionEditMode != TransactionEditMode.normal && mode == null) {
+      _transactionDate = null;
+    }
+
     mode ??= TransactionEditMode.normal;
+
     if (mode == _transactionEditMode) return;
 
     _transactionEditMode = mode;
@@ -645,6 +652,8 @@ class _TransactionPageState extends State<TransactionPage> {
         selectTransactionDate();
         break;
       case TransactionEditMode.recurring:
+        selectRecurrence();
+        break;
       case TransactionEditMode.normal:
         break;
     }
@@ -833,13 +842,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectTransactionDate() async {
-    final TimeOfDay currentTimeOfDay = TimeOfDay.fromDateTime(_transactionDate);
+    final TimeOfDay currentTimeOfDay = TimeOfDay.fromDateTime(transactionDate);
 
     final DateTime? result = await showDatePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
       lastDate: DateTime(9999, 12, 31),
-      initialDate: _transactionDate,
+      initialDate: transactionDate,
     );
 
     setState(() {
@@ -858,7 +867,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (timeResult == null) return;
 
     setState(() {
-      _transactionDate = _transactionDate.copyWith(
+      _transactionDate = transactionDate.copyWith(
         hour: timeResult.hour,
         minute: timeResult.minute,
         second: 0,
@@ -870,10 +879,25 @@ class _TransactionPageState extends State<TransactionPage> {
     _postSelectTransactionDate();
   }
 
+  void selectRecurrence() async {
+    if (_transactionEditMode != TransactionEditMode.recurring) return;
+
+    final mode = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectRecurrenceModeSheet(),
+    );
+
+    print(mode);
+  }
+
   void _postSelectTransactionDate() async {
     if (_transactionEditMode != TransactionEditMode.normal) return;
 
-    if (_transactionDate >= Moment.now().startOfNextMinute()) {
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
+
+    if (pendingTransactionsRequireConfrimation &&
+        transactionDate >= Moment.now().startOfNextMinute()) {
       _transactionEditMode = TransactionEditMode.pending;
     }
   }
@@ -938,7 +962,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final bool? isPending =
         pendingTransactionsRequireConfrimation &&
                 _currentlyEditing.transactionDate.isPast
-            ? _transactionDate.isFuture
+            ? transactionDate.isFuture
             : _currentlyEditing.isPending;
 
     if (_transactionType == TransactionType.transfer) {
@@ -969,7 +993,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.title = formattedTitle;
     _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
-    _currentlyEditing.transactionDate = _transactionDate;
+    _currentlyEditing.transactionDate = transactionDate;
     _currentlyEditing.isPending = isPending;
 
     /// When user edits a balance amendment transaction, it is no longer a balance amendment.
@@ -1012,9 +1036,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     final bool isPending =
         pendingTransactionsRequireConfrimation
-            ? _transactionDate.isFutureAnchored(
-              Moment.now().startOfNextMinute(),
-            )
+            ? transactionDate.isFutureAnchored(Moment.now().startOfNextMinute())
             : false;
 
     if (isTransfer) {

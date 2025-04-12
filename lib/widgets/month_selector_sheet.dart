@@ -32,7 +32,7 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
   @override
   Widget build(BuildContext context) {
     return ModalSheet(
-      title: Text("general.timeSelector.select.month".t(context)),
+      title: Text("select.time.select.month".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
@@ -43,12 +43,13 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
                   year = now.year;
                   month = now.month;
                 }),
-            child: Text("general.timeSelector.now".t(context)),
+            child: Text("select.time.now".t(context)),
           ),
           Button(onTap: pop, child: Text("general.done".t(context))),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           YearSelectorBar(year: year, onUpdate: updateYear),
           const SizedBox(height: 16.0),

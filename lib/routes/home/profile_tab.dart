@@ -52,7 +52,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           ListTile(
             title: Text("preferences.transactions.pending".t(context)),
-            leading: const Icon(Symbols.schedule_rounded),
+            leading: const Icon(Symbols.search_activity_rounded),
             onTap: () => context.push("/transactions/pending"),
           ),
           ListTile(
