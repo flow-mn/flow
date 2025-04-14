@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class WeekdaySelector extends StatefulWidget {
