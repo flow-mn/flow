@@ -182,7 +182,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     final range = await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           _timeRange is CustomTimeRange
               ? DateTimeRange(

@@ -1,10 +1,10 @@
 import "package:flow/l10n/extensions.dart";
+import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
-import "package:moment_dart/moment_dart.dart";
 
 /// Pops with [ValueOr<DateTime>]
 class UpdateBalanceOptionsSheet extends StatelessWidget {
@@ -40,11 +40,7 @@ class UpdateBalanceOptionsSheet extends StatelessWidget {
   }
 
   void _selectDateAndTimeAndPop(BuildContext context) async {
-    final DateTime? dateResult = await showDatePicker(
-      context: context,
-      firstDate: Moment.minValue,
-      lastDate: Moment.maxValue,
-    );
+    final DateTime? dateResult = await context.pickDate();
 
     if (dateResult == null) return;
     if (!context.mounted) return;

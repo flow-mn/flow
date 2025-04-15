@@ -108,6 +108,10 @@ class SyncService {
     required String parent,
     Function(Stream<double>)? onProgress,
   }) async {
+    if (!ICloudSyncService.supported) {
+      return;
+    }
+
     if (!UserPreferencesService().enableICloudSync) {
       _log.info("Cancelling iCloud upload since user hasn't enabled it");
       return;
