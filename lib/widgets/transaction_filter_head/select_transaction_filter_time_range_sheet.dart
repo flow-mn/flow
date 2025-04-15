@@ -50,7 +50,7 @@ Future<TransactionFilterTimeRange?> showTransactionFilterTimeRangeSelectorSheet(
     TimeRangeMode.custom when context.mounted => await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           initialValue?.range is CustomTimeRange
               ? DateTimeRange(

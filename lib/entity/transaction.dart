@@ -113,16 +113,16 @@ class Transaction implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  TransactionEditMode get editMode {
+  TransactionDateEditMode get editMode {
     if (isRecurring) {
-      return TransactionEditMode.recurring;
+      return TransactionDateEditMode.recurring;
     }
 
     if (isPending == true) {
-      return TransactionEditMode.pending;
+      return TransactionDateEditMode.pending;
     }
 
-    return TransactionEditMode.normal;
+    return TransactionDateEditMode.normal;
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -229,14 +229,14 @@ enum TransactionSubtype implements LocalizedEnum {
 }
 
 @JsonEnum(valueField: "value")
-enum TransactionEditMode implements LocalizedEnum {
+enum TransactionDateEditMode implements LocalizedEnum {
   normal("normal"),
   pending("pending"),
   recurring("recurring");
 
   final String value;
 
-  const TransactionEditMode(this.value);
+  const TransactionDateEditMode(this.value);
 
   @override
   final String localizationEnumName = "TransactionEditMode";
@@ -244,23 +244,23 @@ enum TransactionEditMode implements LocalizedEnum {
   @override
   String get localizationEnumValue => value;
 
-  static TransactionEditMode resolve(Transaction t) {
+  static TransactionDateEditMode resolve(Transaction t) {
     if (t.isRecurring) {
-      return TransactionEditMode.recurring;
+      return TransactionDateEditMode.recurring;
     }
 
     if (t.isPending == true) {
-      return TransactionEditMode.pending;
+      return TransactionDateEditMode.pending;
     }
 
-    return TransactionEditMode.normal;
+    return TransactionDateEditMode.normal;
   }
 
   IconData get icon {
     switch (this) {
-      case TransactionEditMode.recurring:
+      case TransactionDateEditMode.recurring:
         return Symbols.repeat_rounded;
-      case TransactionEditMode.pending:
+      case TransactionDateEditMode.pending:
         return Symbols.search_activity_rounded;
       default:
         return Symbols.circle_rounded;

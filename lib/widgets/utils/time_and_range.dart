@@ -53,7 +53,7 @@ Future<TimeRange?> showTimeRangePickerSheet(
     TimeRangeMode.custom when context.mounted => await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           initialValue is CustomTimeRange
               ? DateTimeRange(start: initialValue.from, end: initialValue.to)
