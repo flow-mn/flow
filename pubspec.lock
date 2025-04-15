@@ -1326,10 +1326,10 @@ packages:
     dependency: "direct main"
     description:
       name: recurrence
-      sha256: dcca07a9badb935c8487f49c05883cc00a9804b33397df1215ed8234764c31dd
+      sha256: "7c3ee1ed4c573f8e99e1832041aa318666be29b0484d49e9613d336be8dce56e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6"
+    version: "0.0.8"
   screen_retriever:
     dependency: transitive
     description:

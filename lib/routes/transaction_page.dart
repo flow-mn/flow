@@ -30,7 +30,7 @@ import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
-import "package:flow/widgets/sheets/select_recurrence_mode_sheet.dart";
+import "package:flow/widgets/sheets/select_recurrence_sheet.dart";
 import "package:flow/widgets/square_map.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
 import "package:flutter/material.dart";
@@ -43,6 +43,7 @@ import "package:latlong2/latlong.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 
 final Logger _log = Logger("TransactionPage");
 
@@ -67,7 +68,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late TransactionType _transactionType;
-  late TransactionEditMode _transactionEditMode;
+  late TransactionDateEditMode _transactionEditMode;
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
@@ -100,6 +101,8 @@ class _TransactionPageState extends State<TransactionPage> {
   Account? _selectedAccountTransferTo;
 
   List<RelevanceScoredTitle>? autofillHints;
+
+  Recurrence? _recurrence;
 
   DateTime? _transactionDate;
 
@@ -147,7 +150,7 @@ class _TransactionPageState extends State<TransactionPage> {
           widget.initialTransactionType ??
           TransactionType.expense;
       _transactionEditMode =
-          _currentlyEditing?.editMode ?? TransactionEditMode.normal;
+          _currentlyEditing?.editMode ?? TransactionDateEditMode.normal;
       _amount =
           _currentlyEditing?.isTransfer == true
               ? _currentlyEditing!.amount.abs()
@@ -404,10 +407,11 @@ class _TransactionPageState extends State<TransactionPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     SizedBox.shrink(),
-                                    ...TransactionEditMode.values
+                                    ...TransactionDateEditMode.values
                                         .where(
                                           (x) =>
-                                              x != TransactionEditMode.normal,
+                                              x !=
+                                              TransactionDateEditMode.normal,
                                         )
                                         .map(
                                           (mode) => FilterChip(
@@ -432,13 +436,18 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                               ),
                             ),
-                            ListTile(
-                              title: Text(transactionDate.toMoment().LLL),
-                              onTap: () => selectTransactionDate(),
-                              trailing:
-                                  _selectedCategory == null
-                                      ? const Icon(Symbols.chevron_right)
-                                      : null,
+                            AnimatedSize(
+                              duration: const Duration(milliseconds: 300),
+                              child:
+                                  _transactionEditMode ==
+                                          TransactionDateEditMode.recurring
+                                      ? Text("A/")
+                                      : ListTile(
+                                        title: Text(
+                                          transactionDate.toMoment().LLL,
+                                        ),
+                                        onTap: () => selectTransactionDate(),
+                                      ),
                             ),
                           ],
                         ),
@@ -634,12 +643,13 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {});
   }
 
-  void updateTransactionEditMode(TransactionEditMode? mode) {
-    if (_transactionEditMode != TransactionEditMode.normal && mode == null) {
+  void updateTransactionEditMode(TransactionDateEditMode? mode) {
+    if (_transactionEditMode != TransactionDateEditMode.normal &&
+        mode == null) {
       _transactionDate = null;
     }
 
-    mode ??= TransactionEditMode.normal;
+    mode ??= TransactionDateEditMode.normal;
 
     if (mode == _transactionEditMode) return;
 
@@ -648,13 +658,13 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {});
 
     switch (mode) {
-      case TransactionEditMode.pending:
+      case TransactionDateEditMode.pending:
         selectTransactionDate();
         break;
-      case TransactionEditMode.recurring:
+      case TransactionDateEditMode.recurring:
         selectRecurrence();
         break;
-      case TransactionEditMode.normal:
+      case TransactionDateEditMode.normal:
         break;
     }
   }
@@ -846,8 +856,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
     final DateTime? result = await showDatePicker(
       context: context,
-      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime(9999, 12, 31),
+      firstDate: Moment.minValue,
+      lastDate: Moment.maxValue,
       initialDate: transactionDate,
     );
 
@@ -879,26 +889,69 @@ class _TransactionPageState extends State<TransactionPage> {
     _postSelectTransactionDate();
   }
 
+  void selectRecurrenceStart() async {
+    final DateTime? result = await showDatePicker(
+      context: context,
+      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+      lastDate: Moment.maxValue,
+      initialDate: _recurrence?.range.from ?? transactionDate,
+    );
+
+    if (result == null) return;
+
+    setState(() {
+      _recurrence = Recurrence(
+        range: CustomTimeRange(
+          result,
+          _recurrence?.range.to ?? Moment.maxValue,
+        ),
+        rules: _recurrence?.rules ?? [],
+      );
+    });
+  }
+
+  void selectRecurrenceEnd() async {
+    final DateTime? result = await showDatePicker(
+      context: context,
+      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+      lastDate: Moment.maxValue,
+      initialDate: _recurrence?.range.to ?? Moment.maxValue,
+    );
+
+    if (result == null) return;
+
+    setState(() {
+      _recurrence = Recurrence(
+        range: CustomTimeRange(
+          result,
+          _recurrence?.range.to ?? Moment.maxValue,
+        ),
+        rules: _recurrence?.rules ?? [],
+      );
+    });
+  }
+
   void selectRecurrence() async {
-    if (_transactionEditMode != TransactionEditMode.recurring) return;
+    if (_transactionEditMode != TransactionDateEditMode.recurring) return;
 
     final mode = await showModalBottomSheet(
       context: context,
-      builder: (context) => SelectRecurrenceModeSheet(),
+      builder: (context) => SelectRecurrenceSheet(),
+      isScrollControlled: true,
     );
 
     // TODO
   }
 
   void _postSelectTransactionDate() async {
-    if (_transactionEditMode != TransactionEditMode.normal) return;
+    if (_transactionEditMode != TransactionDateEditMode.normal) return;
 
     final bool pendingTransactionsRequireConfrimation =
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     if (pendingTransactionsRequireConfrimation &&
         transactionDate >= Moment.now().startOfNextMinute()) {
-      _transactionEditMode = TransactionEditMode.pending;
+      _transactionEditMode = TransactionDateEditMode.pending;
     }
   }
 
