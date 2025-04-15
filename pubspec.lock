@@ -1214,10 +1214,10 @@ packages:
     dependency: "direct main"
     description:
       name: pie_menu
-      sha256: "011ccddc6f71c51a766cd3daba445f9e0cba9a6003e8528340c3064a241a5a30"
+      sha256: d6511a64319c500e2263656020105fbce41dcc6234cb8c16f5f5cdac47ab64c1
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.7"
+    version: "3.2.10"
   platform:
     dependency: transitive
     description:

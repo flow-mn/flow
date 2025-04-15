@@ -887,7 +887,7 @@ class _TransactionPageState extends State<TransactionPage> {
       builder: (context) => SelectRecurrenceModeSheet(),
     );
 
-    print(mode);
+    // TODO
   }
 
   void _postSelectTransactionDate() async {
