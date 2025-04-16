@@ -18,8 +18,7 @@ import "package:path/path.dart" as path;
 final Logger _log = Logger("SyncService");
 
 class SyncService {
-  static const String cloudAutobackupsFolder = "autobackups";
-  static const String cloudUserBackupsFolder = "userbackups";
+  static const String cloudBackupsFolder = "backups";
 
   static const String cloudFileBaseName = "latest";
 
@@ -80,9 +79,7 @@ class SyncService {
           throw Exception("Failed to get BackupEntry from objectBoxId: $id");
         }
 
-        unawaited(
-          saveBackupToICloud(entry: entry, parent: cloudAutobackupsFolder),
-        );
+        unawaited(saveBackupToICloud(entry: entry));
       } catch (e, stackTrace) {
         _log.warning(
           "Failed to upload backup to iCloud: ${result.filePath}",
@@ -105,7 +102,7 @@ class SyncService {
 
   Future<void> saveBackupToICloud({
     required BackupEntry entry,
-    required String parent,
+    String? parent,
     Function(Stream<double>)? onProgress,
   }) async {
     if (!UserPreferencesService().enableICloudSync) {
@@ -113,10 +110,15 @@ class SyncService {
       return;
     }
 
+    parent ??= path.join(SyncService.cloudBackupsFolder, entry.type);
+
     final bool hasNewerBackup = ICloudSyncService().filesCache.value.any((
       iCloudFile,
     ) {
-      if (path.dirname(iCloudFile.relativePath) != "parent") return false;
+      if (!path.equals(path.dirname(iCloudFile.relativePath), parent!)) {
+        return false;
+      }
+
       if (path.extension(iCloudFile.relativePath) !=
           path.extension(entry.filePath)) {
         return false;
