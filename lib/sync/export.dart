@@ -88,7 +88,6 @@ Future<ExportResult> export({
         SyncService()
             .saveBackupToICloud(
               entry: entry,
-              parent: SyncService.cloudUserBackupsFolder,
               onProgress: (progress) {
                 syncLogger.fine(
                   "iCloud upload progress for manual backup (${entry.filePath}): $progress",
