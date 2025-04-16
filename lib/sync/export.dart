@@ -88,9 +88,25 @@ Future<ExportResult> export({
         SyncService()
             .saveBackupToICloud(
               entry: entry,
-              onProgress: (progress) {
-                syncLogger.fine(
-                  "iCloud upload progress for manual backup (${entry.filePath}): $progress",
+              onProgress: (progressStream) {
+                late StreamSubscription subscription;
+
+                subscription = progressStream.listen(
+                  (progress) {
+                    syncLogger.fine(
+                      "iCloud upload progress for (${entry.type}) (${path.basename(entry.filePath)}): ${(progress * 100).toStringAsFixed(1)}%",
+                    );
+                  },
+                  onDone: () {
+                    syncLogger.info(
+                      "iCloud upload completed for (${entry.type}) (${path.basename(entry.filePath)}): 100.0%",
+                    );
+                    try {
+                      subscription.cancel();
+                    } catch (e) {
+                      // silent fail
+                    }
+                  },
                 );
               },
             )

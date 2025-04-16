@@ -3,7 +3,6 @@ import "dart:io";
 
 import "package:flow/constants.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/utils/extensions/iterables.dart";
 import "package:flutter/foundation.dart";
 import "package:icloud_storage/icloud_storage.dart";
 import "package:logging/logging.dart";
@@ -171,11 +170,7 @@ class ICloudSyncService {
       modifiedDate: modifiedDate,
     );
 
-    await ICloudStorage.move(
-      containerId: containerId,
-      fromRelativePath: tempLocation,
-      toRelativePath: destinationRelativePath,
-    );
+    await move(from: tempLocation, to: destinationRelativePath);
 
     return destinationRelativePath;
   }
@@ -192,16 +187,7 @@ class ICloudSyncService {
     }
 
     try {
-      await gather();
-
-      ICloudFile? file = _filesCache.value.firstWhereOrNull(
-        (file) => file.relativePath == from,
-      );
-
-      if (file == null) {
-        _log.severe("Cannot move $from to $to; file not found");
-        throw Exception("Cannot move $from to $to; file not found");
-      }
+      _log.info("Attempting to move $from to $to");
 
       await ICloudStorage.move(
         containerId: containerId,
@@ -209,7 +195,7 @@ class ICloudSyncService {
         toRelativePath: to,
       );
 
-      _log.info("Moved $from to $to");
+      _log.info("Successfully moved $from to $to");
 
       lastError = null;
 
