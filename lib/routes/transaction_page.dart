@@ -68,7 +68,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late TransactionType _transactionType;
-  late TransactionDateEditMode _transactionEditMode;
+  late TransactionDateEditMode _transactionDateEditMode;
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
@@ -103,6 +103,11 @@ class _TransactionPageState extends State<TransactionPage> {
   List<RelevanceScoredTitle>? autofillHints;
 
   Recurrence? _recurrence;
+
+  Recurrence? get significantRecurrence =>
+      _transactionDateEditMode == TransactionDateEditMode.recurring
+          ? _recurrence
+          : null;
 
   DateTime? _transactionDate;
 
@@ -149,7 +154,7 @@ class _TransactionPageState extends State<TransactionPage> {
           _currentlyEditing?.type ??
           widget.initialTransactionType ??
           TransactionType.expense;
-      _transactionEditMode =
+      _transactionDateEditMode =
           _currentlyEditing?.editMode ?? TransactionDateEditMode.normal;
       _amount =
           _currentlyEditing?.isTransfer == true
@@ -421,7 +426,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                               ),
                                             ),
                                             selected:
-                                                mode == _transactionEditMode,
+                                                mode ==
+                                                _transactionDateEditMode,
                                             avatar: Icon(mode.icon),
                                             showCheckmark: false,
                                             onSelected:
@@ -439,14 +445,11 @@ class _TransactionPageState extends State<TransactionPage> {
                             AnimatedSize(
                               duration: const Duration(milliseconds: 300),
                               child:
-                                  _transactionEditMode ==
+                                  _transactionDateEditMode ==
                                           TransactionDateEditMode.recurring
                                       ? SelectRecurrence(
                                         initialValue: _recurrence,
-                                        onChanged:
-                                            (p0) => setState(() {
-                                              _recurrence = p0;
-                                            }),
+                                        onChanged: updateRecurrence,
                                       )
                                       : ListTile(
                                         title: Text(
@@ -650,16 +653,16 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateTransactionEditMode(TransactionDateEditMode? mode) {
-    if (_transactionEditMode != TransactionDateEditMode.normal &&
+    if (_transactionDateEditMode != TransactionDateEditMode.normal &&
         mode == null) {
       _transactionDate = null;
     }
 
     mode ??= TransactionDateEditMode.normal;
 
-    if (mode == _transactionEditMode) return;
+    if (mode == _transactionDateEditMode) return;
 
-    _transactionEditMode = mode;
+    _transactionDateEditMode = mode;
 
     setState(() {});
   }
@@ -879,51 +882,23 @@ class _TransactionPageState extends State<TransactionPage> {
     _postSelectTransactionDate();
   }
 
-  void selectRecurrenceStart() async {
-    final DateTime? result = await context.pickDate(
-      _recurrence?.range.from ?? transactionDate,
-    );
+  void updateRecurrence(Recurrence? recurrence) {
+    _recurrence = recurrence;
 
-    if (result == null) return;
+    if (!mounted) return;
 
-    setState(() {
-      _recurrence = Recurrence(
-        range: CustomTimeRange(
-          result,
-          _recurrence?.range.to ?? Moment.maxValue,
-        ),
-        rules: _recurrence?.rules ?? [],
-      );
-    });
-  }
-
-  void selectRecurrenceEnd() async {
-    final DateTime? result = await context.pickDate(
-      _recurrence?.range.to ?? Moment.maxValue,
-    );
-
-    if (result == null) return;
-
-    setState(() {
-      _recurrence = Recurrence(
-        range: CustomTimeRange(
-          result,
-          _recurrence?.range.to ?? Moment.maxValue,
-        ),
-        rules: _recurrence?.rules ?? [],
-      );
-    });
+    setState(() {});
   }
 
   void _postSelectTransactionDate() async {
-    if (_transactionEditMode != TransactionDateEditMode.normal) return;
+    if (_transactionDateEditMode != TransactionDateEditMode.normal) return;
 
     final bool pendingTransactionsRequireConfrimation =
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
     if (pendingTransactionsRequireConfrimation &&
         transactionDate >= Moment.now().startOfNextMinute()) {
-      _transactionEditMode = TransactionDateEditMode.pending;
+      _transactionDateEditMode = TransactionDateEditMode.pending;
     }
   }
 
@@ -1003,6 +978,7 @@ class _TransactionPageState extends State<TransactionPage> {
               _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
           isPending: isPending,
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
+          recurrence: significantRecurrence,
         );
 
         _currentlyEditing.permanentlyDelete(true);
@@ -1074,6 +1050,7 @@ class _TransactionPageState extends State<TransactionPage> {
         extensions: extensions,
         isPending: isPending,
         conversionRate: crossCurrencyTransfer ? _conversionRate : null,
+        recurrence: significantRecurrence,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -1084,6 +1061,7 @@ class _TransactionPageState extends State<TransactionPage> {
         transactionDate: _transactionDate,
         extensions: extensions,
         isPending: isPending,
+        recurrence: significantRecurrence,
       );
     }
 

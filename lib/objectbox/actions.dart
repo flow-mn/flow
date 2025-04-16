@@ -13,18 +13,21 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("ObjectBoxActions");
@@ -805,6 +808,7 @@ extension AccountActions on Account {
     List<TransactionExtension>? extensions,
     bool? isPending,
     double? conversionRate = 1.0,
+    Recurrence? recurrence,
   }) {
     if (conversionRate == 0) {
       throw Exception("Conversion rate cannot be zero, use 1.0 instead");
@@ -823,6 +827,7 @@ extension AccountActions on Account {
         extensions: extensions,
         isPending: isPending,
         conversionRate: 1.0 / (conversionRate ?? 1.0),
+        recurrence: recurrence,
       );
     }
 
@@ -849,11 +854,28 @@ extension AccountActions on Account {
 
     transactionDate ??= DateTime.now();
 
+    final String? recurringTransactionUuid =
+        recurrence == null ? null : const Uuid().v4();
+
+    Recurring? recurringExtension;
+
+    if (recurringTransactionUuid != null) {
+      recurringExtension = Recurring(
+        uuid: const Uuid().v4(),
+        relatedTransactionUuid: fromTransactionUuid,
+        recurringTransactionUuid: recurringTransactionUuid,
+      );
+    }
+
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [transferData, ...filteredExtensions],
+      extensions: [
+        ...filteredExtensions,
+        transferData,
+        if (recurringExtension != null) recurringExtension,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -864,14 +886,27 @@ extension AccountActions on Account {
       title: resolvedTitle,
       description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
         ...filteredExtensions,
+        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
+        if (recurringExtension != null)
+          recurringExtension.copyWith(
+            relatedTransactionUuid: toTransactionUuid,
+          ),
       ],
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
       isPending: isPending,
     );
+
+    if (recurringTransactionUuid != null) {
+      RecurringTransactionsService().createFromTransaction(
+        identifier: fromTransactionUuid,
+        recurrence: recurrence!,
+        uuidOverride: recurringTransactionUuid,
+        transferToAccountUuid: targetAccount.uuid,
+      );
+    }
 
     return (fromTransaction, toTransaction);
   }
@@ -888,8 +923,25 @@ extension AccountActions on Account {
     String? uuidOverride,
     bool? isPending,
     TransactionSubtype? subtype,
+    Recurrence? recurrence,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
+
+    final String? recurringTransactionUuid =
+        recurrence == null ? null : const Uuid().v4();
+
+    Recurring? recurringExtension;
+
+    if (recurringTransactionUuid != null) {
+      recurringExtension = Recurring(
+        uuid: const Uuid().v4(),
+        relatedTransactionUuid: uuid,
+        recurringTransactionUuid: recurringTransactionUuid,
+      );
+
+      extensions ??= [];
+      extensions.add(recurringExtension);
+    }
 
     Transaction value =
         Transaction(
@@ -937,6 +989,14 @@ extension AccountActions on Account {
     }
 
     final int id = TransactionsService().upsertOneSync(value);
+
+    if (recurringTransactionUuid != null) {
+      RecurringTransactionsService().createFromTransaction(
+        identifier: uuid,
+        recurrence: recurrence!,
+        uuidOverride: recurringTransactionUuid,
+      );
+    }
 
     try {
       TransitiveLocalPreferences().updateFrecencyData("account", uuid);

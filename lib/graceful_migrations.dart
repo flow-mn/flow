@@ -56,3 +56,51 @@ void migrateRemoveTitleFromUntitledTransactions() async {
     );
   }
 }
+
+void migrateExtraKeyIndexing() async {
+  const String migrationUuid = "995a88e2-d182-4844-b7a9-42e9a86a3877";
+
+  try {
+    final SharedPreferencesWithCache prefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    final ok = prefs.getString("flow.migration.$migrationUuid");
+
+    if (ok != null) return;
+
+    try {
+      Query<Transaction> withExtras =
+          ObjectBox()
+              .box<Transaction>()
+              .query(Transaction_.extra.notNull())
+              .build();
+
+      final List<Transaction> transactions = withExtras.find();
+
+      _log.info(
+        "Migrating ${transactions.length} transactions for migration $migrationUuid",
+      );
+
+      await ObjectBox().box<Transaction>().putManyAsync(
+        transactions.map((t) {
+          t.extraKeys = t.extensions.data.map((ext) => ext.key).join(";");
+          return t;
+        }).toList(),
+      );
+
+      await prefs.setString("flow.migration.$migrationUuid", "ok");
+    } catch (e) {
+      _log.warning(
+        "Failed to migrate transactions for migration $migrationUuid",
+        e,
+      );
+    }
+  } catch (e) {
+    _log.warning(
+      "Failed to read migration status for migration $migrationUuid",
+      e,
+    );
+  }
+}

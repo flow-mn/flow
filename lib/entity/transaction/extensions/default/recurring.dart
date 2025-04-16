@@ -35,4 +35,20 @@ class Recurring extends TransactionExtension implements Jasonable {
       _$RecurringFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$RecurringToJson(this);
+
+  Recurring copyWith({
+    String? relatedTransactionUuid,
+    String? recurringTransactionUuid,
+    String? uuid,
+    bool? locked,
+  }) {
+    return Recurring(
+      relatedTransactionUuid:
+          relatedTransactionUuid ?? this.relatedTransactionUuid,
+      recurringTransactionUuid:
+          recurringTransactionUuid ?? this.recurringTransactionUuid,
+      uuid: uuid ?? this.uuid,
+      locked: locked ?? this.locked,
+    );
+  }
 }
