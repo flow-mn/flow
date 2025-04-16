@@ -37,7 +37,7 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
       appBar: AppBar(title: Text("preferences.trashBin".t(context))),
       body: SafeArea(
         child: ValueListenableBuilder(
-          valueListenable: UserPreferencesService().valueNotiifer,
+          valueListenable: UserPreferencesService().valueNotifier,
           builder: (context, snapshot, _) {
             final int? trashBinRetentionDays = snapshot.trashBinRetentionDays;
 

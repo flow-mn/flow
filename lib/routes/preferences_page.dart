@@ -74,6 +74,12 @@ class PreferencesPageState extends State<PreferencesPage> {
       body: SafeArea(
         child: ListView(
           children: [
+            ListTile(
+              title: Text("preferences.sync".t(context)),
+              leading: const Icon(Symbols.sync_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/sync"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
             if (flowDebugMode || NotificationsService.schedulingSupported)
               ListTile(
                 title: Text("preferences.reminders".t(context)),
@@ -81,19 +87,6 @@ class PreferencesPageState extends State<PreferencesPage> {
                 onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
                 trailing: const Icon(Symbols.chevron_right_rounded),
               ),
-            ListTile(
-              title: Text("preferences.pendingTransactions".t(context)),
-              subtitle: Text(
-                pendingTransactionsRequireConfrimation
-                    ? "general.enabled".t(context)
-                    : "general.disabled".t(context),
-              ),
-              leading: const Icon(Symbols.schedule_rounded),
-              onTap:
-                  () =>
-                      _pushAndRefreshAfter("/preferences/pendingTransactions"),
-              trailing: const Icon(Symbols.chevron_right_rounded),
-            ),
             ListTile(
               title: Text("preferences.language".t(context)),
               leading: const Icon(Symbols.language_rounded),
@@ -127,13 +120,35 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.transactionGeo".t(context)),
+              title: Text("preferences.moneyFormatting".t(context)),
+              leading: const Icon(Symbols.numbers_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.transactions".t(context)),
+            const SizedBox(height: 8.0),
+            ListTile(
+              title: Text("preferences.transactions.pending".t(context)),
+              subtitle: Text(
+                pendingTransactionsRequireConfrimation
+                    ? "general.enabled".t(context)
+                    : "general.disabled".t(context),
+              ),
+              leading: const Icon(Symbols.schedule_rounded),
+              onTap:
+                  () =>
+                      _pushAndRefreshAfter("/preferences/pendingTransactions"),
+              trailing: const Icon(Symbols.chevron_right_rounded),
+            ),
+            ListTile(
+              title: Text("preferences.transactions.geo".t(context)),
               leading: const Icon(Symbols.location_pin_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/transactionGeo"),
               subtitle: Text(
                 enableGeo
                     ? (autoAttachTransactionGeo
-                        ? "preferences.transactionGeo.auto.enabled".t(context)
+                        ? "preferences.transactions.geo.auto.enabled".t(context)
                         : "general.enabled".t(context))
                     : "general.disabled".t(context),
                 maxLines: 1,
@@ -142,9 +157,12 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             ListTile(
-              title: Text("preferences.moneyFormatting".t(context)),
-              leading: const Icon(Symbols.numbers_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
+              leading: const Icon(Symbols.list_rounded),
+              title: Text("preferences.transactions.listTile".t(context)),
+              onTap:
+                  () => _pushAndRefreshAfter(
+                    "/preferences/transactionListItemAppearance",
+                  ),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
             const SizedBox(height: 24.0),
@@ -215,15 +233,21 @@ class PreferencesPageState extends State<PreferencesPage> {
 
   void _updateLanguage() async {
     if (Platform.isIOS) {
-      await LocalPreferences().localeOverride.remove().catchError((e) {
-        _log.warning("Failed to remove locale override: $e");
-        return false;
+      await LocalPreferences().localeOverride.remove().catchError((
+        e,
+        stackTrace,
+      ) {
+        _log.warning("Failed to remove locale override", e, stackTrace);
       });
       try {
         await AppSettings.openAppSettings(type: AppSettingsType.appLocale);
         return;
-      } catch (e) {
-        _log.warning("Failed to open system app settings on iOS: $e", e);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to open system app settings on iOS",
+          e,
+          stackTrace,
+        );
       }
     }
 

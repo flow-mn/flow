@@ -3,6 +3,7 @@ import "dart:async";
 import "package:flow/data/exchange_rates_set.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/pending_transactions.dart";
@@ -21,7 +22,7 @@ export "./transitive.dart";
 /// device. Such as user preferences and per-device
 /// settings
 class LocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
@@ -226,8 +227,65 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
-    _instance ??= LocalPreferences._internal(
-      await SharedPreferences.getInstance(),
+    try {
+      await _migrateFromLegacy("migrate-d6bf17de-7a59-493c-aa79-30bcd848021e");
+    } catch (e) {
+      startupLog.severe(
+        "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
+        e,
+      );
+    }
+
+    final withCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
     );
+
+    _instance ??= LocalPreferences._internal(withCache);
+  }
+
+  static Future<void> _migrateFromLegacy(String migrationCompletedKey) async {
+    final SharedPreferences legacy = await SharedPreferences.getInstance();
+
+    final SharedPreferencesWithCache neuePrefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    if (neuePrefs.get(migrationCompletedKey) == true) {
+      return;
+    }
+
+    await legacy.reload();
+    final Set<String> keys = legacy.getKeys();
+
+    for (final String key in keys) {
+      final Object? value = legacy.get(key);
+      switch (value.runtimeType) {
+        case const (bool):
+          await neuePrefs.setBool(key, value! as bool);
+        case const (int):
+          await neuePrefs.setInt(key, value! as int);
+        case const (double):
+          await neuePrefs.setDouble(key, value! as double);
+        case const (String):
+          await neuePrefs.setString(key, value! as String);
+        case const (List<String>):
+        case const (List<String?>):
+        case const (List<Object?>):
+        case const (List<dynamic>):
+          try {
+            await neuePrefs.setStringList(
+              key,
+              (value! as List<Object?>).cast<String>(),
+            );
+          } on TypeError catch (
+            _
+          ) {} // Pass over Lists containing non-String values.
+      }
+    }
+
+    await neuePrefs.setBool(migrationCompletedKey, true);
+
+    return;
   }
 }

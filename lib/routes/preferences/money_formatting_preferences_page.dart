@@ -1,5 +1,8 @@
+import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
 
 class MoneyFormattingPreferencesPage extends StatefulWidget {
@@ -25,7 +28,16 @@ class _MoneyFormattingPreferencesPageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              CheckboxListTile /*.adaptive*/ (
+              Center(
+                child: MoneyText(
+                  Money(12345678.90, LocalPreferences().getPrimaryCurrency()),
+                  initiallyAbbreviated: !preferFullAmounts,
+                  tapToToggleAbbreviation: false,
+                  style: context.textTheme.displaySmall,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              CheckboxListTile(
                 title: Text(
                   "preferences.moneyFormatting.preferFull".t(context),
                 ),
@@ -37,8 +49,7 @@ class _MoneyFormattingPreferencesPageState
                 value: preferFullAmounts,
                 onChanged: updatePreferFullAmounts,
               ),
-              const SizedBox(height: 16.0),
-              CheckboxListTile /*.adaptive*/ (
+              CheckboxListTile(
                 title: Text(
                   "preferences.moneyFormatting.useCurrencySymbol".t(context),
                 ),

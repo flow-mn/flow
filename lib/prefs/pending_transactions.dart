@@ -2,7 +2,7 @@ import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 class PendingTransactionsLocalPreferences {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
 
   static PendingTransactionsLocalPreferences? _instance;
 
@@ -22,7 +22,7 @@ class PendingTransactionsLocalPreferences {
 
   late final BoolSettingsEntry requireConfrimation;
 
-  /// Shows next [homeTabPlannedTransactionsDays] days of planned transactions in the home tab
+  /// Shows next [homeTimeframe] days of planned transactions in the home tab
   late final PrimitiveSettingsEntry<int> homeTimeframe;
 
   /// Whether to use date of confirmation for `transactionDate` for pending transactions
@@ -67,6 +67,6 @@ class PendingTransactionsLocalPreferences {
   }
 
   static PendingTransactionsLocalPreferences initialize(
-    SharedPreferences instance,
+    SharedPreferencesWithCache instance,
   ) => _instance ??= PendingTransactionsLocalPreferences._internal(instance);
 }

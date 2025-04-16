@@ -79,13 +79,9 @@ class _DebugLogsPageState extends State<DebugLogsPage> {
   }
 
   Future<void> showShareSheet(String path, RenderObject? renderObject) async {
-    final RenderBox? renderBox =
-        renderObject is RenderBox ? renderObject : null;
-
-    await context.showShareSheet(
+    await context.showFileShareSheet(
       subject: "Share log files",
       filePath: path,
-      renderBox: renderBox,
     );
   }
 }

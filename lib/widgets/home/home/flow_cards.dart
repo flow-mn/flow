@@ -37,7 +37,7 @@ class _FlowCardsState extends State<FlowCards> {
     LocalPreferences().preferFullAmounts.addListener(_updateAbbreviation);
 
     excludeTransferFromFlow = UserPreferencesService().excludeTransfersFromFlow;
-    UserPreferencesService().valueNotiifer.addListener(
+    UserPreferencesService().valueNotifier.addListener(
       _updateExcludeTransferFromFlow,
     );
   }
@@ -45,7 +45,7 @@ class _FlowCardsState extends State<FlowCards> {
   @override
   void dispose() {
     LocalPreferences().preferFullAmounts.removeListener(_updateAbbreviation);
-    UserPreferencesService().valueNotiifer.removeListener(
+    UserPreferencesService().valueNotifier.removeListener(
       _updateExcludeTransferFromFlow,
     );
 
@@ -88,14 +88,7 @@ class _FlowCardsState extends State<FlowCards> {
               TransactionType.income.icon,
               color: TransactionType.income.color(context),
             ),
-            moneyText: MoneyText(
-              totalIncome,
-              style: context.textTheme.displaySmall,
-              autoSizeGroup: autoSizeGroup,
-              autoSize: true,
-              initiallyAbbreviated: abbreviate,
-              onTap: handleTap,
-            ),
+            money: styledMoney(totalIncome, context),
           ),
         ),
         const SizedBox(width: 16.0),
@@ -106,17 +99,21 @@ class _FlowCardsState extends State<FlowCards> {
               TransactionType.expense.icon,
               color: TransactionType.expense.color(context),
             ),
-            moneyText: MoneyText(
-              totalExpense,
-              style: context.textTheme.displaySmall,
-              autoSizeGroup: autoSizeGroup,
-              autoSize: true,
-              initiallyAbbreviated: abbreviate,
-              onTap: handleTap,
-            ),
+            money: styledMoney(totalExpense, context),
           ),
         ),
       ],
+    );
+  }
+
+  MoneyText styledMoney(Money? amount, BuildContext context) {
+    return MoneyText(
+      amount,
+      style: context.textTheme.displaySmall,
+      autoSizeGroup: autoSizeGroup,
+      autoSize: true,
+      initiallyAbbreviated: abbreviate,
+      onTap: handleTap,
     );
   }
 

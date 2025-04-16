@@ -29,7 +29,7 @@ class _LockAppState extends State<LockApp> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SwitchListTile /*.adaptive*/ (
+        SwitchListTile(
           secondary: const Icon(Symbols.lock_rounded),
           title: Text("preferences.privacy.appLock".t(context)),
           value: requireLocalAuth,
@@ -65,8 +65,8 @@ class _LockAppState extends State<LockApp> {
     try {
       final bool auth = await LocalAuthService().authenticate();
       if (!auth) throw "Failed to authenticate, cannot change prefs";
-    } catch (e) {
-      _log.warning("Failed to update requireLocalAuth", e);
+    } catch (e, stackTrace) {
+      _log.warning("Failed to update requireLocalAuth", e, stackTrace);
       if (mounted) {
         context.showErrorToast(error: "error.failedLocalAuth".t(context));
       }

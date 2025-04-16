@@ -41,30 +41,26 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
           ),
         ],
       ),
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height * 0.5,
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Frame(
-              child: Wrap(
-                spacing: 12.0,
-                runSpacing: 12.0,
-                children:
-                    TransactionGroupRange.values
-                        .map(
-                          (range) => ChoiceChip(
-                            label: Text(range.localizedNameContext(context)),
-                            selected: _selected == range,
-                            onSelected:
-                                (value) => _updateRange(value ? range : null),
-                          ),
-                        )
-                        .toList(),
-              ),
+        child: Frame(
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: Wrap(
+              spacing: 12.0,
+              runSpacing: 12.0,
+              children:
+                  TransactionGroupRange.values
+                      .map(
+                        (range) => ChoiceChip(
+                          label: Text(range.localizedNameContext(context)),
+                          selected: _selected == range,
+                          onSelected:
+                              (value) => _updateRange(value ? range : null),
+                        ),
+                      )
+                      .toList(),
             ),
-          ],
+          ),
         ),
       ),
     );

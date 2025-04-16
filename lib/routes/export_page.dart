@@ -78,17 +78,29 @@ class _ExportPageState extends State<ExportPage> {
     }
   }
 
-  Future<void> showShareSheet(RenderObject? renderObject) async {
-    final RenderBox? renderBox =
-        renderObject is RenderBox ? renderObject : null;
+  Future<void> showShareSheet(BuildContext context) async {
+    await context
+        .showFileShareSheet(
+          subject: "sync.export.save.shareTitle".t(context, {
+            "type": widget.mode.name,
+            "date": Moment.now().lll,
+          }),
+          filePath: filePath!,
+        )
+        .then((savedPath) {
+          if (savedPath == null || !isDesktop()) {
+            return;
+          }
+          if (!context.mounted) return;
 
-    await context.showShareSheet(
-      subject: "sync.export.save.shareTitle".t(context, {
-        "type": widget.mode.name,
-        "date": Moment.now().lll,
-      }),
-      filePath: filePath!,
-      renderBox: renderBox,
-    );
+          context.showToast(
+            text: "sync.export.savedTo".t(context, {"path": savedPath}),
+          );
+        })
+        .catchError((error) {
+          if (context.mounted) {
+            context.showErrorToast(error: error?.toString());
+          }
+        });
   }
 }

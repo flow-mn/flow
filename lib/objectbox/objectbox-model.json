@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1185109045851542775",
-      "lastPropertyId": "12:4032509736911472496",
+      "lastPropertyId": "15:4500989952725300589",
       "name": "Account",
       "properties": [
         {
@@ -57,6 +57,21 @@
           "id": "12:4032509736911472496",
           "name": "archived",
           "type": 1
+        },
+        {
+          "id": "13:2639662940928154297",
+          "name": "creditLimit",
+          "type": 8
+        },
+        {
+          "id": "14:3842898167150913136",
+          "name": "showCreditLimit",
+          "type": 1
+        },
+        {
+          "id": "15:4500989952725300589",
+          "name": "type",
+          "type": 9
         }
       ],
       "relations": []
@@ -132,7 +147,7 @@
     },
     {
       "id": "6:5991227438386928245",
-      "lastPropertyId": "6:85022155315718452",
+      "lastPropertyId": "8:7012537446377796117",
       "name": "BackupEntry",
       "properties": [
         {
@@ -165,6 +180,16 @@
           "id": "6:85022155315718452",
           "name": "fileExt",
           "type": 9
+        },
+        {
+          "id": "7:2598696840666344158",
+          "name": "iCloudRelativePath",
+          "type": 9
+        },
+        {
+          "id": "8:7012537446377796117",
+          "name": "iCloudChangeDate",
+          "type": 10
         }
       ],
       "relations": []
@@ -309,7 +334,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "7:2985299148024776274",
+      "lastPropertyId": "13:6826663530484570285",
       "name": "UserPreferences",
       "properties": [
         {
@@ -349,13 +374,148 @@
           "id": "7:2985299148024776274",
           "name": "remindDailyAtRelativeSeconds",
           "type": 6
+        },
+        {
+          "id": "8:8609498027521636604",
+          "name": "useCategoryNameForUntitledTransactions",
+          "type": 1
+        },
+        {
+          "id": "10:1110624065651948179",
+          "name": "autoBackupIntervalInHours",
+          "type": 6
+        },
+        {
+          "id": "11:9083345045177209971",
+          "name": "transactionListTileShowCategoryName",
+          "type": 1
+        },
+        {
+          "id": "12:4693852392718311453",
+          "name": "transactionListTileShowAccountForLeading",
+          "type": 1
+        },
+        {
+          "id": "13:6826663530484570285",
+          "name": "enableICloudSync",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "11:4948078457888921031",
+      "lastPropertyId": "9:6886515900911773491",
+      "name": "Budget",
+      "properties": [
+        {
+          "id": "1:8548068689938827083",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5437558016134721268",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "19:806092094099867187"
+        },
+        {
+          "id": "3:4554850236746747495",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:473869210125712621",
+          "name": "name",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "20:8336098329051704990"
+        },
+        {
+          "id": "5:6253789882700699652",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "6:1298695079656779768",
+          "name": "currency",
+          "type": 9
+        },
+        {
+          "id": "7:801892318627771901",
+          "name": "categoryId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "21:7291423328418584896",
+          "relationTarget": "Category"
+        },
+        {
+          "id": "8:4590726328503721316",
+          "name": "categoryUuid",
+          "type": 9
+        },
+        {
+          "id": "9:6886515900911773491",
+          "name": "range",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "12:800756592587838565",
+      "lastPropertyId": "8:9125625889304953158",
+      "name": "RecurringTransaction",
+      "properties": [
+        {
+          "id": "1:1478236043461226093",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2358830362322475217",
+          "name": "uuid",
+          "type": 9
+        },
+        {
+          "id": "3:7015715332193102336",
+          "name": "jsonTransactionTemplate",
+          "type": 9
+        },
+        {
+          "id": "4:863784590472248880",
+          "name": "range",
+          "type": 9
+        },
+        {
+          "id": "5:4856660607221068479",
+          "name": "rules",
+          "type": 30
+        },
+        {
+          "id": "6:6844871043566830898",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "7:1614599721077752206",
+          "name": "disabled",
+          "type": 1
+        },
+        {
+          "id": "8:9125625889304953158",
+          "name": "transferAccountToUuid",
+          "type": 9
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "10:7829328581176695647",
-  "lastIndexId": "18:256441942731857355",
+  "lastEntityId": "12:800756592587838565",
+  "lastIndexId": "21:7291423328418584896",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -400,7 +560,8 @@
     6426832099320622373,
     4688691313482515602,
     8178664360494427777,
-    9181400211872351108
+    9181400211872351108,
+    577162958135049929
   ],
   "retiredRelationUids": [],
   "version": 1

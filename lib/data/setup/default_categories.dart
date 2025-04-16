@@ -86,5 +86,71 @@ List<Category> getCategoryPresets() {
       name: "setup.categories.preset.paychecks".tr(),
       iconCode: const IconFlowIcon(Symbols.wallet_rounded).toString(),
     ),
+    Category.preset(
+      uuid: "b2d86c68-ed70-46a1-b51c-40077324b99e",
+      name: "setup.categories.preset.insurance".tr(),
+      iconCode: const IconFlowIcon(Symbols.privacy_tip_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "2cc28276-fa02-4eb6-8eb0-fe1bfe88d78c",
+      name: "setup.categories.preset.petCare".tr(),
+      iconCode: const IconFlowIcon(Symbols.pets_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "098fe2da-2db6-4308-a20c-2b22451b2563",
+      name: "setup.categories.preset.childCare".tr(),
+      iconCode: const IconFlowIcon(Symbols.child_care_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "dc074312-1022-4474-8d39-192ba1822dd2",
+      name: "setup.categories.preset.fitness".tr(),
+      iconCode: const IconFlowIcon(Symbols.fitness_center_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "d113504d-8c79-411b-b09f-a14b34bdf307",
+      name: "setup.categories.preset.gadgets".tr(),
+      iconCode: const IconFlowIcon(Symbols.devices_other_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "0c3ea2b1-c90b-437d-a796-9eb02df5dc1a",
+      name: "setup.categories.preset.services".tr(),
+      iconCode: const IconFlowIcon(Symbols.support_agent_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "5466bcd6-df58-4555-a19e-f4f8f308e9ec",
+      name: "setup.categories.preset.snacks".tr(),
+      iconCode: const IconFlowIcon(Symbols.bakery_dining_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "deaa1e54-7507-47a3-ba3e-2cb6345494a6",
+      name: "setup.categories.preset.stationary".tr(),
+      iconCode: const IconFlowIcon(Symbols.note_stack_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "45220b1d-7575-4141-a810-87bb2d0721ce",
+      name: "setup.categories.preset.hygiene".tr(),
+      iconCode: const IconFlowIcon(Symbols.sanitizer_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "a91e03c8-ef94-4e7f-b82f-e97082a822d1",
+      name: "setup.categories.preset.travel".tr(),
+      iconCode: const IconFlowIcon(Symbols.flight_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "cd2a342e-c01d-46db-8897-980fe720e1fb",
+      name: "setup.categories.preset.hobby".tr(),
+      iconCode: const IconFlowIcon(Symbols.sports_esports_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "6fa81abb-5cfb-400b-8325-2f81adfa64d1",
+      name: "setup.categories.preset.donations".tr(),
+      iconCode:
+          const IconFlowIcon(Symbols.volunteer_activism_rounded).toString(),
+    ),
+    Category.preset(
+      uuid: "e32462d9-9ade-4739-8acb-a437a69a4d5d",
+      name: "setup.categories.preset.beauty".tr(),
+      iconCode: const IconFlowIcon(Symbols.self_care_rounded).toString(),
+    ),
   ];
 }

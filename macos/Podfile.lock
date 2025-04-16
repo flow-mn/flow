@@ -3,16 +3,41 @@ PODS:
     - FlutterMacOS
   - desktop_drop (0.0.1):
     - FlutterMacOS
-  - dynamic_color (0.0.2):
+  - file_picker (0.0.1):
+    - FlutterMacOS
+  - file_saver (0.0.1):
+    - FlutterMacOS
+  - file_selector_macos (0.0.1):
+    - FlutterMacOS
+  - flutter_local_notifications (0.0.1):
+    - FlutterMacOS
+  - flutter_timezone (0.1.0):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - geolocator_apple (1.2.0):
+    - FlutterMacOS
+  - in_app_review (2.0.0):
+    - FlutterMacOS
+  - local_auth_darwin (0.0.1):
+    - Flutter
     - FlutterMacOS
   - ObjectBox (4.1.0)
   - objectbox_flutter_libs (0.0.1):
     - FlutterMacOS
     - ObjectBox (= 4.1.0)
+  - package_info_plus (0.0.1):
+    - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - screen_retriever_macos (0.0.1):
+    - FlutterMacOS
+  - share_plus (0.0.1):
+    - FlutterMacOS
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - url_launcher_macos (0.0.1):
     - FlutterMacOS
   - window_manager (0.2.0):
     - FlutterMacOS
@@ -20,11 +45,22 @@ PODS:
 DEPENDENCIES:
   - app_settings (from `Flutter/ephemeral/.symlinks/plugins/app_settings/macos`)
   - desktop_drop (from `Flutter/ephemeral/.symlinks/plugins/desktop_drop/macos`)
-  - dynamic_color (from `Flutter/ephemeral/.symlinks/plugins/dynamic_color/macos`)
+  - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/macos`)
+  - file_saver (from `Flutter/ephemeral/.symlinks/plugins/file_saver/macos`)
+  - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
+  - flutter_local_notifications (from `Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos`)
+  - flutter_timezone (from `Flutter/ephemeral/.symlinks/plugins/flutter_timezone/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - geolocator_apple (from `Flutter/ephemeral/.symlinks/plugins/geolocator_apple/macos`)
+  - in_app_review (from `Flutter/ephemeral/.symlinks/plugins/in_app_review/macos`)
+  - local_auth_darwin (from `Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin`)
   - objectbox_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/objectbox_flutter_libs/macos`)
+  - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - screen_retriever_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos`)
+  - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
+  - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
   - window_manager (from `Flutter/ephemeral/.symlinks/plugins/window_manager/macos`)
 
 SPEC REPOS:
@@ -36,28 +72,61 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/app_settings/macos
   desktop_drop:
     :path: Flutter/ephemeral/.symlinks/plugins/desktop_drop/macos
-  dynamic_color:
-    :path: Flutter/ephemeral/.symlinks/plugins/dynamic_color/macos
+  file_picker:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_picker/macos
+  file_saver:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_saver/macos
+  file_selector_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
+  flutter_local_notifications:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos
+  flutter_timezone:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_timezone/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   geolocator_apple:
     :path: Flutter/ephemeral/.symlinks/plugins/geolocator_apple/macos
+  in_app_review:
+    :path: Flutter/ephemeral/.symlinks/plugins/in_app_review/macos
+  local_auth_darwin:
+    :path: Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin
   objectbox_flutter_libs:
     :path: Flutter/ephemeral/.symlinks/plugins/objectbox_flutter_libs/macos
+  package_info_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
   screen_retriever_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos
+  share_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/share_plus/macos
+  shared_preferences_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
+  url_launcher_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
   window_manager:
     :path: Flutter/ephemeral/.symlinks/plugins/window_manager/macos
 
 SPEC CHECKSUMS:
   app_settings: cd21e176b56f8172043640ade81322a98896bff4
   desktop_drop: e0b672a7d84c0a6cbc378595e82cdb15f2970a43
-  dynamic_color: b820c000cc68df65e7ba7ff177cb98404ce56651
+  file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
+  file_saver: e35bd97de451dde55ff8c38862ed7ad0f3418d0f
+  file_selector_macos: 6280b52b459ae6c590af5d78fc35c7267a3c4b31
+  flutter_local_notifications: 4bf37a31afde695b56091b4ae3e4d9c7a7e6cda0
+  flutter_timezone: d59eea86178cbd7943cd2431cc2eaa9850f935d8
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   geolocator_apple: ccfb79d5250de3a295f5093cd03e76aa8836a416
+  in_app_review: 0599bccaed5e02f6bed2b0d30d16f86b63ed8638
+  local_auth_darwin: 553ce4f9b16d3fdfeafce9cf042e7c9f77c1c391
   ObjectBox: bf3d4b51075d52868422d5d1f2f2141b1d630d30
   objectbox_flutter_libs: 947b3a4e371d88c3c5b59f6a2e95e108cc072e6b
+  package_info_plus: f0052d280d17aa382b932f399edf32507174e870
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
+  share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  url_launcher_macos: 0fba8ddabfc33ce0a9afe7c5fef5aab3d8d2d673
   window_manager: 1d01fa7ac65a6e6f83b965471b1a7fdd3f06166c
 
 PODFILE CHECKSUM: 3d7cd7f90b4de5948ed6e76869b40159643b2f0c

@@ -6,20 +6,29 @@ import "package:flow/entity/user_preferences.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flutter/material.dart";
 
 class UserPreferencesService {
-  final ValueNotifier<UserPreferences> valueNotiifer = ValueNotifier(
+  final ValueNotifier<UserPreferences> valueNotifier = ValueNotifier(
     UserPreferences(),
   );
 
-  UserPreferences get value => valueNotiifer.value;
+  UserPreferences get value => valueNotifier.value;
 
   bool get combineTransfers => value.combineTransfers;
   set combineTransfers(bool newCombineTransfers) {
     if (value.id == 0) return;
 
     value.combineTransfers = newCombineTransfers;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get enableICloudSync => value.enableICloudSync;
+  set enableICloudSync(bool newEnableICloudSync) {
+    if (value.id == 0) return;
+
+    value.enableICloudSync = newEnableICloudSync;
     ObjectBox().box<UserPreferences>().put(value);
   }
 
@@ -36,11 +45,65 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  int? get autoBackupIntervalInHours => value.autoBackupIntervalInHours;
+  set autoBackupIntervalInHours(int? newAutobackupIntervalInHours) {
+    if (value.id == 0) return;
+
+    if (newAutobackupIntervalInHours == null) {
+      value.autoBackupIntervalInHours = null;
+    } else {
+      value.autoBackupIntervalInHours = min(
+        max(0, newAutobackupIntervalInHours),
+        8760,
+      );
+    }
+
+    ObjectBox().box<UserPreferences>().put(value);
+
+    SyncService().triggerAutoBackup();
+  }
+
   bool get excludeTransfersFromFlow => value.excludeTransfersFromFlow;
   set excludeTransfersFromFlow(bool newExcludeTransfersFromFlow) {
     if (value.id == 0) return;
 
     value.excludeTransfersFromFlow = newExcludeTransfersFromFlow;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get useCategoryNameForUntitledTransactions =>
+      value.useCategoryNameForUntitledTransactions;
+  set useCategoryNameForUntitledTransactions(
+    bool newUseCategoryNameForUntitledTransactions,
+  ) {
+    if (value.id == 0) return;
+
+    value.useCategoryNameForUntitledTransactions =
+        newUseCategoryNameForUntitledTransactions;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get transactionListTileShowCategoryName =>
+      value.transactionListTileShowCategoryName;
+  set transactionListTileShowCategoryName(
+    bool newTransactionListTileShowCategoryName,
+  ) {
+    if (value.id == 0) return;
+
+    value.transactionListTileShowCategoryName =
+        newTransactionListTileShowCategoryName;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get transactionListTileShowAccountForLeading =>
+      value.transactionListTileShowAccountForLeading;
+  set transactionListTileShowAccountForLeading(
+    bool newTransactionListTileShowAccountForLeading,
+  ) {
+    if (value.id == 0) return;
+
+    value.transactionListTileShowAccountForLeading =
+        newTransactionListTileShowAccountForLeading;
     ObjectBox().box<UserPreferences>().put(value);
   }
 
@@ -104,7 +167,7 @@ class UserPreferencesService {
             return;
           }
 
-          valueNotiifer.value = userPreferences;
+          valueNotifier.value = userPreferences;
         });
   }
 }

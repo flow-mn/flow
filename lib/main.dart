@@ -19,7 +19,6 @@ import "dart:async";
 import "dart:io";
 import "dart:ui";
 
-import "package:dynamic_color/dynamic_color.dart";
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/profile.dart";
@@ -29,10 +28,13 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
+import "package:flow/providers/categories.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -40,6 +42,7 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
@@ -55,56 +58,22 @@ import "package:window_manager/window_manager.dart";
 RotatingFileAppender? mainLogAppender;
 
 void main() async {
+  Logger.root.level = Level.ALL;
+
   WidgetsFlutterBinding.ensureInitialized();
 
-  Logger.root.level = Level.ALL;
-  if (flowDebugMode) {
-    PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
-  }
-  unawaited(
-    getApplicationSupportDirectory()
-        .then((value) {
-          final String logsDir = path.join(value.path, "logs");
-          Directory(logsDir).createSync(recursive: true);
-          mainLogAppender = RotatingFileAppender(
-            baseFilePath: path.join(
-              logsDir,
-              flowDebugMode ? "flow_debug.log" : "flow.log",
-            ),
-            keepRotateCount: 5,
-          )..attachToLogger(Logger.root);
-        })
-        .catchError((error) {
-          startupLog.severe("Failed to initialize log file appender", error);
-        }),
-  );
+  PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+
+  initializeFileLogger();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     startupLog.fine("Initializing window manager");
-    await windowManager.ensureInitialized();
+    await windowManager.ensureInitialized().catchError((error) {
+      startupLog.severe("Failed to initialize window manager", error);
+    });
   }
 
-  const String debugBuildSuffix = debugBuild ? " (dev)" : "";
-
-  unawaited(
-    PackageInfo.fromPlatform()
-        .then((value) {
-          appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
-
-          startupLog.fine("Loaded package info");
-          startupLog.fine("App version: $appVersion");
-          startupLog.fine("Store: ${value.installerStore}");
-
-          return appVersion;
-        })
-        .catchError((e) {
-          startupLog.warning(
-            "An error was occured while fetching app version",
-            e,
-          );
-          return appVersion = "<unknown>+<0>$debugBuildSuffix";
-        }),
-  );
+  initializePackageVersion();
 
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
@@ -122,33 +91,7 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
   startupLog.fine("Updating account order list");
 
-  unawaited(
-    NotificationsService().initialize().then((_) {
-      unawaited(
-        TransactionsService().synchronizeNotifications().catchError((error) {
-          startupLog.severe("Failed to synchronize notifications", error);
-        }),
-      );
-      if (UserPreferencesService().remindDailyAt
-          case Duration requireRemindAt) {
-        startupLog.info(
-          "Scheduling daily reminder notifications at ${requireRemindAt.inMinutes} minutes past midnight",
-        );
-        unawaited(
-          NotificationsService()
-              .scheduleDailyReminders(requireRemindAt)
-              .catchError((error) {
-                startupLog.severe(
-                  "Failed to schedule daily reminder notifications",
-                  error,
-                );
-              }),
-        );
-      } else {
-        startupLog.fine("No daily reminder set, skipping scheduling");
-      }
-    }),
-  );
+  initializeNotifications();
 
   startupLog.fine("Clearing stale transactions from trash bin");
   unawaited(
@@ -161,22 +104,17 @@ void main() async {
   ExchangeRatesService().init();
 
   try {
-    LocalPreferences().privacyMode.addListener(
-      () => TransitiveLocalPreferences().sessionPrivacyMode.set(
-        LocalPreferences().privacyMode.get(),
-      ),
-    );
-  } catch (e) {
-    startupLog.severe(
-      "Failed to add listener updates prefs.sessionPrivacyMode",
-    );
-  }
-
-  try {
     startupLog.fine("Initializing user preferences service");
     UserPreferencesService().initialize();
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
+  }
+
+  try {
+    startupLog.fine("Initializing SyncService");
+    SyncService();
+  } catch (e, stackTrace) {
+    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
   }
 
   startupLog.fine("Finally telling Flutter to run the app widget");
@@ -225,13 +163,11 @@ class FlowState extends State<Flow> {
 
     if (ObjectBox().box<Profile>().count(limit: 1) == 0) {
       Profile.createDefaultProfile();
-    } else {
-      // To migrate profile image path from old to new (since 0.10.0)
-      nonImportantMigrateProfileImagePath();
     }
 
-    migrateLocalPrefsUserPreferencesRegardingTransferStuff();
-    migrateLocalPrefsRequirePendingTransactionConfrimation();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      migrateRemoveTitleFromUntitledTransactions();
+    });
 
     _tryUnlockTempLock();
   }
@@ -249,25 +185,25 @@ class FlowState extends State<Flow> {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (dynamicLight, dynamicDark) {
-        return MaterialApp.router(
-          onGenerateTitle: (context) => "appName".t(context),
-          localizationsDelegates: [
-            GlobalMaterialLocalizations.delegate,
-            if (flowDebugMode || Platform.isIOS)
-              GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            FlowLocalizations.delegate,
-          ],
-          supportedLocales: FlowLocalizations.supportedLanguages,
-          locale: _locale,
-          routerConfig: router,
-          theme: _themeFactory.materialTheme,
-          themeMode: _themeMode,
-          debugShowCheckedModeBanner: false,
-          builder: (context, child) {
-            return GestureDetector(
+    return MaterialApp.router(
+      onGenerateTitle: (context) => "appName".t(context),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        if (flowDebugMode || Platform.isIOS)
+          GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FlowLocalizations.delegate,
+      ],
+      supportedLocales: FlowLocalizations.supportedLanguages,
+      locale: _locale,
+      routerConfig: router,
+      theme: _themeFactory.materialTheme,
+      themeMode: _themeMode,
+      debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return AccountsProviderScope(
+          child: CategoriesProviderScope(
+            child: GestureDetector(
               behavior:
                   _tempLock
                       ? HitTestBehavior.opaque
@@ -295,8 +231,8 @@ class FlowState extends State<Flow> {
                   ],
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );
@@ -391,5 +327,73 @@ class FlowState extends State<Flow> {
     } catch (e) {
       mainLogger.severe("Failed to initialize LocalAuthService", e);
     }
+  }
+}
+
+void initializeFileLogger() async {
+  try {
+    final Directory supportDirectory = await getApplicationSupportDirectory();
+
+    try {
+      final String logsDir = path.join(supportDirectory.path, "logs");
+      Directory(logsDir).createSync(recursive: true);
+      mainLogAppender = RotatingFileAppender(
+        baseFilePath: path.join(
+          logsDir,
+          flowDebugMode ? "flow_debug.log" : "flow.log",
+        ),
+        keepRotateCount: 5,
+      )..attachToLogger(Logger.root);
+    } catch (e) {
+      startupLog.severe("Failed to initialize log file appender", e);
+    }
+  } catch (e) {
+    startupLog.severe("Failed to get application support directory", e);
+  }
+}
+
+void initializePackageVersion() async {
+  try {
+    const String debugBuildSuffix = debugBuild ? " (dev)" : "";
+
+    final value = await PackageInfo.fromPlatform();
+    appVersion = "${value.version}+${value.buildNumber}$debugBuildSuffix";
+    downloadedFrom = value.installerStore;
+
+    startupLog.fine("Loaded package info");
+    startupLog.fine("App version: $appVersion");
+    startupLog.fine("Store: ${value.installerStore}");
+  } catch (e) {
+    startupLog.warning("An error was occured while fetching app version", e);
+  }
+}
+
+void initializeNotifications() async {
+  assert(LocalPreferences().runtimeType == LocalPreferences);
+
+  await NotificationsService().initialize();
+
+  unawaited(
+    TransactionsService().synchronizeNotifications().catchError((error) {
+      startupLog.severe("Failed to synchronize notifications", error);
+    }),
+  );
+
+  if (UserPreferencesService().remindDailyAt case Duration requireRemindAt) {
+    startupLog.info(
+      "Scheduling daily reminder notifications at ${requireRemindAt.inMinutes} minutes past midnight",
+    );
+    unawaited(
+      NotificationsService().scheduleDailyReminders(requireRemindAt).catchError(
+        (error) {
+          startupLog.severe(
+            "Failed to schedule daily reminder notifications",
+            error,
+          );
+        },
+      ),
+    );
+  } else {
+    startupLog.fine("No daily reminder set, skipping scheduling");
   }
 }

@@ -1,6 +1,9 @@
+import "dart:async";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -42,6 +45,9 @@ class _PendingTransactionPreferencesPageState
   @override
   void dispose() {
     _listener.dispose();
+
+    unawaited(TransactionsService().synchronizeNotifications());
+
     super.dispose();
   }
 
@@ -59,7 +65,9 @@ class _PendingTransactionPreferencesPageState
         LocalPreferences().pendingTransactions.earlyReminderInSeconds.get();
 
     return Scaffold(
-      appBar: AppBar(title: Text("preferences.pendingTransactions".t(context))),
+      appBar: AppBar(
+        title: Text("preferences.transactions.pending".t(context)),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -69,14 +77,14 @@ class _PendingTransactionPreferencesPageState
               Frame(
                 child: InfoText(
                   child: Text(
-                    "preferences.pendingTransactions.requireConfirmation.description"
+                    "preferences.transactions.pending.requireConfirmation.description"
                         .t(context),
                   ),
                 ),
               ),
               const SizedBox(height: 16.0),
               ListHeader(
-                "preferences.pendingTransactions.homeTimeframe".t(context),
+                "preferences.transactions.pending.homeTimeframe".t(context),
               ),
               const SizedBox(height: 8.0),
               Padding(
@@ -108,9 +116,9 @@ class _PendingTransactionPreferencesPageState
                 ),
               ),
               const SizedBox(height: 16.0),
-              CheckboxListTile /*.adaptive*/ (
+              CheckboxListTile(
                 title: Text(
-                  "preferences.pendingTransactions.requireConfirmation".t(
+                  "preferences.transactions.pending.requireConfirmation".t(
                     context,
                   ),
                 ),
@@ -118,13 +126,13 @@ class _PendingTransactionPreferencesPageState
                 onChanged: updatePendingTransactionsRequireConfrimation,
               ),
               if (pendingTransactionsRequireConfrimation) ...[
-                CheckboxListTile /*.adaptive*/ (
+                CheckboxListTile(
                   title: Text(
-                    "preferences.pendingTransactions.updateDateUponConfirmation"
+                    "preferences.transactions.pending.updateDateUponConfirmation"
                         .t(context),
                   ),
                   subtitle: Text(
-                    "preferences.pendingTransactions.updateDateUponConfirmation.description"
+                    "preferences.transactions.pending.updateDateUponConfirmation.description"
                         .t(context),
                   ),
                   value: pendingTransactionsUpdateDateUponConfirmation,
@@ -149,9 +157,9 @@ class _PendingTransactionPreferencesPageState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         notificationsPermissionGranted
-                            ? CheckboxListTile /*.adaptive*/ (
+                            ? CheckboxListTile(
                               title: Text(
-                                "preferences.pendingTransactions.notify".t(
+                                "preferences.transactions.pending.notify".t(
                                   context,
                                 ),
                               ),
@@ -165,7 +173,7 @@ class _PendingTransactionPreferencesPageState
                           Frame(
                             child: InfoText(
                               child: Text(
-                                "preferences.pendingTransactions.notify.schedulingUnsupported"
+                                "preferences.transactions.pending.notify.schedulingUnsupported"
                                     .t(context),
                               ),
                             ),
@@ -176,7 +184,7 @@ class _PendingTransactionPreferencesPageState
                             notify &&
                             notificationsPermissionGranted) ...[
                           ListHeader(
-                            "preferences.pendingTransactions.notify.earlyReminder"
+                            "preferences.transactions.pending.notify.earlyReminder"
                                 .t(context),
                           ),
                           const SizedBox(height: 8.0),
@@ -210,7 +218,7 @@ class _PendingTransactionPreferencesPageState
                                             value?.toDurationString(
                                                   dropPrefixOrSuffix: true,
                                                 ) ??
-                                                "preferences.pendingTransactions.notify.earlyReminder.none"
+                                                "preferences.transactions.pending.notify.earlyReminder.none"
                                                     .t(context),
                                           ),
                                           onSelected:

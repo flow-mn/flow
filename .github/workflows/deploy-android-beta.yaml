@@ -36,5 +36,6 @@ jobs:
           packageName: mn.flow.flow
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: beta
+          status: draft
       - name: Clean up
         run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks

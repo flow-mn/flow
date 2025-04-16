@@ -16,7 +16,7 @@ import "package:material_symbols_icons/symbols.dart";
 
 class ExportSuccess extends StatelessWidget {
   final ExportMode mode;
-  final Function(RenderObject? renderObject) shareFn;
+  final Function(BuildContext context) shareFn;
 
   final String filePath;
 
@@ -83,7 +83,7 @@ class ExportSuccess extends StatelessWidget {
           Builder(
             builder: (context) {
               return Button(
-                onTap: () => shareFn(context.findRenderObject()),
+                onTap: () => shareFn(context),
                 leading: const Icon(Symbols.save_alt_rounded),
                 child: Text("sync.export.save".t(context, mode.name)),
               );

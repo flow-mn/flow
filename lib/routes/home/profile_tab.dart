@@ -4,6 +4,7 @@ import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -27,6 +28,7 @@ class ProfileTab extends StatefulWidget {
 class _ProfileTabState extends State<ProfileTab> {
   bool _debugDbBusy = false;
   bool _debugPrefsBusy = false;
+  bool _debugICloudBusy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,16 @@ class _ProfileTabState extends State<ProfileTab> {
             title: Text("categories".t(context)),
             leading: const Icon(Symbols.category_rounded),
             onTap: () => context.push("/categories"),
+          ),
+          ListTile(
+            title: Text("preferences.transactions.pending".t(context)),
+            leading: const Icon(Symbols.schedule_rounded),
+            onTap: () => context.push("/transactions/pending"),
+          ),
+          ListTile(
+            title: Text("transaction.deleted".t(context)),
+            leading: const Icon(Symbols.delete_rounded),
+            onTap: () => context.push("/transactions/deleted"),
           ),
           ListTile(
             title: Text("tabs.profile.preferences".t(context)),
@@ -74,6 +86,19 @@ class _ProfileTabState extends State<ProfileTab> {
             title: Text("tabs.profile.support".t(context)),
             leading: const Icon(Symbols.favorite_rounded),
             onTap: () => context.push("/support"),
+          ),
+          ListTile(
+            title: Text("contributors".t(context)),
+            leading: const Icon(Symbols.groups_rounded),
+            onTap: () => context.push("/community/contributors"),
+          ),
+          Builder(
+            builder:
+                (context) => ListTile(
+                  title: Text("tabs.profile.recommend".t(context)),
+                  leading: const Icon(Symbols.share_rounded),
+                  onTap: () => context.showUriShareSheet(uri: website),
+                ),
           ),
           ListTile(
             title: Text("visitGitHubRepo".t(context)),
@@ -142,6 +167,11 @@ class _ProfileTabState extends State<ProfileTab> {
               leading: const Icon(Symbols.adb_rounded),
             ),
             ListTile(
+              title: Text("Purge iCloud debug folder"),
+              onTap: () => debugPurgeICloud(),
+              leading: const Icon(Symbols.adb_rounded),
+            ),
+            ListTile(
               title: const Text("Jump to setup page"),
               onTap: () => context.pushReplacement("/setup"),
               leading: const Icon(Symbols.settings_rounded),
@@ -177,7 +207,7 @@ class _ProfileTabState extends State<ProfileTab> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog /*.adaptive*/ (
+          (context) => AlertDialog(
             title: const Text("[dev] Reset database?"),
             actions: [
               Button(
@@ -209,13 +239,48 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
+  void debugPurgeICloud() async {
+    if (_debugICloudBusy) return;
+    setState(() {
+      _debugICloudBusy = true;
+    });
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("[dev] Purge iCloud debug folder?"),
+            actions: [
+              Button(
+                onTap: () => context.pop(true),
+                child: const Text("Confirm delete"),
+              ),
+              Button(
+                onTap: () => context.pop(false),
+                child: const Text("Cancel"),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await ICloudSyncService().debugPurge();
+    } finally {
+      _debugICloudBusy = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   void resetPrefs() async {
     if (_debugPrefsBusy) return;
 
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog /*.adaptive*/ (
+          (context) => AlertDialog(
             title: const Text("[dev] Clear Shared Preferences?"),
             actions: [
               Button(
@@ -236,8 +301,10 @@ class _ProfileTabState extends State<ProfileTab> {
 
     try {
       if (confirm == true) {
-        final instance = await SharedPreferences.getInstance();
-        await instance.clear();
+        final instanceAvecCache = await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+        await instanceAvecCache.clear();
       }
     } finally {
       _debugPrefsBusy = false;

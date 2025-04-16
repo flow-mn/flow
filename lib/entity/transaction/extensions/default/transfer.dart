@@ -15,6 +15,11 @@ class Transfer extends TransactionExtension implements Jasonable {
   final String fromAccountUuid;
   final String toAccountUuid;
 
+  /// Only used for conversion between different currencies
+  ///
+  /// You can technically use this for other purposes, but it's not recommended
+  final double? conversionRate;
+
   @override
   String? relatedTransactionUuid;
 
@@ -26,6 +31,7 @@ class Transfer extends TransactionExtension implements Jasonable {
     required this.fromAccountUuid,
     required this.toAccountUuid,
     required this.relatedTransactionUuid,
+    this.conversionRate,
   }) : super();
 
   Transfer copyWith({
@@ -33,12 +39,14 @@ class Transfer extends TransactionExtension implements Jasonable {
     String? fromAccountUuid,
     String? toAccountUuid,
     String? relatedTransactionUuid,
+    double? conversionRate,
   }) => Transfer(
     uuid: uuid ?? this.uuid,
     fromAccountUuid: fromAccountUuid ?? this.fromAccountUuid,
     toAccountUuid: toAccountUuid ?? this.toAccountUuid,
     relatedTransactionUuid:
         relatedTransactionUuid ?? this.relatedTransactionUuid,
+    conversionRate: conversionRate ?? this.conversionRate,
   );
 
   factory Transfer.fromJson(Map<String, dynamic> json) =>

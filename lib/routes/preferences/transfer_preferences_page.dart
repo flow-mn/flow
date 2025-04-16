@@ -57,13 +57,13 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
               Frame(
                 child: InfoText(
                   child: Text(
-                    "preferences.transfer.combineTransferTransaction.filterDescription"
+                    "preferences.transfer.combineTransferTransaction.combineSupportDisclaimer"
                         .t(context),
                   ),
                 ),
               ),
               const SizedBox(height: 24.0),
-              CheckboxListTile /*.adaptive*/ (
+              CheckboxListTile(
                 title: Text(
                   "preferences.transfer.excludeTransferFromFlow".t(context),
                 ),

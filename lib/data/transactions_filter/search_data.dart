@@ -16,7 +16,10 @@ enum TransactionSearchMode implements LocalizedEnum {
   substring("substring"),
 
   /// Text must be exactly the keyword
-  exact("exact");
+  exact("exact"),
+
+  /// Text must be empty string or null
+  none("none");
 
   final String value;
 
@@ -75,6 +78,7 @@ class TransactionSearchData {
       TransactionSearchMode.smart => _smartMatching(t),
       TransactionSearchMode.substring => _substringMatching(t),
       TransactionSearchMode.exact => _exactMatching(t),
+      TransactionSearchMode.none => _emptyMatching(t),
     };
   }
 
@@ -99,6 +103,10 @@ class TransactionSearchData {
   }
 
   Condition<Transaction>? get _titleFilter {
+    if (mode == TransactionSearchMode.none) {
+      return Transaction_.title.isNull() | Transaction_.title.equals("");
+    }
+
     if (mode == TransactionSearchMode.smart) {
       return null;
     }
@@ -179,6 +187,10 @@ class TransactionSearchData {
     if (normalizedTitle == null) return false;
 
     return normalizedTitle == normalizedKeyword!;
+  }
+
+  bool _emptyMatching(Transaction t) {
+    return t.title == null || t.title!.isEmpty;
   }
 
   factory TransactionSearchData.fromJson(Map<String, dynamic> json) =>

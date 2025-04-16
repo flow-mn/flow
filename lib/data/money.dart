@@ -19,11 +19,13 @@ class Money {
   const Money._(this.amount, this.currency);
 
   factory Money(double amount, String currency) {
+    currency = currency.toUpperCase();
+
     if (!isCurrencyCodeValid(currency)) {
       throw MoneyException("Invalid or unsupported currency code: $currency");
     }
 
-    return Money._(amount, currency.toUpperCase());
+    return Money._(amount, currency);
   }
 
   static double convertDouble(
@@ -32,6 +34,9 @@ class Money {
     double amount,
     ExchangeRates rates,
   ) {
+    from = from.toUpperCase();
+    to = to.toUpperCase();
+
     if (from == to) return amount;
 
     if (!isCurrencyCodeValid(from) || !isCurrencyCodeValid(to)) {
@@ -43,6 +48,8 @@ class Money {
 
   /// Assumes primary currency rates exist
   Money convert(String newCurrency, ExchangeRates rates) {
+    newCurrency = newCurrency.toUpperCase();
+
     if (!isCurrencyCodeValid(newCurrency)) {
       throw MoneyException("Invalid or unsupported currency code: $currency");
     }
@@ -57,7 +64,7 @@ class Money {
       );
     }
 
-    final String currencyFranco = rates.baseCurrency;
+    final String currencyFranco = rates.baseCurrency.toUpperCase();
 
     if (newCurrency == currencyFranco) {
       return Money(amount / rates.getRate(currency)!, newCurrency);

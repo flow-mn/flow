@@ -20,6 +20,8 @@ class SetupProfilePage extends StatefulWidget {
 }
 
 class _SetupProfilePageState extends State<SetupProfilePage> {
+  late final AppLifecycleListener _listener;
+
   final TextEditingController _textEditingController = TextEditingController();
 
   late Profile? _currentlyEditing;
@@ -34,12 +36,16 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
   void initState() {
     super.initState();
 
-    final Query<Profile> profileQuery =
-        ObjectBox().box<Profile>().query().build();
+    _listener = AppLifecycleListener(onShow: () => _updateProfile());
 
-    _currentlyEditing = profileQuery.findFirst();
+    _updateProfile();
+  }
 
-    profileQuery.close();
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _listener.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +71,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                 ),
                 const SizedBox(height: 16.0),
                 if (_textEditingController.text.trim().toLowerCase() == "test")
-                  CheckboxListTile /*.adaptive*/ (
+                  CheckboxListTile(
                     title: Text("Enable demo mode"),
                     value: testMode,
                     onChanged: (value) {
@@ -108,6 +114,8 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
       busy = true;
     });
 
+    _updateProfile();
+
     final String trimmed = _textEditingController.text.trim();
     try {
       if (_currentlyEditing != null) {
@@ -140,5 +148,14 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
         setState(() {});
       }
     }
+  }
+
+  void _updateProfile() {
+    final Query<Profile> profileQuery =
+        ObjectBox().box<Profile>().query().build();
+
+    _currentlyEditing = profileQuery.findFirst();
+
+    profileQuery.close();
   }
 }

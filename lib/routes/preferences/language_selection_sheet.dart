@@ -13,7 +13,6 @@ class LanguageSelectionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: MediaQuery.of(context).size.height,
       title: Text("preferences.language.choose".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -29,7 +28,7 @@ class LanguageSelectionSheet extends StatelessWidget {
         child: Column(
           children: [
             ...FlowLocalizations.supportedLanguages.map(
-              (locale) => RadioListTile<Locale> /*.adaptive*/ (
+              (locale) => RadioListTile<Locale>(
                 title: Text(locale.endonym),
                 subtitle: Text(locale.name),
                 selected: currentLocale == locale,

@@ -16,7 +16,7 @@ Future<File?> pickJsonOrZipFile({String? dialogTitle}) async {
     initialDirectory: await getApplicationDocumentsDirectory()
         .then<String?>((value) => value.path)
         .catchError((_) => null),
-    allowedExtensions: ["json", "zip"],
+    allowedExtensions: ["json", "zip", "csv"],
     type: FileType.custom,
     allowMultiple: false,
   );
