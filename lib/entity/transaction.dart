@@ -82,6 +82,10 @@ class Transaction implements EntityBase {
   /// in this field. (ensuring no collision between extensions)
   String? extra;
 
+  /// List of keys separated by a semicolon. Used for looking up extensions
+  /// in [extra].
+  String? extraKeys;
+
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   ExtensionsWrapper get extensions => ExtensionsWrapper.parse(extra);
@@ -89,6 +93,7 @@ class Transaction implements EntityBase {
   @Transient()
   set extensions(ExtensionsWrapper newValue) {
     extra = newValue.serialize();
+    extraKeys = newValue.data.map((e) => e.key).join(";");
   }
 
   void addExtensions(Iterable<TransactionExtension> newExtensions) {

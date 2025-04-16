@@ -167,6 +167,7 @@ class FlowState extends State<Flow> {
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       migrateRemoveTitleFromUntitledTransactions();
+      migrateExtraKeyIndexing();
     });
 
     _tryUnlockTempLock();

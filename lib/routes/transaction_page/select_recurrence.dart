@@ -103,7 +103,12 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   }
 
   void _selectFrom() async {
-    final DateTime? result = await context.pickDate(_recurrence.range.from);
+    final DateTime initialDate =
+        _recurrence.range.from.isBefore(DateTime(0))
+            ? DateTime.now()
+            : _recurrence.range.from;
+
+    final DateTime? result = await context.pickDate(initialDate);
 
     if (!mounted) return;
     if (result == null) return;
@@ -117,7 +122,12 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   }
 
   void _selectUntil() async {
-    final DateTime? result = await context.pickDate(_recurrence.range.to);
+    final DateTime initialDate =
+        _recurrence.range.to.isAfter(DateTime(4000))
+            ? DateTime.now()
+            : _recurrence.range.to;
+
+    final DateTime? result = await context.pickDate(initialDate);
 
     if (!mounted) return;
     if (result == null) return;

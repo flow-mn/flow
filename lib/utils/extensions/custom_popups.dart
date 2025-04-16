@@ -116,10 +116,22 @@ extension CustomPopups on BuildContext {
     return await Share.share(uri.toString(), sharePositionOrigin: origin);
   }
 
-  Future<DateTime?> pickDate([DateTime? initial]) async => await showDatePicker(
-    context: this,
-    initialDate: initial ?? DateTime.now(),
-    firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-    lastDate: DateTime(4000),
-  );
+  Future<DateTime?> pickDate([DateTime? initial]) async {
+    final DateTime firstDate = DateTime.fromMicrosecondsSinceEpoch(0);
+    final DateTime lastDate = DateTime(4000);
+
+    final DateTime initialDate = DateTime.fromMicrosecondsSinceEpoch(
+      (initial ?? DateTime.now()).microsecondsSinceEpoch.clamp(
+        firstDate.microsecondsSinceEpoch,
+        lastDate.microsecondsSinceEpoch,
+      ),
+    );
+
+    return await showDatePicker(
+      context: this,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+  }
 }

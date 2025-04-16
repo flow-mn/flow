@@ -23,7 +23,7 @@ class RecurringTransaction extends EntityBase {
   /// Serialized [Transaction] object. This is used as a template for
   /// creating new transactions, and some fields are ignored.
   ///
-  /// If the transaction is a transfer, the [transferAccountToUuid] field is
+  /// If the transaction is a transfer, the [transferToAccountUuid] field is
   /// required, and [Transaction.category] is ignored.
   ///
   /// Ignored fields include, but are not limited to:
@@ -34,7 +34,7 @@ class RecurringTransaction extends EntityBase {
   /// * [Transaction.deletedDate]
   String jsonTransactionTemplate;
 
-  String? transferAccountToUuid;
+  String? transferToAccountUuid;
 
   @Transient()
   Transaction get template =>
@@ -74,6 +74,14 @@ class RecurringTransaction extends EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  /// This marks the last generated transaction date
+  ///
+  ///
+  @Property(type: PropertyType.date)
+  DateTime? lastGeneratedTransactionDate;
+
+  String? lastGeneratedTransactionUuid;
+
   final bool disabled;
 
   RecurringTransaction({
@@ -81,9 +89,12 @@ class RecurringTransaction extends EntityBase {
     this.disabled = false,
     required this.rules,
     required this.jsonTransactionTemplate,
-    this.transferAccountToUuid,
+    this.transferToAccountUuid,
     DateTime? createdDate,
     this.range,
+    String? uuid,
+    this.lastGeneratedTransactionDate,
+    this.lastGeneratedTransactionUuid,
   }) : createdDate = createdDate ?? DateTime.now(),
-       uuid = const Uuid().v4();
+       uuid = uuid ?? const Uuid().v4();
 }

@@ -30,6 +30,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) =>
         const UTCDateTimeConverter().fromJson,
       )
       ..extra = json['extra'] as String?
+      ..extraKeys = json['extraKeys'] as String?
       ..categoryUuid = json['categoryUuid'] as String?
       ..accountUuid = json['accountUuid'] as String?;
 
@@ -52,6 +53,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'currency': instance.currency,
       'subtype': instance.subtype,
       'extra': instance.extra,
+      'extraKeys': instance.extraKeys,
       'categoryUuid': instance.categoryUuid,
       'accountUuid': instance.accountUuid,
     };

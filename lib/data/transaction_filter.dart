@@ -49,6 +49,9 @@ class TransactionFilter implements Jasonable {
 
   final List<String>? currencies;
 
+  /// Lookup for [Transaction.extraKeys]
+  final String? extensionKeyPartial;
+
   /// Defaults to false
   final bool? includeDeleted;
 
@@ -62,6 +65,7 @@ class TransactionFilter implements Jasonable {
     this.minAmount,
     this.maxAmount,
     this.currencies,
+    this.extensionKeyPartial,
     this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
@@ -159,6 +163,13 @@ class TransactionFilter implements Jasonable {
       });
     }
 
+    if (extensionKeyPartial != null) {
+      predicates.add(
+        (Transaction t) =>
+            t.extraKeys != null && t.extraKeys!.contains(extensionKeyPartial!),
+      );
+    }
+
     if (includeDeleted != true) {
       predicates.add(
         (Transaction t) => t.isDeleted == null || t.isDeleted == false,
@@ -234,6 +245,14 @@ class TransactionFilter implements Jasonable {
               .or(Transaction_.isPending.isNull()),
         );
       }
+    }
+
+    if (extensionKeyPartial != null) {
+      conditions.add(
+        Transaction_.extraKeys.notNull().and(
+          Transaction_.extraKeys.contains(extensionKeyPartial!),
+        ),
+      );
     }
 
     if (includeDeleted != true) {
@@ -323,6 +342,10 @@ class TransactionFilter implements Jasonable {
       count++;
     }
 
+    if (extensionKeyPartial != other.extensionKeyPartial) {
+      count++;
+    }
+
     return count;
   }
 
@@ -339,6 +362,7 @@ class TransactionFilter implements Jasonable {
     Optional<double>? minAmount,
     Optional<double>? maxAmount,
     Optional<List<String>>? currencies,
+    Optional<String>? extensionKeyPartial,
   }) {
     return TransactionFilter(
       types: types == null ? this.types : types.value,
@@ -356,6 +380,10 @@ class TransactionFilter implements Jasonable {
       minAmount: minAmount == null ? this.minAmount : minAmount.value,
       maxAmount: maxAmount == null ? this.maxAmount : maxAmount.value,
       currencies: currencies == null ? this.currencies : currencies.value,
+      extensionKeyPartial:
+          extensionKeyPartial == null
+              ? this.extensionKeyPartial
+              : extensionKeyPartial.value,
     );
   }
 
@@ -375,6 +403,7 @@ class TransactionFilter implements Jasonable {
     searchData,
     sortBy,
     groupBy,
+    extensionKeyPartial,
   ]);
 
   @override
@@ -395,6 +424,7 @@ class TransactionFilter implements Jasonable {
         other.maxAmount == maxAmount &&
         other.includeDeleted == includeDeleted &&
         other.isPending == isPending &&
+        other.extensionKeyPartial == extensionKeyPartial &&
         setEquals(other.uuids?.toSet(), uuids?.toSet()) &&
         setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
         setEquals(other.types?.toSet(), types?.toSet()) &&
