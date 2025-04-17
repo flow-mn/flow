@@ -49,7 +49,7 @@ class TransactionFilter implements Jasonable {
 
   final List<String>? currencies;
 
-  /// Lookup for [Transaction.extraTags]
+  /// Matches if it's included in [Transaction.extraTags]
   final String? extraTag;
 
   /// Defaults to false

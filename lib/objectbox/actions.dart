@@ -861,7 +861,7 @@ extension AccountActions on Account {
 
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
-        recurringTransactionUuid: recurringTransactionUuid,
+        uuid: recurringTransactionUuid,
         relatedTransactionUuid: fromTransactionUuid,
       );
     }
@@ -933,7 +933,7 @@ extension AccountActions on Account {
 
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
-        recurringTransactionUuid: recurringTransactionUuid,
+        uuid: recurringTransactionUuid,
         relatedTransactionUuid: uuid,
       );
 
