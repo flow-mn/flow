@@ -94,6 +94,7 @@
   "enum.ImportV2Progress@writingAccounts": "Hesap yazma",
   "enum.ImportV2Progress@writingCategories": "Yazma kategorileri",
   "enum.ImportV2Progress@writingProfile": "Profil verilerinin yazılması",
+  "enum.ImportV2Progress@writingRecurringTransactions": "Yinelenen işlemleri yazma",
   "enum.ImportV2Progress@writingTransactions": "İşlemlerin yazılması",
   "enum.ImportV2Progress@writingTranscationFilterPresets": "İşlem filtresi önayarlarını yazma",
   "enum.ImportV2Progress@writingUserPreferences": "Kullanıcı tercihlerinin yazılması",

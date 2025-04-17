@@ -94,6 +94,7 @@
   "enum.ImportV2Progress@writingAccounts": "Scrittura dei conti",
   "enum.ImportV2Progress@writingCategories": "Scrittura delle categorie",
   "enum.ImportV2Progress@writingProfile": "Scrittura dei dati del profilo",
+  "enum.ImportV2Progress@writingRecurringTransactions": "Scrittura delle transazioni ricorrenti",
   "enum.ImportV2Progress@writingTransactions": "Scrittura delle transazioni",
   "enum.ImportV2Progress@writingTranscationFilterPresets": "Scrittura dei filtri predefiniti",
   "enum.ImportV2Progress@writingUserPreferences": "Scrittura delle preferenze utente",

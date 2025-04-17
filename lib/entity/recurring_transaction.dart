@@ -97,4 +97,8 @@ class RecurringTransaction extends EntityBase {
     this.lastGeneratedTransactionUuid,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = uuid ?? const Uuid().v4();
+
+  factory RecurringTransaction.fromJson(Map<String, dynamic> json) =>
+      _$RecurringTransactionFromJson(json);
+  Map<String, dynamic> toJson() => _$RecurringTransactionToJson(this);
 }

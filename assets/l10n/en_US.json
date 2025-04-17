@@ -94,6 +94,7 @@
   "enum.ImportV2Progress@writingAccounts": "Writing accounts",
   "enum.ImportV2Progress@writingCategories": "Writing categories",
   "enum.ImportV2Progress@writingProfile": "Writing profile data",
+  "enum.ImportV2Progress@writingRecurringTransactions": "Writing recurring transactions",
   "enum.ImportV2Progress@writingTransactions": "Writing transactions",
   "enum.ImportV2Progress@writingTranscationFilterPresets": "Writing transaction filter presets",
   "enum.ImportV2Progress@writingUserPreferences": "Writing user preferences",

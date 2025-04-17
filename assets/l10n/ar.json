@@ -94,6 +94,7 @@
   "enum.ImportV2Progress@writingAccounts": "يجري كتابة الحسابات",
   "enum.ImportV2Progress@writingCategories": "يجري كتابة الفئات",
   "enum.ImportV2Progress@writingProfile": "يجري كتابة بيانات الملف الشخصي",
+  "enum.ImportV2Progress@writingRecurringTransactions": "يجري كتابة المعاملات المتكررة",
   "enum.ImportV2Progress@writingTransactions": "يجري كتابة المعاملات",
   "enum.ImportV2Progress@writingTranscationFilterPresets": "يجري كتابة إعدادات فلترة المعاملات",
   "enum.ImportV2Progress@writingUserPreferences": "يجري كتابة تفضيلات المستخدم",

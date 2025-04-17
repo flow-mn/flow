@@ -296,6 +296,7 @@ enum ImportV2Progress implements LocalizedEnum {
   writingCategories,
   writingAccounts,
   resolvingTransactions,
+  writingRecurringTransactions,
   writingTransactions,
   writingTranscationFilterPresets,
   writingProfile,

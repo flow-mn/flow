@@ -1,6 +1,7 @@
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
+import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
@@ -12,6 +13,7 @@ part "model_v2.g.dart";
 @JsonSerializable()
 class SyncModelV2 extends SyncModelBase {
   final List<Transaction> transactions;
+  final List<RecurringTransaction> recurringTransactions;
   final List<Account> accounts;
   final List<Category> categories;
   final List<TransactionFilterPreset>? transactionFilterPresets;
@@ -25,6 +27,7 @@ class SyncModelV2 extends SyncModelBase {
     required super.username,
     required super.appVersion,
     required this.transactions,
+    required this.recurringTransactions,
     required this.accounts,
     required this.categories,
     required this.transactionFilterPresets,
