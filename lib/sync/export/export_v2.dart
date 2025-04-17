@@ -7,6 +7,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
+import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
@@ -27,6 +28,10 @@ Future<String> generateBackupJSONContentV2() async {
     TransactionFilter.all,
   );
   syncLogger.fine("Finished fetching transactions");
+
+  final List<RecurringTransaction> recurringTransactions =
+      await ObjectBox().box<RecurringTransaction>().getAllAsync();
+  syncLogger.fine("Finished fetching recurring transactions");
 
   final List<Account> accounts = await ObjectBox().box<Account>().getAllAsync();
   syncLogger.fine("Finished fetching accounts");
@@ -73,6 +78,7 @@ Future<String> generateBackupJSONContentV2() async {
     transactionFilterPresets: transactionFilterPresets,
     profile: profile,
     userPreferences: userPreferences,
+    recurringTransactions: recurringTransactions,
     primaryCurrency: LocalPreferences().getPrimaryCurrency(),
   );
 

@@ -94,6 +94,7 @@
   "enum.ImportV2Progress@writingAccounts": "Данснуудыг бичиж байна",
   "enum.ImportV2Progress@writingCategories": "Ангиллуудыг бичиж байна",
   "enum.ImportV2Progress@writingProfile": "Бүртгэлийг бичиж байна",
+  "enum.ImportV2Progress@writingRecurringTransactions": "Давтамжит гүйлгээнүүдийг бичиж байна",
   "enum.ImportV2Progress@writingTransactions": "Гүйлгээнүүдийг бичиж байна",
   "enum.ImportV2Progress@writingTranscationFilterPresets": "Гүйлгээ шүүх загваруудыг бичиж байна",
   "enum.ImportV2Progress@writingUserPreferences": "Хэрэглэгчийн тохиргоог бичиж байна",
