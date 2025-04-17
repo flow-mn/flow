@@ -6,43 +6,42 @@ part of 'transaction_filter.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TransactionFilter _$TransactionFilterFromJson(
-  Map<String, dynamic> json,
-) => TransactionFilter(
-  uuids: (json['uuids'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  categories:
-      (json['categories'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  accounts:
-      (json['accounts'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  range:
-      json['range'] == null
+TransactionFilter _$TransactionFilterFromJson(Map<String, dynamic> json) =>
+    TransactionFilter(
+      uuids:
+          (json['uuids'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      categories: (json['categories'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      accounts: (json['accounts'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      range: json['range'] == null
           ? null
           : TransactionFilterTimeRange.fromJson(json['range'] as String),
-  types:
-      (json['types'] as List<dynamic>?)
+      types: (json['types'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$TransactionTypeEnumMap, e))
           .toList(),
-  isPending: json['isPending'] as bool?,
-  minAmount: (json['minAmount'] as num?)?.toDouble(),
-  maxAmount: (json['maxAmount'] as num?)?.toDouble(),
-  currencies:
-      (json['currencies'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  extensionKeyPartial: json['extensionKeyPartial'] as String?,
-  includeDeleted: json['includeDeleted'] as bool? ?? false,
-  sortDescending: json['sortDescending'] as bool? ?? true,
-  searchData:
-      json['searchData'] == null
+      isPending: json['isPending'] as bool?,
+      minAmount: (json['minAmount'] as num?)?.toDouble(),
+      maxAmount: (json['maxAmount'] as num?)?.toDouble(),
+      currencies: (json['currencies'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      extraTag: json['extraTag'] as String?,
+      includeDeleted: json['includeDeleted'] as bool? ?? false,
+      sortDescending: json['sortDescending'] as bool? ?? true,
+      searchData: json['searchData'] == null
           ? const TransactionSearchData()
           : TransactionSearchData.fromJson(
-            json['searchData'] as Map<String, dynamic>,
-          ),
-  sortBy:
-      $enumDecodeNullable(_$TransactionSortFieldEnumMap, json['sortBy']) ??
-      TransactionSortField.transactionDate,
-  groupBy:
-      $enumDecodeNullable(_$TransactionGroupRangeEnumMap, json['groupBy']) ??
-      TransactionGroupRange.day,
-);
+              json['searchData'] as Map<String, dynamic>),
+      sortBy:
+          $enumDecodeNullable(_$TransactionSortFieldEnumMap, json['sortBy']) ??
+              TransactionSortField.transactionDate,
+      groupBy: $enumDecodeNullable(
+              _$TransactionGroupRangeEnumMap, json['groupBy']) ??
+          TransactionGroupRange.day,
+    );
 
 Map<String, dynamic> _$TransactionFilterToJson(TransactionFilter instance) =>
     <String, dynamic>{
@@ -59,7 +58,7 @@ Map<String, dynamic> _$TransactionFilterToJson(TransactionFilter instance) =>
       'minAmount': instance.minAmount,
       'maxAmount': instance.maxAmount,
       'currencies': instance.currencies,
-      'extensionKeyPartial': instance.extensionKeyPartial,
+      'extraTag': instance.extraTag,
       'includeDeleted': instance.includeDeleted,
     };
 

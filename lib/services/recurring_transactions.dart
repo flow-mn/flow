@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
@@ -18,12 +19,11 @@ class RecurringTransactionsService {
     // Constructor
   }
 
-  void _synchronize(RecurringTransaction recurring) {
+  void _synchronize(RecurringTransaction recurring) async {
     if (recurring.disabled) return;
 
-    // recurring.recurrence.TransactionsService().findMany(
-    //   TransactionFilter(extensionKeyPartial: Recurring.keyName),
-    // );
+    final List<Transaction> relatedTransactions = await TransactionsService()
+        .findMany(TransactionFilter(extraTag: recurring.uuid));
   }
 
   void synchronize() {

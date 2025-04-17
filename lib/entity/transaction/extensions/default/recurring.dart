@@ -11,21 +11,22 @@ class Recurring extends TransactionExtension implements Jasonable {
   @override
   String? relatedTransactionUuid;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get recurringTransactionUuid => uuid;
+
   @override
   void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
-
-  final String recurringTransactionUuid;
 
   /// Indicates whether this transaction should be updated when the recurring
   /// transaction is updated.
   final bool locked;
 
   Recurring({
-    required this.relatedTransactionUuid,
-    required this.recurringTransactionUuid,
-    required super.uuid,
+    /// This also represents the UUID of the [RecurringTransaction]
+    required String recurringTransactionUuid,
+    this.relatedTransactionUuid,
     this.locked = false,
-  }) : super();
+  }) : super(uuid: recurringTransactionUuid);
 
   @override
   @JsonKey(includeToJson: true)
@@ -39,7 +40,6 @@ class Recurring extends TransactionExtension implements Jasonable {
   Recurring copyWith({
     String? relatedTransactionUuid,
     String? recurringTransactionUuid,
-    String? uuid,
     bool? locked,
   }) {
     return Recurring(
@@ -47,7 +47,6 @@ class Recurring extends TransactionExtension implements Jasonable {
           relatedTransactionUuid ?? this.relatedTransactionUuid,
       recurringTransactionUuid:
           recurringTransactionUuid ?? this.recurringTransactionUuid,
-      uuid: uuid ?? this.uuid,
       locked: locked ?? this.locked,
     );
   }

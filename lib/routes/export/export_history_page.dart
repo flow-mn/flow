@@ -7,6 +7,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/sync.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/extensions/backup_entry.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
@@ -25,6 +26,7 @@ class ExportHistoryPage extends StatefulWidget {
 
 class _ExportHistoryPageState extends State<ExportHistoryPage> {
   bool uploadBusy = false;
+  late final bool uploadEnabled;
 
   (int uploadingId, double uploadProgress)? uploading;
 
@@ -33,6 +35,12 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
       .box<BackupEntry>()
       .query()
       .order(BackupEntry_.createdDate, flags: Order.descending);
+
+  @override
+  void initState() {
+    super.initState();
+    uploadEnabled = UserPreferencesService().enableICloudSync;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +90,10 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
                       itemBuilder: (context, index) {
                         final BackupEntry entry = backupEntries[index];
 
-                        final canUpload = !uploadBusy && entry.canUploadToCloud;
+                        final bool canUpload =
+                            uploadEnabled &&
+                            !uploadBusy &&
+                            entry.canUploadToCloud;
 
                         return BackupEntryCard(
                           entry: entry,

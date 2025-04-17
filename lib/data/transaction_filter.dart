@@ -49,8 +49,8 @@ class TransactionFilter implements Jasonable {
 
   final List<String>? currencies;
 
-  /// Lookup for [Transaction.extraKeys]
-  final String? extensionKeyPartial;
+  /// Lookup for [Transaction.extraTags]
+  final String? extraTag;
 
   /// Defaults to false
   final bool? includeDeleted;
@@ -65,7 +65,7 @@ class TransactionFilter implements Jasonable {
     this.minAmount,
     this.maxAmount,
     this.currencies,
-    this.extensionKeyPartial,
+    this.extraTag,
     this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
@@ -163,11 +163,8 @@ class TransactionFilter implements Jasonable {
       });
     }
 
-    if (extensionKeyPartial != null) {
-      predicates.add(
-        (Transaction t) =>
-            t.extraKeys != null && t.extraKeys!.contains(extensionKeyPartial!),
-      );
+    if (extraTag != null) {
+      predicates.add((Transaction t) => t.extraTags.contains(extraTag));
     }
 
     if (includeDeleted != true) {
@@ -247,10 +244,10 @@ class TransactionFilter implements Jasonable {
       }
     }
 
-    if (extensionKeyPartial != null) {
+    if (extraTag != null) {
       conditions.add(
-        Transaction_.extraKeys.notNull().and(
-          Transaction_.extraKeys.contains(extensionKeyPartial!),
+        Transaction_.extraTags.notNull().and(
+          Transaction_.extraTags.containsElement(extraTag!),
         ),
       );
     }
@@ -342,7 +339,7 @@ class TransactionFilter implements Jasonable {
       count++;
     }
 
-    if (extensionKeyPartial != other.extensionKeyPartial) {
+    if (extraTag != other.extraTag) {
       count++;
     }
 
@@ -362,7 +359,7 @@ class TransactionFilter implements Jasonable {
     Optional<double>? minAmount,
     Optional<double>? maxAmount,
     Optional<List<String>>? currencies,
-    Optional<String>? extensionKeyPartial,
+    Optional<String>? extraTag,
   }) {
     return TransactionFilter(
       types: types == null ? this.types : types.value,
@@ -380,10 +377,7 @@ class TransactionFilter implements Jasonable {
       minAmount: minAmount == null ? this.minAmount : minAmount.value,
       maxAmount: maxAmount == null ? this.maxAmount : maxAmount.value,
       currencies: currencies == null ? this.currencies : currencies.value,
-      extensionKeyPartial:
-          extensionKeyPartial == null
-              ? this.extensionKeyPartial
-              : extensionKeyPartial.value,
+      extraTag: extraTag == null ? this.extraTag : extraTag.value,
     );
   }
 
@@ -403,7 +397,7 @@ class TransactionFilter implements Jasonable {
     searchData,
     sortBy,
     groupBy,
-    extensionKeyPartial,
+    extraTag,
   ]);
 
   @override
@@ -424,7 +418,7 @@ class TransactionFilter implements Jasonable {
         other.maxAmount == maxAmount &&
         other.includeDeleted == includeDeleted &&
         other.isPending == isPending &&
-        other.extensionKeyPartial == extensionKeyPartial &&
+        other.extraTag == extraTag &&
         setEquals(other.uuids?.toSet(), uuids?.toSet()) &&
         setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
         setEquals(other.types?.toSet(), types?.toSet()) &&

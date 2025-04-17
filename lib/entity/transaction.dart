@@ -84,7 +84,7 @@ class Transaction implements EntityBase {
 
   /// List of keys separated by a semicolon. Used for looking up extensions
   /// in [extra].
-  String? extraKeys;
+  List<String> extraTags;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -93,7 +93,7 @@ class Transaction implements EntityBase {
   @Transient()
   set extensions(ExtensionsWrapper newValue) {
     extra = newValue.serialize();
-    extraKeys = newValue.data.map((e) => e.key).join(";");
+    extraTags = newValue.data.map((e) => e.key).toList();
   }
 
   void addExtensions(Iterable<TransactionExtension> newExtensions) {
@@ -184,6 +184,7 @@ class Transaction implements EntityBase {
     required this.uuid,
     DateTime? transactionDate,
     DateTime? createdDate,
+    this.extraTags = const <String>[],
   }) : createdDate = createdDate ?? DateTime.now(),
        transactionDate = transactionDate ?? createdDate ?? DateTime.now();
 

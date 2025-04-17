@@ -861,9 +861,8 @@ extension AccountActions on Account {
 
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
-        uuid: const Uuid().v4(),
-        relatedTransactionUuid: fromTransactionUuid,
         recurringTransactionUuid: recurringTransactionUuid,
+        relatedTransactionUuid: fromTransactionUuid,
       );
     }
 
@@ -934,9 +933,8 @@ extension AccountActions on Account {
 
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
-        uuid: const Uuid().v4(),
-        relatedTransactionUuid: uuid,
         recurringTransactionUuid: recurringTransactionUuid,
+        relatedTransactionUuid: uuid,
       );
 
       extensions ??= [];
