@@ -38,6 +38,12 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   Widget build(BuildContext context) {
     final bool runsForever = _recurrence.range.to.isAfter(DateTime(4000));
 
+    final Map<String, String> l10nEnumPayload = {
+      "weekday": _recurrence.range.from.format(payload: "dddd"),
+      "dayOfMonth": _recurrence.range.from.format(payload: "Do"),
+      "monthAndDay": _recurrence.range.from.format(payload: "MMMM Do"),
+    };
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -58,7 +64,9 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
                       .map(
                         (mode) => DropdownMenuItem<RecurrenceMode>(
                           value: mode,
-                          child: Text(mode.localizedNameContext(context)),
+                          child: Text(
+                            mode.localizedNameContext(context, l10nEnumPayload),
+                          ),
                         ),
                       )
                       .toList(),

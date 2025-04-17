@@ -75,8 +75,6 @@ class RecurringTransaction extends EntityBase {
   DateTime createdDate;
 
   /// This marks the last generated transaction date
-  ///
-  ///
   @Property(type: PropertyType.date)
   DateTime? lastGeneratedTransactionDate;
 
