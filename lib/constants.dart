@@ -4,7 +4,7 @@ import "package:latlong2/latlong.dart";
 String? downloadedFrom;
 
 String appVersion = "0.0.0";
-const bool debugBuild = false;
+const bool debugBuild = true;
 
 bool get flowDebugMode => kDebugMode || debugBuild;
 
