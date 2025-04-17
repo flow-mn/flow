@@ -119,6 +119,11 @@ class _ProfileTabState extends State<ProfileTab> {
               onTap: () => context.push("/_debug/scheduledNotifications"),
             ),
             ListTile(
+              title: const Text("ICloud debug explorer"),
+              leading: const Icon(Symbols.cloud_rounded),
+              onTap: () => context.push("/_debug/iCloud"),
+            ),
+            ListTile(
               title: const Text("Schedule debug notification"),
               leading: const Icon(Symbols.notification_add_rounded),
               onTap: () {
