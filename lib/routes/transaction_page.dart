@@ -883,6 +883,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateRecurrence(Recurrence? recurrence) {
+    _transactionDateEditMode = TransactionDateEditMode.recurring;
     _recurrence = recurrence;
 
     if (!mounted) return;

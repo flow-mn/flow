@@ -45,13 +45,13 @@ class RecurringTransaction extends EntityBase {
   /// If null, same as [Moment.minValue] to [Moment.maxValue]
   ///
   /// This is inclusive on both ends
-  String? range;
+  String range;
 
   @Transient()
   @JsonKey(includeToJson: false, includeFromJson: false)
-  TimeRange? get timeRange => range != null ? TimeRange.parse(range!) : null;
+  TimeRange get timeRange => TimeRange.parse(range);
 
-  set timeRange(TimeRange? value) => range = value?.toString();
+  set timeRange(TimeRange value) => range = value.encodeShort();
 
   /// [recurrence](https://pub.dev/packages/recurrence) compatible rules
   List<String> rules;
@@ -66,10 +66,8 @@ class RecurringTransaction extends EntityBase {
 
   @Transient()
   @JsonKey(includeToJson: false, includeFromJson: false)
-  Recurrence get recurrence => Recurrence(
-    range: timeRange ?? TimeRange.allTime(),
-    rules: recurrenceRules,
-  );
+  Recurrence get recurrence =>
+      Recurrence(range: timeRange, rules: recurrenceRules);
 
   @Property(type: PropertyType.date)
   DateTime createdDate;
@@ -87,12 +85,12 @@ class RecurringTransaction extends EntityBase {
     this.disabled = false,
     required this.rules,
     required this.jsonTransactionTemplate,
+    required this.range,
     this.transferToAccountUuid,
-    DateTime? createdDate,
-    this.range,
-    String? uuid,
     this.lastGeneratedTransactionDate,
     this.lastGeneratedTransactionUuid,
+    DateTime? createdDate,
+    String? uuid,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = uuid ?? const Uuid().v4();
 

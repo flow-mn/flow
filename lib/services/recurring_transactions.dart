@@ -41,7 +41,16 @@ class RecurringTransactionsService {
           recurring.lastGeneratedTransactionDate?.rangeToMax();
 
       final DateTime? nextOccurence = recurring.recurrence
-          .nextAbsoluteOccurrence(DateTime.now(), range: range);
+          .nextAbsoluteOccurrence(
+            DateTime.now().copyWith(
+              hour: recurring.timeRange.from.hour,
+              minute: recurring.timeRange.from.minute,
+              second: recurring.timeRange.from.second,
+              millisecond: recurring.timeRange.from.millisecond,
+              microsecond: recurring.timeRange.from.microsecond,
+            ),
+            range: range,
+          );
 
       if (nextOccurence == null) {
         _log.fine(

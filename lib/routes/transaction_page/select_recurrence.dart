@@ -24,7 +24,7 @@ class SelectRecurrence extends StatefulWidget {
 
 class _SelectRecurrenceState extends State<SelectRecurrence> {
   late Recurrence _recurrence;
-  RecurrenceMode _selectedMode = RecurrenceMode.everyMonth;
+  final RecurrenceMode _selectedMode = RecurrenceMode.everyMonth;
 
   final GlobalKey _modeSelectorKey = GlobalKey();
 
@@ -32,6 +32,17 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   void initState() {
     super.initState();
     _recurrence = widget.initialValue ?? Recurrence.fromIndefinitely(rules: []);
+  }
+
+  @override
+  void didUpdateWidget(SelectRecurrence oldWidget) {
+    if (oldWidget.initialValue != widget.initialValue) {
+      setState(() {
+        _recurrence =
+            widget.initialValue ?? Recurrence.fromIndefinitely(rules: []);
+      });
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -70,13 +81,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
                         ),
                       )
                       .toList(),
-              onChanged: (newMode) {
-                if (newMode == null) return;
-
-                setState(() {
-                  _selectedMode = newMode;
-                });
-              },
+              onChanged: _updateMode,
             ),
           ),
           onTap: openModeSelector,
@@ -108,6 +113,45 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
         ),
       ],
     );
+  }
+
+  void _updateMode(RecurrenceMode? mode) {
+    if (mode == null) return;
+
+    late final List<RecurrenceRule> rules;
+
+    switch (mode) {
+      case RecurrenceMode.everyDay:
+        rules = [RecurrenceRule.daily()];
+        break;
+      case RecurrenceMode.everyWeek:
+        rules = [RecurrenceRule.weekly(_recurrence.range.from.weekday)];
+        break;
+      case RecurrenceMode.every2Week:
+        rules = [RecurrenceRule.interval(const Duration(days: 14))];
+      case RecurrenceMode.everyMonth:
+        rules = [RecurrenceRule.monthly(_recurrence.range.from.day)];
+        break;
+      case RecurrenceMode.everyYear:
+        rules = [
+          RecurrenceRule.yearly(
+            _recurrence.range.from.month,
+            _recurrence.range.from.day,
+          ),
+        ];
+        break;
+      case RecurrenceMode.custom:
+        rules = [];
+        // TODO: Handle this case. This takes the initial rules in to account,
+        // and returns a new list of rules rather than a single rule.
+        throw UnimplementedError();
+    }
+
+    _recurrence = _recurrence.copyWith(rules: rules);
+
+    if (!mounted) return;
+    setState(() {});
+    widget.onChanged(_recurrence);
   }
 
   void _selectFrom() async {

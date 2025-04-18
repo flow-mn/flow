@@ -34,6 +34,7 @@ import "package:flow/routes.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -115,6 +116,17 @@ void main() async {
     SyncService();
   } catch (e, stackTrace) {
     startupLog.severe("Failed to initialize SyncService", e, stackTrace);
+  }
+
+  try {
+    startupLog.fine("Initializing RecurringTransactionsService");
+    RecurringTransactionsService();
+  } catch (e, stackTrace) {
+    startupLog.severe(
+      "Failed to initialize RecurringTransactionsService",
+      e,
+      stackTrace,
+    );
   }
 
   startupLog.fine("Finally telling Flutter to run the app widget");
