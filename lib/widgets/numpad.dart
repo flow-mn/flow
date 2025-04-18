@@ -42,27 +42,30 @@ class Numpad extends StatelessWidget {
     final double itemSize = (width - totalHorizontalPadding) / crossAxisCount;
     final double itemContentSize = itemSize * _contentSizeFactor;
 
-    return IconTheme.merge(
-      data: IconThemeData(
-        color: context.colorScheme.onSurface,
-        size: itemContentSize,
-        weight: 500.0,
-        fill: 0,
-      ),
-      child: DefaultTextStyle.merge(
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: itemContentSize,
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: IconTheme.merge(
+        data: IconThemeData(
           color: context.colorScheme.onSurface,
-          height: 1.0,
+          size: itemContentSize,
+          weight: 500.0,
+          fill: 0,
         ),
-        child: Padding(
-          padding: padding,
-          child: StaggeredGrid.count(
-            mainAxisSpacing: mainAxisSpacing,
-            crossAxisSpacing: crossAxisSpacing,
-            crossAxisCount: crossAxisCount,
-            children: children,
+        child: DefaultTextStyle.merge(
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: itemContentSize,
+            color: context.colorScheme.onSurface,
+            height: 1.0,
+          ),
+          child: Padding(
+            padding: padding,
+            child: StaggeredGrid.count(
+              mainAxisSpacing: mainAxisSpacing,
+              crossAxisSpacing: crossAxisSpacing,
+              crossAxisCount: crossAxisCount,
+              children: children,
+            ),
           ),
         ),
       ),
