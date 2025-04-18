@@ -26,8 +26,6 @@ class RecurringTransactionsService {
 
   RecurringTransactionsService._internal() {
     synchronize();
-
-    TransactionsService().addListener(() => synchronize());
   }
 
   Future<void> _synchronize(RecurringTransaction recurringTransaction) async {
@@ -75,13 +73,20 @@ class RecurringTransactionsService {
           );
 
       relatedTransactions.sort(
-        (a, b) => a.transactionDate.compareTo(b.transactionDate),
+        (a, b) => a.extensions.recurring!.initialTransactionDate.compareTo(
+          b.extensions.recurring!.initialTransactionDate,
+        ),
       );
 
       final DateTime lastGeneratedTransactionDate =
           relatedTransactions.isEmpty
               ? Moment.minValue
-              : relatedTransactions.last.transactionDate.startOfMillisecond();
+              : relatedTransactions
+                  .last
+                  .extensions
+                  .recurring!
+                  .initialTransactionDate
+                  .startOfMillisecond();
 
       if (lastGeneratedTransactionDate >= nextOccurence) {
         _log.fine(
@@ -236,6 +241,30 @@ class RecurringTransactionsService {
 
     ObjectBox().box<RecurringTransaction>().put(recurringTransaction);
 
+    synchronize();
+
     return recurringTransaction;
+  }
+
+  RecurringTransaction? findOneSync(dynamic identifier) {
+    if (identifier is int) {
+      return ObjectBox().box<RecurringTransaction>().get(identifier);
+    }
+
+    if (identifier case String uuid) {
+      final Query<RecurringTransaction> query =
+          ObjectBox()
+              .box<RecurringTransaction>()
+              .query(RecurringTransaction_.uuid.equals(uuid))
+              .build();
+
+      final RecurringTransaction? recurringTransaction = query.findFirst();
+
+      query.close();
+
+      return recurringTransaction;
+    }
+
+    return null;
   }
 }
