@@ -1449,8 +1449,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final jsonTransactionTemplateOffset = fbb.writeString(
           object.jsonTransactionTemplate,
         );
-        final rangeOffset =
-            object.range == null ? null : fbb.writeString(object.range!);
+        final rangeOffset = fbb.writeString(object.range);
         final rulesOffset = fbb.writeList(
           object.rules.map(fbb.writeString).toList(growable: false),
         );
@@ -1503,18 +1502,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final jsonTransactionTemplateParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
+        final rangeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
         final transferToAccountUuidParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 20);
-        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
-          const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
-        );
-        final rangeParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 10);
-        final uuidParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGet(buffer, rootOffset, 6, '');
         final lastGeneratedTransactionDateParam =
             lastGeneratedTransactionDateValue == null
                 ? null
@@ -1524,17 +1517,23 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final lastGeneratedTransactionUuidParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 24);
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+        );
+        final uuidParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
         final object = RecurringTransaction(
           id: idParam,
           disabled: disabledParam,
           rules: rulesParam,
           jsonTransactionTemplate: jsonTransactionTemplateParam,
-          transferToAccountUuid: transferToAccountUuidParam,
-          createdDate: createdDateParam,
           range: rangeParam,
-          uuid: uuidParam,
+          transferToAccountUuid: transferToAccountUuidParam,
           lastGeneratedTransactionDate: lastGeneratedTransactionDateParam,
           lastGeneratedTransactionUuid: lastGeneratedTransactionUuidParam,
+          createdDate: createdDateParam,
+          uuid: uuidParam,
         );
 
         return object;
