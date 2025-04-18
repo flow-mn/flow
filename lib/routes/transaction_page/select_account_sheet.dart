@@ -22,7 +22,7 @@ class SelectAccountSheet extends StatefulWidget {
 
   final bool showTrailing;
 
-  /// Defaults to [true] when there are more than 8 categories.
+  /// Defaults to [true] when there are more than 6 categories.
   final bool? showSearchBar;
 
   const SelectAccountSheet({
@@ -45,7 +45,7 @@ class _SelectAccountSheetState extends State<SelectAccountSheet> {
   @override
   Widget build(BuildContext context) {
     final bool showSearchBar =
-        widget.showSearchBar ?? widget.accounts.length > 8;
+        widget.showSearchBar ?? widget.accounts.length > 6;
 
     final List<Account> results = simpleSortByQuery(widget.accounts, _query);
 

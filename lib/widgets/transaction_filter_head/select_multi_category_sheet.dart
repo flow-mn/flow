@@ -14,7 +14,7 @@ class SelectMultiCategorySheet extends StatefulWidget {
   final List<Category> categories;
   final List<String>? selectedUuids;
 
-  /// Defaults to [true] when there are more than 8 categories.
+  /// Defaults to [true] when there are more than 6 categories.
   final bool? showSearchBar;
 
   const SelectMultiCategorySheet({
@@ -51,7 +51,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
   @override
   Widget build(BuildContext context) {
     final bool showSearchBar =
-        widget.showSearchBar ?? widget.categories.length > 8;
+        widget.showSearchBar ?? widget.categories.length > 6;
 
     final List<Category> results = simpleSortByQuery(widget.categories, _query);
 
@@ -76,7 +76,6 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
           showSearchBar
               ? Frame(
                 child: TextField(
-                  autofocus: true,
                   onChanged: (value) => setState(() => _query = value),
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(

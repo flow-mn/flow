@@ -13,18 +13,21 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("ObjectBoxActions");
@@ -249,6 +252,9 @@ extension MainActions on ObjectBox {
     String? currentInput,
     int? accountId,
     int? categoryId,
+    double? amount,
+    String? currency,
+    DateTime? transactionDate,
     TransactionType? type,
     int? limit,
   }) async {
@@ -257,6 +263,12 @@ extension MainActions on ObjectBox {
         includeDescription: false,
         keyword: currentInput?.trim() ?? "",
         mode: TransactionSearchMode.substring,
+      ),
+      range: TransactionFilterTimeRange(
+        Moment.now()
+            .subtract(const Duration(days: 210))
+            .rangeTo(Moment.now())
+            .encodeShort(),
       ),
     );
 
@@ -293,6 +305,9 @@ extension MainActions on ObjectBox {
                   accountId: accountId,
                   categoryId: categoryId,
                   transactionType: type,
+                  transactionDate: transactionDate,
+                  amount: amount,
+                  currency: currency,
                 ),
               ),
             )
@@ -318,19 +333,15 @@ extension MainActions on ObjectBox {
     List<RelevanceScoredTitle> scores,
   ) {
     final List<List<RelevanceScoredTitle>> grouped =
-        scores.groupBy((relevance) => relevance.title).values.toList();
+        scores
+            .groupBy((relevance) => relevance.title.toLowerCase())
+            .values
+            .toList();
 
     return grouped.map((items) {
-      final double sum = items
-          .map((x) => x.relevancy)
-          .fold<double>(0, (value, element) => value + element);
+      final double max = items.map((x) => x.relevancy).reduce(math.max);
 
-      final double average = sum / items.length;
-
-      /// If an item occurs multiple times, its relevancy is increased
-      final double weight = 1 + (items.length * 0.025);
-
-      return (title: items.first.title, relevancy: average * weight);
+      return (title: items.first.title, relevancy: max);
     }).toList();
   }
 }
@@ -340,11 +351,16 @@ extension TransactionActions on Transaction {
   ///
   /// * If [query] is exactly same as [title], score is base + 100.0 (110.0)
   /// * If [accountId] matches, score is increased by 25%
-  /// * If [transactionType] matches, score is increased by 75%
-  /// * If [categoryId] matches, score is increased by 275%
+  ///   * If [accountId] matches, and [amount] matches, score is increased by another 100%
+  /// * If [transactionType] matches, score is increased by 50%
+  /// * If [categoryId] matches, score is increased by 150%
+  ///   * If [categoryId] matches, and [amount] matches, score is increased by 350%
+  /// * Depending on recency of [transactionDate], score is increased by 0% - 40%
   ///
-  /// **Max score**: 412.5
+  /// **Max multi.**: 7.15
+  /// **Max score**: 786.5
   /// **Query only max score**: 110.0
+  /// **No query max score**: 72.5
   ///
   /// Recommended to set [fuzzyPartial] to false when using for filtering purposes
   double titleSuggestionScore({
@@ -354,7 +370,12 @@ extension TransactionActions on Transaction {
     TransactionType? transactionType,
     bool fuzzyPartial = true,
     bool caseSensitive = false,
+    double? amount,
+    String? currency,
+    DateTime? transactionDate,
   }) {
+    final List<String> reasons = [];
+
     double score = 10.0;
 
     final String? normalizedTitle =
@@ -367,21 +388,50 @@ extension TransactionActions on Transaction {
               : ratio(query!, normalizedTitle).toDouble();
     }
 
-    double multipler = 1.0;
+    final bool amountMatches =
+        amount != null &&
+        amount.abs() != 0 &&
+        this.amount == amount &&
+        this.currency == currency;
+
+    double multiplier = 1.0;
 
     if (account.targetId == accountId) {
-      multipler += 0.25;
+      multiplier += 0.25;
+      reasons.add("accountId matches, 25%");
+
+      if (amountMatches) {
+        multiplier += 1.0;
+      }
     }
 
     if (transactionType != null && transactionType == type) {
-      multipler += 0.75;
+      multiplier += 0.5;
+      reasons.add("transactionType matches, 50%");
     }
 
     if (category.targetId == categoryId) {
-      multipler += 2.75;
+      multiplier += 1.5;
+
+      if (amountMatches) {
+        multiplier += 3.5;
+      }
+
+      final Duration? transactionDateDifference =
+          transactionDate?.difference(this.transactionDate).abs();
+
+      final double recencyScoreMultipler = switch (transactionDateDifference) {
+        null => 0,
+        > const Duration(days: 60) => 0.1,
+        > const Duration(days: 14) => 0.2,
+        > const Duration(days: 7) => 0.3,
+        _ => 0.4,
+      };
+
+      multiplier += recencyScoreMultipler;
     }
 
-    return score * multipler;
+    return score * multiplier;
   }
 
   /// When user makes a transfer, it actually creates two transactions.
@@ -758,6 +808,8 @@ extension AccountActions on Account {
     List<TransactionExtension>? extensions,
     bool? isPending,
     double? conversionRate = 1.0,
+    Recurrence? recurrence,
+    List<String>? extraTags,
   }) {
     if (conversionRate == 0) {
       throw Exception("Conversion rate cannot be zero, use 1.0 instead");
@@ -776,6 +828,8 @@ extension AccountActions on Account {
         extensions: extensions,
         isPending: isPending,
         conversionRate: 1.0 / (conversionRate ?? 1.0),
+        recurrence: recurrence,
+        extraTags: extraTags,
       );
     }
 
@@ -800,31 +854,63 @@ extension AccountActions on Account {
     final List<TransactionExtension> filteredExtensions =
         extensions?.where((ext) => ext is! Transfer).toList() ?? [];
 
-    transactionDate ??= DateTime.now();
+    transactionDate ??= recurrence?.range.from ?? DateTime.now();
+
+    final String? recurringTransactionUuid =
+        recurrence == null ? null : const Uuid().v4();
+
+    Recurring? recurringExtension;
+
+    if (recurringTransactionUuid != null) {
+      recurringExtension = Recurring(
+        initialTransactionDate: transactionDate,
+        uuid: recurringTransactionUuid,
+        relatedTransactionUuid: fromTransactionUuid,
+      );
+    }
 
     final int fromTransaction = createAndSaveTransaction(
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [transferData, ...filteredExtensions],
+      extensions: [
+        ...filteredExtensions,
+        transferData,
+        if (recurringExtension != null) recurringExtension,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
       isPending: isPending,
+      extraTags: extraTags,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount * (conversionRate ?? 1.0),
       title: resolvedTitle,
       description: description,
       extensions: [
-        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
         ...filteredExtensions,
+        transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
+        if (recurringExtension != null)
+          recurringExtension.copyWith(
+            relatedTransactionUuid: toTransactionUuid,
+          ),
       ],
       uuidOverride: toTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
       isPending: isPending,
+      extraTags: extraTags,
     );
+
+    if (recurringTransactionUuid != null) {
+      RecurringTransactionsService().createFromTransaction(
+        identifier: fromTransactionUuid,
+        recurrence: recurrence!,
+        uuidOverride: recurringTransactionUuid,
+        transferToAccountUuid: targetAccount.uuid,
+      );
+    }
 
     return (fromTransaction, toTransaction);
   }
@@ -841,8 +927,28 @@ extension AccountActions on Account {
     String? uuidOverride,
     bool? isPending,
     TransactionSubtype? subtype,
+    Recurrence? recurrence,
+    List<String>? extraTags,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
+
+    final String? recurringTransactionUuid =
+        recurrence == null ? null : const Uuid().v4();
+
+    Recurring? recurringExtension;
+
+    transactionDate ??= recurrence?.range.from ?? DateTime.now();
+
+    if (recurringTransactionUuid != null) {
+      recurringExtension = Recurring(
+        initialTransactionDate: transactionDate,
+        uuid: recurringTransactionUuid,
+        relatedTransactionUuid: uuid,
+      );
+
+      extensions ??= [];
+      extensions.add(recurringExtension);
+    }
 
     Transaction value =
         Transaction(
@@ -855,6 +961,7 @@ extension AccountActions on Account {
             uuid: uuid,
             isPending: isPending ?? false,
             subtype: subtype?.value,
+            extraTags: extraTags ?? [],
           )
           ..setCategory(category)
           ..setAccount(this);
@@ -890,6 +997,14 @@ extension AccountActions on Account {
     }
 
     final int id = TransactionsService().upsertOneSync(value);
+
+    if (recurringTransactionUuid != null) {
+      RecurringTransactionsService().createFromTransaction(
+        identifier: uuid,
+        recurrence: recurrence!,
+        uuidOverride: recurringTransactionUuid,
+      );
+    }
 
     try {
       TransitiveLocalPreferences().updateFrecencyData("account", uuid);

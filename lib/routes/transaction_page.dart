@@ -5,6 +5,7 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
@@ -18,12 +19,15 @@ import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/routes/transaction_page/select_account_sheet.dart";
 import "package:flow/routes/transaction_page/select_category_sheet.dart";
+import "package:flow/routes/transaction_page/select_recurrence.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -41,6 +45,7 @@ import "package:latlong2/latlong.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 
 final Logger _log = Logger("TransactionPage");
 
@@ -65,6 +70,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   late TransactionType _transactionType;
+  late TransactionDateEditMode _transactionDateEditMode;
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
@@ -98,7 +104,18 @@ class _TransactionPageState extends State<TransactionPage> {
 
   List<RelevanceScoredTitle>? autofillHints;
 
-  late DateTime _transactionDate;
+  RecurringTransaction? _recurringTransaction;
+
+  Recurrence? _recurrence;
+
+  Recurrence? get significantRecurrence =>
+      _transactionDateEditMode == TransactionDateEditMode.recurring
+          ? _recurrence
+          : null;
+
+  DateTime? _transactionDate;
+
+  DateTime get transactionDate => _transactionDate ?? DateTime.now();
 
   late final bool enableGeo;
 
@@ -141,6 +158,8 @@ class _TransactionPageState extends State<TransactionPage> {
           _currentlyEditing?.type ??
           widget.initialTransactionType ??
           TransactionType.expense;
+      _transactionDateEditMode =
+          _currentlyEditing?.editMode ?? TransactionDateEditMode.normal;
       _amount =
           _currentlyEditing?.isTransfer == true
               ? _currentlyEditing!.amount.abs()
@@ -155,6 +174,14 @@ class _TransactionPageState extends State<TransactionPage> {
       if (_currentlyEditing?.isTransfer == true) {
         _conversionRate =
             _currentlyEditing!.extensions.transfer?.conversionRate ?? 1.0;
+      }
+
+      if (_currentlyEditing != null &&
+          _transactionDateEditMode == TransactionDateEditMode.recurring) {
+        _recurringTransaction = RecurringTransactionsService().findOneSync(
+          _currentlyEditing.extensions.recurring?.uuid,
+        );
+        _recurrence = _recurringTransaction?.recurrence;
       }
     }
 
@@ -191,7 +218,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final String primaryCurrency = LocalPreferences().getPrimaryCurrency();
 
     final bool showPostTransactionBalance =
-        _selectedAccount != null && !isTransfer && !widget.isNewTransaction;
+        _selectedAccount != null && !widget.isNewTransaction;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -238,6 +265,9 @@ class _TransactionPageState extends State<TransactionPage> {
                         transactionType: _transactionType,
                         selectedAccountId: _selectedAccount?.id,
                         selectedCategoryId: _selectedCategory?.id,
+                        amount: _amount,
+                        currency: _selectedAccount?.currency,
+                        transactionDate: _transactionDate,
                         fallbackTitle: fallbackTitle,
                         onSubmitted: (_) => save(),
                       ),
@@ -281,7 +311,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                   showPostTransactionBalance
                                       ? MoneyText(
                                         _selectedAccount!.balanceAt(
-                                          _transactionDate,
+                                          transactionDate,
                                         ),
                                       )
                                       : null,
@@ -312,6 +342,14 @@ class _TransactionPageState extends State<TransactionPage> {
                               _selectedAccountTransferTo?.name ??
                                   "transaction.edit.selectAccount".t(context),
                             ),
+                            subtitle:
+                                _selectedAccountTransferTo != null
+                                    ? MoneyText(
+                                      _selectedAccountTransferTo!.balanceAt(
+                                        transactionDate,
+                                      ),
+                                    )
+                                    : null,
                             onTap: () => selectAccountTransferTo(),
                             trailing:
                                 _selectedAccountTransferTo == null
@@ -333,7 +371,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               onTap: () => inputPostConversionAmount(),
                               trailing:
                                   _selectedAccountTransferTo == null
-                                      ? const Icon(Symbols.chevron_right)
+                                      ? DirectionalChevron()
                                       : null,
                               focusNode: _selectAccountTransferToFocusNode,
                             ),
@@ -356,9 +394,6 @@ class _TransactionPageState extends State<TransactionPage> {
                               _selectedCategory?.name ??
                                   "transaction.edit.selectCategory".t(context),
                             ),
-                            // subtitle: _selectedAccount == null
-                            //     ? null
-                            //     : Text(_selectedAccount!.balance.money),
                             onTap: () => selectCategory(),
                             trailing:
                                 _selectedCategory == null
@@ -375,13 +410,67 @@ class _TransactionPageState extends State<TransactionPage> {
                       const SizedBox(height: 24.0),
                       Section(
                         title: "transaction.date".t(context),
-                        child: ListTile(
-                          title: Text(_transactionDate.toMoment().LLL),
-                          onTap: () => selectTransactionDate(),
-                          trailing:
-                              _selectedCategory == null
-                                  ? const Icon(Symbols.chevron_right)
-                                  : null,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 12.0,
+                          children: [
+                            SizedBox.shrink(),
+                            Align(
+                              alignment: AlignmentDirectional.topStart,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  spacing: 12.0,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox.shrink(),
+                                    ...TransactionDateEditMode.values
+                                        .where(
+                                          (x) =>
+                                              x !=
+                                              TransactionDateEditMode.normal,
+                                        )
+                                        .map(
+                                          (mode) => FilterChip(
+                                            label: Text(
+                                              mode.localizedNameContext(
+                                                context,
+                                              ),
+                                            ),
+                                            selected:
+                                                mode ==
+                                                _transactionDateEditMode,
+                                            avatar: Icon(mode.icon),
+                                            showCheckmark: false,
+                                            onSelected:
+                                                (selected) =>
+                                                    updateTransactionEditMode(
+                                                      selected ? mode : null,
+                                                    ),
+                                          ),
+                                        ),
+                                    SizedBox.shrink(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            AnimatedSize(
+                              duration: const Duration(milliseconds: 300),
+                              child:
+                                  _transactionDateEditMode ==
+                                          TransactionDateEditMode.recurring
+                                      ? SelectRecurrence(
+                                        initialValue: _recurrence,
+                                        onChanged: updateRecurrence,
+                                      )
+                                      : ListTile(
+                                        title: Text(
+                                          transactionDate.toMoment().LLL,
+                                        ),
+                                        onTap: () => selectTransactionDate(),
+                                      ),
+                            ),
+                          ],
                         ),
                       ),
                       if (_geo != null || enableGeo) ...[
@@ -575,6 +664,21 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {});
   }
 
+  void updateTransactionEditMode(TransactionDateEditMode? mode) {
+    if (_transactionDateEditMode != TransactionDateEditMode.normal &&
+        mode == null) {
+      _transactionDate = null;
+    }
+
+    mode ??= TransactionDateEditMode.normal;
+
+    if (mode == _transactionDateEditMode) return;
+
+    _transactionDateEditMode = mode;
+
+    setState(() {});
+  }
+
   void inputAmount() async {
     await TransitiveLocalPreferences().updateTransitiveProperties();
     final hideCurrencySymbol =
@@ -758,18 +862,15 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void selectTransactionDate() async {
-    final TimeOfDay currentTimeOfDay = TimeOfDay.fromDateTime(_transactionDate);
+    final TimeOfDay currentTimeOfDay = TimeOfDay.fromDateTime(transactionDate);
 
-    final DateTime? result = await showDatePicker(
-      context: context,
-      firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime(9999, 12, 31),
-      initialDate: _transactionDate,
-    );
+    final DateTime? result = await context.pickDate(transactionDate);
 
     setState(() {
       _transactionDate = result ?? _transactionDate;
     });
+
+    _postSelectTransactionDate();
 
     if (!mounted || result == null) return;
 
@@ -781,7 +882,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (timeResult == null) return;
 
     setState(() {
-      _transactionDate = _transactionDate.copyWith(
+      _transactionDate = transactionDate.copyWith(
         hour: timeResult.hour,
         minute: timeResult.minute,
         second: 0,
@@ -789,6 +890,30 @@ class _TransactionPageState extends State<TransactionPage> {
         millisecond: 0,
       );
     });
+
+    _postSelectTransactionDate();
+  }
+
+  void updateRecurrence(Recurrence? recurrence) {
+    _transactionDateEditMode = TransactionDateEditMode.recurring;
+    _transactionDate = recurrence?.range.from ?? _transactionDate;
+    _recurrence = recurrence;
+
+    if (!mounted) return;
+
+    setState(() {});
+  }
+
+  void _postSelectTransactionDate() async {
+    if (_transactionDateEditMode != TransactionDateEditMode.normal) return;
+
+    final bool pendingTransactionsRequireConfrimation =
+        LocalPreferences().pendingTransactions.requireConfrimation.get();
+
+    if (pendingTransactionsRequireConfrimation &&
+        transactionDate >= Moment.now().startOfNextMinute()) {
+      _transactionDateEditMode = TransactionDateEditMode.pending;
+    }
   }
 
   void selectLocation() async {
@@ -851,7 +976,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final bool? isPending =
         pendingTransactionsRequireConfrimation &&
                 _currentlyEditing.transactionDate.isPast
-            ? _transactionDate.isFuture
+            ? transactionDate.isFuture
             : _currentlyEditing.isPending;
 
     if (_transactionType == TransactionType.transfer) {
@@ -867,6 +992,7 @@ class _TransactionPageState extends State<TransactionPage> {
               _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
           isPending: isPending,
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
+          recurrence: significantRecurrence,
         );
 
         _currentlyEditing.permanentlyDelete(true);
@@ -882,7 +1008,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _currentlyEditing.title = formattedTitle;
     _currentlyEditing.description = formattedDescription;
     _currentlyEditing.amount = _amount;
-    _currentlyEditing.transactionDate = _transactionDate;
+    _currentlyEditing.transactionDate = transactionDate;
     _currentlyEditing.isPending = isPending;
 
     /// When user edits a balance amendment transaction, it is no longer a balance amendment.
@@ -925,9 +1051,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     final bool isPending =
         pendingTransactionsRequireConfrimation
-            ? _transactionDate.isFutureAnchored(
-              Moment.now().startOfNextMinute(),
-            )
+            ? transactionDate.isFutureAnchored(Moment.now().startOfNextMinute())
             : false;
 
     if (isTransfer) {
@@ -940,6 +1064,7 @@ class _TransactionPageState extends State<TransactionPage> {
         extensions: extensions,
         isPending: isPending,
         conversionRate: crossCurrencyTransfer ? _conversionRate : null,
+        recurrence: significantRecurrence,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -950,6 +1075,7 @@ class _TransactionPageState extends State<TransactionPage> {
         transactionDate: _transactionDate,
         extensions: extensions,
         isPending: isPending,
+        recurrence: significantRecurrence,
       );
     }
 

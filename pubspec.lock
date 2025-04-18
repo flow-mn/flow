@@ -1054,10 +1054,10 @@ packages:
     dependency: "direct main"
     description:
       name: moment_dart
-      sha256: "5b3be1bded9d48337751511cfcf3b36f378179ed4940ecb8eece75c6065ac3f7"
+      sha256: "0829d66eec659a7fc6a510ac085f9d8d2fab2d3734aabad40e4b7618835ba3d5"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "5.1.0"
   nm:
     dependency: transitive
     description:
@@ -1214,10 +1214,10 @@ packages:
     dependency: "direct main"
     description:
       name: pie_menu
-      sha256: "011ccddc6f71c51a766cd3daba445f9e0cba9a6003e8528340c3064a241a5a30"
+      sha256: d6511a64319c500e2263656020105fbce41dcc6234cb8c16f5f5cdac47ab64c1
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.7"
+    version: "3.2.10"
   platform:
     dependency: transitive
     description:
@@ -1326,10 +1326,10 @@ packages:
     dependency: "direct main"
     description:
       name: recurrence
-      sha256: dcca07a9badb935c8487f49c05883cc00a9804b33397df1215ed8234764c31dd
+      sha256: "25ceb856b8bf4ab41a68260ce27d071e8f598a2bfefaaabd461f869e64b49d85"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6"
+    version: "0.0.9"
   screen_retriever:
     dependency: transitive
     description:

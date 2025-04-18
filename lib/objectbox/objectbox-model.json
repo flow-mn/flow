@@ -196,7 +196,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "19:8440919020610534632",
+      "lastPropertyId": "21:8105783725440518384",
       "name": "Transaction",
       "properties": [
         {
@@ -292,6 +292,11 @@
           "id": "19:8440919020610534632",
           "name": "deletedDate",
           "type": 10
+        },
+        {
+          "id": "21:8105783725440518384",
+          "name": "extraTags",
+          "type": 30
         }
       ],
       "relations": []
@@ -466,7 +471,7 @@
     },
     {
       "id": "12:800756592587838565",
-      "lastPropertyId": "8:9125625889304953158",
+      "lastPropertyId": "11:420551111786793892",
       "name": "RecurringTransaction",
       "properties": [
         {
@@ -506,9 +511,14 @@
           "type": 1
         },
         {
-          "id": "8:9125625889304953158",
-          "name": "transferAccountToUuid",
+          "id": "9:1604914214581454059",
+          "name": "transferToAccountUuid",
           "type": 9
+        },
+        {
+          "id": "10:651096412135846367",
+          "name": "lastGeneratedTransactionDate",
+          "type": 10
         }
       ],
       "relations": []
@@ -561,7 +571,10 @@
     4688691313482515602,
     8178664360494427777,
     9181400211872351108,
-    577162958135049929
+    577162958135049929,
+    9125625889304953158,
+    4341960036397140355,
+    420551111786793892
   ],
   "retiredRelationUids": [],
   "version": 1

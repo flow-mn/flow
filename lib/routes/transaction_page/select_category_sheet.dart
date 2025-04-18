@@ -15,7 +15,7 @@ class SelectCategorySheet extends StatefulWidget {
   final List<Category> categories;
   final int? currentlySelectedCategoryId;
 
-  /// Defaults to [true] when there are more than 8 categories.
+  /// Defaults to [true] when there are more than 6 categories.
   final bool? showSearchBar;
 
   final bool showTrailing;
@@ -38,7 +38,7 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
   @override
   Widget build(BuildContext context) {
     final bool showSearchBar =
-        widget.showSearchBar ?? widget.categories.length > 8;
+        widget.showSearchBar ?? widget.categories.length > 6;
 
     final List<Category> results = simpleSortByQuery(widget.categories, _query);
 

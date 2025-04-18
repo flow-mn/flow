@@ -1,9 +1,10 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
-import "package:flow/widgets/select_flow_icon_sheet/select_char_flow_icon_sheet.dart";
-import "package:flow/widgets/select_flow_icon_sheet/select_icon_flow_icon_sheet.dart";
-import "package:flow/widgets/select_flow_icon_sheet/select_image_flow_icon_sheet.dart";
+import "package:flow/widgets/sheets/select_flow_icon_sheet/select_char_flow_icon_sheet.dart";
+import "package:flow/widgets/sheets/select_flow_icon_sheet/select_icon_flow_icon_sheet.dart";
+import "package:flow/widgets/sheets/select_flow_icon_sheet/select_image_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -31,16 +32,19 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
         children: [
           ListTile(
             leading: const Icon(Symbols.category_rounded),
+            trailing: DirectionalChevron(),
             title: Text("flowIcon.type.icon".t(context)),
             onTap: () => _selectIcon(),
           ),
           ListTile(
             leading: const Icon(Symbols.glyphs_rounded),
+            trailing: DirectionalChevron(),
             title: Text("flowIcon.type.character".t(context)),
             onTap: () => _selectEmoji(),
           ),
           ListTile(
             leading: const Icon(Symbols.image_rounded),
+            trailing: DirectionalChevron(),
             title: Text("flowIcon.type.image".t(context)),
             onTap: () => _selectImage(),
           ),

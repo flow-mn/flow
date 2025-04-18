@@ -7,6 +7,7 @@ import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
 import "package:flow/routes/community/contributors_page.dart";
+import "package:flow/routes/debug/debug_icloud_page.dart";
 import "package:flow/routes/debug/debug_log_page.dart";
 import "package:flow/routes/debug/debug_logs_page.dart";
 import "package:flow/routes/debug/debug_scheduled_notifications_page.dart";
@@ -412,6 +413,10 @@ final router = GoRouter(
     GoRoute(
       path: "/_debug/scheduledNotifications",
       builder: (context, state) => DebugScheduledNotificationsPage(),
+    ),
+    GoRoute(
+      path: "/_debug/iCloud",
+      builder: (context, state) => DebugICloudPage(),
     ),
     GoRoute(path: "/_debug/logs", builder: (context, state) => DebugLogsPage()),
     GoRoute(

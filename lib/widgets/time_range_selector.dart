@@ -49,94 +49,104 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     final bool buildNextPrev = _timeRange is PageableRange;
 
     final String modeLabel = switch (_timeRange) {
-      LocalWeekTimeRange() => "tabs.stats.timeRange.mode.byWeek",
-      MonthTimeRange() => "tabs.stats.timeRange.mode.byMonth",
-      YearTimeRange() => "tabs.stats.timeRange.mode.byYear",
-      _ => "tabs.stats.timeRange.mode.custom",
+      LocalWeekTimeRange() => "select.timeRange.mode.byWeek",
+      MonthTimeRange() => "select.timeRange.mode.byMonth",
+      YearTimeRange() => "select.timeRange.mode.byYear",
+      _ => "select.timeRange.mode.custom",
     }.t(context);
+
+    final TextDirection textDirection = Directionality.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            if (buildNextPrev) ...[
-              IconButton(
-                icon: const Icon(Symbols.chevron_left),
-                onPressed: prev,
-              ),
-              const SizedBox(width: 12.0),
-            ],
-            Expanded(
-              child: Listener(
-                onPointerSignal: (event) {
-                  if (_timeRange is! PageableRange) return;
-                  if (event is! PointerScrollEvent) return;
-
-                  if (event.scrollDelta.dy < 0) {
-                    prev();
-                  } else if (event.scrollDelta.dy > 0) {
-                    next();
-                  }
-                },
-                child: GestureDetector(
-                  onHorizontalDragEnd: (details) {
-                    final double? velocity = details.primaryVelocity;
-                    if (velocity == null) return;
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            children: [
+              if (buildNextPrev) ...[
+                IconButton(
+                  icon: const Icon(Symbols.chevron_left),
+                  onPressed: prev,
+                ),
+                const SizedBox(width: 12.0),
+              ],
+              Expanded(
+                child: Listener(
+                  onPointerSignal: (event) {
                     if (_timeRange is! PageableRange) return;
+                    if (event is! PointerScrollEvent) return;
 
-                    if (velocity <= -_dragThreshold) {
-                      next();
-                    } else if (velocity >= _dragThreshold) {
+                    if (event.scrollDelta.dy < 0) {
                       prev();
+                    } else if (event.scrollDelta.dy > 0) {
+                      next();
                     }
                   },
-                  child: switch (_timeRange) {
-                    LocalWeekTimeRange localWeekTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    MonthTimeRange monthTimeRange => Button(
-                      onTap: pickMonth,
-                      child: Text(
-                        monthTimeRange.from.format(
-                          payload:
-                              monthTimeRange.from.isAtSameYearAs(DateTime.now())
-                                  ? "MMMM"
-                                  : "MMMM YYYY",
+                  child: Directionality(
+                    textDirection: textDirection,
+                    child: GestureDetector(
+                      onHorizontalDragEnd: (details) {
+                        final double? velocity = details.primaryVelocity;
+                        if (velocity == null) return;
+                        if (_timeRange is! PageableRange) return;
+
+                        if (velocity <= -_dragThreshold) {
+                          next();
+                        } else if (velocity >= _dragThreshold) {
+                          prev();
+                        }
+                      },
+                      child: switch (_timeRange) {
+                        LocalWeekTimeRange localWeekTimeRange => Button(
+                          onTap: selectRange,
+                          child: Text(
+                            "${localWeekTimeRange.from.toMoment().ll} -> ${localWeekTimeRange.to.toMoment().ll}",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                        MonthTimeRange monthTimeRange => Button(
+                          onTap: pickMonth,
+                          child: Text(
+                            monthTimeRange.from.format(
+                              payload:
+                                  monthTimeRange.from.isAtSameYearAs(
+                                        DateTime.now(),
+                                      )
+                                      ? "MMMM"
+                                      : "MMMM YYYY",
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        YearTimeRange yearTimeRange => Button(
+                          onTap: selectRange,
+                          child: Text(
+                            yearTimeRange.year.toString(),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        _ => Button(
+                          onTap: pickRange,
+                          child: Text(
+                            "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      },
                     ),
-                    YearTimeRange yearTimeRange => Button(
-                      onTap: selectRange,
-                      child: Text(
-                        yearTimeRange.year.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    _ => Button(
-                      onTap: pickRange,
-                      child: Text(
-                        "${_timeRange.from.toMoment().ll} -> ${_timeRange.to.toMoment().ll}",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  },
+                  ),
                 ),
               ),
-            ),
-            if (buildNextPrev) ...[
-              const SizedBox(width: 12.0),
-              IconButton(
-                icon: const Icon(Symbols.chevron_right),
-                onPressed: next,
-              ),
+              if (buildNextPrev) ...[
+                const SizedBox(width: 12.0),
+                IconButton(
+                  icon: const Icon(Symbols.chevron_right),
+                  onPressed: next,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
         const SizedBox(height: 4.0),
         Row(
@@ -146,7 +156,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
             Text(modeLabel),
             TextButton(
               onPressed: changeMode,
-              child: Text("tabs.stats.timeRange.changeMode".t(context)),
+              child: Text("select.timeRange.changeMode".t(context)),
             ),
           ],
         ),
@@ -172,7 +182,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     final range = await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           _timeRange is CustomTimeRange
               ? DateTimeRange(

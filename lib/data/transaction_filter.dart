@@ -49,6 +49,9 @@ class TransactionFilter implements Jasonable {
 
   final List<String>? currencies;
 
+  /// Matches if it's included in [Transaction.extraTags]
+  final String? extraTag;
+
   /// Defaults to false
   final bool? includeDeleted;
 
@@ -62,6 +65,7 @@ class TransactionFilter implements Jasonable {
     this.minAmount,
     this.maxAmount,
     this.currencies,
+    this.extraTag,
     this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
@@ -159,6 +163,10 @@ class TransactionFilter implements Jasonable {
       });
     }
 
+    if (extraTag != null) {
+      predicates.add((Transaction t) => t.extraTags.contains(extraTag));
+    }
+
     if (includeDeleted != true) {
       predicates.add(
         (Transaction t) => t.isDeleted == null || t.isDeleted == false,
@@ -234,6 +242,14 @@ class TransactionFilter implements Jasonable {
               .or(Transaction_.isPending.isNull()),
         );
       }
+    }
+
+    if (extraTag != null) {
+      conditions.add(
+        Transaction_.extraTags.notNull().and(
+          Transaction_.extraTags.containsElement(extraTag!),
+        ),
+      );
     }
 
     if (includeDeleted != true) {
@@ -323,6 +339,10 @@ class TransactionFilter implements Jasonable {
       count++;
     }
 
+    if (extraTag != other.extraTag) {
+      count++;
+    }
+
     return count;
   }
 
@@ -339,6 +359,7 @@ class TransactionFilter implements Jasonable {
     Optional<double>? minAmount,
     Optional<double>? maxAmount,
     Optional<List<String>>? currencies,
+    Optional<String>? extraTag,
   }) {
     return TransactionFilter(
       types: types == null ? this.types : types.value,
@@ -356,6 +377,7 @@ class TransactionFilter implements Jasonable {
       minAmount: minAmount == null ? this.minAmount : minAmount.value,
       maxAmount: maxAmount == null ? this.maxAmount : maxAmount.value,
       currencies: currencies == null ? this.currencies : currencies.value,
+      extraTag: extraTag == null ? this.extraTag : extraTag.value,
     );
   }
 
@@ -375,6 +397,7 @@ class TransactionFilter implements Jasonable {
     searchData,
     sortBy,
     groupBy,
+    extraTag,
   ]);
 
   @override
@@ -395,6 +418,7 @@ class TransactionFilter implements Jasonable {
         other.maxAmount == maxAmount &&
         other.includeDeleted == includeDeleted &&
         other.isPending == isPending &&
+        other.extraTag == extraTag &&
         setEquals(other.uuids?.toSet(), uuids?.toSet()) &&
         setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
         setEquals(other.types?.toSet(), types?.toSet()) &&

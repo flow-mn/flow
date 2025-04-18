@@ -32,6 +32,8 @@ class DescriptionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool noContent = controller.text.trim().isEmpty;
 
+    final TextDirection textDirection = Directionality.of(context);
+
     return Section(
       titleOverride: Row(
         mainAxisSize: MainAxisSize.min,
@@ -52,7 +54,7 @@ class DescriptionSection extends StatelessWidget {
       child:
           noContent
               ? Align(
-                alignment: Alignment.topLeft,
+                alignment: AlignmentDirectional.topStart,
                 child: Frame(
                   child: TextButton(
                     onPressed: () => showEditModal(context),
@@ -68,12 +70,16 @@ class DescriptionSection extends StatelessWidget {
                     focusNode: focusNode,
                     allowTogglingCheckboxes: true,
                   ),
-                  Positioned(
-                    right: 24.0,
+                  Positioned.directional(
+                    end: 24.0,
                     top: 8.0,
+                    textDirection: textDirection,
                     child: IconButton(
                       isSelected: true,
-                      icon: Icon(Symbols.edit_rounded),
+                      icon: Icon(
+                        Symbols.edit_rounded,
+                        textDirection: textDirection,
+                      ),
                       onPressed: () => showEditModal(context),
                       tooltip: "general.edit".t(context),
                     ),

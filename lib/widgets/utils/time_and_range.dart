@@ -1,6 +1,6 @@
 import "package:flow/widgets/month_selector_sheet.dart";
-import "package:flow/widgets/select_time_range_mode_sheet.dart";
-import "package:flow/widgets/year_selector_sheet.dart";
+import "package:flow/widgets/sheets/select_time_range_mode_sheet.dart";
+import "package:flow/widgets/sheets/year_selector_sheet.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -53,7 +53,7 @@ Future<TimeRange?> showTimeRangePickerSheet(
     TimeRangeMode.custom when context.mounted => await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           initialValue is CustomTimeRange
               ? DateTimeRange(start: initialValue.from, end: initialValue.to)

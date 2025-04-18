@@ -1,5 +1,5 @@
 import "package:flow/data/transactions_filter/time_range.dart";
-import "package:flow/widgets/select_time_range_mode_sheet.dart";
+import "package:flow/widgets/sheets/select_time_range_mode_sheet.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -50,7 +50,7 @@ Future<TransactionFilterTimeRange?> showTransactionFilterTimeRangeSelectorSheet(
     TimeRangeMode.custom when context.mounted => await showDateRangePicker(
       context: context,
       firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-      lastDate: DateTime.now().startOfNextYear(),
+      lastDate: DateTime(4000),
       initialDateRange:
           initialValue?.range is CustomTimeRange
               ? DateTimeRange(

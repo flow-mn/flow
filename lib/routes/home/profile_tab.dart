@@ -6,6 +6,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -52,7 +53,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           ListTile(
             title: Text("preferences.transactions.pending".t(context)),
-            leading: const Icon(Symbols.schedule_rounded),
+            leading: const Icon(Symbols.search_activity_rounded),
             onTap: () => context.push("/transactions/pending"),
           ),
           ListTile(
@@ -117,6 +118,11 @@ class _ProfileTabState extends State<ProfileTab> {
               title: const Text("View scheduled notifications"),
               leading: const Icon(Symbols.notifications_rounded),
               onTap: () => context.push("/_debug/scheduledNotifications"),
+            ),
+            ListTile(
+              title: const Text("ICloud debug explorer"),
+              leading: const Icon(Symbols.cloud_rounded),
+              onTap: () => context.push("/_debug/iCloud"),
             ),
             ListTile(
               title: const Text("Schedule debug notification"),
@@ -226,11 +232,15 @@ class _ProfileTabState extends State<ProfileTab> {
       _debugDbBusy = true;
     });
 
+    TransactionsService().pauseListeners();
+
     try {
       if (confirm == true) {
         await ObjectBox().eraseMainData();
       }
     } finally {
+      TransactionsService().resumeListeners();
+
       _debugDbBusy = false;
 
       if (mounted) {

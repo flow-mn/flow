@@ -13,7 +13,7 @@ import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/utils/optional.dart";
-import "package:flow/widgets/select_multi_currency_sheet.dart";
+import "package:flow/widgets/sheets/select_multi_currency_sheet.dart";
 import "package:flow/widgets/transaction_filter_head.dart";
 import "package:flow/widgets/transaction_filter_head/create_filter_preset_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_filter_preset_sheet.dart";

@@ -15,6 +15,10 @@ SyncModelV2 _$SyncModelV2FromJson(Map<String, dynamic> json) => SyncModelV2(
       (json['transactions'] as List<dynamic>)
           .map((e) => Transaction.fromJson(e as Map<String, dynamic>))
           .toList(),
+  recurringTransactions:
+      (json['recurringTransactions'] as List<dynamic>)
+          .map((e) => RecurringTransaction.fromJson(e as Map<String, dynamic>))
+          .toList(),
   accounts:
       (json['accounts'] as List<dynamic>)
           .map((e) => Account.fromJson(e as Map<String, dynamic>))
@@ -49,6 +53,7 @@ Map<String, dynamic> _$SyncModelV2ToJson(SyncModelV2 instance) =>
       'username': instance.username,
       'appVersion': instance.appVersion,
       'transactions': instance.transactions,
+      'recurringTransactions': instance.recurringTransactions,
       'accounts': instance.accounts,
       'categories': instance.categories,
       'transactionFilterPresets': instance.transactionFilterPresets,

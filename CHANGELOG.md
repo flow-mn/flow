@@ -7,11 +7,21 @@
 * Now you can save backups to iCloud. Enable it in `Preferences > Sync`
 * [OPTIMISTIC] Now you can setup credit line accounts.
 * Added list of contributors, closes [#448](https://github.com/flow-mn/flow/issues/448)
+* Date and time are now in Arabic when the language is set to Arabic, thanks to [Ultrate](https://github.com/Ultrate)
+* Now you can do recurring transactions, closes [#59](https://github.com/flow-mn/flow/issues/59)
 
 ### Changes & Improvements
 
 * Backup files naming convention has changed to comply with iCloud Drive file name requirements
 * Added "Recommend Flow" button
+* Title suggestion now considers recency of a transaction
+* Improved RTL support in certain parts of the UI. Feel free to report more issues regarding RTL
+* Transfer transactions now shows account balance
+
+### Fixes
+
+* Categories page layout is no longer "suboptimal" on smaller screens
+* `Add category from presets` page no longer show presets with same name as any of your existing categories
 
 ## 0.13.1
 

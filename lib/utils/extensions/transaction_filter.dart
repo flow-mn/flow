@@ -84,7 +84,7 @@ extension TransactionFilterHelpers on TransactionFilter {
 
     if (value case TimeRange timeRange) {
       if (timeRange == last30DaysRange()) {
-        return "tabs.stats.timeRange.last30days".t(context);
+        return "select.timeRange.last30days".t(context);
       }
 
       return timeRange.format();

@@ -2,7 +2,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
-import "package:flow/widgets/month_selector_sheet/month_button.dart";
+import "package:flow/widgets/sheets/month_selector_sheet/month_button.dart";
 import "package:flow/widgets/year_selector_bar.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -32,7 +32,7 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
   @override
   Widget build(BuildContext context) {
     return ModalSheet(
-      title: Text("general.timeSelector.select.month".t(context)),
+      title: Text("select.time.select.month".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
         children: [
@@ -43,12 +43,13 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
                   year = now.year;
                   month = now.month;
                 }),
-            child: Text("general.timeSelector.now".t(context)),
+            child: Text("select.time.now".t(context)),
           ),
           Button(onTap: pop, child: Text("general.done".t(context))),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           YearSelectorBar(year: year, onUpdate: updateYear),
           const SizedBox(height: 16.0),

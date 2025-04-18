@@ -12,6 +12,7 @@ import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/blur_backgorund.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -105,7 +106,7 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
                         ],
                       ),
                     ),
-                    Icon(Symbols.chevron_right_rounded),
+                    RTLFlipper(child: Icon(Symbols.chevron_right_rounded)),
                   ],
                 ),
               ),

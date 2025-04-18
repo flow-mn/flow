@@ -23,6 +23,11 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) =>
           json['createdDate'],
           const UTCDateTimeConverter().fromJson,
         ),
+        extraTags:
+            (json['extraTags'] as List<dynamic>?)
+                ?.map((e) => e as String)
+                .toList() ??
+            const <String>[],
       )
       ..isDeleted = json['isDeleted'] as bool?
       ..deletedDate = _$JsonConverterFromJson<String, DateTime>(
@@ -52,6 +57,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'currency': instance.currency,
       'subtype': instance.subtype,
       'extra': instance.extra,
+      'extraTags': instance.extraTags,
       'categoryUuid': instance.categoryUuid,
       'accountUuid': instance.accountUuid,
     };

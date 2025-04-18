@@ -15,6 +15,10 @@ class TitleInput extends StatelessWidget {
   final int? selectedCategoryId;
   final TransactionType transactionType;
 
+  final double? amount;
+  final String? currency;
+  final DateTime? transactionDate;
+
   final String fallbackTitle;
 
   final Function(String) onSubmitted;
@@ -25,6 +29,9 @@ class TitleInput extends StatelessWidget {
     required this.controller,
     this.selectedAccountId,
     this.selectedCategoryId,
+    this.amount,
+    this.currency,
+    this.transactionDate,
     required this.transactionType,
     required this.fallbackTitle,
     required this.onSubmitted,
@@ -47,7 +54,7 @@ class TitleInput extends StatelessWidget {
               child: child,
             ),
         onSelected: (option) => controller.text = option.title,
-        suggestionsCallback: getAutocompleteOptions,
+        suggestionsCallback: (query) => getAutocompleteOptions(query),
         builder: (context, controller, focusNode) {
           return TextField(
             controller: controller,
@@ -68,20 +75,24 @@ class TitleInput extends StatelessWidget {
     );
   }
 
-  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(
-    String query,
-  ) async => ObjectBox()
-      .transactionTitleSuggestions(
-        currentInput: query,
-        accountId: selectedAccountId,
-        categoryId: selectedCategoryId,
-        type: transactionType,
-        limit: 5,
-      )
-      .then(
-        (results) =>
-            results
-                .where((item) => item.title != "transaction.fallbackTitle".tr())
-                .toList(),
-      );
+  Future<List<RelevanceScoredTitle>> getAutocompleteOptions(String query) =>
+      ObjectBox()
+          .transactionTitleSuggestions(
+            currentInput: query,
+            accountId: selectedAccountId,
+            categoryId: selectedCategoryId,
+            type: transactionType,
+            amount: amount,
+            currency: currency,
+            transactionDate: transactionDate,
+            limit: 5,
+          )
+          .then(
+            (results) =>
+                results
+                    .where(
+                      (item) => item.title != "transaction.fallbackTitle".tr(),
+                    )
+                    .toList(),
+          );
 }

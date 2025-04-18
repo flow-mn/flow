@@ -27,6 +27,7 @@ TransactionFilter _$TransactionFilterFromJson(
   maxAmount: (json['maxAmount'] as num?)?.toDouble(),
   currencies:
       (json['currencies'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  extraTag: json['extraTag'] as String?,
   includeDeleted: json['includeDeleted'] as bool? ?? false,
   sortDescending: json['sortDescending'] as bool? ?? true,
   searchData:
@@ -58,6 +59,7 @@ Map<String, dynamic> _$TransactionFilterToJson(TransactionFilter instance) =>
       'minAmount': instance.minAmount,
       'maxAmount': instance.maxAmount,
       'currencies': instance.currencies,
+      'extraTag': instance.extraTag,
       'includeDeleted': instance.includeDeleted,
     };
 

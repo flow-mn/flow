@@ -261,7 +261,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(7, 5357777579468740615),
     name: 'Transaction',
-    lastPropertyId: const obx_int.IdUid(19, 8440919020610534632),
+    lastPropertyId: const obx_int.IdUid(21, 8105783725440518384),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -369,6 +369,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(19, 8440919020610534632),
         name: 'deletedDate',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(21, 8105783725440518384),
+        name: 'extraTags',
+        type: 30,
         flags: 0,
       ),
     ],
@@ -570,7 +576,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 800756592587838565),
     name: 'RecurringTransaction',
-    lastPropertyId: const obx_int.IdUid(8, 9125625889304953158),
+    lastPropertyId: const obx_int.IdUid(11, 420551111786793892),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -616,9 +622,15 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(8, 9125625889304953158),
-        name: 'transferAccountToUuid',
+        id: const obx_int.IdUid(9, 1604914214581454059),
+        name: 'transferToAccountUuid',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 651096412135846367),
+        name: 'lastGeneratedTransactionDate',
+        type: 10,
         flags: 0,
       ),
     ],
@@ -711,6 +723,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       8178664360494427777,
       9181400211872351108,
       577162958135049929,
+      9125625889304953158,
+      4341960036397140355,
+      420551111786793892,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -1061,7 +1076,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.description == null
                 ? null
                 : fbb.writeString(object.description!);
-        fbb.startTable(20);
+        final extraTagsOffset = fbb.writeList(
+          object.extraTags.map(fbb.writeString).toList(growable: false),
+        );
+        fbb.startTable(22);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -1079,6 +1097,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(16, object.isPending);
         fbb.addBool(17, object.isDeleted);
         fbb.addInt64(18, object.deletedDate?.millisecondsSinceEpoch);
+        fbb.addOffset(20, extraTagsOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1128,6 +1147,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
         );
+        final extraTagsParam = const fb.ListReader<String>(
+          fb.StringReader(asciiOptimization: true),
+          lazy: false,
+        ).vTableGet(buffer, rootOffset, 44, []);
         final object =
             Transaction(
                 id: idParam,
@@ -1140,6 +1163,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 uuid: uuidParam,
                 transactionDate: transactionDateParam,
                 createdDate: createdDateParam,
+                extraTags: extraTagsParam,
               )
               ..extra = const fb.StringReader(
                 asciiOptimization: true,
@@ -1420,16 +1444,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final jsonTransactionTemplateOffset = fbb.writeString(
           object.jsonTransactionTemplate,
         );
-        final rangeOffset =
-            object.range == null ? null : fbb.writeString(object.range!);
+        final rangeOffset = fbb.writeString(object.range);
         final rulesOffset = fbb.writeList(
           object.rules.map(fbb.writeString).toList(growable: false),
         );
-        final transferAccountToUuidOffset =
-            object.transferAccountToUuid == null
+        final transferToAccountUuidOffset =
+            object.transferToAccountUuid == null
                 ? null
-                : fbb.writeString(object.transferAccountToUuid!);
-        fbb.startTable(9);
+                : fbb.writeString(object.transferToAccountUuid!);
+        fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, jsonTransactionTemplateOffset);
@@ -1437,13 +1460,19 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(4, rulesOffset);
         fbb.addInt64(5, object.createdDate.millisecondsSinceEpoch);
         fbb.addBool(6, object.disabled);
-        fbb.addOffset(7, transferAccountToUuidOffset);
+        fbb.addOffset(8, transferToAccountUuidOffset);
+        fbb.addInt64(
+          9,
+          object.lastGeneratedTransactionDate?.millisecondsSinceEpoch,
+        );
         fbb.finish(fbb.endTable());
         return object.id;
       },
       objectFromFB: (obx.Store store, ByteData fbData) {
         final buffer = fb.BufferContext(fbData);
         final rootOffset = buffer.derefObject(0);
+        final lastGeneratedTransactionDateValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 22);
         final idParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -1463,27 +1492,35 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final jsonTransactionTemplateParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
-        final transferAccountToUuidParam = const fb.StringReader(
+        final rangeParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 18);
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final transferToAccountUuidParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 20);
+        final lastGeneratedTransactionDateParam =
+            lastGeneratedTransactionDateValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(
+                  lastGeneratedTransactionDateValue,
+                );
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
-        final rangeParam = const fb.StringReader(
+        final uuidParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 10);
+        ).vTableGet(buffer, rootOffset, 6, '');
         final object = RecurringTransaction(
-            id: idParam,
-            disabled: disabledParam,
-            rules: rulesParam,
-            jsonTransactionTemplate: jsonTransactionTemplateParam,
-            transferAccountToUuid: transferAccountToUuidParam,
-            createdDate: createdDateParam,
-            range: rangeParam,
-          )
-          ..uuid = const fb.StringReader(
-            asciiOptimization: true,
-          ).vTableGet(buffer, rootOffset, 6, '');
+          id: idParam,
+          disabled: disabledParam,
+          rules: rulesParam,
+          jsonTransactionTemplate: jsonTransactionTemplateParam,
+          range: rangeParam,
+          transferToAccountUuid: transferToAccountUuidParam,
+          lastGeneratedTransactionDate: lastGeneratedTransactionDateParam,
+          createdDate: createdDateParam,
+          uuid: uuidParam,
+        );
 
         return object;
       },
@@ -1746,6 +1783,11 @@ class Transaction_ {
   static final deletedDate = obx.QueryDateProperty<Transaction>(
     _entities[4].properties[16],
   );
+
+  /// See [Transaction.extraTags].
+  static final extraTags = obx.QueryStringVectorProperty<Transaction>(
+    _entities[4].properties[17],
+  );
 }
 
 /// [TransactionFilterPreset] entity fields to define ObjectBox queries.
@@ -1917,7 +1959,11 @@ class RecurringTransaction_ {
     _entities[8].properties[6],
   );
 
-  /// See [RecurringTransaction.transferAccountToUuid].
-  static final transferAccountToUuid =
+  /// See [RecurringTransaction.transferToAccountUuid].
+  static final transferToAccountUuid =
       obx.QueryStringProperty<RecurringTransaction>(_entities[8].properties[7]);
+
+  /// See [RecurringTransaction.lastGeneratedTransactionDate].
+  static final lastGeneratedTransactionDate =
+      obx.QueryDateProperty<RecurringTransaction>(_entities[8].properties[8]);
 }

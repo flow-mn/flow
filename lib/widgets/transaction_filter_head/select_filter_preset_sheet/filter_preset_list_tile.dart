@@ -2,6 +2,7 @@ import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -80,23 +81,11 @@ class _FilterPresetListTileState extends State<FilterPresetListTile> {
         ),
     ];
 
-    return Slidable(
+    return DirectionalSlidable(
       key: widget.dismissibleKey,
       groupTag: "filter_preset_list_tile",
-      endActionPane:
-          endActionPanes.isNotEmpty
-              ? ActionPane(
-                motion: const DrawerMotion(),
-                children: endActionPanes,
-              )
-              : null,
-      startActionPane:
-          startActionPanes.isNotEmpty
-              ? ActionPane(
-                motion: const DrawerMotion(),
-                children: startActionPanes,
-              )
-              : null,
+      endActions: endActionPanes,
+      startActions: startActionPanes,
       child: listTile,
     );
   }

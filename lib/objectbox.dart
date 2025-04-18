@@ -5,8 +5,10 @@ import "package:flow/data/flow_icon.dart";
 import "package:flow/data/setup/default_accounts.dart";
 import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/account.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/profile.dart";
+import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
@@ -239,6 +241,8 @@ class ObjectBox {
         box<Account>().removeAllAsync(),
         box<Profile>().removeAllAsync(),
         box<UserPreferences>().removeAllAsync(),
+        box<Budget>().removeAllAsync(),
+        box<RecurringTransaction>().removeAllAsync(),
         box<TransactionFilterPreset>().removeAllAsync(),
       ]);
     } finally {}

@@ -88,35 +88,26 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           spacing: 16.0,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Row(
-                              spacing: 12.0,
-                              children: [
-                                Expanded(
-                                  child: Button(
-                                    onTap: () => context.push("/category/new"),
-                                    leading: Icon(Symbols.add_rounded),
-                                    child: Text("category.new".t(context)),
-                                  ),
-                                ),
-                                if (showPresetsButton)
-                                  Expanded(
-                                    child: Button(
-                                      trailing: Icon(
-                                        Symbols.chevron_right_rounded,
-                                      ),
-                                      onTap: () {
-                                        context.push(
-                                          "/setup/categories?standalone=true&selectAll=false",
-                                        );
-                                      },
-                                      child: Text(
-                                        "categories.addFromPresets".t(context),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                            Button(
+                              onTap: () => context.push("/category/new"),
+                              leading: Icon(Symbols.add_rounded),
+                              child: Text("category.new".t(context)),
                             ),
+                            if (showPresetsButton)
+                              Button(
+                                leading: Icon(Symbols.category_rounded),
+                                onTap: () {
+                                  context.push(
+                                    "/setup/categories?standalone=true&selectAll=false",
+                                  );
+                                },
+                                child: Text(
+                                  "categories.addFromPresets".t(context),
+                                ),
+                              ),
+                            const Divider(),
                             ...categories.map(
                               (category) => CategoryCard(
                                 category: category,
