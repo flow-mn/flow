@@ -14,6 +14,8 @@ class Recurring extends TransactionExtension implements Jasonable {
   @JsonKey(includeFromJson: false, includeToJson: false)
   String get recurringTransactionUuid => uuid;
 
+  DateTime initialTransactionDate;
+
   @override
   void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
@@ -23,6 +25,7 @@ class Recurring extends TransactionExtension implements Jasonable {
 
   Recurring({
     required super.uuid,
+    required this.initialTransactionDate,
     this.relatedTransactionUuid,
     this.locked = false,
   }) : super();
@@ -37,11 +40,14 @@ class Recurring extends TransactionExtension implements Jasonable {
   Map<String, dynamic> toJson() => _$RecurringToJson(this);
 
   Recurring copyWith({
+    DateTime? initialTransactionDate,
     String? relatedTransactionUuid,
     String? uuid,
     bool? locked,
   }) {
     return Recurring(
+      initialTransactionDate:
+          initialTransactionDate ?? this.initialTransactionDate,
       relatedTransactionUuid:
           relatedTransactionUuid ?? this.relatedTransactionUuid,
       uuid: uuid ?? this.uuid,

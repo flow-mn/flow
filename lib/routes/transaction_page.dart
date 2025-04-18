@@ -5,6 +5,7 @@ import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
@@ -21,6 +22,7 @@ import "package:flow/routes/transaction_page/select_category_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurrence.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -102,6 +104,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   List<RelevanceScoredTitle>? autofillHints;
 
+  RecurringTransaction? _recurringTransaction;
+
   Recurrence? _recurrence;
 
   Recurrence? get significantRecurrence =>
@@ -170,6 +174,14 @@ class _TransactionPageState extends State<TransactionPage> {
       if (_currentlyEditing?.isTransfer == true) {
         _conversionRate =
             _currentlyEditing!.extensions.transfer?.conversionRate ?? 1.0;
+      }
+
+      if (_currentlyEditing != null &&
+          _transactionDateEditMode == TransactionDateEditMode.recurring) {
+        _recurringTransaction = RecurringTransactionsService().findOneSync(
+          _currentlyEditing.extensions.recurring?.uuid,
+        );
+        _recurrence = _recurringTransaction?.recurrence;
       }
     }
 
@@ -883,6 +895,8 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateRecurrence(Recurrence? recurrence) {
+    _transactionDateEditMode = TransactionDateEditMode.recurring;
+    _transactionDate = recurrence?.range.from ?? _transactionDate;
     _recurrence = recurrence;
 
     if (!mounted) return;

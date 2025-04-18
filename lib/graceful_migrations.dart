@@ -58,7 +58,7 @@ void migrateRemoveTitleFromUntitledTransactions() async {
 }
 
 void migrateExtraKeyIndexing() async {
-  const String migrationUuid = "eb06ac84-9a41-4a33-bf04-ed40c5d46158";
+  const String migrationUuid = "80323fa8-861c-4483-86db-4b66be64a499";
 
   try {
     final SharedPreferencesWithCache prefs =
@@ -86,8 +86,8 @@ void migrateExtraKeyIndexing() async {
       await ObjectBox().box<Transaction>().putManyAsync(
         transactions.map((t) {
           t.extraTags = [
-            ...t.extensions.data.map((ext) => ext.key),
-            ...t.extensions.data.map((ext) => ext.uuid),
+            ...t.extensions.data.map((ext) => ext.extensionIdentifierTag),
+            ...t.extensions.data.map((ext) => ext.extensionExistenceTag),
           ];
           return t;
         }).toList(),

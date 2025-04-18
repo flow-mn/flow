@@ -93,11 +93,22 @@ class Transaction implements EntityBase {
   @Transient()
   set extensions(ExtensionsWrapper newValue) {
     extra = newValue.serialize();
-    extraTags = newValue.data.map((e) => e.key).toList();
+    extraTags =
+        <String>{
+          ...extraTags.where((tag) => !tag.startsWith("hasExtension:")),
+          ...newValue.data.map((ext) => ext.extensionExistenceTag),
+          ...newValue.data.map((ext) => ext.extensionIdentifierTag),
+        }.toList();
   }
 
   void addExtensions(Iterable<TransactionExtension> newExtensions) {
     extensions = extensions.getMerged(newExtensions.toList());
+    extraTags =
+        <String>{
+          ...extraTags,
+          ...newExtensions.map((e) => e.extensionIdentifierTag),
+          ...newExtensions.map((e) => e.extensionExistenceTag),
+        }.toList();
   }
 
   @Transient()

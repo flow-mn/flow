@@ -8,6 +8,7 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart";
 import "package:share_plus/share_plus.dart";
 
@@ -133,5 +134,20 @@ extension CustomPopups on BuildContext {
       firstDate: firstDate,
       lastDate: lastDate,
     );
+  }
+
+  Future<DateTime?> pickTime({DateTime? anchor, TimeOfDay? initial}) async {
+    anchor ??= DateTime.now();
+
+    final TimeOfDay initialTime = initial ?? TimeOfDay.fromDateTime(anchor);
+
+    final TimeOfDay? time = await showTimePicker(
+      context: this,
+      initialTime: initial ?? initialTime,
+    );
+
+    if (time == null) return null;
+
+    return anchor.date.add(Duration(hours: time.hour, minutes: time.minute));
   }
 }

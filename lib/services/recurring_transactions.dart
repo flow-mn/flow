@@ -1,12 +1,16 @@
 import "dart:convert";
 
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/entity/account.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/accounts.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/utils/extensions/recurring_transaction.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:recurrence/recurrence.dart";
@@ -22,47 +26,69 @@ class RecurringTransactionsService {
 
   RecurringTransactionsService._internal() {
     synchronize();
-
-    TransactionsService().addListener(() => synchronize());
   }
 
-  Future<void> _synchronize(RecurringTransaction recurring) async {
-    final String loggingPrefix = "Recurring(${recurring.uuid})";
+  Future<void> _synchronize(RecurringTransaction recurringTransaction) async {
+    final String loggingPrefix = "Recurring(${recurringTransaction.uuid})";
 
     try {
       _log.fine("$loggingPrefix Synchronizing recurring transaction");
 
-      if (recurring.disabled) {
+      if (recurringTransaction.disabled) {
         _log.fine("$loggingPrefix Recurring transaction is disabled, skipping");
         return;
       }
 
       final TimeRange? range =
-          recurring.lastGeneratedTransactionDate?.rangeToMax();
+          recurringTransaction.lastGeneratedTransactionDate?.rangeToMax();
 
-      final DateTime? nextOccurence = recurring.recurrence
-          .nextAbsoluteOccurrence(DateTime.now(), range: range);
+      final DateTime now = DateTime.now().date;
+
+      final DateTime? nextOccurence =
+          recurringTransaction.recurrence
+              .nextAbsoluteOccurrence(
+                now.copyWith(
+                  hour: recurringTransaction.timeRange.from.hour,
+                  minute: recurringTransaction.timeRange.from.minute,
+                  second: recurringTransaction.timeRange.from.second,
+                  millisecond: recurringTransaction.timeRange.from.millisecond,
+                  microsecond: 0,
+                ),
+                range: range,
+              )
+              ?.startOfMillisecond();
 
       if (nextOccurence == null) {
         _log.fine(
-          "$loggingPrefix No next occurrence for recurring transaction; range is $range; last generated transaction's transaction date is ${recurring.lastGeneratedTransactionDate}",
+          "$loggingPrefix No next occurrence for recurring transaction; range is $range; last generated transaction's transaction date is ${recurringTransaction.lastGeneratedTransactionDate}",
         );
         return;
       }
 
       final List<Transaction> relatedTransactions = await TransactionsService()
-          .findMany(TransactionFilter(extraTag: recurring.uuid));
+          .findMany(
+            TransactionFilter(
+              extraTag: recurringTransaction.extensionIdentifierTag,
+            ),
+          );
 
       relatedTransactions.sort(
-        (a, b) => a.transactionDate.compareTo(b.transactionDate),
+        (a, b) => a.extensions.recurring!.initialTransactionDate.compareTo(
+          b.extensions.recurring!.initialTransactionDate,
+        ),
       );
 
       final DateTime lastGeneratedTransactionDate =
           relatedTransactions.isEmpty
               ? Moment.minValue
-              : relatedTransactions.last.transactionDate;
+              : relatedTransactions
+                  .last
+                  .extensions
+                  .recurring!
+                  .initialTransactionDate
+                  .startOfMillisecond();
 
-      if (lastGeneratedTransactionDate.isAfter(nextOccurence)) {
+      if (lastGeneratedTransactionDate >= nextOccurence) {
         _log.fine(
           "$loggingPrefix Next occurrence is before last generated transaction date: $lastGeneratedTransactionDate, skipping",
         );
@@ -71,30 +97,73 @@ class RecurringTransactionsService {
 
       final String generatedTransactionUuid = const Uuid().v4();
 
-      final Transaction transaction =
-          recurring.template
-            ..uuid = generatedTransactionUuid
-            ..createdDate = DateTime.now()
-            ..transactionDate = nextOccurence;
-      if (!transaction.extraTags.contains(recurring.uuid)) {
-        transaction.extraTags.add(recurring.uuid);
+      final Transaction template = recurringTransaction.template;
+
+      final String? transferToAccountUuid =
+          recurringTransaction.transferToAccountUuid;
+
+      final Account? from = await AccountsService().findOne(
+        template.accountUuid,
+      );
+      final Account? to =
+          transferToAccountUuid != null
+              ? await AccountsService().findOne(transferToAccountUuid)
+              : null;
+
+      if (from == null) {
+        _log.severe(
+          "$loggingPrefix Failed to find account for transaction template: ${template.accountUuid}",
+        );
+        throw StateError(
+          "$loggingPrefix From account not found: ${template.accountUuid}",
+        );
       }
-      transaction.extensions.recurring ??= Recurring(
-        uuid: recurring.uuid,
-        relatedTransactionUuid: generatedTransactionUuid,
-        locked: true,
-      );
 
-      await TransactionsService().upsertOne(transaction);
-      _log.fine(
-        "$loggingPrefix Generated transaction: $generatedTransactionUuid",
-      );
+      if (to == null) {
+        from.createAndSaveTransaction(
+          amount: template.amount,
+          title: template.title,
+          description: template.description,
+          transactionDate: nextOccurence,
+          uuidOverride: generatedTransactionUuid,
+          extensions: [
+            Recurring(
+              initialTransactionDate: nextOccurence,
+              uuid: recurringTransaction.uuid,
+              relatedTransactionUuid: generatedTransactionUuid,
+            ),
+          ],
+          isPending: true,
+        );
 
-      recurring.lastGeneratedTransactionDate = nextOccurence;
-      recurring.lastGeneratedTransactionUuid = generatedTransactionUuid;
+        _log.fine(
+          "$loggingPrefix Generated transaction: $generatedTransactionUuid",
+        );
+      } else {
+        final (int fromObjectId, int toObjectId) = from.transferTo(
+          targetAccount: to,
+          amount: template.amount,
+          title: template.title,
+          description: template.description,
+          transactionDate: nextOccurence,
+          extensions: [
+            Recurring(
+              uuid: recurringTransaction.uuid,
+              initialTransactionDate: nextOccurence,
+            ),
+          ],
+          isPending: true,
+        );
+
+        _log.fine(
+          "$loggingPrefix Generated transfer transactions, idk where is the UUID, but here is the local ids: $fromObjectId, $toObjectId",
+        );
+      }
+
+      recurringTransaction.lastGeneratedTransactionDate = nextOccurence;
 
       ObjectBox().box<RecurringTransaction>().put(
-        recurring,
+        recurringTransaction,
         mode: PutMode.update,
       );
 
@@ -168,11 +237,34 @@ class RecurringTransactionsService {
       range: recurrence.range.encodeShort(),
       rules: recurrence.rules.map((e) => e.serialize()).toList(),
       lastGeneratedTransactionDate: transaction.transactionDate,
-      lastGeneratedTransactionUuid: transaction.uuid,
     );
 
     ObjectBox().box<RecurringTransaction>().put(recurringTransaction);
 
+    synchronize();
+
     return recurringTransaction;
+  }
+
+  RecurringTransaction? findOneSync(dynamic identifier) {
+    if (identifier is int) {
+      return ObjectBox().box<RecurringTransaction>().get(identifier);
+    }
+
+    if (identifier case String uuid) {
+      final Query<RecurringTransaction> query =
+          ObjectBox()
+              .box<RecurringTransaction>()
+              .query(RecurringTransaction_.uuid.equals(uuid))
+              .build();
+
+      final RecurringTransaction? recurringTransaction = query.findFirst();
+
+      query.close();
+
+      return recurringTransaction;
+    }
+
+    return null;
   }
 }

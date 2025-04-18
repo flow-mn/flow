@@ -519,11 +519,6 @@
           "id": "10:651096412135846367",
           "name": "lastGeneratedTransactionDate",
           "type": 10
-        },
-        {
-          "id": "11:420551111786793892",
-          "name": "lastGeneratedTransactionUuid",
-          "type": 9
         }
       ],
       "relations": []
@@ -578,7 +573,8 @@
     9181400211872351108,
     577162958135049929,
     9125625889304953158,
-    4341960036397140355
+    4341960036397140355,
+    420551111786793892
   ],
   "retiredRelationUids": [],
   "version": 1
