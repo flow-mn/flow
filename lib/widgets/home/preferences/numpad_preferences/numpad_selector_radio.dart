@@ -1,5 +1,4 @@
 import "package:flow/l10n/flow_localizations.dart";
-import "package:flow/utils/extensions/directionality.dart";
 import "package:flow/widgets/numpad.dart";
 import "package:flutter/material.dart";
 
@@ -75,10 +74,7 @@ class NumpadSelectorRadio extends StatelessWidget {
   /// 1 2 3
   ///   0
   List<Widget> buildClassicNumpad(BuildContext context) {
-    final String template =
-        context.isLtr ? "789 456 123 0  " : "987 654 321  0 ";
-
-    return template.characters
+    return "789 456 123 0  ".characters
         .map(
           (char) => NumpadButton(
             crossAxisCellCount: char == "0" ? 2 : 1,
@@ -96,10 +92,7 @@ class NumpadSelectorRadio extends StatelessWidget {
   /// 7 8 9
   ///   0
   List<Widget> buildPhoneNumpad(BuildContext context) {
-    final String template =
-        context.isLtr ? "123 456 789 0  " : "321 654 987  0 ";
-
-    return template.characters
+    return "123 456 789 0  ".characters
         .map(
           (char) => NumpadButton(
             crossAxisCellCount: char == "0" ? 2 : 1,
