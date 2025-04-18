@@ -71,7 +71,7 @@ class RecurringTransactionsService {
               ? Moment.minValue
               : relatedTransactions.last.transactionDate;
 
-      if (lastGeneratedTransactionDate.isAfter(nextOccurence)) {
+      if (lastGeneratedTransactionDate >= nextOccurence) {
         _log.fine(
           "$loggingPrefix Next occurrence is before last generated transaction date: $lastGeneratedTransactionDate, skipping",
         );
