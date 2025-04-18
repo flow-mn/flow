@@ -633,12 +633,6 @@ final _entities = <obx_int.ModelEntity>[
         type: 10,
         flags: 0,
       ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(11, 420551111786793892),
-        name: 'lastGeneratedTransactionUuid',
-        type: 9,
-        flags: 0,
-      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
@@ -731,6 +725,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       577162958135049929,
       9125625889304953158,
       4341960036397140355,
+      420551111786793892,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -1457,10 +1452,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.transferToAccountUuid == null
                 ? null
                 : fbb.writeString(object.transferToAccountUuid!);
-        final lastGeneratedTransactionUuidOffset =
-            object.lastGeneratedTransactionUuid == null
-                ? null
-                : fbb.writeString(object.lastGeneratedTransactionUuid!);
         fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
@@ -1474,7 +1465,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           9,
           object.lastGeneratedTransactionDate?.millisecondsSinceEpoch,
         );
-        fbb.addOffset(10, lastGeneratedTransactionUuidOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1514,9 +1504,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 : DateTime.fromMillisecondsSinceEpoch(
                   lastGeneratedTransactionDateValue,
                 );
-        final lastGeneratedTransactionUuidParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 24);
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
@@ -1531,7 +1518,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           range: rangeParam,
           transferToAccountUuid: transferToAccountUuidParam,
           lastGeneratedTransactionDate: lastGeneratedTransactionDateParam,
-          lastGeneratedTransactionUuid: lastGeneratedTransactionUuidParam,
           createdDate: createdDateParam,
           uuid: uuidParam,
         );
@@ -1980,8 +1966,4 @@ class RecurringTransaction_ {
   /// See [RecurringTransaction.lastGeneratedTransactionDate].
   static final lastGeneratedTransactionDate =
       obx.QueryDateProperty<RecurringTransaction>(_entities[8].properties[8]);
-
-  /// See [RecurringTransaction.lastGeneratedTransactionUuid].
-  static final lastGeneratedTransactionUuid =
-      obx.QueryStringProperty<RecurringTransaction>(_entities[8].properties[9]);
 }

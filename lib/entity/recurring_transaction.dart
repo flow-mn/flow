@@ -76,8 +76,6 @@ class RecurringTransaction extends EntityBase {
   @Property(type: PropertyType.date)
   DateTime? lastGeneratedTransactionDate;
 
-  String? lastGeneratedTransactionUuid;
-
   final bool disabled;
 
   RecurringTransaction({
@@ -88,7 +86,6 @@ class RecurringTransaction extends EntityBase {
     required this.range,
     this.transferToAccountUuid,
     this.lastGeneratedTransactionDate,
-    this.lastGeneratedTransactionUuid,
     DateTime? createdDate,
     String? uuid,
   }) : createdDate = createdDate ?? DateTime.now(),

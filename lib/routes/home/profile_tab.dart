@@ -6,6 +6,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/icloud_sync.dart";
 import "package:flow/services/notifications.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
@@ -231,11 +232,15 @@ class _ProfileTabState extends State<ProfileTab> {
       _debugDbBusy = true;
     });
 
+    TransactionsService().pauseListeners();
+
     try {
       if (confirm == true) {
         await ObjectBox().eraseMainData();
       }
     } finally {
+      TransactionsService().resumeListeners();
+
       _debugDbBusy = false;
 
       if (mounted) {

@@ -809,6 +809,7 @@ extension AccountActions on Account {
     bool? isPending,
     double? conversionRate = 1.0,
     Recurrence? recurrence,
+    List<String>? extraTags,
   }) {
     if (conversionRate == 0) {
       throw Exception("Conversion rate cannot be zero, use 1.0 instead");
@@ -828,6 +829,7 @@ extension AccountActions on Account {
         isPending: isPending,
         conversionRate: 1.0 / (conversionRate ?? 1.0),
         recurrence: recurrence,
+        extraTags: extraTags,
       );
     }
 
@@ -852,7 +854,7 @@ extension AccountActions on Account {
     final List<TransactionExtension> filteredExtensions =
         extensions?.where((ext) => ext is! Transfer).toList() ?? [];
 
-    transactionDate ??= DateTime.now();
+    transactionDate ??= recurrence?.range.from ?? DateTime.now();
 
     final String? recurringTransactionUuid =
         recurrence == null ? null : const Uuid().v4();
@@ -861,6 +863,7 @@ extension AccountActions on Account {
 
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
+        initialTransactionDate: transactionDate,
         uuid: recurringTransactionUuid,
         relatedTransactionUuid: fromTransactionUuid,
       );
@@ -879,6 +882,7 @@ extension AccountActions on Account {
       createdDate: createdDate,
       transactionDate: transactionDate,
       isPending: isPending,
+      extraTags: extraTags,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount * (conversionRate ?? 1.0),
@@ -896,6 +900,7 @@ extension AccountActions on Account {
       createdDate: createdDate,
       transactionDate: transactionDate,
       isPending: isPending,
+      extraTags: extraTags,
     );
 
     if (recurringTransactionUuid != null) {
@@ -923,6 +928,7 @@ extension AccountActions on Account {
     bool? isPending,
     TransactionSubtype? subtype,
     Recurrence? recurrence,
+    List<String>? extraTags,
   }) {
     final String uuid = uuidOverride ?? const Uuid().v4();
 
@@ -931,8 +937,11 @@ extension AccountActions on Account {
 
     Recurring? recurringExtension;
 
+    transactionDate ??= recurrence?.range.from ?? DateTime.now();
+
     if (recurringTransactionUuid != null) {
       recurringExtension = Recurring(
+        initialTransactionDate: transactionDate,
         uuid: recurringTransactionUuid,
         relatedTransactionUuid: uuid,
       );
@@ -952,6 +961,7 @@ extension AccountActions on Account {
             uuid: uuid,
             isPending: isPending ?? false,
             subtype: subtype?.value,
+            extraTags: extraTags ?? [],
           )
           ..setCategory(category)
           ..setAccount(this);

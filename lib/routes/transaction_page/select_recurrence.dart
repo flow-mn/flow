@@ -162,14 +162,23 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
 
     final DateTime? result = await context.pickDate(initialDate);
 
-    if (!mounted) return;
     if (result == null) return;
+    _recurrence = _recurrence.copyWith(
+      range: CustomTimeRange(result, _recurrence.range.to),
+    );
 
-    setState(() {
-      _recurrence = _recurrence.copyWith(
-        range: CustomTimeRange(result, _recurrence.range.to),
-      );
-    });
+    if (!mounted) return;
+    setState(() {});
+    widget.onChanged(_recurrence);
+
+    final DateTime? resultWithTime = await context.pickTime(anchor: result);
+    if (resultWithTime == null) return;
+
+    _recurrence = _recurrence.copyWith(
+      range: CustomTimeRange(resultWithTime, _recurrence.range.to),
+    );
+    if (!mounted) return;
+    setState(() {});
     widget.onChanged(_recurrence);
   }
 

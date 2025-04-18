@@ -18,7 +18,6 @@ RecurringTransaction _$RecurringTransactionFromJson(
     json['lastGeneratedTransactionDate'],
     const UTCDateTimeConverter().fromJson,
   ),
-  lastGeneratedTransactionUuid: json['lastGeneratedTransactionUuid'] as String?,
   createdDate: _$JsonConverterFromJson<String, DateTime>(
     json['createdDate'],
     const UTCDateTimeConverter().fromJson,
@@ -39,7 +38,6 @@ Map<String, dynamic> _$RecurringTransactionToJson(
     instance.lastGeneratedTransactionDate,
     const UTCDateTimeConverter().toJson,
   ),
-  'lastGeneratedTransactionUuid': instance.lastGeneratedTransactionUuid,
   'disabled': instance.disabled,
 };
 
