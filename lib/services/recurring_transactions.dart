@@ -43,12 +43,14 @@ class RecurringTransactionsService {
       final TimeRange? range =
           recurringTransaction.lastGeneratedTransactionDate?.rangeToMax();
 
-      final DateTime now = DateTime.now().date;
+      final DateTime anchor =
+          recurringTransaction.lastGeneratedTransactionDate?.date ??
+          DateTime.now().date;
 
       final DateTime? nextOccurence =
           recurringTransaction.recurrence
               .nextAbsoluteOccurrence(
-                now.copyWith(
+                anchor.copyWith(
                   hour: recurringTransaction.timeRange.from.hour,
                   minute: recurringTransaction.timeRange.from.minute,
                   second: recurringTransaction.timeRange.from.second,
