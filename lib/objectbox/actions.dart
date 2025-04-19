@@ -510,64 +510,6 @@ extension TransactionActions on Transaction {
     return TransactionsService().deleteSync(id);
   }
 
-  void moveToTrashBin() {
-    if (isTransfer) {
-      final Transfer? transfer = extensions.transfer;
-
-      if (transfer == null) {
-        _log.severe(
-          "Couldn't delete transfer transaction properly due to missing transfer data",
-        );
-      } else {
-        try {
-          TransactionsService().moveToBinSync(transfer.relatedTransactionUuid);
-        } catch (e, stackTrace) {
-          _log.severe(
-            "Couldn't move transfer transaction to trash bin properly",
-            e,
-            stackTrace,
-          );
-        }
-      }
-    }
-
-    try {
-      TransactionsService().moveToBinSync(this);
-    } catch (e, stackTrace) {
-      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
-    }
-  }
-
-  void recoverFromTrashBin() {
-    if (isTransfer) {
-      final Transfer? transfer = extensions.transfer;
-
-      if (transfer == null) {
-        _log.severe(
-          "Couldn't delete transfer transaction properly due to missing transfer data",
-        );
-      } else {
-        try {
-          TransactionsService().recoverFromBinSync(
-            transfer.relatedTransactionUuid,
-          );
-        } catch (e, stackTrace) {
-          _log.severe(
-            "Couldn't move transfer transaction to trash bin properly",
-            e,
-            stackTrace,
-          );
-        }
-      }
-    }
-
-    try {
-      TransactionsService().recoverFromBinSync(this);
-    } catch (e, stackTrace) {
-      _log.severe("Failed to move transaction to trash bin", e, stackTrace);
-    }
-  }
-
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
     try {
       if (isTransfer) {
@@ -625,12 +567,7 @@ extension TransactionActions on Transaction {
           ..setCategory(category.target)
           ..setAccount(account.target);
 
-    final List<TransactionExtension> filteredExtensions =
-        extensions.data.where((ext) => ext is! Transfer).toList();
-
-    if (filteredExtensions.isNotEmpty) {
-      duplicate.addExtensions(filteredExtensions);
-    }
+    duplicate.addExtensions(extensions.data);
 
     return TransactionsService().upsertOneSync(duplicate);
   }

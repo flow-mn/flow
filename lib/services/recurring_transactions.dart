@@ -2,6 +2,7 @@ import "dart:convert";
 
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
@@ -110,6 +111,22 @@ class RecurringTransactionsService {
               ? await AccountsService().findOne(transferToAccountUuid)
               : null;
 
+      late final Category? category;
+
+      if (template.categoryUuid != null) {
+        final categoryQuery =
+            ObjectBox()
+                .box<Category>()
+                .query(Category_.uuid.equals(template.categoryUuid!))
+                .build();
+
+        category = categoryQuery.findFirst();
+
+        categoryQuery.close();
+      } else {
+        category = null;
+      }
+
       if (from == null) {
         _log.severe(
           "$loggingPrefix Failed to find account for transaction template: ${template.accountUuid}",
@@ -122,8 +139,10 @@ class RecurringTransactionsService {
       if (to == null) {
         from.createAndSaveTransaction(
           amount: template.amount,
+          category: category,
           title: template.title,
           description: template.description,
+          subtype: template.transactionSubtype,
           transactionDate: nextOccurence,
           uuidOverride: generatedTransactionUuid,
           extensions: [

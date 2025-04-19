@@ -2,6 +2,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/utils/simple_query_sorter.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
@@ -76,10 +77,7 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
                 key: ValueKey(category.uuid),
                 title: Text(category.name),
                 leading: FlowIcon(category.icon),
-                trailing:
-                    widget.showTrailing
-                        ? const Icon(Symbols.chevron_right_rounded)
-                        : null,
+                trailing: widget.showTrailing ? DirectionalChevron() : null,
                 onTap: () => context.pop(Optional(category)),
                 selected: widget.currentlySelectedCategoryId == category.id,
               ),
