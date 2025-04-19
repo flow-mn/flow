@@ -9,6 +9,8 @@ import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
+import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
@@ -414,7 +416,10 @@ class _TransactionPageState extends State<TransactionPage> {
                           mainAxisSize: MainAxisSize.min,
                           spacing: 12.0,
                           children: [
-                            SizedBox.shrink(),
+                            ListTile(
+                              title: Text(transactionDate.toMoment().LLL),
+                              onTap: () => selectTransactionDate(),
+                            ),
                             Align(
                               alignment: AlignmentDirectional.topStart,
                               child: SingleChildScrollView(
@@ -454,22 +459,15 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                               ),
                             ),
-                            AnimatedSize(
-                              duration: const Duration(milliseconds: 300),
-                              child:
-                                  _transactionDateEditMode ==
-                                          TransactionDateEditMode.recurring
-                                      ? SelectRecurrence(
-                                        initialValue: _recurrence,
-                                        onChanged: updateRecurrence,
-                                      )
-                                      : ListTile(
-                                        title: Text(
-                                          transactionDate.toMoment().LLL,
-                                        ),
-                                        onTap: () => selectTransactionDate(),
-                                      ),
-                            ),
+                            if (_transactionDateEditMode ==
+                                TransactionDateEditMode.recurring)
+                              AnimatedSize(
+                                duration: const Duration(milliseconds: 300),
+                                child: SelectRecurrence(
+                                  initialValue: _recurrence,
+                                  onChanged: updateRecurrence,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -964,7 +962,7 @@ class _TransactionPageState extends State<TransactionPage> {
     return true;
   }
 
-  void update({
+  void _update({
     required String? formattedTitle,
     required String? formattedDescription,
   }) async {
@@ -973,11 +971,12 @@ class _TransactionPageState extends State<TransactionPage> {
     final bool pendingTransactionsRequireConfrimation =
         LocalPreferences().pendingTransactions.requireConfrimation.get();
 
-    final bool? isPending =
-        pendingTransactionsRequireConfrimation &&
+    final bool isPending =
+        _transactionDateEditMode == TransactionDateEditMode.pending ||
+        (pendingTransactionsRequireConfrimation &&
                 _currentlyEditing.transactionDate.isPast
             ? transactionDate.isFuture
-            : _currentlyEditing.isPending;
+            : _currentlyEditing.isPending == true);
 
     if (_transactionType == TransactionType.transfer) {
       try {
@@ -1016,10 +1015,14 @@ class _TransactionPageState extends State<TransactionPage> {
       _currentlyEditing.subtype = null;
     }
 
-    _currentlyEditing.extensions = _currentlyEditing.extensions.getOverriden(
-      _geo,
-      Geo.keyName,
-    );
+    final List<TransactionExtension> newExtensions =
+        _currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data;
+
+    if (_transactionDateEditMode != TransactionDateEditMode.recurring) {
+      newExtensions.removeWhere((ext) => ext.key == Recurring.keyName);
+    }
+
+    _currentlyEditing.extensions = ExtensionsWrapper(newExtensions);
 
     TransactionsService().updateOneSync(_currentlyEditing);
 
@@ -1041,7 +1044,7 @@ class _TransactionPageState extends State<TransactionPage> {
         trimmedDescription.isNotEmpty ? trimmedDescription : null;
 
     if (_currentlyEditing != null) {
-      return update(
+      return _update(
         formattedTitle: formattedTitle,
         formattedDescription: formattedDescription,
       );
@@ -1050,9 +1053,10 @@ class _TransactionPageState extends State<TransactionPage> {
     final List<TransactionExtension> extensions = [if (_geo != null) _geo!];
 
     final bool isPending =
-        pendingTransactionsRequireConfrimation
+        _transactionDateEditMode == TransactionDateEditMode.pending ||
+        (pendingTransactionsRequireConfrimation
             ? transactionDate.isFutureAnchored(Moment.now().startOfNextMinute())
-            : false;
+            : false);
 
     if (isTransfer) {
       _selectedAccount!.transferTo(
@@ -1123,7 +1127,7 @@ class _TransactionPageState extends State<TransactionPage> {
       return;
     }
 
-    _currentlyEditing.moveToTrashBin();
+    await _currentlyEditing.moveToTrashBin(context);
 
     if (mounted) {
       context.showToast(text: "transaction.moveToTrashBin.success".t(context));

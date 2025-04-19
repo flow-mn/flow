@@ -4,6 +4,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -181,7 +182,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList> {
           transaction: transaction,
           padding: widget.itemPadding,
           dismissibleKey: ValueKey(transaction.id),
-          moveToTrashFn: () => transaction.moveToTrashBin(),
+          moveToTrashFn: () => transaction.moveToTrashBin(context),
           recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
           confirmFn: ([bool confirm = true]) {
             final bool updateTransactionDate =

@@ -146,7 +146,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
         throw UnimplementedError();
     }
 
-    _recurrence = _recurrence.copyWith(rules: rules);
+    _setRecurrence(_recurrence.copyWith(rules: rules));
 
     if (!mounted) return;
     setState(() {});
@@ -216,7 +216,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
 
   void _setRecurrence(Recurrence? recurrence) {
     _recurrence =
-        (widget.initialValue ??
+        (recurrence ??
                 Recurrence.fromIndefinitely(
                   rules: [
                     MonthlyRecurrenceRule(day: recurrence?.range.from.day ?? 1),
@@ -237,9 +237,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
         } else if (rule.data == const Duration(days: 14)) {
           _selectedMode = RecurrenceMode.every2Week;
         }
-      }
-
-      if (rule is WeeklyRecurrenceRule) {
+      } else if (rule is WeeklyRecurrenceRule) {
         _selectedMode = RecurrenceMode.everyWeek;
       } else if (rule is MonthlyRecurrenceRule) {
         _selectedMode = RecurrenceMode.everyMonth;

@@ -108,6 +108,22 @@ class TransactionListTile extends StatelessWidget {
         .nonNulls
         .join(" • ");
 
+    final WidgetSpan? titleLeadingIconSpan =
+        transaction.isRecurring
+            ? titleIconSpan(context, Symbols.repeat_rounded)
+            : (transaction.transactionDate.isFutureAnchored(
+                  Moment.now().startOfNextMinute(),
+                )
+                ? titleIconSpan(
+                  context,
+                  Symbols.search_activity_rounded,
+                  color:
+                      transaction.isPending == true
+                          ? context.colorScheme.onSurface.withAlpha(0xc0)
+                          : context.flowColors.income,
+                )
+                : null);
+
     final Widget listTile = Material(
       type: MaterialType.card,
       color: kTransparent,
@@ -130,21 +146,8 @@ class TransactionListTile extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              if (transaction.transactionDate.isFuture) ...[
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Icon(
-                                    Symbols.search_activity_rounded,
-                                    size:
-                                        context.textTheme.bodyMedium!.fontSize!,
-                                    fill: 0.0,
-                                    color:
-                                        transaction.isPending == true
-                                            ? context.colorScheme.onSurface
-                                                .withAlpha(0xc0)
-                                            : context.flowColors.income,
-                                  ),
-                                ),
+                              if (titleLeadingIconSpan != null) ...[
+                                titleLeadingIconSpan,
                                 TextSpan(text: " "),
                               ],
                               TextSpan(text: resolvedTitle),
@@ -319,4 +322,18 @@ class TransactionListTile extends StatelessWidget {
       _ => transaction.transactionDate.toMoment().lll,
     };
   }
+
+  WidgetSpan titleIconSpan(
+    BuildContext context,
+    IconData icon, {
+    Color? color,
+  }) => WidgetSpan(
+    alignment: PlaceholderAlignment.middle,
+    child: Icon(
+      icon,
+      size: context.textTheme.bodyMedium!.fontSize!,
+      fill: 0.0,
+      color: color,
+    ),
+  );
 }

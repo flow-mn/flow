@@ -2,6 +2,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/simple_query_sorter.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
@@ -105,10 +106,7 @@ class _SelectAccountSheetState extends State<SelectAccountSheet> {
                         )
                         : null,
                 leading: FlowIcon(account.icon),
-                trailing:
-                    widget.showTrailing
-                        ? const Icon(Symbols.chevron_right_rounded)
-                        : null,
+                trailing: widget.showTrailing ? DirectionalChevron() : null,
                 onTap: () => context.pop(account),
                 selected: widget.currentlySelectedAccountId == account.id,
               ),
