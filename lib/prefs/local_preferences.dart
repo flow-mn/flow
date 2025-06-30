@@ -5,6 +5,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/google.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/prefs/theme.dart";
 import "package:flow/prefs/transitive.dart";
@@ -59,6 +60,7 @@ class LocalPreferences {
   late final PendingTransactionsLocalPreferences pendingTransactions;
   late final ThemeLocalPreferences theme;
   late final TransitiveLocalPreferences transitive;
+  late final GoogleLocalPreferences google;
 
   /// Number of notifications issued by the app
   ///
@@ -159,6 +161,7 @@ class LocalPreferences {
     );
     theme = ThemeLocalPreferences.initialize(_prefs);
     transitive = TransitiveLocalPreferences.initialize(_prefs);
+    google = GoogleLocalPreferences.initialize(_prefs);
   }
 
   @Deprecated("Use UserPreferencesService().primaryCurrency instead")
