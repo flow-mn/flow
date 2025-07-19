@@ -11,8 +11,6 @@ import "package:shared_preferences/shared_preferences.dart";
 
 final Logger _log = Logger("GracefulMigrations");
 
-// late final JsonListSettingsEntry<TransactionType> transactionButtonOrder;
-
 void migrateButtonOrder() async {
   const String migrationUuid = "be216298-efca-4d93-85c2-6809ebd34dff";
 

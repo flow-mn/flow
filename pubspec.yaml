@@ -20,7 +20,7 @@ dependencies:
     desktop_drop: ^0.6.0
     dotted_border: ^3.0.1
     file_picker: ^10.1.2
-    file_saver: ^0.2.14
+    file_saver: ^0.3.1
     fl_chart: ^1.0.0
     flutter:
         sdk: flutter
@@ -37,9 +37,9 @@ dependencies:
     flutter_typeahead: ^5.2.0
     fuzzywuzzy: ^1.2.0
     geolocator: ^14.0.0
-    go_router: ^15.1.2
     google_sign_in: ^7.0.0
     googleapis: ^14.0.0
+    go_router: ^16.0.0
     http: ^1.4.0
     icloud_storage: ^2.2.0
     image_picker: ^1.1.1
@@ -54,8 +54,8 @@ dependencies:
     logging_appenders: ^1.3.1
     material_symbols_icons: ^4.2815.1
     moment_dart: ^5.2.3
-    objectbox: ^4.1.0
-    objectbox_flutter_libs: ^4.1.0
+    objectbox: ^4.3.0
+    objectbox_flutter_libs: ^4.3.0
     package_info_plus: ^8.3.0
     path: ^1.9.1
     path_provider: ^2.1.5
