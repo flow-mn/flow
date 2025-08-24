@@ -5,8 +5,8 @@ import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-class OfflineSlide extends StatelessWidget {
-  const OfflineSlide({super.key});
+class PrivacySlide extends StatelessWidget {
+  const PrivacySlide({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +25,14 @@ class OfflineSlide extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            "setup.slides.offline".t(context),
+            "setup.slides.privacy".t(context),
             style: context.textTheme.displayMedium?.copyWith(
               color: context.colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8.0),
           Text(
-            "setup.slides.offline.description".t(context),
+            "setup.slides.privacy.description".t(context),
             style: context.textTheme.bodyLarge,
           ),
           const SizedBox(height: 16.0),

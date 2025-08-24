@@ -93,12 +93,15 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(Symbols.groups_rounded),
             onTap: () => context.push("/community/contributors"),
           ),
-          Builder(
-            builder: (context) => ListTile(
-              title: Text("tabs.profile.recommend".t(context)),
-              leading: const Icon(Symbols.share_rounded),
-              onTap: () => context.showUriShareSheet(uri: website),
-            ),
+          ListTile(
+            title: Text("tabs.profile.recommend".t(context)),
+            leading: const Icon(Symbols.share_rounded),
+            onTap: () => context.showUriShareSheet(uri: website),
+          ),
+          ListTile(
+            title: Text("tabs.profile.guide".t(context)),
+            leading: const Icon(Symbols.book_2_rounded),
+            onTap: () => openUrl(guideUrl),
           ),
           ListTile(
             title: Text("visitGitHubRepo".t(context)),

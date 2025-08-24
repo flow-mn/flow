@@ -11,7 +11,9 @@ import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class AccountCard extends StatelessWidget {
@@ -143,17 +145,28 @@ class AccountCard extends StatelessWidget {
       actions: [
         // TODO Why is it still open? Do I really have to pop, then push?
         CupertinoContextMenuAction(
-          onPressed: () => context.push("/account/${account.id}"),
+          onPressed: () {
+            context.pop();
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              context.push("/account/${account.id}");
+            });
+          },
           isDefaultAction: true,
-          trailingIcon: CupertinoIcons.pencil,
+          trailingIcon: Symbols.edit_rounded,
           child: Text("account.edit".t(context)),
         ),
         CupertinoContextMenuAction(
-          onPressed: () => context.push(
-            "/account/${account.id}/transactions?title=${"account.transactions.title".t(context, account.name)}",
-          ),
+          onPressed: () {
+            context.pop();
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              if (!context.mounted) return;
+              context.push(
+                "/account/${account.id}/transactions?title=${"account.transactions.title".t(context, account.name)}",
+              );
+            });
+          },
           isDefaultAction: true,
-          trailingIcon: CupertinoIcons.square_list,
+          trailingIcon: Symbols.list_rounded,
           child: Text("account.transactions".t(context)),
         ),
       ],
