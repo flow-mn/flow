@@ -263,7 +263,7 @@ class ICloudSyncer implements Syncer {
 
     final List<SyncerItem> remaining =
         items.where((item) => item.inferredBackupDate != null).toList()..sort(
-          (a, b) => b.inferredBackupDate!.compareTo(a.inferredBackupDate!),
+          (a, b) => a.inferredBackupDate!.compareTo(b.inferredBackupDate!),
         );
 
     if (keepCount != null) {
