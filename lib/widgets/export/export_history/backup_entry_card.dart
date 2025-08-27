@@ -194,7 +194,10 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
             isDeletionConfirmation: true,
             title: "general.delete.confirmName".t(context, title),
             child: Text(
-              "general.delete.permanentWarning".t(context),
+              (ICloudSyncer.supported &&
+                      widget.entry.correspondingICloudFile != null)
+                  ? "sync.export.deleteCloudBackupConfirmation".t(context)
+                  : "general.delete.permanentWarning".t(context),
               style: context.textTheme.bodyMedium?.copyWith(
                 color: context.flowColors.expense,
               ),
