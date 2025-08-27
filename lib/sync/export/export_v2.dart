@@ -19,6 +19,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:path/path.dart" as path;
+import "package:uuid/uuid.dart";
 
 Future<String> generateBackupJSONContentV2() async {
   const int versionCode = 2;
@@ -99,9 +100,9 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
 
   final String jsonContent = await generateBackupJSONContentV2();
 
-  final Directory tempDir = await Directory.systemTemp.createTemp(
-    "flow_export_v2",
-  );
+  final Directory tempDir = Directory(
+    path.join(Directory.systemTemp.path, Uuid().v4()),
+  )..createSync(recursive: true);
 
   await File(path.join(tempDir.path, jsonFileName)).writeAsString(jsonContent);
 
