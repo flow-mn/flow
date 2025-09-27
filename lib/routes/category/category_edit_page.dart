@@ -124,6 +124,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                     validator: validateNameField,
                   ),
                 ),
+                const SizedBox(height: 12.0),
                 SelectColorSchemeListTile(
                   colorScheme: _colorSchemeName,
                   onChanged: (scheme) {

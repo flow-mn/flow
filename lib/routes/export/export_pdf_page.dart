@@ -9,7 +9,7 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flow/utils/time_and_range.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";

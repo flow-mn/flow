@@ -1,6 +1,5 @@
 import "dart:async";
 import "dart:io";
-import "dart:ui" as ui;
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
@@ -14,7 +13,6 @@ import "package:go_router/go_router.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:path/path.dart" as path;
-import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("SelectImageFlowIconSheet");
 
@@ -127,22 +125,11 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
 
     try {
       final cropped = await pickAndCropSquareImage(context, maxDimension: 256);
-      if (cropped == null) {
-        // Error toast is handled in `pickAndCropSquareImage`
-        return;
-      }
+      final String? objectPath = await ImageFlowIcon.putImage(cropped);
 
-      final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
-      final bytes = byteData?.buffer.asUint8List();
+      if (objectPath == null) return;
 
-      if (bytes == null) throw "";
-
-      final fileName = "${const Uuid().v4()}.png";
-      final file = File(path.join(ObjectBox.imagesDirectory, fileName));
-      await file.create(recursive: true);
-      await file.writeAsBytes(bytes, flush: true);
-
-      value = ImageFlowIcon("images/$fileName");
+      value = ImageFlowIcon(objectPath);
       if (mounted) {
         setState(() {});
       }

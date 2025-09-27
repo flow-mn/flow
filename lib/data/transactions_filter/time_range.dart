@@ -1,6 +1,6 @@
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/extensions.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flow/utils/time_and_range.dart";
 import "package:moment_dart/moment_dart.dart";
 
 enum TransactionFilterTimeRangePreset implements LocalizedEnum {

@@ -1,6 +1,6 @@
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/utils/jasonable.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
-import "package:flow/utils/utils.dart";
 import "package:geolocator/geolocator.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:latlong2/latlong.dart";

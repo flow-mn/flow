@@ -231,7 +231,8 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
   void _updateType(TransactionTagType newType) {
     if (newType == _type) return;
 
-    if (FlowIconData.icon(_type.icon).toString() == _iconData.toString()) {
+    if (_iconData == null ||
+        FlowIconData.icon(_type.icon).toString() == _iconData.toString()) {
       _iconData = FlowIconData.icon(newType.icon);
     }
     _type = newType;
@@ -336,6 +337,16 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     if (contact != null) {
       _updatePayload(contact);
       _titleController.text = contact.displayName;
+      if (_iconData == null ||
+          FlowIconData.icon(_type.icon).toString() == _iconData.toString()) {
+        final ImageFlowIcon? contactImage = await ImageFlowIcon.tryFromData(
+          contact.photo,
+        );
+
+        if (contactImage != null) {
+          _iconData = contactImage;
+        }
+      }
     }
   }
 

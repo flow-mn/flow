@@ -70,10 +70,10 @@ class _SelectColorSchemeListTileState extends State<SelectColorSchemeListTile> {
   }
 
   void _selectColor() async {
-    final String themeName = UserPreferencesService().themeName;
+    final String? themeNameRaw = UserPreferencesService().themeNameRaw;
 
     final FlowColorScheme theme = getTheme(
-      themeName,
+      themeNameRaw,
       preferDark: Flow.of(context).useDarkTheme,
     );
 

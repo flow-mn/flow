@@ -1,4 +1,4 @@
-import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
+import "package:flow/utils/should_execute_scheduled_task.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:moment_dart/moment_dart.dart";
 

@@ -16,7 +16,7 @@ class Navbar extends StatelessWidget {
     final NavbarTheme navbarTheme = Theme.of(context).extension<NavbarTheme>()!;
 
     return Container(
-      constraints: BoxConstraints.tightFor(width: 600.0),
+      constraints: BoxConstraints(maxWidth: 480.0),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(999.9),

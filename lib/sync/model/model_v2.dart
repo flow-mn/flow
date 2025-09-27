@@ -4,6 +4,7 @@ import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/sync/model/base.dart";
 import "package:json_annotation/json_annotation.dart";
@@ -17,6 +18,7 @@ class SyncModelV2 extends SyncModelBase {
   final List<Transaction> transactions;
   final List<RecurringTransaction>? recurringTransactions;
   final List<TransactionFilterPreset>? transactionFilterPresets;
+  final List<TransactionTag>? transactionTags;
   final Profile? profile;
   final UserPreferences? userPreferences;
   final String? primaryCurrency;
@@ -31,6 +33,7 @@ class SyncModelV2 extends SyncModelBase {
     required this.accounts,
     required this.categories,
     required this.transactionFilterPresets,
+    required this.transactionTags,
     required this.profile,
     required this.userPreferences,
     required this.primaryCurrency,

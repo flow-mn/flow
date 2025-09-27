@@ -9,6 +9,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -142,6 +143,8 @@ class RecurringTransactionsService {
 
       late final Category? category;
 
+      late final List<TransactionTag>? tags;
+
       if (template.categoryUuid != null) {
         final categoryQuery = ObjectBox()
             .box<Category>()
@@ -153,6 +156,19 @@ class RecurringTransactionsService {
         categoryQuery.close();
       } else {
         category = null;
+      }
+
+      if (template.tagsUuids.isNotEmpty) {
+        final transactionTags = ObjectBox()
+            .box<TransactionTag>()
+            .query(TransactionTag_.uuid.oneOf(template.tagsUuids))
+            .build();
+
+        tags = transactionTags.find();
+
+        transactionTags.close();
+      } else {
+        tags = null;
       }
 
       if (from == null) {
@@ -172,6 +188,7 @@ class RecurringTransactionsService {
         from.createAndSaveTransaction(
           amount: template.amount,
           category: category,
+          tags: tags,
           title: template.title,
           description: template.description,
           subtype: template.transactionSubtype,
@@ -193,6 +210,7 @@ class RecurringTransactionsService {
       } else {
         final (int fromObjectId, int toObjectId) = from.transferTo(
           targetAccount: to,
+          tags: tags,
           amount: template.amount.abs(),
           title: template.title,
           description: template.description,

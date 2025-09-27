@@ -131,4 +131,8 @@ class TransactionTag extends EntityBase {
       return null;
     }
   }
+
+  factory TransactionTag.fromJson(Map<String, dynamic> json) =>
+      _$TransactionTagFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionTagToJson(this);
 }

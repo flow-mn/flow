@@ -8,7 +8,7 @@ import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
-import "package:flow/widgets/utils/should_execute_scheduled_task.dart";
+import "package:flow/utils/should_execute_scheduled_task.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 

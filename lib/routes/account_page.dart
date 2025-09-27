@@ -151,6 +151,7 @@ class _AccountPageState extends State<AccountPage> {
               count: transactions?.nonPending.length,
               flow: mergedFlow.totalFlow,
               icon: account.icon,
+              colorScheme: account.colorScheme,
             ),
             const SizedBox(height: 12.0),
             Row(

@@ -80,12 +80,7 @@ class CategoryCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  category.name,
-                  style: context.textTheme.titleSmall?.copyWith(
-                    color: colorScheme?.onSurface,
-                  ),
-                ),
+                Text(category.name, style: context.textTheme.titleSmall),
                 if (showAmount)
                   MoneyText(flow.merge(primaryCurrency, rates).totalFlow),
               ],

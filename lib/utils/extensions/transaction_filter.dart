@@ -6,7 +6,7 @@ import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/widgets/utils/time_and_range.dart";
+import "package:flow/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 

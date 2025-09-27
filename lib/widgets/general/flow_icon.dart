@@ -106,6 +106,11 @@ class FlowIcon extends StatelessWidget {
         dimension: size,
         child: Center(
           child: RichText(
+            textHeightBehavior: TextHeightBehavior(
+              applyHeightToFirstAscent: false,
+              applyHeightToLastDescent: false,
+              leadingDistribution: TextLeadingDistribution.proportional,
+            ),
             text: TextSpan(
               text: character.character,
               spellOut: false,

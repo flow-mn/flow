@@ -32,7 +32,7 @@ class NotificationsService {
   bool? _available;
   bool get available => _available == true;
 
-  String? _timezone;
+  TimezoneInfo? _timezone;
 
   final List<Function(NotificationResponse)> _registeredCallbacks = [];
 
@@ -65,7 +65,7 @@ class NotificationsService {
     try {
       _timezone = await FlutterTimezone.getLocalTimezone();
     } catch (error, stackTrace) {
-      _timezone = _fallbackTimezone;
+      _timezone = TimezoneInfo(identifier: _fallbackTimezone);
       _log.severe("Failed to get local timezone", error, stackTrace);
     }
 
@@ -440,7 +440,7 @@ class NotificationsService {
     late final Location location;
 
     try {
-      location = getLocation(_timezone ?? _fallbackTimezone);
+      location = getLocation(_timezone?.identifier ?? _fallbackTimezone);
     } catch (e) {
       location = UTC;
     }

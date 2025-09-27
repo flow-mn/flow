@@ -20,11 +20,13 @@
 * Fixed PDF range date were relative.
 * Fixed it was impossible to edit the category/account of an existing
   transaction in some scenarios
+* Single character/emoji Flow Icons are vertically centered (way better than before at least)
 
 ### Changes
 
 * Added slight shadow to the navbar for distinction
 * Some pages now scroll behind the system navbar
+* Reorganized profile tab to account for upcoming changes
 
 ## 0.15.0
 

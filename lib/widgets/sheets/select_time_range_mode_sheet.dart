@@ -55,7 +55,7 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Wrap(
               spacing: 12.0,
-              runSpacing: 12.0,
+              runSpacing: 4.0,
               children: [
                 ActionChip(
                   label: Text("select.timeRange.last30days".t(context)),

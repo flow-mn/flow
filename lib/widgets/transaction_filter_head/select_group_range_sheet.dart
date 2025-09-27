@@ -47,7 +47,7 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
             alignment: AlignmentDirectional.topStart,
             child: Wrap(
               spacing: 12.0,
-              runSpacing: 12.0,
+              runSpacing: 4.0,
               children: TransactionGroupRange.values
                   .map(
                     (range) => ChoiceChip(

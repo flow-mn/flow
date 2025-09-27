@@ -66,6 +66,7 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
         ? extractTop<Contact>(
             query: normalizedQuery,
             choices: contacts,
+            getter: (contact) => contact.displayName.toLowerCase(),
             limit: 10,
           ).map((result) => result.choice).toList()
         : contacts;

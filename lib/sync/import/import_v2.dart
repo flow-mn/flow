@@ -8,6 +8,7 @@ import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
@@ -19,7 +20,7 @@ import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
-import "package:flow/utils/extensions/transaction.dart";
+import "package:flow/utils/utils.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
@@ -34,8 +35,9 @@ class ImportV2 extends Importer {
 
   dynamic error;
 
-  final Map<String, int> memoizeAccounts = {};
-  final Map<String, int> memoizeCategories = {};
+  final Map<String, int> memoizedAccounts = {};
+  final Map<String, int> memoizedCategories = {};
+  final Map<String, Optional<TransactionTag>> memoizedTransactionTags = {};
 
   @override
   final ValueNotifier<ImportV2Progress> progressNotifier = ValueNotifier(
@@ -103,7 +105,16 @@ class ImportV2 extends Importer {
     await ObjectBox().box<Account>().putManyAsync(data.accounts);
     _log.fine("Imported ${data.accounts.length} accounts");
 
-    // 3. Resurrect [RecurringTransaction]s
+    // 3. Resurrect [TransactionTag]s
+    if (data.transactionTags?.isNotEmpty == true) {
+      progressNotifier.value = ImportV2Progress.writingTransactionTags;
+      await ObjectBox().box<TransactionTag>().putManyAsync(
+        data.transactionTags!,
+      );
+      _log.fine("Imported ${data.transactionTags!.length} transaction tags");
+    }
+
+    // 4. Resurrect [RecurringTransaction]s
     if (data.recurringTransactions?.isNotEmpty == true) {
       progressNotifier.value = ImportV2Progress.writingRecurringTransactions;
       await ObjectBox().box<RecurringTransaction>().putManyAsync(
@@ -114,7 +125,7 @@ class ImportV2 extends Importer {
       "Imported ${data.recurringTransactions?.length ?? 0} recurring transactions",
     );
 
-    // 4. Resurrect [Transaction]s
+    // 5. Resurrect [Transaction]s
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
     progressNotifier.value = ImportV2Progress.resolvingTransactions;
@@ -131,6 +142,15 @@ class ImportV2 extends Importer {
 
           try {
             transaction = _resolveCategoryForTransaction(transaction);
+          } catch (e) {
+            if (e is ImportException) {
+              _log.warning(e.toString());
+            }
+            // Still proceed without category
+          }
+
+          try {
+            transaction = _resolveTransactionTagsForTransaction(transaction);
           } catch (e) {
             if (e is ImportException) {
               _log.warning(e.toString());
@@ -253,24 +273,24 @@ class ImportV2 extends Importer {
     final String accountUuid = transaction.accountUuid!;
 
     // If the `id` is 0, we've already encountered it
-    if (memoizeAccounts[accountUuid] != 0) {
+    if (memoizedAccounts[accountUuid] != 0) {
       final Query<Account> accountQuery = ObjectBox()
           .box<Account>()
           .query(Account_.uuid.equals(accountUuid))
           .build();
 
-      memoizeAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
+      memoizedAccounts[accountUuid] ??= accountQuery.findFirst()?.id ?? 0;
 
       accountQuery.close();
     }
 
-    if (memoizeAccounts[accountUuid] == 0) {
+    if (memoizedAccounts[accountUuid] == 0) {
       throw ImportException(
         "Failed to link account to transaction because: Cannot find account ($accountUuid)",
       );
     }
 
-    transaction.account.targetId = memoizeAccounts[accountUuid]!;
+    transaction.account.targetId = memoizedAccounts[accountUuid]!;
 
     return transaction;
   }
@@ -283,24 +303,60 @@ class ImportV2 extends Importer {
     final String categoryUuid = transaction.categoryUuid!;
 
     // If the `id` is 0, we've already encountered it
-    if (memoizeCategories[categoryUuid] != 0) {
+    if (memoizedCategories[categoryUuid] != 0) {
       final Query<Category> categoryQuery = ObjectBox()
           .box<Category>()
           .query(Category_.uuid.equals(categoryUuid))
           .build();
 
-      memoizeCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
+      memoizedCategories[categoryUuid] ??= categoryQuery.findFirst()?.id ?? 0;
 
       categoryQuery.close();
     }
 
-    if (memoizeCategories[categoryUuid] == 0) {
+    if (memoizedCategories[categoryUuid] == 0) {
       throw ImportException(
         "Failed to link category to transaction because: Cannot find category ($categoryUuid)",
       );
     }
 
-    transaction.category.targetId = memoizeCategories[categoryUuid]!;
+    transaction.category.targetId = memoizedCategories[categoryUuid]!;
+
+    return transaction;
+  }
+
+  Transaction _resolveTransactionTagsForTransaction(Transaction transaction) {
+    if (transaction.tagsUuids.isEmpty) {
+      throw Exception("This transaction lacks `tagsUuids`");
+    }
+
+    final List<String> tagsUuids = transaction.tagsUuids;
+
+    for (final String tagUuid in tagsUuids) {
+      if (memoizedTransactionTags[tagUuid] is! Optional) {
+        final Query<TransactionTag> tagQuery = ObjectBox()
+            .box<TransactionTag>()
+            .query(TransactionTag_.uuid.equals(tagUuid))
+            .build();
+
+        memoizedTransactionTags[tagUuid] ??= Optional<TransactionTag>(
+          tagQuery.findFirst(),
+        );
+
+        tagQuery.close();
+      }
+
+      if (memoizedTransactionTags[tagUuid] is Optional &&
+          memoizedTransactionTags[tagUuid]!.value == null) {
+        throw ImportException(
+          "Failed to link tag to transaction because: Cannot find tag ($tagUuid)",
+        );
+      }
+    }
+
+    transaction.setTags(
+      tagsUuids.map((e) => memoizedTransactionTags[e]!.value!).toList(),
+    );
 
     return transaction;
   }
@@ -312,6 +368,7 @@ enum ImportV2Progress implements LocalizedEnum {
   erasing,
   writingCategories,
   writingAccounts,
+  writingTransactionTags,
   resolvingTransactions,
   writingRecurringTransactions,
   writingTransactions,

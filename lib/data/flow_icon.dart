@@ -1,4 +1,12 @@
+import "dart:io";
+import "dart:typed_data";
+import "dart:ui" as ui;
+
+import "package:cross_file/cross_file.dart";
+import "package:flow/objectbox.dart";
 import "package:flutter/material.dart";
+import "package:path/path.dart" as path;
+import "package:uuid/uuid.dart";
 
 /// An icon, emoji, or image used for [Account] or [Category]
 abstract class FlowIconData {
@@ -100,6 +108,16 @@ class ImageFlowIcon extends FlowIconData {
 
   const ImageFlowIcon(this.imagePath);
 
+  static Future<ImageFlowIcon?> tryFromData(dynamic data) async {
+    try {
+      final String? objectPath = await ImageFlowIcon.putImage(data);
+      if (objectPath == null) return null;
+      return ImageFlowIcon(objectPath);
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   String toString() => "ImageFlowIcon:$imagePath";
 
@@ -111,6 +129,31 @@ class ImageFlowIcon extends FlowIconData {
   static FlowIconData? tryParse(String serialized) {
     try {
       return parse(serialized);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Returns the path for [ImageFlowIcon]
+  static Future<String?> putImage(dynamic data) async {
+    try {
+      final Uint8List bytes = switch (data) {
+        Uint8List b => b,
+        XFile x => await x.readAsBytes(),
+        File f => await f.readAsBytes(),
+        ui.Image img =>
+          await img
+              .toByteData(format: ui.ImageByteFormat.png)
+              .then((data) => data!.buffer.asUint8List()),
+        _ => throw UnimplementedError(),
+      };
+
+      final String fileName = "${const Uuid().v4()}.png";
+      final File file = File(path.join(ObjectBox.imagesDirectory, fileName));
+      await file.create(recursive: true);
+      await file.writeAsBytes(bytes, flush: true);
+
+      return "images/$fileName";
     } catch (e) {
       return null;
     }

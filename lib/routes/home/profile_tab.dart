@@ -60,26 +60,6 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(Symbols.search_activity_rounded),
             onTap: () => context.push("/transactions/pending"),
           ),
-          ListTile(
-            title: Text("transaction.deleted".t(context)),
-            leading: const Icon(Symbols.delete_rounded),
-            onTap: () => context.push("/transactions/deleted"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.preferences".t(context)),
-            leading: const Icon(Symbols.settings_rounded),
-            onTap: () => context.push("/preferences"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.backup".t(context)),
-            leading: const Icon(Symbols.hard_drive_rounded),
-            onTap: () => context.push("/exportOptions"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.import".t(context)),
-            leading: const Icon(Symbols.restore_page_rounded),
-            onTap: () => context.push("/import"),
-          ),
           const SizedBox(height: 32.0),
           ListHeader("tabs.profile.community".t(context)),
           ListTile(
@@ -102,15 +82,37 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(Symbols.share_rounded),
             onTap: () => context.showUriShareSheet(uri: website),
           ),
-          ListTile(
-            title: Text("tabs.profile.guide".t(context)),
-            leading: const Icon(Symbols.book_2_rounded),
-            onTap: () => openUrl(guideUrl),
-          ),
+          // ListTile(
+          //   title: Text("tabs.profile.guide".t(context)),
+          //   leading: const Icon(Symbols.book_2_rounded),
+          //   onTap: () => openUrl(guideUrl),
+          // ),
           ListTile(
             title: Text("visitGitHubRepo".t(context)),
             leading: const Icon(SimpleIcons.github),
             onTap: () => openUrl(flowGitHubRepoLink),
+          ),
+          const SizedBox(height: 32.0),
+          ListHeader("tabs.profile.other".t(context)),
+          ListTile(
+            title: Text("transaction.deleted".t(context)),
+            leading: const Icon(Symbols.delete_rounded),
+            onTap: () => context.push("/transactions/deleted"),
+          ),
+          ListTile(
+            title: Text("tabs.profile.backup".t(context)),
+            leading: const Icon(Symbols.hard_drive_rounded),
+            onTap: () => context.push("/exportOptions"),
+          ),
+          ListTile(
+            title: Text("tabs.profile.import".t(context)),
+            leading: const Icon(Symbols.restore_page_rounded),
+            onTap: () => context.push("/import"),
+          ),
+          ListTile(
+            title: Text("tabs.profile.preferences".t(context)),
+            leading: const Icon(Symbols.settings_rounded),
+            onTap: () => context.push("/preferences"),
           ),
           if (flowDebugMode) ...[
             const SizedBox(height: 32.0),

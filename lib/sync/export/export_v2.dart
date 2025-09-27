@@ -10,6 +10,7 @@ import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
@@ -42,6 +43,11 @@ Future<String> generateBackupJSONContentV2() async {
       .box<Category>()
       .getAllAsync();
   syncLogger.fine("Finished fetching categories");
+
+  final List<TransactionTag> transactionTags = await ObjectBox()
+      .box<TransactionTag>()
+      .getAllAsync();
+  syncLogger.fine("Finished fetching transaction tags");
 
   final DateTime exportDate = DateTime.now().toUtc();
 
@@ -80,6 +86,7 @@ Future<String> generateBackupJSONContentV2() async {
     username: username,
     appVersion: appVersion,
     transactions: transactions,
+    transactionTags: transactionTags,
     accounts: accounts,
     categories: categories,
     transactionFilterPresets: transactionFilterPresets,

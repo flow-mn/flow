@@ -81,6 +81,18 @@ class BackupInfoV2 extends StatelessWidget {
               ),
             ),
           ],
+          if (importer.data.transactionTags?.isNotEmpty == true) ...[
+            const SizedBox(height: 8.0),
+            ImportItemListTile(
+              icon: FlowIconData.icon(Symbols.style_rounded),
+              label: Text(
+                "sync.import.syncData.parsedEstimate.transactionTagCount".t(
+                  context,
+                  importer.data.transactionTags?.length ?? 0,
+                ),
+              ),
+            ),
+          ],
           if (primaryCurrency != null) ...[
             const SizedBox(height: 8.0),
             ImportItemListTile(

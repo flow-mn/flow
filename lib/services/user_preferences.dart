@@ -50,6 +50,8 @@ class UserPreferencesService {
     return flowLights.schemes.first.name;
   }
 
+  String? get themeNameRaw => value.themeName;
+
   set themeName(String? newThemeName) {
     if (validateThemeName(newThemeName)) {
       value.themeName = newThemeName;
