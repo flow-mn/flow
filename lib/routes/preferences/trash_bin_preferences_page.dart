@@ -35,24 +35,24 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("preferences.trashBin".t(context))),
-      body: SafeArea(
-        child: ValueListenableBuilder(
-          valueListenable: UserPreferencesService().valueNotifier,
-          builder: (context, snapshot, _) {
-            final int? trashBinRetentionDays = snapshot.trashBinRetentionDays;
+      body: ValueListenableBuilder(
+        valueListenable: UserPreferencesService().valueNotifier,
+        builder: (context, snapshot, _) {
+          final int? trashBinRetentionDays = snapshot.trashBinRetentionDays;
 
-            final bool isCustomPeriod =
-                trashBinRetentionDays != null &&
-                !TrashBinPreferencesPage.choices.any(
-                  (preset) => trashBinRetentionDays == preset.inDays,
-                );
+          final bool isCustomPeriod =
+              trashBinRetentionDays != null &&
+              !TrashBinPreferencesPage.choices.any(
+                (preset) => trashBinRetentionDays == preset.inDays,
+              );
 
-            final List<Duration> choices = [
-              ...TrashBinPreferencesPage.choices,
-              if (isCustomPeriod) Duration(days: trashBinRetentionDays),
-            ]..sort((a, b) => a.inDays.compareTo(b.inDays));
+          final List<Duration> choices = [
+            ...TrashBinPreferencesPage.choices,
+            if (isCustomPeriod) Duration(days: trashBinRetentionDays),
+          ]..sort((a, b) => a.inDays.compareTo(b.inDays));
 
-            return SingleChildScrollView(
+          return SingleChildScrollView(
+            child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -109,9 +109,9 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
                   const SizedBox(height: 16.0),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

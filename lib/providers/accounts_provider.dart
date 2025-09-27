@@ -1,7 +1,9 @@
+import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/widgets/transaction_watcher.dart";
 import "package:flutter/material.dart";
@@ -26,6 +28,26 @@ class _AccountsProviderScopeState extends State<AccountsProviderScope> {
         stream: _queryBuilder().watch(triggerImmediately: true),
         builder: (context, snapshot) {
           final List<Account>? accounts = snapshot.data?.find();
+
+          if (accounts != null) {
+            final FrecencyGroup frecencyGroup = FrecencyGroup(
+              accounts
+                  .map(
+                    (account) => TransitiveLocalPreferences().getFrecencyData(
+                      "account",
+                      account.uuid,
+                    ),
+                  )
+                  .nonNulls
+                  .toList(),
+            );
+
+            accounts.sort(
+              (a, b) => frecencyGroup
+                  .getScore(b.uuid)
+                  .compareTo(frecencyGroup.getScore(a.uuid)),
+            );
+          }
 
           return AccountsProvider(accounts, child: widget.child);
         },

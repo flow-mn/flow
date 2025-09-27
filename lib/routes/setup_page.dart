@@ -44,11 +44,9 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          children: const [WelcomeSlide(), FossSlide(), PrivacySlide()],
-        ),
+      body: PageView(
+        controller: _pageController,
+        children: const [WelcomeSlide(), FossSlide(), PrivacySlide()],
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

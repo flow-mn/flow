@@ -32,8 +32,8 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.sync".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

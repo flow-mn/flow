@@ -4,6 +4,8 @@ import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/theme/color_themes/registry.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -59,10 +61,15 @@ class Account implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final transactions = ToMany<Transaction>();
 
-  String iconCode;
-
   bool excludeFromTotalBalance;
   bool archived;
+
+  String? colorSchemeName;
+
+  @Transient()
+  FlowColorScheme? get colorScheme => getThemeStrict(colorSchemeName);
+
+  String iconCode;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -96,6 +103,7 @@ class Account implements EntityBase {
     required this.currency,
     required this.iconCode,
     this.creditLimit,
+    this.colorSchemeName,
     this.excludeFromTotalBalance = false,
     this.archived = false,
     this.sortOrder = -1,
@@ -110,6 +118,7 @@ class Account implements EntityBase {
     required this.iconCode,
     required this.uuid,
     this.creditLimit,
+    this.colorSchemeName,
     this.type = AccountType.debitValue,
     this.excludeFromTotalBalance = false,
   }) : archived = false,

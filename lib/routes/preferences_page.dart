@@ -62,7 +62,7 @@ class PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     final FlowColorScheme currentTheme = getTheme(
-      LocalPreferences().theme.themeName.get(),
+      UserPreferencesService().themeName,
     );
 
     final bool enableGeo = LocalPreferences().enableGeo.get();
@@ -295,6 +295,7 @@ class PreferencesPageState extends State<PreferencesPage> {
       final selected = await showModalBottomSheet<String>(
         context: context,
         builder: (context) => SelectCurrencySheet(currentlySelected: current),
+        isScrollControlled: true,
       );
 
       if (selected != null) {
@@ -319,14 +320,12 @@ class PreferencesPageState extends State<PreferencesPage> {
   void _openTheme() async {
     await context.push("/preferences/theme");
 
-    final bool themeChangesAppIcon = LocalPreferences()
-        .theme
-        .themeChangesAppIcon
-        .get();
+    final bool themeChangesAppIcon =
+        UserPreferencesService().themeChangesAppIcon;
 
     trySetAppIcon(
       themeChangesAppIcon
-          ? allThemes[LocalPreferences().theme.themeName.get()]?.iconName
+          ? allThemes[UserPreferencesService().themeName]?.iconName
           : null,
     );
 

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1185109045851542775",
-      "lastPropertyId": "15:4500989952725300589",
+      "lastPropertyId": "16:5820369881987699214",
       "name": "Account",
       "properties": [
         {
@@ -67,13 +67,18 @@
           "id": "15:4500989952725300589",
           "name": "type",
           "type": 9
+        },
+        {
+          "id": "16:5820369881987699214",
+          "name": "colorSchemeName",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "2:649350347514211469",
-      "lastPropertyId": "8:2832069050067036408",
+      "lastPropertyId": "10:8207473128907508304",
       "name": "Category",
       "properties": [
         {
@@ -104,6 +109,11 @@
         {
           "id": "6:7989789340130049283",
           "name": "iconCode",
+          "type": 9
+        },
+        {
+          "id": "10:8207473128907508304",
+          "name": "colorSchemeName",
           "type": 9
         }
       ],
@@ -181,7 +191,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "21:8105783725440518384",
+      "lastPropertyId": "24:2157597498441905857",
       "name": "Transaction",
       "properties": [
         {
@@ -282,9 +292,27 @@
           "id": "21:8105783725440518384",
           "name": "extraTags",
           "type": 30
+        },
+        {
+          "id": "22:8732200258907669936",
+          "name": "location",
+          "type": 28,
+          "flags": 8,
+          "indexId": "22:4524862754555930046"
+        },
+        {
+          "id": "24:2157597498441905857",
+          "name": "tagsUuids",
+          "type": 30
         }
       ],
-      "relations": []
+      "relations": [
+        {
+          "id": "1:3860846002029102487",
+          "name": "tags",
+          "targetId": "13:1815911240017711144"
+        }
+      ]
     },
     {
       "id": "9:292195687144521768",
@@ -324,7 +352,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "18:5817984994810877086",
+      "lastPropertyId": "20:3170754472241464501",
       "name": "UserPreferences",
       "properties": [
         {
@@ -409,6 +437,16 @@
           "id": "18:5817984994810877086",
           "name": "iCloudBackupsToKeep",
           "type": 6
+        },
+        {
+          "id": "19:4873078044604055561",
+          "name": "themeName",
+          "type": 9
+        },
+        {
+          "id": "20:3170754472241464501",
+          "name": "themeChangesAppIcon",
+          "type": 1
         }
       ],
       "relations": []
@@ -527,11 +565,138 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "13:1815911240017711144",
+      "lastPropertyId": "11:3938547905203366311",
+      "name": "TransactionTag",
+      "properties": [
+        {
+          "id": "1:3148504216745320475",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:267854316046110520",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "23:848773158592813096"
+        },
+        {
+          "id": "3:1701687991250279034",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:1033466507363479834",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "5:5151684011991355185",
+          "name": "deletedDate",
+          "type": 10
+        },
+        {
+          "id": "6:1324427155948625680",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "7:1336731416210755961",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "8:7684406616909361899",
+          "name": "payload",
+          "type": 9
+        },
+        {
+          "id": "9:487976549673225350",
+          "name": "iconCode",
+          "type": 9
+        },
+        {
+          "id": "11:3938547905203366311",
+          "name": "colorSchemeName",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "14:7904423998243143112",
+      "lastPropertyId": "10:3196587516305976411",
+      "name": "Goal",
+      "properties": [
+        {
+          "id": "1:5506339622345934410",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6590369245858196692",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "24:5428246387638285574"
+        },
+        {
+          "id": "3:8127192883640469620",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:4538446564856671516",
+          "name": "name",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "25:1837035268504934837"
+        },
+        {
+          "id": "5:102148746483304310",
+          "name": "range",
+          "type": 9
+        },
+        {
+          "id": "6:1142434388520977284",
+          "name": "targetBalance",
+          "type": 8
+        },
+        {
+          "id": "7:2371982402833524364",
+          "name": "currency",
+          "type": 9
+        },
+        {
+          "id": "8:263931570311257219",
+          "name": "iconCode",
+          "type": 9
+        },
+        {
+          "id": "9:6660372638472601413",
+          "name": "accountId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "26:6114043135141023608",
+          "relationTarget": "Account"
+        },
+        {
+          "id": "10:3196587516305976411",
+          "name": "accountUuid",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "12:800756592587838565",
-  "lastIndexId": "21:7291423328418584896",
-  "lastRelationId": "0:0",
+  "lastEntityId": "14:7904423998243143112",
+  "lastIndexId": "26:6114043135141023608",
+  "lastRelationId": "1:3860846002029102487",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
@@ -583,7 +748,10 @@
     3842898167150913136,
     1701734084880256388,
     2598696840666344158,
-    7012537446377796117
+    7012537446377796117,
+    6033810133674409127,
+    610924910099589699,
+    3063095817126288040
   ],
   "retiredRelationUids": [],
   "version": 1

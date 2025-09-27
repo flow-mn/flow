@@ -6,12 +6,13 @@ import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/subtype.dart";
 import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction/wrapper.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
 
-export "transaction/type.dart";
 export "transaction/subtype.dart";
+export "transaction/type.dart";
 
 part "transaction.g.dart";
 
@@ -43,6 +44,10 @@ class Transaction implements EntityBase {
   static const int maxDescriptionLength = 65536;
   String? description;
 
+  @HnswIndex(dimensions: 2, distanceType: VectorDistanceType.geo)
+  @Property(type: PropertyType.floatVector)
+  List<double>? location;
+
   double amount;
 
   bool? isPending;
@@ -59,7 +64,6 @@ class Transaction implements EntityBase {
   // transactions might not be good idea.
   //
   /// Subtype of transaction
-  @Property()
   String? subtype;
 
   @Transient()
@@ -123,6 +127,24 @@ class Transaction implements EntityBase {
     if (isTransfer) return TransactionType.transfer;
 
     return amount.isNegative ? TransactionType.expense : TransactionType.income;
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final tags = ToMany<TransactionTag>();
+
+  @Transient()
+  List<String>? _tagsUuids;
+
+  List<String> get tagsUuids => _tagsUuids ?? tags.map((e) => e.uuid).toList();
+
+  set tagsUuids(List<String> newTagUuids) {
+    _tagsUuids = newTagUuids;
+  }
+
+  void setTags(List<TransactionTag> newTags) {
+    tags.clear();
+    tags.addAll(newTags);
+    tagsUuids = tags.map((e) => e.uuid).toList();
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)

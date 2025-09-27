@@ -6,6 +6,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/accounts.dart";
@@ -33,6 +34,7 @@ class TransitiveLocalPreferences {
   late final PrimitiveSettingsEntry<String> lastAutoBackupPath;
 
   late final DateTimeSettingsEntry lastSuccessfulICloudSyncAt;
+  late final BoolSettingsEntry iCloudSyncWorkingFine;
 
   late final BoolSettingsEntry sessionPrivacyMode;
 
@@ -83,6 +85,12 @@ class TransitiveLocalPreferences {
     lastSuccessfulICloudSyncAt = DateTimeSettingsEntry(
       key: "transitive.lastSuccessfulICloudSyncAt",
       preferences: _prefs,
+    );
+
+    iCloudSyncWorkingFine = BoolSettingsEntry(
+      key: "transitive.iCloudSyncWorkingFine",
+      preferences: _prefs,
+      initialValue: true,
     );
 
     sessionPrivacyMode = BoolSettingsEntry(
@@ -140,6 +148,7 @@ class TransitiveLocalPreferences {
           )) {
         unawaited(_reevaluateCategoryFrecency());
         unawaited(_reevaluateAccountFrecency());
+        unawaited(_reevaluateTransactionTagFrecency());
         unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
       }
     } catch (e) {
@@ -199,7 +208,7 @@ class TransitiveLocalPreferences {
         final TransactionFilter filter = TransactionFilter(
           categories: [category.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
-            Moment.minValue.rangeTo(Moment.now()),
+            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
           ),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
@@ -243,7 +252,7 @@ class TransitiveLocalPreferences {
         final TransactionFilter filter = TransactionFilter(
           accounts: [account.uuid],
           range: TransactionFilterTimeRange.fromTimeRange(
-            Moment.minValue.rangeTo(Moment.now()),
+            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
           ),
           sortBy: TransactionSortField.transactionDate,
           sortDescending: true,
@@ -268,6 +277,52 @@ class TransitiveLocalPreferences {
       } catch (e, stackTrace) {
         _log.warning(
           "Failed to build account FrecencyData for $account",
+          e,
+          stackTrace,
+        );
+      }
+    }
+  }
+
+  Future<void> _reevaluateTransactionTagFrecency() async {
+    final List<TransactionTag> tags = await ObjectBox()
+        .box<TransactionTag>()
+        .getAllAsync();
+
+    if (tags.isEmpty) {
+      return;
+    }
+
+    for (final tag in tags) {
+      try {
+        final TransactionFilter filter = TransactionFilter(
+          tags: [tag.uuid],
+          range: TransactionFilterTimeRange.fromTimeRange(
+            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
+          ),
+          sortBy: TransactionSortField.transactionDate,
+          sortDescending: true,
+        );
+
+        final int useCount = TransactionsService().countMany(filter);
+        final DateTime lastUsed =
+            TransactionsService().findFirstSync(filter)?.transactionDate ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+
+        unawaited(
+          setFrecencyData(
+            "tag",
+            tag.uuid,
+            FrecencyData(
+              uuid: tag.uuid,
+              lastUsed: lastUsed,
+              useCount: useCount,
+            ),
+          ),
+        );
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to build tag FrecencyData for $tag",
           e,
           stackTrace,
         );

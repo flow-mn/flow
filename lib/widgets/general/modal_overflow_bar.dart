@@ -26,15 +26,18 @@ class ModalOverflowBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding,
-      child: OverflowBar(
-        alignment: alignment,
-        spacing: spacing,
-        overflowSpacing: overflowSpacing,
-        overflowAlignment: overflowAlignment,
-        overflowDirection: overflowDirection,
-        textDirection: textDirection,
-        children: children,
+      padding: padding.copyWith(bottom: 4.0),
+      child: SafeArea(
+        top: false,
+        child: OverflowBar(
+          alignment: alignment,
+          spacing: spacing,
+          overflowSpacing: overflowSpacing,
+          overflowAlignment: overflowAlignment,
+          overflowDirection: overflowDirection,
+          textDirection: textDirection,
+          children: children,
+        ),
       ),
     );
   }

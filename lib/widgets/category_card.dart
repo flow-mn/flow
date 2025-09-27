@@ -4,6 +4,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -57,6 +58,8 @@ class CategoryCard extends StatelessWidget {
             .map((transaction) => transaction.money),
       );
 
+    final FlowColorScheme? colorScheme = category.colorScheme;
+
     return Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
@@ -66,13 +69,23 @@ class CategoryCard extends StatelessWidget {
             : onTapOverride!.value,
         child: Row(
           children: [
-            FlowIcon(category.icon, size: 32.0, plated: true),
+            FlowIcon(
+              category.icon,
+              size: 32.0,
+              plated: true,
+              colorScheme: colorScheme,
+            ),
             const SizedBox(width: 12.0),
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(category.name, style: context.textTheme.titleSmall),
+                Text(
+                  category.name,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: colorScheme?.onSurface,
+                  ),
+                ),
                 if (showAmount)
                   MoneyText(flow.merge(primaryCurrency, rates).totalFlow),
               ],

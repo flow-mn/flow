@@ -72,8 +72,8 @@ class _PendingTransactionPreferencesPageState
       appBar: AppBar(
         title: Text("preferences.transactions.pending".t(context)),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

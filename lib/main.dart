@@ -19,6 +19,7 @@ import "dart:async";
 import "dart:io";
 import "dart:ui";
 
+import "package:app_links/app_links.dart";
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/profile.dart";
@@ -29,7 +30,8 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/providers/accounts_provider.dart";
-import "package:flow/providers/categories.dart";
+import "package:flow/providers/categories_provider.dart";
+import "package:flow/providers/transaction_tags_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
@@ -117,7 +119,7 @@ void main() async {
 
   try {
     startupLog.fine("Initializing user preferences service");
-    UserPreferencesService().initialize();
+    await UserPreferencesService().initialize();
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
@@ -173,6 +175,8 @@ class FlowState extends State<Flow> {
 
   ThemeMode get themeMode => _themeMode;
 
+  late final StreamSubscription<Uri?> _flowUriSubscription;
+
   late bool _tempLock;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
@@ -186,8 +190,12 @@ class FlowState extends State<Flow> {
     _reloadLocale();
     _reloadTheme();
 
+    AppLinks().getInitialLink().then(_handleFlowUri);
+    _flowUriSubscription = AppLinks().uriLinkStream.listen(_handleFlowUri);
+
+    UserPreferencesService().valueNotifier.addListener(_reloadTheme);
+
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().theme.themeName.addListener(_reloadTheme);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
 
     _tempLock = LocalPreferences().requireLocalAuth.get();
@@ -202,6 +210,7 @@ class FlowState extends State<Flow> {
       migrateRemoveTitleFromUntitledTransactions();
       migrateExtraKeyIndexing();
       migratePrimaryCurrencyToDb();
+      migrateThemePrefsToDb();
     });
 
     _tryUnlockTempLock();
@@ -228,10 +237,12 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().theme.themeName.removeListener(_reloadTheme);
+    UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
 
     TransactionsService().removeListener(_synchronizePlannedNotifications);
+
+    _flowUriSubscription.cancel();
 
     _appLifeCycleListener.dispose();
 
@@ -258,31 +269,33 @@ class FlowState extends State<Flow> {
       builder: (context, child) {
         return AccountsProviderScope(
           child: CategoriesProviderScope(
-            child: GestureDetector(
-              behavior: _tempLock
-                  ? HitTestBehavior.opaque
-                  : HitTestBehavior.deferToChild,
-              onTap: _tryUnlockTempLock,
-              child: IgnorePointer(
-                ignoring: _tempLock,
-                child: Stack(
-                  children: [
-                    child ?? Container(),
-                    if (_tempLock)
-                      Positioned.fill(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                          child: SizedBox.expand(
-                            child: Center(
-                              child: FlowIcon(
-                                FlowIconData.icon(Symbols.lock_rounded),
-                                size: 80.0,
+            child: TransactionTagsProviderScope(
+              child: GestureDetector(
+                behavior: _tempLock
+                    ? HitTestBehavior.opaque
+                    : HitTestBehavior.deferToChild,
+                onTap: _tryUnlockTempLock,
+                child: IgnorePointer(
+                  ignoring: _tempLock,
+                  child: Stack(
+                    children: [
+                      child ?? Container(),
+                      if (_tempLock)
+                        Positioned.fill(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                            child: SizedBox.expand(
+                              child: Center(
+                                child: FlowIcon(
+                                  FlowIconData.icon(Symbols.lock_rounded),
+                                  size: 80.0,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -293,16 +306,22 @@ class FlowState extends State<Flow> {
   }
 
   void _reloadTheme() {
-    final String? themeName = LocalPreferences().theme.themeName.value;
+    final String? themeName = UserPreferencesService().value.themeName;
 
-    themeLogger.info("Reloading $themeName");
+    if (validateThemeName(themeName)) {
+      themeLogger.info("Reloading $themeName");
 
-    FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
+      FlowColorScheme theme = getTheme(themeName, preferDark: useDarkTheme);
 
-    setState(() {
-      _themeMode = theme.mode;
-      _themeFactory = ThemeFactory(theme);
-    });
+      setState(() {
+        _themeMode = theme.mode;
+        _themeFactory = ThemeFactory(theme);
+      });
+    } else {
+      themeLogger.warning(
+        "Invalid theme name: $themeName, falling back to null",
+      );
+    }
   }
 
   void _reloadLocale() {
@@ -389,6 +408,23 @@ class FlowState extends State<Flow> {
       }
     } catch (e) {
       mainLogger.severe("Failed to initialize LocalAuthService", e);
+    }
+  }
+
+  void _handleFlowUri(Uri? uri) {
+    if (uri == null) return;
+    mainLogger.info("Received app link: $uri");
+
+    if (uri.scheme != "flow-mn") {
+      mainLogger.warning("Ignoring non-flow scheme URI: $uri");
+      return;
+    }
+
+    if (uri.pathSegments.join("/") == "transaction/new") {
+      if (mounted) {
+        router.push("/transaction/new?${uri.query}");
+      }
+      return;
     }
   }
 }

@@ -90,6 +90,7 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
                           FlowIcon(
                             category?.icon ??
                                 FlowIconData.icon(Symbols.category_rounded),
+                            colorScheme: category?.colorScheme,
                           ),
                           Text(category?.name ?? "category.none".t(context)),
                         ],

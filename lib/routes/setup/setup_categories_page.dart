@@ -77,106 +77,107 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.categories.setup".t(context))),
-      body: SafeArea(
-        child: StreamBuilder(
-          stream: qb().watch(triggerImmediately: true),
-          builder: (context, snapshot) {
-            final List<Category> currentCategories =
-                snapshot.data?.find() ?? [];
+      body: StreamBuilder(
+        stream: qb().watch(triggerImmediately: true),
+        builder: (context, snapshot) {
+          final List<Category> currentCategories = snapshot.data?.find() ?? [];
 
-            final Set<bool> presetSelections = presetCategories
-                .map((preset) => preset.id == 0)
-                .toSet();
+          final Set<bool> presetSelections = presetCategories
+              .map((preset) => preset.id == 0)
+              .toSet();
 
-            final bool? presetSelectedAll = presetSelections.length == 1
-                ? presetSelections.first
-                : null;
+          final bool? presetSelectedAll = presetSelections.length == 1
+              ? presetSelections.first
+              : null;
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InfoText(
-                    child: Text("setup.categories.description".t(context)),
-                  ),
-                  if (presetCategories.isNotEmpty) ...[
-                    const SizedBox(height: 8.0),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: TextButton(
-                        onPressed: selectAll,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("general.select.all".t(context)),
-                            const SizedBox(width: 8.0),
-                            IgnorePointer(
-                              child: Checkbox(
-                                value: presetSelectedAll,
-                                onChanged: (value) => (),
-                                tristate: true,
+          return SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InfoText(
+                      child: Text("setup.categories.description".t(context)),
+                    ),
+                    if (presetCategories.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: TextButton(
+                          onPressed: selectAll,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("general.select.all".t(context)),
+                              const SizedBox(width: 8.0),
+                              IgnorePointer(
+                                child: Checkbox(
+                                  value: presetSelectedAll,
+                                  onChanged: (value) => (),
+                                  tristate: true,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16.0),
+                    const AddCategoryCard(),
+                    const SizedBox(height: 16.0),
+                    LocalHeroScope(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: presetCategories
+                            .map(
+                              (preset) => LocalHero(
+                                key: ValueKey(preset.uuid),
+                                tag: preset.uuid,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 16.0),
+                                  child: CategoryPresetCard(
+                                    category: preset,
+                                    onSelect: (selected) =>
+                                        select(preset.uuid, selected),
+                                    selected: preset.id == 0,
+                                    preexisting: false,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    if (currentCategories.isNotEmpty) ...[
+                      const SizedBox(height: 16.0),
+                      WavyDivider(),
+                      const SizedBox(height: 16.0),
+                      ListHeader(
+                        "setup.categories.existing".t(context),
+                        padding: EdgeInsets.zero,
+                      ),
+                      const SizedBox(height: 8.0),
+                    ],
+                    ...currentCategories.map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: CategoryCard(
+                          category: e,
+                          onTapOverride: const Optional(null),
+                          showAmount: false,
+                          trailing: Icon(Symbols.done_all_rounded),
                         ),
                       ),
                     ),
                   ],
-                  const SizedBox(height: 16.0),
-                  const AddCategoryCard(),
-                  const SizedBox(height: 16.0),
-                  LocalHeroScope(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: presetCategories
-                          .map(
-                            (preset) => LocalHero(
-                              key: ValueKey(preset.uuid),
-                              tag: preset.uuid,
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: CategoryPresetCard(
-                                  category: preset,
-                                  onSelect: (selected) =>
-                                      select(preset.uuid, selected),
-                                  selected: preset.id == 0,
-                                  preexisting: false,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  if (currentCategories.isNotEmpty) ...[
-                    const SizedBox(height: 16.0),
-                    WavyDivider(),
-                    const SizedBox(height: 16.0),
-                    ListHeader(
-                      "setup.categories.existing".t(context),
-                      padding: EdgeInsets.zero,
-                    ),
-                    const SizedBox(height: 8.0),
-                  ],
-                  ...currentCategories.map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: CategoryCard(
-                        category: e,
-                        onTapOverride: const Optional(null),
-                        showAmount: false,
-                        trailing: Icon(Symbols.done_all_rounded),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

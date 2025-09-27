@@ -1,3 +1,6 @@
+import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/multi_currency_flow.dart";
+import "package:flow/data/single_currency_flow.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
@@ -9,6 +12,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/accounts.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/sync/export/export_pdf/headers.dart";
 import "package:flutter/services.dart";
@@ -144,6 +148,7 @@ Future<Uint8List> generatePDFContent({
                     "~",
               })
             : "transaction.fallbackTitle".tr());
+
     final String accountName = (transaction.isTransfer)
         ? "${accountNames[transaction.extensions.transfer!.fromAccountUuid] ?? "~"} -> ${accountNames[transaction.extensions.transfer!.toAccountUuid] ?? "~"}"
         : (accountNames[transaction.accountUuid] ?? "~");
@@ -177,6 +182,38 @@ Future<Uint8List> generatePDFContent({
     );
   }
 
+  final Map<String, SingleCurrencyFlow> accountFlowSummary = Map.fromEntries(
+    accounts.map(
+      (account) => MapEntry(
+        account.name,
+        SingleCurrencyFlow(currency: account.currency)..addAll(
+          account.transactions.map((transaction) => transaction.money),
+          null,
+        ),
+      ),
+    ),
+  );
+
+  final ExchangeRates? rates = ExchangeRatesService().getPrimaryCurrencyRates();
+
+  late final SingleCurrencyFlow? allAccountsFlow;
+
+  if (rates == null) {
+    allAccountsFlow = null;
+  } else {
+    final MultiCurrencyFlow multiCurrencyFlow = MultiCurrencyFlow();
+
+    for (final SingleCurrencyFlow flow in accountFlowSummary.values) {
+      multiCurrencyFlow.add(flow.totalExpense);
+      multiCurrencyFlow.add(flow.totalIncome);
+    }
+
+    allAccountsFlow = multiCurrencyFlow.merge(
+      rates.baseCurrency.toUpperCase(),
+      rates,
+    );
+  }
+
   final String author =
       ObjectBox().box<Profile>().getAll().firstOrNull?.name ?? "Flow";
 
@@ -188,6 +225,10 @@ Future<Uint8List> generatePDFContent({
     title: "Flow - Transactions statement (${options.timeRange})",
     author: author,
     keywords: "Flow, statement, personal, non-legal",
+  );
+
+  final String formattedPdfRange = (realTimeRange ?? options.timeRange).format(
+    useRelative: false,
   );
 
   pdf.addPage(
@@ -232,11 +273,7 @@ Future<Uint8List> generatePDFContent({
               pw.TextSpan(text: "sync.export.pdf.notice[1]".tr()),
               pw.TextSpan(text: " "),
               pw.TextSpan(
-                text: "sync.export.pdf.header".tr({
-                  "range": (realTimeRange ?? options.timeRange).format(
-                    useRelative: false,
-                  ),
-                }),
+                text: "sync.export.pdf.header".tr({"range": formattedPdfRange}),
               ),
               pw.TextSpan(text: " "),
               pw.TextSpan(
@@ -309,6 +346,138 @@ Future<Uint8List> generatePDFContent({
                   .toList(),
             ),
             ...transactions.map(generateRow),
+          ],
+        ),
+        pw.SizedBox(height: 20),
+        pw.Text("sync.export.pdf.summary".tr({"range": formattedPdfRange})),
+        pw.SizedBox(height: 20),
+        pw.Table(
+          defaultColumnWidth: pw.FlexColumnWidth(),
+          children: [
+            pw.TableRow(
+              decoration: rowOddDeco,
+              children:
+                  [
+                        "",
+                        "sync.export.pdf.summary.income",
+                        "sync.export.pdf.summary.expense",
+                        "sync.export.pdf.summary.flow",
+                      ]
+                      .map(
+                        (header) => pw.Align(
+                          alignment: pw.Alignment.topRight,
+                          child: pw.Padding(
+                            padding: pw.EdgeInsets.symmetric(
+                              horizontal: 4.0,
+                              vertical: 4.0,
+                            ),
+                            child: pw.Text(
+                              header.tr(),
+                              style: pw.TextStyle(
+                                color: PdfColor.fromInt(0xff33004f),
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+            ),
+            ...accountFlowSummary.entries.map(
+              (entry) => pw.TableRow(
+                decoration: (even = !even) ? rowEvenDeco : rowOddDeco,
+                children: [
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Text(
+                      entry.key,
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(entry.value.totalIncome.formatMoney()),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(entry.value.totalExpense.formatMoney()),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(entry.value.totalFlow.formatMoney()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (allAccountsFlow != null)
+              pw.TableRow(
+                decoration: (even = !even) ? rowEvenDeco : rowOddDeco,
+                children: [
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Text(
+                      "sync.export.pdf.summary.allAcounts".tr(),
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(allAccountsFlow.totalIncome.formatMoney()),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(
+                        allAccountsFlow.totalExpense.formatMoney(),
+                      ),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(
+                      horizontal: 4.0,
+                      vertical: 4.0,
+                    ),
+                    child: pw.Align(
+                      alignment: pw.Alignment.topRight,
+                      child: pw.Text(allAccountsFlow.totalFlow.formatMoney()),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ],

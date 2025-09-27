@@ -5,6 +5,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/providers/accounts_provider.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
@@ -292,6 +293,7 @@ class TransactionListTile extends StatelessWidget {
 
   FlowIcon buildLeading(BuildContext context) {
     late final FlowIconData iconData;
+    FlowColorScheme? colorScheme;
 
     if (transaction.isTransfer) {
       iconData = FlowIconData.icon(Symbols.sync_alt_rounded);
@@ -302,6 +304,7 @@ class TransactionListTile extends StatelessWidget {
           FlowIconData.icon(Symbols.circle_rounded);
     } else if (transaction.category.target != null) {
       iconData = transaction.category.target!.icon;
+      colorScheme = transaction.category.target!.colorScheme;
     } else {
       iconData = FlowIconData.icon(Symbols.circle_rounded);
     }
@@ -310,6 +313,8 @@ class TransactionListTile extends StatelessWidget {
       iconData,
       plated: true,
       fill: transaction.category.target != null ? 1.0 : 0.0,
+      color: colorScheme?.primary,
+      plateColor: colorScheme?.secondary,
     );
   }
 

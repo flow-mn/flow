@@ -144,16 +144,14 @@ class _HomePageState extends State<HomePage>
             barColor: const Color.fromARGB(0, 86, 75, 75),
             borderRadius: BorderRadius.circular(32.0),
             body: (context, scrollControler) => Scaffold(
-              body: SafeArea(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    HomeTab(scrollController: _homeTabScrollController),
-                    const StatsTab(),
-                    const AccountsTab(),
-                    const ProfileTab(),
-                  ],
-                ),
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  HomeTab(scrollController: _homeTabScrollController),
+                  const StatsTab(),
+                  const SafeArea(child: AccountsTab()),
+                  const SafeArea(child: ProfileTab()),
+                ],
               ),
             ),
             child: Stack(

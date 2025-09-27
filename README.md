@@ -36,7 +36,36 @@ personal expense tracking app.
 * Full export/backup
   * Fully recoverable backups (ZIP/JSON)
   * Export CSV for external software use (i.e., Google Sheets)
-* Multilingual, see [list of supported languages]
+  * Auto-backups to iCloud Drive
+
+## Development
+
+Please read [Contribuition guide](./CONTRIBUTING.md), and
+[Code of Conduct](./CODE_OF_CONDUCT.md) before contributing.
+
+### Prerequisites
+
+* [Flutter](https://flutter.dev/) (latest stable)
+
+Other:
+
+* JDK 11 or later if you're gonna build for Android
+* [XCode](https://developer.apple.com/xcode/) if you're gonna build for iOS/macOS
+* To run tests on your machine, see [Testing](#testing)
+
+Building for Windows, macOS, and Linux-based systems requires the same
+dependencies as Flutter. Read more on <https://docs.flutter.dev/platform-integration>
+
+### Testing
+
+If you plan to run tests on your machine, ensure you've installed ObjectBox
+dynamic libraries.
+
+Install ObjectBox dynamic libraries[^3]:
+
+`bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
+
+Run tests with: `flutter test`
 
 ## Support Flow
 
@@ -48,11 +77,13 @@ income. Consider helping Flow! Here are some suggestions:
   and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
 * Tell a friend
 * [Buy me a coffee](https://buymeacoffee.com/sadespresso)
+  <!-- markdownlint-disable-next-line -->
+  <a href="https://www.buymeacoffee.com/sadespresso"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=sadespresso&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
   
-  Maintaining Flow on the App Store requires a substantial annual fee
-  (see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
-  which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
-  continued existence and future development, your support is greatly appreciated.
+Maintaining Flow on the App Store requires a substantial annual fee
+(see [Apple Developer Program](https://developer.apple.com/support/enrollment/#:~:text=The%20Apple%20Developer%20Program%20annual,in%20local%20currency%20where%20available.)),
+which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
+continued existence and future development, your support is greatly appreciated.
 
 Thank you for all the contributors, supporters, testers, and those who
 indirectly contributed 🤍
@@ -72,35 +103,6 @@ indirectly contributed 🤍
 
 > See [Translation guide](./CONTRIBUTING.md#translating) if you want to make
 > Flow available to your language
-
-## Development
-
-Please read [Contribuition guide](./CONTRIBUTING.md), and
-[Code of Conduct](./CODE_OF_CONDUCT.md) before contributing.
-
-### Prerequisites
-
-* [Flutter](https://flutter.dev/) (latest stable)
-
-Other:
-
-* JDK 11 or 17 if you're gonna build for Android
-* [XCode](https://developer.apple.com/xcode/) if you're gonna build for iOS/macOS
-* To run tests on your machine, see [Testing](#testing)
-
-Building for Windows, macOS, and Linux-based systems requires the same
-dependencies as Flutter. Read more on <https://docs.flutter.dev/platform-integration>
-
-### Testing
-
-If you plan to run tests on your machine, ensure you've installed ObjectBox
-dynamic libraries.
-
-Install ObjectBox dynamic libraries[^3]:
-
-`bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
-
-Run tests with: `flutter test`
 
 <!-- markdownlint-disable-next-line -->
 <a href="https://www.producthunt.com/posts/flow-2cbe921f-2ed9-4ed1-b8d7-26dff1c2c49d?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-flow&#0045;2cbe921f&#0045;2ed9&#0045;4ed1&#0045;b8d7&#0045;26dff1c2c49d" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=955354&theme=light&period=daily&t=1745222977391" alt="Flow - A&#0032;FOSS&#0032;expense&#0032;tracker&#0032;that&#0032;focuses&#0032;on&#0032;privacy&#0032;and&#0032;UX | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>

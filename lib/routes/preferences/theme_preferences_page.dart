@@ -1,7 +1,7 @@
 import "dart:io";
 
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/theme/names.dart";
@@ -29,7 +29,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
   void initState() {
     super.initState();
 
-    final String currentTheme = LocalPreferences().getCurrentTheme();
+    final String currentTheme = UserPreferencesService().themeName;
 
     selectedGroup =
         groups.entries
@@ -42,18 +42,16 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String currentTheme = LocalPreferences().getCurrentTheme();
+    final String currentTheme = UserPreferencesService().themeName;
     final String? currentThemeName = themeNames[currentTheme];
 
-    final bool themeChangesAppIcon = LocalPreferences()
-        .theme
-        .themeChangesAppIcon
-        .get();
+    final bool themeChangesAppIcon =
+        UserPreferencesService().themeChangesAppIcon;
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.theme.choose".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -83,6 +81,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
                 child: ThemePetalSelector(
                   groups: groups[selectedGroup]!,
                   updateOnHover: true,
+                  onChanged: (scheme) =>
+                      UserPreferencesService().themeName = scheme.name,
                 ),
               ),
               if (currentThemeName != null) ...[
@@ -141,10 +141,10 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
 
     try {
       appIconBusy = true;
-      await LocalPreferences().theme.themeChangesAppIcon.set(newValue);
+      UserPreferencesService().themeChangesAppIcon = newValue;
       trySetAppIcon(
         newValue
-            ? allThemes[LocalPreferences().getCurrentTheme()]?.iconName
+            ? allThemes[UserPreferencesService().themeName]?.iconName
             : null,
       );
     } finally {
@@ -160,8 +160,8 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
     if (busy) return;
 
     try {
-      await LocalPreferences().theme.themeName.set(name);
-      if (LocalPreferences().theme.themeChangesAppIcon.get()) {
+      UserPreferencesService().themeName = name;
+      if (UserPreferencesService().themeChangesAppIcon) {
         trySetAppIcon(allThemes[name]?.iconName);
       }
     } finally {

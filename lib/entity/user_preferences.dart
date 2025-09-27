@@ -81,6 +81,9 @@ class UserPreferences implements EntityBase {
 
   String? transactionButtonOrderJoined;
 
+  String? themeName;
+  bool themeChangesAppIcon;
+
   @Transient()
   @JsonKey(includeToJson: false, includeFromJson: false)
   List<TransactionType> get transactionButtonOrder {
@@ -128,6 +131,8 @@ class UserPreferences implements EntityBase {
     this.primaryCurrency,
     this.transactionButtonOrderJoined,
     this.remindDailyAtRelativeSeconds,
+    this.themeName,
+    this.themeChangesAppIcon = true,
   }) : uuid = const Uuid().v4();
 
   factory UserPreferences.fromJson(Map<String, dynamic> json) =>

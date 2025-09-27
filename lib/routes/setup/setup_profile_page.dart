@@ -52,35 +52,38 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.profile.setup".t(context))),
-      body: SafeArea(
-        child: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: TextFormField(
-                    controller: _textEditingController,
-                    autofocus: true,
-                    validator: validateRequiredField,
-                    textInputAction: TextInputAction.send,
-                    onFieldSubmitted: (value) => save(),
+      body: Form(
+        key: formKey,
+        child: SingleChildScrollView(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: TextFormField(
+                      controller: _textEditingController,
+                      autofocus: true,
+                      validator: validateRequiredField,
+                      textInputAction: TextInputAction.send,
+                      onFieldSubmitted: (value) => save(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                if (_textEditingController.text.trim().toLowerCase() == "test")
-                  CheckboxListTile(
-                    title: Text("Enable demo mode"),
-                    value: testMode,
-                    onChanged: (value) {
-                      setState(() {
-                        testMode = value ?? testMode;
-                      });
-                    },
-                  ),
-              ],
+                  const SizedBox(height: 16.0),
+                  if (_textEditingController.text.trim().toLowerCase() ==
+                      "test")
+                    CheckboxListTile(
+                      title: Text("Enable demo mode"),
+                      value: testMode,
+                      onChanged: (value) {
+                        setState(() {
+                          testMode = value ?? testMode;
+                        });
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
         ),

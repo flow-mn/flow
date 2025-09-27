@@ -45,41 +45,43 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.primaryCurrency.setup".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              InfoText(
-                child: Text("setup.primaryCurrency.description".t(context)),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                readOnly: true,
-                controller: _textController,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => save(),
-                decoration: const InputDecoration(border: InputBorder.none),
-                textAlign: TextAlign.center,
-                style: _currency == null
-                    ? context.textTheme.displaySmall?.semi(context)
-                    : context.textTheme.displaySmall,
-              ),
-              if (error != null) ...[
-                const SizedBox(height: 8.0),
-                Text(
-                  error.toString(),
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.flowColors.expense,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                InfoText(
+                  child: Text("setup.primaryCurrency.description".t(context)),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  readOnly: true,
+                  controller: _textController,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => save(),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  textAlign: TextAlign.center,
+                  style: _currency == null
+                      ? context.textTheme.displaySmall?.semi(context)
+                      : context.textTheme.displaySmall,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: 8.0),
+                  Text(
+                    error.toString(),
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.flowColors.expense,
+                    ),
                   ),
+                ],
+                const SizedBox(height: 16.0),
+                Button(
+                  child: Text("setup.primaryCurrency.choose".t(context)),
+                  onTap: () => selectCurrency(),
                 ),
               ],
-              const SizedBox(height: 16.0),
-              Button(
-                child: Text("setup.primaryCurrency.choose".t(context)),
-                onTap: () => selectCurrency(),
-              ),
-            ],
+            ),
           ),
         ),
       ),

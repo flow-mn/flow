@@ -24,8 +24,8 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.transfer".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

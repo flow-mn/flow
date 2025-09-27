@@ -4,6 +4,7 @@ import "package:flow/entity/backup_entry.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/user_preferences.dart";
@@ -11,6 +12,7 @@ import "package:flow/utils/extensions/backup_entry.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
 import "package:flow/widgets/export/export_history/no_backups.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/icloud_failed_error_box.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:path/path.dart" as path;
@@ -26,6 +28,8 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
   bool uploadBusy = false;
   late final bool uploadEnabled;
 
+  bool iCloudSyncWorkingFine = true;
+
   (int uploadingId, double uploadProgress)? uploading;
 
   // Query for today's transaction, newest to oldest
@@ -38,6 +42,19 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
   void initState() {
     super.initState();
     uploadEnabled = UserPreferencesService().enableICloudSync;
+
+    TransitiveLocalPreferences().iCloudSyncWorkingFine.addListener(
+      _updateICloudSyncWorkingFine,
+    );
+    _updateICloudSyncWorkingFine();
+  }
+
+  @override
+  void dispose() {
+    TransitiveLocalPreferences().iCloudSyncWorkingFine.removeListener(
+      _updateICloudSyncWorkingFine,
+    );
+    super.dispose();
   }
 
   @override
@@ -80,28 +97,38 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
 
                 return switch ((backupEntries?.length ?? 0, snapshot.hasData)) {
                   (0, true) => const NoBackups(),
-                  (_, true) => SlidableAutoCloseBehavior(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        final BackupEntry entry = backupEntries[index];
+                  (_, true) => Column(
+                    children: [
+                      if (ICloudSyncer.supported && !iCloudSyncWorkingFine)
+                        ICloudFailedErrorBox(),
+                      Expanded(
+                        child: SlidableAutoCloseBehavior(
+                          child: ListView.separated(
+                            itemBuilder: (context, index) {
+                              final BackupEntry entry = backupEntries[index];
 
-                        final bool canUpload =
-                            uploadEnabled &&
-                            // !uploadBusy &&
-                            entry.canUploadToCloud;
+                              final bool canUpload =
+                                  uploadEnabled &&
+                                  // !uploadBusy &&
+                                  entry.canUploadToCloud;
 
-                        return BackupEntryCard(
-                          entry: entry,
-                          dismissibleKey: ValueKey(entry.id),
-                          onUpload: canUpload ? (() => upload(entry)) : null,
-                          uploadProgress: uploading?.$1 == entry.id
-                              ? uploading?.$2
-                              : null,
-                        );
-                      },
-                      separatorBuilder: (context, index) => separator,
-                      itemCount: backupEntries!.length,
-                    ),
+                              return BackupEntryCard(
+                                entry: entry,
+                                dismissibleKey: ValueKey(entry.id),
+                                onUpload: canUpload
+                                    ? (() => upload(entry))
+                                    : null,
+                                uploadProgress: uploading?.$1 == entry.id
+                                    ? uploading?.$2
+                                    : null,
+                              );
+                            },
+                            separatorBuilder: (context, index) => separator,
+                            itemCount: backupEntries!.length,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   (_, false) => const Spinner.center(),
                 };
@@ -139,6 +166,17 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
 
   void onUploadProgress(BackupEntry entry, double progress) {
     uploading = (entry.id, progress);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _updateICloudSyncWorkingFine() {
+    if (!ICloudSyncer.supported) return;
+    if (!ICloudSyncer().syncing) return;
+
+    iCloudSyncWorkingFine = TransitiveLocalPreferences().iCloudSyncWorkingFine
+        .get();
     if (mounted) {
       setState(() {});
     }

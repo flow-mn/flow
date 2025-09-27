@@ -10,33 +10,35 @@ class PrivacySlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Center(
-            child: FlowIcon(
-              FlowIconData.icon(Symbols.security_rounded),
-              size: 160.0,
-              plated: true,
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Spacer(),
+            Center(
+              child: FlowIcon(
+                FlowIconData.icon(Symbols.security_rounded),
+                size: 160.0,
+                plated: true,
+              ),
             ),
-          ),
-          const Spacer(),
-          Text(
-            "setup.slides.privacy".t(context),
-            style: context.textTheme.displayMedium?.copyWith(
-              color: context.colorScheme.primary,
+            const Spacer(),
+            Text(
+              "setup.slides.privacy".t(context),
+              style: context.textTheme.displayMedium?.copyWith(
+                color: context.colorScheme.primary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            "setup.slides.privacy.description".t(context),
-            style: context.textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16.0),
-        ],
+            const SizedBox(height: 8.0),
+            Text(
+              "setup.slides.privacy.description".t(context),
+              style: context.textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 16.0),
+          ],
+        ),
       ),
     );
   }

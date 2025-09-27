@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_saver
   file_selector_linux
   flutter_timezone
+  gtk
   objectbox_flutter_libs
   screen_retriever_linux
   url_launcher_linux

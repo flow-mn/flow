@@ -8,11 +8,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
+import "package:flow/widgets/select_color_scheme_list_tile.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -39,6 +41,8 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
   late final Category? _currentlyEditing;
 
+  String? _colorSchemeName;
+
   String get iconCodeOrError =>
       _iconData?.toString() ??
       FlowIconData.icon(Symbols.category_rounded).toString();
@@ -60,6 +64,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
         text: _currentlyEditing?.name,
       );
       _iconData = _currentlyEditing?.icon;
+      _colorSchemeName = _currentlyEditing?.colorSchemeName;
     }
   }
 
@@ -85,8 +90,8 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Form(
             key: _formKey,
             child: Column(
@@ -98,6 +103,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                   size: 80.0,
                   plated: true,
                   onTap: selectIcon,
+                  colorScheme: getThemeStrict(_colorSchemeName),
                 ),
                 const SizedBox(height: 8.0),
                 TextButton(
@@ -117,6 +123,14 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                     ),
                     validator: validateNameField,
                   ),
+                ),
+                SelectColorSchemeListTile(
+                  colorScheme: _colorSchemeName,
+                  onChanged: (scheme) {
+                    setState(() {
+                      _colorSchemeName = scheme?.name;
+                    });
+                  },
                 ),
                 if (_currentlyEditing != null) ...[
                   const SizedBox(height: 36.0),
@@ -139,6 +153,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
     _currentlyEditing.name = formattedName;
     _currentlyEditing.iconCode = iconCodeOrError;
+    _currentlyEditing.colorSchemeName = _colorSchemeName;
 
     ObjectBox().box<Category>().put(_currentlyEditing, mode: PutMode.update);
 
@@ -157,6 +172,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     final Category category = Category(
       name: trimmed,
       iconCode: iconCodeOrError,
+      colorSchemeName: _colorSchemeName,
     );
 
     unawaited(
@@ -169,10 +185,13 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   bool hasChanged() {
     if (_currentlyEditing != null) {
       return _currentlyEditing.name != _nameTextController.text.trim() ||
-          _currentlyEditing.iconCode != iconCodeOrError;
+          _currentlyEditing.iconCode != iconCodeOrError ||
+          _currentlyEditing.colorSchemeName != _colorSchemeName;
     }
 
-    return _nameTextController.text.trim().isNotEmpty || _iconData != null;
+    return _nameTextController.text.trim().isNotEmpty ||
+        _iconData != null ||
+        _colorSchemeName != null;
   }
 
   String? validateNameField(String? value) {

@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:math";
 
 import "package:flow/data/flow_notification_payload.dart";
@@ -10,6 +11,7 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/sync.dart";
+import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -30,6 +32,29 @@ class UserPreferencesService {
   set enableICloudSync(bool newEnableICloudSync) {
     value.enableICloudSync = newEnableICloudSync;
     ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get themeChangesAppIcon => value.themeChangesAppIcon;
+  set themeChangesAppIcon(bool newThemeChangesAppIcon) {
+    value.themeChangesAppIcon = newThemeChangesAppIcon;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  String get themeName {
+    final String? savedThemeName = value.themeName;
+
+    if (validateThemeName(savedThemeName)) {
+      return savedThemeName!;
+    }
+
+    return flowLights.schemes.first.name;
+  }
+
+  set themeName(String? newThemeName) {
+    if (validateThemeName(newThemeName)) {
+      value.themeName = newThemeName;
+      ObjectBox().box<UserPreferences>().put(value);
+    }
   }
 
   int? get trashBinRetentionDays => value.trashBinRetentionDays;
@@ -206,19 +231,29 @@ class UserPreferencesService {
 
   UserPreferencesService._internal();
 
-  void initialize() {
+  Future<void> initialize() async {
+    final Completer<void> completer = Completer();
+
     ObjectBox()
         .box<UserPreferences>()
         .query()
         .watch(triggerImmediately: true)
         .listen((event) {
-          final UserPreferences? userPreferences = event.findFirst();
+          try {
+            final UserPreferences? userPreferences = event.findFirst();
 
-          if (userPreferences == null) {
-            return;
+            if (userPreferences == null) {
+              return;
+            }
+
+            valueNotifier.value = userPreferences;
+          } finally {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
           }
-
-          valueNotifier.value = userPreferences;
         });
+
+    return completer.future;
   }
 }

@@ -1,7 +1,8 @@
 import "dart:math" as math;
 
 import "package:flow/data/flow_icon.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -23,6 +24,8 @@ class ThemePetalSelector extends StatefulWidget {
 
   final List<FlowThemeGroup> groups;
 
+  final ValueChanged<FlowColorScheme> onChanged;
+
   const ThemePetalSelector({
     super.key,
     this.playInitialAnimation = true,
@@ -31,6 +34,7 @@ class ThemePetalSelector extends StatefulWidget {
     this.animationStartDelay = const Duration(milliseconds: 250),
     this.animationDuration = const Duration(milliseconds: 1000),
     required this.groups,
+    required this.onChanged,
   });
 
   @override
@@ -92,7 +96,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
   @override
   Widget build(BuildContext context) {
-    final String currentTheme = LocalPreferences().getCurrentTheme();
+    final String currentTheme = UserPreferencesService().themeName;
     int groupIndex = 0;
     int themeIndex = -1;
 
@@ -159,7 +163,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
                               if (itemIndexAtPointer == null) return;
 
-                              setThemeByIndex(itemIndexAtPointer, groupIndex);
+                              updateByIndex(itemIndexAtPointer, groupIndex);
                             })
                           : null,
                       onTapUp: (details) {
@@ -171,7 +175,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
 
                         if (itemIndexAtPointer == null) return;
 
-                        setThemeByIndex(itemIndexAtPointer, groupIndex);
+                        updateByIndex(itemIndexAtPointer, groupIndex);
                       },
                       child: AnimatedBuilder(
                         builder: (context, child) => CustomPaint(
@@ -204,7 +208,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                           child: InkWell(
                             onTap: () {
                               if (themeIndex >= 0) {
-                                setThemeByIndex(themeIndex, (groupIndex + 1));
+                                updateByIndex(themeIndex, (groupIndex + 1));
                               } else {
                                 setState(() {
                                   selectedGroupIndex =
@@ -243,24 +247,16 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
     );
   }
 
-  void setThemeByIndex(int themeIndex, int groupIndex) async {
-    if (busy) return;
-
+  void updateByIndex(int themeIndex, int groupIndex) async {
     try {
-      setState(() {
-        busy = true;
-      });
-
-      final String themeName = widget
+      final FlowColorScheme scheme = widget
           .groups[(groupIndex % widget.groups.length)]
-          .schemes[themeIndex]
-          .name;
+          .schemes[themeIndex];
 
-      await LocalPreferences().theme.themeName.set(themeName);
+      widget.onChanged(scheme);
     } catch (e) {
       _log.warning("Something went wrong with the theme petal selector.", e);
     } finally {
-      busy = false;
       if (mounted) {
         setState(() {});
       }

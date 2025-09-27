@@ -8,14 +8,14 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-class RatesMissingWarning extends StatefulWidget {
-  const RatesMissingWarning({super.key});
+class RatesMissingErrorBox extends StatefulWidget {
+  const RatesMissingErrorBox({super.key});
 
   @override
-  State<RatesMissingWarning> createState() => _RatesMissingWarningState();
+  State<RatesMissingErrorBox> createState() => _RatesMissingErrorBoxState();
 }
 
-class _RatesMissingWarningState extends State<RatesMissingWarning> {
+class _RatesMissingErrorBoxState extends State<RatesMissingErrorBox> {
   bool busy = false;
 
   @override

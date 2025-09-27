@@ -8,6 +8,7 @@ import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/icloud_failed_error_box.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -21,11 +22,29 @@ class ICloud extends StatefulWidget {
 }
 
 class _ICloudState extends State<ICloud> {
+  bool iCloudSyncWorkingFine = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    TransitiveLocalPreferences().iCloudSyncWorkingFine.addListener(
+      _updateICloudSyncWorkingFine,
+    );
+    _updateICloudSyncWorkingFine();
+  }
+
+  @override
+  void dispose() {
+    TransitiveLocalPreferences().iCloudSyncWorkingFine.removeListener(
+      _updateICloudSyncWorkingFine,
+    );
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool enableICloudSync = UserPreferencesService().enableICloudSync;
-
-    final dynamic error = ICloudSyncer().lastError;
 
     final DateTime? lastSuccessfulICloudSyncAt = TransitiveLocalPreferences()
         .lastSuccessfulICloudSyncAt
@@ -41,6 +60,8 @@ class _ICloudState extends State<ICloud> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8.0,
       children: [
+        if (ICloudSyncer.supported && !iCloudSyncWorkingFine)
+          ICloudFailedErrorBox(),
         SwitchListTile(
           secondary: const Icon(Symbols.cloud_rounded),
           title: Text("preferences.sync.iCloud".t(context)),
@@ -56,18 +77,6 @@ class _ICloudState extends State<ICloud> {
                 )
               : null,
         ),
-        if (error != null)
-          Frame(
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-              child: Text(
-                "error".t(context),
-                style: context.textTheme.bodyMedium!.copyWith(
-                  color: context.colorScheme.error,
-                ),
-              ),
-            ),
-          ),
         Frame(
           child: InfoText(
             child: Text("preferences.sync.iCloud.privacyNotice".t(context)),
@@ -142,5 +151,16 @@ class _ICloudState extends State<ICloud> {
     UserPreferencesService().enableICloudSync = newEnableICloudSync;
 
     setState(() {});
+  }
+
+  void _updateICloudSyncWorkingFine() {
+    if (!ICloudSyncer.supported) return;
+    if (!ICloudSyncer().syncing) return;
+
+    iCloudSyncWorkingFine = TransitiveLocalPreferences().iCloudSyncWorkingFine
+        .get();
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

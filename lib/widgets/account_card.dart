@@ -67,7 +67,11 @@ class AccountCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  FlowIcon(account.icon, size: 60.0),
+                  FlowIcon(
+                    account.icon,
+                    size: 60.0,
+                    colorScheme: account.colorScheme,
+                  ),
                   const SizedBox(width: 8.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

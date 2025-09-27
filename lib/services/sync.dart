@@ -132,6 +132,14 @@ class SyncService {
         entry,
         onProgress: onProgress,
       );
+      unawaited(
+        TransitiveLocalPreferences().iCloudSyncWorkingFine
+            .set(result)
+            .catchError((e) {
+              _log.warning("Failed to set iCloudSyncWorkingFine preference", e);
+              return false;
+            }),
+      );
       _log.info("Uploaded backup to iCloud: ${entry.filePath}");
       return result;
     } else {

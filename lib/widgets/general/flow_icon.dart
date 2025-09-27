@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
@@ -18,6 +19,8 @@ class FlowIcon extends StatelessWidget {
 
   /// Defaults to theme secondary color
   final Color? plateColor;
+
+  final FlowColorScheme? colorScheme;
 
   final double plateElevation;
 
@@ -44,31 +47,39 @@ class FlowIcon extends StatelessWidget {
     this.platePadding = const EdgeInsets.all(8.0),
     this.onTap,
     this.onLongPress,
+    this.colorScheme,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (!plated) return buildChild(context, data);
+    final Color iconColor =
+        color ?? colorScheme?.primary ?? context.colorScheme.primary;
 
-    final plateColor = this.plateColor ?? context.colorScheme.secondary;
+    if (!plated) return buildChild(context, data, iconColor);
+
+    final Color plateColor =
+        this.plateColor ??
+        colorScheme?.secondary ??
+        context.colorScheme.secondary;
 
     return Surface(
       builder: (BuildContext context) => InkWell(
         borderRadius: borderRadius,
         onTap: onTap,
         onLongPress: onLongPress,
-        child: Padding(padding: platePadding, child: buildChild(context, data)),
+        child: Padding(
+          padding: platePadding,
+          child: buildChild(context, data, iconColor),
+        ),
       ),
       color: plateColor,
-      iconColor: context.colorScheme.primary,
+      iconColor: iconColor,
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       elevation: plateElevation,
     );
   }
 
-  Widget buildChild(BuildContext context, FlowIconData data) {
-    final color = this.color ?? Theme.of(context).iconTheme.color;
-
+  Widget buildChild(BuildContext context, FlowIconData data, Color color) {
     return switch (data) {
       IconFlowIcon icon => Icon(
         icon.iconData,

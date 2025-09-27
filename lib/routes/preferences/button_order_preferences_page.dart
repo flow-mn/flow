@@ -34,84 +34,90 @@ class ButtonOrderPreferencesPageState
       appBar: AppBar(
         title: Text("preferences.transactionButtonOrder".t(context)),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16.0),
-              InfoText(
-                child: Text(
-                  "preferences.transactionButtonOrder.guide".t(context),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16.0),
+                InfoText(
+                  child: Text(
+                    "preferences.transactionButtonOrder.guide".t(context),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: transactionButtonOrder
-                    .map(
-                      (transactionType) => Container(
-                        margin: EdgeInsets.only(
-                          left: 8.0,
-                          right: 8.0,
-                          top:
-                              transactionButtonOrder.indexOf(transactionType) !=
-                                  1
-                              ? 72.0
-                              : 0.0,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(widget.radius),
-                        ),
-                        clipBehavior: Clip.none,
-                        child: DottedBorder(
-                          options: RoundedRectDottedBorderOptions(
-                            color: Theme.of(
-                              context,
-                            ).dividerColor.withAlpha(0x80),
-                            strokeWidth: 4.0,
-                            radius: widget.radius,
-                            strokeCap: StrokeCap.round,
-                            dashPattern: const [6.0, 10.0],
+                const SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: transactionButtonOrder
+                      .map(
+                        (transactionType) => Container(
+                          margin: EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top:
+                                transactionButtonOrder.indexOf(
+                                      transactionType,
+                                    ) !=
+                                    1
+                                ? 72.0
+                                : 0.0,
                           ),
-                          child: DragTarget<TransactionType>(
-                            onWillAcceptWithDetails: (details) =>
-                                details.data != transactionType,
-                            onAcceptWithDetails: (details) => swap(
-                              transactionButtonOrder,
-                              details.data,
-                              transactionType,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(widget.radius),
+                          ),
+                          clipBehavior: Clip.none,
+                          child: DottedBorder(
+                            options: RoundedRectDottedBorderOptions(
+                              color: Theme.of(
+                                context,
+                              ).dividerColor.withAlpha(0x80),
+                              strokeWidth: 4.0,
+                              radius: widget.radius,
+                              strokeCap: StrokeCap.round,
+                              dashPattern: const [6.0, 10.0],
                             ),
-                            builder: (context, candidateData, rejectedData) {
-                              final List<TransactionType> candidates =
-                                  candidateData.nonNulls.toList();
+                            child: DragTarget<TransactionType>(
+                              onWillAcceptWithDetails: (details) =>
+                                  details.data != transactionType,
+                              onAcceptWithDetails: (details) => swap(
+                                transactionButtonOrder,
+                                details.data,
+                                transactionType,
+                              ),
+                              builder: (context, candidateData, rejectedData) {
+                                final List<TransactionType> candidates =
+                                    candidateData.nonNulls.toList();
 
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Draggable<TransactionType>(
-                                  data: transactionType,
-                                  childWhenDragging: TransactionTypeButton(
-                                    type: transactionType,
-                                    opacity: 0.25,
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Draggable<TransactionType>(
+                                    data: transactionType,
+                                    childWhenDragging: TransactionTypeButton(
+                                      type: transactionType,
+                                      opacity: 0.25,
+                                    ),
+                                    feedback: TransactionTypeButton(
+                                      type: transactionType,
+                                    ),
+                                    child: TransactionTypeButton(
+                                      type: transactionType,
+                                      opacity: candidates.isNotEmpty
+                                          ? 0.5
+                                          : 1.0,
+                                    ),
                                   ),
-                                  feedback: TransactionTypeButton(
-                                    type: transactionType,
-                                  ),
-                                  child: TransactionTypeButton(
-                                    type: transactionType,
-                                    opacity: candidates.isNotEmpty ? 0.5 : 1.0,
-                                  ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
+                      )
+                      .toList(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -28,6 +28,8 @@ UserPreferences _$UserPreferencesFromJson(
   transactionButtonOrderJoined: json['transactionButtonOrderJoined'] as String?,
   remindDailyAtRelativeSeconds: (json['remindDailyAtRelativeSeconds'] as num?)
       ?.toInt(),
+  themeName: json['themeName'] as String?,
+  themeChangesAppIcon: json['themeChangesAppIcon'] as bool? ?? true,
 )..uuid = json['uuid'] as String;
 
 Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
@@ -50,4 +52,6 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'enableICloudSync': instance.enableICloudSync,
       'iCloudBackupsToKeep': instance.iCloudBackupsToKeep,
       'transactionButtonOrderJoined': instance.transactionButtonOrderJoined,
+      'themeName': instance.themeName,
+      'themeChangesAppIcon': instance.themeChangesAppIcon,
     };

@@ -48,53 +48,54 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.onboarding".t(context))),
-      body: SafeArea(
-        child: (loading || busy)
-            ? Spinner.center()
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    if (backups?.isNotEmpty != null) ...[
+      body: (loading || busy)
+          ? SafeArea(child: const Spinner.center())
+          : SingleChildScrollView(
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      if (backups?.isNotEmpty == true) ...[
+                        ActionCard(
+                          onTap: () => showICloudBackupModal(),
+                          icon: FlowIconData.icon(SimpleIcons.icloud),
+                          title: "setup.onboarding.recoverICloudBackup".t(
+                            context,
+                          ),
+                          subtitle:
+                              "setup.onboarding.recoverICloudBackup.description"
+                                  .t(
+                                    context,
+                                    backups?.firstOrNull?.inferredBackupDate
+                                            ?.toMoment()
+                                            .lll ??
+                                        "-",
+                                  ),
+                        ),
+                        const SizedBox(height: 16.0),
+                      ],
                       ActionCard(
-                        onTap: () => showICloudBackupModal(),
-                        icon: FlowIconData.icon(SimpleIcons.icloud),
-                        title: "setup.onboarding.recoverICloudBackup".t(
+                        onTap: () => context.push("/setup/currency"),
+                        icon: FlowIconData.icon(Symbols.wand_stars_rounded),
+                        title: "setup.onboarding.freshStart".t(context),
+                        subtitle: "setup.onboarding.freshStart.description".t(
                           context,
                         ),
-                        subtitle:
-                            "setup.onboarding.recoverICloudBackup.description"
-                                .t(
-                                  context,
-                                  backups?.firstOrNull?.inferredBackupDate
-                                          ?.toMoment()
-                                          .lll ??
-                                      "-",
-                                ),
                       ),
                       const SizedBox(height: 16.0),
+                      ActionCard(
+                        onTap: () => context.push("/import?setupMode=true"),
+                        icon: FlowIconData.icon(Symbols.restore_page_rounded),
+                        title: "setup.onboarding.importExisting".t(context),
+                        subtitle: "setup.onboarding.importExisting.description"
+                            .t(context),
+                      ),
                     ],
-                    ActionCard(
-                      onTap: () => context.push("/setup/currency"),
-                      icon: FlowIconData.icon(Symbols.wand_stars_rounded),
-                      title: "setup.onboarding.freshStart".t(context),
-                      subtitle: "setup.onboarding.freshStart.description".t(
-                        context,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    ActionCard(
-                      onTap: () => context.push("/import?setupMode=true"),
-                      icon: FlowIconData.icon(Symbols.restore_page_rounded),
-                      title: "setup.onboarding.importExisting".t(context),
-                      subtitle: "setup.onboarding.importExisting.description".t(
-                        context,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-      ),
+            ),
     );
   }
 

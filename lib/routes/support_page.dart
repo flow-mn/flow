@@ -33,9 +33,9 @@ class SupportPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text("support".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: SafeArea(
           child: Column(
             children: [
               Text("support.description".t(context)),

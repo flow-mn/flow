@@ -46,55 +46,57 @@ class _AccountsPageState extends State<AccountsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("accounts".t(context))),
-      body: SafeArea(
-        child: StreamBuilder<List<Account>>(
-          stream: qb()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Spinner.center();
-            }
+      body: StreamBuilder<List<Account>>(
+        stream: qb()
+            .watch(triggerImmediately: true)
+            .map((event) => event.find()),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return SafeArea(child: const Spinner.center());
+          }
 
-            final accounts = snapshot.requireData;
+          final List<Account> accounts = snapshot.requireData;
 
-            return switch (accounts.length) {
-              0 => const NoAccounts(),
-              _ => SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 16.0),
-                      child: AddAccountCard(),
-                    ),
-                    ...accounts.actives.map(
-                      (account) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: AccountCard(
-                          account: account,
-                          useCupertinoContextMenu: Platform.isIOS,
-                          excludeTransfersInTotal: excludeTransfersInTotal,
+          return switch (accounts.length) {
+            0 => SafeArea(child: const NoAccounts()),
+            _ => SingleChildScrollView(
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                        child: AddAccountCard(),
+                      ),
+                      ...accounts.actives.map(
+                        (account) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: AccountCard(
+                            account: account,
+                            useCupertinoContextMenu: Platform.isIOS,
+                            excludeTransfersInTotal: excludeTransfersInTotal,
+                          ),
                         ),
                       ),
-                    ),
-                    ...accounts.inactives.map(
-                      (account) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: AccountCard(
-                          account: account,
-                          useCupertinoContextMenu: Platform.isIOS,
-                          excludeTransfersInTotal: excludeTransfersInTotal,
+                      ...accounts.inactives.map(
+                        (account) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: AccountCard(
+                            account: account,
+                            useCupertinoContextMenu: Platform.isIOS,
+                            excludeTransfersInTotal: excludeTransfersInTotal,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16.0),
-                  ],
+                      const SizedBox(height: 16.0),
+                    ],
+                  ),
                 ),
               ),
-            };
-          },
-        ),
+            ),
+          };
+        },
       ),
     );
   }

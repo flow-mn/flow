@@ -75,7 +75,10 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
               (category) => ListTile(
                 key: ValueKey(category.uuid),
                 title: Text(category.name),
-                leading: FlowIcon(category.icon),
+                leading: FlowIcon(
+                  category.icon,
+                  colorScheme: category.colorScheme,
+                ),
                 trailing: widget.showTrailing ? DirectionalChevron() : null,
                 onTap: () => context.pop(Optional(category)),
                 selected: widget.currentlySelectedCategoryId == category.id,

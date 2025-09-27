@@ -19,8 +19,8 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.numpad".t(context))),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

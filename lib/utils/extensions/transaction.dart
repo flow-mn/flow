@@ -187,4 +187,25 @@ extension TransactionHelpers on Transaction {
       _log.severe("Failed to move transaction to trash bin", e, stackTrace);
     }
   }
+
+  /// Modifies the transaction in place.
+  ///
+  /// If the transaction already has a valid location, it is not modified.
+  ///
+  /// If anything goes wrong, the transaction is returned unmodified.
+  Transaction migrateGeoExtensionToLocation() {
+    try {
+      if (this.location != null && this.location!.length == 2) return this;
+
+      final List<double>? location = extensions.geo?.toLatLng();
+
+      if (location == null) throw Exception("No location data");
+
+      this.location = location;
+
+      return this;
+    } catch (e) {
+      return this;
+    }
+  }
 }

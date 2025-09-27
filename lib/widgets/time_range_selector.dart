@@ -66,14 +66,13 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
           Directionality(
             textDirection: TextDirection.ltr,
             child: Row(
+              spacing: 4.0,
               children: [
-                if (buildNextPrev) ...[
+                if (buildNextPrev)
                   IconButton(
                     icon: const Icon(Symbols.chevron_left),
                     onPressed: prev,
                   ),
-                  const SizedBox(width: 12.0),
-                ],
                 Expanded(
                   child: Listener(
                     onPointerSignal: (event) {
@@ -144,13 +143,11 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                     ),
                   ),
                 ),
-                if (buildNextPrev) ...[
-                  const SizedBox(width: 12.0),
+                if (buildNextPrev)
                   IconButton(
                     icon: const Icon(Symbols.chevron_right),
                     onPressed: next,
                   ),
-                ],
               ],
             ),
           ),

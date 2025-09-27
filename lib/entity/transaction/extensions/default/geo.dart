@@ -85,4 +85,7 @@ class Geo extends TransactionExtension implements Jasonable {
 
   @override
   Map<String, dynamic> toJson() => _$GeoToJson(this);
+
+  List<double>? toLatLng() =>
+      (latitude != null && longitude != null) ? [latitude!, longitude!] : null;
 }

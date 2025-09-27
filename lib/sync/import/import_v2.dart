@@ -19,6 +19,7 @@ import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
+import "package:flow/utils/extensions/transaction.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
@@ -137,7 +138,7 @@ class ImportV2 extends Importer {
             // Still proceed without category
           }
 
-          return transaction;
+          return transaction.migrateGeoExtensionToLocation();
         })
         .nonNulls
         .toList();

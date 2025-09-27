@@ -47,6 +47,22 @@ bool validateThemeName(String? themeName) {
   return allThemes.containsKey(themeName);
 }
 
+FlowThemeGroup getGroupByTheme(String themeName) {
+  try {
+    return groups.values
+        .expand((x) => x)
+        .firstWhere(
+          (group) => group.schemes.any((scheme) => scheme.name == themeName),
+        );
+  } catch (e) {
+    return flowLights;
+  }
+}
+
+FlowColorScheme? getThemeStrict(String? themeName) {
+  return allThemes[themeName ?? ""];
+}
+
 FlowColorScheme getTheme(String? themeName, {bool preferDark = false}) {
   final FlowColorScheme? scheme = allThemes[themeName ?? ""];
 

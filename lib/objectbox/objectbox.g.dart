@@ -18,10 +18,12 @@ import '../entity/account.dart';
 import '../entity/backup_entry.dart';
 import '../entity/budget.dart';
 import '../entity/category.dart';
+import '../entity/goal.dart';
 import '../entity/profile.dart';
 import '../entity/recurring_transaction.dart';
 import '../entity/transaction.dart';
 import '../entity/transaction_filter_preset.dart';
+import '../entity/transaction_tag.dart';
 import '../entity/user_preferences.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -30,7 +32,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 1185109045851542775),
     name: 'Account',
-    lastPropertyId: const obx_int.IdUid(15, 4500989952725300589),
+    lastPropertyId: const obx_int.IdUid(16, 5820369881987699214),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -101,6 +103,12 @@ final _entities = <obx_int.ModelEntity>[
         type: 9,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(16, 5820369881987699214),
+        name: 'colorSchemeName',
+        type: 9,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[
@@ -114,7 +122,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 649350347514211469),
     name: 'Category',
-    lastPropertyId: const obx_int.IdUid(8, 2832069050067036408),
+    lastPropertyId: const obx_int.IdUid(10, 8207473128907508304),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -146,6 +154,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(6, 7989789340130049283),
         name: 'iconCode',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 8207473128907508304),
+        name: 'colorSchemeName',
         type: 9,
         flags: 0,
       ),
@@ -243,7 +257,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(7, 5357777579468740615),
     name: 'Transaction',
-    lastPropertyId: const obx_int.IdUid(21, 8105783725440518384),
+    lastPropertyId: const obx_int.IdUid(24, 2157597498441905857),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -359,8 +373,28 @@ final _entities = <obx_int.ModelEntity>[
         type: 30,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(22, 8732200258907669936),
+        name: 'location',
+        type: 28,
+        flags: 8,
+        indexId: const obx_int.IdUid(22, 4524862754555930046),
+        hnswParams: obx_int.ModelHnswParams(dimensions: 2, distanceType: 6),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(24, 2157597498441905857),
+        name: 'tagsUuids',
+        type: 30,
+        flags: 0,
+      ),
     ],
-    relations: <obx_int.ModelRelation>[],
+    relations: <obx_int.ModelRelation>[
+      obx_int.ModelRelation(
+        id: const obx_int.IdUid(1, 3860846002029102487),
+        name: 'tags',
+        targetId: const obx_int.IdUid(13, 1815911240017711144),
+      ),
+    ],
     backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
@@ -407,7 +441,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(18, 5817984994810877086),
+    lastPropertyId: const obx_int.IdUid(20, 3170754472241464501),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -505,6 +539,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(18, 5817984994810877086),
         name: 'iCloudBackupsToKeep',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(19, 4873078044604055561),
+        name: 'themeName',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(20, 3170754472241464501),
+        name: 'themeChangesAppIcon',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -643,6 +689,151 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(13, 1815911240017711144),
+    name: 'TransactionTag',
+    lastPropertyId: const obx_int.IdUid(11, 3938547905203366311),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 3148504216745320475),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 267854316046110520),
+        name: 'uuid',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(23, 848773158592813096),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 1701687991250279034),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 1033466507363479834),
+        name: 'isDeleted',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 5151684011991355185),
+        name: 'deletedDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 1324427155948625680),
+        name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 1336731416210755961),
+        name: 'type',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7684406616909361899),
+        name: 'payload',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 487976549673225350),
+        name: 'iconCode',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 3938547905203366311),
+        name: 'colorSchemeName',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(14, 7904423998243143112),
+    name: 'Goal',
+    lastPropertyId: const obx_int.IdUid(10, 3196587516305976411),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 5506339622345934410),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 6590369245858196692),
+        name: 'uuid',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(24, 5428246387638285574),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 8127192883640469620),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 4538446564856671516),
+        name: 'name',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(25, 1837035268504934837),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 102148746483304310),
+        name: 'range',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 1142434388520977284),
+        name: 'targetBalance',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 2371982402833524364),
+        name: 'currency',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 263931570311257219),
+        name: 'iconCode',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 6660372638472601413),
+        name: 'accountId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(26, 6114043135141023608),
+        relationTarget: 'Account',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 3196587516305976411),
+        name: 'accountUuid',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -683,9 +874,9 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(12, 800756592587838565),
-    lastIndexId: const obx_int.IdUid(21, 7291423328418584896),
-    lastRelationId: const obx_int.IdUid(0, 0),
+    lastEntityId: const obx_int.IdUid(14, 7904423998243143112),
+    lastIndexId: const obx_int.IdUid(26, 6114043135141023608),
+    lastRelationId: const obx_int.IdUid(1, 3860846002029102487),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
       3796819593314794683,
@@ -736,6 +927,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       1701734084880256388,
       2598696840666344158,
       7012537446377796117,
+      6033810133674409127,
+      610924910099589699,
+      3063095817126288040,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -764,7 +958,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final currencyOffset = fbb.writeString(object.currency);
         final iconCodeOffset = fbb.writeString(object.iconCode);
         final typeOffset = fbb.writeString(object.type);
-        fbb.startTable(16);
+        final colorSchemeNameOffset = object.colorSchemeName == null
+            ? null
+            : fbb.writeString(object.colorSchemeName!);
+        fbb.startTable(17);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -776,6 +973,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(11, object.archived);
         fbb.addFloat64(12, object.creditLimit);
         fbb.addOffset(14, typeOffset);
+        fbb.addOffset(15, colorSchemeNameOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -802,6 +1000,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           28,
         );
+        final colorSchemeNameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 34);
         final excludeFromTotalBalanceParam = const fb.BoolReader().vTableGet(
           buffer,
           rootOffset,
@@ -833,6 +1034,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 currency: currencyParam,
                 iconCode: iconCodeParam,
                 creditLimit: creditLimitParam,
+                colorSchemeName: colorSchemeNameParam,
                 excludeFromTotalBalance: excludeFromTotalBalanceParam,
                 archived: archivedParam,
                 sortOrder: sortOrderParam,
@@ -872,12 +1074,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final uuidOffset = fbb.writeString(object.uuid);
         final nameOffset = fbb.writeString(object.name);
         final iconCodeOffset = fbb.writeString(object.iconCode);
-        fbb.startTable(9);
+        final colorSchemeNameOffset = object.colorSchemeName == null
+            ? null
+            : fbb.writeString(object.colorSchemeName!);
+        fbb.startTable(11);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
         fbb.addOffset(3, nameOffset);
         fbb.addOffset(5, iconCodeOffset);
+        fbb.addOffset(9, colorSchemeNameOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -899,12 +1105,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
         );
+        final colorSchemeNameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 22);
         final object =
             Category(
                 id: idParam,
                 name: nameParam,
                 iconCode: iconCodeParam,
                 createdDate: createdDateParam,
+                colorSchemeName: colorSchemeNameParam,
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
@@ -1028,7 +1238,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
     Transaction: obx_int.EntityDefinition<Transaction>(
       model: _entities[4],
       toOneRelations: (Transaction object) => [object.category, object.account],
-      toManyRelations: (Transaction object) => {},
+      toManyRelations: (Transaction object) => {
+        obx_int.RelInfo<Transaction>.toMany(1, object.id): object.tags,
+      },
       getId: (Transaction object) => object.id,
       setId: (Transaction object, int id) {
         object.id = id;
@@ -1057,7 +1269,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final extraTagsOffset = fbb.writeList(
           object.extraTags.map(fbb.writeString).toList(growable: false),
         );
-        fbb.startTable(22);
+        final locationOffset = object.location == null
+            ? null
+            : fbb.writeListFloat32(object.location!);
+        final tagsUuidsOffset = fbb.writeList(
+          object.tagsUuids.map(fbb.writeString).toList(growable: false),
+        );
+        fbb.startTable(25);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
@@ -1076,6 +1294,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(17, object.isDeleted);
         fbb.addInt64(18, object.deletedDate?.millisecondsSinceEpoch);
         fbb.addOffset(20, extraTagsOffset);
+        fbb.addOffset(21, locationOffset);
+        fbb.addOffset(23, tagsUuidsOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1159,7 +1379,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
               )
               ..deletedDate = deletedDateValue == null
                   ? null
-                  : DateTime.fromMillisecondsSinceEpoch(deletedDateValue);
+                  : DateTime.fromMillisecondsSinceEpoch(deletedDateValue)
+              ..location = const fb.ListReader<double>(
+                fb.Float32Reader(),
+                lazy: false,
+              ).vTableGetNullable(buffer, rootOffset, 46)
+              ..tagsUuids = const fb.ListReader<String>(
+                fb.StringReader(asciiOptimization: true),
+                lazy: false,
+              ).vTableGet(buffer, rootOffset, 50, []);
         object.category.targetId = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -1174,6 +1402,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           0,
         );
         object.account.attach(store);
+        obx_int.InternalToManyAccess.setRelInfo<Transaction>(
+          object.tags,
+          store,
+          obx_int.RelInfo<Transaction>.toMany(1, object.id),
+        );
         return object;
       },
     ),
@@ -1256,7 +1489,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
             object.transactionButtonOrderJoined == null
             ? null
             : fbb.writeString(object.transactionButtonOrderJoined!);
-        fbb.startTable(19);
+        final themeNameOffset = object.themeName == null
+            ? null
+            : fbb.writeString(object.themeName!);
+        fbb.startTable(21);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1273,6 +1509,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(15, primaryCurrencyOffset);
         fbb.addOffset(16, transactionButtonOrderJoinedOffset);
         fbb.addInt64(17, object.iCloudBackupsToKeep);
+        fbb.addOffset(18, themeNameOffset);
+        fbb.addBool(19, object.themeChangesAppIcon);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1329,6 +1567,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         ).vTableGetNullable(buffer, rootOffset, 36);
         final remindDailyAtRelativeSecondsParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 16);
+        final themeNameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 40);
+        final themeChangesAppIconParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          42,
+          false,
+        );
         final object =
             UserPreferences(
                 id: idParam,
@@ -1349,6 +1596,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 primaryCurrency: primaryCurrencyParam,
                 transactionButtonOrderJoined: transactionButtonOrderJoinedParam,
                 remindDailyAtRelativeSeconds: remindDailyAtRelativeSecondsParam,
+                themeName: themeNameParam,
+                themeChangesAppIcon: themeChangesAppIconParam,
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
@@ -1531,6 +1780,193 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    TransactionTag: obx_int.EntityDefinition<TransactionTag>(
+      model: _entities[9],
+      toOneRelations: (TransactionTag object) => [],
+      toManyRelations: (TransactionTag object) => {},
+      getId: (TransactionTag object) => object.id,
+      setId: (TransactionTag object, int id) {
+        object.id = id;
+      },
+      objectToFB: (TransactionTag object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final titleOffset = fbb.writeString(object.title);
+        final typeOffset = object.type == null
+            ? null
+            : fbb.writeString(object.type!);
+        final payloadOffset = object.payload == null
+            ? null
+            : fbb.writeString(object.payload!);
+        final iconCodeOffset = object.iconCode == null
+            ? null
+            : fbb.writeString(object.iconCode!);
+        final colorSchemeNameOffset = object.colorSchemeName == null
+            ? null
+            : fbb.writeString(object.colorSchemeName!);
+        fbb.startTable(12);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+        fbb.addBool(3, object.isDeleted);
+        fbb.addInt64(4, object.deletedDate?.millisecondsSinceEpoch);
+        fbb.addOffset(5, titleOffset);
+        fbb.addOffset(6, typeOffset);
+        fbb.addOffset(7, payloadOffset);
+        fbb.addOffset(8, iconCodeOffset);
+        fbb.addOffset(10, colorSchemeNameOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final deletedDateValue = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          12,
+        );
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final uuidParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+        );
+        final isDeletedParam = const fb.BoolReader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          10,
+        );
+        final deletedDateParam = deletedDateValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(deletedDateValue);
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
+        final typeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 16);
+        final payloadParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 18);
+        final iconCodeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 20);
+        final colorSchemeNameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 24);
+        final object = TransactionTag(
+          id: idParam,
+          uuid: uuidParam,
+          createdDate: createdDateParam,
+          isDeleted: isDeletedParam,
+          deletedDate: deletedDateParam,
+          title: titleParam,
+          type: typeParam,
+          payload: payloadParam,
+          iconCode: iconCodeParam,
+          colorSchemeName: colorSchemeNameParam,
+        );
+
+        return object;
+      },
+    ),
+    Goal: obx_int.EntityDefinition<Goal>(
+      model: _entities[10],
+      toOneRelations: (Goal object) => [object.account],
+      toManyRelations: (Goal object) => {},
+      getId: (Goal object) => object.id,
+      setId: (Goal object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Goal object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final nameOffset = fbb.writeString(object.name);
+        final rangeOffset = object.range == null
+            ? null
+            : fbb.writeString(object.range!);
+        final currencyOffset = fbb.writeString(object.currency);
+        final iconCodeOffset = object.iconCode == null
+            ? null
+            : fbb.writeString(object.iconCode!);
+        final accountUuidOffset = object.accountUuid == null
+            ? null
+            : fbb.writeString(object.accountUuid!);
+        fbb.startTable(11);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+        fbb.addOffset(3, nameOffset);
+        fbb.addOffset(4, rangeOffset);
+        fbb.addFloat64(5, object.targetBalance);
+        fbb.addOffset(6, currencyOffset);
+        fbb.addOffset(7, iconCodeOffset);
+        fbb.addInt64(8, object.account.targetId);
+        fbb.addOffset(9, accountUuidOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final nameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final targetBalanceParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          14,
+          0,
+        );
+        final currencyParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 16, '');
+        final rangeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 12);
+        final iconCodeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 18);
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+        );
+        final object =
+            Goal(
+                id: idParam,
+                name: nameParam,
+                targetBalance: targetBalanceParam,
+                currency: currencyParam,
+                range: rangeParam,
+                iconCode: iconCodeParam,
+                createdDate: createdDateParam,
+              )
+              ..uuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGet(buffer, rootOffset, 6, '')
+              ..accountUuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 22);
+        object.account.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          20,
+          0,
+        );
+        object.account.attach(store);
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1593,6 +2029,11 @@ class Account_ {
     _entities[0].properties[10],
   );
 
+  /// See [Account.colorSchemeName].
+  static final colorSchemeName = obx.QueryStringProperty<Account>(
+    _entities[0].properties[11],
+  );
+
   /// see [Account.transactions]
   static final transactions = obx.QueryBacklinkToMany<Transaction, Account>(
     Transaction_.account,
@@ -1624,6 +2065,11 @@ class Category_ {
   /// See [Category.iconCode].
   static final iconCode = obx.QueryStringProperty<Category>(
     _entities[1].properties[4],
+  );
+
+  /// See [Category.colorSchemeName].
+  static final colorSchemeName = obx.QueryStringProperty<Category>(
+    _entities[1].properties[5],
   );
 
   /// see [Category.transactions]
@@ -1779,6 +2225,21 @@ class Transaction_ {
   static final extraTags = obx.QueryStringVectorProperty<Transaction>(
     _entities[4].properties[17],
   );
+
+  /// See [Transaction.location].
+  static final location = obx.QueryHnswProperty<Transaction>(
+    _entities[4].properties[18],
+  );
+
+  /// See [Transaction.tagsUuids].
+  static final tagsUuids = obx.QueryStringVectorProperty<Transaction>(
+    _entities[4].properties[19],
+  );
+
+  /// see [Transaction.tags]
+  static final tags = obx.QueryRelationToMany<Transaction, TransactionTag>(
+    _entities[4].relations[0],
+  );
 }
 
 /// [TransactionFilterPreset] entity fields to define ObjectBox queries.
@@ -1882,6 +2343,16 @@ class UserPreferences_ {
   static final iCloudBackupsToKeep = obx.QueryIntegerProperty<UserPreferences>(
     _entities[6].properties[15],
   );
+
+  /// See [UserPreferences.themeName].
+  static final themeName = obx.QueryStringProperty<UserPreferences>(
+    _entities[6].properties[16],
+  );
+
+  /// See [UserPreferences.themeChangesAppIcon].
+  static final themeChangesAppIcon = obx.QueryBooleanProperty<UserPreferences>(
+    _entities[6].properties[17],
+  );
 }
 
 /// [Budget] entity fields to define ObjectBox queries.
@@ -1975,4 +2446,108 @@ class RecurringTransaction_ {
   /// See [RecurringTransaction.lastGeneratedTransactionDate].
   static final lastGeneratedTransactionDate =
       obx.QueryDateProperty<RecurringTransaction>(_entities[8].properties[8]);
+}
+
+/// [TransactionTag] entity fields to define ObjectBox queries.
+class TransactionTag_ {
+  /// See [TransactionTag.id].
+  static final id = obx.QueryIntegerProperty<TransactionTag>(
+    _entities[9].properties[0],
+  );
+
+  /// See [TransactionTag.uuid].
+  static final uuid = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[1],
+  );
+
+  /// See [TransactionTag.createdDate].
+  static final createdDate = obx.QueryDateProperty<TransactionTag>(
+    _entities[9].properties[2],
+  );
+
+  /// See [TransactionTag.isDeleted].
+  static final isDeleted = obx.QueryBooleanProperty<TransactionTag>(
+    _entities[9].properties[3],
+  );
+
+  /// See [TransactionTag.deletedDate].
+  static final deletedDate = obx.QueryDateProperty<TransactionTag>(
+    _entities[9].properties[4],
+  );
+
+  /// See [TransactionTag.title].
+  static final title = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[5],
+  );
+
+  /// See [TransactionTag.type].
+  static final type = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[6],
+  );
+
+  /// See [TransactionTag.payload].
+  static final payload = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[7],
+  );
+
+  /// See [TransactionTag.iconCode].
+  static final iconCode = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[8],
+  );
+
+  /// See [TransactionTag.colorSchemeName].
+  static final colorSchemeName = obx.QueryStringProperty<TransactionTag>(
+    _entities[9].properties[9],
+  );
+}
+
+/// [Goal] entity fields to define ObjectBox queries.
+class Goal_ {
+  /// See [Goal.id].
+  static final id = obx.QueryIntegerProperty<Goal>(_entities[10].properties[0]);
+
+  /// See [Goal.uuid].
+  static final uuid = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[1],
+  );
+
+  /// See [Goal.createdDate].
+  static final createdDate = obx.QueryDateProperty<Goal>(
+    _entities[10].properties[2],
+  );
+
+  /// See [Goal.name].
+  static final name = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[3],
+  );
+
+  /// See [Goal.range].
+  static final range = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[4],
+  );
+
+  /// See [Goal.targetBalance].
+  static final targetBalance = obx.QueryDoubleProperty<Goal>(
+    _entities[10].properties[5],
+  );
+
+  /// See [Goal.currency].
+  static final currency = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[6],
+  );
+
+  /// See [Goal.iconCode].
+  static final iconCode = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[7],
+  );
+
+  /// See [Goal.account].
+  static final account = obx.QueryRelationToOne<Goal, Account>(
+    _entities[10].properties[8],
+  );
+
+  /// See [Goal.accountUuid].
+  static final accountUuid = obx.QueryStringProperty<Goal>(
+    _entities[10].properties[9],
+  );
 }

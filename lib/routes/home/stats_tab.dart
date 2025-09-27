@@ -22,7 +22,7 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/info_card_with_delta.dart";
 import "package:flow/widgets/home/stats/most_spending_category.dart";
 import "package:flow/widgets/home/stats/no_data.dart";
-import "package:flow/widgets/rates_missing_warning.dart";
+import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/reports/interval_flow_report_view.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/trend.dart";
@@ -91,208 +91,219 @@ class _StatsTabState extends State<StatsTab>
 
     return Column(
       children: [
-        Frame.standalone(
-          child: TimeRangeSelector(initialValue: range, onChanged: updateRange),
+        SafeArea(
+          bottom: false,
+          child: Frame.standalone(
+            child: TimeRangeSelector(
+              initialValue: range,
+              onChanged: updateRange,
+            ),
+          ),
         ),
         if (showMissingExchangeRatesWarning) ...[
-          RatesMissingWarning(),
+          RatesMissingErrorBox(),
           const SizedBox(height: 12.0),
         ],
         Expanded(
           child: hasData
               ? SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlurBackground(
-                        blur: busy,
-                        child: Frame(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                showForecast
-                                    ? "tabs.stats.intervalReport.forecast".t(
-                                        context,
-                                        rangeForecastReport
-                                            ?.currentRangeData
-                                            .range
-                                            .format(),
-                                      )
-                                    : "tabs.stats.intervalReport.totalExpense"
-                                          .t(
-                                            context,
-                                            intervalFlowReport!.rangeData.range
-                                                .format(),
-                                          ),
-                                style: context.textTheme.titleSmall?.semi(
-                                  context,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  MoneyText(
-                                    showForecast
-                                        ? rangeForecastReport!
-                                              .forecast
-                                              .totalExpense
-                                        : intervalFlowReport!.totalExpense,
-                                    style: context.textTheme.displaySmall,
-                                    autoSize: true,
-                                    tapToToggleAbbreviation: true,
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Trend.fromMoney(
-                                    current: showForecast
-                                        ? rangeForecastReport
-                                              ?.forecast
-                                              .totalExpense
-                                        : intervalFlowReport!.totalExpense,
-                                    previous: previousIntervalFlowReport
-                                        ?.totalExpense,
-                                    invertDelta: true,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      if (intervalFlowReport != null)
-                        BlurBackground(
-                          blur: busy,
-                          child: IntervalFlowReportView(
-                            report: intervalFlowReport!,
-                            compareWith: previousIntervalFlowReport,
-                          ),
-                        ),
-                      const SizedBox(height: 24.0),
-                      if (intervalFlowReport != null) ...[
-                        const SizedBox(height: 24.0),
-                        ListHeader(intervalFlowReport!.averageTitle(context)),
-                        const SizedBox(height: 8.0),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         BlurBackground(
                           blur: busy,
                           child: Frame(
                             child: Column(
-                              spacing: 16.0,
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Text(
+                                  showForecast
+                                      ? "tabs.stats.intervalReport.forecast".t(
+                                          context,
+                                          rangeForecastReport
+                                              ?.currentRangeData
+                                              .range
+                                              .format(),
+                                        )
+                                      : "tabs.stats.intervalReport.totalExpense"
+                                            .t(
+                                              context,
+                                              intervalFlowReport!
+                                                  .rangeData
+                                                  .range
+                                                  .format(),
+                                            ),
+                                  style: context.textTheme.titleSmall?.semi(
+                                    context,
+                                  ),
+                                ),
                                 Row(
-                                  spacing: 16.0,
                                   children: [
-                                    Expanded(
-                                      child: InfoCardWithDelta(
-                                        title:
-                                            "tabs.stats.intervalReport.averages.expense"
-                                                .t(context),
-                                        autoSizeGroup: autoSizeGroup,
-                                        money:
-                                            intervalFlowReport!.averageExpense,
-                                        previousMoney:
-                                            previousIntervalFlowReport
-                                                ?.averageExpense,
-                                        invertDelta: true,
-                                      ),
+                                    MoneyText(
+                                      showForecast
+                                          ? rangeForecastReport!
+                                                .forecast
+                                                .totalExpense
+                                          : intervalFlowReport!.totalExpense,
+                                      style: context.textTheme.displaySmall,
+                                      autoSize: true,
+                                      tapToToggleAbbreviation: true,
                                     ),
-                                    Expanded(
-                                      child: InfoCardWithDelta(
-                                        title:
-                                            "tabs.stats.intervalReport.averages.income"
-                                                .t(context),
-                                        autoSizeGroup: autoSizeGroup,
-                                        money:
-                                            intervalFlowReport!.averageIncome,
-                                        previousMoney:
-                                            previousIntervalFlowReport
-                                                ?.averageIncome,
-                                      ),
+                                    const SizedBox(width: 8.0),
+                                    Trend.fromMoney(
+                                      current: showForecast
+                                          ? rangeForecastReport
+                                                ?.forecast
+                                                .totalExpense
+                                          : intervalFlowReport!.totalExpense,
+                                      previous: previousIntervalFlowReport
+                                          ?.totalExpense,
+                                      invertDelta: true,
                                     ),
                                   ],
-                                ),
-
-                                InfoCardWithDelta(
-                                  title:
-                                      "tabs.stats.intervalReport.averages.flow"
-                                          .t(context),
-                                  autoSizeGroup: autoSizeGroup,
-                                  money: intervalFlowReport!.averageFlow,
-                                  previousMoney:
-                                      previousIntervalFlowReport?.averageFlow,
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ],
-                      // if (trendsReport != null) ...[
-                      //   const SizedBox(height: 24.0),
-                      //   ListHeader("tabs.stats.trends".t(context)),
-                      //   const SizedBox(height: 8.0),
-                      //   BlurBackground(
-                      //     blur: busy,
-                      //     child: Frame(
-                      //       child: Column(
-                      //         spacing: 16.0,
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: [
-                      //           Surface(
-                      //             builder: (context) {
-                      //               return Padding(
-                      //                 padding: EdgeInsets.all(16.0),
-                      //                 child: Column(
-                      //                   mainAxisSize: MainAxisSize.min,
-                      //                   children: [
-                      //                     Text(
-                      //                       "tabs.stats.trends.topSpendingTitles"
-                      //                           .t(context),
-                      //                     ),
-                      //                     const SizedBox(height: 16.0),
-                      //                     ...trendsReport!
-                      //                         .sortedTitlesByFrequency
-                      //                         .take(3)
-                      //                         .map(
-                      //                           (titleFrequency) => Text(
-                      //                             "${titleFrequency.key} (${titleFrequency.value})",
-                      //                           ),
-                      //                         ),
-                      //                   ],
-                      //                 ),
-                      //               );
-                      //             },
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ],
-                      const SizedBox(height: 24.0),
-                      ListHeader("tabs.stats.categories".t(context)),
-                      const SizedBox(height: 8.0),
-                      Frame(child: MostSpendingCategory(range: range)),
-                      const SizedBox(height: 12.0),
-                      Frame(
-                        child: Align(
-                          alignment: AlignmentDirectional.topEnd,
-                          child: TextButton.icon(
-                            onPressed: () => context.push(
-                              "/stats/category?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+                        const SizedBox(height: 16.0),
+                        if (intervalFlowReport != null)
+                          BlurBackground(
+                            blur: busy,
+                            child: IntervalFlowReportView(
+                              report: intervalFlowReport!,
+                              compareWith: previousIntervalFlowReport,
                             ),
-                            label: Text(
-                              "tabs.stats.categories.seeAll".t(context),
+                          ),
+                        const SizedBox(height: 24.0),
+                        if (intervalFlowReport != null) ...[
+                          const SizedBox(height: 24.0),
+                          ListHeader(intervalFlowReport!.averageTitle(context)),
+                          const SizedBox(height: 8.0),
+                          BlurBackground(
+                            blur: busy,
+                            child: Frame(
+                              child: Column(
+                                spacing: 16.0,
+                                children: [
+                                  Row(
+                                    spacing: 16.0,
+                                    children: [
+                                      Expanded(
+                                        child: InfoCardWithDelta(
+                                          title:
+                                              "tabs.stats.intervalReport.averages.expense"
+                                                  .t(context),
+                                          autoSizeGroup: autoSizeGroup,
+                                          money: intervalFlowReport!
+                                              .averageExpense,
+                                          previousMoney:
+                                              previousIntervalFlowReport
+                                                  ?.averageExpense,
+                                          invertDelta: true,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: InfoCardWithDelta(
+                                          title:
+                                              "tabs.stats.intervalReport.averages.income"
+                                                  .t(context),
+                                          autoSizeGroup: autoSizeGroup,
+                                          money:
+                                              intervalFlowReport!.averageIncome,
+                                          previousMoney:
+                                              previousIntervalFlowReport
+                                                  ?.averageIncome,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  InfoCardWithDelta(
+                                    title:
+                                        "tabs.stats.intervalReport.averages.flow"
+                                            .t(context),
+                                    autoSizeGroup: autoSizeGroup,
+                                    money: intervalFlowReport!.averageFlow,
+                                    previousMoney:
+                                        previousIntervalFlowReport?.averageFlow,
+                                  ),
+                                ],
+                              ),
                             ),
-                            icon: DirectionalChevron(),
-                            iconAlignment: IconAlignment.end,
+                          ),
+                        ],
+                        // if (trendsReport != null) ...[
+                        //   const SizedBox(height: 24.0),
+                        //   ListHeader("tabs.stats.trends".t(context)),
+                        //   const SizedBox(height: 8.0),
+                        //   BlurBackground(
+                        //     blur: busy,
+                        //     child: Frame(
+                        //       child: Column(
+                        //         spacing: 16.0,
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //           Surface(
+                        //             builder: (context) {
+                        //               return Padding(
+                        //                 padding: EdgeInsets.all(16.0),
+                        //                 child: Column(
+                        //                   mainAxisSize: MainAxisSize.min,
+                        //                   children: [
+                        //                     Text(
+                        //                       "tabs.stats.trends.topSpendingTitles"
+                        //                           .t(context),
+                        //                     ),
+                        //                     const SizedBox(height: 16.0),
+                        //                     ...trendsReport!
+                        //                         .sortedTitlesByFrequency
+                        //                         .take(3)
+                        //                         .map(
+                        //                           (titleFrequency) => Text(
+                        //                             "${titleFrequency.key} (${titleFrequency.value})",
+                        //                           ),
+                        //                         ),
+                        //                   ],
+                        //                 ),
+                        //               );
+                        //             },
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ],
+                        const SizedBox(height: 24.0),
+                        ListHeader("tabs.stats.categories".t(context)),
+                        const SizedBox(height: 8.0),
+                        Frame(child: MostSpendingCategory(range: range)),
+                        const SizedBox(height: 12.0),
+                        Frame(
+                          child: Align(
+                            alignment: AlignmentDirectional.topEnd,
+                            child: TextButton.icon(
+                              onPressed: () => context.push(
+                                "/stats/category?range=${Uri.encodeQueryComponent(range.encodeShort())}",
+                              ),
+                              label: Text(
+                                "tabs.stats.categories.seeAll".t(context),
+                              ),
+                              icon: DirectionalChevron(),
+                              iconAlignment: IconAlignment.end,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      const SizedBox(height: 96.0),
-                    ],
+                        const SizedBox(height: 24.0),
+                        const SizedBox(height: 96.0),
+                      ],
+                    ),
                   ),
                 )
-              : NoData(),
+              : SafeArea(child: NoData()),
         ),
       ],
     );

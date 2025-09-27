@@ -3,6 +3,8 @@ import "dart:io";
 
 import "package:flow/constants.dart";
 import "package:flow/entity/backup_entry.dart";
+import "package:flow/entity/user_preferences.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/services/sync/syncer.dart";
 import "package:flow/utils/utils.dart";
@@ -88,7 +90,7 @@ class ICloudSyncer implements Syncer {
   }
 
   @override
-  bool get syncing => true;
+  bool get syncing => UserPreferences().enableICloudSync;
 
   @override
   Future<bool> delete(String path) async {

@@ -3,6 +3,7 @@ import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction/type.dart";
+import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/widgets/utils/time_and_range.dart";
@@ -99,6 +100,10 @@ extension TransactionFilterHelpers on TransactionFilter {
       }
 
       return timeRange.format();
+    }
+
+    if (value case TransactionTag tag) {
+      return tag.title;
     }
 
     if (value case Account account) {

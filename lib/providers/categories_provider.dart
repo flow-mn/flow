@@ -1,8 +1,10 @@
 import "dart:async";
 
+import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:flow/utils/extensions/iterables.dart";
 import "package:flutter/material.dart";
 
@@ -32,7 +34,27 @@ class _CategoriesProviderScopeState extends State<CategoriesProviderScope> {
 
   void onData(Query<Category> query) {
     setState(() {
-      _categories = query.find();
+      final List<Category> found = query.find();
+
+      final FrecencyGroup frecencyGroup = FrecencyGroup(
+        found
+            .map(
+              (category) => TransitiveLocalPreferences().getFrecencyData(
+                "category",
+                category.uuid,
+              ),
+            )
+            .nonNulls
+            .toList(),
+      );
+
+      found.sort(
+        (a, b) => frecencyGroup
+            .getScore(b.uuid)
+            .compareTo(frecencyGroup.getScore(a.uuid)),
+      );
+
+      _categories = found;
     });
   }
 

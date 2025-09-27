@@ -6,7 +6,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
-import "package:flow/widgets/square_map.dart";
+import "package:flow/widgets/open_street_map.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
@@ -75,7 +75,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       ),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * .75,
-        child: OSMap(
+        child: OpenStreetMap(
           center: center,
           onTap: (pos) => setState(() {
             useCurrentLocationWhenAvailable = false;

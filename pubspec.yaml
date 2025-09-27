@@ -3,12 +3,13 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.15.0+258"
+version: "0.15.1+262"
 
 environment:
     sdk: ">=3.8.0 <4.0.0"
 
 dependencies:
+    app_links: ^6.4.1
     app_settings: ^6.1.1
     archive: ^4.0.7
     auto_size_text: ^3.0.0
@@ -24,6 +25,7 @@ dependencies:
     fl_chart: ^1.0.0
     flutter:
         sdk: flutter
+    flutter_contacts: ^1.1.9+2
     flutter_dynamic_icon_plus: ^1.2.1
     flutter_floating_bottom_bar: ^1.2.0
     flutter_local_notifications: ^19.2.1
@@ -36,8 +38,8 @@ dependencies:
     flutter_timezone: ^4.1.1
     flutter_typeahead: ^5.2.0
     fuzzywuzzy: ^1.2.0
-    geolocator: ^14.0.0
-    go_router: ^16.0.0
+    geolocator: ^14.0.2
+    go_router: ^16.2.1
     http: ^1.4.0
     icloud_storage: ^2.2.0
     image_picker: ^1.1.1
@@ -51,13 +53,14 @@ dependencies:
     logging: ^1.3.0
     logging_appenders: ^1.3.1
     material_symbols_icons: ^4.2815.1
-    moment_dart: ^5.2.3
+    moment_dart: ^5.2.4
     objectbox: ^4.3.0
     objectbox_flutter_libs: ^4.3.0
     package_info_plus: ^8.3.0
     path: ^1.9.1
     path_provider: ^2.1.5
     pdf: ^3.11.3
+    permission_handler: ^12.0.1
     pie_menu: ^3.3.0
     recurrence: ^0.3.0
     share_plus: ^11.0.0

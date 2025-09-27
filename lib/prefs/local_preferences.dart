@@ -6,15 +6,12 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/pending_transactions.dart";
-import "package:flow/prefs/theme.dart";
 import "package:flow/prefs/transitive.dart";
-import "package:flow/theme/color_themes/registry.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 export "./pending_transactions.dart";
-export "./theme.dart";
 export "./transitive.dart";
 
 /// This class contains everything that's stored on
@@ -57,7 +54,6 @@ class LocalPreferences {
   late final BoolSettingsEntry useCurrencySymbol;
 
   late final PendingTransactionsLocalPreferences pendingTransactions;
-  late final ThemeLocalPreferences theme;
   late final TransitiveLocalPreferences transitive;
 
   /// Number of notifications issued by the app
@@ -157,7 +153,6 @@ class LocalPreferences {
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(
       _prefs,
     );
-    theme = ThemeLocalPreferences.initialize(_prefs);
     transitive = TransitiveLocalPreferences.initialize(_prefs);
   }
 
@@ -199,13 +194,6 @@ class LocalPreferences {
     }
 
     return primaryCurrencyName;
-  }
-
-  String getCurrentTheme() {
-    final String? preferencesTheme = theme.themeName.get();
-    return validateThemeName(preferencesTheme)
-        ? preferencesTheme!
-        : flowLights.schemes.first.name;
   }
 
   factory LocalPreferences() {

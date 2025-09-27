@@ -58,13 +58,13 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.reminders".t(context))),
-      body: SafeArea(
-        child: FutureBuilder(
-          future: _notificationsPermissionGranted,
-          builder: (context, snapshot) {
-            final bool? hasNotificationsPermissions = snapshot.data;
+      body: FutureBuilder(
+        future: _notificationsPermissionGranted,
+        builder: (context, snapshot) {
+          final bool? hasNotificationsPermissions = snapshot.data;
 
-            return SingleChildScrollView(
+          return SingleChildScrollView(
+            child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -150,9 +150,9 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                   ],
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

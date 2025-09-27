@@ -54,68 +54,70 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.accounts.setup".t(context))),
-      body: SafeArea(
-        child: StreamBuilder<List<Account>>(
-          stream: qb()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, snapshot) {
-            final List<Account> currentAccounts = snapshot.data ?? [];
+      body: StreamBuilder<List<Account>>(
+        stream: qb()
+            .watch(triggerImmediately: true)
+            .map((event) => event.find()),
+        builder: (context, snapshot) {
+          final List<Account> currentAccounts = snapshot.data ?? [];
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InfoText(
-                    child: Text("setup.accounts.description".t(context)),
-                  ),
-                  const SizedBox(height: 16.0),
-                  const AddAccountCard(),
-                  const SizedBox(height: 16.0),
-                  ...currentAccounts.map(
-                    (account) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: AccountPresetCard(
-                        key: ValueKey(account.uuid),
-                        account: account,
-                        onSelect: null,
-                        selected: true,
-                        preexisting: true,
+          return SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    InfoText(
+                      child: Text("setup.accounts.description".t(context)),
+                    ),
+                    const SizedBox(height: 16.0),
+                    const AddAccountCard(),
+                    const SizedBox(height: 16.0),
+                    ...currentAccounts.map(
+                      (account) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: AccountPresetCard(
+                          key: ValueKey(account.uuid),
+                          account: account,
+                          onSelect: null,
+                          selected: true,
+                          preexisting: true,
+                        ),
                       ),
                     ),
-                  ),
-                  LocalHeroScope(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: presetAccounts
-                          .map(
-                            (preset) => Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: LocalHero(
-                                key: ValueKey(preset.uuid),
-                                tag: preset.uuid,
-                                child: AccountPresetCard(
+                    LocalHeroScope(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: presetAccounts
+                            .map(
+                              (preset) => Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: LocalHero(
                                   key: ValueKey(preset.uuid),
-                                  account: preset,
-                                  onSelect: (selected) =>
-                                      select(preset.uuid, selected),
-                                  selected: preset.id == 0,
-                                  preexisting: false,
+                                  tag: preset.uuid,
+                                  child: AccountPresetCard(
+                                    key: ValueKey(preset.uuid),
+                                    account: preset,
+                                    onSelect: (selected) =>
+                                        select(preset.uuid, selected),
+                                    selected: preset.id == 0,
+                                    preexisting: false,
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                          .toList(),
+                            )
+                            .toList(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

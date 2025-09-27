@@ -22,26 +22,29 @@ class TypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!canEdit) return Text(current.localizedNameContext(context));
 
-    return DropdownButton<TransactionType>(
-      style: context.textTheme.titleSmall,
-      underline: Container(),
-      icon: const Icon(Symbols.arrow_drop_down_rounded),
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-      borderRadius: BorderRadius.circular(8.0),
-      value: current,
-      items: TransactionType.values
-          .map(
-            (type) => DropdownMenuItem(
-              value: type,
-              child: Text(type.localizedNameContext(context)),
-            ),
-          )
-          .toList(),
-      onChanged: (TransactionType? value) {
-        if (value == null) return;
+    return Padding(
+      padding: const EdgeInsets.only(left: 12.0),
+      child: DropdownButton<TransactionType>(
+        style: context.textTheme.titleSmall,
+        underline: Container(),
+        icon: const Icon(Symbols.arrow_drop_down_rounded),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+        borderRadius: BorderRadius.circular(8.0),
+        value: current,
+        items: TransactionType.values
+            .map(
+              (type) => DropdownMenuItem(
+                value: type,
+                child: Text(type.localizedNameContext(context)),
+              ),
+            )
+            .toList(),
+        onChanged: (TransactionType? value) {
+          if (value == null) return;
 
-        onChange(value);
-      },
+          onChange(value);
+        },
+      ),
     );
   }
 }
