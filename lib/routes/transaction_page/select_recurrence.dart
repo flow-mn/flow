@@ -167,6 +167,12 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
                 Text("select.recurrence.occurrences.times".t(context, {"count": _occurrences.toString()})),
               ],
             ),
+            subtitle: Text(
+              "Ends on ${_calculateEndDateFromOccurrences().toMoment().LLL}",
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
             onTap: _selectOccurrences,
           ),
       ],
@@ -235,11 +241,27 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
       case RecurrenceMode.everyMonth:
         DateTime endDate = startDate;
         for (int i = 1; i < _occurrences; i++) {
-          endDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+          // Handle month transitions more safely
+          int nextMonth = endDate.month + 1;
+          int nextYear = endDate.year;
+          if (nextMonth > 12) {
+            nextMonth = 1;
+            nextYear++;
+          }
+          
+          // Handle cases where the day doesn't exist in the next month (e.g., Jan 31 -> Feb 31)
+          int day = endDate.day;
+          int daysInNextMonth = DateTime(nextYear, nextMonth + 1, 0).day;
+          if (day > daysInNextMonth) {
+            day = daysInNextMonth;
+          }
+          
+          endDate = DateTime(nextYear, nextMonth, day, endDate.hour, endDate.minute, endDate.second);
         }
         return endDate;
       case RecurrenceMode.everyYear:
-        return DateTime(startDate.year + _occurrences - 1, startDate.month, startDate.day);
+        return DateTime(startDate.year + _occurrences - 1, startDate.month, startDate.day,
+            startDate.hour, startDate.minute, startDate.second);
       case RecurrenceMode.custom:
         // For custom, fallback to daily calculation
         return startDate.add(Duration(days: _occurrences - 1));
@@ -405,7 +427,9 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
     if (_recurrence.range.to >= Moment.maxValue) {
       _endMode = RecurrenceEndMode.never;
     } else {
+      // Try to detect if this was set up with occurrences by checking common patterns
       _endMode = RecurrenceEndMode.onDate;
+      _detectPossibleOccurrences();
     }
 
     if (_recurrence.rules.length != 1) {
@@ -430,6 +454,28 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
       } else {
         _selectedMode = RecurrenceMode.custom;
       }
+    }
+  }
+
+  void _detectPossibleOccurrences() {
+    // Try to reverse-engineer if this recurrence was set up with occurrences
+    DateTime startDate = _recurrence.range.from;
+    DateTime endDate = _recurrence.range.to;
+    
+    // Test different occurrence counts to see if any match the end date
+    for (int testOccurrences = 2; testOccurrences <= 100; testOccurrences++) {
+      int savedOccurrences = _occurrences;
+      _occurrences = testOccurrences;
+      DateTime calculatedEnd = _calculateEndDateFromOccurrences();
+      
+      // If the calculated end date is within a day of the actual end date,
+      // it's likely this was set up with occurrences
+      if ((calculatedEnd.difference(endDate).inDays).abs() <= 1) {
+        _endMode = RecurrenceEndMode.afterOccurrences;
+        return;
+      }
+      
+      _occurrences = savedOccurrences;
     }
   }
 }
