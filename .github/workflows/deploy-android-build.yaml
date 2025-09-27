@@ -44,7 +44,7 @@ jobs:
   build-fat-apk:
     if: github.ref_type == 'branch' && github.ref == 'refs/heads/internal'
     runs-on: "ubuntu-latest"
-    environment: Android private testing build
+    environment: Android release
     steps:
       - uses: actions/checkout@v4
       - name: Setup JDK 17
