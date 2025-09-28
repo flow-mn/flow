@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:math";
 
 import "package:flow/data/flow_notification_payload.dart";
+import "package:flow/data/prefs/change_visuals.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
@@ -57,6 +58,17 @@ class UserPreferencesService {
       value.themeName = newThemeName;
       ObjectBox().box<UserPreferences>().put(value);
     }
+  }
+
+  ChangeVisuals get changeVisuals {
+    final ChangeVisuals? parsed = ChangeVisuals.tryParse(value.changeVisuals);
+
+    return parsed ?? ChangeVisuals.defaults;
+  }
+
+  set changeVisuals(ChangeVisuals newChangeVisuals) {
+    value.changeVisuals = newChangeVisuals.serialize();
+    ObjectBox().box<UserPreferences>().put(value);
   }
 
   int? get trashBinRetentionDays => value.trashBinRetentionDays;

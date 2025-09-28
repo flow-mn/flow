@@ -441,7 +441,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(20, 3170754472241464501),
+    lastPropertyId: const obx_int.IdUid(21, 2536977424684614223),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -551,6 +551,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(20, 3170754472241464501),
         name: 'themeChangesAppIcon',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(21, 2536977424684614223),
+        name: 'changeVisuals',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -1492,7 +1498,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final themeNameOffset = object.themeName == null
             ? null
             : fbb.writeString(object.themeName!);
-        fbb.startTable(21);
+        final changeVisualsOffset = object.changeVisuals == null
+            ? null
+            : fbb.writeString(object.changeVisuals!);
+        fbb.startTable(22);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1511,6 +1520,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(17, object.iCloudBackupsToKeep);
         fbb.addOffset(18, themeNameOffset);
         fbb.addBool(19, object.themeChangesAppIcon);
+        fbb.addOffset(20, changeVisualsOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1601,7 +1611,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
-              ).vTableGet(buffer, rootOffset, 6, '');
+              ).vTableGet(buffer, rootOffset, 6, '')
+              ..changeVisuals = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 44);
 
         return object;
       },
@@ -2352,6 +2365,11 @@ class UserPreferences_ {
   /// See [UserPreferences.themeChangesAppIcon].
   static final themeChangesAppIcon = obx.QueryBooleanProperty<UserPreferences>(
     _entities[6].properties[17],
+  );
+
+  /// See [UserPreferences.changeVisuals].
+  static final changeVisuals = obx.QueryStringProperty<UserPreferences>(
+    _entities[6].properties[18],
   );
 }
 

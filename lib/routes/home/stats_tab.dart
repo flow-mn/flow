@@ -161,7 +161,6 @@ class _StatsTabState extends State<StatsTab>
                                           : intervalFlowReport!.totalExpense,
                                       previous: previousIntervalFlowReport
                                           ?.totalExpense,
-                                      invertDelta: true,
                                     ),
                                   ],
                                 ),

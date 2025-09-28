@@ -1,3 +1,4 @@
+import "package:flow/data/prefs/change_visuals.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction/type.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
@@ -83,6 +84,16 @@ class UserPreferences implements EntityBase {
 
   String? themeName;
   bool themeChangesAppIcon;
+
+  String? changeVisuals;
+
+  @Transient()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ChangeVisuals? get changeVisualParsed =>
+      ChangeVisuals.tryParse(changeVisuals);
+  set changeVisualParsed(ChangeVisuals? visuals) {
+    changeVisuals = visuals?.serialize() ?? ChangeVisuals.defaults.serialize();
+  }
 
   @Transient()
   @JsonKey(includeToJson: false, includeFromJson: false)

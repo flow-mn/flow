@@ -7,7 +7,9 @@
 * Pdf summary now shows summary for the report duration
 * Added transaction tags, closes [#568](https://github.com/flow-mn/flow/issues/568)
 * Now you can set colors for tags, accounts, and categories.
-* Now you can programmatically open new transaction page with prefilled fields.
+* Now you can set N occurences for recurring transactions, closes [#536](https://github.com/flow-mn/flow/issues/536)
+* Now you can customize arrow/color of comparisions, closes [#546](https://github.com/flow-mn/flow/issues/546)
+* Now you can programmatically open new transaction page with prefilled fields with `flow-mn` uri scheme
   * Example for creating $300 transaction in an USD account:
 
     `flow-mn:/transaction/new?amount=300&fromAccountUuid=2627442e-b741-4ab7-93a8-d82178007519`

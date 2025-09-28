@@ -6,7 +6,7 @@ import "package:go_router/go_router.dart";
 import "package:json_annotation/json_annotation.dart";
 
 @JsonEnum(valueField: "value")
-enum RecurringUpdateMode implements LocalizedEnum {
+enum RecurringUpdateMode with LocalizedEnum {
   /// Update the transaction
   current("current"),
 

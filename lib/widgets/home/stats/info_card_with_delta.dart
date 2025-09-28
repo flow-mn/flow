@@ -38,11 +38,7 @@ class InfoCardWithDelta extends StatelessWidget {
         autoSizeGroup: autoSizeGroup,
         style: context.textTheme.displaySmall,
       ),
-      delta: Trend.fromMoney(
-        current: money,
-        previous: previousMoney,
-        invertDelta: invertDelta,
-      ),
+      delta: Trend.fromMoney(current: money, previous: previousMoney),
     );
   }
 }

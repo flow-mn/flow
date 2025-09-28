@@ -1,12 +1,30 @@
 import "package:flow/data/recurrence_mode.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/routes/transaction_page/select_recurrence/input_occurrences_sheet.dart";
+import "package:flow/routes/transaction_page/select_recurrence/select_until_mode_sheet.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:recurrence/recurrence.dart";
+
+enum RecurrenceUntilMode with LocalizedEnum {
+  never,
+  date,
+  noOfOccurrences;
+
+  @override
+  String get localizationEnumName => "RecurrenceUntilMode";
+
+  @override
+  String get localizationEnumValue => name;
+
+  @override
+  String get localizedTextKey =>
+      "select.recurrence.until.$localizationEnumValue";
+}
 
 class SelectRecurrence extends StatefulWidget {
   final Recurrence? initialValue;
@@ -56,6 +74,10 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
       "dayOfMonth": _recurrence.range.from.format(payload: "Do"),
       "monthAndDay": _recurrence.range.from.format(payload: "MMMM Do"),
     };
+
+    final int? currentOccurrences = _recurrence.range.to >= Moment.maxValue
+        ? null
+        : _recurrence.occurrences().length;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -115,11 +137,25 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
               Opacity(
                 opacity: runsForever ? 0.5 : 1.0,
                 child: Text(
-                  runsForever ? "-" : _recurrence.range.to.toMoment().LLL,
+                  runsForever
+                      ? RecurrenceUntilMode.never.localizedNameContext(context)
+                      : _recurrence.range.to.toMoment().LLL,
                 ),
               ),
             ],
           ),
+          subtitle: currentOccurrences == null
+              ? null
+              : Align(
+                  alignment: AlignmentDirectional.topEnd,
+                  child: Text(
+                    "select.recurrence.occurrences.n".t(
+                      context,
+                      currentOccurrences.toString(),
+                    ),
+                    style: context.textTheme.bodyMedium?.semi(context),
+                  ),
+                ),
           onTap: _selectUntil,
         ),
       ],
@@ -197,22 +233,105 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   }
 
   void _selectUntil() async {
-    final DateTime initialDate = _recurrence.range.to >= Moment.maxValue
-        ? DateTime.now()
-        : _recurrence.range.to;
+    final RecurrenceUntilMode? mode = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectUntilModeSheet(),
+      isScrollControlled: true,
+    );
 
-    final DateTime? result = await context.pickDate(initialDate);
+    if (mode == null || !mounted) return;
 
-    if (!mounted) return;
-    if (result == null) return;
+    switch (mode) {
+      case RecurrenceUntilMode.never:
+        {
+          setState(() {
+            _recurrence = _recurrence.copyWith(
+              range: CustomTimeRange(
+                _recurrence.range.from.startOfSecond(),
+                Moment.maxValue,
+              ),
+            );
+          });
+          widget.onChanged(_recurrence);
+          return;
+        }
+      case RecurrenceUntilMode.date:
+        {
+          final DateTime initialDate = _recurrence.range.to >= Moment.maxValue
+              ? DateTime.now()
+              : _recurrence.range.to;
 
-    setState(() {
-      _recurrence = _recurrence.copyWith(
-        range: CustomTimeRange(_recurrence.range.from, result),
-      );
-    });
-    widget.onChanged(_recurrence);
+          final DateTime? result = await context.pickDate(initialDate);
+
+          if (!mounted) return;
+          if (result == null) return;
+
+          setState(() {
+            _recurrence = _recurrence.copyWith(
+              range: CustomTimeRange(
+                _recurrence.range.from.startOfSecond(),
+                copyWithFromHours(result),
+              ),
+            );
+          });
+          widget.onChanged(_recurrence);
+        }
+      case RecurrenceUntilMode.noOfOccurrences:
+        {
+          final int? currentOccurrences =
+              _recurrence.range.to >= Moment.maxValue
+              ? null
+              : _recurrence.occurrences().length;
+
+          final int? occurrences = await showModalBottomSheet(
+            context: context,
+            builder: (context) =>
+                InputOccurrencesSheet(initialValue: currentOccurrences),
+            isScrollControlled: true,
+          );
+
+          if (!mounted) return;
+          if (occurrences == null) return;
+
+          final Duration? safeLimitDuration = switch (_selectedMode) {
+            RecurrenceMode.everyDay => const Duration(days: 1),
+            RecurrenceMode.everyWeek => const Duration(days: 7),
+            RecurrenceMode.every2Week => const Duration(days: 14),
+            RecurrenceMode.everyMonth => const Duration(days: 32),
+            RecurrenceMode.everyYear => const Duration(days: 367),
+            RecurrenceMode.custom => null,
+          };
+
+          setState(() {
+            final DateTime safeLimit = safeLimitDuration == null
+                ? Moment.maxValue
+                : (_recurrence.range.from +
+                      (safeLimitDuration * (occurrences + 1)));
+
+            final DateTime endDate = _recurrence
+                .occurrences(
+                  subrange: _recurrence.range.from.rangeTo(safeLimit),
+                )
+                .skip(occurrences - 1)
+                .first;
+
+            _recurrence = _recurrence.copyWith(
+              range: CustomTimeRange(
+                _recurrence.range.from.startOfSecond(),
+                copyWithFromHours(endDate),
+              ),
+            );
+          });
+          widget.onChanged(_recurrence);
+        }
+    }
   }
+
+  DateTime copyWithFromHours(DateTime date) => date
+      .clone()
+      .setClampedHour(_recurrence.range.from.hour)
+      .setClampedMinute(_recurrence.range.from.minute)
+      .setClampedSecond(_recurrence.range.from.second);
 
   void openModeSelector() {
     _modeSelectorKey.currentContext?.visitChildElements((element) {
@@ -235,6 +354,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
                   rules: [
                     MonthlyRecurrenceRule(day: recurrence?.range.from.day ?? 1),
                   ],
+                  start: DateTime.now().startOfSecond(),
                 ))
             .realign();
 

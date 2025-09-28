@@ -1,6 +1,6 @@
 import "package:flow/l10n/named_enum.dart";
 
-enum PDFHeader implements LocalizedEnum {
+enum PDFHeader with LocalizedEnum {
   transactionDate,
   title,
   amount,

@@ -2,7 +2,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:json_annotation/json_annotation.dart";
 
 @JsonEnum(valueField: "value")
-enum TransactionTagType implements LocalizedEnum {
+enum TransactionTagType with LocalizedEnum {
   generic("generic"),
   location("location"),
   contact("contact");

@@ -24,6 +24,7 @@ import "package:flow/routes/import_wizard/ivy.dart";
 import "package:flow/routes/import_wizard/v1.dart";
 import "package:flow/routes/import_wizard/v2.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
+import "package:flow/routes/preferences/change_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
 import "package:flow/routes/preferences/pending_transactions_preferences_page.dart";
@@ -213,6 +214,10 @@ final router = GoRouter(
         GoRoute(
           path: "theme",
           builder: (context, state) => const ThemePreferencesPage(),
+        ),
+        GoRoute(
+          path: "changeVisuals",
+          builder: (context, state) => const ChangeVisualsPreferencesPage(),
         ),
         GoRoute(
           path: "moneyFormatting",

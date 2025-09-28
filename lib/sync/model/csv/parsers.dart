@@ -4,7 +4,7 @@ import "package:logging/logging.dart";
 final Logger _log = Logger("CSVCellParser");
 
 /// Used to report current status to user
-enum CSVCellParserError implements LocalizedEnum {
+enum CSVCellParserError with LocalizedEnum {
   invalidDate,
   invalidAmount,
   invalid;

@@ -2,7 +2,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:json_annotation/json_annotation.dart";
 
 @JsonEnum(valueField: "value")
-enum RecurrenceMode implements LocalizedEnum {
+enum RecurrenceMode with LocalizedEnum {
   everyDay("everyDay"),
   everyWeek("everyWeek"),
   every2Week("every2Week"),

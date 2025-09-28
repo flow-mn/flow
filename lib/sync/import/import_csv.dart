@@ -259,7 +259,7 @@ class ImportCSV extends Importer {
 }
 
 /// Used to report current status to user
-enum ImportCSVProgress implements LocalizedEnum {
+enum ImportCSVProgress with LocalizedEnum {
   waitingConfirmation,
   parsing,
   erasing,

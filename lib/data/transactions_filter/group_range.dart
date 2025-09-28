@@ -4,7 +4,7 @@ import "package:json_annotation/json_annotation.dart";
 import "package:moment_dart/moment_dart.dart";
 
 @JsonEnum(valueField: "value")
-enum TransactionGroupRange implements LocalizedEnum {
+enum TransactionGroupRange with LocalizedEnum {
   hour("hour"),
 
   /// Default

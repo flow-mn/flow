@@ -8,7 +8,7 @@ import "package:json_annotation/json_annotation.dart";
 part "search_data.g.dart";
 
 @JsonEnum(valueField: "value")
-enum TransactionSearchMode implements LocalizedEnum {
+enum TransactionSearchMode with LocalizedEnum {
   /// Fuzzy matching, allows for little error
   smart("smart"),
 

@@ -132,7 +132,7 @@ class Account implements EntityBase {
 }
 
 @JsonEnum(valueField: "value")
-enum AccountType implements LocalizedEnum {
+enum AccountType with LocalizedEnum {
   /// Accounts that hold money. This includes but not limited to: checking,
   /// savings, cash.
   debit(debitValue),

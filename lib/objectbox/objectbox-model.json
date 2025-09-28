@@ -352,7 +352,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "20:3170754472241464501",
+      "lastPropertyId": "21:2536977424684614223",
       "name": "UserPreferences",
       "properties": [
         {
@@ -447,6 +447,11 @@
           "id": "20:3170754472241464501",
           "name": "themeChangesAppIcon",
           "type": 1
+        },
+        {
+          "id": "21:2536977424684614223",
+          "name": "changeVisuals",
+          "type": 9
         }
       ],
       "relations": []

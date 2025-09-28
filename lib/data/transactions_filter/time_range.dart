@@ -3,7 +3,7 @@ import "package:flow/utils/extensions.dart";
 import "package:flow/utils/time_and_range.dart";
 import "package:moment_dart/moment_dart.dart";
 
-enum TransactionFilterTimeRangePreset implements LocalizedEnum {
+enum TransactionFilterTimeRangePreset with LocalizedEnum {
   last30Days("last30Days"),
   thisWeek("thisWeek"),
   thisMonth("thisMonth"),

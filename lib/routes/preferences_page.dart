@@ -212,6 +212,12 @@ class PreferencesPageState extends State<PreferencesPage> {
               ),
               trailing: DirectionalChevron(),
             ),
+            ListTile(
+              title: Text("preferences.changeVisuals".t(context)),
+              leading: const Icon(Symbols.moving_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/changeVisuals"),
+              trailing: DirectionalChevron(),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.privacy".t(context)),
             const SizedBox(height: 8.0),

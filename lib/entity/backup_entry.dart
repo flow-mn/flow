@@ -63,7 +63,7 @@ class BackupEntry {
 }
 
 @JsonEnum(valueField: "value")
-enum BackupEntryType implements LocalizedEnum {
+enum BackupEntryType with LocalizedEnum {
   manual("manual"),
   automated("automated"),
   preAccountDeletion("preAccountDeletion"),

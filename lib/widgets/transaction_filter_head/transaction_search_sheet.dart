@@ -1,6 +1,5 @@
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/l10n/named_enum.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";

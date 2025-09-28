@@ -2,7 +2,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:json_annotation/json_annotation.dart";
 
 @JsonEnum(valueField: "value")
-enum TransactionSubtype implements LocalizedEnum {
+enum TransactionSubtype with LocalizedEnum {
   transactionFee("transactionFee"),
   givenLoan("loan.given"),
   receivedLoan("loan.received"),

@@ -363,7 +363,7 @@ class ImportV2 extends Importer {
 }
 
 /// Used to report current status to user
-enum ImportV2Progress implements LocalizedEnum {
+enum ImportV2Progress with LocalizedEnum {
   waitingConfirmation,
   erasing,
   writingCategories,
