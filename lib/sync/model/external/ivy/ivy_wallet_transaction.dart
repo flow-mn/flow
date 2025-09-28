@@ -17,7 +17,7 @@ class IvyWalletTransaction {
   final String? transferToCurrency;
   final double? transferToAmount;
 
-  final DateTime transactionDate;
+  final DateTime? transactionDate;
 
   const IvyWalletTransaction({
     required this.uuid,
@@ -31,7 +31,7 @@ class IvyWalletTransaction {
     required this.transferToAccount,
     required this.transferToCurrency,
     required this.transferToAmount,
-    required this.transactionDate,
+    this.transactionDate,
   });
 
   double get conversionRate {

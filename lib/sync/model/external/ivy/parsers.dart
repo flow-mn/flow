@@ -41,6 +41,14 @@ String parseUuid(dynamic x) {
   return x;
 }
 
+DateTime? parseOptionalDate(dynamic x) {
+  try {
+    return parseDate(x);
+  } catch (e) {
+    return null;
+  }
+}
+
 DateTime parseDate(dynamic x) {
   if (x is DateTime) {
     return x;

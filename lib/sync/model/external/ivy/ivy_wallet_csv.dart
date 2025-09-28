@@ -97,7 +97,7 @@ class IvyWalletCsv {
               row[headerMap["Receive Currency"]!],
             ),
             transferToAmount: transferToAmount,
-            transactionDate: parseDate(row[headerMap["Date"]!]),
+            transactionDate: parseOptionalDate(row[headerMap["Date"]!]),
           );
         })
         .nonNulls
