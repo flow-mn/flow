@@ -7,7 +7,7 @@ on:
       - "internal"
 jobs:
   build:
-    runs-on: "macos-15"
+    runs-on: "macos-26"
     env:
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
       APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
@@ -41,8 +41,6 @@ jobs:
         run: keychain add-certificates
       - name: Set up signing certificate
         run: keychain add-certificates
-      - name: Switch to XCode 16.4
-        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
       - name: Set up code signing settings on Xcode project
         run: xcode-project use-profiles
       - name: Build ipa for distribution

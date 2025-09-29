@@ -472,7 +472,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               HapticFeedback.lightImpact();
                             }
 
-                            _selectTags();
+                            selectTags();
                           },
                         ),
                       ),
@@ -878,15 +878,15 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     if (fromAutomatedFlow && widget.isNewTransaction && result != null) {
-      inputAmount();
+      inputAmount(true);
     }
   }
 
   void selectCategory([bool fromAutomatedFlow = false]) async {
     final categories = CategoriesProvider.of(context).categories;
 
-    if (categories.isEmpty) {
-      inputAmount();
+    if (fromAutomatedFlow && categories.isEmpty) {
+      inputAmount(true);
       return;
     }
 
@@ -909,8 +909,10 @@ class _TransactionPageState extends State<TransactionPage> {
       }
     }
 
-    if (fromAutomatedFlow) {
-      if (widget.isNewTransaction && _selectedCategory != null) inputAmount();
+    if (fromAutomatedFlow &&
+        widget.isNewTransaction &&
+        _selectedCategory != null) {
+      selectTags(true);
     }
   }
 
@@ -1039,10 +1041,18 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {});
   }
 
-  void _selectTags() async {
+  void selectTags([bool fromAutomatedFlow = false]) async {
     final List<TransactionTag> allTags = TransactionTagsProvider.of(
       context,
     ).tags;
+
+    if (allTags.isEmpty) {
+      if (fromAutomatedFlow) {
+        inputAmount(true);
+      }
+
+      return;
+    }
 
     final List<TransactionTag>? tags = await showModalBottomSheet(
       context: context,
@@ -1057,8 +1067,12 @@ class _TransactionPageState extends State<TransactionPage> {
       _selectedTags = tags;
     }
 
-    if (mounted) {
-      setState(() {});
+    if (!mounted) return;
+
+    setState(() {});
+
+    if (fromAutomatedFlow && tags != null) {
+      inputAmount(true);
     }
   }
 

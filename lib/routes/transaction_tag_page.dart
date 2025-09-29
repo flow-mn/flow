@@ -370,6 +370,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     _currentlyEditing!
       ..title = formattedName
       ..type = _type.value
+      ..iconCode = iconCodeOrError
       ..colorSchemeName = _colorSchemeName
       ..payload = TransactionTag.serializePayload(_payload);
 
@@ -397,6 +398,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       type: _type.value,
       payload: TransactionTag.serializePayload(_payload),
       colorSchemeName: _colorSchemeName,
+      iconCode: iconCodeOrError,
     );
 
     ObjectBox().box<TransactionTag>().put(tag, mode: PutMode.insert);
