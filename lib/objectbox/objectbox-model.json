@@ -352,7 +352,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "21:2536977424684614223",
+      "lastPropertyId": "22:3911662458210039466",
       "name": "UserPreferences",
       "properties": [
         {
@@ -452,6 +452,11 @@
           "id": "21:2536977424684614223",
           "name": "changeVisuals",
           "type": 9
+        },
+        {
+          "id": "22:3911662458210039466",
+          "name": "transactionListTileRelaxedDensity",
+          "type": 1
         }
       ],
       "relations": []

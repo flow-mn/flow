@@ -93,7 +93,6 @@ class DebugThemePage extends StatelessWidget {
             ListHeader("Home Components"),
             const SizedBox(height: 12.0),
             TransactionListTile(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               transaction: demoPendingTransaction,
               moveToTrashFn: null,
               recoverFromTrashFn: null,
@@ -105,10 +104,6 @@ class DebugThemePage extends StatelessWidget {
               children: _demoTransactions
                   .map(
                     (transaction) => TransactionListTile(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 4.0,
-                      ),
                       transaction: transaction,
                       moveToTrashFn: null,
                       recoverFromTrashFn: null,

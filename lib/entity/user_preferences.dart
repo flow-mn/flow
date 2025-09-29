@@ -62,6 +62,7 @@ class UserPreferences implements EntityBase {
 
   bool transactionListTileShowCategoryName;
   bool transactionListTileShowAccountForLeading;
+  bool transactionListTileRelaxedDensity;
 
   String? icuCurrencyFormattingPattern;
 
@@ -133,6 +134,7 @@ class UserPreferences implements EntityBase {
     this.useCategoryNameForUntitledTransactions = false,
     this.transactionListTileShowCategoryName = false,
     this.transactionListTileShowAccountForLeading = false,
+    this.transactionListTileRelaxedDensity = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
     this.enableICloudSync = false,

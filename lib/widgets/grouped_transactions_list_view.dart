@@ -22,8 +22,6 @@ enum GroupedTransactionsListViewType {
 }
 
 class GroupedTransactionsListView extends StatefulWidget {
-  final EdgeInsets itemPadding;
-
   /// When null, same as [itemPadding]
   final EdgeInsets? groupHeaderPadding;
 
@@ -86,10 +84,6 @@ class GroupedTransactionsListView extends StatefulWidget {
     this.groupHeaderPadding,
     this.groupBy,
     this.overrideObscure,
-    this.itemPadding = const EdgeInsets.symmetric(
-      horizontal: 16.0,
-      vertical: 4.0,
-    ),
     this.mainHeaderPadding,
     this.shouldCombineTransferIfNeeded = false,
     this.listType = GroupedTransactionsListViewType.list,
@@ -133,12 +127,6 @@ class _GroupedTransactionsListViewState
     final bool combineTransfers =
         widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
-    final bool useCategoryNameForUntitledTransactions =
-        UserPreferencesService().useCategoryNameForUntitledTransactions;
-    final bool useAccountIconForLeading =
-        UserPreferencesService().transactionListTileShowAccountForLeading;
-    final bool showCategory =
-        UserPreferencesService().transactionListTileShowCategoryName;
 
     final List<Object> flattened = [
       if (header != null) header!,
@@ -160,7 +148,8 @@ class _GroupedTransactionsListViewState
     ];
 
     final EdgeInsets headerPadding =
-        widget.groupHeaderPadding ?? widget.itemPadding;
+        widget.groupHeaderPadding ??
+        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0);
 
     Widget itemBuilder(BuildContext context, int index) =>
         switch (flattened[index]) {
@@ -181,7 +170,6 @@ class _GroupedTransactionsListViewState
             child: TransactionListTile(
               combineTransfers: combineTransfers,
               transaction: transaction,
-              padding: widget.itemPadding,
               dismissibleKey: ValueKey(transaction.id),
               moveToTrashFn: () => transaction.moveToTrashBin(context),
               recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
@@ -196,10 +184,6 @@ class _GroupedTransactionsListViewState
               duplicateFn: () => transaction.duplicate(),
               overrideObscure: widget.overrideObscure,
               groupRange: widget.groupBy,
-              useCategoryNameForUntitledTransactions:
-                  useCategoryNameForUntitledTransactions,
-              useAccountIconForLeading: useAccountIconForLeading,
-              showCategory: showCategory,
             ),
           ),
           (_) => Container(),

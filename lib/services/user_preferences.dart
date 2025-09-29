@@ -133,6 +133,16 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get transactionListTileRelaxedDensity =>
+      value.transactionListTileRelaxedDensity;
+  set transactionListTileRelaxedDensity(
+    bool newTransactionListTileRelaxedDensity,
+  ) {
+    value.transactionListTileRelaxedDensity =
+        newTransactionListTileRelaxedDensity;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   bool get transactionListTileShowAccountForLeading =>
       value.transactionListTileShowAccountForLeading;
   set transactionListTileShowAccountForLeading(

@@ -44,6 +44,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/widgets/flow_themes.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
@@ -270,31 +271,36 @@ class FlowState extends State<Flow> {
         return AccountsProviderScope(
           child: CategoriesProviderScope(
             child: TransactionTagsProviderScope(
-              child: GestureDetector(
-                behavior: _tempLock
-                    ? HitTestBehavior.opaque
-                    : HitTestBehavior.deferToChild,
-                onTap: _tryUnlockTempLock,
-                child: IgnorePointer(
-                  ignoring: _tempLock,
-                  child: Stack(
-                    children: [
-                      child ?? Container(),
-                      if (_tempLock)
-                        Positioned.fill(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                            child: SizedBox.expand(
-                              child: Center(
-                                child: FlowIcon(
-                                  FlowIconData.icon(Symbols.lock_rounded),
-                                  size: 80.0,
+              child: FlowThemes(
+                child: GestureDetector(
+                  behavior: _tempLock
+                      ? HitTestBehavior.opaque
+                      : HitTestBehavior.deferToChild,
+                  onTap: _tryUnlockTempLock,
+                  child: IgnorePointer(
+                    ignoring: _tempLock,
+                    child: Stack(
+                      children: [
+                        child ?? Container(),
+                        if (_tempLock)
+                          Positioned.fill(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 8.0,
+                                sigmaY: 8.0,
+                              ),
+                              child: SizedBox.expand(
+                                child: Center(
+                                  child: FlowIcon(
+                                    FlowIconData.icon(Symbols.lock_rounded),
+                                    size: 80.0,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

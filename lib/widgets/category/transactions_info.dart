@@ -26,24 +26,28 @@ class TransactionsInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Surface(
       builder: (context) {
+        var align = Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(flow.formatted, style: context.textTheme.displaySmall),
+              Text(
+                "transactions.count".t(context, count ?? 0),
+                style: context.textTheme.bodySmall,
+              ),
+            ],
+          ),
+        );
         return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(width: 4.0),
             FlowIcon(icon, size: 48.0, plated: true, colorScheme: colorScheme),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(flow.formatted, style: context.textTheme.displaySmall),
-                    Text(
-                      "transactions.count".t(context, count ?? 0),
-                      style: context.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.all(
+                  4.0,
+                ).copyWith(left: 12.0, right: 16.0),
+                child: align,
               ),
             ),
           ],

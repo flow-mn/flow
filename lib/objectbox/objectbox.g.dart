@@ -441,7 +441,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(21, 2536977424684614223),
+    lastPropertyId: const obx_int.IdUid(22, 3911662458210039466),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -557,6 +557,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(21, 2536977424684614223),
         name: 'changeVisuals',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(22, 3911662458210039466),
+        name: 'transactionListTileRelaxedDensity',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1501,7 +1507,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final changeVisualsOffset = object.changeVisuals == null
             ? null
             : fbb.writeString(object.changeVisuals!);
-        fbb.startTable(22);
+        fbb.startTable(23);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1521,6 +1527,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(18, themeNameOffset);
         fbb.addBool(19, object.themeChangesAppIcon);
         fbb.addOffset(20, changeVisualsOffset);
+        fbb.addBool(21, object.transactionListTileRelaxedDensity);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1551,6 +1558,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
             .vTableGet(buffer, rootOffset, 24, false);
         final transactionListTileShowAccountForLeadingParam =
             const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false);
+        final transactionListTileRelaxedDensityParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 46, false);
         final trashBinRetentionDaysParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
@@ -1597,6 +1606,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                     transactionListTileShowCategoryNameParam,
                 transactionListTileShowAccountForLeading:
                     transactionListTileShowAccountForLeadingParam,
+                transactionListTileRelaxedDensity:
+                    transactionListTileRelaxedDensityParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
                 enableICloudSync: enableICloudSyncParam,
@@ -2371,6 +2382,10 @@ class UserPreferences_ {
   static final changeVisuals = obx.QueryStringProperty<UserPreferences>(
     _entities[6].properties[18],
   );
+
+  /// See [UserPreferences.transactionListTileRelaxedDensity].
+  static final transactionListTileRelaxedDensity =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[19]);
 }
 
 /// [Budget] entity fields to define ObjectBox queries.
