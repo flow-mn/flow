@@ -3,6 +3,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
+import "package:flow/widgets/transaction_tag_add_chip.dart";
 import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -59,23 +60,26 @@ class _SelectTransactionTagsSheetState
           child: Wrap(
             spacing: 12.0,
             runSpacing: 12.0,
-            children: widget.tags
-                .map(
-                  (tag) => TransactionTagChip(
-                    tag: tag,
-                    selected: _selectedTagUuids.contains(tag.uuid),
-                    key: ValueKey(tag.uuid),
-                    onPressed: () {
-                      if (_selectedTagUuids.contains(tag.uuid)) {
-                        _selectedTagUuids.remove(tag.uuid);
-                      } else {
-                        _selectedTagUuids.add(tag.uuid);
-                      }
-                      setState(() {});
-                    },
-                  ),
-                )
-                .toList(),
+            children: [
+              TransactionTagAddChip(
+                onPressed: () => context.push("/transactionTags/new"),
+              ),
+              ...widget.tags.map(
+                (tag) => TransactionTagChip(
+                  tag: tag,
+                  selected: _selectedTagUuids.contains(tag.uuid),
+                  key: ValueKey(tag.uuid),
+                  onPressed: () {
+                    if (_selectedTagUuids.contains(tag.uuid)) {
+                      _selectedTagUuids.remove(tag.uuid);
+                    } else {
+                      _selectedTagUuids.add(tag.uuid);
+                    }
+                    setState(() {});
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),

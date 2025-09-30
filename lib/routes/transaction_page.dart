@@ -761,7 +761,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (!mounted) return;
 
-    if (fromAutomatedFlow && widget.isNewTransaction && _amount == 0.0) {
+    if (fromAutomatedFlow && widget.isNewTransaction && _amount != 0.0) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (context.mounted && _titleController.text.isEmpty) {
           FocusScope.of(context).requestFocus(_titleFocusNode);

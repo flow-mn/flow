@@ -24,6 +24,7 @@ import "package:flow/widgets/sheets/select_contact_sheet.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter_contacts/contact.dart";
+import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
@@ -62,6 +63,8 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
   String get iconCodeOrError =>
       _iconData?.toString() ?? FlowIconData.icon(_type.icon).toString();
 
+  final MapController _mapController = MapController();
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +80,13 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       _colorSchemeName = _currentlyEditing?.colorSchemeName;
       _iconData = _currentlyEditing?.icon;
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _mapController.dispose();
+    super.dispose();
   }
 
   @override
@@ -169,6 +179,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
                     aspectRatio: 1.0,
                     child: OpenStreetMap(
                       center: center,
+                      mapController: _mapController,
                       onTap: (point) {
                         _updatePayload(point);
                       },
@@ -242,6 +253,10 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
 
   void _updatePayload(Object? payload) {
     _payload = switch (payload) {
+      List<double> coords when coords.length == 2 => List<double>.from(
+        coords,
+        growable: false,
+      ),
       Position position => payload = List<double>.from([
         position.latitude,
         position.longitude,
@@ -290,8 +305,16 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
           }
       }
 
-      final position = await Geolocator.getCurrentPosition();
-      _updatePayload(position);
+      try {
+        final position = await Geolocator.getCurrentPosition();
+        _mapController.move(
+          LatLng(position.latitude, position.longitude),
+          _mapController.camera.zoom,
+        );
+        _updatePayload(position);
+      } catch (e) {
+        // Ignore
+      }
     } finally {
       _locationBusy = false;
       if (mounted) {
