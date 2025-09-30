@@ -600,6 +600,8 @@
   "transaction.tags": "Шошго",
   "transaction.tags.contact.name": "Хүний нэр",
   "transaction.tags.contact.select": "Утасны дэвтрээс сонгох",
+  "transaction.tags.delete": "Шошго устгах",
+  "transaction.tags.delete.description": "Энэ шошгыг устгавал холбоотой {transactionCount} гүйлгээний шошго цуг арилахыг анхаарна уу. Энэ үйлдлийг буцаах боломжгүй юм!",
   "transaction.tags.location.name": "Байршлын нэр",
   "transaction.tags.location.useCurrent": "Одоогийн байршлыг ашиглах",
   "transaction.tags.name": "Шошгоны нэр",

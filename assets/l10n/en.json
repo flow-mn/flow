@@ -600,6 +600,8 @@
   "transaction.tags": "Tags",
   "transaction.tags.contact.name": "Contact name",
   "transaction.tags.contact.select": "Select contact from phone",
+  "transaction.tags.delete": "Delete tag",
+  "transaction.tags.delete.description": "Deleting this tag will detach {transactionCount} transactions' tag. This action is irreversible!",
   "transaction.tags.location.name": "Location name",
   "transaction.tags.location.useCurrent": "Use current location",
   "transaction.tags.name": "Tag name",

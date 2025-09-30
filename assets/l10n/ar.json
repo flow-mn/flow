@@ -600,6 +600,8 @@
   "transaction.tags": "الوسوم",
   "transaction.tags.contact.name": "اسم جهة الاتصال",
   "transaction.tags.contact.select": "اختر جهة اتصال من الهاتف",
+  "transaction.tags.delete": "حذف الوسم",
+  "transaction.tags.delete.description": "سيؤدي حذف هذا الوسم إلى فك ارتباطه عن {transactionCount} معاملة. لا يمكن التراجع عن هذا الإجراء!",
   "transaction.tags.location.name": "اسم الموقع",
   "transaction.tags.location.useCurrent": "استخدام الموقع الحالي",
   "transaction.tags.name": "اسم الوسم",

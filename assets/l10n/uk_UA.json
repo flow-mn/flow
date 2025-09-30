@@ -600,6 +600,8 @@
   "transaction.tags": "Теги",
   "transaction.tags.contact.name": "Ім’я контакту",
   "transaction.tags.contact.select": "Вибрати контакт із телефону",
+  "transaction.tags.delete": "Видалити мітку",
+  "transaction.tags.delete.description": "Видалення цієї мітки від’єднає її від {transactionCount} транзакцій. Цю дію неможливо скасувати!",
   "transaction.tags.location.name": "Назва локації",
   "transaction.tags.location.useCurrent": "Використати поточну локацію",
   "transaction.tags.name": "Назва тега",

@@ -600,6 +600,8 @@
   "transaction.tags": "Etiquetas",
   "transaction.tags.contact.name": "Nombre del contacto",
   "transaction.tags.contact.select": "Seleccionar contacto del teléfono",
+  "transaction.tags.delete": "Eliminar etiqueta",
+  "transaction.tags.delete.description": "Al eliminar esta etiqueta, se quitará la etiqueta de {transactionCount} transacciones. ¡Esta acción es irreversible!",
   "transaction.tags.location.name": "Nombre de la ubicación",
   "transaction.tags.location.useCurrent": "Usar ubicación actual",
   "transaction.tags.name": "Nombre de la etiqueta",

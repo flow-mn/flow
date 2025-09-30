@@ -600,6 +600,8 @@
   "transaction.tags": "Теги",
   "transaction.tags.contact.name": "Имя контакта",
   "transaction.tags.contact.select": "Выбрать контакт из телефона",
+  "transaction.tags.delete": "Удалить тег",
+  "transaction.tags.delete.description": "Удаление этого тега снимет его с {transactionCount} транзакций. Это действие необратимо!",
   "transaction.tags.location.name": "Название места",
   "transaction.tags.location.useCurrent": "Использовать текущее местоположение",
   "transaction.tags.name": "Название тега",

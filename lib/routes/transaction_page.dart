@@ -1057,9 +1057,17 @@ class _TransactionPageState extends State<TransactionPage> {
     final List<TransactionTag>? tags = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => SelectTransactionTagsSheet(
-        tags: allTags,
-        initialTagUuids: _selectedTags?.map((e) => e.uuid).toList(),
+      builder: (context) => Builder(
+        builder: (context) {
+          final List<TransactionTag> allTags = TransactionTagsProvider.of(
+            context,
+          ).tags;
+
+          return SelectTransactionTagsSheet(
+            tags: allTags,
+            initialTagUuids: _selectedTags?.map((e) => e.uuid).toList(),
+          );
+        },
       ),
     );
 

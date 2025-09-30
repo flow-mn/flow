@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/transaction_contact_tag.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction/tag_type.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/form_validators.dart";
@@ -9,10 +10,12 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/extensions/transaction_tag_type.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
@@ -217,6 +220,14 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
                   onChanged: (scheme) =>
                       setState(() => _colorSchemeName = scheme?.name),
                 ),
+                if (_currentlyEditing != null) ...[
+                  const SizedBox(height: 36.0),
+                  DeleteButton(
+                    onTap: _deleteTag,
+                    label: Text("transaction.tags.delete".t(context)),
+                  ),
+                  const SizedBox(height: 16.0),
+                ],
               ],
             ),
           ),
@@ -427,5 +438,32 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     ObjectBox().box<TransactionTag>().put(tag, mode: PutMode.insert);
 
     context.pop();
+  }
+
+  Future<void> _deleteTag() async {
+    if (_currentlyEditing == null) return;
+
+    final TransactionFilter filter = TransactionFilter(
+      tags: [_currentlyEditing!.uuid],
+    );
+
+    final int txnCount = TransactionsService().countMany(filter);
+
+    final bool? confirmation = await context.showConfirmationSheet(
+      isDeletionConfirmation: true,
+      title: "general.delete.confirmName".t(context, _currentlyEditing!.title),
+      child: Text("transaction.tags.delete.description".t(context, txnCount)),
+    );
+
+    if (confirmation == true) {
+      ObjectBox().box<TransactionTag>().remove(_currentlyEditing!.id);
+
+      if (mounted) {
+        context.pop();
+        GoRouter.of(context).popUntil((route) {
+          return route.path != "/transactionTags/:id";
+        });
+      }
+    }
   }
 }

@@ -600,6 +600,8 @@
   "transaction.tags": "Etiketler",
   "transaction.tags.contact.name": "Kişi adı",
   "transaction.tags.contact.select": "Telefondan kişi seç",
+  "transaction.tags.delete": "Etiketi sil",
+  "transaction.tags.delete.description": "Bu etiketi silmek, {transactionCount} işlemden etiketi kaldırır. Bu işlem geri alınamaz!",
   "transaction.tags.location.name": "Konum adı",
   "transaction.tags.location.useCurrent": "Mevcut konumu kullan",
   "transaction.tags.name": "Etiket adı",

@@ -2,6 +2,7 @@
 
 import "dart:convert";
 import "dart:io";
+import "dart:isolate";
 
 import "package:openai_dart/openai_dart.dart";
 import "package:path/path.dart";
@@ -51,6 +52,59 @@ final Map<String, String> filenameToTargetLanguageMapping = {
   "uk_UA.json": "Ukrainian (Ukraine)",
 };
 
+Future<void> translateMissingKeys(
+  File file,
+  Map<String, dynamic> english,
+) async {
+  final Map<String, dynamic> contents = await File(
+    file.path,
+  ).readAsString().then((str) => jsonDecode(str) as Map<String, dynamic>);
+
+  final List<String> missingKeys = [];
+
+  for (final String key in english.keys) {
+    if (contents.containsKey(key)) continue;
+
+    missingKeys.add(key);
+  }
+
+  print(
+    "Found ${missingKeys.length} missing keys in ${file.path}, translating...",
+  );
+
+  final String missingContentStr = jsonEncode(
+    Map.fromEntries(
+      english.entries.where((entry) => missingKeys.contains(entry.key)),
+    ),
+  ).toString();
+
+  final String? targetLanguage =
+      filenameToTargetLanguageMapping[basename(file.path)];
+
+  if (targetLanguage == null) {
+    print("Target language not found for ${file.path}");
+    return;
+  }
+
+  final Map<String, dynamic>? translationToBeAdded = await translate(
+    missingContentStr,
+    targetLanguage,
+  );
+
+  if (translationToBeAdded == null) {
+    print("Translation failed for ${file.path}");
+    return;
+  }
+
+  // Add the missing translations to the original contents
+  for (final MapEntry<String, dynamic> entry in translationToBeAdded.entries) {
+    contents[entry.key] = entry.value;
+  }
+
+  // Write the updated contents back to the file
+  await File(file.path).writeAsString(jsonEncode(contents));
+}
+
 Future<void> main() async {
   final Directory directory = Directory("assets/l10n");
 
@@ -64,58 +118,15 @@ Future<void> main() async {
 
   print("Found ${english.length} keys in English");
 
-  for (FileSystemEntity file in directory.listSync()) {
-    if (!file.path.endsWith(".json")) continue;
+  final List<File> files = directory
+      .listSync()
+      .where((file) => file.path.endsWith(".json"))
+      .whereType<File>()
+      .toList();
 
-    final Map<String, dynamic> contents = await File(
-      file.path,
-    ).readAsString().then((str) => jsonDecode(str) as Map<String, dynamic>);
-
-    final List<String> missingKeys = [];
-
-    for (final String key in english.keys) {
-      if (contents.containsKey(key)) continue;
-
-      missingKeys.add(key);
-    }
-
-    print(
-      "Found ${missingKeys.length} missing keys in ${file.path}, translating...",
-    );
-
-    final String missingContentStr = jsonEncode(
-      Map.fromEntries(
-        english.entries.where((entry) => missingKeys.contains(entry.key)),
-      ),
-    ).toString();
-
-    final String? targetLanguage =
-        filenameToTargetLanguageMapping[basename(file.path)];
-
-    if (targetLanguage == null) {
-      print("Target language not found for ${file.path}");
-      continue;
-    }
-
-    final Map<String, dynamic>? translationToBeAdded = await translate(
-      missingContentStr,
-      targetLanguage,
-    );
-
-    if (translationToBeAdded == null) {
-      print("Translation failed for ${file.path}");
-      continue;
-    }
-
-    // Add the missing translations to the original contents
-    for (final MapEntry<String, dynamic> entry
-        in translationToBeAdded.entries) {
-      contents[entry.key] = entry.value;
-    }
-
-    // Write the updated contents back to the file
-    await File(file.path).writeAsString(jsonEncode(contents));
-  }
+  await Future.wait(
+    files.map((file) => Isolate.run(() => translateMissingKeys(file, english))),
+  );
 
   print("Completed translations.");
   exit(0);

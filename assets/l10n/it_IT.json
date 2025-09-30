@@ -600,6 +600,8 @@
   "transaction.tags": "Tag",
   "transaction.tags.contact.name": "Nome del contatto",
   "transaction.tags.contact.select": "Seleziona contatto dalla rubrica",
+  "transaction.tags.delete": "Elimina tag",
+  "transaction.tags.delete.description": "L'eliminazione di questo tag lo rimuoverà da {transactionCount} transazioni. Questa azione è irreversibile!",
   "transaction.tags.location.name": "Nome posizione",
   "transaction.tags.location.useCurrent": "Usa posizione attuale",
   "transaction.tags.name": "Nome tag",
