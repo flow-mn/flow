@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "Ангилал",
   "preferences.transactions.listTile.preview": "Урьдчилан харах",
   "preferences.transactions.listTile.showCategoryInList": "Дансны ард ангилал харуулах",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "Илүү сийрэг байршил",
   "preferences.transactions.pending": "Хүлээгдэж буй гүйлгээнүүд",
   "preferences.transactions.pending.homeTimeframe": "Нүүр хуудсанд харуулах",
   "preferences.transactions.pending.notify": "Мэдэгдэл илгээх",

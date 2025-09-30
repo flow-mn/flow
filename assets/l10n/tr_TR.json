@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "Kategori",
   "preferences.transactions.listTile.preview": "Önizleme",
   "preferences.transactions.listTile.showCategoryInList": "Hesaptan sonra kategoriyi göster",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "Daha seyrek yerleşim",
   "preferences.transactions.pending": "Bekleyen işlemler",
   "preferences.transactions.pending.homeTimeframe": "Ana sayfada göster",
   "preferences.transactions.pending.notify": "Bildirim",

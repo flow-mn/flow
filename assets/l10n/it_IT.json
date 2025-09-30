@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "Categoria",
   "preferences.transactions.listTile.preview": "Anteprima",
   "preferences.transactions.listTile.showCategoryInList": "Mostra categoria dopo il conto",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "Layout meno denso",
   "preferences.transactions.pending": "Transazioni in sospeso",
   "preferences.transactions.pending.homeTimeframe": "Mostra in Home",
   "preferences.transactions.pending.notify": "Notifica",

@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "Kategorie",
   "preferences.transactions.listTile.preview": "Vorschau",
   "preferences.transactions.listTile.showCategoryInList": "Kategorie nach dem Konto anzeigen",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "Weniger dichtes Layout",
   "preferences.transactions.pending": "Ausstehende Buchungen",
   "preferences.transactions.pending.homeTimeframe": "Auf der Startseite anzeigen",
   "preferences.transactions.pending.notify": "Benachrichtigen",

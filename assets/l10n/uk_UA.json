@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "Категорія",
   "preferences.transactions.listTile.preview": "Попередній перегляд",
   "preferences.transactions.listTile.showCategoryInList": "Показувати категорію після рахунку",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "Менш щільне компонування",
   "preferences.transactions.pending": "Очікувані транзакції",
   "preferences.transactions.pending.homeTimeframe": "Показувати на головному екрані",
   "preferences.transactions.pending.notify": "Сповіщати",

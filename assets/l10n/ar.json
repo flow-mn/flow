@@ -306,6 +306,7 @@
   "preferences.transactions.listTile.leading.category": "الفئة",
   "preferences.transactions.listTile.preview": "معاينة",
   "preferences.transactions.listTile.showCategoryInList": "عرض الفئة بعد الحساب",
+  "preferences.transactions.listTile.transactionListTileRelaxedDensity": "تخطيط أقل كثافة",
   "preferences.transactions.pending": "المعاملات المعلقة",
   "preferences.transactions.pending.homeTimeframe": "عرضها على الصفحة الرئيسية",
   "preferences.transactions.pending.notify": "إعلام",
