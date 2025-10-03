@@ -722,36 +722,37 @@ class _TransactionPageState extends State<TransactionPage> {
   void inputAmount([bool fromAutomatedFlow = false]) async {
     if (_amount == 0.0) {
       await TransitiveLocalPreferences().updateTransitiveProperties();
-      final hideCurrencySymbol = !TransitiveLocalPreferences()
-          .usesMultipleCurrencies
-          .get();
-
-      if (!mounted) return;
-
-      final double? result = await showModalBottomSheet<double>(
-        context: context,
-        builder: (context) => InputAmountSheet(
-          initialAmount: _amount.abs(),
-          currency: _selectedAccount?.currency,
-          hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
-          title: _transactionType.localizedNameContext(context),
-          lockSign: true,
-        ),
-        isScrollControlled: true,
-      );
-
-      final double? resultAmount = result == null
-          ? null
-          : switch (_transactionType) {
-              TransactionType.expense => -result.abs(),
-              TransactionType.income => result.abs(),
-              TransactionType.transfer => result.abs(),
-            };
-
-      setState(() {
-        _amount = resultAmount ?? _amount;
-      });
     }
+
+    if (!mounted) return;
+
+    final hideCurrencySymbol = !TransitiveLocalPreferences()
+        .usesMultipleCurrencies
+        .get();
+
+    final double? result = await showModalBottomSheet<double>(
+      context: context,
+      builder: (context) => InputAmountSheet(
+        initialAmount: _amount.abs(),
+        currency: _selectedAccount?.currency,
+        hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
+        title: _transactionType.localizedNameContext(context),
+        lockSign: true,
+      ),
+      isScrollControlled: true,
+    );
+
+    final double? resultAmount = result == null
+        ? null
+        : switch (_transactionType) {
+            TransactionType.expense => -result.abs(),
+            TransactionType.income => result.abs(),
+            TransactionType.transfer => result.abs(),
+          };
+
+    setState(() {
+      _amount = resultAmount ?? _amount;
+    });
 
     if (!mounted) return;
 
@@ -912,7 +913,7 @@ class _TransactionPageState extends State<TransactionPage> {
     if (fromAutomatedFlow &&
         widget.isNewTransaction &&
         _selectedCategory != null) {
-      selectTags(true);
+      inputAmount(true);
     }
   }
 
