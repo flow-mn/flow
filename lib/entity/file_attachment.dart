@@ -1,8 +1,6 @@
 import "dart:io";
 
-import "package:cross_file/cross_file.dart";
 import "package:flow/entity/_base.dart";
-import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
@@ -48,25 +46,4 @@ class FileAttachment extends EntityBase {
   factory FileAttachment.fromJson(Map<String, dynamic> json) =>
       _$FileAttachmentFromJson(json);
   Map<String, dynamic> toJson() => _$FileAttachmentToJson(this);
-
-  /// Returns the path for [ImageFlowIcon]
-  static Future<FileAttachment?> fromFile(XFile xFile) async {
-    try {
-      final String fileName = "${const Uuid().v4()}/${xFile.name}";
-      final File file = File(path.join(ObjectBox.filesDirectory, fileName));
-      await file.create(recursive: true);
-      await File(xFile.path).copy(file.path);
-
-      return FileAttachment(
-        filePath: "${ObjectBox.filesDirectoryName}/$fileName",
-      );
-    } catch (e, stackTrace) {
-      mainLogger.warning(
-        "Couldn't create file attachment from $xFile",
-        e,
-        stackTrace,
-      );
-      return null;
-    }
-  }
 }

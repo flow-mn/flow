@@ -175,6 +175,13 @@ class PreferencesPageState extends State<PreferencesPage> {
               ),
               trailing: DirectionalChevron(),
             ),
+            // ListTile(
+            //   leading: const Icon(Symbols.automation_rounded),
+            //   title: Text("preferences.transactionEntryFlow".t(context)),
+            //   onTap: () =>
+            //       _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
+            //   trailing: DirectionalChevron(),
+            // ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.appearance".t(context)),
             const SizedBox(height: 8.0),

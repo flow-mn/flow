@@ -1,14 +1,20 @@
 import "dart:io";
 
+import "package:cross_file/cross_file.dart";
 import "package:flow/entity/file_attachment.dart";
+import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:logging/logging.dart";
+import "package:path/path.dart" as path;
+import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("FileAttachmentService");
 
 class FileAttachmentService {
   static FileAttachmentService? _instance;
+
+  final List<FileAttachment> _markedForCleanupCheck = [];
 
   factory FileAttachmentService() =>
       _instance ??= FileAttachmentService._internal();
@@ -26,37 +32,88 @@ class FileAttachmentService {
     }
   }
 
+  void markForCleanupCheck(FileAttachment fileAttachment) {
+    _markedForCleanupCheck.add(fileAttachment);
+  }
+
+  void performCleanupCheck() {
+    for (final fileAttachment in _markedForCleanupCheck) {
+      try {
+        deleteIfOrphan(fileAttachment);
+      } catch (e) {
+        _log.warning(
+          "Failed to perform cleanup check for FileAttachment ${fileAttachment.id}",
+          e,
+        );
+      }
+    }
+    _markedForCleanupCheck.clear();
+  }
+
   Future<bool> delete(FileAttachment fileAttachment) async {
     try {
-      final List<FileAttachment> attachments = await ObjectBox()
-          .box<FileAttachment>()
-          .query(FileAttachment_.filePath.equals(fileAttachment.filePath))
-          .build()
-          .findAsync();
-
-      final bool hasMoreTiedAttachments = attachments
-          .where((fa) => fa.id != fileAttachment.id)
-          .isNotEmpty;
-
       await ObjectBox().box<FileAttachment>().removeAsync(fileAttachment.id);
 
-      if (!hasMoreTiedAttachments) {
-        try {
-          await File(fileAttachment.filePath).delete();
-        } catch (e, stackTrace) {
-          _log.warning(
-            "Failed to delete file at ${fileAttachment.filePath}",
-            e,
-            stackTrace,
-          );
-        }
+      try {
+        await File(fileAttachment.filePath).delete();
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to delete file at ${fileAttachment.filePath}",
+          e,
+          stackTrace,
+        );
       }
 
-      // There are other attachments using the same file, do not delete the file.
       return true;
     } catch (e, stackTrace) {
       _log.severe("Failed to delete FileAttachment", e, stackTrace);
       return false;
+    }
+  }
+
+  Future<bool> deleteIfOrphan(FileAttachment fileAttachment) async {
+    try {
+      final qb = ObjectBox().box<Transaction>().query();
+      qb.linkMany(
+        Transaction_.attachments,
+        FileAttachment_.uuid.equals(fileAttachment.uuid),
+      );
+      final query = qb.build();
+
+      final int count = query.count();
+      query.close();
+
+      if (count > 0) {
+        return false;
+      }
+
+      return await delete(fileAttachment);
+    } catch (e, stackTrace) {
+      _log.severe("Failed to delete FileAttachment", e, stackTrace);
+      return false;
+    }
+  }
+
+  /// Returns the path for [ImageFlowIcon]
+  Future<FileAttachment?> createFromXFile(XFile xFile) async {
+    try {
+      final String fileName = "${const Uuid().v4()}/${xFile.name}";
+      final File file = File(path.join(ObjectBox.filesDirectory, fileName));
+      await file.create(recursive: true);
+      await File(xFile.path).copy(file.path);
+
+      final fileAttachment = FileAttachment(
+        filePath: "${ObjectBox.filesDirectoryName}/$fileName",
+      );
+      markForCleanupCheck(fileAttachment);
+      return fileAttachment;
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Couldn't create file attachment from $xFile",
+        e,
+        stackTrace,
+      );
+      return null;
     }
   }
 }

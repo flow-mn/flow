@@ -43,4 +43,10 @@ extension FileAttachmentExtension on FileAttachment {
     ".php" => Symbols.php_rounded,
     _ => Symbols.unknown_document_rounded,
   };
+
+  bool get canPreviewAsImage =>
+      switch (path.extension(filePath).toLowerCase()) {
+        ".jpg" || ".jpeg" || ".png" || ".gif" || ".webp" => true,
+        _ => false,
+      };
 }

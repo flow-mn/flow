@@ -31,6 +31,7 @@ import "package:flow/routes/preferences/pending_transactions_preferences_page.da
 import "package:flow/routes/preferences/reminders_preferences_page.dart";
 import "package:flow/routes/preferences/sync_preferences_page.dart";
 import "package:flow/routes/preferences/theme_preferences_page.dart";
+import "package:flow/routes/preferences/transaction_entry_flow_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_list_item_appearance_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
@@ -210,6 +211,11 @@ final router = GoRouter(
         GoRoute(
           path: "transactionGeo",
           builder: (context, state) => const TransactionGeoPreferencesPage(),
+        ),
+        GoRoute(
+          path: "transactionEntryFlow",
+          builder: (context, state) =>
+              const TransactionEntryFlowPreferencesPage(),
         ),
         GoRoute(
           path: "theme",

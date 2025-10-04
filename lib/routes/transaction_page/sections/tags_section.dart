@@ -40,6 +40,7 @@ class TagsSection extends StatelessWidget {
                 leading: Icon(Symbols.style_rounded),
                 title: Text("transaction.edit.selectTags".t(context)),
                 trailing: DirectionalChevron(),
+                onTap: selectTags,
               ),
         onTap: () {
           if (LocalPreferences().enableHapticFeedback.get()) {

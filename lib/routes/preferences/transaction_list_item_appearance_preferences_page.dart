@@ -59,6 +59,8 @@ class _TransactionListItemAppearancePreferencesPageState
                 ),
               ),
               const SizedBox(height: 16.0),
+              const Divider(),
+              const SizedBox(height: 16.0),
               SwitchListTile(
                 title: Text(
                   "preferences.transactions.listTile.fallbackToCategoryName".t(

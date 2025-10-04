@@ -7,7 +7,9 @@ import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart";
 import "package:share_plus/share_plus.dart";
@@ -157,5 +159,69 @@ extension CustomPopups on BuildContext {
     if (time == null) return null;
 
     return anchor.date.add(Duration(hours: time.hour, minutes: time.minute));
+  }
+
+  Future<void> showImagePreview({
+    File? file,
+    String? url,
+    Uint8List? bytes,
+  }) async {
+    assert(file != null || url != null || bytes != null);
+
+    late final ImageProvider imageProvider;
+
+    if (file != null) {
+      imageProvider = FileImage(file);
+    } else if (url != null) {
+      imageProvider = NetworkImage(url);
+    } else if (bytes != null) {
+      imageProvider = MemoryImage(bytes);
+    } else {
+      throw ArgumentError("One of file, url or bytes must be provided.");
+    }
+
+    await showGeneralDialog(
+      context: this,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        void tryPop() {
+          if (context.mounted) {
+            context.pop();
+          }
+        }
+
+        return CallbackShortcuts(
+          bindings: {SingleActivator(LogicalKeyboardKey.escape): tryPop},
+          child: Transform.translate(
+            offset: Offset(0.0, 1.0 - secondaryAnimation.value),
+            child: Container(
+              color: const Color(0x80000000),
+              child: SafeArea(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: InteractiveViewer(
+                        minScale: 1.0,
+                        child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Image(image: imageProvider),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 20.0,
+                      left: 20.0,
+                      child: IconButton(
+                        onPressed: tryPop,
+                        icon: Icon(Symbols.close_rounded),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

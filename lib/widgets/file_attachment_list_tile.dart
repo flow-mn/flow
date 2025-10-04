@@ -4,6 +4,7 @@ import "dart:io";
 import "package:file_saver/file_saver.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/file_attachment.dart";
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/file_attachment.dart";
 import "package:flow/utils/utils.dart";
@@ -126,15 +127,35 @@ class _FileAttachmentListTileState extends State<FileAttachmentListTile> {
   }
 
   void open() async {
+    if (widget.fileAttachment.canPreviewAsImage) {
+      await context.showImagePreview(file: widget.fileAttachment.file);
+      return;
+    }
+
+    final bool? confirmation = await context.showConfirmationSheet(
+      title: "fileAttachment.open".t(
+        context,
+        widget.fileAttachment.displayName,
+      ),
+      child: Text("fileAttachment.open.description".t(context)),
+    );
+
+    if (confirmation != true) {
+      return;
+    }
+
+    if (!mounted) return;
+
     if (Platform.isAndroid || Platform.isIOS) {
       await OpenFilex.open(widget.fileAttachment.filePath);
       return;
     }
 
     final String savedPath = await FileSaver.instance.saveFile(
-      filePath: widget.fileAttachment.filePath,
+      filePath: widget.fileAttachment.file.path,
       name: widget.fileAttachment.fileName,
     );
+
     if (Platform.isLinux) {
       Process.runSync("xdg-open", [File(savedPath).parent.path]);
     }

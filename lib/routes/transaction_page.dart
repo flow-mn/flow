@@ -1015,9 +1015,8 @@ class _TransactionPageState extends State<TransactionPage> {
     if (allTags.isEmpty) {
       if (fromAutomatedFlow) {
         inputAmount(true);
+        return;
       }
-
-      return;
     }
 
     final List<TransactionTag>? tags = await showModalBottomSheet(
@@ -1392,6 +1391,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void pop() {
+    FileAttachmentService().performCleanupCheck();
     context.pop();
   }
 
@@ -1435,7 +1435,8 @@ class _TransactionPageState extends State<TransactionPage> {
   void addFiles(List<XFile> files) async {
     for (XFile file in files) {
       try {
-        final FileAttachment? attachment = await FileAttachment.fromFile(file);
+        final FileAttachment? attachment = await FileAttachmentService()
+            .createFromXFile(file);
 
         if (attachment != null) {
           _attachments ??= [];

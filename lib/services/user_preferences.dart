@@ -7,6 +7,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
+import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/currency_registry.dart";
@@ -229,6 +230,12 @@ class UserPreferencesService {
     } else {
       NotificationsService().scheduleDailyReminders(duration);
     }
+  }
+
+  TransactionEntryFlow get transactionEntryFlow => value.transactionEntryFlow;
+  set transactionEntryFlow(TransactionEntryFlow newEntryFlow) {
+    value.transactionEntryFlow = newEntryFlow;
+    ObjectBox().box<UserPreferences>().put(value);
   }
 
   TransactionFilterPreset? get defaultFilterPreset {
