@@ -23,6 +23,8 @@ import "package:flow/widgets/transaction_filter_head.dart";
 import "package:flow/widgets/transaction_filter_head/create_filter_preset_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_filter_preset_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_group_range_sheet.dart";
+import "package:flow/widgets/transaction_filter_head/select_has_attachment_sheet.dart";
+import "package:flow/widgets/transaction_filter_head/select_is_pending_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_category_sheet.dart";
 import "package:flow/widgets/transaction_filter_head/select_transaction_filter_time_range_sheet.dart";
@@ -234,6 +236,20 @@ class _DefaultTransactionsFilterHeadState
                             .toSet()
                       : null,
                 ),
+              TransactionFilterChip<bool?>(
+                translationKey: "transactions.query.filter.hasAttachments",
+                avatar: const Icon(Symbols.attach_file_rounded),
+                onSelect: onSelectHasAttachments,
+                defaultValue: null,
+                value: _filter.hasAttachments,
+              ),
+              TransactionFilterChip<bool?>(
+                translationKey: "transactions.query.filter.isPending",
+                avatar: const Icon(Symbols.search_activity_rounded),
+                onSelect: onSelectIsPending,
+                defaultValue: null,
+                value: _filter.isPending,
+              ),
               TransactionFilterChip<List<TransactionType>>(
                 translationKey: "transactions.query.filter.transactionType",
                 avatar: const Icon(Symbols.swap_horiz_rounded),
@@ -420,6 +436,32 @@ class _DefaultTransactionsFilterHeadState
       filter = filter.copyWithOptional(
         range: Optional(newTransactionFilterTimeRange),
       );
+    });
+  }
+
+  void onSelectHasAttachments() async {
+    final Optional<bool>? hasAttachments = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectHasAttachmentSheet(),
+    );
+
+    if (hasAttachments == null || !mounted) return;
+
+    setState(() {
+      filter = filter.copyWithOptional(hasAttachments: hasAttachments);
+    });
+  }
+
+  void onSelectIsPending() async {
+    final Optional<bool>? isPending = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectIsPendingSheet(),
+    );
+
+    if (isPending == null || !mounted) return;
+
+    setState(() {
+      filter = filter.copyWithOptional(isPending: isPending);
     });
   }
 

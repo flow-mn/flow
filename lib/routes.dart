@@ -283,6 +283,28 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: "/utils/previewpdf",
+      pageBuilder: (context, state) {
+        return switch (state.extra) {
+          null => MaterialPage(
+            child: EditMarkdownPage(),
+            fullscreenDialog: true,
+          ),
+          EditMarkdownPageProps props => MaterialPage(
+            child: EditMarkdownPage(
+              initialValue: props.initialValue,
+              maxLength: props.maxLength,
+            ),
+            fullscreenDialog: true,
+          ),
+          _ => throw const ErrorPage(
+            error:
+                "Invalid state. Pass [EditMarkdownPageProps] object or nothing to `extra` prop",
+          ),
+        };
+      },
+    ),
+    GoRoute(
       path: "/exportOptions",
       builder: (context, state) => const ExportOptionsPage(),
     ),

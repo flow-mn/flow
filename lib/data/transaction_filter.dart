@@ -38,6 +38,13 @@ class TransactionFilter implements Jasonable {
   final List<String>? accounts;
   final List<String>? tags;
 
+  /// When true, matches transactions that have all of the specified [tags].
+  ///
+  /// When false, matches transactions that have at least one of the specified [tags].
+  final bool requireAllTags;
+
+  final bool? hasAttachments;
+
   final bool sortDescending;
   final TransactionSortField sortBy;
 
@@ -68,6 +75,8 @@ class TransactionFilter implements Jasonable {
     this.maxAmount,
     this.currencies,
     this.extraTag,
+    this.hasAttachments,
+    this.requireAllTags = false,
     this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
@@ -150,9 +159,17 @@ class TransactionFilter implements Jasonable {
     }
 
     if (tags?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) => tags!.any((tag) => t.tags.any((e) => e.uuid == tag)),
-      );
+      if (requireAllTags) {
+        predicates.add(
+          (Transaction t) =>
+              tags!.every((tag) => t.tags.any((e) => e.uuid == tag)),
+        );
+      } else {
+        predicates.add(
+          (Transaction t) =>
+              tags!.any((tag) => t.tags.any((e) => e.uuid == tag)),
+        );
+      }
     }
 
     if (minAmount != null) {
@@ -175,6 +192,14 @@ class TransactionFilter implements Jasonable {
           return t.isPending == null || !t.isPending!;
         }
       });
+    }
+
+    if (hasAttachments != null) {
+      if (hasAttachments!) {
+        predicates.add((Transaction t) => t.attachments.isNotEmpty);
+      } else {
+        predicates.add((Transaction t) => t.attachments.isEmpty);
+      }
     }
 
     if (extraTag != null) {
@@ -279,7 +304,30 @@ class TransactionFilter implements Jasonable {
     );
 
     if (tags != null && tags!.isNotEmpty) {
-      filtered.linkMany(Transaction_.tags, TransactionTag_.uuid.oneOf(tags!));
+      if (requireAllTags) {
+        for (final tag in tags!) {
+          filtered.linkMany(
+            Transaction_.tags,
+            TransactionTag_.uuid.equals(tag),
+          );
+        }
+      } else {
+        filtered.linkMany(Transaction_.tags, TransactionTag_.uuid.oneOf(tags!));
+      }
+    }
+
+    if (hasAttachments != null) {
+      if (hasAttachments!) {
+        filtered.linkMany(
+          Transaction_.attachments,
+          FileAttachment_.id.notEquals(0),
+        );
+      } else {
+        filtered.linkMany(
+          Transaction_.attachments,
+          FileAttachment_.id.equals(0),
+        );
+      }
     }
 
     return switch (sortBy) {
@@ -361,6 +409,18 @@ class TransactionFilter implements Jasonable {
       count++;
     }
 
+    if (requireAllTags != other.requireAllTags) {
+      count++;
+    }
+
+    if (hasAttachments != other.hasAttachments) {
+      count++;
+    }
+
+    if (isPending != other.isPending) {
+      count++;
+    }
+
     if (extraTag != other.extraTag) {
       count++;
     }
@@ -375,7 +435,7 @@ class TransactionFilter implements Jasonable {
     Optional<List<String>>? categories,
     Optional<List<String>>? accounts,
     Optional<List<String>>? tags,
-    bool? sortDescending,
+    Optional<bool>? sortDescending,
     TransactionSortField? sortBy,
     Optional<TransactionGroupRange>? groupBy,
     Optional<bool>? isPending,
@@ -383,24 +443,28 @@ class TransactionFilter implements Jasonable {
     Optional<double>? maxAmount,
     Optional<List<String>>? currencies,
     Optional<String>? extraTag,
+    Optional<bool>? hasAttachments,
+    Optional<bool>? requireAllTags,
   }) {
     return TransactionFilter(
-      types: types == null ? this.types : types.value,
-      range: range == null ? this.range : range.value,
+      types: types != null ? types.value : this.types,
+      range: range != null ? range.value : this.range,
       searchData: searchData ?? this.searchData,
-      categories: categories == null ? this.categories : categories.value,
-      accounts: accounts == null ? this.accounts : accounts.value,
-      tags: tags == null ? this.tags : tags.value,
+      categories: categories != null ? categories.value : this.categories,
+      accounts: accounts != null ? accounts.value : this.accounts,
+      tags: tags != null ? tags.value : this.tags,
       sortBy: sortBy ?? this.sortBy,
-      groupBy: (groupBy == null || groupBy.value == null)
-          ? this.groupBy
-          : groupBy.value!,
-      sortDescending: sortDescending ?? this.sortDescending,
-      isPending: isPending == null ? this.isPending : isPending.value,
-      minAmount: minAmount == null ? this.minAmount : minAmount.value,
-      maxAmount: maxAmount == null ? this.maxAmount : maxAmount.value,
-      currencies: currencies == null ? this.currencies : currencies.value,
-      extraTag: extraTag == null ? this.extraTag : extraTag.value,
+      groupBy: groupBy?.value ?? this.groupBy,
+      sortDescending: sortDescending?.value ?? this.sortDescending,
+      isPending: isPending != null ? isPending.value : this.isPending,
+      minAmount: minAmount != null ? minAmount.value : this.minAmount,
+      maxAmount: maxAmount != null ? maxAmount.value : this.maxAmount,
+      currencies: currencies != null ? currencies.value : this.currencies,
+      extraTag: extraTag != null ? extraTag.value : this.extraTag,
+      hasAttachments: hasAttachments != null
+          ? hasAttachments.value
+          : this.hasAttachments,
+      requireAllTags: requireAllTags?.value ?? this.requireAllTags,
     );
   }
 

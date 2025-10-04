@@ -4,6 +4,7 @@ import "dart:io";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
@@ -114,7 +115,14 @@ class ImportV2 extends Importer {
       _log.fine("Imported ${data.transactionTags!.length} transaction tags");
     }
 
-    // 4. Resurrect [RecurringTransaction]s
+    // 4. Resurrect [FileAttachment]s
+    if (data.attachments?.isNotEmpty == true) {
+      progressNotifier.value = ImportV2Progress.writingFileAttachments;
+      await ObjectBox().box<FileAttachment>().putManyAsync(data.attachments!);
+      _log.fine("Imported ${data.attachments!.length} file attachments");
+    }
+
+    // 5. Resurrect [RecurringTransaction]s
     if (data.recurringTransactions?.isNotEmpty == true) {
       progressNotifier.value = ImportV2Progress.writingRecurringTransactions;
       await ObjectBox().box<RecurringTransaction>().putManyAsync(
@@ -125,7 +133,7 @@ class ImportV2 extends Importer {
       "Imported ${data.recurringTransactions?.length ?? 0} recurring transactions",
     );
 
-    // 5. Resurrect [Transaction]s
+    // 6. Resurrect [Transaction]s
     //
     // Resolve ToOne<T> [account] and [category] by `uuid`.
     progressNotifier.value = ImportV2Progress.resolvingTransactions;
@@ -156,6 +164,15 @@ class ImportV2 extends Importer {
               _log.warning(e.toString());
             }
             // Still proceed without category
+          }
+
+          try {
+            transaction = _resolveFileAttachmentsForTransaction(transaction);
+          } catch (e) {
+            if (e is ImportException) {
+              _log.warning(e.toString());
+            }
+            // Still proceed without attachments
           }
 
           return transaction.migrateGeoExtensionToLocation();
@@ -326,11 +343,11 @@ class ImportV2 extends Importer {
   }
 
   Transaction _resolveTransactionTagsForTransaction(Transaction transaction) {
-    if (transaction.tagsUuids.isEmpty) {
+    if (transaction.tagsUuids?.isEmpty == true) {
       throw Exception("This transaction lacks `tagsUuids`");
     }
 
-    final List<String> tagsUuids = transaction.tagsUuids;
+    final List<String> tagsUuids = transaction.tagsUuids!;
 
     for (final String tagUuid in tagsUuids) {
       if (memoizedTransactionTags[tagUuid] is! Optional) {
@@ -360,6 +377,36 @@ class ImportV2 extends Importer {
 
     return transaction;
   }
+
+  Transaction _resolveFileAttachmentsForTransaction(Transaction transaction) {
+    if (transaction.attachmentsUuids?.isEmpty == true) {
+      throw Exception("This transaction lacks `attachmentsUuids`");
+    }
+
+    final List<String> attachmentsUuids = transaction.attachmentsUuids!;
+
+    final query = ObjectBox()
+        .box<FileAttachment>()
+        .query(FileAttachment_.uuid.oneOf(attachmentsUuids))
+        .build();
+
+    final List<FileAttachment> foundFiles = query.find();
+
+    if (foundFiles.length != attachmentsUuids.length) {
+      final foundUuids = foundFiles.map((e) => e.uuid).toSet();
+      final missingUuids = attachmentsUuids.where(
+        (e) => !foundUuids.contains(e),
+      );
+
+      _log.warning(
+        "Failed to link attachment to transaction because: Cannot find attachment(s) (${missingUuids.join(", ")})",
+      );
+    }
+
+    transaction.setAttachments(foundFiles);
+
+    return transaction;
+  }
 }
 
 /// Used to report current status to user
@@ -369,6 +416,7 @@ enum ImportV2Progress with LocalizedEnum {
   writingCategories,
   writingAccounts,
   writingTransactionTags,
+  writingFileAttachments,
   resolvingTransactions,
   writingRecurringTransactions,
   writingTransactions,

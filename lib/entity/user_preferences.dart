@@ -1,6 +1,7 @@
 import "package:flow/data/prefs/change_visuals.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction/type.dart";
+import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:objectbox/objectbox.dart";
@@ -86,7 +87,20 @@ class UserPreferences implements EntityBase {
   String? themeName;
   bool themeChangesAppIcon;
 
+  /// Serialized version of [ChangeVisuals]
   String? changeVisuals;
+
+  @Transient()
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  TransactionEntryFlow get transactionEntryFlow =>
+      TransactionEntryFlow.deserialize(transactionEntryFlowJson);
+
+  set transactionEntryFlow(TransactionEntryFlow flow) {
+    transactionEntryFlowJson = flow.serialize();
+  }
+
+  /// Serialized version of [TransactionEntryFlow]
+  String? transactionEntryFlowJson;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -145,6 +159,7 @@ class UserPreferences implements EntityBase {
     this.transactionButtonOrderJoined,
     this.remindDailyAtRelativeSeconds,
     this.themeName,
+    this.transactionEntryFlowJson,
     this.themeChangesAppIcon = true,
   }) : uuid = const Uuid().v4();
 

@@ -2,6 +2,7 @@ import "package:flow/data/money.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/subtype.dart";
 import "package:flow/entity/transaction/type.dart";
@@ -135,16 +136,35 @@ class Transaction implements EntityBase {
   @Transient()
   List<String>? _tagsUuids;
 
-  List<String> get tagsUuids => _tagsUuids ?? tags.map((e) => e.uuid).toList();
+  List<String>? get tagsUuids => _tagsUuids ?? tags.map((e) => e.uuid).toList();
 
-  set tagsUuids(List<String> newTagUuids) {
-    _tagsUuids = newTagUuids;
+  set tagsUuids(List<String>? newTagUuids) {
+    _tagsUuids = newTagUuids ?? <String>[];
   }
 
-  void setTags(List<TransactionTag> newTags) {
+  void setTags(List<TransactionTag>? newTags) {
     tags.clear();
-    tags.addAll(newTags);
+    tags.addAll(newTags ?? []);
     tagsUuids = tags.map((e) => e.uuid).toList();
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final attachments = ToMany<FileAttachment>();
+
+  @Transient()
+  List<String>? _attachmentsUuids;
+
+  List<String>? get attachmentsUuids =>
+      _attachmentsUuids ?? attachments.map((e) => e.uuid).toList();
+
+  set attachmentsUuids(List<String>? newFileUuids) {
+    _attachmentsUuids = newFileUuids ?? <String>[];
+  }
+
+  void setAttachments(List<FileAttachment>? newFiles) {
+    attachments.clear();
+    attachments.addAll(newFiles ?? []);
+    attachmentsUuids = attachments.map((e) => e.uuid).toList();
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)

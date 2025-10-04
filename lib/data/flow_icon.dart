@@ -153,7 +153,7 @@ class ImageFlowIcon extends FlowIconData {
       await file.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
 
-      return "images/$fileName";
+      return "${ObjectBox.imagesDirectoryName}/$fileName";
     } catch (e) {
       return null;
     }

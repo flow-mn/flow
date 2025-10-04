@@ -109,7 +109,7 @@ class TrendsReport extends FlowReport {
 
     if (expenses.length.isEven) {
       final int midIndex = expenses.length ~/ 2;
-      return (expenses[midIndex] + expenses[midIndex + 1]) * 0.5;
+      return (expenses[midIndex] + expenses[midIndex - 1]) * 0.5;
     }
 
     return expenses[expenses.length ~/ 2];

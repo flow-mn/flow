@@ -158,10 +158,10 @@ class RecurringTransactionsService {
         category = null;
       }
 
-      if (template.tagsUuids.isNotEmpty) {
+      if (template.tagsUuids?.isNotEmpty == true) {
         final transactionTags = ObjectBox()
             .box<TransactionTag>()
-            .query(TransactionTag_.uuid.oneOf(template.tagsUuids))
+            .query(TransactionTag_.uuid.oneOf(template.tagsUuids!))
             .build();
 
         tags = transactionTags.find();

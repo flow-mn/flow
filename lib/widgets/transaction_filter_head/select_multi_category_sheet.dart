@@ -32,7 +32,7 @@ class SelectMultiCategorySheet extends StatefulWidget {
 class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
   String _query = "";
 
-  late Set<String> selectedUuids;
+  late final Set<String> selectedUuids;
 
   @override
   void initState() {
@@ -43,7 +43,8 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
   @override
   void didUpdateWidget(covariant SelectMultiCategorySheet oldWidget) {
     if (widget.selectedUuids != oldWidget.selectedUuids) {
-      selectedUuids = Set.from(widget.selectedUuids ?? (const []));
+      selectedUuids.clear();
+      selectedUuids.addAll(widget.selectedUuids ?? (const []));
     }
     super.didUpdateWidget(oldWidget);
   }

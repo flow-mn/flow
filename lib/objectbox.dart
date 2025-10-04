@@ -7,6 +7,7 @@ import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/goal.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
@@ -29,7 +30,12 @@ class ObjectBox {
 
   static late String appDataDirectory;
 
-  static String get imagesDirectory => path.join(appDataDirectory, "images");
+  static const String imagesDirectoryName = "images";
+  static const String filesDirectoryName = "files";
+  static String get imagesDirectory =>
+      path.join(appDataDirectory, imagesDirectoryName);
+  static String get filesDirectory =>
+      path.join(appDataDirectory, filesDirectoryName);
 
   static String kDebugDefaultSubdirectory = "__debug";
 
@@ -248,6 +254,7 @@ class ObjectBox {
         box<Budget>().removeAllAsync(),
         box<Goal>().removeAllAsync(),
         box<TransactionTag>().removeAllAsync(),
+        box<FileAttachment>().removeAllAsync(),
         box<RecurringTransaction>().removeAllAsync(),
         box<TransactionFilterPreset>().removeAllAsync(),
       ]);

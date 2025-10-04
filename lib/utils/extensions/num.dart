@@ -28,6 +28,8 @@ extension NumberFormatter on num {
   String get percent2 => percent(2);
 
   String get humanReadableBinarySize {
+    if (round() == 0) return "0 B";
+
     const log1024 = 6.931471805599453;
     const formats = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"];
 

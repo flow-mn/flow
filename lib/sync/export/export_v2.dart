@@ -6,6 +6,7 @@ import "package:flow/constants.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
@@ -48,6 +49,11 @@ Future<String> generateBackupJSONContentV2() async {
       .box<TransactionTag>()
       .getAllAsync();
   syncLogger.fine("Finished fetching transaction tags");
+
+  final List<FileAttachment> attachments = await ObjectBox()
+      .box<FileAttachment>()
+      .getAllAsync();
+  syncLogger.fine("Finished fetching file attachments");
 
   final DateTime exportDate = DateTime.now().toUtc();
 
@@ -93,6 +99,7 @@ Future<String> generateBackupJSONContentV2() async {
     profile: profile,
     userPreferences: userPreferences,
     recurringTransactions: recurringTransactions,
+    attachments: attachments,
     primaryCurrency:
         userPreferences?.primaryCurrency ??
         UserPreferencesService().primaryCurrency,
@@ -114,7 +121,7 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
   await File(path.join(tempDir.path, jsonFileName)).writeAsString(jsonContent);
 
   final Directory imagesDir = Directory(
-    path.join(tempDir.path, "assets", "images"),
+    path.join(tempDir.path, "assets", ObjectBox.imagesDirectoryName),
   );
 
   try {
@@ -132,6 +139,39 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
       pngsList.map(
         (png) => png.copy(path.join(imagesDir.path, path.basename(png.path))),
       ),
+    ).catchError((error) {
+      syncLogger.warning(
+        "Failed to copy some or all of the images to temp directory",
+        error,
+      );
+      return <File>[];
+    });
+  } catch (e) {
+    syncLogger.warning(
+      "Failed to copy some or all of the images to temp directory",
+      e,
+    );
+  }
+
+  final Directory filesDir = Directory(
+    path.join(tempDir.path, "assets", ObjectBox.filesDirectoryName),
+  );
+
+  try {
+    await filesDir.create(recursive: true);
+
+    final List<File> files = Directory(
+      ObjectBox.filesDirectory,
+    ).listSync(followLinks: false, recursive: true).whereType<File>().toList();
+
+    await Future.wait(
+      files.map((file) {
+        final String destination = path.join(
+          filesDir.path,
+          path.basename(file.path),
+        );
+        return File(destination).create().then((_) => file.copy(destination));
+      }),
     ).catchError((error) {
       syncLogger.warning(
         "Failed to copy some or all of the images to temp directory",

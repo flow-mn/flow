@@ -11,32 +11,39 @@ Future<Map<String, dynamic>?> translate(
   String englishJson,
   String targetLanguage,
 ) async {
-  final String? openaiApiKey = Platform.environment["OPENAI_API_KEY"];
-  final OpenAIClient client = OpenAIClient(apiKey: openaiApiKey);
+  try {
+    final String? openaiApiKey = Platform.environment["OPENAI_API_KEY"];
+    final OpenAIClient client = OpenAIClient(apiKey: openaiApiKey);
 
-  final CreateChatCompletionResponse
-  response = await client.createChatCompletion(
-    request: CreateChatCompletionRequest(
-      model: ChatCompletionModel.modelId("gpt-5"),
-      responseFormat: ResponseFormat.text(type: ResponseFormatType.jsonObject),
-      messages: [
-        ChatCompletionMessage.developer(
-          content: ChatCompletionDeveloperMessageContent.text(
-            "You are a professional translator with expertise in user interface design. You will be provided a JSON localization file in english, and you should translate the file into a localization json in $targetLanguage language.",
+    final CreateChatCompletionResponse
+    response = await client.createChatCompletion(
+      request: CreateChatCompletionRequest(
+        model: ChatCompletionModel.modelId("gpt-5"),
+        responseFormat: ResponseFormat.text(
+          type: ResponseFormatType.jsonObject,
+        ),
+        messages: [
+          ChatCompletionMessage.developer(
+            content: ChatCompletionDeveloperMessageContent.text(
+              "You are a professional translator with expertise in user interface design. You will be provided a JSON localization file in english, and you should translate the file into a localization json in $targetLanguage language.",
+            ),
           ),
-        ),
-        ChatCompletionMessage.user(
-          content: ChatCompletionUserMessageContent.string(englishJson),
-        ),
-      ],
-    ),
-  );
+          ChatCompletionMessage.user(
+            content: ChatCompletionUserMessageContent.string(englishJson),
+          ),
+        ],
+      ),
+    );
 
-  if (response.choices.first.message.content == null) {
+    if (response.choices.first.message.content == null) {
+      throw Exception("No content in response");
+    }
+
+    return jsonDecode(response.choices.first.message.content!);
+  } catch (e) {
+    print("Error occurred while translating: $e");
     return null;
   }
-
-  return jsonDecode(response.choices.first.message.content!);
 }
 
 final Map<String, String> filenameToTargetLanguageMapping = {

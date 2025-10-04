@@ -88,6 +88,10 @@ extension TransactionFilterHelpers on TransactionFilter {
       return "$translationKey.all".t(context);
     }
 
+    if (value case bool b) {
+      return "$translationKey#$b".t(context);
+    }
+
     if (value case TransactionFilterTimeRange filterTimeRange) {
       return filterTimeRange.preset?.localizedNameContext(context) ??
           filterTimeRange.range?.format() ??
@@ -139,6 +143,8 @@ extension TransactionFilterHelpers on TransactionFilter {
             context,
             list.length,
           );
+        } else if (list.first is TransactionTag) {
+          return "transactions.query.filter.tags.n".t(context, list.length);
         }
       }
 

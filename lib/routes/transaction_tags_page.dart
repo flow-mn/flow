@@ -49,7 +49,7 @@ class _TransactionTagsPageState extends State<TransactionTagsPage> {
 
                 final tag = tags[index - 1];
                 return ListTile(
-                  leading: FlowIcon(tag.icon),
+                  leading: FlowIcon(tag.icon, colorScheme: tag.colorScheme),
                   title: Text(tag.title),
                   onTap: () => context.push("/transactionTags/${tag.id}"),
                 );

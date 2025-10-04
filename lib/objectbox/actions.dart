@@ -12,6 +12,7 @@ import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
@@ -23,6 +24,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/file_attachment.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -804,6 +806,7 @@ extension AccountActions on Account {
     double? longitude,
     List<TransactionExtension>? extensions,
     List<TransactionTag>? tags,
+    List<FileAttachment>? attachments,
     bool? isPending,
     double? conversionRate = 1.0,
     Recurrence? recurrence,
@@ -829,6 +832,7 @@ extension AccountActions on Account {
         recurrence: recurrence,
         extraTags: extraTags,
         tags: tags,
+        attachments: attachments,
       );
     }
 
@@ -884,6 +888,7 @@ extension AccountActions on Account {
       isPending: isPending,
       extraTags: extraTags,
       tags: tags,
+      attachments: attachments,
     );
     final int toTransaction = targetAccount.createAndSaveTransaction(
       amount: amount * (conversionRate ?? 1.0),
@@ -903,6 +908,7 @@ extension AccountActions on Account {
       isPending: isPending,
       extraTags: extraTags,
       tags: tags,
+      attachments: attachments,
     );
 
     if (recurringTransactionUuid != null) {
@@ -927,6 +933,7 @@ extension AccountActions on Account {
     Category? category,
     List<TransactionExtension>? extensions,
     List<TransactionTag>? tags,
+    List<FileAttachment>? attachments,
     String? uuidOverride,
     bool? isPending,
     TransactionSubtype? subtype,
@@ -934,6 +941,8 @@ extension AccountActions on Account {
     List<String>? extraTags,
     List<double>? location,
   }) {
+    FileAttachmentService().upsertManySync(attachments ?? []);
+
     final String uuid = uuidOverride ?? const Uuid().v4();
 
     if (location == null) {
@@ -977,7 +986,8 @@ extension AccountActions on Account {
           )
           ..setTags(tags ?? [])
           ..setCategory(category)
-          ..setAccount(this);
+          ..setAccount(this)
+          ..setAttachments(attachments ?? []);
 
     final List<TransactionExtension>? applicableExtensions = extensions
         ?.map((ext) {

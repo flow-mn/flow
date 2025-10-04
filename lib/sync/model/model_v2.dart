@@ -1,5 +1,6 @@
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
@@ -19,6 +20,7 @@ class SyncModelV2 extends SyncModelBase {
   final List<RecurringTransaction>? recurringTransactions;
   final List<TransactionFilterPreset>? transactionFilterPresets;
   final List<TransactionTag>? transactionTags;
+  final List<FileAttachment>? attachments;
   final Profile? profile;
   final UserPreferences? userPreferences;
   final String? primaryCurrency;
@@ -34,6 +36,7 @@ class SyncModelV2 extends SyncModelBase {
     required this.categories,
     required this.transactionFilterPresets,
     required this.transactionTags,
+    required this.attachments,
     required this.profile,
     required this.userPreferences,
     required this.primaryCurrency,

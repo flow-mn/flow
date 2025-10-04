@@ -12,7 +12,7 @@ import "package:path_provider/path_provider.dart";
 
 Future<File?> pickImportFile({String? dialogTitle}) async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
-    dialogTitle: dialogTitle ?? "Select a backup file",
+    dialogTitle: dialogTitle ?? "sync.import.pickFile".tr(),
     initialDirectory: await getApplicationDocumentsDirectory()
         .then<String?>((value) => value.path)
         .catchError((_) => null),
@@ -25,6 +25,23 @@ Future<File?> pickImportFile({String? dialogTitle}) async {
   }
 
   return File(result.files.single.path!);
+}
+
+Future<List<XFile>?> pickFiles() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    dialogTitle: "fileAttachment.pick".tr(),
+    initialDirectory: await getApplicationDocumentsDirectory()
+        .then<String?>((value) => value.path)
+        .catchError((_) => null),
+    type: FileType.any,
+    allowMultiple: true,
+  );
+
+  if (result == null) {
+    return null;
+  }
+
+  return result.files.map((platformFile) => platformFile.xFile).toList();
 }
 
 Future<XFile?> pickImage({
@@ -41,6 +58,21 @@ Future<XFile?> pickImage({
   );
 
   return xfile;
+}
+
+Future<List<XFile>?> pickMultipleMediaFiles({
+  ImageSource source = ImageSource.gallery,
+  double? maxWidth,
+  double? maxHeight,
+}) async {
+  final xFiles = await ImagePicker().pickMultipleMedia(
+    maxHeight: maxHeight,
+    maxWidth: maxWidth,
+    requestFullMetadata: false,
+    imageQuality: 99,
+  );
+
+  return xFiles;
 }
 
 Future<ui.Image?> pickAndCropSquareImage(

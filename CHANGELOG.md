@@ -9,6 +9,7 @@
 * Now you can set colors for tags, accounts, and categories.
 * Now you can set N occurences for recurring transactions, closes [#536](https://github.com/flow-mn/flow/issues/536)
 * Now you can customize arrow/color of comparisions, closes [#546](https://github.com/flow-mn/flow/issues/546)
+* Now you can attach files to transactions, closes [#517](https://github.com/flow-mn/flow/issues/517)
 * Now you can programmatically open new transaction page with prefilled fields with `flow-mn` uri scheme
   * Example for creating $300 transaction in an USD account:
 

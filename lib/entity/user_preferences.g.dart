@@ -35,6 +35,7 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         remindDailyAtRelativeSeconds:
             (json['remindDailyAtRelativeSeconds'] as num?)?.toInt(),
         themeName: json['themeName'] as String?,
+        transactionEntryFlowJson: json['transactionEntryFlowJson'] as String?,
         themeChangesAppIcon: json['themeChangesAppIcon'] as bool? ?? true,
       )
       ..uuid = json['uuid'] as String
@@ -65,4 +66,5 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
       'themeName': instance.themeName,
       'themeChangesAppIcon': instance.themeChangesAppIcon,
       'changeVisuals': instance.changeVisuals,
+      'transactionEntryFlowJson': instance.transactionEntryFlowJson,
     };

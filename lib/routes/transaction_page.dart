@@ -1,11 +1,13 @@
 import "dart:io";
 
+import "package:cross_file/cross_file.dart";
 import "package:flow/constants.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/transaction_programmable_object.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
@@ -21,15 +23,18 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/providers/transaction_tags_provider.dart";
-import "package:flow/routes/transaction_page/description_section.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/section.dart";
+import "package:flow/routes/transaction_page/sections/description_section.dart";
+import "package:flow/routes/transaction_page/sections/files_section.dart";
+import "package:flow/routes/transaction_page/sections/tags_section.dart";
 import "package:flow/routes/transaction_page/select_account_sheet.dart";
 import "package:flow/routes/transaction_page/select_category_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurrence.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/file_attachment.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -39,14 +44,12 @@ import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
-import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
 import "package:flow/widgets/open_street_map.dart";
 import "package:flow/widgets/sheets/select_transaction_tags_sheet.dart";
 import "package:flow/widgets/transaction/type_selector.dart";
-import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/foundation.dart" hide Category;
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
@@ -110,6 +113,8 @@ class _TransactionPageState extends State<TransactionPage> {
   Account? _selectedAccountTransferTo;
 
   List<TransactionTag>? _selectedTags;
+
+  List<FileAttachment>? _attachments;
 
   List<RelevanceScoredTitle>? autofillHints;
 
@@ -200,6 +205,7 @@ class _TransactionPageState extends State<TransactionPage> {
         _selectedAccount = _currentlyEditing.account.target;
         _selectedCategory = _currentlyEditing.category.target;
         _selectedTags = _currentlyEditing.tags;
+        _attachments = _currentlyEditing.attachments.toList();
         _transactionDate = _currentlyEditing.transactionDate;
         _initialTransactionDate = _currentlyEditing.transactionDate;
         _transactionType = _currentlyEditing.type;
@@ -293,12 +299,13 @@ class _TransactionPageState extends State<TransactionPage> {
               backgroundColor: context.colorScheme.surface,
             ),
             body: SingleChildScrollView(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 24.0),
               child: SafeArea(
                 child: Form(
                   canPop: !hasChanged(),
                   child: Column(
+                    spacing: 24.0,
                     children: [
-                      const SizedBox(height: 24.0),
                       TitleInput(
                         key: ValueKey(_amount),
                         focusNode: _titleFocusNode,
@@ -312,7 +319,6 @@ class _TransactionPageState extends State<TransactionPage> {
                         fallbackTitle: fallbackTitle,
                         onSubmitted: (_) => save(),
                       ),
-                      const SizedBox(height: 24.0),
                       Center(
                         child: InkWell(
                           onTap: inputAmount,
@@ -327,7 +333,6 @@ class _TransactionPageState extends State<TransactionPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24.0),
                       // From account
                       Section(
                         title: isTransfer
@@ -364,7 +369,6 @@ class _TransactionPageState extends State<TransactionPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24.0),
                       // To account
                       if (isTransfer) ...[
                         Section(
@@ -396,8 +400,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             focusNode: _selectAccountTransferToFocusNode,
                           ),
                         ),
-                        if (crossCurrencyTransfer) ...[
-                          const SizedBox(height: 24.0),
+                        if (crossCurrencyTransfer)
                           Section(
                             title: "transaction.transfer.conversionRate".t(
                               context,
@@ -413,7 +416,6 @@ class _TransactionPageState extends State<TransactionPage> {
                               focusNode: _selectAccountTransferToFocusNode,
                             ),
                           ),
-                        ],
                       ],
                       // Category
                       if (!isTransfer)
@@ -437,53 +439,21 @@ class _TransactionPageState extends State<TransactionPage> {
                                 : null,
                           ),
                         ),
-                      const SizedBox(height: 24.0),
-                      Section(
-                        title: "transaction.tags".t(context),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          child: _selectedTags?.isNotEmpty == true
-                              ? Frame(
-                                  child: Align(
-                                    alignment: AlignmentDirectional.topStart,
-                                    child: IgnorePointer(
-                                      child: Wrap(
-                                        spacing: 12.0,
-                                        runSpacing: 12.0,
-                                        children: _selectedTags!
-                                            .map(
-                                              (tag) =>
-                                                  TransactionTagChip(tag: tag),
-                                            )
-                                            .toList(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : ListTile(
-                                  leading: Icon(Symbols.style_rounded),
-                                  title: Text(
-                                    "transaction.edit.selectTags".t(context),
-                                  ),
-                                  trailing: DirectionalChevron(),
-                                ),
-                          onTap: () {
-                            if (LocalPreferences().enableHapticFeedback.get()) {
-                              HapticFeedback.lightImpact();
-                            }
-
-                            selectTags();
-                          },
-                        ),
+                      TagsSection(
+                        selectTags: selectTags,
+                        selectedTags: _selectedTags,
                       ),
-                      const SizedBox(height: 24.0),
                       DescriptionSection(
                         controller: _descriptionController,
                         focusNode: _descriptionFocusNode,
                         onChanged: (_) => setState(() => {}),
                       ),
-                      if (_recurrence == null || !widget.isNewTransaction) ...[
-                        const SizedBox(height: 24.0),
+                      FilesSection(
+                        onAdd: addFiles,
+                        onRemove: removeFile,
+                        attachments: _attachments,
+                      ),
+                      if (_recurrence == null || !widget.isNewTransaction)
                         Section(
                           title: "transaction.date".t(context),
                           child: Column(
@@ -508,8 +478,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             ],
                           ),
                         ),
-                      ],
-                      const SizedBox(height: 24.0),
+
                       Section(
                         title: "transaction.recurring".t(context),
                         child: AnimatedSize(
@@ -531,8 +500,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         ),
                       ),
 
-                      if (_geo != null || enableGeo) ...[
-                        const SizedBox(height: 24.0),
+                      if (_geo != null || enableGeo)
                         Section(
                           title: "transaction.location".t(context),
                           child: Padding(
@@ -599,9 +567,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                   ),
                           ),
                         ),
-                      ],
-                      const SizedBox(height: 24.0),
-                      if (_currentlyEditing != null) ...[
+
+                      if (_currentlyEditing != null)
                         Section(
                           title: "transaction.actions".t(context),
                           child: Column(
@@ -651,8 +618,6 @@ class _TransactionPageState extends State<TransactionPage> {
                             ],
                           ),
                         ),
-                      ],
-                      const SizedBox(height: 24.0),
                     ],
                   ),
                 ),
@@ -1156,6 +1121,7 @@ class _TransactionPageState extends State<TransactionPage> {
       _currentlyEditing.transactionDate = transactionDate;
       _currentlyEditing.isPending = _isPending;
       _currentlyEditing.setTags(_selectedTags ?? []);
+      _currentlyEditing.setAttachments(_attachments);
 
       /// When user edits a balance amendment transaction, it is no longer a balance amendment.
       if (_currentlyEditing.subtype == TransactionSubtype.updateBalance.value) {
@@ -1179,6 +1145,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
       _currentlyEditing.extensions = ExtensionsWrapper(newExtensions);
 
+      FileAttachmentService().upsertManySync(_attachments ?? []);
       TransactionsService().updateOneSync(_currentlyEditing);
     }
 
@@ -1298,6 +1265,7 @@ class _TransactionPageState extends State<TransactionPage> {
         conversionRate: crossCurrencyTransfer ? _conversionRate : null,
         recurrence: _recurrence,
         tags: _selectedTags,
+        attachments: _attachments,
       );
     } else {
       _selectedAccount!.createAndSaveTransaction(
@@ -1310,6 +1278,7 @@ class _TransactionPageState extends State<TransactionPage> {
         isPending: _isPending,
         recurrence: _recurrence,
         tags: _selectedTags,
+        attachments: _attachments,
       );
     }
 
@@ -1344,6 +1313,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _selectedTags?.map((tag) => tag.uuid).toSet(),
             _currentlyEditing.tags.map((tag) => tag.uuid).toSet(),
           ) ||
+          !setEquals(
+            _attachments?.map((attachment) => attachment.uuid).toSet(),
+            _currentlyEditing.attachments.map((file) => file.uuid).toSet(),
+          ) ||
           _currentlyEditing.transactionDate != _transactionDate;
     }
 
@@ -1355,6 +1328,7 @@ class _TransactionPageState extends State<TransactionPage> {
         _selectedAccountTransferTo != null ||
         _isPending ||
         (_selectedTags ?? []).isNotEmpty ||
+        (_attachments ?? []).isNotEmpty ||
         _selectedCategory != null;
   }
 
@@ -1449,5 +1423,38 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return null;
+  }
+
+  void removeFile(FileAttachment attachment) {
+    _attachments?.removeWhere((a) => a.uuid == attachment.uuid);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void addFiles(List<XFile> files) async {
+    for (XFile file in files) {
+      try {
+        final FileAttachment? attachment = await FileAttachment.fromFile(file);
+
+        if (attachment != null) {
+          _attachments ??= [];
+          _attachments!.add(attachment);
+        } else {
+          if (mounted) {
+            context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+        }
+        _log.warning("Failed to add file attachment", e);
+      }
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

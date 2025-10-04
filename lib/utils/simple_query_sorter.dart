@@ -12,28 +12,16 @@ List<T> simpleSortByQuery<T>(List<T> items, String query) {
   return extractAllSorted<T>(
     query: normalizedQuery,
     choices: items,
-    getter: (item) {
-      if (item case Category category) {
-        return category.name;
-      }
-
-      if (item case TransactionTag transactionTag) {
-        return transactionTag.title;
-      }
-
-      if (item case Account account) {
-        return account.name;
-      }
-
-      if (item case CurrencyData currencyData) {
-        return [
-          currencyData.code,
-          currencyData.name,
-          currencyData.country,
-        ].join(" ");
-      }
-
-      return item.toString();
+    getter: (item) => switch (item) {
+      Account account => account.name.toLowerCase(),
+      Category category => category.name.toLowerCase(),
+      TransactionTag tag => tag.title.toLowerCase(),
+      CurrencyData currencyData => [
+        currencyData.code,
+        currencyData.name,
+        currencyData.country,
+      ].join(" "),
+      _ => item.toString().toLowerCase(),
     },
   ).map((result) => result.choice).toList();
 }
