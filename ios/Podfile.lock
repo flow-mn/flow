@@ -69,7 +69,7 @@ PODS:
   - objectbox_flutter_libs (0.0.1):
     - Flutter
     - ObjectBox (= 4.4.1)
-  - open_filex (0.0.2):
+  - open_app_file (3.2.2):
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
@@ -111,7 +111,7 @@ DEPENDENCIES:
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
-  - open_filex (from `.symlinks/plugins/open_filex/ios`)
+  - open_app_file (from `.symlinks/plugins/open_app_file/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -164,8 +164,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/local_auth_darwin/darwin"
   objectbox_flutter_libs:
     :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
-  open_filex:
-    :path: ".symlinks/plugins/open_filex/ios"
+  open_app_file:
+    :path: ".symlinks/plugins/open_app_file/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -202,7 +202,7 @@ SPEC CHECKSUMS:
   local_auth_darwin: d2e8c53ef0c4f43c646462e3415432c4dab3ae19
   ObjectBox: 7da4aceb5013d041bfafdbc6d744a26918b09757
   objectbox_flutter_libs: 09b1dec1b4cd27bf1a5f9bae7ccaa7e43588bf31
-  open_filex: 432f3cd11432da3e39f47fcc0df2b1603854eff1
+  open_app_file: ba67d2bf6cdddfb654b13b713d66bea4974a5adb
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d

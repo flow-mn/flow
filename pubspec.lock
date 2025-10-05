@@ -1197,14 +1197,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.3.1"
-  open_filex:
+  open_app_file:
     dependency: "direct main"
     description:
-      name: open_filex
-      sha256: "9976da61b6a72302cf3b1efbce259200cd40232643a467aac7370addf94d6900"
+      name: open_app_file
+      sha256: "031fa67cdf6fd22c1c07039daa1a617457047ed750b90c345f64ced09135a0dc"
       url: "https://pub.dev"
     source: hosted
-    version: "4.7.0"
+    version: "4.0.4"
   openai_dart:
     dependency: "direct dev"
     description:

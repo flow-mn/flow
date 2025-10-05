@@ -14,7 +14,7 @@ import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
-import "package:open_filex/open_filex.dart";
+import "package:open_app_file/open_app_file.dart";
 
 class FileAttachmentListTile extends StatefulWidget {
   final FileAttachment fileAttachment;
@@ -146,8 +146,11 @@ class _FileAttachmentListTileState extends State<FileAttachmentListTile> {
 
     if (!mounted) return;
 
-    if (Platform.isAndroid || Platform.isIOS) {
-      await OpenFilex.open(widget.fileAttachment.filePath);
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+      await OpenAppFile.open(
+        widget.fileAttachment.file.path,
+        locate: Platform.isMacOS,
+      );
       return;
     }
 
@@ -158,9 +161,6 @@ class _FileAttachmentListTileState extends State<FileAttachmentListTile> {
 
     if (Platform.isLinux) {
       Process.runSync("xdg-open", [File(savedPath).parent.path]);
-    }
-    if (Platform.isMacOS) {
-      Process.runSync("open", [File(savedPath).parent.path]);
     }
     if (Platform.isWindows) {
       Process.runSync("explorer", [File(savedPath).parent.path]);

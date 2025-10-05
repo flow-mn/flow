@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.16.0+278"
+version: "0.16.1+279"
 
 environment:
     sdk: ">=3.8.0 <4.0.0"
@@ -55,7 +55,7 @@ dependencies:
     moment_dart: ^5.2.4
     objectbox: ^4.3.1
     objectbox_flutter_libs: ^4.3.1
-    open_filex: ^4.7.0
+    open_app_file: ^4.0.4
     package_info_plus: ^8.3.1
     path: ^1.9.1
     path_provider: ^2.1.5
