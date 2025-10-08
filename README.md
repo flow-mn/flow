@@ -29,14 +29,17 @@ personal expense tracking app.
 
 ## Features
 
-* Simple & seamless UX
-* Multiple accounts
-* Multiple currencies
+* Simple UX helping you efficiently track your finances
+* Infinite accounts and currencies
+* Categories, tags, file attachments
+* Numbers to reflect on your spendings
 * Fully-offline[^1]
-* Full export/backup
+* Full control over your data
+  * No trackers, no analytics
   * Fully recoverable backups (ZIP/JSON)
-  * Export CSV for external software use (i.e., Google Sheets)
-  * Auto-backups to iCloud Drive
+  * Export CSV, PDFs
+  * Periodic auto-backups to iCloud
+* Absolutely free ([please donate 🥺](#support-flow))
 
 ## Development
 
@@ -76,6 +79,7 @@ income. Consider helping Flow! Here are some suggestions:
 * Leave a review on [Google Play](https://play.google.com/store/apps/details?id=mn.flow.flow)
   and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
 * Tell a friend
+* Send me BTC `bc1qjf74ptmjdv2x7jep785s9rxvwgnrgn6ahxwsg8`
 * [Buy me a coffee](https://buymeacoffee.com/sadespresso)
   <!-- markdownlint-disable-next-line -->
   <a href="https://www.buymeacoffee.com/sadespresso"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=sadespresso&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
@@ -85,8 +89,7 @@ Maintaining Flow on the App Store requires a substantial annual fee
 which [I currently cover](https://github.com/sadespresso).  To ensure Flow's
 continued existence and future development, your support is greatly appreciated.
 
-Thank you for all the contributors, supporters, testers, and those who
-indirectly contributed 🤍
+Thank you to all the contributors, supporters, testers, and those who contributed indirectly 🤍
 
 ## List of supported languages
 

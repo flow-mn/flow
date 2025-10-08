@@ -1,6 +1,27 @@
 # Changelog
 
-## Next
+## 0.16.2
+
+### New features
+
+* Now you can paste copied images, or image urls when choosing image icons for
+  accounts/categories/tags. Download images from the internet will require
+  internet. Duh.
+
+### Changes
+
+* Now selecting tags doesn't require you to click "Done" in the transaction page.
+* When you create a new tag in the transaction page, it'll be selected automatically
+
+### Fixes
+
+* Small QoL fixes regarding modal bottom sheets
+
+## 0.16.1
+
+* [REDACTED]
+
+## 0.16.0
 
 ### New features
 

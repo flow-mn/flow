@@ -21,6 +21,7 @@ import "package:flow/sync/exception.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flow/sync/sync.dart";
+import "package:flow/utils/copy_directory.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
@@ -238,7 +239,7 @@ class ImportV2 extends Importer {
       progressNotifier.value = ImportV2Progress.copyingImages;
       try {
         final List<FileSystemEntity> assetsList = Directory(
-          path.join(assetsRoot!, "images"),
+          path.join(assetsRoot!, ObjectBox.imagesDirectoryName),
         ).listSync(followLinks: false);
 
         await Directory(ObjectBox.imagesDirectory).create(recursive: true);
@@ -261,6 +262,24 @@ class ImportV2 extends Importer {
               "Skipping non-PNG asset: ${path.basename(asset.path)}",
             );
           }
+        }
+      } catch (e) {
+        _log.warning("Failed to copy assets, ignoring", e);
+      }
+
+      progressNotifier.value = ImportV2Progress.copyingFileAttachments;
+      try {
+        final bool shouldCopy = Directory(
+          path.join(assetsRoot!, ObjectBox.filesDirectoryName),
+        ).existsSync();
+
+        await Directory(ObjectBox.filesDirectory).create(recursive: true);
+
+        if (shouldCopy) {
+          await copyDirectory(
+            Directory(path.join(assetsRoot!, ObjectBox.filesDirectoryName)),
+            Directory(ObjectBox.filesDirectory),
+          );
         }
       } catch (e) {
         _log.warning("Failed to copy assets, ignoring", e);
@@ -425,6 +444,7 @@ enum ImportV2Progress with LocalizedEnum {
   writingUserPreferences,
   settingPrimaryCurrency,
   copyingImages,
+  copyingFileAttachments,
   success,
   error;
 

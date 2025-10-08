@@ -42,12 +42,7 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final double scrollableContentMaxHeight =
-        MediaQuery.of(context).size.height * 0.3 -
-        MediaQuery.of(context).viewInsets.vertical;
-
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("flowIcon.type.character".t(context)),
       trailing: ModalOverflowBar(
         alignment: MainAxisAlignment.end,
@@ -59,63 +54,65 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 24.0),
-          // TODO center the text/emoji, see https://github.com/flutter/flutter/issues/119623 for details
-          Center(
-            child: Surface(
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                side: BorderSide(
-                  color:
-                      (_textFieldFocusNode.hasPrimaryFocus ||
-                          _textFieldFocusNode.hasFocus)
-                      ? context.colorScheme.primary
-                      : kTransparent,
-                  width: 2.0,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 24.0),
+            // TODO center the text/emoji, see https://github.com/flutter/flutter/issues/119623 for details
+            Center(
+              child: Surface(
+                shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                  side: BorderSide(
+                    color:
+                        (_textFieldFocusNode.hasPrimaryFocus ||
+                            _textFieldFocusNode.hasFocus)
+                        ? context.colorScheme.primary
+                        : kTransparent,
+                    width: 2.0,
+                  ),
                 ),
-              ),
-              builder: (context) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox.square(
-                  dimension: widget.iconSize,
-                  child: Center(
-                    child: TextField(
-                      autofocus: true,
-                      focusNode: _textFieldFocusNode,
-                      showCursor: false,
-                      cursorWidth: 0.0,
-                      controller: _characterTextController,
-                      onChanged: (_) => updateCharacter(),
-                      style: TextStyle(
-                        fontSize: widget.iconSize * 0.5,
-                        height: 1.0,
-                        fontWeight: FontWeight.w500,
-                        color: context.colorScheme.onSecondary,
-                        decoration: null,
-                      ),
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: "?",
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox.square(
+                    dimension: widget.iconSize,
+                    child: Center(
+                      child: TextField(
+                        autofocus: true,
+                        focusNode: _textFieldFocusNode,
+                        showCursor: false,
+                        cursorWidth: 0.0,
+                        controller: _characterTextController,
+                        onChanged: (_) => updateCharacter(),
+                        style: TextStyle(
+                          fontSize: widget.iconSize * 0.5,
+                          height: 1.0,
+                          fontWeight: FontWeight.w500,
+                          color: context.colorScheme.onSecondary,
+                          decoration: null,
+                        ),
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          hintText: "?",
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16.0),
-          Text(
-            "flowIcon.type.character.description".t(context),
-            style: context.textTheme.bodySmall?.semi(context),
-          ),
-          const SizedBox(height: 24.0),
-        ],
+            const SizedBox(height: 16.0),
+            Text(
+              "flowIcon.type.character.description".t(context),
+              style: context.textTheme.bodySmall?.semi(context),
+            ),
+            const SizedBox(height: 24.0),
+          ],
+        ),
       ),
     );
   }

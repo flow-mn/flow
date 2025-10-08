@@ -29,90 +29,104 @@ class BackupInfoV2 extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: ListHeader("sync.import.syncData.parsedEstimate".t(context)),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: ListHeader(
+                      "sync.import.syncData.parsedEstimate".t(context),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ImportItemListTile(
+                    icon: FlowIconData.icon(Symbols.account_circle_rounded),
+                    label: Text(profileName),
+                  ),
+                  const SizedBox(height: 8.0),
+                  ImportItemListTile(
+                    icon: FlowIconData.icon(Symbols.wallet_rounded),
+                    label: Text(
+                      "sync.import.syncData.parsedEstimate.accountCount".t(
+                        context,
+                        importer.data.accounts.length,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  ImportItemListTile(
+                    icon: FlowIconData.icon(Symbols.list_alt_rounded),
+                    label: Text(
+                      "sync.import.syncData.parsedEstimate.transactionCount".t(
+                        context,
+                        importer.data.transactions.length,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  ImportItemListTile(
+                    icon: FlowIconData.icon(Symbols.category_rounded),
+                    label: Text(
+                      "sync.import.syncData.parsedEstimate.categoryCount".t(
+                        context,
+                        importer.data.categories.length,
+                      ),
+                    ),
+                  ),
+                  if (importer.data.transactionFilterPresets?.isNotEmpty ==
+                      true) ...[
+                    const SizedBox(height: 8.0),
+                    ImportItemListTile(
+                      icon: FlowIconData.icon(Symbols.filter_alt_rounded),
+                      label: Text(
+                        "sync.import.syncData.parsedEstimate.transactionFilterPresets"
+                            .t(
+                              context,
+                              importer.data.transactionFilterPresets?.length ??
+                                  0,
+                            ),
+                      ),
+                    ),
+                  ],
+                  if (importer.data.transactionTags?.isNotEmpty == true) ...[
+                    const SizedBox(height: 8.0),
+                    ImportItemListTile(
+                      icon: FlowIconData.icon(Symbols.style_rounded),
+                      label: Text(
+                        "sync.import.syncData.parsedEstimate.transactionTagCount"
+                            .t(
+                              context,
+                              importer.data.transactionTags?.length ?? 0,
+                            ),
+                      ),
+                    ),
+                  ],
+                  if (importer.data.attachments?.isNotEmpty == true) ...[
+                    const SizedBox(height: 8.0),
+                    ImportItemListTile(
+                      icon: FlowIconData.icon(Symbols.attach_file_rounded),
+                      label: Text(
+                        "sync.import.syncData.parsedEstimate.fileAttachmentsCount"
+                            .t(context, importer.data.attachments?.length ?? 0),
+                      ),
+                    ),
+                  ],
+                  if (primaryCurrency != null) ...[
+                    const SizedBox(height: 8.0),
+                    ImportItemListTile(
+                      icon: FlowIconData.icon(
+                        Symbols.currency_exchange_rounded,
+                      ),
+                      label: Text(primaryCurrency),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 16.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.account_circle_rounded),
-            label: Text(profileName),
-          ),
-          const SizedBox(height: 8.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.wallet_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.accountCount".t(
-                context,
-                importer.data.accounts.length,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.list_alt_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.transactionCount".t(
-                context,
-                importer.data.transactions.length,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.category_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.categoryCount".t(
-                context,
-                importer.data.categories.length,
-              ),
-            ),
-          ),
-          if (importer.data.transactionFilterPresets?.isNotEmpty == true) ...[
-            const SizedBox(height: 8.0),
-            ImportItemListTile(
-              icon: FlowIconData.icon(Symbols.filter_alt_rounded),
-              label: Text(
-                "sync.import.syncData.parsedEstimate.transactionFilterPresets"
-                    .t(
-                      context,
-                      importer.data.transactionFilterPresets?.length ?? 0,
-                    ),
-              ),
-            ),
-          ],
-          if (importer.data.transactionTags?.isNotEmpty == true) ...[
-            const SizedBox(height: 8.0),
-            ImportItemListTile(
-              icon: FlowIconData.icon(Symbols.style_rounded),
-              label: Text(
-                "sync.import.syncData.parsedEstimate.transactionTagCount".t(
-                  context,
-                  importer.data.transactionTags?.length ?? 0,
-                ),
-              ),
-            ),
-          ],
-          if (importer.data.attachments?.isNotEmpty == true) ...[
-            const SizedBox(height: 8.0),
-            ImportItemListTile(
-              icon: FlowIconData.icon(Symbols.attach_file_rounded),
-              label: Text(
-                "sync.import.syncData.parsedEstimate.fileAttachmentsCount".t(
-                  context,
-                  importer.data.attachments?.length ?? 0,
-                ),
-              ),
-            ),
-          ],
-          if (primaryCurrency != null) ...[
-            const SizedBox(height: 8.0),
-            ImportItemListTile(
-              icon: FlowIconData.icon(Symbols.currency_exchange_rounded),
-              label: Text(primaryCurrency),
-            ),
-          ],
-          const Spacer(),
           InfoText(child: Text("sync.import.emergencyBackup".t(context))),
           const SizedBox(height: 16.0),
           Button(

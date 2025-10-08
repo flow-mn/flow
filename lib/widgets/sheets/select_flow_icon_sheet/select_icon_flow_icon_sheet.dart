@@ -45,15 +45,10 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
 
   @override
   Widget build(BuildContext context) {
-    final double scrollableContentMaxHeight =
-        MediaQuery.of(context).size.height * 0.4 -
-        MediaQuery.of(context).viewInsets.vertical;
-
     final List<IconData> simpleIconsResult = querySimpleIcons(_query);
     final List<IconData> materialSymbolsResult = queryMaterialSymbols(_query);
 
     return ModalSheet.scrollable(
-      scrollableContentMaxHeight: scrollableContentMaxHeight,
       title: Text("flowIcon.type.icon".t(context)),
       leadingSpacing: 0.0,
       leading: Column(

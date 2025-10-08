@@ -1,9 +1,7 @@
-import "dart:convert";
-
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/transaction_contact_tag.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction/tag_type.dart";
+import "package:flow/entity/transaction_type/payload.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/utils/extensions/transaction_tag_type.dart";
@@ -66,6 +64,18 @@ class TransactionTag extends EntityBase {
 
   String? payload;
 
+  TransactionTagPayload? get parsedPayload {
+    if (payload == null || payload!.isEmpty) {
+      return null;
+    }
+
+    try {
+      return TransactionTagPayload.tryParse(payload);
+    } catch (e) {
+      return null;
+    }
+  }
+
   TransactionTag({
     this.id = 0,
     String? uuid,
@@ -81,56 +91,6 @@ class TransactionTag extends EntityBase {
        uuid = Uuid.isValidUUID(fromString: uuid ?? "")
            ? uuid!
            : const Uuid().v4();
-
-  static Object? parsePayload(TransactionTagType type, String? payload) {
-    if (payload == null) return null;
-
-    switch (type) {
-      case TransactionTagType.generic:
-        return payload;
-      case TransactionTagType.location:
-        {
-          try {
-            final List<double?> coordinates = payload
-                .split(",")
-                .map((e) => double.tryParse(e))
-                .toList();
-
-            if (coordinates.length != 2 ||
-                coordinates.any((element) => element == null)) {
-              return null;
-            }
-
-            return coordinates;
-          } catch (e) {
-            return null;
-          }
-        }
-      case TransactionTagType.contact:
-        {
-          try {
-            final Map<String, dynamic> json = jsonDecode(payload);
-            return TransactionContactTag.fromJson(json);
-          } catch (e) {
-            return null;
-          }
-        }
-    }
-  }
-
-  static String? serializePayload(Object? payload) {
-    if (payload == null) return null;
-
-    if (payload is String) {
-      return payload;
-    } else if (payload is List<double>) {
-      return payload.join(",");
-    } else if (payload is TransactionContactTag) {
-      return jsonEncode(payload.toJson());
-    } else {
-      return null;
-    }
-  }
 
   factory TransactionTag.fromJson(Map<String, dynamic> json) =>
       _$TransactionTagFromJson(json);

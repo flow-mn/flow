@@ -50,6 +50,70 @@ class FileAttachmentService {
     _markedForCleanupCheck.clear();
   }
 
+  Future<int> deleteAllOrphans() async {
+    int totalDeleted = 0;
+
+    final Set<String> registeredFilePaths = {};
+
+    try {
+      final box = ObjectBox().box<FileAttachment>();
+      final allAttachments = box.getAll();
+
+      registeredFilePaths.addAll(allAttachments.map((x) => x.filePath));
+
+      final List<bool> results = await Future.wait(
+        allAttachments.map(
+          (attachment) => deleteIfOrphan(attachment).catchError((_) => false),
+        ),
+      );
+
+      totalDeleted = results.where((result) => result).length;
+    } catch (e, stackTrace) {
+      _log.severe(
+        "Failed to delete all orphaned FileAttachments",
+        e,
+        stackTrace,
+      );
+    }
+
+    try {
+      final Directory parent = Directory(ObjectBox.filesDirectory);
+      final List<File> fileEntries = parent
+          .listSync(recursive: true)
+          .whereType<File>()
+          .toList();
+
+      for (final File file in fileEntries) {
+        if (!file.path.startsWith(ObjectBox.filesDirectory)) {
+          // TODO @sadespresso check if this check is valid for every os
+          continue;
+        }
+
+        final String relativePath = path.relative(
+          file.path,
+          from: ObjectBox.appDataDirectory,
+        );
+
+        if (!registeredFilePaths.contains(relativePath)) {
+          try {
+            await file.delete();
+            totalDeleted += 1;
+          } catch (e, stackTrace) {
+            _log.warning(
+              "Failed to delete unregistered file at ${file.path}",
+              e,
+              stackTrace,
+            );
+          }
+        }
+      }
+    } catch (e, stackTrace) {
+      _log.severe("Failed to cleanup unregistered files", e, stackTrace);
+    }
+
+    return totalDeleted;
+  }
+
   Future<bool> delete(FileAttachment fileAttachment) async {
     try {
       await ObjectBox().box<FileAttachment>().removeAsync(fileAttachment.id);

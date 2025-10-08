@@ -18,7 +18,7 @@ Future<Map<String, dynamic>?> translate(
     final CreateChatCompletionResponse
     response = await client.createChatCompletion(
       request: CreateChatCompletionRequest(
-        model: ChatCompletionModel.modelId("gpt-5"),
+        model: ChatCompletionModel.modelId("gpt-5-mini"),
         responseFormat: ResponseFormat.text(
           type: ResponseFormatType.jsonObject,
         ),

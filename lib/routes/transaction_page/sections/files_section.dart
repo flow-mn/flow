@@ -1,5 +1,3 @@
-import "dart:io";
-
 import "package:flow/entity/file_attachment.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/routes/transaction_page/section.dart";
@@ -79,9 +77,7 @@ class _FilesSectionState extends State<FilesSection> {
 
   void share(FileAttachment file) async {
     try {
-      final bool exists = await File(
-        file.filePath,
-      ).exists().catchError((_) => false);
+      final bool exists = await file.file.exists().catchError((_) => false);
 
       if (!exists) {
         throw Exception("File does not exist");
@@ -91,7 +87,7 @@ class _FilesSectionState extends State<FilesSection> {
         final String title = file.name ?? "fileAttachment.share".t(context);
 
         await context.showFileShareSheet(
-          filePath: file.filePath,
+          filePath: file.file.path,
           subject: title,
         );
       }
@@ -111,7 +107,7 @@ class _FilesSectionState extends State<FilesSection> {
     if (confirmation != true || !mounted) return;
 
     try {
-      await FileAttachmentService().delete(file);
+      await FileAttachmentService().deleteIfOrphan(file);
       if (mounted) {
         context.showToast(text: "fileAttachment.delete.success".t(context));
       }

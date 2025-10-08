@@ -598,7 +598,11 @@ extension TransactionActions on Transaction {
             createdDate: Moment.now(),
             isPending: isPending,
             uuid: Uuid().v4(),
+            extraTags: extraTags,
+            subtype: subtype,
           )
+          ..setTags(tags.toList())
+          ..setAttachments(attachments.toList())
           ..setCategory(category.target)
           ..setAccount(account.target);
 

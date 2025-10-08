@@ -25,41 +25,50 @@ class BackupInfoV1 extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: ListHeader("sync.import.syncData.parsedEstimate".t(context)),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: ListHeader(
+                    "sync.import.syncData.parsedEstimate".t(context),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ImportItemListTile(
+                  icon: FlowIconData.icon(Symbols.wallet_rounded),
+                  label: Text(
+                    "sync.import.syncData.parsedEstimate.accountCount".t(
+                      context,
+                      importer.data.accounts.length,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                ImportItemListTile(
+                  icon: FlowIconData.icon(Symbols.list_alt_rounded),
+                  label: Text(
+                    "sync.import.syncData.parsedEstimate.transactionCount".t(
+                      context,
+                      importer.data.transactions.length,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                ImportItemListTile(
+                  icon: FlowIconData.icon(Symbols.category_rounded),
+                  label: Text(
+                    "sync.import.syncData.parsedEstimate.categoryCount".t(
+                      context,
+                      importer.data.categories.length,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.wallet_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.accountCount".t(
-                context,
-                importer.data.accounts.length,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.list_alt_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.transactionCount".t(
-                context,
-                importer.data.transactions.length,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          ImportItemListTile(
-            icon: FlowIconData.icon(Symbols.category_rounded),
-            label: Text(
-              "sync.import.syncData.parsedEstimate.categoryCount".t(
-                context,
-                importer.data.categories.length,
-              ),
-            ),
-          ),
-          const Spacer(),
           InfoText(child: Text("sync.import.emergencyBackup".t(context))),
           const SizedBox(height: 16.0),
           Button(

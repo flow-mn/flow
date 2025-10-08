@@ -1,3 +1,4 @@
+import "dart:math" as math;
 import "dart:math";
 
 import "package:flow/theme/theme.dart";
@@ -131,19 +132,22 @@ class ModalSheet extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double maxScrollableContentHeight =
-            scrollableContentMaxHeight == 0.0
-            ? (MediaQuery.of(context).size.height * 0.5)
-            : scrollableContentMaxHeight;
+        final double maxScrollableContentHeight = math.max(
+          (MediaQuery.of(context).size.height -
+              64.0 -
+              MediaQuery.viewInsetsOf(context).bottom),
+          scrollableContentMaxHeight,
+        );
 
         return AnimatedContainer(
           constraints: BoxConstraints.loose(
             Size(
               double.infinity,
               min(
-                max(minScrollableContentHeight, maxScrollableContentHeight),
-                constraints.maxHeight,
-              ),
+                    max(minScrollableContentHeight, maxScrollableContentHeight),
+                    constraints.maxHeight,
+                  ) -
+                  64.0,
             ),
           ),
           duration: const Duration(milliseconds: 200),

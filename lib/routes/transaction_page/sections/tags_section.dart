@@ -23,15 +23,18 @@ class TagsSection extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         child: selectedTags?.isNotEmpty == true
             ? Frame(
-                child: Align(
-                  alignment: AlignmentDirectional.topStart,
-                  child: IgnorePointer(
-                    child: Wrap(
-                      spacing: 12.0,
-                      runSpacing: 12.0,
-                      children: selectedTags!
-                          .map((tag) => TransactionTagChip(tag: tag))
-                          .toList(),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: IgnorePointer(
+                      child: Wrap(
+                        spacing: 12.0,
+                        runSpacing: 12.0,
+                        children: selectedTags!
+                            .map((tag) => TransactionTagChip(tag: tag))
+                            .toList(),
+                      ),
                     ),
                   ),
                 ),

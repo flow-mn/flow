@@ -16,11 +16,18 @@ class SelectTransactionTagsSheet extends StatefulWidget {
   final List<String>? initialTagUuids;
   final bool? showSearchBar;
 
+  /// Use this to get notified when the selection changes.
+  /// This will be called whenever a tag is selected or deselected.
+  ///
+  /// Last value of this callback will be returned when the sheet is popped.
+  final ValueChanged<List<TransactionTag>>? onChanged;
+
   const SelectTransactionTagsSheet({
     super.key,
     required this.tags,
     this.initialTagUuids,
     this.showSearchBar = true,
+    this.onChanged,
   });
 
   @override
@@ -92,9 +99,7 @@ class _SelectTransactionTagsSheetState
             runSpacing: 12.0,
             children: [
               if (_query.isEmpty)
-                TransactionTagAddChip(
-                  onPressed: () => context.push("/transactionTags/new"),
-                ),
+                TransactionTagAddChip(onPressed: createAndAdd),
               ...results.map(
                 (tag) => TransactionTagChip(
                   tag: tag,
@@ -106,6 +111,7 @@ class _SelectTransactionTagsSheetState
                     } else {
                       _selectedTagUuids.add(tag.uuid);
                     }
+                    notifyChange();
                     setState(() {});
                   },
                 ),
@@ -117,11 +123,33 @@ class _SelectTransactionTagsSheetState
     );
   }
 
+  void notifyChange() {
+    if (widget.onChanged == null) return;
+
+    final List<TransactionTag> selectedTags = widget.tags
+        .where((tag) => _selectedTagUuids.contains(tag.uuid))
+        .toList();
+
+    widget.onChanged!(selectedTags);
+  }
+
   void pop() {
     final List<TransactionTag> selectedTags = widget.tags
         .where((tag) => _selectedTagUuids.contains(tag.uuid))
         .toList();
 
     context.pop(selectedTags);
+  }
+
+  void createAndAdd() async {
+    final TransactionTag? result = await context.push("/transactionTags/new");
+
+    if (result != null) {
+      _selectedTagUuids.add(result.uuid);
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }

@@ -28,7 +28,7 @@ class _DebugLogsPageState extends State<DebugLogsPage> {
   void initState() {
     super.initState();
     appenderAvailable = mainLogAppender != null;
-    files = mainLogAppender?.getAllLogFiles();
+    files = List<File>.from(mainLogAppender?.getAllLogFiles() ?? []);
   }
 
   @override

@@ -4,7 +4,7 @@ Thank you for stopping by here! There are many ways to make Flow better for
 everyone. Here are few:
 
 * [Report a bug](https://github.com/flow-mn/flow/issues/new/choose)
-* [Propos a feature](https://github.com/flow-mn/flow/issues/new?assignees=&labels=&projects=&template=feature_request.yaml&title=%5BFEAT%5D+)
+* [Propose a feature](https://github.com/flow-mn/flow/issues/new?assignees=&labels=&projects=&template=feature_request.yaml&title=%5BFEAT%5D+)
 * [Contribute code](#developing)
 * [Translating Flow](#translating) to your own language
 * [Buy maintainer a coffee](https://buymeacoffee.com/sadespresso). Flow is a
@@ -39,7 +39,7 @@ implementing a new feature
 * It is not necessary to change the version unless you're in charge of
 publishing a release
 * Update [CHANGELOG.md](./CHANGELOG.md) with your change description. (Use
-version name `Next`)
+version name `next`)
 
 ## Translating
 

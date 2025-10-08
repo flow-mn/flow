@@ -1,10 +1,11 @@
 import "dart:io";
 
+import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/transaction_contact_tag.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction/tag_type.dart";
 import "package:flow/entity/transaction_tag.dart";
+import "package:flow/entity/transaction_type/payload.dart";
 import "package:flow/form_validators.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
@@ -53,9 +54,9 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
 
   late TransactionTagType _type;
 
-  late TransactionTag? _currentlyEditing;
+  TransactionTag? _currentlyEditing;
 
-  Object? _payload;
+  TransactionTagPayload? _payload;
 
   bool _locationBusy = false;
 
@@ -79,9 +80,18 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       _currentlyEditing = ObjectBox().box<TransactionTag>().get(widget.tagId);
       _titleController = TextEditingController(text: _currentlyEditing?.title);
       _type = _currentlyEditing?.tagType ?? TransactionTagType.generic;
-      _payload = TransactionTag.parsePayload(_type, _currentlyEditing?.payload);
+      _payload = _currentlyEditing?.parsedPayload;
       _colorSchemeName = _currentlyEditing?.colorSchemeName;
       _iconData = _currentlyEditing?.icon;
+
+      if (_type == TransactionTagType.location && _payload?.location != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _mapController.move(
+            _payload!.location!.latLng,
+            _mapController.camera.zoom,
+          );
+        });
+      }
     }
   }
 
@@ -96,12 +106,11 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
   Widget build(BuildContext context) {
     const EdgeInsets contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
 
-    final LatLng center = switch ((_type, _payload)) {
-      (TransactionTagType.location, List<double> coords)
-          when coords.length == 2 =>
-        LatLng(coords[0], coords[1]),
-      _ => LatLng(47.9184, 106.9175), // Ulaanbaatar center
-    };
+    final LatLng center =
+        (_type == TransactionTagType.location
+            ? _payload?.location?.latLng
+            : sukhbaatarSquareCenter) ??
+        sukhbaatarSquareCenter;
 
     return Scaffold(
       appBar: AppBar(
@@ -183,12 +192,11 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
                     child: OpenStreetMap(
                       center: center,
                       mapController: _mapController,
-                      onTap: (point) {
-                        _updatePayload(point);
-                      },
+                      onTap: _updatePayloadLocation,
                     ),
                   ),
-                if (_type == TransactionTagType.location)
+                if ((Platform.isIOS || Platform.isAndroid) &&
+                    _type == TransactionTagType.location)
                   ListTile(
                     enabled: !_locationBusy,
                     leading: Icon(Symbols.my_location_rounded),
@@ -262,30 +270,11 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     setState(() {});
   }
 
-  void _updatePayload(Object? payload) {
-    _payload = switch (payload) {
-      List<double> coords when coords.length == 2 => List<double>.from(
-        coords,
-        growable: false,
-      ),
-      Position position => payload = List<double>.from([
-        position.latitude,
-        position.longitude,
-      ], growable: false),
-      LatLng latLng => payload = List<double>.from([
-        latLng.latitude,
-        latLng.longitude,
-      ], growable: false),
-      Contact contact => payload = TransactionContactTag(
-        id: contact.id,
-        name: contact.displayName,
-      ),
-      _ => null,
-    };
-
-    if (mounted) {
-      setState(() {});
-    }
+  void _updatePayloadLocation(LatLng point) {
+    _payload = (_payload ?? const TransactionTagPayload()).copyWith(
+      location: TransactionTagLocationPayload(point.latitude, point.longitude),
+    );
+    if (mounted) setState(() {});
   }
 
   void _useMyLocation() async {
@@ -318,11 +307,9 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
 
       try {
         final position = await Geolocator.getCurrentPosition();
-        _mapController.move(
-          LatLng(position.latitude, position.longitude),
-          _mapController.camera.zoom,
-        );
-        _updatePayload(position);
+        final point = LatLng(position.latitude, position.longitude);
+        _mapController.move(point, _mapController.camera.zoom);
+        _updatePayloadLocation(point);
       } catch (e) {
         // Ignore
       }
@@ -369,7 +356,12 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     final Contact? contact = selectedContact?.value;
 
     if (contact != null) {
-      _updatePayload(contact);
+      _payload = (_payload ?? const TransactionTagPayload()).copyWith(
+        contact: TransactionContactTag(
+          id: contact.id,
+          name: contact.displayName,
+        ),
+      );
       _titleController.text = contact.displayName;
       if (_iconData == null ||
           FlowIconData.icon(_type.icon).toString() == _iconData.toString()) {
@@ -395,7 +387,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     return _titleController.text != (_currentlyEditing?.title ?? "") ||
         _type != (_currentlyEditing?.tagType ?? TransactionTagType.generic) ||
         _colorSchemeName != _currentlyEditing?.colorSchemeName ||
-        _payload != _currentlyEditing?.payload;
+        _payload != _currentlyEditing?.parsedPayload;
   }
 
   void update(String formattedName) async {
@@ -406,7 +398,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       ..type = _type.value
       ..iconCode = iconCodeOrError
       ..colorSchemeName = _colorSchemeName
-      ..payload = TransactionTag.serializePayload(_payload);
+      ..payload = _payload?.serialize();
 
     ObjectBox().box<TransactionTag>().put(
       _currentlyEditing!,
@@ -430,14 +422,17 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
     final TransactionTag tag = TransactionTag(
       title: formattedName,
       type: _type.value,
-      payload: TransactionTag.serializePayload(_payload),
+      payload: _payload?.serialize(),
       colorSchemeName: _colorSchemeName,
       iconCode: iconCodeOrError,
     );
 
-    ObjectBox().box<TransactionTag>().put(tag, mode: PutMode.insert);
+    final int insertedId = ObjectBox().box<TransactionTag>().put(
+      tag,
+      mode: PutMode.insert,
+    );
 
-    context.pop();
+    context.pop(ObjectBox().box<TransactionTag>().get(insertedId));
   }
 
   Future<void> _deleteTag() async {

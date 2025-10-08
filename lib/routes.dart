@@ -252,11 +252,7 @@ final router = GoRouter(
       pageBuilder: (context, state) {
         return switch (state.extra) {
           CropSquareImagePageProps props => MaterialPage(
-            child: CropSquareImagePage(
-              image: props.image,
-              maxDimension: props.maxDimension,
-              returnBitmap: props.returnBitmap,
-            ),
+            child: CropSquareImagePage.fromProps(props: props),
             fullscreenDialog: true,
           ),
           _ => throw const ErrorPage(

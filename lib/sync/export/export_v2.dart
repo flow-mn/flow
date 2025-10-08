@@ -20,6 +20,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/sync/export.dart";
 import "package:flow/sync/model/model_v2.dart";
+import "package:flow/utils/copy_directory.dart";
 import "package:path/path.dart" as path;
 import "package:uuid/uuid.dart";
 
@@ -158,32 +159,9 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
   );
 
   try {
-    await filesDir.create(recursive: true);
-
-    final List<File> files = Directory(
-      ObjectBox.filesDirectory,
-    ).listSync(followLinks: false, recursive: true).whereType<File>().toList();
-
-    await Future.wait(
-      files.map((file) {
-        final String destination = path.join(
-          filesDir.path,
-          path.basename(file.path),
-        );
-        return File(destination).create().then((_) => file.copy(destination));
-      }),
-    ).catchError((error) {
-      syncLogger.warning(
-        "Failed to copy some or all of the images to temp directory",
-        error,
-      );
-      return <File>[];
-    });
+    await copyDirectory(Directory(ObjectBox.filesDirectory), filesDir);
   } catch (e) {
-    syncLogger.warning(
-      "Failed to copy some or all of the images to temp directory",
-      e,
-    );
+    syncLogger.warning("Failed to copy file attachments to temp directory", e);
   }
 
   final File result = File(path.join(Directory.systemTemp.path, zipFileName));
