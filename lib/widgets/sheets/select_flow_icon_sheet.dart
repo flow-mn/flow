@@ -88,6 +88,7 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
         iconSize: widget.iconSize,
         initialValue: widget.current,
       ),
+      isScrollControlled: true,
     );
 
     if (mounted) {

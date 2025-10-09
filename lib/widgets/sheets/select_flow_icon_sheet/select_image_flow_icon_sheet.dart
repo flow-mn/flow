@@ -5,6 +5,7 @@ import "dart:ui" as ui;
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/routes/utils/crop_square_image_page.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
@@ -166,7 +167,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
     try {
       final imageBytes = await Pasteboard.image;
 
-      dynamic image;
+      Uint8List? image;
 
       if (imageBytes != null && imageBytes.isNotEmpty) {
         _log.info("Found an image from the clipboard, trying to use it...");
@@ -191,7 +192,16 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
         }
       }
 
-      final String? objectPath = await ImageFlowIcon.putImage(image);
+      if (!mounted) {
+        return;
+      }
+
+      final ui.Image? cropped = await context.push<ui.Image>(
+        "/utils/cropsquare",
+        extra: CropSquareImagePageProps(bytes: image, maxDimension: 512),
+      );
+
+      final String? objectPath = await ImageFlowIcon.putImage(cropped);
 
       if (objectPath != null) {
         value = ImageFlowIcon(objectPath);

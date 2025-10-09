@@ -1,4 +1,5 @@
 import "dart:io";
+import "dart:typed_data";
 
 import "package:crop_image/crop_image.dart";
 import "package:flow/l10n/extensions.dart";
@@ -9,31 +10,25 @@ import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class CropSquareImagePageProps {
-  final File file;
+  final File? file;
+  final Uint8List? bytes;
   final double? maxDimension;
 
-  /// If [false], returns [Image] object
-  final bool returnBitmap;
-
-  CropSquareImagePageProps({
-    required this.file,
-    this.maxDimension,
-    this.returnBitmap = true,
-  });
+  CropSquareImagePageProps({this.bytes, this.file, this.maxDimension});
 }
 
 /// Pops with a [ui.Image] object
 class CropSquareImagePage extends StatefulWidget {
-  final File file;
+  final File? file;
+  final Uint8List? bytes;
 
   final double? maxDimension;
-  final bool returnBitmap;
 
   const CropSquareImagePage({
     super.key,
-    required this.file,
+    this.file,
+    this.bytes,
     this.maxDimension,
-    this.returnBitmap = true,
   });
   factory CropSquareImagePage.fromProps({
     Key? key,
@@ -41,8 +36,8 @@ class CropSquareImagePage extends StatefulWidget {
   }) => CropSquareImagePage(
     key: key,
     file: props.file,
+    bytes: props.bytes,
     maxDimension: props.maxDimension,
-    returnBitmap: props.returnBitmap,
   );
 
   @override
@@ -67,7 +62,9 @@ class _CropSquareImagePageState extends State<CropSquareImagePage> {
       body: SafeArea(
         child: CropImage(
           controller: _controller,
-          image: Image.file(widget.file),
+          image: widget.file != null
+              ? Image.file(widget.file!)
+              : Image.memory(widget.bytes!),
         ),
       ),
       bottomNavigationBar: SafeArea(

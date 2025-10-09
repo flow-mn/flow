@@ -10,14 +10,15 @@ import "package:image_picker/image_picker.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with a List of [XFile]
-class SelectFileAttachment extends StatefulWidget {
-  const SelectFileAttachment({super.key});
+class SelectFileAttachmentSheet extends StatefulWidget {
+  const SelectFileAttachmentSheet({super.key});
 
   @override
-  State<SelectFileAttachment> createState() => _SelectFileAttachmentState();
+  State<SelectFileAttachmentSheet> createState() =>
+      _SelectFileAttachmentSheetState();
 }
 
-class _SelectFileAttachmentState extends State<SelectFileAttachment> {
+class _SelectFileAttachmentSheetState extends State<SelectFileAttachmentSheet> {
   @override
   void initState() {
     super.initState();
@@ -50,7 +51,13 @@ class _SelectFileAttachmentState extends State<SelectFileAttachment> {
             ListTile(
               title: Text("fileAttachment.photos".t(context)),
               leading: const Icon(Symbols.image_rounded),
-              onTap: pickImages,
+              onTap: pickMultipleMedias,
+            ),
+          if (Platform.isIOS || Platform.isAndroid)
+            ListTile(
+              title: Text("fileAttachment.photo".t(context)),
+              leading: const Icon(Symbols.image_rounded),
+              onTap: pickAnImage,
             ),
         ],
       ),
@@ -65,11 +72,19 @@ class _SelectFileAttachmentState extends State<SelectFileAttachment> {
     }
   }
 
-  void pickImages() async {
+  void pickMultipleMedias() async {
     final List<XFile>? files = await pickMultipleMediaFiles();
 
     if (mounted) {
       context.pop(files);
+    }
+  }
+
+  void pickAnImage() async {
+    final XFile? file = await pickImage(source: ImageSource.gallery);
+
+    if (mounted) {
+      context.pop(file == null ? null : [file]);
     }
   }
 
