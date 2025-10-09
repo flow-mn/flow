@@ -35,6 +35,7 @@ import "package:flow/providers/transaction_tags_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/goals.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/recurring_transactions.dart";
@@ -138,6 +139,17 @@ void main() async {
   } catch (e, stackTrace) {
     startupLog.severe(
       "Failed to initialize RecurringTransactionsService",
+      e,
+      stackTrace,
+    );
+  }
+
+  try {
+    startupLog.fine("Initializing GoalsService");
+    GoalsService();
+  } catch (e, stackTrace) {
+    startupLog.severe(
+      "Failed to initialize GoalsService",
       e,
       stackTrace,
     );
