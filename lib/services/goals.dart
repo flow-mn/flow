@@ -130,6 +130,33 @@ class GoalsService {
     await LocalPreferences().notifiedGoals.set(notified.toList());
   }
 
+  /// Update or create a goal
+  /// Automatically resets notification state if target balance changes
+  Future<int> upsertGoal(Goal goal) async {
+    final Goal? existing = goal.id > 0 
+        ? await ObjectBox().box<Goal>().getAsync(goal.id)
+        : null;
+
+    // Reset notification if target balance changed
+    if (existing != null && existing.targetBalance != goal.targetBalance) {
+      await resetGoalNotification(goal.id);
+    }
+
+    return await ObjectBox().box<Goal>().putAsync(goal);
+  }
+
+  /// Delete a goal and clean up its notification state
+  Future<bool> deleteGoal(int goalId) async {
+    await resetGoalNotification(goalId);
+    return ObjectBox().box<Goal>().remove(goalId);
+  }
+
+  /// Manually check all goals for achievement
+  /// Useful for debugging or manual triggers
+  Future<void> checkGoalsNow() async {
+    await _checkAllGoalsForAchievement();
+  }
+
   /// Show a notification when a goal is achieved
   Future<void> _showGoalAchievedNotification(
     Goal goal,

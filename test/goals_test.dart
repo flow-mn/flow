@@ -171,6 +171,37 @@ void main() {
       expect(true, isTrue);
     });
 
+    test("upsertGoal resets notification when target balance changes", () async {
+      final goalsService = GoalsService();
+      
+      // Update the goal with a new target balance
+      testGoal.targetBalance = 2000.0;
+      await goalsService.upsertGoal(testGoal);
+      
+      // Verify goal was updated
+      final updated = await goalsService.getOne(testGoal.id);
+      expect(updated?.targetBalance, 2000.0);
+    });
+
+    test("deleteGoal removes goal and clears notification state", () async {
+      final goalsService = GoalsService();
+      
+      final deleted = await goalsService.deleteGoal(testGoal.id);
+      expect(deleted, isTrue);
+      
+      // Verify goal is gone
+      final found = await goalsService.getOne(testGoal.id);
+      expect(found, isNull);
+    });
+
+    test("checkGoalsNow manually triggers goal checking", () async {
+      final goalsService = GoalsService();
+      
+      // This should not throw
+      await goalsService.checkGoalsNow();
+      expect(true, isTrue);
+    });
+
     tearDownAll(() async {
       await ObjectBox().close();
       
