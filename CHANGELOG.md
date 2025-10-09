@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### New features
+
+* Account-based goals: Set financial targets for accounts and receive notifications when reached
+  - Supports both positive goals (savings targets) and negative goals (credit card limits)
+  - Automatic monitoring with smart notifications
+  - Closes issue about needing a "set goals" option
+
 ## 0.16.2
 
 ### New features
