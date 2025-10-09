@@ -61,6 +61,9 @@ class LocalPreferences {
   /// Used to prevent id collisions
   late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
 
+  /// List of goal IDs that have been notified as achieved
+  late final JsonSettingsEntry<List<int>> notifiedGoals;
+
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
 
@@ -148,6 +151,14 @@ class LocalPreferences {
       key: "notificationsIssuedCount",
       preferences: _prefs,
       initialValue: 0,
+    );
+
+    notifiedGoals = JsonSettingsEntry<List<int>>(
+      key: "notifiedGoals",
+      preferences: _prefs,
+      initialValue: [],
+      fromJson: (json) => (json as List).cast<int>(),
+      toJson: (data) => data,
     );
 
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(
