@@ -68,7 +68,6 @@ Future<List<XFile>?> pickMultipleMediaFiles({
     maxHeight: maxHeight,
     maxWidth: maxWidth,
     requestFullMetadata: false,
-    imageQuality: 99,
   );
 
   return xFiles;
