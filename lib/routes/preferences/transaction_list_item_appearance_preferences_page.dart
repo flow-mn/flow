@@ -42,7 +42,7 @@ class _TransactionListItemAppearancePreferencesPageState
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               ListHeader(
                 "preferences.transactions.listTile.preview".t(context),

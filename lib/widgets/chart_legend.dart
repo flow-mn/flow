@@ -17,7 +17,7 @@ class ChartLegend extends StatelessWidget {
           height: 16.0,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4.0),
+            borderRadius: .circular(4.0),
             border: Border.all(
               color: context.colorScheme.onSurface,
               width: 1.0,

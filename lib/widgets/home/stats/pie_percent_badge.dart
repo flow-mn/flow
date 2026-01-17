@@ -24,7 +24,7 @@ class PiePercentBadge extends StatelessWidget {
     required this.percent,
     this.color,
     this.backgroundColor,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
     this.padding = const EdgeInsets.all(8.0),
   });
 

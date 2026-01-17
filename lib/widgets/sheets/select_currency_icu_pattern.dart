@@ -56,7 +56,7 @@ class _SelectCurrencyIcuPatternState extends State<SelectCurrencyIcuPattern> {
         style: context.textTheme.displaySmall!,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: .center,
           spacing: 8.0,
           children: [
             Text(
@@ -82,7 +82,7 @@ class _SelectCurrencyIcuPatternState extends State<SelectCurrencyIcuPattern> {
         ),
       ),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,

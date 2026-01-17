@@ -25,6 +25,8 @@ class AccountCard extends StatelessWidget {
 
   final bool excludeTransfersInTotal;
 
+  final bool primary;
+
   final BorderRadius borderRadius;
 
   const AccountCard({
@@ -32,7 +34,8 @@ class AccountCard extends StatelessWidget {
     required this.account,
     required this.useCupertinoContextMenu,
     this.onTapOverride,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    this.primary = false,
+    this.borderRadius = const .all(Radius.circular(24.0)),
     required this.excludeTransfersInTotal,
   });
 
@@ -62,7 +65,7 @@ class AccountCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
@@ -74,16 +77,33 @@ class AccountCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8.0),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        account.name +
-                            (account.archived
-                                ? " (${"account.archived".t(context)})"
-                                : ""),
-                        style: context.textTheme.titleSmall,
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            if (primary)
+                              WidgetSpan(
+                                alignment: .middle,
+                                child: Icon(
+                                  Symbols.star_rounded,
+                                  size: context.textTheme.titleSmall?.fontSize,
+                                  color: context.colorScheme.primary,
+                                ),
+                              ),
+                            TextSpan(
+                              text:
+                                  account.name +
+                                  (account.archived
+                                      ? " (${"account.archived".t(context)})"
+                                      : ""),
+                            ),
+                          ],
+                          style: context.textTheme.titleSmall,
+                        ),
                       ),
+
                       MoneyText(
                         account.balance,
                         style: context.textTheme.displaySmall,
@@ -93,7 +113,7 @@ class AccountCard extends StatelessWidget {
                 ],
               ),
               if (!account.archived) ...[
-                const SizedBox(height: 24.0),
+                const SizedBox(height: 16.0),
                 Text(
                   "account.thisMonth".t(context),
                   style: context.textTheme.bodyLarge,
@@ -152,7 +172,7 @@ class AccountCard extends StatelessWidget {
           onPressed: () {
             context.pop();
             SchedulerBinding.instance.addPostFrameCallback((_) {
-              context.push("/account/${account.id}");
+              context.push("/account/${account.id}/edit");
             });
           },
           isDefaultAction: true,

@@ -1,4 +1,3 @@
-import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -6,6 +5,7 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:permission_handler/permission_handler.dart";
 
 final Logger _log = Logger("NotificationPermissionMissingReminder");
 
@@ -27,7 +27,7 @@ class _NotificationPermissionMissingReminderState
       onTap: openNotificationsSettings,
       child: Frame.standalone(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: .center,
           children: [
             Icon(
               Symbols.warning_rounded,
@@ -54,9 +54,9 @@ class _NotificationPermissionMissingReminderState
     );
   }
 
-  void openNotificationsSettings() {
+  void openNotificationsSettings() async {
     try {
-      AppSettings.openAppSettings(type: AppSettingsType.notification);
+      await openAppSettings();
     } catch (error) {
       _log.warning("Failed to open app settings: $error", error);
     }

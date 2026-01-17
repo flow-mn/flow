@@ -19,7 +19,7 @@ class _ICloudFailedErrorBoxState extends State<ICloudFailedErrorBox> {
       onTap: openSettings,
       child: Frame.standalone(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: .center,
           children: [
             Icon(
               Symbols.error_circle_rounded,
@@ -60,7 +60,7 @@ class _ICloudFailedErrorBoxState extends State<ICloudFailedErrorBox> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             spacing: 16.0,
             children: [
               ...List.generate(3, (index) {

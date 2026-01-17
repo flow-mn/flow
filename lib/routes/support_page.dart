@@ -21,7 +21,7 @@ class SupportPage extends StatelessWidget {
   );
 
   static const ShapeBorder cardShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+    borderRadius: .all(Radius.circular(16.0)),
   );
 
   const SupportPage({super.key});

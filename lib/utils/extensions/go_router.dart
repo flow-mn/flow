@@ -1,6 +1,10 @@
 // Ongoing issue about lack of `popUntil`
 // https://github.com/flutter/flutter/issues/131625
+import "package:flutter/widgets.dart";
 import "package:go_router/go_router.dart";
+import "package:logging/logging.dart";
+
+final Logger _log = Logger("GoRouterExt");
 
 extension GoRouterExt on GoRouter {
   void popUntil(bool Function(GoRoute) predicate) {
@@ -17,6 +21,32 @@ extension GoRouterExt on GoRouter {
           pop();
         }
       }
+    }
+  }
+}
+
+extension GoRouterContextExt on BuildContext {
+  String get location {
+    final GoRouter router = GoRouter.of(this);
+
+    final RouteMatch lastMatch =
+        router.routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches
+        : router.routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+    return location;
+  }
+
+  void safePush(String path) {
+    try {
+      if (location != path) {
+        push(path);
+      } else {
+        _log.fine("Not navigating to the same path: $path");
+      }
+    } catch (e) {
+      push(path);
     }
   }
 }

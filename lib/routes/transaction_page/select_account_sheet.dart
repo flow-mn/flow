@@ -56,7 +56,7 @@ class _SelectAccountSheetState extends State<SelectAccountSheet> {
       ),
       trailing: widget.accounts.isEmpty
           ? ModalOverflowBar(
-              alignment: MainAxisAlignment.end,
+              alignment: .end,
               children: [
                 Button(
                   onTap: () => context.pop(),

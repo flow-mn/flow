@@ -65,11 +65,9 @@ class LocalAuthService {
     try {
       final bool success = await _localAuth.authenticate(
         localizedReason: "general.unlockToOpen".tr(),
-        options: AuthenticationOptions(
-          sensitiveTransaction: true,
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+        sensitiveTransaction: true,
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
       );
 
       _log.fine("Authentication result: $success");

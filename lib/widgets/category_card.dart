@@ -37,7 +37,7 @@ class CategoryCard extends StatelessWidget {
     this.rates,
     this.showAmount = true,
     this.excludeTransfersInTotal = true,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   });
 
   @override
@@ -78,7 +78,7 @@ class CategoryCard extends StatelessWidget {
             const SizedBox(width: 12.0),
             Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 Text(category.name, style: context.textTheme.titleSmall),
                 if (showAmount)

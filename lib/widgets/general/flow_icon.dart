@@ -43,7 +43,7 @@ class FlowIcon extends StatelessWidget {
     this.size = 24.0,
     this.fill = 1.0,
     this.plated = false,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
     this.platePadding = const EdgeInsets.all(8.0),
     this.onTap,
     this.onLongPress,
@@ -88,9 +88,7 @@ class FlowIcon extends StatelessWidget {
         fill: fill,
       ),
       ImageFlowIcon image => ClipRRect(
-        borderRadius: borderRadius.subtract(
-          BorderRadius.circular(platePadding.top),
-        ),
+        borderRadius: borderRadius.subtract(.circular(platePadding.top)),
         child: Image.file(
           File(join(ObjectBox.appDataDirectory, image.imagePath)),
           width: size,

@@ -45,7 +45,7 @@ class _SetupProfilePhotoPageState extends State<SetupProfilePhotoPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: .center,
               children: [
                 ProfilePicture(
                   key: ValueKey(_profilePictureUpdateCounter),

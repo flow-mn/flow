@@ -142,14 +142,14 @@ class TransactionListTile extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 spacing: effectiveTheme.spacingOrDefault,
                 children: [
                   buildLeading(context, effectiveTheme),
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       spacing: effectiveTheme.titleSpacingOrDefault,
                       children: [
                         RichText(
@@ -177,7 +177,7 @@ class TransactionListTile extends StatelessWidget {
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: .end,
                     spacing: effectiveTheme.titleSpacingOrDefault,
                     children: [
                       MoneyText(
@@ -227,7 +227,7 @@ class TransactionListTile extends StatelessWidget {
               if (showPendingConfirmation) ...[
                 SizedBox(height: effectiveTheme.spacingOrDefault),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: .end,
                   children: [
                     TextButton.icon(
                       onPressed: () => confirmFn!(),

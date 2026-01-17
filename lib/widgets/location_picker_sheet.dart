@@ -54,7 +54,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       title: Text("general.selectLocation".t(context)),
       scrollableContentMaxHeight: MediaQuery.of(context).size.height * .8,
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(Optional<LatLng>(null)),

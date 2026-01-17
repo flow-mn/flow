@@ -91,7 +91,7 @@ class _SelectImageFlowIconSheetState extends State<SelectImageFlowIconSheet> {
       child: ModalSheet(
         title: Text("flowIcon.type.image".t(context)),
         trailing: ModalOverflowBar(
-          alignment: MainAxisAlignment.end,
+          alignment: .end,
           children: [
             TextButton.icon(
               onPressed: () => context.pop(value),

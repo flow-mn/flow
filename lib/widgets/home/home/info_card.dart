@@ -21,12 +21,12 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Surface(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      shape: RoundedRectangleBorder(borderRadius: .circular(16.0)),
       builder: (BuildContext context) => Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(

@@ -1,6 +1,6 @@
+import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/prefs/change_visuals.dart";
 import "package:flow/entity/_base.dart";
-import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
@@ -69,6 +69,8 @@ class UserPreferences implements EntityBase {
 
   String? primaryCurrency;
 
+  String? primaryAccountUuid;
+
   /// In hours, set as `null` to disable
   int? autoBackupIntervalInHours;
 
@@ -112,31 +114,31 @@ class UserPreferences implements EntityBase {
 
   @Transient()
   @JsonKey(includeToJson: false, includeFromJson: false)
-  List<TransactionType> get transactionButtonOrder {
+  List<FlowButtonType> get transactionButtonOrder {
     try {
       if (transactionButtonOrderJoined == null ||
           transactionButtonOrderJoined!.isEmpty) {
         throw StateError("transactionButtonOrderJoined is null or empty");
       }
 
-      final List<TransactionType> parsed = transactionButtonOrderJoined!
+      final List<FlowButtonType> parsed = transactionButtonOrderJoined!
           .split(",")
           .map(
-            (e) => TransactionType.values.firstWhere((type) => type.value == e),
+            (e) => FlowButtonType.values.firstWhere((type) => type.value == e),
           )
           .toList();
 
-      if (parsed.length != TransactionType.values.length) {
-        throw StateError("Parsed transactionButtonOrder length mismatch");
+      if (parsed.length < 3) {
+        throw StateError("Must have at least 3 options");
       }
 
       return parsed;
     } catch (e) {
-      return TransactionType.values.toList();
+      return FlowButtonType.values.where((value) => value != .eny).toList();
     }
   }
 
-  set transactionButtonOrder(List<TransactionType> order) {
+  set transactionButtonOrder(List<FlowButtonType> order) {
     transactionButtonOrderJoined = order.map((e) => e.value).join(",");
   }
 
@@ -156,6 +158,7 @@ class UserPreferences implements EntityBase {
     this.autoBackupIntervalInHours = 72,
     this.icuCurrencyFormattingPattern,
     this.primaryCurrency,
+    this.primaryAccountUuid,
     this.transactionButtonOrderJoined,
     this.remindDailyAtRelativeSeconds,
     this.themeName,

@@ -16,7 +16,7 @@ class InfoText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: .center,
       children: [
         Icon(icon, fill: 0, color: context.flowColors.semi, size: 16.0),
         const SizedBox(width: 4.0),

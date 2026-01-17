@@ -1,6 +1,5 @@
 import "dart:io";
 
-import "package:app_settings/app_settings.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/extensions/toast.dart";
@@ -9,6 +8,7 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/geo_permission_missing_reminder.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
+import "package:permission_handler/permission_handler.dart";
 
 class TransactionGeoPreferencesPage extends StatefulWidget {
   const TransactionGeoPreferencesPage({super.key});
@@ -67,7 +67,7 @@ class _TransactionGeoPreferencesPageState
           return SingleChildScrollView(
             child: SafeArea(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   const SizedBox(height: 16.0),
                   SwitchListTile(
@@ -130,7 +130,7 @@ class _TransactionGeoPreferencesPageState
       case LocationPermission.unableToDetermine:
         if (!retryAfterOpeningSettings) return false;
 
-        await AppSettings.openAppSettings(type: AppSettingsType.location);
+        await openAppSettings();
         return await tryRequestPermission(false);
       case LocationPermission.denied:
         break;

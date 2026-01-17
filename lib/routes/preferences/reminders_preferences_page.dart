@@ -66,7 +66,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
           return SingleChildScrollView(
             child: SafeArea(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   if (!NotificationsService.schedulingSupported) ...[
                     const SizedBox(height: 16.0),
@@ -119,7 +119,7 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                       const SizedBox(height: 8.0),
                       Frame(
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: .circular(8.0),
                           onTap: () => updateRemindDailyAt(h, m),
                           child: Container(
                             padding: EdgeInsets.symmetric(

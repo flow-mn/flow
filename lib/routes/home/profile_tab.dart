@@ -35,7 +35,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           const SizedBox(height: 24.0),
           const Center(child: ProfileCard()),
@@ -196,7 +196,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           Center(
             child: InkWell(
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: .circular(8.0),
               onTap: () => openUrl(maintainerGitHubLink),
               child: Opacity(
                 opacity: 0.5,

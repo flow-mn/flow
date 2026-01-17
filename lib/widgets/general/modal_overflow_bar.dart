@@ -26,7 +26,7 @@ class ModalOverflowBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding.copyWith(bottom: 4.0),
+      padding: padding.copyWith(bottom: 8.0),
       child: SafeArea(
         top: false,
         child: OverflowBar(

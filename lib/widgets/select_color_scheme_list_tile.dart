@@ -59,7 +59,7 @@ class _SelectColorSchemeListTileState extends State<SelectColorSchemeListTile> {
                   height: 20.0,
                   decoration: BoxDecoration(
                     color: colorScheme!.primary,
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: .circular(10.0),
                   ),
                   duration: const Duration(milliseconds: 200),
                 ),

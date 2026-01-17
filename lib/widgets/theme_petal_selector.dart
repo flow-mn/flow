@@ -217,7 +217,7 @@ class _ThemePetalSelectorState extends State<ThemePetalSelector>
                                 });
                               }
                             },
-                            borderRadius: BorderRadius.circular(999.0),
+                            borderRadius: .circular(999.0),
                             child: Container(
                               width: middleButtonSize,
                               height: middleButtonSize,

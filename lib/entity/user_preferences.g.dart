@@ -30,6 +30,7 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         icuCurrencyFormattingPattern:
             json['icuCurrencyFormattingPattern'] as String?,
         primaryCurrency: json['primaryCurrency'] as String?,
+        primaryAccountUuid: json['primaryAccountUuid'] as String?,
         transactionButtonOrderJoined:
             json['transactionButtonOrderJoined'] as String?,
         remindDailyAtRelativeSeconds:
@@ -59,6 +60,7 @@ Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
           instance.transactionListTileRelaxedDensity,
       'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
       'primaryCurrency': instance.primaryCurrency,
+      'primaryAccountUuid': instance.primaryAccountUuid,
       'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
       'enableICloudSync': instance.enableICloudSync,
       'iCloudBackupsToKeep': instance.iCloudBackupsToKeep,

@@ -1,10 +1,9 @@
-import "package:flow/entity/transaction.dart";
-import "package:flow/theme/theme.dart";
+import "package:flow/data/flow_button_type.dart";
 import "package:flutter/material.dart";
 
 class TransactionTypeButton extends StatelessWidget {
   final double opacity;
-  final TransactionType type;
+  final FlowButtonType type;
 
   const TransactionTypeButton({
     super.key,

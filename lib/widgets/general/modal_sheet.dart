@@ -42,7 +42,7 @@ class ModalSheet extends StatelessWidget {
     this.trailing,
     this.topMargin = 40.0,
     this.titleSpacing = 16.0,
-    this.leadingSpacing = 8.0,
+    this.leadingSpacing = 16.0,
     this.trailingSpacing = 8.0,
   }) : scrollable = false,
        scrollableContentMaxHeight = 0,
@@ -60,7 +60,7 @@ class ModalSheet extends StatelessWidget {
     this.minScrollableContentHeight = 64.0,
     this.topMargin = 40.0,
     this.titleSpacing = 16.0,
-    this.leadingSpacing = 8.0,
+    this.leadingSpacing = 16.0,
     this.trailingSpacing = 8.0,
     this.scrollableContentMaxHeight = 0.0,
   }) : scrollable = true;
@@ -97,7 +97,7 @@ class ModalSheet extends StatelessWidget {
                 height: 6.0,
                 decoration: BoxDecoration(
                   color: context.colorScheme.onSurface.withAlpha(0x80),
-                  borderRadius: BorderRadius.circular(24.0),
+                  borderRadius: .circular(24.0),
                 ),
               ),
             SizedBox(height: titleSpacing),

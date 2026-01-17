@@ -6,6 +6,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/navigation.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/money_text_builder.dart";
@@ -78,6 +79,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     final Widget title =
         widget.titleOverride ??
         GestureDetector(
+          onLongPress: _handleRangeTextLongPress,
           onTap: _handleRangeTextTap,
           child: Text(_getRangeTitle()),
         );
@@ -119,13 +121,13 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
         return Row(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: .spaceBetween,
+          crossAxisAlignment: .center,
           children: [
             Flexible(
               fit: FlexFit.tight,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DefaultTextStyle(
@@ -182,6 +184,16 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     }
 
     setState(() {});
+  }
+
+  void _handleRangeTextLongPress() {
+    if (LocalPreferences().enableHapticFeedback.get()) {
+      HapticFeedback.mediumImpact();
+    }
+
+    NavigationService().add(
+      "/transaction/new?transactionDate=${widget.range.from.toIso8601String()}",
+    );
   }
 
   String _getRangeTitle() {

@@ -25,7 +25,7 @@ class DebugThemePage extends StatelessWidget {
       appBar: AppBar(title: const Text("Debug Theme Page")),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             ListHeader("Update theme"),
             const SizedBox(height: 12.0),

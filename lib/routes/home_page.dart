@@ -1,15 +1,17 @@
 import "dart:async";
 import "dart:developer";
 
+import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/entity/account.dart";
-import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/routes.dart";
 import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
 import "package:flow/routes/home/profile_tab.dart";
 import "package:flow/routes/home/stats_tab.dart";
+import "package:flow/services/navigation.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/shortcut.dart";
@@ -40,6 +42,8 @@ class _HomePageState extends State<HomePage>
 
   late int _currentIndex;
 
+  bool _navigationListenerRegistered = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,8 +61,13 @@ class _HomePageState extends State<HomePage>
       });
     });
 
-    Future.delayed(const Duration(milliseconds: 200)).then((_) {
+    Future.delayed(const Duration(milliseconds: 250)).then((_) {
       if (!mounted) return;
+
+      NavigationService().pendingStack.addListener(
+        _consumeNextPendingNavigation,
+      );
+      _navigationListenerRegistered = true;
 
       if (LocalPreferences().completedInitialSetup.get()) return;
 
@@ -81,27 +90,11 @@ class _HomePageState extends State<HomePage>
       try {
         if (NotificationsService().ready &&
             NotificationsService().notificationAppLaunchDetails != null) {
-          final NotificationResponse? response = NotificationsService()
-              .notificationAppLaunchDetails!
-              .notificationResponse;
-
-          if (response == null || response.payload == null) {
-            throw "No notification payload";
-          }
-
-          final FlowNotificationPayload parsed = FlowNotificationPayload.parse(
-            response.payload!,
+          _pushNotificationPath(
+            NotificationsService()
+                .notificationAppLaunchDetails!
+                .notificationResponse!,
           );
-
-          switch (parsed.itemType) {
-            case FlowNotificationPayloadItemType.transaction:
-              SchedulerBinding.instance.addPostFrameCallback((_) {
-                context.push("/transaction/${parsed.id}");
-              });
-              return;
-            case FlowNotificationPayloadItemType.reminder:
-              return;
-          }
         }
       } catch (e) {
         log(
@@ -113,12 +106,18 @@ class _HomePageState extends State<HomePage>
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       NotificationsService().addCallback(_pushNotificationPath);
+      _consumeNextPendingNavigation();
     });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    if (_navigationListenerRegistered) {
+      NavigationService().pendingStack.removeListener(
+        _consumeNextPendingNavigation,
+      );
+    }
     NotificationsService().removeCallback(_pushNotificationPath);
     super.dispose();
   }
@@ -194,21 +193,25 @@ class _HomePageState extends State<HomePage>
     _tabController.animateTo(index);
   }
 
-  void _newTransactionPage(TransactionType? type) {
+  void _newTransactionPage(FlowButtonType? type) {
     // Generally, this wouldn't happen in production environment
     if (ObjectBox().box<Account>().count(limit: 1) == 0) {
       context.push("/account/new");
       return;
     }
 
-    type ??= TransactionType.expense;
+    type ??= FlowButtonType.expense;
 
     context.push("/transaction/new?type=${type.value}");
   }
 
   void _pushNotificationPath(NotificationResponse response) {
     try {
-      if (response.payload == null) throw "Payload is null";
+      if (response.payload == null || response.payload == "") {
+        NavigationService().add("/accounts");
+        return;
+        // throw "Payload is null";
+      }
 
       final FlowNotificationPayload parsed = FlowNotificationPayload.parse(
         response.payload!,
@@ -216,13 +219,38 @@ class _HomePageState extends State<HomePage>
 
       switch (parsed.itemType) {
         case FlowNotificationPayloadItemType.transaction:
-          context.push("/transaction/${parsed.id}");
+          NavigationService().add("/transaction/${parsed.id}");
           return;
         case FlowNotificationPayloadItemType.reminder:
           return;
       }
     } catch (e) {
       log("Failed to push notification path", error: e);
+    }
+  }
+
+  void _consumeNextPendingNavigation() async {
+    await NavigationService().consume(_consumePendingNavigation);
+  }
+
+  Future<bool> _consumePendingNavigation(String path) async {
+    try {
+      final BuildContext? globalNavigatorContext =
+          globalNavigatorKey.currentState?.context;
+      if (globalNavigatorContext == null) {
+        throw "Global navigator context is null";
+      }
+
+      final goRouter = GoRouter.maybeOf(globalNavigatorContext);
+      if (goRouter == null) {
+        throw "GoRouter is null";
+      }
+
+      await goRouter.push(path);
+
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

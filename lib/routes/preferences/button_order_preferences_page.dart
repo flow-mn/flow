@@ -1,7 +1,7 @@
 import "dart:developer";
 
 import "package:dotted_border/dotted_border.dart";
-import "package:flow/entity/transaction.dart";
+import "package:flow/data/flow_button_type.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -27,7 +27,7 @@ class ButtonOrderPreferencesPageState
 
   @override
   Widget build(BuildContext context) {
-    final List<TransactionType> transactionButtonOrder =
+    final List<FlowButtonType> transactionButtonOrder =
         UserPreferencesService().transactionButtonOrder;
 
     return Scaffold(
@@ -39,7 +39,7 @@ class ButtonOrderPreferencesPageState
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 const SizedBox(height: 16.0),
                 InfoText(
@@ -49,11 +49,11 @@ class ButtonOrderPreferencesPageState
                 ),
                 const SizedBox(height: 16.0),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: transactionButtonOrder
                       .map(
                         (transactionType) => Container(
-                          margin: EdgeInsets.only(
+                          margin: .only(
                             left: 8.0,
                             right: 8.0,
                             top:
@@ -65,9 +65,9 @@ class ButtonOrderPreferencesPageState
                                 : 0.0,
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(widget.radius),
+                            borderRadius: .all(widget.radius),
                           ),
-                          clipBehavior: Clip.none,
+                          clipBehavior: .none,
                           child: DottedBorder(
                             options: RoundedRectDottedBorderOptions(
                               color: Theme.of(
@@ -75,10 +75,10 @@ class ButtonOrderPreferencesPageState
                               ).dividerColor.withAlpha(0x80),
                               strokeWidth: 4.0,
                               radius: widget.radius,
-                              strokeCap: StrokeCap.round,
+                              strokeCap: .round,
                               dashPattern: const [6.0, 10.0],
                             ),
-                            child: DragTarget<TransactionType>(
+                            child: DragTarget<FlowButtonType>(
                               onWillAcceptWithDetails: (details) =>
                                   details.data != transactionType,
                               onAcceptWithDetails: (details) => swap(
@@ -87,12 +87,12 @@ class ButtonOrderPreferencesPageState
                                 transactionType,
                               ),
                               builder: (context, candidateData, rejectedData) {
-                                final List<TransactionType> candidates =
+                                final List<FlowButtonType> candidates =
                                     candidateData.nonNulls.toList();
 
                                 return Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Draggable<TransactionType>(
+                                  child: Draggable<FlowButtonType>(
                                     data: transactionType,
                                     childWhenDragging: TransactionTypeButton(
                                       type: transactionType,
@@ -125,9 +125,9 @@ class ButtonOrderPreferencesPageState
   }
 
   void swap(
-    List<TransactionType> order,
-    TransactionType a,
-    TransactionType b,
+    List<FlowButtonType> order,
+    FlowButtonType a,
+    FlowButtonType b,
   ) async {
     if (busy) return;
 
@@ -155,7 +155,7 @@ class ButtonOrderPreferencesPageState
   }
 
   void onReorder(
-    List<TransactionType> transactionButtonOrder,
+    List<FlowButtonType> transactionButtonOrder,
     int oldIndex,
     int newIndex,
   ) async {
@@ -163,7 +163,7 @@ class ButtonOrderPreferencesPageState
       newIndex -= 1;
     }
 
-    final TransactionType removed = transactionButtonOrder.removeAt(oldIndex);
+    final FlowButtonType removed = transactionButtonOrder.removeAt(oldIndex);
     transactionButtonOrder.insert(newIndex, removed);
 
     UserPreferencesService().transactionButtonOrder = transactionButtonOrder;

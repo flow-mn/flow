@@ -84,7 +84,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
       children: [
         ListTile(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text("select.recurrence".t(context)),
               IgnorePointer(
@@ -117,7 +117,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
         ),
         ListTile(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text("select.recurrence.from".t(context)),
               Opacity(
@@ -131,7 +131,7 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
         ),
         ListTile(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text("select.recurrence.until".t(context)),
               Opacity(

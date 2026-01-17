@@ -74,7 +74,7 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
     return ModalSheet.scrollable(
       title: Text("select.contact".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<Contact>(null)),

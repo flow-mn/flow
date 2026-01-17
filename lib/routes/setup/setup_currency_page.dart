@@ -1,5 +1,5 @@
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -117,7 +117,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
     });
   }
 
-  void save() {
+  void save() async {
     if (_currency == null) {
       error = "error.input.mustBeNotEmpty".t(context);
 
@@ -126,8 +126,10 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
       return;
     }
 
-    LocalPreferences().primaryCurrency.set(_currency!);
+    UserPreferencesService().primaryCurrency = _currency!;
 
-    context.push("/setup/accounts");
+    if (!mounted) return;
+
+    await context.push("/setup/accounts");
   }
 }

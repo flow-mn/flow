@@ -16,7 +16,7 @@ class ProfileCard extends StatelessWidget {
   const ProfileCard({
     super.key,
     this.size = 100.0,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   });
 
   @override
@@ -37,7 +37,7 @@ class ProfileCard extends StatelessWidget {
               vertical: 4.0,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: .center,
               children: [
                 Hero(
                   tag: "pfp",

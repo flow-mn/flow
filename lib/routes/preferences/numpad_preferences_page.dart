@@ -22,7 +22,7 @@ class _NumpadPreferencesPageState extends State<NumpadPreferencesPage> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 16.0),
               ListHeader("preferences.numpad.layout".t(context)),

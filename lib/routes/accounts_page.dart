@@ -20,6 +20,8 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
+  String? primaryAccountUuid;
+
   bool excludeTransfersInTotal = false;
 
   QueryBuilder<Account> qb() =>
@@ -29,15 +31,16 @@ class _AccountsPageState extends State<AccountsPage> {
   void initState() {
     super.initState();
 
+    _onUserPreferencesChange();
     UserPreferencesService().valueNotifier.addListener(
-      _updateExcludeTransfersInTotal,
+      _onUserPreferencesChange,
     );
   }
 
   @override
   void dispose() {
     UserPreferencesService().valueNotifier.removeListener(
-      _updateExcludeTransfersInTotal,
+      _onUserPreferencesChange,
     );
     super.dispose();
   }
@@ -73,6 +76,7 @@ class _AccountsPageState extends State<AccountsPage> {
                         (account) => Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: AccountCard(
+                            primary: account.uuid == primaryAccountUuid,
                             account: account,
                             useCupertinoContextMenu: Platform.isIOS,
                             excludeTransfersInTotal: excludeTransfersInTotal,
@@ -101,10 +105,17 @@ class _AccountsPageState extends State<AccountsPage> {
     );
   }
 
-  void _updateExcludeTransfersInTotal() {
-    setState(() {
-      excludeTransfersInTotal =
-          UserPreferencesService().excludeTransfersFromFlow;
-    });
+  void _onUserPreferencesChange() {
+    excludeTransfersInTotal = UserPreferencesService().excludeTransfersFromFlow;
+
+    try {
+      primaryAccountUuid = UserPreferencesService().primaryAccountUuid;
+    } catch (e) {
+      //
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

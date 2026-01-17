@@ -13,7 +13,7 @@ class ContributorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => openUrl(Uri.parse(contributor.htmlUrl)),
-      borderRadius: BorderRadius.circular(8.0),
+      borderRadius: .circular(8.0),
       child: Material(
         type: MaterialType.transparency,
         shape: StadiumBorder(),

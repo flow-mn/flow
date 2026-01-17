@@ -58,6 +58,7 @@ final Map<String, String> themeNames = {
 
   // Standalones
   "palenight": "Material - Palenight",
+  "monochrome": "Monochrome",
 
   // Catppuccin
   "catppuccinFlamingoFrappe": "Catppuccin Frappé - Flamingo",

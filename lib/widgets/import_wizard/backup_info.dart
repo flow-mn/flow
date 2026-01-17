@@ -20,14 +20,16 @@ class BackupInfo extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => switch (importer) {
-    ImportV1 v1 => BackupInfoV1(importer: v1, onClickStart: onClickStart),
-    ImportV2 v2 => BackupInfoV2(importer: v2, onClickStart: onClickStart),
-    ImportCSV csv => BackupInfoCSV(importer: csv, onClickStart: onClickStart),
-    IvyWalletCsvImporter ivyImporter => BackupInfoIvyWalletCsv(
-      importer: ivyImporter,
-      onClickStart: onClickStart,
-    ),
-    _ => Container(),
-  };
+  Widget build(BuildContext context) {
+    return switch (importer) {
+      ImportV1 v1 => BackupInfoV1(importer: v1, onClickStart: onClickStart),
+      ImportV2 v2 => BackupInfoV2(importer: v2, onClickStart: onClickStart),
+      ImportCSV csv => BackupInfoCSV(importer: csv, onClickStart: onClickStart),
+      IvyWalletCsvImporter ivyImporter => BackupInfoIvyWalletCsv(
+        importer: ivyImporter,
+        onClickStart: onClickStart,
+      ),
+      _ => Container(),
+    };
+  }
 }

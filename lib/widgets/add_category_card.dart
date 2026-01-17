@@ -11,7 +11,7 @@ class AddCategoryCard extends StatelessWidget {
 
   const AddCategoryCard({super.key, this.onTapOverride});
 
-  static BorderRadius borderRadius = BorderRadius.circular(16.0);
+  static BorderRadius borderRadius = .circular(16.0);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class AddCategoryCard extends StatelessWidget {
             const SizedBox(width: 12.0),
             Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [Text("category.new".t(context))],
             ),
             const Spacer(),

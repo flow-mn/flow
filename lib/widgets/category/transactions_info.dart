@@ -29,7 +29,7 @@ class TransactionsInfo extends StatelessWidget {
         var align = Align(
           alignment: AlignmentDirectional.centerStart,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Text(flow.formatted, style: context.textTheme.displaySmall),
               Text(

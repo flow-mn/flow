@@ -48,7 +48,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
     return ModalSheet.scrollable(
       title: Text("transactionFilterPreset.saveAsNew".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,
@@ -65,7 +65,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             const SizedBox(height: 16.0),
             Frame(

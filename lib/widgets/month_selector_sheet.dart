@@ -34,7 +34,7 @@ class _MonthSelectorSheetState extends State<MonthSelectorSheet> {
     return ModalSheet(
       title: Text("select.time.select.month".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton(
             onPressed: () => setState(() {

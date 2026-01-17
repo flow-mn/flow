@@ -63,7 +63,7 @@ class _SelectMultiAccountSheetState extends State<SelectMultiAccountSheet> {
         widget.titleOverride ?? "transaction.edit.selectAccount".t(context),
       ),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<Account>[]),

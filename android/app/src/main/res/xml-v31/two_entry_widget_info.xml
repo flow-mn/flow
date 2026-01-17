@@ -1,0 +1,7 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+  android:minWidth="80dp"
+  android:minHeight="40dp"
+  android:targetCellHeight="1"
+  android:targetCellWidth="2"
+  android:initialLayout="@layout/glance_default_loading_layout">
+</appwidget-provider>

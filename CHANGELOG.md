@@ -1,5 +1,66 @@
 # Changelog
 
+## 0.17.0
+
+### New features
+
+* Now you can configure transaction entry flows
+* Added more fields to programmable object.
+* Now you can import multiple transactions at once with [programmable URL](./README.md#adding-multiple-transactions)
+* Now there's a concept of primary accounts, closes [#624](https://github.com/flow-mn/flow/issues/624)
+
+## 0.16.6
+
+### New features
+
+* Now you can select categories when exporting PDFs
+* New theme: Monochrome for those who resemble Wednesday
+
+### Fixes
+
+* Android widget now opens the app (I'm really sorry, it was working when I tested)
+
+## 0.16.5
+
+### New features
+
+* Now we have our initial widget for Android, yey!
+* Home widgets now respects the Button Order settings.
+* Long-pressing on a date will prompt you to create a new transaction,
+  closes [#617](https://github.com/flow-mn/flow/issues/617)
+
+### Fixes
+
+* Text selection is now transparent in the markdown editor
+
+## 0.16.4
+
+### New features
+
+* Now we have a very basic iOS widget, which I plan to improve later, part of
+  [#411](https://github.com/flow-mn/flow/issues/411)
+* Now you can search accounts in the accounts tab if you have more than
+  4 accounts, closes [#607](https://github.com/flow-mn/flow/issues/607)
+
+### Fixes
+
+* Fixed setup preset accounts always having USD currency thanks to Duluu
+* Fixed long text getting clipped in home screen actionable reminders [#608](https://github.com/flow-mn/flow/issues/608)
+* Other minor fixes, UX/QoL improvements;
+
+## 0.16.3
+
+### New features
+
+* We have a better editor for the notes/description now, yayy. Closes [#323](https://github.com/flow-mn/flow/issues/323)
+* Added Czech language support thanks to **Miloš Koliáš** through email.
+* Added Flow to the home page.
+
+### Fixes
+
+* Fixed opening external links on Android, closes [#600](https://github.com/flow-mn/flow/issues/600)
+* Other UX/QoL fixes and improvements
+
 ## 0.16.2
 
 ### New features
@@ -16,10 +77,12 @@
 ### Fixes
 
 * Small QoL fixes regarding modal bottom sheets
+* Fixed translation for attachment/pending filters
+* [iOS] Fixed "Take a photo" option when attaching files in iOS/iPadOS
 
 ## 0.16.1
 
-* [REDACTED]
+* Exactly same as 0.16.0
 
 ## 0.16.0
 

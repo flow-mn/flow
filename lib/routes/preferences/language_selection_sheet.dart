@@ -15,7 +15,7 @@ class LanguageSelectionSheet extends StatelessWidget {
     return ModalSheet.scrollable(
       title: Text("preferences.language.choose".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(),

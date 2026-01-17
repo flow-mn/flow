@@ -32,7 +32,7 @@ class _SelectGroupRangeSheetState extends State<SelectGroupRangeSheet> {
     return ModalSheet.scrollable(
       title: Text("transactions.query.filter.groupBy".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,

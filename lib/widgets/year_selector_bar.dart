@@ -27,7 +27,7 @@ class YearSelectorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: .center,
       mainAxisSize: MainAxisSize.max,
       children: [
         IconButton(

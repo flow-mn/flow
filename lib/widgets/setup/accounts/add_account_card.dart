@@ -12,7 +12,7 @@ class AddAccountCard extends StatelessWidget {
 
   const AddAccountCard({
     super.key,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    this.borderRadius = const .all(Radius.circular(24.0)),
   });
 
   @override
@@ -25,7 +25,7 @@ class AddAccountCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(

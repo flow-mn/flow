@@ -29,11 +29,36 @@ class _AccountsTabState extends State<AccountsTab>
     with AutomaticKeepAliveClientMixin {
   bool _reordering = false;
 
+  final TextEditingController _searchController = TextEditingController();
+
+  String get _searchQuery => _searchController.text.trim();
+
+  String? primaryAccountUuid;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _updatePrimaryAccountUuid();
+    UserPreferencesService().valueNotifier.addListener(
+      _updatePrimaryAccountUuid,
+    );
+  }
+
+  @override
+  void dispose() {
+    UserPreferencesService().valueNotifier.removeListener(
+      _updatePrimaryAccountUuid,
+    );
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    final accounts = AccountsProvider.of(context).activeAccounts;
+    final List<Account> accounts = AccountsProvider.of(context).activeAccounts;
     final bool ready = AccountsProvider.of(context).ready;
 
     if (!ready) {
@@ -43,14 +68,21 @@ class _AccountsTabState extends State<AccountsTab>
     return switch (accounts.length) {
       0 => const NoAccounts(),
       _ => Column(
+        spacing: 16.0,
         children: [
-          const SizedBox(height: 16.0),
-          Frame(child: buildHeader(context)),
+          SizedBox.shrink(),
+          Frame(child: buildHeader(context, hasSearchBar: accounts.length > 4)),
           ValueListenableBuilder(
             valueListenable: UserPreferencesService().valueNotifier,
             builder: (context, userPreferences, child) {
               final bool excludeTransfersInTotal =
                   userPreferences.excludeTransfersFromFlow;
+
+              final bool hasQuery = !_reordering && _searchQuery.isNotEmpty;
+
+              final List<Account> searchResult = hasQuery
+                  ? simpleSortByQuery(accounts, _searchQuery)
+                  : accounts;
 
               return Expanded(
                 child: _reordering
@@ -63,6 +95,8 @@ class _AccountsTabState extends State<AccountsTab>
                             child: AccountCard(
                               account: accounts[index],
                               useCupertinoContextMenu: false,
+                              primary:
+                                  accounts[index].uuid == primaryAccountUuid,
                               excludeTransfersInTotal:
                                   excludeTransfersInTotal == true,
                             ),
@@ -74,18 +108,16 @@ class _AccountsTabState extends State<AccountsTab>
                         ),
                       )
                     : ListView(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0).copyWith(top: 0.0),
                         children: [
-                          TotalBalance(),
-                          const SizedBox(height: 16.0),
-                          Divider(),
-                          const SizedBox(height: 16.0),
-                          ...accounts.map(
+                          ...searchResult.map(
                             (account) => Padding(
+                              key: ValueKey("account-card-${account.uuid}"),
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: AccountCard(
                                 account: account,
                                 useCupertinoContextMenu: Platform.isIOS,
+                                primary: account.uuid == primaryAccountUuid,
                                 excludeTransfersInTotal:
                                     excludeTransfersInTotal == true,
                                 onTapOverride: Optional(() async {
@@ -110,25 +142,49 @@ class _AccountsTabState extends State<AccountsTab>
     };
   }
 
-  Widget buildHeader(BuildContext context) {
-    return Row(
+  Widget buildHeader(BuildContext context, {bool hasSearchBar = false}) {
+    return Column(
+      crossAxisAlignment: .start,
+      spacing: 16.0,
       children: [
-        Text(
-          (_reordering && !isDesktop())
-              ? "tabs.accounts.reorder.guide".t(context)
-              : "tabs.accounts".t(context),
-          style: context.textTheme.titleSmall,
+        Row(
+          children: [
+            Text(
+              (_reordering && !isDesktop())
+                  ? "tabs.accounts.reorder.guide".t(context)
+                  : "tabs.accounts".t(context),
+              style: context.textTheme.titleSmall,
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: toggleReorderMode,
+              tooltip: _reordering
+                  ? "general.done".t(context)
+                  : "tabs.accounts.reorder".t(context),
+              icon: _reordering
+                  ? const Icon(Symbols.check_rounded)
+                  : const Icon(Symbols.reorder_rounded),
+            ),
+          ],
         ),
-        const Spacer(),
-        IconButton(
-          onPressed: toggleReorderMode,
-          tooltip: _reordering
-              ? "general.done".t(context)
-              : "tabs.accounts.reorder".t(context),
-          icon: _reordering
-              ? const Icon(Symbols.check_rounded)
-              : const Icon(Symbols.reorder_rounded),
-        ),
+        TotalBalance(),
+        if (hasSearchBar)
+          TextField(
+            controller: _searchController,
+            onChanged: (value) => setState(() {}),
+            enabled: !_reordering,
+            decoration: InputDecoration(
+              hintText: "general.search".t(context),
+              prefixIcon: const Icon(Symbols.search_rounded),
+              suffixIcon: (_searchQuery.isNotEmpty)
+                  ? IconButton(
+                      onPressed: () =>
+                          setState(() => _searchController.clear()),
+                      icon: const Icon(Symbols.close_rounded),
+                    )
+                  : null,
+            ),
+          ),
       ],
     );
   }
@@ -157,6 +213,17 @@ class _AccountsTabState extends State<AccountsTab>
     currentAccounts.insert(newIndex, removed);
 
     ObjectBox().updateAccountOrderList(accounts: currentAccounts);
+  }
+
+  void _updatePrimaryAccountUuid() {
+    try {
+      primaryAccountUuid = UserPreferencesService().primaryAccountUuid;
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      //
+    }
   }
 
   @override

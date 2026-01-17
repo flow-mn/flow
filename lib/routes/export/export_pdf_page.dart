@@ -1,5 +1,8 @@
 import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/sync/export/export_pdf.dart";
 import "package:flow/widgets/general/button.dart";
@@ -10,7 +13,8 @@ import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/transaction_filter_head/select_multi_account_sheet.dart";
 import "package:flow/utils/time_and_range.dart";
-import "package:flutter/foundation.dart";
+import "package:flow/widgets/transaction_filter_head/select_multi_category_sheet.dart";
+import "package:flutter/foundation.dart" hide Category;
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -26,6 +30,10 @@ class ExportPdfPage extends StatefulWidget {
 class _ExportPdfPageState extends State<ExportPdfPage> {
   final List<Account> _accounts = [];
   final Set<String> _selectedAccounts = {};
+
+  final List<Category> _categories = [];
+  final Set<String> _selectedCategories = {};
+
   bool _useA4 = true;
   TimeRange _range = TimeRange.allTime();
 
@@ -45,6 +53,9 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   @override
   void initState() {
     super.initState();
+
+    _categories.addAll(ObjectBox().getCategories());
+    _selectedCategories.addAll(_categories.map((category) => category.uuid));
 
     AccountsService()
         .getAll()
@@ -120,6 +131,18 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                   trailing: DirectionalChevron(),
                 ),
                 ListTile(
+                  leading: Icon(Symbols.category_rounded),
+                  title: Text("sync.export.pdf.categories".t(context)),
+                  subtitle: Text(
+                    "sync.export.pdf.categories.selected".tr({
+                      "n": _selectedCategories.length.toString(),
+                      "total": _categories.length.toString(),
+                    }),
+                  ),
+                  onTap: _selectCategories,
+                  trailing: DirectionalChevron(),
+                ),
+                ListTile(
                   leading: Icon(Symbols.schedule_rounded),
                   title: Text("sync.export.pdf.timeRange".t(context)),
                   subtitle: Text(rangeText),
@@ -167,6 +190,24 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
     setState(() {
       _selectedAccounts.clear();
       _selectedAccounts.addAll(selected.map((account) => account.uuid));
+    });
+  }
+
+  void _selectCategories() async {
+    final List<Category>? selected = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectMultiCategorySheet(
+        categories: _categories,
+        selectedUuids: _selectedCategories.toList(),
+      ),
+      isScrollControlled: true,
+    );
+
+    if (selected == null) return;
+
+    setState(() {
+      _selectedCategories.clear();
+      _selectedCategories.addAll(selected.map((category) => category.uuid));
     });
   }
 
@@ -218,6 +259,9 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
         timeRange: _range,
         whitelistedAccounts: _accounts
             .where((account) => _selectedAccounts.contains(account.uuid))
+            .toList(),
+        whitelistedCategories: _categories
+            .where((category) => _selectedCategories.contains(category.uuid))
             .toList(),
         useA4: _useA4,
       ),

@@ -32,7 +32,7 @@ class BackupEntryCard extends StatefulWidget {
   const BackupEntryCard({
     super.key,
     required this.entry,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
     this.dismissibleKey,
     this.onUpload,
@@ -95,7 +95,7 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Text(
                         widget.entry.backupEntryType.localizedNameContext(

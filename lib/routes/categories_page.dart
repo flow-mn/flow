@@ -72,7 +72,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           spacing: 16.0,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          crossAxisAlignment: .stretch,
                           children: [
                             Button(
                               onTap: () => context.push("/category/new"),

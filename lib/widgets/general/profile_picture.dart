@@ -70,7 +70,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
           child,
           InkWell(
             onTap: widget.onTap,
-            borderRadius: BorderRadius.circular(999.9),
+            borderRadius: .circular(999.9),
             child: AnimatedOpacity(
               opacity: widget.showOverlayUponHover
                   ? (showOverlay ? 1.0 : 0.5)

@@ -169,10 +169,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     focusNode: _editNameFocusNode,
                     maxLength: Account.maxNameLength,
                     decoration: InputDecoration(
-                      hintText: "account.name".t(context),
                       focusColor: context.colorScheme.secondary,
-                      isDense: true,
                       counter: const SizedBox.shrink(),
+                      hintText: "account.name".t(context),
+                      hintStyle: context.textTheme.headlineMedium?.copyWith(
+                        color: context.textTheme.headlineMedium?.color
+                            ?.withAlpha(0x80),
+                      ),
+                      border: UnderlineInputBorder(),
                     ),
                     style: context.textTheme.headlineMedium,
                     textAlign: TextAlign.center,
@@ -184,7 +188,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                 ),
                 const SizedBox(height: 48.0),
                 InkWell(
-                  borderRadius: BorderRadius.circular(16.0),
+                  borderRadius: .circular(16.0),
                   onTap: updateBalance,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -260,6 +264,44 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     });
                   },
                 ),
+                if (!_archived && _currentlyEditing?.uuid != null)
+                  ValueListenableBuilder(
+                    valueListenable: UserPreferencesService().valueNotifier,
+                    builder: (context, value, _) {
+                      final bool isPrimary =
+                          value.primaryAccountUuid == _currentlyEditing?.uuid;
+
+                      if (isPrimary) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              leading: Icon(Symbols.star_rounded),
+                              title: Text("account.primaryAccount".t(context)),
+                            ),
+                            Frame(
+                              child: InfoText(
+                                child: Text(
+                                  "account.primaryAccount.changeDescription".t(
+                                    context,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      return SwitchListTile(
+                        secondary: Icon(Symbols.star_rounded),
+                        title: Text(
+                          "account.primaryAccount.notPrimary".t(context),
+                        ),
+                        selected: false,
+                        value: false,
+                        onChanged: (_) => setAsPrimaryAccount(),
+                      );
+                    },
+                  ),
                 const SizedBox(height: 24.0),
                 const Divider(),
                 const SizedBox(height: 24.0),
@@ -430,6 +472,14 @@ class _AccountEditPageState extends State<AccountEditPage> {
 
     ObjectBox().box<Account>().put(_currentlyEditing!, mode: PutMode.update);
 
+    if (_archived) {
+      try {
+        UserPreferencesService().ensurePrimaryAccountAvailability();
+      } catch (e) {
+        //
+      }
+    }
+
     if (mounted) {
       context.pop();
     }
@@ -558,6 +608,19 @@ class _AccountEditPageState extends State<AccountEditPage> {
     _iconData = data;
   }
 
+  Future<void> setAsPrimaryAccount() async {
+    if (_currentlyEditing?.uuid == null) return;
+
+    final bool? confirmation = await context.showConfirmationSheet(
+      title: "account.primaryAccount.set".t(context),
+      child: Text("account.primaryAccount.description".t(context)),
+    );
+
+    if (confirmation != true) return;
+
+    UserPreferencesService().primaryAccountUuid = _currentlyEditing!.uuid;
+  }
+
   Future<void> selectIcon() async {
     final result = await showModalBottomSheet<FlowIconData>(
       context: context,
@@ -611,6 +674,12 @@ class _AccountEditPageState extends State<AccountEditPage> {
           "[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
         );
       }
+    }
+
+    try {
+      UserPreferencesService().ensurePrimaryAccountAvailability();
+    } catch (e) {
+      //
     }
 
     if (!mounted) return;

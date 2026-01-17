@@ -46,12 +46,10 @@ class _ContributorsPageState extends State<ContributorsPage> {
                     fetchFuture = GitHubService().fetchAll();
                   });
                 },
-                borderRadius: BorderRadius.circular(16.0),
+                borderRadius: .circular(16.0),
                 child: Container(
                   padding: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
+                  decoration: BoxDecoration(borderRadius: .circular(16.0)),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     spacing: 16.0,

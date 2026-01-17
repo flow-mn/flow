@@ -7,6 +7,7 @@ import "package:flow/theme/color_themes/catppuccin/mocha.dart";
 import "package:flow/theme/color_themes/flow/flow_darks.dart";
 import "package:flow/theme/color_themes/flow/flow_lights.dart";
 import "package:flow/theme/color_themes/flow/flow_oleds.dart";
+import "package:flow/theme/color_themes/monochrome.dart";
 import "package:flow/theme/color_themes/palenight.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
@@ -19,8 +20,12 @@ export "flow/flow_darks.dart";
 export "flow/flow_lights.dart";
 export "flow/flow_oleds.dart";
 export "palenight.dart";
+export "monochrome.dart";
 
-final Map<String, FlowColorScheme> standaloneThemes = {"palenight": palenight};
+final Map<String, FlowColorScheme> standaloneThemes = {
+  "palenight": palenight,
+  "monochrome": monochrome,
+};
 
 final Map<String, List<FlowThemeGroup>> groups = {
   "Flow": [flowLights, flowDarks, flowOleds],
@@ -64,7 +69,9 @@ FlowColorScheme? getThemeStrict(String? themeName) {
 }
 
 FlowColorScheme getTheme(String? themeName, {bool preferDark = false}) {
-  final FlowColorScheme? scheme = allThemes[themeName ?? ""];
+  final FlowColorScheme? scheme = themeName == null
+      ? null
+      : allThemes[themeName];
 
   if (scheme == null) {
     themeLogger.warning("Unknown theme: $themeName", StackTrace.current);

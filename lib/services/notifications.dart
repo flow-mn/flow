@@ -429,7 +429,7 @@ class NotificationsService {
             importance: Importance.max,
           ),
         ),
-        payload: "/profile",
+        payload: null,
       );
     } catch (e) {
       _log.warning("Failed to show notification", e);

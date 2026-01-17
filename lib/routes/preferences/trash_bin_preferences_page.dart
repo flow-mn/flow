@@ -54,7 +54,7 @@ class _TrashBinPreferencesPageState extends State<TrashBinPreferencesPage> {
           return SingleChildScrollView(
             child: SafeArea(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   ListHeader("preferences.trashBin.retention".t(context)),
                   const SizedBox(height: 8.0),

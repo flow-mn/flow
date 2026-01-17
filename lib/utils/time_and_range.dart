@@ -29,7 +29,9 @@ Future<TimeRange?> showTimeRangePickerSheet(
   final TimeRangeMode? mode = await showModalBottomSheet<TimeRangeMode>(
     context: context,
     isScrollControlled: true,
-    builder: (BuildContext context) => const SelectTimeRangeModeSheet(),
+    builder: (BuildContext context) => SelectTimeRangeModeSheet(
+      initialValue: TimeRangeMode.tryInferPresetFromRange(initialValue),
+    ),
   );
 
   if (mode == null) return null;
@@ -66,7 +68,7 @@ Future<TimeRange?> showTimeRangePickerSheet(
   };
 }
 
-CustomTimeRange last30DaysRange() => Moment.now()
+CustomTimeRange last30DaysRange([DateTime? anchor]) => (anchor ?? Moment.now())
     .subtract(const Duration(days: 29))
     .startOfDay()
     .rangeTo(Moment.endOfToday());

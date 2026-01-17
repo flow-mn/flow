@@ -36,7 +36,7 @@ class _ChangeVisualsPreferencesPageState
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               ListHeader("preferences.changeVisuals.incomeIncrease".t(context)),
               const SizedBox(height: 8.0),
@@ -59,7 +59,7 @@ class _ChangeVisualsPreferencesPageState
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: .circular(8.0),
                               color: context.colorScheme.surfaceContainer,
                             ),
                             child: Center(
@@ -89,7 +89,7 @@ class _ChangeVisualsPreferencesPageState
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: .circular(8.0),
                               color: context.colorScheme.surfaceContainer,
                             ),
                             child: Center(
@@ -138,7 +138,7 @@ class _ChangeVisualsPreferencesPageState
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: .circular(8.0),
                               color: context.colorScheme.surfaceContainer,
                             ),
                             child: Center(
@@ -168,7 +168,7 @@ class _ChangeVisualsPreferencesPageState
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: .circular(8.0),
                               color: context.colorScheme.surfaceContainer,
                             ),
                             child: Padding(
@@ -208,7 +208,7 @@ class _ChangeVisualsPreferencesPageState
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     spacing: 12.0,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Text(changeVisuals.serialize()),
                       ListHeader("Income Increase"),

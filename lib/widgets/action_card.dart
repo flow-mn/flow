@@ -19,7 +19,7 @@ class ActionCard extends StatelessWidget {
     super.key,
     this.onTap,
     this.onLongPress,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
     required this.title,
     this.icon,
     this.subtitle,
@@ -39,7 +39,7 @@ class ActionCard extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 if (icon != null) ...[
                   FlowIcon(icon!, size: 80.0, plated: true),

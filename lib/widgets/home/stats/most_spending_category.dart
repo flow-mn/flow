@@ -27,7 +27,7 @@ class MostSpendingCategory extends StatefulWidget {
   const MostSpendingCategory({
     super.key,
     required this.range,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   });
 
   @override
@@ -82,7 +82,7 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
               children: [
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Row(
                         spacing: 8.0,

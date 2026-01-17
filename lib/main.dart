@@ -19,7 +19,6 @@ import "dart:async";
 import "dart:io";
 import "dart:ui";
 
-import "package:app_links/app_links.dart";
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/profile.dart";
@@ -36,6 +35,7 @@ import "package:flow/routes.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/local_auth.dart";
+import "package:flow/services/navigation.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/sync.dart";
@@ -49,6 +49,7 @@ import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
+import "package:flutter_quill/flutter_quill.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
 import "package:logging_appenders/logging_appenders.dart";
@@ -91,6 +92,8 @@ void main() async {
   if (flowDebugMode) {
     FlowLocalizations.printMissingKeys();
   }
+
+  NavigationService();
 
   startupLog.fine("Initializing ObjectBox database");
 
@@ -176,8 +179,6 @@ class FlowState extends State<Flow> {
 
   ThemeMode get themeMode => _themeMode;
 
-  late final StreamSubscription<Uri?> _flowUriSubscription;
-
   late bool _tempLock;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
@@ -190,9 +191,6 @@ class FlowState extends State<Flow> {
 
     _reloadLocale();
     _reloadTheme();
-
-    AppLinks().getInitialLink().then(_handleFlowUri);
-    _flowUriSubscription = AppLinks().uriLinkStream.listen(_handleFlowUri);
 
     UserPreferencesService().valueNotifier.addListener(_reloadTheme);
 
@@ -243,8 +241,6 @@ class FlowState extends State<Flow> {
 
     TransactionsService().removeListener(_synchronizePlannedNotifications);
 
-    _flowUriSubscription.cancel();
-
     _appLifeCycleListener.dispose();
 
     super.dispose();
@@ -260,6 +256,7 @@ class FlowState extends State<Flow> {
           GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         FlowLocalizations.delegate,
+        FlutterQuillLocalizations.delegate,
       ],
       supportedLocales: FlowLocalizations.supportedLocales,
       locale: _locale,
@@ -313,6 +310,10 @@ class FlowState extends State<Flow> {
 
   void _reloadTheme() {
     final String? themeName = UserPreferencesService().value.themeName;
+
+    if (_themeFactory.flowColorScheme.name == themeName) {
+      return;
+    }
 
     if (validateThemeName(themeName)) {
       themeLogger.info("Reloading $themeName");
@@ -414,23 +415,6 @@ class FlowState extends State<Flow> {
       }
     } catch (e) {
       mainLogger.severe("Failed to initialize LocalAuthService", e);
-    }
-  }
-
-  void _handleFlowUri(Uri? uri) {
-    if (uri == null) return;
-    mainLogger.info("Received app link: $uri");
-
-    if (uri.scheme != "flow-mn") {
-      mainLogger.warning("Ignoring non-flow scheme URI: $uri");
-      return;
-    }
-
-    if (uri.pathSegments.join("/") == "transaction/new") {
-      if (mounted) {
-        router.push("/transaction/new?${uri.query}");
-      }
-      return;
     }
   }
 }

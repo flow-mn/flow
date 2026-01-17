@@ -22,11 +22,13 @@ import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/location_picker_sheet.dart";
 import "package:flow/widgets/open_street_map.dart";
 import "package:flow/widgets/select_color_scheme_list_tile.dart";
 import "package:flow/widgets/sheets/select_contact_sheet.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter_contacts/contact.dart";
 import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
@@ -187,12 +189,27 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
                 ),
                 const SizedBox(height: 24.0),
                 if (_type == TransactionTagType.location)
-                  AspectRatio(
-                    aspectRatio: 1.0,
-                    child: OpenStreetMap(
-                      center: center,
-                      mapController: _mapController,
-                      onTap: _updatePayloadLocation,
+                  Frame(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ClipRRect(
+                          borderRadius: .circular(8.0),
+                          child: AspectRatio(
+                            aspectRatio: 1.0,
+                            child: OpenStreetMap(
+                              mapController: _mapController,
+                              interactable: false,
+                              onTap: (_) => selectLocation(center),
+                              center: center,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8.0),
+                        InfoText(
+                          child: Text("transaction.location.edit".t(context)),
+                        ),
+                      ],
                     ),
                   ),
                 if ((Platform.isIOS || Platform.isAndroid) &&
@@ -374,6 +391,28 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
         }
       }
     }
+  }
+
+  void selectLocation(LatLng center) async {
+    final Optional<LatLng>? result =
+        await showModalBottomSheet<Optional<LatLng>>(
+          context: context,
+          builder: (context) => LocationPickerSheet(
+            latitude: center.latitude,
+            longitude: center.longitude,
+          ),
+          isScrollControlled: true,
+        );
+
+    if (result?.value case LatLng newLatLng) {
+      _updatePayloadLocation(newLatLng);
+
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _mapController.move(newLatLng, _mapController.camera.zoom);
+      });
+    }
+
+    setState(() {});
   }
 
   bool hasChanged() {

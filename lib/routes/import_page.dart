@@ -42,7 +42,7 @@ class _ImportPageState extends State<ImportPage> {
             ? const Spinner.center()
             : SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     FileSelectArea(
                       onFileDropped: initiateImportFromDroppedFile,
@@ -53,9 +53,7 @@ class _ImportPageState extends State<ImportPage> {
                     const SizedBox(height: 8.0),
                     ListTile(
                       leading: ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4.0),
-                        ),
+                        borderRadius: const .all(Radius.circular(4.0)),
                         child: Image.asset(
                           "assets/images/external/ivy_wallet.png",
                           width: IconTheme.of(context).size,

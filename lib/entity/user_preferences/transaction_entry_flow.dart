@@ -8,10 +8,10 @@ part "transaction_entry_flow.g.dart";
 @JsonValue("value")
 enum TransactionEntryAction with LocalizedEnum {
   selectAccount("selectAccount"),
+  selectPrimaryAccount("selectPrimaryAccount"),
   selectCategoryOrTransferAccount("selectCategoryOrTransferAccount"),
   inputAmount("inputAmount"),
   inputTitle("inputTitle"),
-  inputNote("inputNote"),
   selectTags("selectTags"),
   attachFiles("attachFiles");
 
@@ -29,10 +29,12 @@ enum TransactionEntryAction with LocalizedEnum {
 class TransactionEntryFlow {
   final List<TransactionEntryAction> actions;
   final bool abandonUponActionCancelled;
+  final bool skipSelectedFields;
 
   const TransactionEntryFlow({
     required this.actions,
     this.abandonUponActionCancelled = true,
+    this.skipSelectedFields = true,
   });
 
   const TransactionEntryFlow.defaults()
@@ -42,7 +44,8 @@ class TransactionEntryFlow {
         TransactionEntryAction.inputAmount,
         TransactionEntryAction.inputTitle,
       ],
-      abandonUponActionCancelled = true;
+      skipSelectedFields = true,
+      abandonUponActionCancelled = false;
 
   factory TransactionEntryFlow.fromJson(Map<String, dynamic> json) =>
       _$TransactionEntryFlowFromJson(json);

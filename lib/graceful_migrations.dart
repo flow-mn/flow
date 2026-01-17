@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
@@ -33,16 +34,15 @@ void migrateButtonOrder() async {
         "flow.transactionButtonOrder",
       );
 
-      final List<TransactionType>? parsed = oldValue
+      final List<FlowButtonType>? parsed = oldValue
           ?.map((value) => (jsonDecode(value) as Map)["value"])
           .map(
-            (value) =>
-                TransactionType.values.firstWhere((e) => e.name == value),
+            (value) => FlowButtonType.values.firstWhere((e) => e.name == value),
           )
           .toList();
 
       UserPreferencesService().transactionButtonOrder =
-          parsed ?? TransactionType.values.toList();
+          parsed ?? FlowButtonType.defaultOrder;
 
       await prefs.setString("flow.migration.$migrationUuid", "ok");
     } catch (e) {

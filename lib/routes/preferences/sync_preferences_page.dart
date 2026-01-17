@@ -35,7 +35,7 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 16.0),
               ListHeader("preferences.sync.autoBackup.interval".t(context)),

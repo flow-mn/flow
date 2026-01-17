@@ -62,7 +62,9 @@ class AccountsProvider extends InheritedWidget {
   bool get ready => _accounts != null;
 
   List<Account> get allAccounts => _accounts ?? [];
-  List<Account> get activeAccounts => allAccounts.actives.toList();
+  List<Account> get activeAccounts =>
+      allAccounts.actives.toList()
+        ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
 
   List<String> get activeUuids =>
       activeAccounts.map((account) => account.uuid).toList();

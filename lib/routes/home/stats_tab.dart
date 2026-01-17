@@ -110,14 +110,14 @@ class _StatsTabState extends State<StatsTab>
                   child: SafeArea(
                     top: false,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       children: [
                         BlurBackground(
                           blur: busy,
                           child: Frame(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: .start,
                               children: [
                                 Text(
                                   showForecast

@@ -53,7 +53,7 @@ class _ThemePreferencesPageState extends State<ThemePreferencesPage> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Frame(
                 child: SingleChildScrollView(

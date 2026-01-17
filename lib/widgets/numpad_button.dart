@@ -34,14 +34,14 @@ class NumpadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(borderRadiusSize);
+    final BorderRadius borderRadius = .circular(borderRadiusSize);
 
     return StaggeredGridTile.count(
       crossAxisCellCount: crossAxisCellCount,
       mainAxisCellCount: mainAxisCellCount,
       child: Material(
         textStyle: DefaultTextStyle.of(context).style,
-        type: MaterialType.button,
+        type: .button,
         color: backgroundColor ?? context.colorScheme.secondary,
         borderRadius: borderRadius,
         child: InkWell(

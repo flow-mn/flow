@@ -7,6 +7,7 @@ import "dart:ui";
 final Map<Locale, (String, String)> supportedLanguages = {
   const Locale("mn", "MN"): ("Mongolian (Mongolia)", "Монгол (Монгол)"),
   const Locale("en"): ("English", "English"),
+  const Locale("cs", "CZ"): ("Czech (Czechia)", "Čeština (Česko)"),
   const Locale("it", "IT"): ("Italian (Italy)", "Italiano (Italia)"),
   const Locale("tr", "TR"): ("Turkish (Turkey)", "Türkçe (Türkiye)"),
   const Locale("fr", "FR"): ("French (France)", "Français (France)"),

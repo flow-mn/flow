@@ -95,7 +95,7 @@ class _SetupCategoriesPageState extends State<SetupCategoriesPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     InfoText(
                       child: Text("setup.categories.description".t(context)),

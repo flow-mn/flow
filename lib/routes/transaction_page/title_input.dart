@@ -5,7 +5,6 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
-import "package:flutter_typeahead/flutter_typeahead.dart";
 
 class TitleInput extends StatelessWidget {
   final FocusNode focusNode;
@@ -40,39 +39,69 @@ class TitleInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Frame(
-      child: TypeAheadField<RelevanceScoredTitle>(
+      child: Autocomplete<RelevanceScoredTitle>(
         focusNode: focusNode,
-        controller: controller,
-        itemBuilder: (context, value) => ListTile(title: Text(value.title)),
-        // TODO fix loading indicator appearing everytime i type
-        debounceDuration: const Duration(milliseconds: 180),
-        decorationBuilder: (context, child) => Material(
-          clipBehavior: Clip.hardEdge,
-          elevation: 1.0,
-          borderRadius: BorderRadius.circular(16.0),
-          child: child,
-        ),
-        onSelected: (option) => controller.text = option.title,
-        suggestionsCallback: (query) => getAutocompleteOptions(query),
-        builder: (context, controller, focusNode) {
-          return TextField(
-            controller: controller,
-            focusNode: focusNode,
-            style: context.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-            maxLength: Transaction.maxTitleLength,
-            onSubmitted: onSubmitted,
-            autocorrect: false,
-            decoration: InputDecoration(
-              hintText: fallbackTitle,
-              hintStyle: context.textTheme.headlineMedium?.copyWith(
-                color: context.textTheme.headlineMedium?.color?.withAlpha(0x80),
-              ),
-              counter: const SizedBox.shrink(),
-            ),
-          );
+        textEditingController: controller,
+        optionsBuilder: (value) => getAutocompleteOptions(value.text),
+        displayStringForOption: (option) => option.title,
+        onSelected: (option) {
+          controller.text = option.title;
         },
-        hideOnEmpty: true,
+        optionsViewBuilder: (context, onSelected, options) => Container(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(8.0),
+              bottomRight: Radius.circular(8.0),
+            ),
+            border: BoxBorder.all(color: context.flowColors.semi),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0x05000000),
+                blurRadius: 16.0,
+                offset: const Offset(0, 0),
+              ),
+              BoxShadow(
+                color: const Color(0x10000000),
+                blurRadius: 4.0,
+                offset: const Offset(0, 0),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: options
+                .map(
+                  (item) => ListTile(
+                    title: Text(item.title),
+                    onTap: () => onSelected(item),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+        fieldViewBuilder:
+            (context, textEditingController, focusNode, onFieldSubmitted) =>
+                TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  style: context.textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                  maxLength: Transaction.maxTitleLength,
+                  onSubmitted: onSubmitted,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    hintText: fallbackTitle,
+                    hintStyle: context.textTheme.headlineMedium?.copyWith(
+                      color: context.textTheme.headlineMedium?.color?.withAlpha(
+                        0x80,
+                      ),
+                    ),
+                    border: UnderlineInputBorder(),
+                    counter: const SizedBox.shrink(),
+                  ),
+                ),
       ),
     );
   }

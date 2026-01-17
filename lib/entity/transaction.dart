@@ -216,6 +216,7 @@ class Transaction implements EntityBase {
     this.description,
     this.subtype,
     this.isPending,
+    this.location,
     required this.amount,
     required this.currency,
     required this.uuid,

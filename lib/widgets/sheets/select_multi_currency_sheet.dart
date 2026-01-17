@@ -50,7 +50,7 @@ class _SelectMultiCurrencySheetState extends State<SelectMultiCurrencySheet> {
           MediaQuery.of(context).size.height * 0.4 -
           MediaQuery.of(context).viewInsets.vertical,
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<String>[]),

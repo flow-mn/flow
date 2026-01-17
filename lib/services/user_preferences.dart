@@ -1,10 +1,10 @@
 import "dart:async";
 import "dart:math";
 
+import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/prefs/change_visuals.dart";
 import "package:flow/entity/account.dart";
-import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
 import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
@@ -15,7 +15,12 @@ import "package:flow/services/notifications.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
+import "package:home_widget/home_widget.dart";
 import "package:intl/intl.dart";
+import "package:logging/logging.dart";
+import "package:uuid/uuid.dart";
+
+final Logger _log = Logger("UserPreferencesService");
 
 class UserPreferencesService {
   final ValueNotifier<UserPreferences> valueNotifier = ValueNotifier(
@@ -160,6 +165,37 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  String? get _primaryAccountUuidRaw => value.primaryAccountUuid;
+
+  /// Throws [StateError] if no accounts are available to set as primary.
+  String get primaryAccountUuid {
+    if (value.primaryAccountUuid case String uuid) {
+      return uuid;
+    }
+
+    final Query<Account> firstAccountQuery = ObjectBox()
+        .box<Account>()
+        .query(Account_.archived.equals(false))
+        .order(Account_.sortOrder)
+        .build();
+
+    final Account? first = firstAccountQuery.findFirst();
+
+    firstAccountQuery.close();
+
+    if (first != null) {
+      primaryAccountUuid = first.uuid;
+      return first.uuid;
+    }
+
+    throw StateError("No accounts available to set as primary account.");
+  }
+
+  set primaryAccountUuid(String? newPrimaryAccountUuid) {
+    value.primaryAccountUuid = newPrimaryAccountUuid;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   String get primaryCurrency {
     if (value.primaryCurrency != null) {
       return value.primaryCurrency!;
@@ -212,10 +248,13 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
-  List<TransactionType> get transactionButtonOrder =>
+  List<FlowButtonType> get transactionButtonOrder =>
       value.transactionButtonOrder;
-  set transactionButtonOrder(List<TransactionType> order) {
+  set transactionButtonOrder(List<FlowButtonType> order) {
     value.transactionButtonOrder = order;
+
+    _updateButtonsWidgets(order);
+
     ObjectBox().box<UserPreferences>().put(value);
   }
 
@@ -262,6 +301,59 @@ class UserPreferencesService {
 
   UserPreferencesService._internal();
 
+  void _updateButtonsWidgets(List<FlowButtonType> order) async {
+    try {
+      final String value = order.map((e) => e.value).join(",");
+      await HomeWidget.setAppGroupId("group.mn.flow.flow");
+      await HomeWidget.saveWidgetData("buttonOrder", value);
+      final bool? succeeded = await HomeWidget.updateWidget(
+        name: "FlowTwoEntryWidget",
+        iOSName: "FlowTwoEntryWidget",
+        androidName: "TwoEntryReceiver",
+        qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryReceiver",
+      );
+      if (succeeded != true) throw Exception("HomeWidget update failed");
+      _log.finest("Updated widgets button order to: $value");
+    } catch (e) {
+      _log.warning("Failed to update widgets button order: $e");
+    }
+  }
+
+  void ensurePrimaryAccountAvailability() async {
+    try {
+      final String uuid = _primaryAccountUuidRaw ?? Namespace.nil.value;
+
+      final Query<Account> primaryAccountQuery = ObjectBox()
+          .box<Account>()
+          .query(
+            Account_.uuid.equals(uuid).and(Account_.archived.equals(false)),
+          )
+          .build();
+
+      final Account? primaryAccount = primaryAccountQuery.findFirst();
+
+      primaryAccountQuery.close();
+
+      if (primaryAccount == null) {
+        final Query<Account> firstAccountQuery = ObjectBox()
+            .box<Account>()
+            .query(Account_.archived.equals(false))
+            .order(Account_.sortOrder)
+            .build();
+
+        final Account? first = firstAccountQuery.findFirst();
+
+        firstAccountQuery.close();
+
+        if (first != null) {
+          primaryAccountUuid = first.uuid;
+        }
+      }
+    } catch (e) {
+      _log.warning("Failed to update primary account: $e");
+    }
+  }
+
   Future<void> initialize() async {
     final Completer<void> completer = Completer();
 
@@ -284,6 +376,17 @@ class UserPreferencesService {
             }
           }
         });
+
+    unawaited(
+      completer.future
+          .then((_) {
+            ensurePrimaryAccountAvailability();
+            _updateButtonsWidgets(transactionButtonOrder);
+          })
+          .catchError((e) {
+            _log.warning("Failed to update widgets button order on init: $e");
+          }),
+    );
 
     return completer.future;
   }

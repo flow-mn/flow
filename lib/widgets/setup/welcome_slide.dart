@@ -11,12 +11,12 @@ class WelcomeSlide extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             const Spacer(),
             Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(24.0),
+                borderRadius: .circular(24.0),
                 child: Image.asset(
                   "assets/images/flow.png",
                   width: 176.0,

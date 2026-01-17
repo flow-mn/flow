@@ -40,7 +40,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
     return ModalSheet.scrollable(
       title: Text("transactions.query.filter.keyword".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: clear,
@@ -57,22 +57,24 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
-            Frame(
-              child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: TransactionSearchMode.values
-                    .map(
-                      (mode) => ChoiceChip(
-                        label: Text(mode.localizedTextKey.t(context)),
-                        selected: mode == _searchData.mode,
-                        onSelected: (bool selected) =>
-                            _updateMode(selected ? mode : null),
-                      ),
-                    )
-                    .toList(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Frame(
+                child: Row(
+                  spacing: 8.0,
+                  children: TransactionSearchMode.values
+                      .map(
+                        (mode) => ChoiceChip(
+                          label: Text(mode.localizedTextKey.t(context)),
+                          selected: mode == _searchData.mode,
+                          onSelected: (bool selected) =>
+                              _updateMode(selected ? mode : null),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
             const SizedBox(height: 16.0),

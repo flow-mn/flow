@@ -65,7 +65,7 @@ class _SelectTransactionTagsSheetState
     return ModalSheet.scrollable(
       title: Text("setup.transactionTags".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<TransactionTag>[]),
@@ -92,31 +92,33 @@ class _SelectTransactionTagsSheetState
             )
           : null,
       child: Frame(
-        child: Align(
-          alignment: AlignmentDirectional.topStart,
-          child: Wrap(
-            spacing: 12.0,
-            runSpacing: 12.0,
-            children: [
-              if (_query.isEmpty)
-                TransactionTagAddChip(onPressed: createAndAdd),
-              ...results.map(
-                (tag) => TransactionTagChip(
-                  tag: tag,
-                  selected: _selectedTagUuids.contains(tag.uuid),
-                  key: ValueKey(tag.uuid),
-                  onPressed: () {
-                    if (_selectedTagUuids.contains(tag.uuid)) {
-                      _selectedTagUuids.remove(tag.uuid);
-                    } else {
-                      _selectedTagUuids.add(tag.uuid);
-                    }
-                    notifyChange();
-                    setState(() {});
-                  },
+        child: SingleChildScrollView(
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: Wrap(
+              spacing: 12.0,
+              runSpacing: 8.0,
+              children: [
+                if (_query.isEmpty)
+                  TransactionTagAddChip(onPressed: createAndAdd),
+                ...results.map(
+                  (tag) => TransactionTagChip(
+                    tag: tag,
+                    selected: _selectedTagUuids.contains(tag.uuid),
+                    key: ValueKey(tag.uuid),
+                    onPressed: () {
+                      if (_selectedTagUuids.contains(tag.uuid)) {
+                        _selectedTagUuids.remove(tag.uuid);
+                      } else {
+                        _selectedTagUuids.add(tag.uuid);
+                      }
+                      notifyChange();
+                      setState(() {});
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

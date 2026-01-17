@@ -75,7 +75,7 @@ class _PendingTransactionPreferencesPageState
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 16.0),
               Frame(
@@ -150,7 +150,7 @@ class _PendingTransactionPreferencesPageState
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       children: [
                         notificationsPermissionGranted
                             ? CheckboxListTile(

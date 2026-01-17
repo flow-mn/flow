@@ -68,6 +68,9 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
         child: TextField(
           onChanged: _updateQuery,
           onSubmitted: _updateQuery,
+          autocorrect: false,
+          enableSuggestions: false,
+          spellCheckConfiguration: .disabled(),
           decoration: InputDecoration(
             hintText: "currency.searchHint".t(context),
             prefixIcon: const Icon(Symbols.search_rounded),

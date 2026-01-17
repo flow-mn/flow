@@ -11,7 +11,7 @@ class AccountCardSkeleton extends StatelessWidget {
   const AccountCardSkeleton({
     super.key,
     this.onTap,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    this.borderRadius = const .all(Radius.circular(24.0)),
   });
 
   @override

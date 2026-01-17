@@ -38,7 +38,7 @@ class _YearSelectorSheetState extends State<YearSelectorSheet> {
     return ModalSheet(
       title: Text("select.time.select.year".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton(
             onPressed: () => setState(() {

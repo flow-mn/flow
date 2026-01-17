@@ -1,6 +1,5 @@
 import "dart:io";
 
-import "package:app_settings/app_settings.dart";
 import "package:flow/constants.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs/local_preferences.dart";
@@ -24,6 +23,7 @@ import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+import "package:permission_handler/permission_handler.dart";
 
 final Logger _log = Logger("PreferencesPage");
 
@@ -138,6 +138,20 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: DirectionalChevron(),
             ),
             const SizedBox(height: 24.0),
+            ListHeader("preferences.integrations".t(context)),
+            const SizedBox(height: 8.0),
+            ListTile(
+              title: Text("Eny"),
+              leading: SizedBox(
+                width: 24.0,
+                height: 24.0,
+                child: Image.network(enyLogoUrl, width: 192.0, height: 192.0),
+              ),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/integrations/eny"),
+              trailing: DirectionalChevron(),
+            ),
+            const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
             const SizedBox(height: 8.0),
             ListTile(
@@ -177,13 +191,13 @@ class PreferencesPageState extends State<PreferencesPage> {
               ),
               trailing: DirectionalChevron(),
             ),
-            // ListTile(
-            //   leading: const Icon(Symbols.automation_rounded),
-            //   title: Text("preferences.transactionEntryFlow".t(context)),
-            //   onTap: () =>
-            //       _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
-            //   trailing: DirectionalChevron(),
-            // ),
+            ListTile(
+              leading: const Icon(Symbols.automation_rounded),
+              title: Text("preferences.transactionEntryFlow".t(context)),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
+              trailing: DirectionalChevron(),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.appearance".t(context)),
             const SizedBox(height: 8.0),
@@ -267,7 +281,7 @@ class PreferencesPageState extends State<PreferencesPage> {
         _log.warning("Failed to remove locale override", e, stackTrace);
       });
       try {
-        await AppSettings.openAppSettings(type: AppSettingsType.appLocale);
+        await openAppSettings();
         return;
       } catch (e, stackTrace) {
         _log.warning(

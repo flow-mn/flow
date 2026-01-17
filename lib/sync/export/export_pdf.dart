@@ -23,11 +23,13 @@ import "package:pdf/widgets.dart" as pw;
 class ExportPdfOptions {
   final TimeRange timeRange;
   final List<Account>? whitelistedAccounts;
+  final List<Category>? whitelistedCategories;
   final bool useA4;
 
   const ExportPdfOptions({
     required this.timeRange,
     this.whitelistedAccounts,
+    this.whitelistedCategories,
     this.useA4 = true,
   });
 }
@@ -79,6 +81,18 @@ Future<Uint8List> generatePDFContent({
   final List<Transaction> transactions = await TransactionsService().findMany(
     filter,
   );
+
+  if (options.whitelistedCategories != null) {
+    final Set<String> whitelistedCategoriesUuids = options
+        .whitelistedCategories!
+        .map((category) => category.uuid)
+        .toSet();
+
+    transactions.retainWhere(
+      (transaction) =>
+          whitelistedCategoriesUuids.contains(transaction.categoryUuid),
+    );
+  }
 
   /// TODO @sadespresso maybe ask user to download missing fonts?
   // final Map<String, bool> potentialMissingFonts = {
@@ -295,10 +309,10 @@ Future<Uint8List> generatePDFContent({
         pw.Padding(
           padding: pw.EdgeInsets.symmetric(vertical: 12.0),
           child: pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: .spaceBetween,
             children: [
               pw.Row(
-                mainAxisSize: pw.MainAxisSize.min,
+                mainAxisSize: .min,
                 children: [
                   pw.Image(
                     pw.MemoryImage(imageBytes),
@@ -310,7 +324,7 @@ Future<Uint8List> generatePDFContent({
                 ],
               ),
               pw.Column(
-                mainAxisSize: pw.MainAxisSize.min,
+                mainAxisSize: .min,
                 children: [
                   pw.Opacity(
                     opacity: 0.5,

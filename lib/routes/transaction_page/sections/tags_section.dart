@@ -4,6 +4,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -27,14 +28,28 @@ class TagsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Align(
                     alignment: AlignmentDirectional.topStart,
-                    child: IgnorePointer(
-                      child: Wrap(
-                        spacing: 12.0,
-                        runSpacing: 12.0,
-                        children: selectedTags!
-                            .map((tag) => TransactionTagChip(tag: tag))
-                            .toList(),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      spacing: 8.0,
+                      children: [
+                        IgnorePointer(
+                          child: Wrap(
+                            spacing: 12.0,
+                            runSpacing: 8.0,
+                            children: selectedTags!
+                                .map(
+                                  (tag) => TransactionTagChip(
+                                    tag: tag,
+                                    selected: true,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        InfoText(
+                          child: Text("transaction.tags.editGuide".t(context)),
+                        ),
+                      ],
                     ),
                   ),
                 ),

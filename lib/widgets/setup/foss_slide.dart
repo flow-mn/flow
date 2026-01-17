@@ -18,7 +18,7 @@ class FossSlide extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           mainAxisSize: MainAxisSize.min,
           children: [
             const Spacer(),

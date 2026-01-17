@@ -24,7 +24,7 @@ class _RatesMissingErrorBoxState extends State<RatesMissingErrorBox> {
       onTap: fetch,
       child: Frame.standalone(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: .center,
           children: [
             Icon(
               Symbols.error_circle_rounded,

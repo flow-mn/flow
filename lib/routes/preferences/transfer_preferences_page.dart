@@ -27,7 +27,7 @@ class _TransferPreferencesPageState extends State<TransferPreferencesPage> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 16.0),
               ListHeader(

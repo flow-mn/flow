@@ -44,7 +44,7 @@ class _SelectIsPendingSheetState extends State<SelectIsPendingSheet> {
     return ModalSheet(
       title: Text("transactions.query.filter.isPending".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,
@@ -63,7 +63,9 @@ class _SelectIsPendingSheetState extends State<SelectIsPendingSheet> {
               .map(
                 (value) => ChoiceChip(
                   label: Text(
-                    "transactions.query.filter.isPending${suffix(value)}",
+                    "transactions.query.filter.isPending${suffix(value)}".t(
+                      context,
+                    ),
                   ),
                   selected: _selected == value,
                   onSelected: (selected) {

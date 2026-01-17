@@ -45,7 +45,7 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
     return ModalSheet.scrollable(
       title: Text("flowIcon.type.character".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(value),
@@ -63,7 +63,7 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
             Center(
               child: Surface(
                 shape: RoundedRectangleBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                  borderRadius: const .all(Radius.circular(16.0)),
                   side: BorderSide(
                     color:
                         (_textFieldFocusNode.hasPrimaryFocus ||

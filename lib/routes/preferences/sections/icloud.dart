@@ -57,7 +57,7 @@ class _ICloudState extends State<ICloud> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       spacing: 8.0,
       children: [
         if (ICloudSyncer.supported && !iCloudSyncWorkingFine)

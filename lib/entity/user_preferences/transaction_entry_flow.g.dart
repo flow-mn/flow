@@ -14,6 +14,7 @@ TransactionEntryFlow _$TransactionEntryFlowFromJson(
       .toList(),
   abandonUponActionCancelled:
       json['abandonUponActionCancelled'] as bool? ?? true,
+  skipSelectedFields: json['skipSelectedFields'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$TransactionEntryFlowToJson(
@@ -23,15 +24,16 @@ Map<String, dynamic> _$TransactionEntryFlowToJson(
       .map((e) => _$TransactionEntryActionEnumMap[e]!)
       .toList(),
   'abandonUponActionCancelled': instance.abandonUponActionCancelled,
+  'skipSelectedFields': instance.skipSelectedFields,
 };
 
 const _$TransactionEntryActionEnumMap = {
   TransactionEntryAction.selectAccount: 'selectAccount',
+  TransactionEntryAction.selectPrimaryAccount: 'selectPrimaryAccount',
   TransactionEntryAction.selectCategoryOrTransferAccount:
       'selectCategoryOrTransferAccount',
   TransactionEntryAction.inputAmount: 'inputAmount',
   TransactionEntryAction.inputTitle: 'inputTitle',
-  TransactionEntryAction.inputNote: 'inputNote',
   TransactionEntryAction.selectTags: 'selectTags',
   TransactionEntryAction.attachFiles: 'attachFiles',
 };

@@ -676,7 +676,7 @@ class CurrencyRegistryService {
       code: "SYP",
     ),
     const CurrencyData(
-      country: "TAIWAN (PROVINCE OF CHINA)",
+      country: "TAIWAN",
       name: "New Taiwan Dollar",
       code: "TWD",
     ),

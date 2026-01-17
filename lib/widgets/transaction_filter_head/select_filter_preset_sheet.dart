@@ -45,7 +45,7 @@ class _SelectFilterPresetSheetState extends State<SelectFilterPresetSheet> {
     return ModalSheet.scrollable(
       title: Text("transactionFilterPreset".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,

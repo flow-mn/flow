@@ -1,0 +1,138 @@
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "description": "Flow's programmable transaction object definition. All of the fields are optional. This only represents the data object, refer to Flow's GitHub repo for how this is used.",
+    "properties": {
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Title of the transaction"
+      },
+      "amount": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "description": "Amount of the transaction"
+      },
+      "fromAccountUuid": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "UUID of the account from which the amount is debited. This has more priority than fromAccount. If not provided, or this doesn't exist, this field is ignored for the user to fill out."
+      },
+      "fromAccount": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Name of the account from which the amount is debited. If fromAccountUuid is provided, or this doesn't match any existing account (case-sensitive), this field is ignored."
+      },
+      "toAccountUuid": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Only for transfers. UUID of the account to which the amount is credited. This has more priority than toAccount. If not provided, or this doesn't exist, this field is ignored for the user to fill out."
+      },
+      "toAccount": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Only for transfers. Name of the account to which the amount is credited. If toAccountUuid is provided, or this doesn't match any existing account (case-sensitive), this field is ignored."
+      },
+      "type": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "expense",
+          "income",
+          "transfer",
+          null
+        ]
+      },
+      "transactionDate": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date-time",
+        "description": "Date of the transaction in ISO 8601 format. If not provided, the current date is used."
+      },
+      "categoryUuid": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "UUID of the category associated with the transaction. If not provided, or this doesn't exist, this field is ignored for the user to fill out."
+      },
+      "category": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Name of the category associated with the transaction. If categoryUuid is provided, or this doesn't match any existing category (case-sensitive), this field is ignored."
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Additional notes for the transaction, supports markdown."
+      },
+      "transferConversionRate": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "description": "Only for transfers. Conversion rate applied during the transfer between two different currencies."
+      },
+      "isPending": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "description": "Indicates whether the transaction is pending. If the transactionDate is in the future, this is set to true automatically."
+      },
+      "tags": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "description": "List of tags associated with the transaction."
+      },
+      "tagsUuids": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "description": "List of uuid of tags associated with the transaction."
+      },
+      "lat": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "description": "Latitude coordinate of the transaction location."
+      },
+      "lng": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "description": "Longitude coordinate of the transaction location."
+      }
+    }
+  }

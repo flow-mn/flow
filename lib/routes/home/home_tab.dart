@@ -292,7 +292,13 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               Align(
                 alignment: AlignmentDirectional.topStart,
                 child: Text(
-                  "transactions.count".t(context, transactions.renderableCount),
+                  [
+                    combinedFlow.totalFlow.formatMoney(compact: true),
+                    "transactions.count".t(
+                      context,
+                      transactions.renderableCount,
+                    ),
+                  ].join(" • "),
                   style: context.textTheme.bodyMedium?.semi(context),
                 ),
               ),

@@ -49,6 +49,7 @@ Future<Map<String, dynamic>?> translate(
 final Map<String, String> filenameToTargetLanguageMapping = {
   "ar.json": "Arabic (generic)",
   "de_DE.json": "German (Germany)",
+  "cs_CZ.json": "Czech (Czechia)",
   "en.json": "English (generic)",
   "es_ES.json": "Spanish (Spain)",
   "fr_FR.json": "French (France)",

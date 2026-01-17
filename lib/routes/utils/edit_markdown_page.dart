@@ -1,10 +1,13 @@
-import "package:flow/l10n/extensions.dart";
-import "package:flow/theme/theme.dart";
+import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/theme/helpers.dart";
+import "package:flow/utils/extensions/quill_theme.dart";
 import "package:flow/widgets/general/form_close_button.dart";
-import "package:flow/widgets/general/markdown_view.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
+import "package:flutter_quill/flutter_quill.dart";
 import "package:go_router/go_router.dart";
+import "package:markdown/markdown.dart" as md;
+import "package:markdown_quill/markdown_quill.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class EditMarkdownPageProps {
@@ -19,245 +22,178 @@ class EditMarkdownPage extends StatefulWidget {
   final int? maxLength;
 
   const EditMarkdownPage({super.key, this.initialValue, this.maxLength});
+  EditMarkdownPage.fromProps({super.key, required EditMarkdownPageProps props})
+    : initialValue = props.initialValue,
+      maxLength = props.maxLength;
 
   @override
   State<EditMarkdownPage> createState() => _EditMarkdownPageState();
 }
 
-class _EditMarkdownPageState extends State<EditMarkdownPage>
-    with SingleTickerProviderStateMixin {
-  late final TextEditingController _controller;
-  late final TabController _tabController;
-  final FocusNode _focusNode = FocusNode();
-
-  bool focused = false;
+class _EditMarkdownPageState extends State<EditMarkdownPage> {
+  late final QuillController _controller;
+  final FocusNode _editorFocusNode = FocusNode();
+  final ScrollController _editorScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue);
-    _tabController = TabController(length: 2, vsync: this);
-    _focusNode.addListener(_handleFocusChange);
-    focused = _focusNode.hasFocus;
+    _controller = QuillController.basic(
+      config: QuillControllerConfig(
+        clipboardConfig: QuillClipboardConfig(
+          enableExternalRichPaste: true,
+          onRichTextPaste: (delta, isExternal) async {
+            return MarkdownToDelta(
+              markdownDocument: md.Document(encodeHtml: false),
+            ).convert(DeltaToMarkdown().convert(delta));
+          },
+          onImagePaste: (imageBytes) async {
+            return null;
+          },
+          onGifPaste: (imageBytes) async {
+            return null;
+          },
+        ),
+      ),
+    );
+
+    final bool hasInitialValue =
+        widget.initialValue != null && widget.initialValue!.trim().isNotEmpty;
+
+    _controller.document = hasInitialValue
+        ? Document.fromDelta(
+            MarkdownToDelta(
+              markdownDocument: md.Document(encodeHtml: false),
+            ).convert(widget.initialValue!),
+          )
+        : Document();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _tabController.dispose();
-    _focusNode.removeListener(_handleFocusChange);
+    _editorFocusNode.dispose();
+    _editorScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget? counterOverride =
-        (widget.maxLength != null &&
-            _controller.text.length < (widget.maxLength! * 0.9))
-        ? SizedBox.shrink()
-        : null;
-
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Stack(
-        children: [
-          Scaffold(
-            appBar: AppBar(
-              leadingWidth: 40.0,
-              leading: FormCloseButton(canPop: () => !hasChanged()),
-              actions: [
-                IconButton(
-                  onPressed: () => save(),
-                  icon: const Icon(Symbols.check_rounded),
-                  tooltip: "general.save".t(context),
-                ),
-              ],
-              bottom: TabBar(
-                tabs: [
-                  Tab(text: "general.edit".t(context)),
-                  Tab(text: "transaction.description.preview".t(context)),
-                ],
-                controller: _tabController,
-              ),
-              centerTitle: true,
-              backgroundColor: context.colorScheme.surface,
+      child: Scaffold(
+        appBar: AppBar(
+          leadingWidth: 40.0,
+          leading: FormCloseButton(canPop: () => !hasChanged()),
+          actions: [
+            IconButton(
+              onPressed: save,
+              icon: const Icon(Symbols.check_rounded),
+              tooltip: "general.save".t(context),
             ),
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                SingleChildScrollView(
-                  padding: EdgeInsets.all(16.0),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 80.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "transaction.description".t(context),
-                        border: OutlineInputBorder(),
-                        counter: counterOverride,
+          ],
+          centerTitle: true,
+          backgroundColor: context.colorScheme.surface,
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              QuillSimpleToolbar(
+                controller: _controller,
+                config: _defaultQuillToolbarConfig,
+              ),
+              Expanded(
+                child: Frame.standalone(
+                  child: QuillEditor(
+                    focusNode: _editorFocusNode,
+                    scrollController: _editorScrollController,
+                    controller: _controller,
+                    config: QuillEditorConfig(
+                      enableScribble: true,
+                      customStyles: context.quillDefaultStyles,
+                      placeholder: "transaction.description.placeholder".t(
+                        context,
                       ),
-                      focusNode: _focusNode,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      maxLength: widget.maxLength,
-                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                      minLines: 10,
-                      controller: _controller,
-                      autofocus: true,
-                      textInputAction: TextInputAction.newline,
                     ),
                   ),
                 ),
-                SingleChildScrollView(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: MarkdownView(controller: _controller),
-                ),
-              ],
-            ),
-          ),
-          if (focused)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              child: Container(
-                color: context.colorScheme.surface,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 4.0,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: _bold,
-                      icon: Icon(Symbols.format_bold_rounded),
-                    ),
-                    IconButton(
-                      onPressed: _italic,
-                      icon: Icon(Symbols.format_italic_rounded),
-                    ),
-                    IconButton(
-                      onPressed: _checklist,
-                      icon: Icon(Symbols.checklist_rounded),
-                    ),
-                  ],
-                ),
               ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  void save() async {
-    context.pop(_controller.text);
+  Future<void> save() async {
+    final markdown = DeltaToMarkdown().convert(_controller.document.toDelta());
+    context.pop<String>(markdown);
   }
 
   bool hasChanged() {
-    return _controller.text != widget.initialValue;
-  }
-
-  void _bold() {
-    if (_controller.selection.isCollapsed) {
-      _insert("****", -2);
-    } else {
-      _alterUncollapsed("**", "**");
-    }
-  }
-
-  void _italic() {
-    if (_controller.selection.isCollapsed) {
-      _insert("**", -1);
-    } else {
-      _alterUncollapsed("*", "*");
-    }
-  }
-
-  void _checklist() {
-    if (_controller.selection.isCollapsed) {
-      _insertChecklist();
-    } else {
-      _alterUncollapsed("\n- [ ] ", "\n");
-    }
-  }
-
-  void _alterUncollapsed(
-    String prefix,
-    String postfix, [
-    int cursorOffset = 0,
-  ]) {
     try {
-      final TextSelection selection = _controller.selection;
-      final String text = _controller.text;
+      final String currentMarkdown = DeltaToMarkdown()
+          .convert(_controller.document.toDelta())
+          .trim();
 
-      if (!selection.isValid) return;
+      if ((widget.initialValue?.trim() ?? "").isEmpty &&
+          currentMarkdown.isEmpty) {
+        return false;
+      }
 
-      // TODO bold the whole line if selection is collapsed
-      if (selection.isCollapsed) return;
+      final String initialMarkdown = DeltaToMarkdown()
+          .convert(
+            MarkdownToDelta(
+              markdownDocument: md.Document(encodeHtml: false),
+            ).convert(widget.initialValue?.trim() ?? ""),
+          )
+          .trim();
 
-      _controller.value = TextEditingValue(
-        text:
-            "${selection.textBefore(text)}$prefix${selection.textInside(text)}$postfix${selection.textAfter(text)}",
-        selection: TextSelection.collapsed(
-          offset: selection.end + prefix.length + postfix.length + cursorOffset,
-          affinity: selection.affinity,
-        ),
-      );
-    } finally {
-      _focusNode.requestFocus();
+      return currentMarkdown != initialMarkdown;
+    } catch (e) {
+      return false;
     }
-  }
-
-  void _insertChecklist() {
-    try {
-      final TextSelection selection = _controller.selection;
-      final String text = _controller.text;
-
-      if (!selection.isValid) return;
-
-      final bool currentlyAtBegginingOfLine =
-          selection.start == 0 || text[selection.start - 1] == "\n";
-
-      final String payload = currentlyAtBegginingOfLine
-          ? "- [ ] \n"
-          : "\n- [ ] \n";
-      final int cursorOffset = -1;
-
-      _controller.value = TextEditingValue(
-        text:
-            "${selection.textBefore(text)}$payload${selection.textAfter(text)}",
-        selection: TextSelection.collapsed(
-          offset: selection.end + payload.length + cursorOffset,
-          affinity: selection.affinity,
-        ),
-      );
-    } finally {
-      _focusNode.requestFocus();
-    }
-  }
-
-  void _insert(String payload, [int cursorOffset = 0]) {
-    try {
-      final TextSelection selection = _controller.selection;
-      final String text = _controller.text;
-
-      if (!selection.isValid) return;
-
-      _controller.value = TextEditingValue(
-        text:
-            "${selection.textBefore(text)}$payload${selection.textAfter(text)}",
-        selection: TextSelection.collapsed(
-          offset: selection.end + payload.length + cursorOffset,
-          affinity: selection.affinity,
-        ),
-      );
-    } finally {
-      _focusNode.requestFocus();
-    }
-  }
-
-  void _handleFocusChange() {
-    setState(() {
-      focused = _focusNode.hasFocus;
-    });
   }
 }
+
+const QuillSimpleToolbarConfig _defaultQuillToolbarConfig =
+    QuillSimpleToolbarConfig(
+      multiRowsDisplay: true,
+      showDividers: true,
+      showFontFamily: false,
+      showFontSize: false,
+      showBoldButton: true,
+      showItalicButton: true,
+      showSmallButton: false,
+      showUnderLineButton: true,
+      showLineHeightButton: false,
+      showStrikeThrough: true,
+      showInlineCode: true,
+      showColorButton: false,
+      showBackgroundColorButton: false,
+      showClearFormat: true,
+      showAlignmentButtons: false,
+      showLeftAlignment: false,
+      showCenterAlignment: false,
+      showRightAlignment: false,
+      showJustifyAlignment: false,
+      showHeaderStyle: true,
+      showListNumbers: true,
+      showListBullets: true,
+      showListCheck: true,
+      showCodeBlock: true,
+      showQuote: true,
+      showIndent: false,
+      showLink: true,
+      showUndo: true,
+      showRedo: true,
+      showDirection: false,
+      showSearchButton: true,
+      showSubscript: false,
+      showSuperscript: false,
+      showClipboardCut: false,
+      showClipboardCopy: false,
+      showClipboardPaste: false,
+      linkStyleType: LinkStyleType.original,
+      headerStyleType: HeaderStyleType.original,
+    );

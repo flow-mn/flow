@@ -7,16 +7,9 @@
 
 ## Preface
 
-![Flow logo](logo@16.png) Flow is a
-
-* Free
-* Open-Source
-* Simple
-* UX-Focused
-* Fully-offline[^1]
-* Cross-platform[^2]
-
-personal expense tracking app.
+![Flow logo](logo@16.png) Flow is a free, open-source, and beautifully simple
+expense tracker — built with a focus on great UX, works fully offline, and runs
+seamlessly across platforms.
 
 ## Download Flow (beta)
 
@@ -30,9 +23,9 @@ personal expense tracking app.
 ## Features
 
 * Simple UX helping you efficiently track your finances
-* Infinite accounts and currencies
-* Categories, tags, file attachments
-* Numbers to reflect on your spendings
+* Infinite accounts and currencies (including various cryptos)
+* Categories, tags, file attachments, geo tagging (optional)
+* Reflect on your spendings
 * Fully-offline[^1]
 * Full control over your data
   * No trackers, no analytics
@@ -40,6 +33,63 @@ personal expense tracking app.
   * Export CSV, PDFs
   * Periodic auto-backups to iCloud
 * Absolutely free ([please donate 🥺](#support-flow))
+* [URI-based automation](#uri-based-automation)
+
+## URI-based automation
+
+You can add one or more transactions using `flow-mn` schema uris.
+
+Check out the supported [JSON Schema file in schemas folder](./schemas/programmable-object.json).
+
+Currencies are based on the account, so there's no way to specify it at the moment.
+
+### Adding single transaction
+
+When adding single transactions, properties must be provided as query params.
+
+```json
+{
+  "title": "Tous les jours",
+  "amount": 42000.00
+}
+```
+
+turns into:
+
+```plain
+flow-mn:///transaction/new?title=Tous+les+jours&amount=42000.00
+```
+
+### Adding multiple transactions
+
+When adding multiple transactions, you must provide stringified version of the following as "json" query param.
+
+```json
+{
+  "t": [
+    {
+      "title": "Fresh blueberry piece",
+      "amount": "13000.00",
+      "transactionDate": "2011-12-05",
+      "category": "Food",
+      "tags": "My fave cafe",
+      "accountUuid": "faa6d523-277f-46af-9493-67768e5b48ab",
+    },
+    {
+      "title": "Caffe Mocha ice",
+      "amount": "10000.00",
+      "transactionDate": "2011-12-05",
+      "category": "Drinks"
+    }
+  ]
+}
+```
+
+turns into
+
+```plain
+flow-mn:///transaction/new?json=%7B%22t%22%3A%5B%7B%22title%22%3A%22Fresh%20blueberry%20piece%22%2C%22amount%22%3A%2213000.00%22%2C%22transactionDate%22%3A%222011-12-05%22%2C%22category%22%3A%22Food%22%7D%2C%7B%22title%22%3A%22Caffe%20Mocha%20ice%22%2C%22amount%22%3A%2210000.00%22%2C%22transactionDate%22%3A%222011-12-05%22%2C%22category%22%3A%22Drinks%22%7D%5D%7D
+```
 
 ## Development
 
@@ -79,7 +129,6 @@ income. Consider helping Flow! Here are some suggestions:
 * Leave a review on [Google Play](https://play.google.com/store/apps/details?id=mn.flow.flow)
   and [App Store](https://apps.apple.com/mn/app/flow-expense-tracker/id6477741670)
 * Tell a friend
-* Send me BTC `bc1qjf74ptmjdv2x7jep785s9rxvwgnrgn6ahxwsg8`
 * [Buy me a coffee](https://buymeacoffee.com/sadespresso)
   <!-- markdownlint-disable-next-line -->
   <a href="https://www.buymeacoffee.com/sadespresso"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=sadespresso&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
@@ -103,12 +152,13 @@ Thank you to all the contributors, supporters, testers, and those who contribute
 * Spanish (Spain)
 * Turkish (Turkiye) - thanks to [NoRiskNoViski](https://github.com/NoRiskNoViski)
 * Ukranian (Ukrain)
+* Czech (Czechia) - thanks to **Miloš Koliáš** through email
 
 > See [Translation guide](./CONTRIBUTING.md#translating) if you want to make
 > Flow available to your language
 
 <!-- markdownlint-disable-next-line -->
-<a href="https://www.producthunt.com/posts/flow-2cbe921f-2ed9-4ed1-b8d7-26dff1c2c49d?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-flow&#0045;2cbe921f&#0045;2ed9&#0045;4ed1&#0045;b8d7&#0045;26dff1c2c49d" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=955354&theme=light&period=daily&t=1745222977391" alt="Flow - A&#0032;FOSS&#0032;expense&#0032;tracker&#0032;that&#0032;focuses&#0032;on&#0032;privacy&#0032;and&#0032;UX | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+<!-- <a href="https://www.producthunt.com/posts/flow-2cbe921f-2ed9-4ed1-b8d7-26dff1c2c49d?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-flow&#0045;2cbe921f&#0045;2ed9&#0045;4ed1&#0045;b8d7&#0045;26dff1c2c49d" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=955354&theme=light&period=daily&t=1745222977391" alt="Flow - A&#0032;FOSS&#0032;expense&#0032;tracker&#0032;that&#0032;focuses&#0032;on&#0032;privacy&#0032;and&#0032;UX | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a> -->
 
 [^1]: Flow requires internet to download currency exchage rates. Only necessary
 if you use more than one currencies

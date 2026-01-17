@@ -61,6 +61,9 @@ class LocalPreferences {
   /// Used to prevent id collisions
   late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
 
+  late final PrimitiveSettingsEntry<String> enyApiKey;
+  late final PrimitiveSettingsEntry<String> enyEmail;
+
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
 
@@ -148,6 +151,16 @@ class LocalPreferences {
       key: "notificationsIssuedCount",
       preferences: _prefs,
       initialValue: 0,
+    );
+
+    enyApiKey = PrimitiveSettingsEntry<String>(
+      key: "eny.apiKey",
+      preferences: _prefs,
+    );
+
+    enyEmail = PrimitiveSettingsEntry<String>(
+      key: "eny.email",
+      preferences: _prefs,
     );
 
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(

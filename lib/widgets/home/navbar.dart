@@ -19,7 +19,7 @@ class Navbar extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: 480.0),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(999.9),
+        borderRadius: .circular(999.9),
         color: navbarTheme.backgroundColor,
         boxShadow: [
           BoxShadow(
@@ -36,7 +36,7 @@ class Navbar extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: .spaceEvenly,
         children: [
           NavbarButton(
             index: 0,

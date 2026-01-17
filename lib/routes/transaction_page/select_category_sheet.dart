@@ -46,7 +46,7 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<Category>(null)),

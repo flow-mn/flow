@@ -42,7 +42,7 @@ class _FileSelectAreaState extends State<FileSelectArea> {
               padding: const EdgeInsets.all(16.0),
               child: InkWell(
                 onTap: widget.onTap,
-                borderRadius: BorderRadius.circular(16.0),
+                borderRadius: .circular(16.0),
                 child: Surface(
                   builder: (context) => Padding(
                     padding: const EdgeInsets.all(16.0),

@@ -17,5 +17,9 @@
 	<array>
 		<string>iCloud.mn.flow.flow</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.mn.flow.flow</string>
+	</array>
 </dict>
 </plist>

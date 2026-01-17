@@ -14,7 +14,7 @@ class DeleteButton extends StatelessWidget {
     super.key,
     this.label,
     this.onTap,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   });
 
   @override

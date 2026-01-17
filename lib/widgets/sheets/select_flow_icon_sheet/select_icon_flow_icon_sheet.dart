@@ -75,7 +75,7 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
         ],
       ),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(value),

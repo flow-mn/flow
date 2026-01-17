@@ -27,7 +27,7 @@ extension CustomPopups on BuildContext {
       builder: (context) => ModalSheet(
         title: Text(title ?? "general.areYouSure".t(context)),
         trailing: ModalOverflowBar(
-          alignment: MainAxisAlignment.end,
+          alignment: .end,
           children: [
             Button(
               onTap: () => context.pop(false),

@@ -21,7 +21,7 @@ class AccountPresetCard extends StatelessWidget {
     required this.onSelect,
     required this.selected,
     required this.preexisting,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24.0)),
+    this.borderRadius = const .all(Radius.circular(24.0)),
   });
 
   @override
@@ -36,7 +36,7 @@ class AccountPresetCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
@@ -44,7 +44,7 @@ class AccountPresetCard extends StatelessWidget {
                     FlowIcon(account.icon, size: 60.0),
                     const SizedBox(width: 8.0),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(account.name, style: context.textTheme.titleSmall),

@@ -12,6 +12,9 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) =>
         description: json['description'] as String?,
         subtype: json['subtype'] as String?,
         isPending: json['isPending'] as bool?,
+        location: (json['location'] as List<dynamic>?)
+            ?.map((e) => (e as num).toDouble())
+            .toList(),
         amount: (json['amount'] as num).toDouble(),
         currency: json['currency'] as String,
         uuid: json['uuid'] as String,
@@ -34,9 +37,6 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) =>
         json['deletedDate'],
         const UTCDateTimeConverter().fromJson,
       )
-      ..location = (json['location'] as List<dynamic>?)
-          ?.map((e) => (e as num).toDouble())
-          .toList()
       ..extra = json['extra'] as String?
       ..tagsUuids = (json['tagsUuids'] as List<dynamic>?)
           ?.map((e) => e as String)

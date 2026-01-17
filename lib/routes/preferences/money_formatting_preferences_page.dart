@@ -29,7 +29,7 @@ class _MoneyFormattingPreferencesPageState
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 16.0),
               Center(

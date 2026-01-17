@@ -24,7 +24,7 @@ class NumpadSelectorRadio extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return InkWell(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: .circular(16.0),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),

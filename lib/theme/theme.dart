@@ -102,6 +102,21 @@ class ThemeFactory {
         size: 24.0,
         fill: 1.0,
       ),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          iconColor: WidgetStateColor.fromMap({
+            WidgetState.selected: colorScheme.primary,
+            ~WidgetState.selected: colorScheme.onSurface,
+          }),
+          backgroundColor: WidgetStateColor.fromMap({
+            WidgetState.selected: colorScheme.primary,
+            WidgetState.pressed: colorScheme.onSurface.withAlpha(0x42),
+            WidgetState.hovered: colorScheme.onSurface.withAlpha(0x28),
+            WidgetState.focused: colorScheme.onSurface.withAlpha(0x28),
+            WidgetState.any: kTransparent,
+          }),
+        ),
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: bottomNavigationBarItemColor,
         unselectedItemColor: bottomNavigationBarItemColor.withAlpha(0x80),
@@ -159,9 +174,18 @@ class ThemeFactory {
         }),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: isDark ? colorScheme.primary : colorScheme.secondary,
+        selectionColor: isDark
+            ? colorScheme.primary.withAlpha(0x60)
+            : colorScheme.secondary.withAlpha(0xa0),
         cursorColor: colorScheme.primary,
         selectionHandleColor: colorScheme.primary,
+      ),
+      inputDecorationTheme: InputDecorationThemeData(
+        border: OutlineInputBorder(borderRadius: .circular(8.0)),
+        isDense: true,
+        hintStyle: textTheme.labelLarge?.copyWith(
+          color: textTheme.labelLarge?.color?.withAlpha(0x80),
+        ),
       ),
       tabBarTheme: TabBarThemeData(dividerColor: colorScheme.primary),
     );

@@ -33,7 +33,7 @@ class _SelectMultiTransactionTypeSheetState
     return ModalSheet.scrollable(
       title: Text("enum.TransactionType".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<TransactionType>[]),

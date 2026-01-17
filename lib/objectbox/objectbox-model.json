@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "23:1897952567667191209",
+      "lastPropertyId": "24:4516202653950496157",
       "name": "UserPreferences",
       "properties": [
         {
@@ -471,6 +471,11 @@
         {
           "id": "23:1897952567667191209",
           "name": "transactionEntryFlowJson",
+          "type": 9
+        },
+        {
+          "id": "24:4516202653950496157",
+          "name": "primaryAccountUuid",
           "type": 9
         }
       ],

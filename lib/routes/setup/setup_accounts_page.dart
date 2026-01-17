@@ -25,7 +25,7 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   QueryBuilder<Account> qb() =>
       ObjectBox().box<Account>().query().order(Account_.createdDate);
 
-  late final List<Account> presetAccounts;
+  late List<Account> presetAccounts;
 
   bool busy = false;
 
@@ -33,21 +33,8 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   void initState() {
     super.initState();
 
-    final String primaryCurrency = UserPreferencesService().primaryCurrency;
-
-    final Query<Account> existingAccountsQuery = qb().build();
-
-    final List<Account> existingAccounts = existingAccountsQuery.find();
-
-    existingAccountsQuery.close();
-
-    presetAccounts = getAccountPresets(primaryCurrency)
-        .where(
-          (account) => !existingAccounts.any(
-            (existingAccount) => existingAccount.uuid == account.uuid,
-          ),
-        )
-        .toList();
+    UserPreferencesService().valueNotifier.addListener(_updatePresets);
+    _updatePresets();
   }
 
   @override
@@ -186,6 +173,16 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
       if (mounted) {
         setState(() {});
       }
+    }
+  }
+
+  void _updatePresets() {
+    final String primaryCurrency = UserPreferencesService().primaryCurrency;
+
+    presetAccounts = getAccountPresets(primaryCurrency).toList();
+
+    if (mounted) {
+      setState(() {});
     }
   }
 }

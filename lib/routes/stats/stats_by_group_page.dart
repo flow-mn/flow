@@ -56,9 +56,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.byCategory
-              ? "tabs.stats.summaryByCategory".t(context)
-              : "tabs.stats.summaryByAccount".t(context),
+          widget.byCategory ? "categories".t(context) : "accounts".t(context),
         ),
       ),
       body: ValueListenableBuilder(

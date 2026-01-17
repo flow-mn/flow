@@ -32,7 +32,7 @@ class _InputOccurrencesSheetState extends State<InputOccurrencesSheet> {
     return ModalSheet.scrollable(
       title: Text("select.recurrence.occurrences".t(context)),
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: pop,
@@ -44,7 +44,7 @@ class _InputOccurrencesSheetState extends State<InputOccurrencesSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         spacing: 12.0,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,

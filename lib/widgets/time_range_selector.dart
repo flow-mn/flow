@@ -153,8 +153,8 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
           ),
           const SizedBox(height: 4.0),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: .center,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text(modeLabel),
               TextButton(

@@ -29,7 +29,7 @@ class _SelectColorSchemeSheetState extends State<SelectColorSchemeSheet> {
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       trailing: ModalOverflowBar(
-        alignment: MainAxisAlignment.end,
+        alignment: .end,
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<FlowColorScheme>(null)),

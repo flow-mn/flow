@@ -22,7 +22,7 @@ class Surface extends StatelessWidget {
     this.iconColor,
     this.clipBehavior,
     this.shape = const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      borderRadius: .all(Radius.circular(16.0)),
     ),
     this.elevation = 0.0,
     this.margin = EdgeInsets.zero,

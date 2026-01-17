@@ -17,13 +17,13 @@ class CombineTransferRadio extends StatelessWidget {
     super.key,
     required this.currentlyUsingCombineMode,
     required this.onTap,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   }) : combine = true;
   const CombineTransferRadio.separate({
     super.key,
     required this.currentlyUsingCombineMode,
     required this.onTap,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16.0)),
+    this.borderRadius = const .all(Radius.circular(16.0)),
   }) : combine = false;
 
   @override

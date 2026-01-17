@@ -5,8 +5,9 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/sync/import/external/ivy_wallet_csv.dart";
 import "package:flow/sync/import/import_csv.dart";
 import "package:flow/utils/utils.dart";
-import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import_wizard/backup_info.dart";
+import "package:flow/widgets/import_wizard/import_error.dart";
+import "package:flow/widgets/import_wizard/import_progress.dart";
 import "package:flow/widgets/import_wizard/import_success.dart";
 import "package:flutter/material.dart";
 
@@ -32,38 +33,17 @@ class _IvyWalletImportWizardPageState extends State<IvyWalletImportWizardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("sync.import".t(context))),
-      body: SafeArea(
-        child: ValueListenableBuilder(
-          valueListenable: importer.progressNotifier,
-          builder: (context, value, child) => switch (value) {
-            ImportCSVProgress.waitingConfirmation => BackupInfo(
-              importer: importer,
-              onClickStart: _start,
-            ),
-            ImportCSVProgress.error => Text(error.toString()),
-            ImportCSVProgress.success => ImportSuccess(
-              setupMode: widget.setupMode,
-            ),
-            _ => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Spinner.center(),
-                  const SizedBox(height: 8.0),
-                  Center(
-                    child: Text(
-                      value.localizedNameContext(context),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          },
+    return ValueListenableBuilder(
+      valueListenable: importer.progressNotifier,
+      builder: (context, value, child) => switch (value) {
+        ImportCSVProgress.waitingConfirmation => BackupInfo(
+          importer: importer,
+          onClickStart: _start,
         ),
-      ),
+        ImportCSVProgress.error => ImportError(error),
+        ImportCSVProgress.success => ImportSuccess(setupMode: widget.setupMode),
+        _ => ImportProgressIndicator(value.localizedNameContext(context)),
+      },
     );
   }
 
