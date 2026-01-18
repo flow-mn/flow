@@ -2,7 +2,7 @@ import "package:flow/constants.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/services/integrations/eny.dart";
 import "package:flow/theme/helpers.dart";
-import "package:flow/utils/open_url.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -23,37 +23,47 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Eny")),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              EnyPrivacyNotice(),
-              const SizedBox(height: 24.0),
-              const WavyDivider(),
-              const SizedBox(height: 24.0),
-              Frame(
-                child: InfoText(
-                  child: Text(
-                    "integrations.eny.dashboard.description".t(context),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              ListTile(
-                leading: Icon(Symbols.space_dashboard_rounded),
-                title: Text("integrations.eny.dashboard".t(context)),
-                trailing: const DirectionalChevron(),
-                onTap: () {
-                  openUrl(enyDashboardLink);
-                },
-              ),
-              ValueListenableBuilder(
-                valueListenable: EnyService().apiKey,
-                builder: (context, apiKey, child) {
-                  final bool connected = apiKey != null;
+      body: ValueListenableBuilder(
+        valueListenable: EnyService().apiKey,
+        builder: (context, apiKey, child) {
+          final bool connected = apiKey != null;
 
-                  return Column(
+          return SingleChildScrollView(
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  EnyPrivacyNotice(),
+                  const SizedBox(height: 24.0),
+                  const WavyDivider(),
+                  const SizedBox(height: 24.0),
+                  if (!connected) ...[
+                    Frame(
+                      child: InfoText(
+                        child: Text(
+                          "integrations.eny.dashboard.description".t(context),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                  ],
+                  ListTile(
+                    leading: SizedBox(
+                      width: 24.0,
+                      height: 24.0,
+                      child: Image.network(
+                        enyLogoUrl,
+                        width: 192.0,
+                        height: 192.0,
+                      ),
+                    ),
+                    title: Text("integrations.eny.dashboard".t(context)),
+                    trailing: const DirectionalChevron(),
+                    onTap: () {
+                      openUrl(enyDashboardLink);
+                    },
+                  ),
+                  Column(
                     mainAxisSize: .min,
                     children: [
                       ListTile(
@@ -110,28 +120,48 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                             );
                           },
                         ),
-                      if (connected)
+                      if (connected) ...[
+                        const SizedBox(height: 24.0),
+                        const WavyDivider(),
+                        const SizedBox(height: 24.0),
                         ListTile(
-                          leading: Icon(Symbols.logout_rounded),
-                          title: Text("integrations.eny.disconnect".t(context)),
-                          trailing: const DirectionalChevron(),
-                          onTap: () async {
-                            // TODO @sadespresso confirmation sheet
-                            await EnyService().disconnect();
-                            if (mounted) {
-                              setState(() {});
-                            }
-                          },
+                          leading: Icon(
+                            Symbols.logout_rounded,
+                            color: context.colorScheme.error,
+                          ),
+                          title: Text(
+                            "integrations.eny.disconnect".t(context),
+                            style: TextStyle(color: context.colorScheme.error),
+                          ),
+                          onTap: _disconnectEny,
                         ),
+                      ],
                     ],
-                  );
-                },
+                  ),
+                  const SizedBox(height: 24.0),
+                ],
               ),
-              const SizedBox(height: 24.0),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  Future<void> _disconnectEny() async {
+    final bool? confirmed = await context.showConfirmationSheet(
+      title: "integrations.eny.disconnect".t(context),
+      isDeletionConfirmation: true,
+      mainActionLabelOverride: "general.confirm".t(context),
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
+    await EnyService().disconnect();
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

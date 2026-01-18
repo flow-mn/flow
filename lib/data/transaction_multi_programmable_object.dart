@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:flow/data/transaction_programmable_object.dart";
+import "package:flow/utils/loose_parsers.dart";
 
 class TransactionMultiProgrammableObject {
   final List<TransactionProgrammableObject> t;
@@ -47,6 +48,50 @@ class TransactionMultiProgrammableObject {
       } else {
         throw Exception("No json parameter");
       }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static TransactionMultiProgrammableObject? fromEnyJson(Map json) {
+    try {
+      final List<dynamic>? items = json["items"] as List<dynamic>?;
+      if (items == null || items.isEmpty) {
+        return null;
+      }
+      final transactions = items
+          .map((item) {
+            try {
+              final itemMap = item as Map?;
+
+              if (itemMap == null) return null;
+
+              final String title = looseString(itemMap["name"]) ?? "An item";
+              final double amount = -(looseDouble(itemMap["amount"]) ?? 0.0);
+              final DateTime transactionDate = switch (looseString(
+                json["date"],
+              )) {
+                String dateString =>
+                  DateTime.tryParse(dateString) ?? DateTime.now(),
+                _ => DateTime.now(),
+              };
+              final int quantity =
+                  looseDouble(itemMap["quantity"])?.toInt() ?? 1;
+              final String notes = "Quantity: $quantity\n\nImported from Eny";
+
+              return TransactionProgrammableObject(
+                title: title,
+                amount: amount,
+                transactionDate: transactionDate,
+                notes: notes,
+              );
+            } catch (e) {
+              return null;
+            }
+          })
+          .whereType<TransactionProgrammableObject>()
+          .toList();
+      return TransactionMultiProgrammableObject(t: transactions);
     } catch (e) {
       return null;
     }

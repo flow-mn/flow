@@ -159,6 +159,16 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get createTransactionsPerItemInScans =>
+      value.createTransactionsPerItemInScans;
+  set createTransactionsPerItemInScans(
+    bool newCreateTransactionsPerItemInScans,
+  ) {
+    value.createTransactionsPerItemInScans =
+        newCreateTransactionsPerItemInScans;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   String? get defaultFilterPresetUuid => value.defaultFilterPreset;
   set defaultFilterPresetUuid(String? uuid) {
     value.defaultFilterPreset = uuid;

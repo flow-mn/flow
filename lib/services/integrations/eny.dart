@@ -1,8 +1,13 @@
+import "dart:async";
 import "dart:convert";
 
 import "package:cross_file/cross_file.dart";
-import "package:flow/prefs/local_preferences.dart";
+import "package:flow/data/transaction_multi_programmable_object.dart";
+import "package:flow/data/transaction_programmable_object.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/eny_preferences.dart";
 import "package:flow/services/categories.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart";
@@ -25,6 +30,8 @@ class EnyService {
   final ValueNotifier<int?> _remainingCredits = ValueNotifier<int?>(null);
   ValueListenable<int?> get remainingCredits => _remainingCredits;
 
+  final Map<String, dynamic> _sessionCache = {};
+
   String? _email;
   String? get email => _email;
 
@@ -36,26 +43,27 @@ class EnyService {
 
   void _init() async {
     try {
-      _apiKey.value = LocalPreferences().enyApiKey.get();
-      _email = LocalPreferences().enyEmail.get();
+      _apiKey.value = EnyLocalPreferences().apiKey.get();
+      _email = EnyLocalPreferences().email.get();
       _log.fine(
         "Eny API key loaded, exists: ${_apiKey.value != null}, email: ${_email != null}",
       );
     } catch (e) {
       _log.warning("Failed to load Eny API key", e);
     }
+    unawaited(resolveProcessedReceipt());
   }
 
   Future<void> setApiKey({required String? apiKey, String? email}) async {
     try {
-      await LocalPreferences().enyApiKey.set(apiKey ?? "");
+      await EnyLocalPreferences().apiKey.set(apiKey ?? "");
       _apiKey.value = apiKey;
       _log.fine("Eny API key saved");
     } catch (e) {
       _log.warning("Failed to save Eny API key", e);
     }
     try {
-      await LocalPreferences().enyEmail.set(email ?? "");
+      await EnyLocalPreferences().email.set(email ?? "");
       _email = email;
       _log.fine("Eny email saved");
     } catch (e) {
@@ -81,6 +89,23 @@ class EnyService {
       _log.warning("Failed to check credits", e);
       return null;
     }
+  }
+
+  Future<Map?> fetchReceiptDetails(String receiptId) async {
+    final response = await http.get(
+      Uri.parse("https://eny.gege.mn/api/v1/receipts/$receiptId"),
+      headers: {"X-API-KEY": _apiKey.value!},
+    );
+
+    if (response.statusCode == 401) {
+      throw EnyCredsError();
+    }
+
+    final decoded = jsonDecode(response.body);
+
+    if (decoded is! Map) return null;
+
+    return decoded;
   }
 
   static Future<int?> fetchRemainingCredits(String xApiKey) async {
@@ -150,13 +175,81 @@ class EnyService {
 
       final decoded = jsonDecode(response.body);
 
-      return decoded["id"];
+      if (decoded case Map decodedResult) {
+        if (decoded["id"] case String id) {
+          if (decodedResult["status"] != "processing" &&
+              decodedResult["result"] != null) {
+            _sessionCache[id] = decodedResult;
+          }
+          unawaited(
+            EnyLocalPreferences().pendingReceipts.addItem(id).catchError((
+              error,
+            ) {
+              _log.warning("Failed to save pending receipt ID", error);
+            }),
+          );
+          unawaited(resolveProcessedReceipt());
+          return decoded["id"];
+        }
+      }
     } catch (e, stackTrace) {
       if (e is EnyCredsError) {
         rethrow;
       }
       _log.severe("Failed to process receipt", e, stackTrace);
       return null;
+    }
+    return null;
+  }
+
+  Future<void> resolveProcessedReceipt() async {
+    try {
+      final List<String>? items = EnyLocalPreferences().pendingReceipts.get();
+      if (items == null || items.isEmpty) {
+        return;
+      }
+      final String id = items.first;
+
+      _log.fine("Resolving processed receipt with ID $id");
+
+      final Map? enyJson = switch (_sessionCache[id]) {
+        Map m => m,
+        _ => await fetchReceiptDetails(id),
+      };
+
+      bool completed = false;
+
+      if (enyJson != null && enyJson["status"] == "completed") {
+        if (enyJson["result"] case Map enyResult) {
+          if (enyResult["data"] case Map enySuccessResult) {
+            if (UserPreferencesService().createTransactionsPerItemInScans) {
+              final parsed = TransactionMultiProgrammableObject.fromEnyJson(
+                enySuccessResult,
+              );
+              for (final tranasction in parsed?.t ?? []) {
+                tranasction.save();
+              }
+              completed = parsed != null && parsed.t.isNotEmpty;
+            } else {
+              final parsed = TransactionProgrammableObject.fromEnyJson(
+                enySuccessResult,
+              );
+              parsed?.save();
+              completed = parsed != null;
+            }
+          }
+        }
+      }
+
+      if (completed) {
+        await EnyLocalPreferences().pendingReceipts
+            .removeItem(id)
+            .catchError((error) => false);
+      }
+
+      return await resolveProcessedReceipt();
+    } catch (e) {
+      _log.warning("Failed to resolve processed receipt", e);
     }
   }
 

@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "24:4516202653950496157",
+      "lastPropertyId": "25:5365639887585710264",
       "name": "UserPreferences",
       "properties": [
         {
@@ -477,6 +477,11 @@
           "id": "24:4516202653950496157",
           "name": "primaryAccountUuid",
           "type": 9
+        },
+        {
+          "id": "25:5365639887585710264",
+          "name": "createTransactionsPerItemInScans",
+          "type": 1
         }
       ],
       "relations": []

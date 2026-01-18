@@ -19,6 +19,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['transactionListTileShowAccountForLeading'] as bool? ?? false,
         transactionListTileRelaxedDensity:
             json['transactionListTileRelaxedDensity'] as bool? ?? false,
+        createTransactionsPerItemInScans:
+            json['createTransactionsPerItemInScans'] as bool? ?? true,
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
@@ -42,31 +44,33 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
       ..uuid = json['uuid'] as String
       ..changeVisuals = json['changeVisuals'] as String?;
 
-Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
-    <String, dynamic>{
-      'uuid': instance.uuid,
-      'combineTransfers': instance.combineTransfers,
-      'excludeTransfersFromFlow': instance.excludeTransfersFromFlow,
-      'trashBinRetentionDays': instance.trashBinRetentionDays,
-      'defaultFilterPreset': instance.defaultFilterPreset,
-      'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
-      'useCategoryNameForUntitledTransactions':
-          instance.useCategoryNameForUntitledTransactions,
-      'transactionListTileShowCategoryName':
-          instance.transactionListTileShowCategoryName,
-      'transactionListTileShowAccountForLeading':
-          instance.transactionListTileShowAccountForLeading,
-      'transactionListTileRelaxedDensity':
-          instance.transactionListTileRelaxedDensity,
-      'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
-      'primaryCurrency': instance.primaryCurrency,
-      'primaryAccountUuid': instance.primaryAccountUuid,
-      'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
-      'enableICloudSync': instance.enableICloudSync,
-      'iCloudBackupsToKeep': instance.iCloudBackupsToKeep,
-      'transactionButtonOrderJoined': instance.transactionButtonOrderJoined,
-      'themeName': instance.themeName,
-      'themeChangesAppIcon': instance.themeChangesAppIcon,
-      'changeVisuals': instance.changeVisuals,
-      'transactionEntryFlowJson': instance.transactionEntryFlowJson,
-    };
+Map<String, dynamic> _$UserPreferencesToJson(
+  UserPreferences instance,
+) => <String, dynamic>{
+  'uuid': instance.uuid,
+  'combineTransfers': instance.combineTransfers,
+  'excludeTransfersFromFlow': instance.excludeTransfersFromFlow,
+  'trashBinRetentionDays': instance.trashBinRetentionDays,
+  'defaultFilterPreset': instance.defaultFilterPreset,
+  'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
+  'useCategoryNameForUntitledTransactions':
+      instance.useCategoryNameForUntitledTransactions,
+  'transactionListTileShowCategoryName':
+      instance.transactionListTileShowCategoryName,
+  'transactionListTileShowAccountForLeading':
+      instance.transactionListTileShowAccountForLeading,
+  'transactionListTileRelaxedDensity':
+      instance.transactionListTileRelaxedDensity,
+  'createTransactionsPerItemInScans': instance.createTransactionsPerItemInScans,
+  'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
+  'primaryCurrency': instance.primaryCurrency,
+  'primaryAccountUuid': instance.primaryAccountUuid,
+  'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,
+  'enableICloudSync': instance.enableICloudSync,
+  'iCloudBackupsToKeep': instance.iCloudBackupsToKeep,
+  'transactionButtonOrderJoined': instance.transactionButtonOrderJoined,
+  'themeName': instance.themeName,
+  'themeChangesAppIcon': instance.themeChangesAppIcon,
+  'changeVisuals': instance.changeVisuals,
+  'transactionEntryFlowJson': instance.transactionEntryFlowJson,
+};

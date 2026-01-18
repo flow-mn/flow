@@ -1,0 +1,35 @@
+String? looseString(dynamic value) {
+  if (value is Iterable) {
+    return value.firstOrNull;
+  }
+
+  if (value is num) {
+    return value.toString();
+  }
+
+  if (value is String) {
+    return value;
+  }
+
+  return null;
+}
+
+double? looseDouble(dynamic value) {
+  final stringValue = looseString(value);
+  if (stringValue != null) {
+    return double.tryParse(stringValue);
+  }
+  return null;
+}
+
+List<String>? looseStringList(dynamic value) {
+  if (value is Iterable) {
+    return value.whereType<String>().where((x) => x.isNotEmpty).toList();
+  }
+
+  if (value is String) {
+    return [value];
+  }
+
+  return null;
+}

@@ -5,6 +5,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/eny_preferences.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:intl/intl.dart";
@@ -53,16 +54,14 @@ class LocalPreferences {
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
-  late final PendingTransactionsLocalPreferences pendingTransactions;
-  late final TransitiveLocalPreferences transitive;
-
   /// Number of notifications issued by the app
   ///
   /// Used to prevent id collisions
   late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
 
-  late final PrimitiveSettingsEntry<String> enyApiKey;
-  late final PrimitiveSettingsEntry<String> enyEmail;
+  late final PendingTransactionsLocalPreferences pendingTransactions;
+  late final TransitiveLocalPreferences transitive;
+  late final EnyLocalPreferences eny;
 
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
@@ -153,20 +152,11 @@ class LocalPreferences {
       initialValue: 0,
     );
 
-    enyApiKey = PrimitiveSettingsEntry<String>(
-      key: "eny.apiKey",
-      preferences: _prefs,
-    );
-
-    enyEmail = PrimitiveSettingsEntry<String>(
-      key: "eny.email",
-      preferences: _prefs,
-    );
-
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(
       _prefs,
     );
     transitive = TransitiveLocalPreferences.initialize(_prefs);
+    eny = EnyLocalPreferences.initialize(_prefs);
   }
 
   @Deprecated("Use UserPreferencesService().primaryCurrency instead")

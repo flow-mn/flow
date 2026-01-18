@@ -65,6 +65,8 @@ class UserPreferences implements EntityBase {
   bool transactionListTileShowAccountForLeading;
   bool transactionListTileRelaxedDensity;
 
+  bool createTransactionsPerItemInScans;
+
   String? icuCurrencyFormattingPattern;
 
   String? primaryCurrency;
@@ -128,13 +130,18 @@ class UserPreferences implements EntityBase {
           )
           .toList();
 
-      if (parsed.length < 3) {
-        throw StateError("Must have at least 3 options");
+      if (parsed.length < FlowButtonType.values.length) {
+        // Ensure all button types are present
+        for (final type in FlowButtonType.values) {
+          if (!parsed.contains(type)) {
+            parsed.add(type);
+          }
+        }
       }
 
       return parsed;
     } catch (e) {
-      return FlowButtonType.values.where((value) => value != .eny).toList();
+      return FlowButtonType.defaultOrder;
     }
   }
 
@@ -151,6 +158,7 @@ class UserPreferences implements EntityBase {
     this.transactionListTileShowCategoryName = false,
     this.transactionListTileShowAccountForLeading = false,
     this.transactionListTileRelaxedDensity = false,
+    this.createTransactionsPerItemInScans = true,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
     this.enableICloudSync = false,

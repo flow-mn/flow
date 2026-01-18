@@ -85,7 +85,6 @@ class FileAttachmentService {
 
       for (final File file in fileEntries) {
         if (!file.path.startsWith(ObjectBox.filesDirectory)) {
-          // TODO @sadespresso check if this check is valid for every os
           continue;
         }
 

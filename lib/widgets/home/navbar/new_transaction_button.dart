@@ -1,12 +1,13 @@
 import "package:flow/data/flow_button_type.dart";
+import "package:flow/entity/user_preferences.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/navbar_theme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/directionality.dart";
 import "package:flutter/material.dart" hide Flow;
-import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:pie_menu/pie_menu.dart";
 
@@ -26,12 +27,23 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
   Widget build(BuildContext context) {
     final NavbarTheme navbarTheme = Theme.of(context).extension<NavbarTheme>()!;
 
-    return ValueListenableBuilder(
-      valueListenable: UserPreferencesService().valueNotifier,
-      builder: (context, userPreferences, child) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        UserPreferencesService().valueNotifier,
+        EnyService().apiKey,
+      ]),
+      builder: (context, _) {
+        final UserPreferences userPreferences = UserPreferencesService().value;
+        final bool enyConnected = EnyService().apiKey.value?.isNotEmpty == true;
+
         final List<FlowButtonType> buttonOrder = context.isLtr
             ? userPreferences.transactionButtonOrder
             : userPreferences.transactionButtonOrder.reversed.toList();
+
+        if (!enyConnected) {
+          // If Eny is not connected, show only 3 buttons + Eny button
+          buttonOrder.removeWhere((type) => type == .eny);
+        }
 
         return PieMenu(
           theme: context.pieTheme.copyWith(
@@ -45,40 +57,21 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
             longPressDuration: Duration.zero,
           ),
           onToggle: onToggle,
-          actions: [
-            // PieAction(
-            //   tooltip: Text("Eny"),
-            //   onSelect: () => widget.onActionTap(.expense),
-            //   child: Icon(TransactionType.expense.icon, weight: 800.0),
-            //   buttonTheme: PieButtonTheme(
-            //     backgroundColor: TransactionType.expense.actionBackgroundColor(
-            //       context,
-            //     ),
-            //     iconColor: TransactionType.expense.actionColor(context),
-            //   ),
-            // ),
-            for (final transactionType in buttonOrder)
-              PieAction(
-                tooltip: Text(transactionType.localizedNameContext(context)),
-                onSelect: () => widget.onActionTap(transactionType),
-                child: Icon(transactionType.icon, weight: 800.0),
-                buttonTheme: PieButtonTheme(
-                  backgroundColor: transactionType.actionBackgroundColor(
-                    context,
+          actions: buttonOrder
+              .map(
+                (transactionType) => PieAction(
+                  tooltip: Text(transactionType.localizedNameContext(context)),
+                  onSelect: () => widget.onActionTap(transactionType),
+                  child: Icon(transactionType.icon, weight: 800.0),
+                  buttonTheme: PieButtonTheme(
+                    backgroundColor: transactionType.actionBackgroundColor(
+                      context,
+                    ),
+                    iconColor: transactionType.actionColor(context),
                   ),
-                  iconColor: transactionType.actionColor(context),
                 ),
-              ),
-            PieAction(
-              tooltip: Text("Eny"),
-              onSelect: () => context.push("/integrations/eny"),
-              child: Icon(Symbols.camera_alt_rounded, weight: 800.0),
-              buttonTheme: PieButtonTheme(
-                backgroundColor: context.colorScheme.secondary,
-                iconColor: context.colorScheme.onSecondary,
-              ),
-            ),
-          ],
+              )
+              .toList(),
           child: StatefulBuilder(
             builder: (context, setState) => Tooltip(
               message: "transaction.new".t(context),
