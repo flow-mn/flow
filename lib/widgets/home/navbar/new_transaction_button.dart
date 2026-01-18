@@ -36,14 +36,22 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
         final UserPreferences userPreferences = UserPreferencesService().value;
         final bool enyConnected = EnyService().apiKey.value?.isNotEmpty == true;
 
-        final List<FlowButtonType> buttonOrder = context.isLtr
-            ? userPreferences.transactionButtonOrder
-            : userPreferences.transactionButtonOrder.reversed.toList();
-
-        if (!enyConnected) {
-          // If Eny is not connected, show only 3 buttons + Eny button
-          buttonOrder.removeWhere((type) => type == .eny);
-        }
+        final List<FlowButtonType> buttonOrder = switch ((
+          context.isLtr,
+          enyConnected,
+        )) {
+          (true, true) => userPreferences.transactionButtonOrder,
+          (true, false) =>
+            userPreferences.transactionButtonOrder
+                .where((type) => type != FlowButtonType.eny)
+                .toList(),
+          (false, true) =>
+            userPreferences.transactionButtonOrder.reversed.toList(),
+          (false, false) =>
+            userPreferences.transactionButtonOrder.reversed
+                .where((type) => type != FlowButtonType.eny)
+                .toList(),
+        };
 
         return PieMenu(
           theme: context.pieTheme.copyWith(
