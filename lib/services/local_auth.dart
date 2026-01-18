@@ -62,9 +62,15 @@ class LocalAuthService {
   Future<bool> authenticate() async {
     _log.fine("Initiating authentication with biometrics");
 
+    String localizedReason = "general.unlockToOpen".tr();
+
+    if (localizedReason.trim().isEmpty) {
+      localizedReason = "Please authenticate to proceed";
+    }
+
     try {
       final bool success = await _localAuth.authenticate(
-        localizedReason: "general.unlockToOpen".tr(),
+        localizedReason: localizedReason,
         sensitiveTransaction: true,
         biometricOnly: true,
         persistAcrossBackgrounding: true,
