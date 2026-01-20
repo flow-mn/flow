@@ -140,7 +140,7 @@ class EnyService {
 
       final request = http.MultipartRequest(
         "post",
-        Uri.parse("https://eny.gege.mn/api/v1/receipts"),
+        Uri.parse("https://eny.gege.mn/api/v1/receipts?async"),
       );
 
       http.MediaType? contentType;
@@ -247,7 +247,11 @@ class EnyService {
             .catchError((error) => false);
       }
 
-      return await resolveProcessedReceipt();
+      unawaited(
+        Future.delayed(const Duration(seconds: 8)).then((_) {
+          resolveProcessedReceipt();
+        }),
+      );
     } catch (e) {
       _log.warning("Failed to resolve processed receipt", e);
     }

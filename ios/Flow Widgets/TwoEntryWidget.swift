@@ -11,13 +11,13 @@ struct TwoEntryProvider: TimelineProvider {
     typealias Entry = TwoEntryWidgetEntry
 
     func placeholder(in context: Context) -> TwoEntryWidgetEntry {
-        TwoEntryWidgetEntry(date: Date(), order: ["income", "expense"], color: .primary)
+        TwoEntryWidgetEntry(date: Date(), order: ["transfer", "income", "expense"], color: .primary)
     }
     
     func getSnapshot(in context: Context, completion: @escaping (TwoEntryWidgetEntry) -> ()) {
         let prefs = UserDefaults(suiteName: "group.mn.flow.flow")
         let counter = prefs?.string(forKey: "buttonOrder")
-        let order = counter?.components(separatedBy: ",") ?? ["income", "expense"]
+        let order = counter?.components(separatedBy: ",") ?? ["transfer", "income", "expense"]
         let entry = TwoEntryWidgetEntry(date: Date(), order: order, color: .primary)
         completion(entry)
     }
@@ -29,67 +29,111 @@ struct TwoEntryProvider: TimelineProvider {
         }
     }
 
-//    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async
-//        -> TwoEntryWidgetEntry
-//    {
-//        TwoEntryWidgetEntry(date: Date(), order: ["income", "expense"], color: .primary)
-//    }
-
-    static let validOrderNames: [String] = ["income", "expense", "transfer"]
-
-//    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<
-//        TwoEntryWidgetEntry
-//    > {
-//        let order: [String] = UserDefaults.standard.string(forKey: "flutter.flow.widgets.buttonOrder")?.components(separatedBy: ",") ?? ["income", "expense"]
-//        let colorHex: String? = UserDefaults.standard.string(forKey: "flow.widgets.color")
-//        let validOrder: [String] =
-//            (order.allSatisfy({ TwoEntryProvider.validOrderNames.contains($0) })
-//                && order.count >= 2)
-//            ? order : ["income", "expense"]
-//
-//        let entry = TwoEntryWidgetEntry(date: Date(), order: validOrder, color: .primary)
-//
-//        return Timeline(entries: [entry], policy: .atEnd)
-//    }
+    static let validOrderNames: [String] = ["income", "expense", "transfer", "eny"]
 }
 
 struct TwoEntryWidgetView: View {
     var entry: TwoEntryWidgetEntry
 
     static let spacing = 8.0
+    
+    static let images: [String: String] = [
+        "transfer": "Transfer",
+        "income": "Income",
+        "expense": "Expense",
+        "eny": "Camera"
+    ]
 
     var body: some View {
         GeometryReader { geometry in
             let size = (geometry.size.height - 40) * 0.5
 
-            VStack(alignment: .center, spacing: TwoEntryWidgetView.spacing) {
-                Link(destination: URL(string: "flow-mn:///transaction/new?type=transfer")!) {
-                    Capsule()
-                    .fill(.tertiary)
-                    .overlay{
-                        Image("Transfer")
-                            .resizable()
-                            .foregroundStyle(.primary)
-                            .frame(
-                                width: size,
-                                height: size)
+            if (entry.order.count == 2) {
+                VStack(spacing: TwoEntryWidgetView.spacing) {
+                    button(
+                        type: entry.order[0],
+                        size: size,
+                        pill: true
+                    )
+                    button(
+                        type: entry.order[1],
+                        size: size,
+                        pill: true
+                    )
+                }
+            }
+
+            if (entry.order.count == 3) {
+                VStack(alignment: .center, spacing: TwoEntryWidgetView.spacing) {
+                    button(
+                        type: entry.order[0],
+                        size: size,
+                        pill: true
+                    )
+                    HStack(spacing: TwoEntryWidgetView.spacing) {
+                        button(
+                            type: entry.order[1],
+                            size: size
+                        )
+                        button(
+                            type: entry.order[2],
+                            size: size
+                        )
                     }
                 }
-                HStack(spacing: TwoEntryWidgetView.spacing) {
-                    ForEach(entry.order.filter({ $0 != "transfer" }), id: \.self) { item in
-                        Link(destination: URL(string: "flow-mn:///transaction/new?type=\(item)")!) {
-                            Circle()
-                                .fill(.tertiary)
-                                .overlay {
-                                    Image(item.capitalized)
-                                        .resizable()
-                                        .foregroundStyle(.primary)
-                                        .frame(
-                                            width: size,
-                                            height: size)
-                                }
-                        }
+            }
+
+            if (entry.order.count == 4) {
+                VStack(alignment: .center, spacing: TwoEntryWidgetView.spacing) {
+                    HStack(spacing: TwoEntryWidgetView.spacing) {
+                        button(
+                            type: entry.order[0],
+                            size: size
+                        )
+                        button(
+                            type: entry.order[1],
+                            size: size
+                        )
                     }
+                    HStack(spacing: TwoEntryWidgetView.spacing) {
+                        button(
+                            type: entry.order[2],
+                            size: size
+                        )
+                        button(
+                            type: entry.order[3],
+                            size: size
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    func button(type: String, size: Double, pill: Bool = false) -> some View {
+        Link(destination: URL(string: "flow-mn:///transaction/new?type=\(type)")!) {
+            if (pill) {
+                Capsule()
+                .fill(.tertiary)
+                .overlay{
+                    Image(TwoEntryWidgetView.images[entry.order[0]]!)
+                        .resizable()
+                        .foregroundStyle(.primary)
+                        .frame(
+                            width: size,
+                            height: size)
+                }
+            } else {
+                Circle()
+                .fill(.tertiary)
+                .overlay {
+                    Image(TwoEntryWidgetView.images[type]!)
+                        .resizable()
+                        .foregroundStyle(.primary)
+                        .frame(
+                            width: size,
+                            height: size)
                 }
             }
         }

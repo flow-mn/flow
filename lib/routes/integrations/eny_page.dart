@@ -5,10 +5,12 @@ import "package:camera/camera.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/camera.dart";
 import "package:flow/services/integrations/eny.dart";
+import "package:flow/theme/helpers.dart";
 import "package:flow/utils/extensions/directionality.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/camera_page_base.dart";
 import "package:flow/widgets/camera_page_base/overlay_button.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/image_drop_zone.dart";
@@ -33,10 +35,10 @@ class _EnyPageState extends State<EnyPage> {
 
   XFile? _takenPicture;
 
+  bool get isCameraSupported => Platform.isAndroid || Platform.isIOS;
+
   @override
   Widget build(BuildContext context) {
-    final bool isCameraSupported = Platform.isAndroid || Platform.isIOS;
-
     final IconData flashIcon = switch (_cameraPageKey.currentState?.flashMode) {
       FlashMode.auto => Symbols.flash_auto_rounded,
       FlashMode.always => Symbols.flash_on_rounded,
@@ -46,14 +48,20 @@ class _EnyPageState extends State<EnyPage> {
 
     final List<Widget> topButtons = [
       OverlayButton(
-        child: RTLFlipper(child: Icon(Symbols.chevron_left_rounded)),
+        child: _takenPicture == null
+            ? RTLFlipper(child: Icon(Symbols.chevron_left_rounded))
+            : Icon(Symbols.close_rounded),
         onTap: () {
-          if (context.canPop()) {
+          if (_takenPicture != null) {
+            setState(() {
+              _takenPicture = null;
+            });
+          } else if (context.canPop()) {
             context.pop();
           }
         },
       ),
-      if (isCameraSupported)
+      if (isCameraSupported && CameraService.cameras?.isNotEmpty == true)
         OverlayButton(
           child: Icon(flashIcon),
           onTap: () {
@@ -61,45 +69,6 @@ class _EnyPageState extends State<EnyPage> {
             setState(() {});
           },
         ),
-    ];
-
-    final List<Widget> bottomButtons = [
-      (CameraService.cameras?.length ?? 0) > 1
-          ? OverlayButton(
-              onTap: () {
-                setState(() {});
-              },
-              child: Icon(Symbols.switch_camera_rounded),
-            )
-          : Opacity(
-              opacity: 0,
-              child: IgnorePointer(
-                child: OverlayButton(
-                  onTap: () {},
-                  child: Icon(Icons.switch_camera_rounded),
-                ),
-              ),
-            ),
-      if (_takenPicture != null || isCameraSupported)
-        OverlayButton(
-          onTap: _busy
-              ? null
-              : (_takenPicture == null ? _takePicture : _sendTakenPicture),
-          child: SizedBox.square(
-            dimension: 24.0,
-            child: _busy
-                ? const Spinner.center()
-                : Icon(
-                    _takenPicture == null
-                        ? Symbols.photo_camera_rounded
-                        : Symbols.send_rounded,
-                  ),
-          ),
-        ),
-      OverlayButton(
-        onTap: _selectMultiImageFromGallery,
-        child: Icon(Symbols.photo_library_rounded),
-      ),
     ];
 
     return CameraPageBase(
@@ -120,10 +89,7 @@ class _EnyPageState extends State<EnyPage> {
       children: [
         if (_takenPicture != null)
           Positioned.fill(
-            child: Container(
-              color: Colors.black,
-              child: Image.file(File(_takenPicture!.path), fit: BoxFit.contain),
-            ),
+            child: Image.file(File(_takenPicture!.path), fit: BoxFit.cover),
           ),
         Positioned(
           top: 20.0,
@@ -143,17 +109,76 @@ class _EnyPageState extends State<EnyPage> {
           bottom: 20.0,
           left: 20.0,
           right: 20.0,
-          child: SafeArea(
-            child: Row(
-              spacing: 12.0,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: context.isRtl
-                  ? bottomButtons.reversed.toList()
-                  : bottomButtons,
-            ),
-          ),
+          child: SafeArea(child: buildBottomButtons(context)),
         ),
       ],
+    );
+  }
+
+  Widget buildBottomButtons(BuildContext context) {
+    if (_takenPicture != null) {
+      return Column(
+        spacing: 16.0,
+        mainAxisSize: .min,
+        children: [
+          OverlayButton(
+            child: Icon(
+              Symbols.delete_forever_rounded,
+              color: context.colorScheme.error,
+            ),
+            onTap: () {
+              _takenPicture = null;
+              setState(() {});
+            },
+          ),
+          Button(
+            trailing: _busy
+                ? const SizedBox.square(dimension: 24.0, child: Spinner())
+                : Icon(Symbols.send_rounded),
+            onTap: _busy ? null : _sendTakenPicture,
+            child: Text("Send"),
+          ),
+        ],
+      );
+    }
+
+    final List<Widget> buttons = [
+      (CameraService.cameras?.length ?? 0) > 1
+          ? OverlayButton(
+              onTap: () {
+                setState(() {});
+              },
+              child: Icon(Symbols.switch_camera_rounded),
+            )
+          : Opacity(
+              opacity: 0,
+              child: IgnorePointer(
+                child: OverlayButton(
+                  onTap: () {},
+                  child: Icon(Icons.switch_camera_rounded),
+                ),
+              ),
+            ),
+      if (_takenPicture != null ||
+          (isCameraSupported && CameraService.cameras?.isNotEmpty == true))
+        OverlayButton(
+          onTap: _busy ? null : _takePicture,
+          child: SizedBox.square(
+            dimension: 24.0,
+            child: _busy
+                ? const Spinner.center()
+                : Icon(Symbols.photo_camera_rounded),
+          ),
+        ),
+      OverlayButton(
+        onTap: _selectMultiImageFromGallery,
+        child: Icon(Symbols.photo_library_rounded),
+      ),
+    ];
+    return Row(
+      spacing: 12.0,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: context.isRtl ? buttons.reversed.toList() : buttons,
     );
   }
 

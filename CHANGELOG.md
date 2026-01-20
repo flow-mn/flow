@@ -5,13 +5,6 @@
 ### New features
 
 * Now you can scan receipts with Eny (WIP)
-* Release checklist:
-  * Handle background progress
-  * Always use async processing
-  * Allow up to 5 images at once
-  * Add itemize option in eny settings
-  * Update button order prefs page to account for eny button
-  * Test categories
 
 ## 0.17.0
 

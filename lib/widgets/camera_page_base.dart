@@ -79,7 +79,7 @@ class CameraPageBaseState extends State<CameraPageBase>
           Positioned.fill(
             child: controller == null || !controller!.value.isInitialized
                 ? const Center(child: CircularProgressIndicator())
-                : CameraPreview(controller!),
+                : cameraWidget(context, controller!),
           ),
         if (!isSupported)
           widget.unsupportedWidget ??
@@ -87,6 +87,22 @@ class CameraPageBaseState extends State<CameraPageBase>
 
         ...widget.children,
       ],
+    );
+  }
+
+  Widget cameraWidget(BuildContext context, CameraController controller) {
+    final CameraValue camera = controller.value;
+
+    final Size size = MediaQuery.sizeOf(context);
+
+    double scale = size.aspectRatio * camera.aspectRatio;
+
+    // to prevent scaling down, invert the value
+    if (scale < 1) scale = 1 / scale;
+
+    return Transform.scale(
+      scale: scale,
+      child: Center(child: CameraPreview(controller)),
     );
   }
 

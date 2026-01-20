@@ -59,7 +59,6 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 24.0),
-            // TODO center the text/emoji, see https://github.com/flutter/flutter/issues/119623 for details
             Center(
               child: Surface(
                 shape: RoundedRectangleBorder(

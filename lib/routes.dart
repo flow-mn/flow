@@ -78,6 +78,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/transaction/new",
       redirect: (context, state) {
+        if (state.uri.queryParameters["type"]?.toLowerCase() == "eny") {
+          return "/integrations/eny";
+        }
+
         if (state.uri.queryParameters["json"] case String jason
             when jason.isNotEmpty) {
           return "/transaction/batch-import?json=${Uri.encodeComponent(jason)}";

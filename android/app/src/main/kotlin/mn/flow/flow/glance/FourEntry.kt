@@ -36,10 +36,9 @@ import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.state.GlanceStateDefinition
 import mn.flow.flow.R
-import mn.flow.flow.FlowUtils
 import java.util.Locale.getDefault
 
-class TwoEntry : GlanceAppWidget() {
+class FourEntry : GlanceAppWidget() {
   override val sizeMode = SizeMode.Exact
 
   override val stateDefinition: GlanceStateDefinition<*>
@@ -53,7 +52,6 @@ class TwoEntry : GlanceAppWidget() {
     }
   }
 }
-
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Composable
 @Preview(widthDp = 100, heightDp = 50)
@@ -97,6 +95,19 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState) {
               contentScale = ContentScale.Fit
             )
           }
+//          CircleIconButton(
+//            ImageProvider(if (operation.lowercase(getDefault()) == "expense") R.drawable.expense else R.drawable.income),
+//            backgroundColor = GlanceTheme.colors.primary,
+//            contentColor = GlanceTheme.colors.widgetBackground,
+//            contentDescription = "New $operation",
+//            onClick =
+//              actionStartActivity(
+//                Intent(
+//                  Intent.ACTION_VIEW,
+//                  "flow-mn:///transaction/new?type=${operation}".toUri()
+//                )
+//              )
+//          )
         }
       }
     }
