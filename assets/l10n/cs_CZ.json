@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Pořadí tlačítek transakcí",
   "preferences.transactionButtonOrder.description": "Změňte pořadí tlačítek pro přidání nové transakce.",
   "preferences.transactionButtonOrder.guide": "Přetáhněte tlačítka pro změnu pořadí",
+  "preferences.transactionButtonOrder.widgetDescription": "Toto pořadí se zobrazuje ve widgetu tlačítek pro transakce na domovské obrazovce.",
   "preferences.transactionEntryFlow": "Postup zadávání transakcí",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Zrušit celý postup při zrušení jakéhokoli kroku",
   "preferences.transactionEntryFlow.actions": "Seznam akcí",

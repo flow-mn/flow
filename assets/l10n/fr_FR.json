@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Placement des boutons",
   "preferences.transactionButtonOrder.description": "Changer le placement du bouton de nouvelle transaction",
   "preferences.transactionButtonOrder.guide": "Faites glisser les boutons pour réorganiser",
+  "preferences.transactionButtonOrder.widgetDescription": "Cet ordre est affiché dans le widget des boutons de transaction sur l'écran d'accueil",
   "preferences.transactionEntryFlow": "Saisie de transaction",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Interrompre le processus si l'un des formulaires est fermé",
   "preferences.transactionEntryFlow.actions": "Liste des actions",

@@ -4,6 +4,7 @@ import "dart:convert";
 import "package:cross_file/cross_file.dart";
 import "package:flow/data/transaction_multi_programmable_object.dart";
 import "package:flow/data/transaction_programmable_object.dart";
+import "package:flow/entity/transaction/extensions/default/eny_receipt.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/eny_preferences.dart";
 import "package:flow/services/categories.dart";
@@ -11,6 +12,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
 import "package:logging/logging.dart";
+import "package:uuid/uuid.dart";
 
 final Logger _log = Logger("EnyService");
 
@@ -31,6 +33,9 @@ class EnyService {
   ValueListenable<int?> get remainingCredits => _remainingCredits;
 
   final Map<String, dynamic> _sessionCache = {};
+
+  int _currentConcurrentRequests = 0;
+  static const int _maxConcurrentRequests = 3;
 
   String? _email;
   String? get email => _email;
@@ -166,6 +171,7 @@ class EnyService {
         (categories) => categories.take(32).map((x) => x.name).join(","),
       );
       request.headers["X-API-KEY"] = xApiKey;
+      request.headers["X-Client-Name"] = "Flow";
 
       final response = await request.send().then(http.Response.fromStream);
 
@@ -208,52 +214,90 @@ class EnyService {
       if (items == null || items.isEmpty) {
         return;
       }
-      final String id = items.first;
 
-      _log.fine("Resolving processed receipt with ID $id");
-
-      final Map? enyJson = switch (_sessionCache[id]) {
-        Map m => m,
-        _ => await fetchReceiptDetails(id),
-      };
-
-      bool completed = false;
-
-      if (enyJson != null && enyJson["status"] == "completed") {
-        if (enyJson["result"] case Map enyResult) {
-          if (enyResult["data"] case Map enySuccessResult) {
-            if (UserPreferencesService().createTransactionsPerItemInScans) {
-              final parsed = TransactionMultiProgrammableObject.fromEnyJson(
-                enySuccessResult,
-              );
-              for (final tranasction in parsed?.t ?? []) {
-                tranasction.save();
-              }
-              completed = parsed != null && parsed.t.isNotEmpty;
-            } else {
-              final parsed = TransactionProgrammableObject.fromEnyJson(
-                enySuccessResult,
-              );
-              parsed?.save();
-              completed = parsed != null;
-            }
-          }
-        }
+      if (_currentConcurrentRequests >= _maxConcurrentRequests) {
+        _log.fine(
+          "Max concurrent requests reached ($_currentConcurrentRequests), delaying...",
+        );
+        return;
       }
 
-      if (completed) {
-        await EnyLocalPreferences().pendingReceipts
-            .removeItem(id)
-            .catchError((error) => false);
-      }
-
-      unawaited(
-        Future.delayed(const Duration(seconds: 8)).then((_) {
-          resolveProcessedReceipt();
+      await Future.wait(
+        items.take(_maxConcurrentRequests - _currentConcurrentRequests).map((
+          id,
+        ) {
+          _currentConcurrentRequests += 1;
+          return _resolveProcessedReceipt(id).whenComplete(() {
+            _currentConcurrentRequests -= 1;
+          });
         }),
       );
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      return await resolveProcessedReceipt();
     } catch (e) {
       _log.warning("Failed to resolve processed receipt", e);
+    }
+  }
+
+  Future<void> _resolveProcessedReceipt(String id, [int retryCount = 0]) async {
+    _log.fine("Resolving processed receipt with ID $id");
+
+    final Map? enyJson = switch (_sessionCache[id]) {
+      Map m => m,
+      _ => await fetchReceiptDetails(id),
+    };
+
+    bool completed = false;
+
+    if (enyJson == null || enyJson["status"] == "processing") {
+      _log.fine("Receipt $id is still processing");
+      return Future.delayed(
+        Duration(seconds: 5 + (retryCount * 5)),
+        () => _resolveProcessedReceipt(id, retryCount + 1),
+      );
+    }
+
+    if (enyJson["status"] != "completed" || enyJson["result"] is! Map) {
+      completed = true;
+    } else if (enyJson["result"]["data"] case Map enySuccessResult) {
+      if (UserPreferencesService().createTransactionsPerItemInScans) {
+        final parsed = TransactionMultiProgrammableObject.fromEnyJson(
+          enySuccessResult,
+        );
+        for (final tranasction in parsed?.t ?? []) {
+          tranasction.save(
+            EnyReceipt(
+              uuid: const Uuid().v4(),
+              enyImageUrl: enySuccessResult["imageUrl"] as String?,
+              enyReceiptId: id,
+              partOfMultiTransaction: true,
+            ),
+          );
+        }
+        completed = parsed != null && parsed.t.isNotEmpty;
+      } else {
+        final parsed = TransactionProgrammableObject.fromEnyJson(
+          enySuccessResult,
+        );
+        parsed?.save(
+          extensions: [
+            EnyReceipt(
+              uuid: const Uuid().v4(),
+              enyImageUrl: enySuccessResult["imageUrl"] as String?,
+              enyReceiptId: id,
+            ),
+          ],
+        );
+        completed = parsed != null;
+      }
+    }
+
+    if (completed) {
+      await EnyLocalPreferences().pendingReceipts
+          .removeItem(id)
+          .catchError((error) => false);
     }
   }
 

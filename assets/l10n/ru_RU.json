@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Расположение кнопок",
   "preferences.transactionButtonOrder.description": "Изменить расположение кнопки новой транзакции",
   "preferences.transactionButtonOrder.guide": "Перетащите кнопки, чтобы изменить порядок",
+  "preferences.transactionButtonOrder.widgetDescription": "Этот порядок отображается в виджете кнопок транзакций на главном экране",
   "preferences.transactionEntryFlow": "Создание транзакции",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Останавливать процесс при закрытии любой формы",
   "preferences.transactionEntryFlow.actions": "Список действий",

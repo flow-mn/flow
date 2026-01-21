@@ -2,6 +2,7 @@ import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/gestures.dart";
@@ -17,13 +18,13 @@ class EnyPrivacyNotice extends StatelessWidget {
       mainAxisSize: .min,
       crossAxisAlignment: .start,
       children: [
-        Center(
+        const Center(
           child: Padding(
-            padding: const .all(24.0),
+            padding: .all(24.0),
             child: SizedBox(
               width: 96.0,
               height: 96.0,
-              child: Image.network(enyLogoUrl, width: 192.0, height: 192.0),
+              child: AnimatedEnyLogo(),
             ),
           ),
         ),

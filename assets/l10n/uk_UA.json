@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Розташування кнопок",
   "preferences.transactionButtonOrder.description": "Змінити розташування кнопки нової транзакції",
   "preferences.transactionButtonOrder.guide": "Перетягніть кнопки, щоб змінити порядок",
+  "preferences.transactionButtonOrder.widgetDescription": "Цей порядок відображається у віджеті кнопок транзакцій на головному екрані",
   "preferences.transactionEntryFlow": "Введення транзакції",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Зупиняти процес, якщо будь-яку з форм скасовано",
   "preferences.transactionEntryFlow.actions": "Список дій",

@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Button placement",
   "preferences.transactionButtonOrder.description": "Change new transaction button placement",
   "preferences.transactionButtonOrder.guide": "Drag the buttons to reorder",
+  "preferences.transactionButtonOrder.widgetDescription": "This order is reflected in the transaction buttons widget on home screen",
   "preferences.transactionEntryFlow": "Transaction Entry",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Stop flow when any one of the forms is dismissed",
   "preferences.transactionEntryFlow.actions": "List of actions",

@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Platzierung der Buttons",
   "preferences.transactionButtonOrder.description": "Ändere die Platzierung des Buttons für neue Buchungen.",
   "preferences.transactionButtonOrder.guide": "Ziehe die Buttons, um die Reihenfolge zu ändern.",
+  "preferences.transactionButtonOrder.widgetDescription": "Diese Reihenfolge wird im Widget für Transaktionsschaltflächen auf dem Startbildschirm angezeigt.",
   "preferences.transactionEntryFlow": "Transaktionseingabe",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Ablauf beenden, wenn eines der Formulare abgebrochen wird",
   "preferences.transactionEntryFlow.actions": "Liste der Aktionen",

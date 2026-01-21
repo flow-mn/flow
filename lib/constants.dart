@@ -19,7 +19,10 @@ final Uri flowGitHubIssuesLink = Uri.parse(
 final Uri maintainerGitHubLink = Uri.parse("https://github.com/sadespresso");
 final Uri enyHomeLink = Uri.parse("https://eny.gege.mn");
 final Uri enyDashboardLink = Uri.parse("https://eny.gege.mn/dash");
-final String enyLogoUrl = "https://eny.gege.mn/images/logo@192.png";
+final String enyLogoUrl =
+    "https://cdn.gege.mn/eny/2026-01-21/07983467-1954-4496-a3f2-59e94aeb35f5/logo@192.png";
+final String enyLogoLottieAnimationUrl =
+    "https://cdn.gege.mn/eny/2025-12-22/db1b8661-c50d-45fb-ac62-9657b0143bed/eny-animation.json";
 
 const double sukhbaatarSquareCenterLat = 47.918828;
 const double sukhbaatarSquareCenterLong = 106.917604;

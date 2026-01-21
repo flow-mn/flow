@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "ترتيب الأزرار",
   "preferences.transactionButtonOrder.description": "تغيير موقع زر المعاملة الجديدة",
   "preferences.transactionButtonOrder.guide": "اسحب الأزرار لإعادة ترتيبها",
+  "preferences.transactionButtonOrder.widgetDescription": "يُعكس هذا الترتيب في عنصر واجهة أزرار المعاملات على الشاشة الرئيسية",
   "preferences.transactionEntryFlow": "إدخال المعاملات",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "إيقاف سير العملية عند إلغاء أي نموذج",
   "preferences.transactionEntryFlow.actions": "قائمة الإجراءات",

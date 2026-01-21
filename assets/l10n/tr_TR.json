@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Düğme yerleşimi",
   "preferences.transactionButtonOrder.description": "Yeni işlem düğmesi yerleşimini değiştirme",
   "preferences.transactionButtonOrder.guide": "Yeniden sıralamak için düğmeleri sürükleyin",
+  "preferences.transactionButtonOrder.widgetDescription": "Bu sıra, ana ekrandaki işlem düğmeleri widget'ına yansıtılır.",
   "preferences.transactionEntryFlow": "İşlem Girişi",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Formlardan herhangi biri kapatıldığında akışı durdur",
   "preferences.transactionEntryFlow.actions": "Eylem listesi",

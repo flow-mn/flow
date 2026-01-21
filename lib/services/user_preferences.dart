@@ -260,8 +260,13 @@ class UserPreferencesService {
 
   List<FlowButtonType> get transactionButtonOrder =>
       value.transactionButtonOrder;
+
   set transactionButtonOrder(List<FlowButtonType> order) {
-    value.transactionButtonOrder = order;
+    if (order.length >= 3 && order.length <= FlowButtonType.values.length) {
+      value.transactionButtonOrder = order;
+    } else {
+      value.transactionButtonOrder = FlowButtonType.defaultOrder;
+    }
 
     _updateButtonsWidgets(order);
 

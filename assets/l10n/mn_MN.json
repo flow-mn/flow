@@ -348,6 +348,7 @@
   "preferences.transactionButtonOrder": "Товчны байрлал",
   "preferences.transactionButtonOrder.description": "Шинэ гүйлгээ хийх товчны байрлал өөрчлөх",
   "preferences.transactionButtonOrder.guide": "Чирж байрлалыг өөрчлөөрэй",
+  "preferences.transactionButtonOrder.widgetDescription": "Энэ дараалал нь нүүр хуудасны гүйлгээ хийх виджетийн дарааллыг мөн хамт өөрчилдөг.",
   "preferences.transactionEntryFlow": "Гүйлгээ нэмэх үйлдлүүд",
   "preferences.transactionEntryFlow.abandonUponCancelForm": "Үйлдэл цуцлах үед дарааллийг зогсоох",
   "preferences.transactionEntryFlow.actions": "Үйлдлийн дараалал",

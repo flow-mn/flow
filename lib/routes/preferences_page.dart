@@ -15,6 +15,7 @@ import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/names.dart";
 import "package:flow/utils/extensions.dart";
+import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/rtl_flipper.dart";
@@ -142,10 +143,10 @@ class PreferencesPageState extends State<PreferencesPage> {
             const SizedBox(height: 8.0),
             ListTile(
               title: Text("Eny"),
-              leading: SizedBox(
+              leading: const SizedBox(
                 width: 24.0,
                 height: 24.0,
-                child: Image.network(enyLogoUrl, width: 192.0, height: 192.0),
+                child: AnimatedEnyLogo(),
               ),
               onTap: () =>
                   _pushAndRefreshAfter("/preferences/integrations/eny"),
