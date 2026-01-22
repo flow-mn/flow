@@ -1,6 +1,8 @@
+import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:uuid/uuid.dart";
 
 class CategoriesService {
@@ -22,6 +24,32 @@ class CategoriesService {
 
   Future<List<Category>> getAll() async {
     return ObjectBox().box<Category>().getAllAsync();
+  }
+
+  Future<List<Category>> getAllWithFrecencySort() async {
+    final List<Category> found = await ObjectBox()
+        .box<Category>()
+        .getAllAsync();
+
+    final FrecencyGroup frecencyGroup = FrecencyGroup(
+      found
+          .map(
+            (category) => TransitiveLocalPreferences().getFrecencyData(
+              "category",
+              category.uuid,
+            ),
+          )
+          .nonNulls
+          .toList(),
+    );
+
+    found.sort(
+      (a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)),
+    );
+
+    return found;
   }
 
   Future<Category?> findOne(dynamic identifier) async {

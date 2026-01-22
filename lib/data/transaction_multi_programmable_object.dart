@@ -55,11 +55,18 @@ class TransactionMultiProgrammableObject {
 
   static TransactionMultiProgrammableObject? fromEnyJson(Map json) {
     try {
-      final List<dynamic>? items = json["items"] as List<dynamic>?;
-      if (items == null || items.isEmpty) {
+      final List<Map>? items = switch (json["items"]) {
+        Iterable itemList
+            when itemList.isNotEmpty && itemList.every((item) => item is Map) =>
+          itemList.cast<Map>().toList(),
+        _ => null,
+      };
+
+      if (items == null) {
         return null;
       }
-      final transactions = items
+
+      final List<TransactionProgrammableObject> transactions = items
           .map((item) {
             try {
               final itemMap = item as Map?;
@@ -77,7 +84,8 @@ class TransactionMultiProgrammableObject {
               };
               final int quantity =
                   looseDouble(itemMap["quantity"])?.toInt() ?? 1;
-              final String notes = "Quantity: $quantity\n\nImported from Eny";
+              final String notes =
+                  "Quantity: $quantity\n\n---\n\nImported from Eny";
 
               return TransactionProgrammableObject(
                 title: title,

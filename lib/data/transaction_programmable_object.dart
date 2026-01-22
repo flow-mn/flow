@@ -135,28 +135,20 @@ class TransactionProgrammableObject {
   }
 
   static TransactionProgrammableObject? fromEnyJson(Map json) {
-    try {
-      final String title = (json["merchant"] as String?) ?? "Receipt from Eny";
-      final double? amount = (json["total"] as num?)?.toDouble();
-      final DateTime transactionDate = switch (json["date"]) {
-        String dateString => DateTime.tryParse(dateString) ?? DateTime.now(),
-        _ => DateTime.now(),
-      };
-      final String notes = (() {
-        final items = json["items"];
-        if (items is! List) return "Imported from Eny";
-
-        final itemLines = items
-            .map((item) {
+    String? itemsToNote(List<Map> items) {
+      return items
+          .map((item) {
+            try {
               final itemMap = item as Map?;
 
-              if (itemMap == null) return null;
+              if (itemMap == null) {
+                throw Exception("Invalid item format");
+              }
 
               final String name = looseString(itemMap["name"]) ?? "An item";
               final int quantity =
                   looseDouble(itemMap["quantity"])?.toInt() ?? 1;
-              final double itemAmount =
-                  -(looseDouble(itemMap["amount"]) ?? 0.0);
+              final double itemAmount = looseDouble(itemMap["amount"]) ?? 0.0;
               final String? currency = looseString(itemMap["currency"]);
 
               final String amountStr = Money(
@@ -164,18 +156,39 @@ class TransactionProgrammableObject {
                 currency ?? UserPreferencesService().primaryCurrency,
               ).formatted;
 
-              return "$quantity x $name - ${amountStr.trim()}";
-            })
-            .whereType<String>()
-            .join("\n");
+              return "$quantity x $name - **${amountStr.trim()}**";
+            } catch (_) {
+              return null;
+            }
+          })
+          .whereType<String>()
+          .join("\n\n");
+    }
 
-        return "$itemLines\n\nImported from Eny";
-      })();
+    try {
+      final String title = looseString(json["merchant"]) ?? "Receipt from Eny";
+      final double? amount = looseDouble(json["total"]);
+      final DateTime transactionDate = switch (json["date"]) {
+        String dateString => DateTime.tryParse(dateString) ?? DateTime.now(),
+        _ => DateTime.now(),
+      };
+
+      final List<Map>? items = switch (json["items"]) {
+        Iterable itemList
+            when itemList.isNotEmpty && itemList.every((item) => item is Map) =>
+          itemList.cast<Map>().toList(),
+        _ => null,
+      };
+
+      final String notes = items == null
+          ? "Imported from Eny"
+          : "${itemsToNote(items)}\n\n---\n\nImported from Eny";
       return TransactionProgrammableObject(
         title: title,
-        amount: amount,
+        amount: amount == null ? 0.0 : (-amount.abs()),
         transactionDate: transactionDate,
         notes: notes,
+        category: looseString(items?.firstOrNull?["category"]),
       );
     } catch (e) {
       return null;

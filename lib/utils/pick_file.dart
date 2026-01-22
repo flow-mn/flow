@@ -63,12 +63,14 @@ Future<XFile?> pickImage({
 Future<List<XFile>?> pickMultipleMediaFiles({
   double? maxWidth,
   double? maxHeight,
+  int? limit,
 }) async {
   final xFiles = await ImagePicker().pickMultipleMedia(
     maxHeight: maxHeight,
     maxWidth: maxWidth,
     requestFullMetadata: false,
     imageQuality: 99,
+    limit: limit,
   );
 
   return xFiles;

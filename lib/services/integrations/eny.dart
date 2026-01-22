@@ -167,9 +167,11 @@ class EnyService {
           contentType: contentType,
         ),
       );
-      request.fields["categories"] = await CategoriesService().getAll().then(
-        (categories) => categories.take(32).map((x) => x.name).join(","),
-      );
+      request.fields["categories"] = await CategoriesService()
+          .getAllWithFrecencySort()
+          .then(
+            (categories) => categories.take(32).map((x) => x.name).join("\t"),
+          );
       request.headers["X-API-KEY"] = xApiKey;
       request.headers["X-Client-Name"] = "Flow";
 
@@ -187,14 +189,17 @@ class EnyService {
               decodedResult["result"] != null) {
             _sessionCache[id] = decodedResult;
           }
+          await EnyLocalPreferences().pendingReceipts.addItem(id).catchError((
+            error,
+          ) {
+            _log.warning("Failed to save pending receipt ID", error);
+          });
           unawaited(
-            EnyLocalPreferences().pendingReceipts.addItem(id).catchError((
-              error,
-            ) {
-              _log.warning("Failed to save pending receipt ID", error);
-            }),
+            Future.delayed(
+              const Duration(seconds: 10),
+              resolveProcessedReceipt,
+            ),
           );
-          unawaited(resolveProcessedReceipt());
           return decoded["id"];
         }
       }
@@ -212,6 +217,7 @@ class EnyService {
     try {
       final List<String>? items = EnyLocalPreferences().pendingReceipts.get();
       if (items == null || items.isEmpty) {
+        _log.finer("No pending receipts to resolve");
         return;
       }
 

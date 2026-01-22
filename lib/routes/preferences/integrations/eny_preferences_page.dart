@@ -1,6 +1,7 @@
 import "package:flow/constants.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/services/integrations/eny.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/animated_eny_logo.dart";
@@ -10,6 +11,7 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/integrations/eny_page/eny_privacy_notice.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:material_symbols_icons/symbols.dart";
 
 class EnyPreferencesPage extends StatefulWidget {
@@ -20,6 +22,15 @@ class EnyPreferencesPage extends StatefulWidget {
 }
 
 class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      EnyService().checkCredits();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,8 +118,11 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                                 remainingCredits != null
                                     ? remainingCredits.toString()
                                     : "—",
-                                style: context.textTheme.bodyMedium?.copyWith(
+                                style: context.textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
+                                  fontFeatures: [
+                                    const FontFeature.tabularFigures(),
+                                  ],
                                 ),
                               ),
                               onTap: () {
@@ -117,6 +131,37 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                             );
                           },
                         ),
+                      ValueListenableBuilder(
+                        valueListenable: UserPreferencesService().valueNotifier,
+                        builder: (context, userPreferences, child) {
+                          final bool createTransactionsPerItemInScans =
+                              userPreferences.createTransactionsPerItemInScans;
+
+                          return SwitchListTile(
+                            secondary: Icon(
+                              createTransactionsPerItemInScans
+                                  ? Symbols.list_rounded
+                                  : Symbols.list_alt_rounded,
+                            ),
+                            title: Text(
+                              "preferences.scan.createTransactionsPerItemInScans"
+                                  .t(context),
+                            ),
+                            subtitle: Text(
+                              "preferences.scan.createTransactionsPerItemInScans.description"
+                                  .t(context),
+                            ),
+                            value: createTransactionsPerItemInScans,
+                            onChanged: (bool newValue) {
+                              UserPreferencesService()
+                                      .value
+                                      .createTransactionsPerItemInScans =
+                                  newValue;
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
                       if (connected) ...[
                         const SizedBox(height: 24.0),
                         const WavyDivider(),

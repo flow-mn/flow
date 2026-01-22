@@ -2,20 +2,24 @@ import "dart:async";
 import "dart:io";
 
 import "package:camera/camera.dart";
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/camera.dart";
 import "package:flow/services/integrations/eny.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/extensions/directionality.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/camera_page_base.dart";
 import "package:flow/widgets/camera_page_base/overlay_button.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/image_drop_zone.dart";
 import "package:flow/widgets/integrations/eny_page/eny_error_sheet.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -36,6 +40,17 @@ class _EnyPageState extends State<EnyPage> {
   XFile? _takenPicture;
 
   bool get isCameraSupported => Platform.isAndroid || Platform.isIOS;
+
+  @override
+  void initState() {
+    super.initState();
+    CameraService.ensureInitialized().then((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {});
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,9 +198,13 @@ class _EnyPageState extends State<EnyPage> {
   }
 
   Future<void> _selectMultiImageFromGallery() async {
-    final List<XFile>? files = await pickMultipleMediaFiles();
+    final List<XFile>? files = await pickMultipleMediaFiles(limit: 5);
 
     if (files == null || files.isEmpty) {
+      return;
+    }
+
+    if (!mounted) {
       return;
     }
 
@@ -193,7 +212,67 @@ class _EnyPageState extends State<EnyPage> {
       _takenPicture = files.first;
       setState(() {});
     } else {
-      // show popup here
+      final bool? confirmed = await context.showConfirmationSheet(
+        title: "integrations.eny.multipleImagesNotice".t(context, files.length),
+        child: Column(
+          mainAxisSize: .min,
+          spacing: 12.0,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: .bold,
+                ),
+                children: [
+                  WidgetSpan(
+                    child: SizedBox(
+                      width: 20.0,
+                      height: 20.0,
+                      child: AnimatedEnyLogo(),
+                    ),
+                    alignment: .middle,
+                  ),
+                  TextSpan(text: " "),
+                  TextSpan(
+                    text: "integrations.eny.multipleImagesNotice.description".t(
+                      context,
+                      files.length,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: .horizontal,
+              child: Row(
+                spacing: 12.0,
+                children: files
+                    .map(
+                      (file) => ClipRRect(
+                        borderRadius: .all(.circular(12.0)),
+                        child: SizedBox(
+                          width: 80.0,
+                          height: 80.0,
+                          child: Image.file(File(file.path), fit: BoxFit.cover),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            InfoText(
+              child: Text(
+                "integrations.eny.multipleImagesNotice.checkNotice".t(context),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true) {
+        return;
+      }
+
       await Future.wait(files.map((file) => EnyService().processReceipt(file)));
     }
   }

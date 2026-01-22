@@ -36,22 +36,13 @@ class CameraPageBaseState extends State<CameraPageBase>
   @override
   void initState() {
     super.initState();
-    if (!CameraService.initialized) {
-      CameraService.initialize().then((_) {
-        if (!mounted) return;
-        _initializeCameraController();
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          setState(() {});
-        });
-      });
-    } else {
-      _initializeCameraController();
+
+    CameraService.ensureInitialized().then((_) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         setState(() {});
       });
-    }
+    });
   }
 
   @override

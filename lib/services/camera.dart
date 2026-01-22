@@ -24,4 +24,10 @@ class CameraService {
     );
     _instance ??= CameraService._internal();
   }
+
+  static Future<void> ensureInitialized() async {
+    if (!initialized) {
+      await CameraService.initialize();
+    }
+  }
 }

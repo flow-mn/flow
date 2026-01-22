@@ -15,6 +15,10 @@ String? looseString(dynamic value) {
 }
 
 double? looseDouble(dynamic value) {
+  if (value is num) {
+    return value.toDouble();
+  }
+
   final stringValue = looseString(value);
   if (stringValue != null) {
     return double.tryParse(stringValue);
