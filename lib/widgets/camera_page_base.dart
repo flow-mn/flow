@@ -4,6 +4,7 @@ import "package:camera/camera.dart";
 import "package:flow/services/camera.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:logging/logging.dart";
 
 final Logger _log = Logger("CameraPageBase");
@@ -39,9 +40,17 @@ class CameraPageBaseState extends State<CameraPageBase>
       CameraService.initialize().then((_) {
         if (!mounted) return;
         _initializeCameraController();
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {});
+        });
       });
     } else {
       _initializeCameraController();
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {});
+      });
     }
   }
 
