@@ -40,6 +40,7 @@ class CameraPageBaseState extends State<CameraPageBase>
     CameraService.ensureInitialized().then((_) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
+        _initializeCameraController();
         setState(() {});
       });
     });

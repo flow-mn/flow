@@ -125,7 +125,7 @@ List<Category> getCategoryPresets() {
     ),
     Category.preset(
       uuid: "deaa1e54-7507-47a3-ba3e-2cb6345494a6",
-      name: "setup.categories.preset.stationary".tr(),
+      name: "setup.categories.preset.stationery".tr(),
       iconCode: const IconFlowIcon(Symbols.note_stack_rounded).toString(),
     ),
     Category.preset(

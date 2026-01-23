@@ -25,7 +25,7 @@ import androidx.glance.preview.Preview
 import androidx.glance.state.GlanceStateDefinition
 import mn.flow.flow.FlowWidgetUtils
 
-class TwoEntry : GlanceAppWidget() {
+class TwoEntryLast : GlanceAppWidget() {
   override val sizeMode = SizeMode.Exact
 
   override val stateDefinition: GlanceStateDefinition<*>

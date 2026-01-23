@@ -11,7 +11,7 @@ plugins {
 android {
   namespace = "mn.flow.flow"
   compileSdk = 36
-  ndkVersion = "28.0.13004108"
+  ndkVersion = "28.2.13676358"
 
   buildFeatures {
     compose = true
@@ -79,6 +79,6 @@ dependencies {
   implementation("androidx.compose.foundation:foundation-layout:1.9.4")
 
   coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-  debugImplementation("io.objectbox:objectbox-android-objectbrowser:5.1.0")
+  debugImplementation("io.objectbox:objectbox-android-objectbrowser:5.0.1")
   debugImplementation("androidx.glance:glance-appwidget-preview:1.1.1")
 }
