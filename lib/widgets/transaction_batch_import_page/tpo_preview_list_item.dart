@@ -1,5 +1,3 @@
-import "dart:developer";
-
 import "package:flow/data/transaction_programmable_object.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
@@ -34,7 +32,7 @@ class _TpoPreviewListItemState extends State<TpoPreviewListItem> {
   }
 
   @override
-  void didUpdateWidget(covariant TpoPreviewListItem oldWidget) {
+  void didUpdateWidget(TpoPreviewListItem oldWidget) {
     if (widget.tpo != oldWidget.tpo) {
       _estimate();
     }
@@ -43,8 +41,6 @@ class _TpoPreviewListItemState extends State<TpoPreviewListItem> {
 
   @override
   Widget build(BuildContext context) {
-    inspect(estimate);
-
     return IgnorePointer(
       child: estimate == null
           ? SizedBox.shrink()

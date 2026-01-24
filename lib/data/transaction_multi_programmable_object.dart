@@ -1,6 +1,8 @@
 import "dart:convert";
 
 import "package:flow/data/transaction_programmable_object.dart";
+import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/utils/loose_parsers.dart";
 
 class TransactionMultiProgrammableObject {
@@ -12,6 +14,24 @@ class TransactionMultiProgrammableObject {
     final map = <String, String>{};
     map["t"] = jsonEncode(t.map((e) => e.toMap()));
     return map;
+  }
+
+  List<int> save({
+    dynamic fromAccount,
+    dynamic toAccount,
+    List<String>? extraTags,
+    List<TransactionExtension>? extensions,
+  }) {
+    return t
+        .map(
+          (transaction) => transaction.save(
+            fromAccount: fromAccount,
+            toAccount: toAccount,
+            extraTags: extraTags,
+            extensions: extensions,
+          ),
+        )
+        .toList();
   }
 
   static TransactionMultiProgrammableObject parse(Map<String, dynamic> params) {

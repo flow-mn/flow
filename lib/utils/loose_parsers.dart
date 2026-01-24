@@ -1,6 +1,6 @@
 String? looseString(dynamic value) {
   if (value is Iterable) {
-    return value.firstOrNull;
+    return looseString(value.firstOrNull);
   }
 
   if (value is num) {

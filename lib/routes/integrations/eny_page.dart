@@ -37,6 +37,9 @@ class _EnyPageState extends State<EnyPage> {
 
   bool _busy = false;
 
+  bool _flashBusy = false;
+  bool _lensChangeBusy = false;
+
   XFile? _takenPicture;
 
   bool get isCameraSupported => Platform.isAndroid || Platform.isIOS;
@@ -79,9 +82,21 @@ class _EnyPageState extends State<EnyPage> {
       if (isCameraSupported && CameraService.cameras?.isNotEmpty == true)
         OverlayButton(
           child: Icon(flashIcon),
-          onTap: () {
-            _cameraPageKey.currentState?.rotateFlashMode();
-            setState(() {});
+          onTap: () async {
+            if (_flashBusy) return;
+
+            setState(() {
+              _flashBusy = true;
+            });
+
+            try {
+              await _cameraPageKey.currentState?.rotateFlashMode();
+            } finally {
+              _flashBusy = false;
+              if (mounted) {
+                setState(() {});
+              }
+            }
           },
         ),
     ];
@@ -151,7 +166,7 @@ class _EnyPageState extends State<EnyPage> {
                 ? const SizedBox.square(dimension: 24.0, child: Spinner())
                 : Icon(Symbols.send_rounded),
             onTap: _busy ? null : _sendTakenPicture,
-            child: Text("Send"),
+            child: Text("integrations.eny.send".t(context)),
           ),
         ],
       );
@@ -160,8 +175,19 @@ class _EnyPageState extends State<EnyPage> {
     final List<Widget> buttons = [
       (CameraService.cameras?.length ?? 0) > 1
           ? OverlayButton(
-              onTap: () {
-                setState(() {});
+              onTap: () async {
+                if (_lensChangeBusy) return;
+                setState(() {
+                  _lensChangeBusy = true;
+                });
+                try {
+                  await _cameraPageKey.currentState?.rotateCamera();
+                } finally {
+                  _lensChangeBusy = false;
+                  if (mounted) {
+                    setState(() {});
+                  }
+                }
               },
               child: Icon(Symbols.switch_camera_rounded),
             )
@@ -274,6 +300,12 @@ class _EnyPageState extends State<EnyPage> {
       }
 
       await Future.wait(files.map((file) => EnyService().processReceipt(file)));
+      if (mounted) {
+        context.showToast(text: "integrations.eny.sent".t(context));
+        if (context.canPop()) {
+          context.pop();
+        }
+      }
     }
   }
 
@@ -325,6 +357,12 @@ class _EnyPageState extends State<EnyPage> {
 
     try {
       await EnyService().processReceipt(_takenPicture!);
+      if (mounted) {
+        context.showToast(text: "integrations.eny.sent".t(context));
+        if (context.canPop()) {
+          context.pop();
+        }
+      }
     } catch (e) {
       if (e is EnyCredsError) {
         if (mounted) {

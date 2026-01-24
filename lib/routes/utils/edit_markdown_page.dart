@@ -1,6 +1,7 @@
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/extensions/quill_theme.dart";
+import "package:flow/utils/flutter_quill/divider_embed_builder.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
@@ -109,6 +110,7 @@ class _EditMarkdownPageState extends State<EditMarkdownPage> {
                     scrollController: _editorScrollController,
                     controller: _controller,
                     config: QuillEditorConfig(
+                      embedBuilders: [DividerEmbedBuilder()],
                       enableScribble: true,
                       customStyles: context.quillDefaultStyles,
                       placeholder: "transaction.description.placeholder".t(
@@ -194,6 +196,7 @@ const QuillSimpleToolbarConfig _defaultQuillToolbarConfig =
       showClipboardCut: false,
       showClipboardCopy: false,
       showClipboardPaste: false,
+
       linkStyleType: LinkStyleType.original,
       headerStyleType: HeaderStyleType.original,
     );

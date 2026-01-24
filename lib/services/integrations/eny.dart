@@ -5,9 +5,11 @@ import "package:cross_file/cross_file.dart";
 import "package:flow/data/transaction_multi_programmable_object.dart";
 import "package:flow/data/transaction_programmable_object.dart";
 import "package:flow/entity/transaction/extensions/default/eny_receipt.dart";
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/eny_preferences.dart";
 import "package:flow/services/categories.dart";
+import "package:flow/services/external_toasts.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flutter/foundation.dart";
 import "package:http/http.dart" as http;
@@ -28,6 +30,8 @@ class EnyService {
 
   final ValueNotifier<String?> _apiKey = ValueNotifier<String?>(null);
   ValueListenable<String?> get apiKey => _apiKey;
+
+  bool get isConnected => _apiKey.value?.startsWith("eny") == true;
 
   final ValueNotifier<int?> _remainingCredits = ValueNotifier<int?>(null);
   ValueListenable<int?> get remainingCredits => _remainingCredits;
@@ -61,16 +65,30 @@ class EnyService {
 
   Future<void> setApiKey({required String? apiKey, String? email}) async {
     try {
-      await EnyLocalPreferences().apiKey.set(apiKey ?? "");
-      _apiKey.value = apiKey;
-      _log.fine("Eny API key saved");
+      final String? normalized = EnyService().isConnected ? apiKey! : null;
+
+      if (normalized != null) {
+        await EnyLocalPreferences().apiKey.set(normalized);
+        _apiKey.value = normalized;
+        _log.fine("Eny API key saved");
+      } else {
+        await EnyLocalPreferences().apiKey.remove();
+        _apiKey.value = null;
+        _log.fine("Eny API key removed");
+      }
     } catch (e) {
       _log.warning("Failed to save Eny API key", e);
     }
     try {
-      await EnyLocalPreferences().email.set(email ?? "");
-      _email = email;
-      _log.fine("Eny email saved");
+      if (email?.contains("@") == true) {
+        await EnyLocalPreferences().email.set(email!);
+        _email = email;
+        _log.fine("Eny email saved");
+      } else {
+        await EnyLocalPreferences().email.remove();
+        _email = null;
+        _log.fine("Eny email cleared");
+      }
     } catch (e) {
       _log.warning("Failed to save Eny email", e);
     }
@@ -97,6 +115,11 @@ class EnyService {
   }
 
   Future<Map?> fetchReceiptDetails(String receiptId) async {
+    if (!isConnected) {
+      _log.warning("Not connected to Eny, skipping receipt resolution");
+      return null;
+    }
+
     final response = await http.get(
       Uri.parse("https://eny.gege.mn/api/v1/receipts/$receiptId"),
       headers: {"X-API-KEY": _apiKey.value!},
@@ -214,6 +237,11 @@ class EnyService {
   }
 
   Future<void> resolveProcessedReceipt() async {
+    if (!isConnected) {
+      _log.warning("Not connected to Eny, skipping receipt resolution");
+      return;
+    }
+
     try {
       final List<String>? items = EnyLocalPreferences().pendingReceipts.get();
       if (items == null || items.isEmpty) {
@@ -256,6 +284,7 @@ class EnyService {
     };
 
     bool completed = false;
+    bool succeeded = false;
 
     if (enyJson == null || enyJson["status"] == "processing") {
       _log.fine("Receipt $id is still processing");
@@ -269,20 +298,21 @@ class EnyService {
       completed = true;
     } else if (enyJson["result"]["data"] case Map enySuccessResult) {
       if (UserPreferencesService().createTransactionsPerItemInScans) {
-        final parsed = TransactionMultiProgrammableObject.fromEnyJson(
-          enySuccessResult,
-        );
-        for (final tranasction in parsed?.t ?? []) {
-          tranasction.save(
+        final TransactionMultiProgrammableObject? parsed =
+            TransactionMultiProgrammableObject.fromEnyJson(enySuccessResult);
+        parsed?.save(
+          extensions: [
             EnyReceipt(
               uuid: const Uuid().v4(),
               enyImageUrl: enySuccessResult["imageUrl"] as String?,
               enyReceiptId: id,
               partOfMultiTransaction: true,
             ),
-          );
-        }
+          ],
+        );
+
         completed = parsed != null && parsed.t.isNotEmpty;
+        succeeded = completed;
       } else {
         final parsed = TransactionProgrammableObject.fromEnyJson(
           enySuccessResult,
@@ -297,6 +327,7 @@ class EnyService {
           ],
         );
         completed = parsed != null;
+        succeeded = completed;
       }
     }
 
@@ -304,6 +335,12 @@ class EnyService {
       await EnyLocalPreferences().pendingReceipts
           .removeItem(id)
           .catchError((error) => false);
+      if (succeeded) {
+        ExternalToastsService().addToast(
+          "transaction.external.added".tr(),
+          .success,
+        );
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/eny_receipt.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
@@ -17,6 +18,7 @@ class ExtensionsWrapper {
     Transfer.keyName: (json) => Transfer.fromJson(json),
     Geo.keyName: (json) => Geo.fromJson(json),
     Recurring.keyName: (json) => Recurring.fromJson(json),
+    EnyReceipt.keyName: (json) => EnyReceipt.fromJson(json),
   };
 
   static void register<T extends TransactionExtension>(
@@ -34,6 +36,10 @@ class ExtensionsWrapper {
 
   Geo? get geo => data.firstWhereOrNull((element) => element is Geo) as Geo?;
   set geo(Geo? newGeo) => _overrideSingle(newGeo, Geo.keyName);
+
+  EnyReceipt? get eny =>
+      data.firstWhereOrNull((element) => element is EnyReceipt) as EnyReceipt?;
+  set eny(EnyReceipt? newEny) => _overrideSingle(newEny, EnyReceipt.keyName);
 
   Recurring? get recurring =>
       data.firstWhereOrNull((element) => element is Recurring) as Recurring?;

@@ -9,7 +9,7 @@ class EnyLocalPreferences {
   factory EnyLocalPreferences() {
     if (_instance == null) {
       throw Exception(
-        "You must initialize PendingTransactionsLocalPreferences by calling initialize().",
+        "You must initialize EnyLocalPreferences by calling initialize().",
       );
     }
 

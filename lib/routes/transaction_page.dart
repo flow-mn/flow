@@ -42,6 +42,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -148,6 +149,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool _isPending = false;
 
+  bool _importedFromEny = false;
+
   @override
   void initState() {
     super.initState();
@@ -220,6 +223,7 @@ class _TransactionPageState extends State<TransactionPage> {
               _currentlyEditing.extensions.transfer?.toAccountUuid,
         );
         _geo = _currentlyEditing.extensions.geo;
+        _importedFromEny = _currentlyEditing.extensions.eny != null;
         _isPending = _currentlyEditing.isPending ?? _isPending;
         if (_currentlyEditing.isTransfer == true) {
           _conversionRate =
@@ -616,6 +620,38 @@ class _TransactionPageState extends State<TransactionPage> {
                                   context,
                                 ),
                               ),
+                              if (_importedFromEny) ...[
+                                const SizedBox(height: 8.0),
+                                GestureDetector(
+                                  onTap: () {
+                                    openUrl(enyHomeLink);
+                                  },
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: context.textTheme.bodyMedium?.semi(
+                                        context,
+                                      ),
+                                      children: [
+                                        WidgetSpan(
+                                          child: SizedBox.square(
+                                            dimension: 16.0,
+                                            child: AnimatedEnyLogo(
+                                              noAnimation: true,
+                                            ),
+                                          ),
+                                        ),
+                                        TextSpan(text: " "),
+                                        TextSpan(
+                                          text: "transaction.external.from".t(
+                                            context,
+                                            "Eny",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),

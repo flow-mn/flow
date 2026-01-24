@@ -36,7 +36,7 @@ class ButtonOrderPreferencesPageState
       UserPreferencesService().transactionButtonOrder,
     );
 
-    if (EnyService().apiKey.value == null) {
+    if (EnyService().apiKey.value?.startsWith("eny") != true) {
       transactionButtonOrder.remove(FlowButtonType.eny);
     }
 

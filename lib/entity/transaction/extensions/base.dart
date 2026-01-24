@@ -10,8 +10,7 @@ abstract class TransactionExtension implements Jasonable {
   String? get relatedTransactionUuid;
   set relatedTransactionUuid(String? uuid);
 
-  void setRelatedTransactionUuid(String uuid) =>
-      relatedTransactionUuid = relatedTransactionUuid;
+  void setRelatedTransactionUuid(String uuid) => relatedTransactionUuid = uuid;
 
   const TransactionExtension({required this.uuid});
 }

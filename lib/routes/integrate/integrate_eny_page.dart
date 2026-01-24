@@ -72,13 +72,26 @@ class _IntegrateEnyPageState extends State<IntegrateEnyPage> {
       _busy = true;
     });
     try {
-      await EnyService().connect(apiKey: widget.apiKey, email: widget.email);
+      final bool success = await EnyService().connect(
+        apiKey: widget.apiKey,
+        email: widget.email,
+      );
+      if (!success) {
+        throw Exception("Failed to connect to Eny");
+      }
       if (mounted) {
         context.showToast(
           text: "integrations.eny.connect.success".t(context),
           type: .success,
         );
         context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        context.showToast(
+          text: "integrations.eny.invalidCredentials".t(context),
+          type: .error,
+        );
       }
     } finally {
       if (mounted) {
@@ -89,49 +102,3 @@ class _IntegrateEnyPageState extends State<IntegrateEnyPage> {
     }
   }
 }
-
-// class EnyConnectSheet extends StatelessWidget {
-//   final String apiKey;
-//   final String? email;
-
-//   const EnyConnectSheet({super.key, required this.apiKey, this.email});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ValueListenableBuilder(
-//       valueListenable: EnyService().apiKey,
-//       builder: (context, currentApiKey, child) {
-//         return ModalSheet.scrollable(
-//           trailing: ModalOverflowBar(
-//             alignment: .end,
-//             children: [
-//               Button(
-//                 onTap: () => context.pop(false),
-//                 child: Text("general.cancel".t(context)),
-//               ),
-//               Button(
-//                 onTap: () {
-//                   if (context.canPop()) {
-//                     context.pop();
-//                   }
-//                   context.push("/preferences/integrations/eny");
-//                 },
-//                 trailing: DirectionalChevron(),
-//                 child: Text("general.confirm".t(context)),
-//               ),
-//             ],
-//           ),
-//           title: Text("integrations.eny.connect".t(context)),
-//           child: Column(
-//             mainAxisSize: .min,
-//             spacing: 12.0,
-//             children: [
-//               if (currentApiKey != null)
-//                 Text("integrations.eny.connect.conflict".t(context)),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

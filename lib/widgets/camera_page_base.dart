@@ -37,6 +37,8 @@ class CameraPageBaseState extends State<CameraPageBase>
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
+
     CameraService.ensureInitialized().then((_) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -64,6 +66,7 @@ class CameraPageBaseState extends State<CameraPageBase>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     controller?.dispose();
     super.dispose();
   }
@@ -148,7 +151,7 @@ class CameraPageBaseState extends State<CameraPageBase>
     }
   }
 
-  FlashMode rotateFlashMode() {
+  Future<FlashMode> rotateFlashMode() async {
     if (controller == null) {
       return FlashMode.off;
     }
@@ -161,8 +164,28 @@ class CameraPageBaseState extends State<CameraPageBase>
       FlashMode.torch => FlashMode.off,
     };
 
-    controller!.setFlashMode(newMode);
+    await controller!.setFlashMode(newMode);
     _flashMode = newMode;
     return newMode;
+  }
+
+  Future<CameraDescription?> rotateCamera() async {
+    if (controller != null) {
+      final CameraDescription currentDescription = controller!.description;
+      final int currentIndex = CameraService.cameras!.indexWhere(
+        (c) => c.name == currentDescription.name,
+      );
+      final int nextIndex = (currentIndex + 1) % CameraService.cameras!.length;
+      final CameraDescription nextDescription =
+          CameraService.cameras![nextIndex];
+      await controller!.setDescription(nextDescription);
+      return nextDescription;
+    } else {
+      _initializeCameraController();
+      return CameraService.cameras?.firstWhereOrNull(
+            (camera) => camera.lensDirection == widget.preferredCamera,
+          ) ??
+          CameraService.cameras?.firstOrNull;
+    }
   }
 }

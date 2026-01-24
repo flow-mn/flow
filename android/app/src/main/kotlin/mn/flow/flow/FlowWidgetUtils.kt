@@ -56,12 +56,13 @@ abstract class FlowWidgetUtils {
     @Composable
     fun EntryButton(context: Context, operation: String, size: DpSize, buttonSize: Dp, padEnd: Boolean, pill: Boolean = false) {
       val iconSize = buttonSize * 2 / 3
+      val buttonWidth = if (pill) (buttonSize * 2 + 8.dp) else buttonSize
 
       Box(modifier = GlanceModifier.padding(end = if(padEnd) 8.dp else 0.dp)) {
         Box(
           modifier = GlanceModifier
             .background(GlanceTheme.colors.primary)
-            .width(buttonSize)
+            .width(buttonWidth)
             .height(buttonSize)
             .cornerRadius(999.dp)
             .clickable(

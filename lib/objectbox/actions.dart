@@ -1049,6 +1049,10 @@ extension AccountActions on Account {
             return ext;
           }
 
+          _log.warning(
+            "Skipping extension ${ext.runtimeType}(${ext.uuid}) due to mismatched relatedTransactionUuid (${ext.relatedTransactionUuid} != $uuid)",
+          );
+
           return null;
         })
         .nonNulls

@@ -11,6 +11,7 @@ import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/currency_registry.dart";
+import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/theme/color_themes/registry.dart";
@@ -262,13 +263,13 @@ class UserPreferencesService {
       value.transactionButtonOrder;
 
   set transactionButtonOrder(List<FlowButtonType> order) {
-    if (order.length >= 3 && order.length <= FlowButtonType.values.length) {
-      value.transactionButtonOrder = order;
-    } else {
-      value.transactionButtonOrder = FlowButtonType.defaultOrder;
-    }
+    final List<FlowButtonType> newOrder =
+        (order.length >= 3 && order.length <= FlowButtonType.values.length)
+        ? order
+        : FlowButtonType.defaultOrder;
 
-    _updateButtonsWidgets(order);
+    value.transactionButtonOrder = newOrder;
+    _updateButtonsWidgets(newOrder);
 
     ObjectBox().box<UserPreferences>().put(value);
   }
@@ -318,16 +319,33 @@ class UserPreferencesService {
 
   void _updateButtonsWidgets(List<FlowButtonType> order) async {
     try {
-      final String value = order.map((e) => e.value).join(",");
+      final String value = EnyService().isConnected
+          ? order.map((e) => e.value).join(",")
+          : order
+                .where((e) => e != FlowButtonType.eny)
+                .map((e) => e.value)
+                .join(",");
       await HomeWidget.setAppGroupId("group.mn.flow.flow");
       await HomeWidget.saveWidgetData("buttonOrder", value);
-      final bool? succeeded = await HomeWidget.updateWidget(
-        name: "FlowTwoEntryWidget",
-        iOSName: "FlowTwoEntryWidget",
-        androidName: "TwoEntryReceiver",
-        qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryReceiver",
-      );
-      if (succeeded != true) throw Exception("HomeWidget update failed");
+      await Future.wait([
+        HomeWidget.updateWidget(
+          name: "FlowTwoEntryWidget",
+          iOSName: "FlowTwoEntryWidget",
+          androidName: "TwoEntryReceiver",
+          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryReceiver",
+        ),
+        HomeWidget.updateWidget(
+          name: "FlowTwoEntryLateWidget",
+          androidName: "TwoEntryLateReceiver",
+          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryLateReceiver",
+        ),
+        HomeWidget.updateWidget(
+          name: "FlowFourEntryWidget",
+          iOSName: "FlowFourEntryWidget",
+          androidName: "FourEntryReceiver",
+          qualifiedAndroidName: "mn.flow.flow.glance.FourEntryReceiver",
+        ),
+      ]);
       _log.finest("Updated widgets button order to: $value");
     } catch (e) {
       _log.warning("Failed to update widgets button order: $e");

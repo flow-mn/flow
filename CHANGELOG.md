@@ -2,9 +2,9 @@
 
 ## Next
 
-### New features
+### 0.18.0
 
-* Now you can scan receipts with Eny (WIP)
+* Now you can scan receipts with Eny (beta)
 
 ## 0.17.0
 

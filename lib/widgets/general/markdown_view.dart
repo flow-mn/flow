@@ -1,4 +1,5 @@
 import "package:flow/utils/extensions/quill_theme.dart";
+import "package:flow/utils/flutter_quill/divider_embed_builder.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flutter/material.dart";
 import "package:flutter_quill/flutter_quill.dart";
@@ -56,7 +57,10 @@ class _MarkdownViewState extends State<MarkdownView> {
           focusNode: focusNode,
           scrollController: scrollController,
           controller: quillController,
-          config: QuillEditorConfig(customStyles: context.quillDefaultStyles),
+          config: QuillEditorConfig(
+            customStyles: context.quillDefaultStyles,
+            embedBuilders: [DividerEmbedBuilder()],
+          ),
         ),
       ),
     );
