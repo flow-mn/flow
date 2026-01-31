@@ -112,6 +112,7 @@ class TransactionMultiProgrammableObject {
                 amount: amount,
                 transactionDate: transactionDate,
                 notes: notes,
+                category: looseString(itemMap["category"]),
               );
             } catch (e) {
               return null;

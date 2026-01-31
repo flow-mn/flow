@@ -27,7 +27,9 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      EnyService().checkCredits();
+      EnyService().checkCredits().catchError((_) {
+        return null;
+      });
     });
   }
 
@@ -126,7 +128,9 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                                 ),
                               ),
                               onTap: () {
-                                EnyService().checkCredits();
+                                EnyService().checkCredits().catchError((_) {
+                                  return null;
+                                });
                               },
                             );
                           },

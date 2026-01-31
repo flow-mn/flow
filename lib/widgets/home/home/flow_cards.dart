@@ -83,14 +83,21 @@ class _FlowCardsState extends State<FlowCards> {
     );
   }
 
-  MoneyText styledMoney(Money? amount, BuildContext context) {
-    return MoneyText(
-      amount,
-      style: context.textTheme.displaySmall,
-      autoSizeGroup: autoSizeGroup,
-      autoSize: true,
-      initiallyAbbreviated: abbreviate,
-      onTap: handleTap,
+  Widget styledMoney(Money? amount, BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).textScaler.scale(
+        context.textTheme.displaySmall!.fontSize! *
+            context.textTheme.displaySmall!.height!,
+      ),
+      alignment: AlignmentDirectional.centerStart,
+      child: MoneyText(
+        amount,
+        style: context.textTheme.displaySmall,
+        autoSizeGroup: autoSizeGroup,
+        autoSize: true,
+        initiallyAbbreviated: abbreviate,
+        onTap: handleTap,
+      ),
     );
   }
 

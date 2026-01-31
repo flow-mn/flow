@@ -47,6 +47,13 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
             .map((event) => event.find()),
         builder: (context, snapshot) {
           final List<Account> currentAccounts = snapshot.data ?? [];
+          final List<Account> uniquePresets = presetAccounts
+              .where(
+                (preset) => !currentAccounts.any(
+                  (account) => account.uuid == preset.uuid,
+                ),
+              )
+              .toList();
 
           return SingleChildScrollView(
             child: SafeArea(
@@ -78,7 +85,7 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
                       curve: Curves.easeOut,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: presetAccounts
+                        children: uniquePresets
                             .map(
                               (preset) => Padding(
                                 padding: const EdgeInsets.only(bottom: 16.0),

@@ -33,7 +33,7 @@ class _SelectColorSchemeSheetState extends State<SelectColorSchemeSheet> {
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<FlowColorScheme>(null)),
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("select.color.clear".t(context)),
           ),
         ],

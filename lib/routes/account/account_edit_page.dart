@@ -27,6 +27,7 @@ import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/select_color_scheme_list_tile.dart";
 import "package:flow/widgets/sheets/select_account_type_sheet.dart";
 import "package:flow/widgets/sheets/select_currency_sheet.dart";
@@ -303,7 +304,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     },
                   ),
                 const SizedBox(height: 24.0),
-                const Divider(),
+                const WavyDivider(),
                 const SizedBox(height: 24.0),
                 SwitchListTile(
                   secondary: Icon(Symbols.playlist_remove_rounded),
@@ -313,7 +314,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                 ),
                 if (!widget.isNewAccount)
                   SwitchListTile(
-                    secondary: Icon(Symbols.block_rounded),
+                    secondary: const Icon(Symbols.block_rounded, fill: 0.0),
                     value: _archived,
                     onChanged: updateArchived,
                     title: Text("account.archive".t(context)),

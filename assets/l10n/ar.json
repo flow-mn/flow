@@ -327,7 +327,7 @@
   "preferences.reminders.remindDaily.time": "ذكرني في",
   "preferences.reminders.unsupportedPlatform": "جدولة الإشعارات غير مدعومة على هذه المنصة",
   "preferences.scan.createTransactionsPerItemInScans": "إنشاء معاملة لكل عنصر",
-  "preferences.scan.createTransactionsPerItemInScans.description": "قد يكون ذلك فوضويًا جدًا عند التعامل مع إيصالات كبيرة",
+  "preferences.scan.createTransactionsPerItemInScans.description": "قد يكون فوضويًا مع الإيصالات الطويلة",
   "preferences.sync": "المزامنة",
   "preferences.sync.autoBackup": "النسخ الاحتياطي التلقائي",
   "preferences.sync.autoBackup.disabled": "تعطيل",

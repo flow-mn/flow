@@ -114,7 +114,9 @@ class ActionableNotificationsService {
       return;
     }
 
-    if (ICloudSyncer.supported && !UserPreferencesService().enableICloudSync) {
+    if (ICloudSyncer.supported &&
+        !UserPreferencesService().enableICloudSync &&
+        (UserPreferencesService().autoBackupIntervalInHours ?? 0) > 0) {
       add(TurnOnICloudNotification());
     }
   }

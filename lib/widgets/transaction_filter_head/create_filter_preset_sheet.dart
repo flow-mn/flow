@@ -52,7 +52,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
         children: [
           TextButton.icon(
             onPressed: pop,
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("general.cancel".t(context)),
           ),
           TextButton.icon(

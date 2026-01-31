@@ -65,7 +65,9 @@ class EnyService {
 
   Future<void> setApiKey({required String? apiKey, String? email}) async {
     try {
-      final String? normalized = EnyService().isConnected ? apiKey! : null;
+      final String? normalized = apiKey?.startsWith("eny") == true
+          ? apiKey
+          : null;
 
       if (normalized != null) {
         await EnyLocalPreferences().apiKey.set(normalized);

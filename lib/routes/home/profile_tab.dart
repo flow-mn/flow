@@ -11,6 +11,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/preferences/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -172,7 +173,13 @@ class _ProfileTabState extends State<ProfileTab> {
                 _debugDbBusy ? "Clearing database" : "Clear objectbox",
               ),
               onTap: () => resetDatabase(),
-              leading: const Icon(Symbols.adb_rounded),
+              leading: _debugDbBusy
+                  ? const SizedBox(
+                      width: 24.0,
+                      height: 24.0,
+                      child: Spinner.center(),
+                    )
+                  : const Icon(Symbols.adb_rounded),
             ),
             ListTile(
               title: Text("Clear Shared Preferences"),

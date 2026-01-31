@@ -63,7 +63,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
           ),
           TextButton.icon(
             onPressed: () => context.pop(),
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("general.cancel".t(context)),
           ),
           TextButton.icon(

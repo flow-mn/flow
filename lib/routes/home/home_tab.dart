@@ -251,7 +251,12 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         final SingleCurrencyFlow combinedFlow =
             SingleCurrencyFlow(currency: primaryCurrency)..addAll(
               transactions
-                  .where((transaction) => !transaction.isTransfer)
+                  .where((transaction) {
+                    if (transaction.isTransfer) return false;
+                    if (transaction.transactionDate.isAfter(now)) return false;
+                    if (transaction.isPending == true) return false;
+                    return true;
+                  })
                   .map((t) => t.money),
               rates,
             );
@@ -271,11 +276,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
                     }),
                   ),
                 ),
-                SizedBox(height: 8.0),
               ],
               if (showMissingExchangeRatesWarning) ...[
-                RatesMissingErrorBox(),
                 SizedBox(height: 8.0),
+                RatesMissingErrorBox(),
               ],
               // TODO @sadespresso want to analyze transactions shown in current
               // view. For example, average amount of transaction, how often this
@@ -284,6 +288,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               //   Text("transactions.count".t(context, transactions.length)),
               //   const SizedBox(height: 4.0),
               // ],
+              SizedBox(height: 8.0),
               FlowCards(
                 totalExpense: combinedFlow.totalExpense,
                 totalIncome: combinedFlow.totalIncome,

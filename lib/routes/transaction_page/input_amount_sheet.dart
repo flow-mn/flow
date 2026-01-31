@@ -431,7 +431,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void handlePaste(String text, [bool reportInvalid = false]) {
-    final num? parsed = NumberFormat().tryParse(text) ?? num.tryParse(text);
+    text = text.replaceAll(RegExp(r"[^\d.,]"), "");
+
+    num? parsed;
+
+    if (text.contains(RegExp(r"\d"))) {
+      parsed = NumberFormat().tryParse(text) ?? num.tryParse(text);
+    }
 
     if (parsed == null) {
       if (reportInvalid) {

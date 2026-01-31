@@ -3,7 +3,7 @@ import "dart:io";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/theme/helpers.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/widgets/account_card.dart";
 import "package:flow/widgets/action_card.dart";
 import "package:flow/widgets/general/button.dart";
@@ -22,23 +22,32 @@ class DebugThemePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Debug Theme Page")),
+      appBar: AppBar(
+        title: const Text("Debug Theme Page"),
+        elevation: 0.0,
+        scrolledUnderElevation: 1.0,
+        centerTitle: false,
+        shadowColor: context.colorScheme.onSurface.withAlpha(0x40),
+        backgroundColor: context.colorScheme.surface,
+        surfaceTintColor: kTransparent,
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: .start,
           children: [
-            ListHeader("Update theme"),
-            const SizedBox(height: 12.0),
             ListTile(
               title: const Text("Update theme"),
               leading: const Icon(Symbols.settings_rounded),
               onTap: () => context.push("/preferences/theme"),
               trailing: const Icon(Symbols.chevron_right_rounded),
             ),
+            const SizedBox(height: 24.0),
+            const WavyDivider(),
+            const SizedBox(height: 24.0),
             Frame(
               child: Wrap(
                 spacing: 12.0,
-                runSpacing: 12.0,
+                runSpacing: 8.0,
                 children: [
                   FilterChip(label: Text("FilterChip"), onSelected: (_) {}),
                   FilterChip(
@@ -149,10 +158,22 @@ class DebugThemePage extends StatelessWidget {
               value: false,
               onChanged: (_) => {},
             ),
-            RadioListTile(title: const Text("With Radio Selected"), value: "a"),
-            RadioListTile(
-              title: const Text("With Radio Unselected"),
-              value: "b",
+            RadioGroup(
+              groupValue: "a",
+              onChanged: (String? value) {},
+              child: Column(
+                mainAxisSize: .min,
+                children: [
+                  RadioListTile(
+                    title: const Text("With Radio Selected"),
+                    value: "a",
+                  ),
+                  RadioListTile(
+                    title: const Text("With Radio Unselected"),
+                    value: "b",
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 240.0),
           ],

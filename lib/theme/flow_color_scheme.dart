@@ -76,6 +76,7 @@ class FlowColorScheme {
       onSecondary: onSecondary,
       error: error ?? defaultBase.error,
       onError: onError ?? defaultBase.onError,
+      outlineVariant: customColors.semi,
     );
   }
 

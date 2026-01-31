@@ -69,22 +69,12 @@ class _ContextMenuState extends State<ContextMenu> {
 
     String? pasteText;
 
-    if (widget.addPasteAction && widget.onPaste != null) {
-      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-
-      final String? text = clipboardData?.text?.trim();
-
-      if (text != null && text.isNotEmpty) {
-        pasteText = text;
-      }
-    }
-
     if (!mounted) return;
 
     final String? value = await showMenu<String>(
       context: context,
       items: [
-        if (pasteText != null)
+        if (widget.addPasteAction && widget.onPaste != null)
           PopupMenuItem<String>(
             value: "paste",
             child: Text("general.paste".t(context)),
@@ -100,6 +90,13 @@ class _ContextMenuState extends State<ContextMenu> {
     );
 
     if (value == "paste") {
+      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+
+      final String? text = clipboardData?.text?.trim();
+
+      if (text != null && text.isNotEmpty) {
+        pasteText = text;
+      }
       widget.onPaste?.call(pasteText ?? "");
     } else {
       widget.onSelected(value);

@@ -50,7 +50,7 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
         children: [
           TextButton.icon(
             onPressed: () => context.pop(const Optional<Category>(null)),
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("category.skip".t(context)),
           ),
         ],

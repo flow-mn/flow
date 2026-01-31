@@ -44,7 +44,7 @@ class _TransactionSearchSheetState extends State<TransactionSearchSheet> {
         children: [
           TextButton.icon(
             onPressed: clear,
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("transactions.query.filter.keyword.clear".t(context)),
           ),
           TextButton.icon(

@@ -86,72 +86,43 @@ class IntervalFlowReport extends FlowReport {
     final List<DateTime> sortedKeys = data.keys.toList()
       ..sort((a, b) => a.compareTo(b));
 
-    int? firstIncomeIndex;
-    int? firstExpenseIndex;
-    int? firstFlowIndex;
+    int? firstTransactionIndex;
+    int? lastTransactionIndex;
 
     for (int i = 0; i < sortedKeys.length; i++) {
       final DateTime startOfInterval = sortedKeys[i];
       final SingleCurrencyFlow flow = data[startOfInterval]!;
 
-      if (flow.incomeSum > 0 && firstIncomeIndex == null) {
-        firstIncomeIndex = i;
-      }
-      if (flow.expenseSum < 0 && firstExpenseIndex == null) {
-        firstExpenseIndex = i;
-      }
-      if (flow.flow != 0 && firstFlowIndex == null) {
-        firstFlowIndex = i;
+      if (firstTransactionIndex == null && flow.flow != 0) {
+        firstTransactionIndex = i;
       }
 
-      if (firstIncomeIndex != null) {
-        _totalIncome += flow.incomeSum;
+      if (lastTransactionIndex == null || i > lastTransactionIndex) {
+        if (flow.flow != 0) {
+          lastTransactionIndex = i;
+        }
       }
 
-      if (firstExpenseIndex != null) {
-        _totalExpense += flow.expenseSum;
-      }
+      _totalIncome += flow.incomeSum;
 
-      if (firstFlowIndex != null) {
-        _totalFlow += flow.flow;
-      }
+      _totalExpense += flow.expenseSum;
+
+      _totalFlow += flow.flow;
     }
 
-    int incomeCount = sortedKeys.length - (firstIncomeIndex ?? 0);
-    int expenseCount = sortedKeys.length - (firstExpenseIndex ?? 0);
-    int flowCount = sortedKeys.length - (firstFlowIndex ?? 0);
+    final int intervalCount =
+        (rangeData.range.duration.inMicroseconds / interval.inMicroseconds)
+            .ceil();
 
-    for (final DateTime startOfInterval in sortedKeys.reversed) {
-      final SingleCurrencyFlow flow = data[startOfInterval]!;
+    final int totalTransactionCount =
+        ((lastTransactionIndex ?? 0) - (firstTransactionIndex ?? 0) + 1).clamp(
+          1,
+          intervalCount,
+        );
 
-      if (firstIncomeIndex != null) {
-        if (flow.incomeSum <= 0) {
-          incomeCount--;
-        } else {
-          firstIncomeIndex = null;
-        }
-      }
-
-      if (firstExpenseIndex != null) {
-        if (flow.expenseSum >= 0) {
-          expenseCount--;
-        } else {
-          firstExpenseIndex = null;
-        }
-      }
-
-      if (firstFlowIndex != null) {
-        if (flow.flow == 0) {
-          flowCount--;
-        } else {
-          firstFlowIndex = null;
-        }
-      }
-    }
-
-    _averageIncome = _totalIncome / incomeCount.toDouble();
-    _averageExpense = _totalExpense / expenseCount.toDouble();
-    _averageFlow = _totalFlow / flowCount.toDouble();
+    _averageIncome = _totalIncome / totalTransactionCount.toDouble();
+    _averageExpense = _totalExpense / totalTransactionCount.toDouble();
+    _averageFlow = _totalFlow / totalTransactionCount.toDouble();
   }
 
   (DateTime, int) getInterval(DateTime transactionDate) {

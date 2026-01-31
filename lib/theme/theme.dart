@@ -71,10 +71,11 @@ class ThemeFactory {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       brightness: colorScheme.brightness,
       colorScheme: colorScheme,
-      appBarTheme: AppBarTheme(
-        centerTitle: false,
+      appBarTheme: AppBarThemeData(
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
+        centerTitle: false,
+        backgroundColor: colorScheme.surface,
       ),
       cardTheme: CardThemeData(
         color: colorScheme.secondary,

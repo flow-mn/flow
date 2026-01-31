@@ -63,7 +63,7 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
         children: [
           TextButton.icon(
             onPressed: () => context.pop(<Category>[]),
-            icon: const Icon(Symbols.block_rounded),
+            icon: const Icon(Symbols.block_rounded, fill: 0.0),
             label: Text("transactions.query.clearSelection".t(context)),
           ),
           TextButton.icon(

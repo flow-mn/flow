@@ -1,8 +1,28 @@
 # Changelog
 
-## Next
+## 0.18.2
 
-### 0.18.0
+### Fixes
+
+* Fixed Eny itemized categories
+* Home tab income/expense no longer includes pending transactions
+* Tweaked pasting numbers into the amount field so it ignores text and
+  currency symbols
+
+### Changes
+
+* Simplified stats tab average income/expense calculation
+* Minor UI enhancements
+
+## 0.18.1
+
+### Fixes
+
+* Fixed you weren't able to connect Eny. Goofed big time :P
+
+## 0.18.0
+
+### New features
 
 * Now you can scan receipts with Eny (beta)
 
