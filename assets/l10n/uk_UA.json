@@ -277,6 +277,8 @@
   "logs.delete": "Видалити файл журналу",
   "logs.delete.confirmation": "Ви впевнені, що хочете видалити цей файл журналу?",
   "logs.deleted": "Файл журналу успішно видалено",
+  "notifications.alarm.androidDescription": "Надайте дозвіл «Будильники та нагадування» (останній у списку дозволів), щоб отримувати нагадування у точний час.",
+  "notifications.alarm.permissionNotGranted": "Дозвіл на будильники/нагадування не надано",
   "notifications.openSettingsToGrantPermission": "Надайте дозвіл на сповіщення в системних налаштуваннях",
   "notifications.permissionNotGranted": "Дозвіл на сповіщення не надано",
   "notifications.reminderText#1": "Ви відстежили свої витрати сьогодні?",

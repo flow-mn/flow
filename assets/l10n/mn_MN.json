@@ -277,6 +277,8 @@
   "logs.delete": "Лог файлыг устгах",
   "logs.delete.confirmation": "Та энэ лог файлыг устгахдаа итгэлтэй байна уу?",
   "logs.deleted": "Лог файлыг амжилттай устгалаа",
+  "notifications.alarm.androidDescription": "Аппын зөвшөөрлийн хамгийн доор байрлах \"Сэрүүлэг ба санамж\" тохиргооны эрхийг өгнө үү.",
+  "notifications.alarm.permissionNotGranted": "Сэрүүлэг тохируулах зөвшөөрөл олгоогүй байна",
   "notifications.openSettingsToGrantPermission": "Системийн тохиргооны хэсэгт орж мэдэгдэл илгээх зөвшөөрлийг олгоно уу",
   "notifications.permissionNotGranted": "Мэдэгдэл илгээх зөвшөөрөл олгоогүй байна",
   "notifications.reminderText#1": "Та өнөөдөр зардлаа бүртгэсэн үү?",

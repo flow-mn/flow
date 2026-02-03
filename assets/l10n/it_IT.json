@@ -277,6 +277,8 @@
   "logs.delete": "Elimina file di log",
   "logs.delete.confirmation": "Sei sicuro di voler eliminare questo file di log?",
   "logs.deleted": "File di log eliminato con successo",
+  "notifications.alarm.androidDescription": "Concedi il permesso \"Sveglie e promemoria\" (ultimo nell'elenco dei permessi) per ricevere promemoria all'orario esatto.",
+  "notifications.alarm.permissionNotGranted": "Permesso Sveglie/Promemoria non concesso",
   "notifications.openSettingsToGrantPermission": "Concedi il permesso di notifica dalle impostazioni di sistema",
   "notifications.permissionNotGranted": "Permesso di notifica non concesso",
   "notifications.reminderText#1": "Hai registrato le tue spese oggi?",

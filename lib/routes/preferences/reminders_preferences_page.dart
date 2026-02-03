@@ -6,7 +6,8 @@ import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
-import "package:flow/widgets/notifications_permission_missing_reminder.dart";
+import "package:flow/widgets/schdeuled_notification_permission_builder.dart";
+import "package:flow/widgets/schdeuled_notification_permission_missing_reminder.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -19,33 +20,6 @@ class RemindersPreferencesPage extends StatefulWidget {
 }
 
 class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
-  late final AppLifecycleListener _listener;
-
-  late Future<bool?> _notificationsPermissionGranted;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _notificationsPermissionGranted = NotificationsService().hasPermissions();
-
-    _listener = AppLifecycleListener(
-      onShow: () {
-        _notificationsPermissionGranted = NotificationsService()
-            .hasPermissions();
-        if (mounted) {
-          setState(() {});
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _listener.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final Duration? remindDailyAt = UserPreferencesService().remindDailyAt;
@@ -58,11 +32,8 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.reminders".t(context))),
-      body: FutureBuilder(
-        future: _notificationsPermissionGranted,
-        builder: (context, snapshot) {
-          final bool? hasNotificationsPermissions = snapshot.data;
-
+      body: SchdeuledNotificationPermissionBuilder(
+        builder: (context, permissions, _) {
           return SingleChildScrollView(
             child: SafeArea(
               child: Column(
@@ -81,9 +52,11 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                     ),
                   ],
                   if (NotificationsService.schedulingSupported &&
-                      hasNotificationsPermissions == false) ...[
+                      !permissions.hasAllPermissions) ...[
                     const SizedBox(height: 16.0),
-                    NotificationPermissionMissingReminder(),
+                    SchdeuledNotificationPermissionMissingReminder(
+                      permissions: permissions,
+                    ),
                   ],
                   if (flowDebugMode &&
                       !NotificationsService.schedulingSupported) ...[
@@ -109,9 +82,11 @@ class _RemindersPreferencesPageState extends State<RemindersPreferencesPage> {
                         ),
                       ),
                       value: enabled,
-                      onChanged: toggleRemindDaily,
+                      onChanged: permissions.hasAllPermissions
+                          ? toggleRemindDaily
+                          : null,
                     ),
-                    if (enabled) ...[
+                    if (permissions.hasAllPermissions && enabled) ...[
                       const SizedBox(height: 16.0),
                       ListHeader(
                         "preferences.reminders.remindDaily.time".t(context),

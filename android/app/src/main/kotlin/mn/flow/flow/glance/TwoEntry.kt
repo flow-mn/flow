@@ -1,7 +1,7 @@
 package mn.flow.flow.glance
 
-import HomeWidgetGlanceState
-import HomeWidgetGlanceStateDefinition
+import es.antonborri.home_widget.HomeWidgetGlanceState
+import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp

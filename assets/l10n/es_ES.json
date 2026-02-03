@@ -277,6 +277,8 @@
   "logs.delete": "Eliminar archivo de registro",
   "logs.delete.confirmation": "¿Estás seguro de que quieres eliminar este archivo de registro?",
   "logs.deleted": "Archivo de registro eliminado correctamente",
+  "notifications.alarm.androidDescription": "Conceda el permiso \"Alarmas y recordatorios\" (el último en la lista de permisos) para recibir recordatorios a la hora exacta.",
+  "notifications.alarm.permissionNotGranted": "Permiso de alarmas/recordatorios no concedido",
   "notifications.openSettingsToGrantPermission": "Concede permiso de notificación desde los ajustes del sistema",
   "notifications.permissionNotGranted": "Permiso de notificaciones no concedido",
   "notifications.reminderText#1": "¿Registraste tus gastos de hoy?",

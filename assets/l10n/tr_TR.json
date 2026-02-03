@@ -277,6 +277,8 @@
   "logs.delete": "Günlük dosyasını sil",
   "logs.delete.confirmation": "Bu günlük dosyasını silmek istediğinizden emin misiniz?",
   "logs.deleted": "Günlük dosyası başarıyla silindi",
+  "notifications.alarm.androidDescription": "Tam zamanında hatırlatmalar almak için \"Alarmlar ve Hatırlatmalar\" iznini (izinler listesinin en sonunda) verin.",
+  "notifications.alarm.permissionNotGranted": "Alarm/Hatırlatma izni verilmedi",
   "notifications.openSettingsToGrantPermission": "Bildirim iznini sistem ayarlarından verin",
   "notifications.permissionNotGranted": "Bildirim izni verilmedi",
   "notifications.reminderText#1": "Bugün harcamalarınızı takip ettiniz mi?",

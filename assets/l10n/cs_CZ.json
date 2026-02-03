@@ -277,6 +277,8 @@
   "logs.delete": "Smazat soubor protokolu",
   "logs.delete.confirmation": "Opravdu chcete smazat tento soubor protokolu?",
   "logs.deleted": "Soubor protokolu byl úspěšně smazán.",
+  "notifications.alarm.androidDescription": "Povolte oprávnění \"Alarms and Reminder\" (poslední v seznamu oprávnění), abyste dostávali připomínky v přesném čase.",
+  "notifications.alarm.permissionNotGranted": "Oprávnění pro budíky a připomínky nebylo uděleno",
   "notifications.openSettingsToGrantPermission": "Povolte oznámení v nastavení systému.",
   "notifications.permissionNotGranted": "Oprávnění pro oznámení nebylo uděleno.",
   "notifications.reminderText#1": "Zaznamenali jste dnes své výdaje?",

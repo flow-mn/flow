@@ -277,6 +277,8 @@
   "logs.delete": "Supprimer le fichier journal",
   "logs.delete.confirmation": "Êtes-vous sûr de vouloir supprimer ce fichier journal ?",
   "logs.deleted": "Fichier journal supprimé avec succès",
+  "notifications.alarm.androidDescription": "Accordez l'autorisation « Alarmes et rappels » (la dernière de la liste des autorisations) pour recevoir des rappels à l'heure précise.",
+  "notifications.alarm.permissionNotGranted": "Autorisation « Alarmes et rappels » non accordée",
   "notifications.openSettingsToGrantPermission": "Grant notification permission from system settings",
   "notifications.permissionNotGranted": "Notifications permission not granted",
   "notifications.reminderText#1": "Avez-vous suivi vos dépenses aujourd'hui ?",

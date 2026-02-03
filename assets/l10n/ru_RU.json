@@ -277,6 +277,8 @@
   "logs.delete": "Удалить файл логов",
   "logs.delete.confirmation": "Вы уверены, что хотите удалить этот файл логов?",
   "logs.deleted": "Файл логов успешно удален",
+  "notifications.alarm.androidDescription": "Предоставьте разрешение «Будильники и напоминания» (последнее в списке разрешений), чтобы получать напоминания в точное время.",
+  "notifications.alarm.permissionNotGranted": "Разрешение на будильники/напоминания не предоставлено",
   "notifications.openSettingsToGrantPermission": "Предоставьте разрешение на уведомления в системных настройках",
   "notifications.permissionNotGranted": "Разрешение на уведомления не предоставлено",
   "notifications.reminderText#1": "Вы отследили свои расходы сегодня?",

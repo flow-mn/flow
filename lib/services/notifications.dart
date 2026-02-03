@@ -108,7 +108,7 @@ class NotificationsService {
           );
 
       _available = await pluginInstance.initialize(
-        initializationSettings,
+        settings: initializationSettings,
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
@@ -224,11 +224,11 @@ class NotificationsService {
       );
 
       await pluginInstance.zonedSchedule(
-        _getNextId(),
-        transaction.title ?? "transaction.fallbackTitle".tr(),
-        "${transaction.money.formatMoney()}, ${now.from(now)}",
-        dateTime,
-        details,
+        id: _getNextId(),
+        title: transaction.title ?? "transaction.fallbackTitle".tr(),
+        body: "${transaction.money.formatMoney()}, ${now.from(now)}",
+        scheduledDate: dateTime,
+        notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: FlowNotificationPayload(
           itemType: FlowNotificationPayloadItemType.transaction,
@@ -241,11 +241,12 @@ class NotificationsService {
 
       if (earlyDateTime != null) {
         await pluginInstance.zonedSchedule(
-          _getNextId(),
-          transaction.title ?? "transaction.fallbackTitle".tr(),
-          "${transaction.money.formatMoney()}, ${dateTime.toMoment().from(earlyDateTime)}",
-          earlyDateTime,
-          details,
+          id: _getNextId(),
+          title: transaction.title ?? "transaction.fallbackTitle".tr(),
+          body:
+              "${transaction.money.formatMoney()}, ${dateTime.toMoment().from(earlyDateTime)}",
+          scheduledDate: earlyDateTime,
+          notificationDetails: details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           payload: FlowNotificationPayload(
             itemType: FlowNotificationPayloadItemType.transaction,
@@ -296,7 +297,7 @@ class NotificationsService {
     await Future.wait(
       reminders.map((reminder) async {
         try {
-          await pluginInstance.cancel(reminder.id);
+          await pluginInstance.cancel(id: reminder.id);
           _log.fine(
             "Cancelled reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
           );
@@ -366,11 +367,11 @@ class NotificationsService {
         );
 
         await pluginInstance.zonedSchedule(
-          _getNextId(),
-          "Flow",
-          "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
-          dateTime,
-          details,
+          id: _getNextId(),
+          title: "Flow",
+          body: "notifications.reminderText#${1 + ((i + offset) % 7)}".tr(),
+          scheduledDate: dateTime,
+          notificationDetails: details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           payload: FlowNotificationPayload(
             itemType: FlowNotificationPayloadItemType.reminder,
@@ -389,11 +390,11 @@ class NotificationsService {
 
     try {
       await pluginInstance.zonedSchedule(
-        math.Random().nextInt(10000) + 1,
-        "Test 1",
-        null,
-        dateTime,
-        NotificationDetails(
+        id: math.Random().nextInt(10000) + 1,
+        title: "Test 1",
+        body: null,
+        scheduledDate: dateTime,
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             "debug",
             "Debug",
@@ -419,10 +420,10 @@ class NotificationsService {
   void debugShow() async {
     try {
       await pluginInstance.show(
-        0,
-        "Test 1",
-        null,
-        NotificationDetails(
+        id: 0,
+        title: "Test 1",
+        body: null,
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             "debug",
             "Debug",

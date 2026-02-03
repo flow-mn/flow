@@ -277,6 +277,8 @@
   "logs.delete": "حذف ملف السجل",
   "logs.delete.confirmation": "هل أنت متأكد من رغبتك في حذف ملف السجل هذا؟",
   "logs.deleted": "تم حذف ملف السجل بنجاح",
+  "notifications.alarm.androidDescription": "امنح إذن \"المنبهات والتذكيرات\" (آخر عنصر في قائمة الأذونات) لتلقي التذكيرات في الوقت المحدد.",
+  "notifications.alarm.permissionNotGranted": "لم يتم منح إذن المنبه/التذكير",
   "notifications.openSettingsToGrantPermission": "امنح إذن الإشعارات من إعدادات النظام",
   "notifications.permissionNotGranted": "إذن الإشعارات غير ممنوح",
   "notifications.reminderText#1": "هل قمت بتتبع مصروفاتك اليوم؟",

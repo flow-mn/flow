@@ -277,6 +277,8 @@
   "logs.delete": "Protokolldatei löschen",
   "logs.delete.confirmation": "Bist du sicher, dass du diese Protokolldatei löschen möchtest?",
   "logs.deleted": "Protokolldatei erfolgreich gelöscht",
+  "notifications.alarm.androidDescription": "Gewähre die Berechtigung \"Alarms and Reminder\" (die letzte in der Liste der Berechtigungen), um Erinnerungen zur genauen Uhrzeit zu erhalten.",
+  "notifications.alarm.permissionNotGranted": "Berechtigung für Alarme und Erinnerungen nicht erteilt",
   "notifications.openSettingsToGrantPermission": "Erlaube Benachrichtigungen in den Systemeinstellungen.",
   "notifications.permissionNotGranted": "Erlaubnis für Benachrichtigungen nicht gegeben.",
   "notifications.reminderText#1": "Hast du heute deine Ausgaben erfasst?",

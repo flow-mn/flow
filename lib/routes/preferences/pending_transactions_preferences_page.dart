@@ -7,7 +7,8 @@ import "package:flow/services/transactions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
-import "package:flow/widgets/notifications_permission_missing_reminder.dart";
+import "package:flow/widgets/schdeuled_notification_permission_builder.dart";
+import "package:flow/widgets/schdeuled_notification_permission_missing_reminder.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
@@ -21,31 +22,8 @@ class PendingTransactionPreferencesPage extends StatefulWidget {
 
 class _PendingTransactionPreferencesPageState
     extends State<PendingTransactionPreferencesPage> {
-  late final AppLifecycleListener _listener;
-
-  late Future<bool?> _notificationsPermissionGranted;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _notificationsPermissionGranted = NotificationsService().hasPermissions();
-
-    _listener = AppLifecycleListener(
-      onShow: () {
-        _notificationsPermissionGranted = NotificationsService()
-            .hasPermissions();
-        if (mounted) {
-          setState(() {});
-        }
-      },
-    );
-  }
-
   @override
   void dispose() {
-    _listener.dispose();
-
     unawaited(TransactionsService().synchronizeNotifications());
 
     super.dispose();
@@ -68,103 +46,100 @@ class _PendingTransactionPreferencesPageState
         .earlyReminderInSeconds
         .get();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("preferences.transactions.pending".t(context)),
-      ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              const SizedBox(height: 16.0),
-              Frame(
-                child: InfoText(
-                  child: Text(
-                    "preferences.transactions.pending.requireConfirmation.description"
-                        .t(context),
+    return SchdeuledNotificationPermissionBuilder(
+      builder: (context, permissions, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("preferences.transactions.pending".t(context)),
+          ),
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  const SizedBox(height: 16.0),
+                  Frame(
+                    child: InfoText(
+                      child: Text(
+                        "preferences.transactions.pending.requireConfirmation.description"
+                            .t(context),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ListHeader(
-                "preferences.transactions.pending.homeTimeframe".t(context),
-              ),
-              const SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Wrap(
-                  spacing: 12.0,
-                  runSpacing: 8.0,
-                  children: [1, 2, 3, 5, 7, 14, 30]
-                      .map(
-                        (value) => FilterChip(
-                          showCheckmark: false,
-                          key: ValueKey(value),
-                          label: Text("general.nextNDays".t(context, value)),
-                          onSelected: (bool selected) => selected
-                              ? updatePendingTransactionsHomeTimeframe(value)
-                              : null,
-                          selected: value == pendingTransactionsHomeTimeframe,
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              CheckboxListTile(
-                title: Text(
-                  "preferences.transactions.pending.requireConfirmation".t(
-                    context,
+                  const SizedBox(height: 16.0),
+                  ListHeader(
+                    "preferences.transactions.pending.homeTimeframe".t(context),
                   ),
-                ),
-                value: pendingTransactionsRequireConfrimation,
-                onChanged: updatePendingTransactionsRequireConfrimation,
-              ),
-              if (pendingTransactionsRequireConfrimation) ...[
-                CheckboxListTile(
-                  title: Text(
-                    "preferences.transactions.pending.updateDateUponConfirmation"
-                        .t(context),
+                  const SizedBox(height: 8.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Wrap(
+                      spacing: 12.0,
+                      runSpacing: 8.0,
+                      children: [1, 2, 3, 5, 7, 14, 30]
+                          .map(
+                            (value) => FilterChip(
+                              showCheckmark: false,
+                              key: ValueKey(value),
+                              label: Text(
+                                "general.nextNDays".t(context, value),
+                              ),
+                              onSelected: (bool selected) => selected
+                                  ? updatePendingTransactionsHomeTimeframe(
+                                      value,
+                                    )
+                                  : null,
+                              selected:
+                                  value == pendingTransactionsHomeTimeframe,
+                            ),
+                          )
+                          .toList(),
+                    ),
                   ),
-                  subtitle: Text(
-                    "preferences.transactions.pending.updateDateUponConfirmation.description"
-                        .t(context),
+                  const SizedBox(height: 16.0),
+                  CheckboxListTile(
+                    title: Text(
+                      "preferences.transactions.pending.requireConfirmation".t(
+                        context,
+                      ),
+                    ),
+                    value: pendingTransactionsRequireConfrimation,
+                    onChanged: updatePendingTransactionsRequireConfrimation,
                   ),
-                  value: pendingTransactionsUpdateDateUponConfirmation,
-                  onChanged: updatePendingTransactionsConfirmationDate,
-                ),
-                FutureBuilder(
-                  future: _notificationsPermissionGranted,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.none ||
-                        snapshot.connectionState == ConnectionState.waiting ||
-                        snapshot.error != null) {
-                      return const SizedBox();
-                    }
-
-                    final bool notificationsPermissionGranted =
-                        snapshot.data != false;
-                    final bool showSchedulingUnsupportedNotice =
-                        snapshot.data == null;
-
-                    return Column(
+                  if (pendingTransactionsRequireConfrimation) ...[
+                    CheckboxListTile(
+                      title: Text(
+                        "preferences.transactions.pending.updateDateUponConfirmation"
+                            .t(context),
+                      ),
+                      subtitle: Text(
+                        "preferences.transactions.pending.updateDateUponConfirmation.description"
+                            .t(context),
+                      ),
+                      value: pendingTransactionsUpdateDateUponConfirmation,
+                      onChanged: updatePendingTransactionsConfirmationDate,
+                    ),
+                    Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: .start,
                       children: [
-                        notificationsPermissionGranted
+                        permissions.hasAllPermissions
                             ? CheckboxListTile(
                                 title: Text(
                                   "preferences.transactions.pending.notify".t(
                                     context,
                                   ),
                                 ),
-                                enabled: notificationsPermissionGranted,
-                                value: notificationsPermissionGranted && notify,
+                                enabled: permissions.hasNotificationPermission,
+                                value:
+                                    permissions.hasNotificationPermission &&
+                                    notify,
                                 onChanged: updateNotify,
                               )
-                            : NotificationPermissionMissingReminder(),
-                        if (showSchedulingUnsupportedNotice) ...[
+                            : SchdeuledNotificationPermissionMissingReminder(
+                                permissions: permissions,
+                              ),
+                        if (!NotificationsService.schedulingSupported) ...[
                           const SizedBox(height: 8.0),
                           Frame(
                             child: InfoText(
@@ -176,9 +151,9 @@ class _PendingTransactionPreferencesPageState
                           ),
                         ],
                         const SizedBox(height: 16.0),
-                        if (!showSchedulingUnsupportedNotice &&
+                        if (NotificationsService.schedulingSupported &&
                             notify &&
-                            notificationsPermissionGranted) ...[
+                            permissions.hasNotificationPermission) ...[
                           ListHeader(
                             "preferences.transactions.pending.notify.earlyReminder"
                                 .t(context),
@@ -233,14 +208,14 @@ class _PendingTransactionPreferencesPageState
                           ),
                         ],
                       ],
-                    );
-                  },
-                ),
-              ],
-            ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
