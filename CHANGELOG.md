@@ -11,8 +11,17 @@
 
 ### Changes
 
+* Transactions added from Eny that have older transaction date (6h)
+  will be added as a pending transaction
 * Simplified stats tab average income/expense calculation
+* Added a description about missing alarm permission required for settings
+  reminders. Closes [#647](https://github.com/flow-mn/flow/issues/647)
 * Minor UI enhancements
+
+### New features
+
+* Now you can configure Eny transactions to be added as "pending". Transactions
+  that have **transaction date** older than 6 hours is always set as "pending"
 
 ## 0.18.1
 

@@ -21,6 +21,7 @@ class TransactionMultiProgrammableObject {
     dynamic toAccount,
     List<String>? extraTags,
     List<TransactionExtension>? extensions,
+    bool? isPendingOverride,
   }) {
     return t
         .map(
@@ -29,6 +30,7 @@ class TransactionMultiProgrammableObject {
             toAccount: toAccount,
             extraTags: extraTags,
             extensions: extensions,
+            isPendingOverride: isPendingOverride,
           ),
         )
         .toList();

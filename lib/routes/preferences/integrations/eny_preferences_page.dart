@@ -8,6 +8,7 @@ import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
+import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/integrations/eny_page/eny_privacy_notice.dart";
 import "package:flutter/material.dart";
@@ -75,6 +76,7 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                   ),
                   Column(
                     mainAxisSize: .min,
+                    crossAxisAlignment: .start,
                     children: [
                       ListTile(
                         leading: Icon(
@@ -135,33 +137,71 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                             );
                           },
                         ),
+                      const SizedBox(height: 24.0),
+                      ListHeader("preferences.scan".t(context)),
+                      const SizedBox(height: 8.0),
                       ValueListenableBuilder(
                         valueListenable: UserPreferencesService().valueNotifier,
                         builder: (context, userPreferences, child) {
                           final bool createTransactionsPerItemInScans =
                               userPreferences.createTransactionsPerItemInScans;
+                          final int? scansPendingThresholdInHours =
+                              userPreferences.scansPendingThresholdInHours;
 
-                          return SwitchListTile(
-                            secondary: Icon(
-                              createTransactionsPerItemInScans
-                                  ? Symbols.list_rounded
-                                  : Symbols.list_alt_rounded,
-                            ),
-                            title: Text(
-                              "preferences.scan.createTransactionsPerItemInScans"
-                                  .t(context),
-                            ),
-                            subtitle: Text(
-                              "preferences.scan.createTransactionsPerItemInScans.description"
-                                  .t(context),
-                            ),
-                            value: createTransactionsPerItemInScans,
-                            onChanged: (bool newValue) {
-                              UserPreferencesService()
-                                      .createTransactionsPerItemInScans =
-                                  newValue;
-                              setState(() {});
-                            },
+                          return Column(
+                            mainAxisSize: .min,
+                            crossAxisAlignment: .start,
+                            children: [
+                              SwitchListTile(
+                                secondary: Icon(
+                                  createTransactionsPerItemInScans
+                                      ? Symbols.list_rounded
+                                      : Symbols.list_alt_rounded,
+                                ),
+                                title: Text(
+                                  "preferences.scan.createTransactionsPerItemInScans"
+                                      .t(context),
+                                ),
+                                subtitle: Text(
+                                  "preferences.scan.createTransactionsPerItemInScans.description"
+                                      .t(context),
+                                ),
+                                value: createTransactionsPerItemInScans,
+                                onChanged: (bool newValue) {
+                                  UserPreferencesService()
+                                          .createTransactionsPerItemInScans =
+                                      newValue;
+                                  setState(() {});
+                                },
+                              ),
+                              SwitchListTile(
+                                secondary: const Icon(
+                                  Symbols.search_activity_rounded,
+                                ),
+                                title: Text(
+                                  "preferences.scan.markPendingThreshold".t(
+                                    context,
+                                  ),
+                                ),
+                                value: scansPendingThresholdInHours == 0,
+                                onChanged: (bool newValue) {
+                                  UserPreferencesService()
+                                      .scansPendingThresholdInHours = newValue
+                                      ? 0
+                                      : 6;
+                                  setState(() {});
+                                },
+                              ),
+                              const SizedBox(height: 8.0),
+                              Frame(
+                                child: InfoText(
+                                  child: Text(
+                                    "preferences.scan.markPendingThreshold.description"
+                                        .t(context),
+                                  ),
+                                ),
+                              ),
+                            ],
                           );
                         },
                       ),

@@ -280,6 +280,9 @@ class EnyService {
   Future<void> _resolveProcessedReceipt(String id, [int retryCount = 0]) async {
     _log.fine("Resolving processed receipt with ID $id");
 
+    final bool markPendingAllTransactions =
+        UserPreferencesService().scansPendingThresholdInHours == 0;
+
     final Map? enyJson = switch (_sessionCache[id]) {
       Map m => m,
       _ => await fetchReceiptDetails(id),
@@ -294,6 +297,12 @@ class EnyService {
         Duration(seconds: 5 + (retryCount * 5)),
         () => _resolveProcessedReceipt(id, retryCount + 1),
       );
+    }
+
+    bool shouldMarkPending(DateTime? tranactionDate) {
+      if (tranactionDate == null) return false;
+
+      return tranactionDate.difference(DateTime.now()).inHours < -6;
     }
 
     if (enyJson["status"] != "completed" || enyJson["result"] is! Map) {
@@ -311,6 +320,9 @@ class EnyService {
               partOfMultiTransaction: true,
             ),
           ],
+          isPendingOverride: markPendingAllTransactions
+              ? true
+              : shouldMarkPending(parsed.t.firstOrNull?.transactionDate),
         );
 
         completed = parsed != null && parsed.t.isNotEmpty;
@@ -327,7 +339,11 @@ class EnyService {
               enyReceiptId: id,
             ),
           ],
+          isPendingOverride: markPendingAllTransactions
+              ? true
+              : shouldMarkPending(parsed.transactionDate),
         );
+
         completed = parsed != null;
         succeeded = completed;
       }

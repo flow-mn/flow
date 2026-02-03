@@ -101,7 +101,7 @@ class _SchdeuledNotificationPermissionBuilderState
             await androidImplementation?.canScheduleExactNotifications() ??
             false;
       } else {
-        _hasAlarmPermission = await Permission.scheduleExactAlarm.isGranted;
+        _hasAlarmPermission = NotificationsService.schedulingSupported;
       }
     } finally {
       if (mounted) {

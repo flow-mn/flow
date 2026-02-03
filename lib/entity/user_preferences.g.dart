@@ -21,6 +21,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['transactionListTileRelaxedDensity'] as bool? ?? false,
         createTransactionsPerItemInScans:
             json['createTransactionsPerItemInScans'] as bool? ?? true,
+        scansPendingThresholdInHours:
+            (json['scansPendingThresholdInHours'] as num?)?.toInt() ?? 6,
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
@@ -62,6 +64,7 @@ Map<String, dynamic> _$UserPreferencesToJson(
   'transactionListTileRelaxedDensity':
       instance.transactionListTileRelaxedDensity,
   'createTransactionsPerItemInScans': instance.createTransactionsPerItemInScans,
+  'scansPendingThresholdInHours': instance.scansPendingThresholdInHours,
   'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
   'primaryCurrency': instance.primaryCurrency,
   'primaryAccountUuid': instance.primaryAccountUuid,

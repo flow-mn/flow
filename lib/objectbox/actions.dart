@@ -1150,6 +1150,7 @@ extension TransactionProgrammableObjectActions
     dynamic toAccount,
     List<String>? extraTags,
     List<TransactionExtension>? extensions,
+    bool? isPendingOverride,
   }) {
     final Account? resolvedFromAccount =
         AccountsService().findOneActiveSync(fromAccountUuid) ??
@@ -1213,7 +1214,7 @@ extension TransactionProgrammableObjectActions
             title: title,
             description: notes,
             transactionDate: transactionDate,
-            isPending: isPending,
+            isPending: isPendingOverride ?? isPending,
             tags: resolvedTags,
             conversionRate: transferConversionRate,
             // attachments: attachments,
@@ -1247,7 +1248,7 @@ extension TransactionProgrammableObjectActions
         description: notes,
         category: resolvedCategory,
         tags: resolvedTags,
-        isPending: isPending,
+        isPending: isPendingOverride ?? isPending,
         // attachments: attachments,
         // subtype: subtype,
         extensions: extensions,
