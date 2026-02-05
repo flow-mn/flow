@@ -6,8 +6,7 @@
 
 * Fixed Eny itemized categories
 * Home tab income/expense no longer includes pending transactions
-* Tweaked pasting numbers into the amount field so it ignores text and
-  currency symbols
+* Enchanced pasting number into amount input
 
 ### Changes
 

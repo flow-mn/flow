@@ -23,6 +23,8 @@ class EnyPreferencesPage extends StatefulWidget {
 }
 
 class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
+  bool _busy = false;
+
   @override
   void initState() {
     super.initState();
@@ -118,22 +120,26 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                               title: Text(
                                 "integrations.eny.creditsRemaining".t(context),
                               ),
-                              trailing: Text(
-                                remainingCredits != null
-                                    ? remainingCredits.toString()
-                                    : "—",
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontFeatures: [
-                                    const FontFeature.tabularFigures(),
-                                  ],
-                                ),
+                              trailing: Row(
+                                mainAxisSize: .min,
+                                spacing: 8.0,
+                                children: [
+                                  Text(
+                                    (_busy || remainingCredits == null)
+                                        ? "...."
+                                        : remainingCredits.toString(),
+                                    style: context.textTheme.bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontFeatures: [
+                                            const FontFeature.tabularFigures(),
+                                          ],
+                                        ),
+                                  ),
+                                  Icon(Symbols.refresh_rounded, size: 16.0),
+                                ],
                               ),
-                              onTap: () {
-                                EnyService().checkCredits().catchError((_) {
-                                  return null;
-                                });
-                              },
+                              onTap: _refreshCredits,
                             );
                           },
                         ),
@@ -171,7 +177,6 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                                   UserPreferencesService()
                                           .createTransactionsPerItemInScans =
                                       newValue;
-                                  setState(() {});
                                 },
                               ),
                               SwitchListTile(
@@ -189,7 +194,6 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                                       .scansPendingThresholdInHours = newValue
                                       ? 0
                                       : 6;
-                                  setState(() {});
                                 },
                               ),
                               const SizedBox(height: 8.0),
@@ -231,6 +235,23 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
         },
       ),
     );
+  }
+
+  Future<void> _refreshCredits() async {
+    if (_busy) return;
+
+    setState(() {
+      _busy = true;
+    });
+
+    try {
+      await EnyService().checkCredits();
+    } finally {
+      _busy = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   Future<void> _disconnectEny() async {

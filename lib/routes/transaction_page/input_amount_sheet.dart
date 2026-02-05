@@ -7,6 +7,7 @@ import "package:flow/routes/transaction_page/input_amount_sheet/calculator_butto
 import "package:flow/routes/transaction_page/input_amount_sheet/input_value.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/money_parsing.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/numpad.dart";
@@ -431,13 +432,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   }
 
   void handlePaste(String text, [bool reportInvalid = false]) {
-    text = text.replaceAll(RegExp(r"[^\d.,]"), "");
-
-    num? parsed;
-
-    if (text.contains(RegExp(r"\d"))) {
-      parsed = NumberFormat().tryParse(text) ?? num.tryParse(text);
-    }
+    double? parsed = parseMoneyString(text: text);
 
     if (parsed == null) {
       if (reportInvalid) {
