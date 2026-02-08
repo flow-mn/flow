@@ -23,6 +23,9 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['createTransactionsPerItemInScans'] as bool? ?? true,
         scansPendingThresholdInHours:
             (json['scansPendingThresholdInHours'] as num?)?.toInt() ?? 6,
+        privacyModeUponLaunch: json['privacyModeUponLaunch'] as bool? ?? false,
+        privacyModeUponShaking:
+            json['privacyModeUponShaking'] as bool? ?? false,
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
@@ -65,6 +68,8 @@ Map<String, dynamic> _$UserPreferencesToJson(
       instance.transactionListTileRelaxedDensity,
   'createTransactionsPerItemInScans': instance.createTransactionsPerItemInScans,
   'scansPendingThresholdInHours': instance.scansPendingThresholdInHours,
+  'privacyModeUponLaunch': instance.privacyModeUponLaunch,
+  'privacyModeUponShaking': instance.privacyModeUponShaking,
   'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
   'primaryCurrency': instance.primaryCurrency,
   'primaryAccountUuid': instance.primaryAccountUuid,

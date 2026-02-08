@@ -1,3 +1,5 @@
+import "dart:math" as math;
+
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/user_preferences.dart";
@@ -174,6 +176,20 @@ class Money {
       formatterPattern = Optional(
         UserPreferencesService().icuCurrencyFormattingPattern!,
       );
+    }
+
+    if (decimalDigits == null) {
+      final int? preferredDecimalPlaces = CurrencyRegistryService()
+          .getPreferredDecimalPrecision(currency);
+      final int totalDecimalPlaces = CurrencyRegistryService()
+          .detectDecimalPrecision(amountToFormat, currency);
+
+      if (preferredDecimalPlaces != null) {
+        decimalDigits = math.max(
+          2,
+          math.min(totalDecimalPlaces, preferredDecimalPlaces),
+        );
+      }
     }
 
     final String? symbol = useCurrencySymbol

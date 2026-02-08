@@ -68,6 +68,9 @@ class UserPreferences implements EntityBase {
   bool createTransactionsPerItemInScans;
   int? scansPendingThresholdInHours;
 
+  bool privacyModeUponLaunch;
+  bool privacyModeUponShaking;
+
   String? icuCurrencyFormattingPattern;
 
   String? primaryCurrency;
@@ -161,6 +164,8 @@ class UserPreferences implements EntityBase {
     this.transactionListTileRelaxedDensity = false,
     this.createTransactionsPerItemInScans = true,
     this.scansPendingThresholdInHours = 6,
+    this.privacyModeUponLaunch = false,
+    this.privacyModeUponShaking = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
     this.enableICloudSync = false,

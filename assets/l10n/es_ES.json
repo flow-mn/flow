@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "Requerir autenticación biométrica para abrir la aplicación",
   "preferences.privacy.appLock.description#iOS": "Requerir Face ID o Touch ID para abrir la aplicación",
   "preferences.privacy.appLock.lockAfterClosing": "Bloquear tras cerrar",
+  "preferences.privacy.maskAtShake": "Enmascarar números (*) al agitar el dispositivo",
   "preferences.privacy.maskAtStartup": "Ocultar números (*) al inicio",
   "preferences.reminders": "Recordatorio",
   "preferences.reminders.remindDaily": "Recordar diariamente",

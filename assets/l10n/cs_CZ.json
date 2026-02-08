@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "Vyžadovat biometrické ověření pro otevření aplikace.",
   "preferences.privacy.appLock.description#iOS": "Vyžadovat Face ID nebo Touch ID pro otevření aplikace.",
   "preferences.privacy.appLock.lockAfterClosing": "Zamknout po zavření",
+  "preferences.privacy.maskAtShake": "Při zatřesení zařízením maskovat čísla (*)",
   "preferences.privacy.maskAtStartup": "Maskovat částky (*) při spuštění",
   "preferences.reminders": "Připomínky",
   "preferences.reminders.remindDaily": "Připomínat denně",

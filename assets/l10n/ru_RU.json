@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "Требовать биометрическую аутентификацию для открытия приложения",
   "preferences.privacy.appLock.description#iOS": "Требовать Face ID или Touch ID для открытия приложения",
   "preferences.privacy.appLock.lockAfterClosing": "Блокировать после закрытия",
+  "preferences.privacy.maskAtShake": "Маскировать цифры (*) при встряхивании устройства",
   "preferences.privacy.maskAtStartup": "Маскировать числа (*) при запуске",
   "preferences.reminders": "Напоминание",
   "preferences.reminders.remindDaily": "Напоминать ежедневно",

@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(26, 3978302515507676621),
+    lastPropertyId: const obx_int.IdUid(28, 7803371152939021971),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -601,6 +601,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(26, 3978302515507676621),
         name: 'scansPendingThresholdInHours',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(27, 4758372811016538649),
+        name: 'privacyModeUponLaunch',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(28, 7803371152939021971),
+        name: 'privacyModeUponShaking',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1622,7 +1634,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final primaryAccountUuidOffset = object.primaryAccountUuid == null
             ? null
             : fbb.writeString(object.primaryAccountUuid!);
-        fbb.startTable(27);
+        fbb.startTable(29);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1647,6 +1659,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(23, primaryAccountUuidOffset);
         fbb.addBool(24, object.createTransactionsPerItemInScans);
         fbb.addInt64(25, object.scansPendingThresholdInHours);
+        fbb.addBool(26, object.privacyModeUponLaunch);
+        fbb.addBool(27, object.privacyModeUponShaking);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1683,6 +1697,18 @@ obx_int.ModelDefinition getObjectBoxModel() {
             .vTableGet(buffer, rootOffset, 52, false);
         final scansPendingThresholdInHoursParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 54);
+        final privacyModeUponLaunchParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          56,
+          false,
+        );
+        final privacyModeUponShakingParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          58,
+          false,
+        );
         final trashBinRetentionDaysParam = const fb.Int64Reader()
             .vTableGetNullable(buffer, rootOffset, 14);
         final defaultFilterPresetParam = const fb.StringReader(
@@ -1740,6 +1766,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 createTransactionsPerItemInScans:
                     createTransactionsPerItemInScansParam,
                 scansPendingThresholdInHours: scansPendingThresholdInHoursParam,
+                privacyModeUponLaunch: privacyModeUponLaunchParam,
+                privacyModeUponShaking: privacyModeUponShakingParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
                 enableICloudSync: enableICloudSyncParam,
@@ -2603,6 +2631,14 @@ class UserPreferences_ {
   /// See [UserPreferences.scansPendingThresholdInHours].
   static final scansPendingThresholdInHours =
       obx.QueryIntegerProperty<UserPreferences>(_entities[6].properties[23]);
+
+  /// See [UserPreferences.privacyModeUponLaunch].
+  static final privacyModeUponLaunch =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[24]);
+
+  /// See [UserPreferences.privacyModeUponShaking].
+  static final privacyModeUponShaking =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[25]);
 }
 
 /// [Budget] entity fields to define ObjectBox queries.

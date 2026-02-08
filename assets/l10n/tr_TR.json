@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "Uygulamayı açmak için biyometrik kimlik doğrulama gerektirir",
   "preferences.privacy.appLock.description#iOS": "Uygulamayı açmak için Face ID veya Touch ID gerektirir",
   "preferences.privacy.appLock.lockAfterClosing": "Kapattıktan sonra kilitle",
+  "preferences.privacy.maskAtShake": "Cihaz sallanınca numaraları (*) ile gizle",
   "preferences.privacy.maskAtStartup": "Başlangıçta sayıları maskele (*)",
   "preferences.reminders": "Hatırlatıcı",
   "preferences.reminders.remindDaily": "Remind daily",

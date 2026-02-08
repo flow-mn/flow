@@ -59,6 +59,7 @@ import "package:package_info_plus/package_info_plus.dart";
 import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart"
     show getApplicationSupportDirectory;
+import "package:shake/shake.dart";
 import "package:window_manager/window_manager.dart";
 
 RotatingFileAppender? mainLogAppender;
@@ -185,6 +186,8 @@ class FlowState extends State<Flow> {
       ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
       : (_themeMode == ThemeMode.dark));
 
+  ShakeDetector? detector;
+
   @override
   void initState() {
     super.initState();
@@ -193,6 +196,7 @@ class FlowState extends State<Flow> {
     _reloadTheme();
 
     UserPreferencesService().valueNotifier.addListener(_reloadTheme);
+    UserPreferencesService().valueNotifier.addListener(_listenToShakes);
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
@@ -210,9 +214,12 @@ class FlowState extends State<Flow> {
       migrateExtraKeyIndexing();
       migratePrimaryCurrencyToDb();
       migrateThemePrefsToDb();
+      migratePrivacyPreferencesToUserPreferences();
     });
 
     _tryUnlockTempLock();
+
+    _listenToShakes();
 
     _appLifeCycleListener = AppLifecycleListener(
       onInactive: () {
@@ -236,12 +243,15 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+    UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
+    UserPreferencesService().valueNotifier.removeListener(_listenToShakes);
 
     TransactionsService().removeListener(_synchronizePlannedNotifications);
 
     _appLifeCycleListener.dispose();
+
+    _stopListeningToShakes();
 
     super.dispose();
   }
@@ -305,6 +315,35 @@ class FlowState extends State<Flow> {
           ),
         );
       },
+    );
+  }
+
+  void _stopListeningToShakes() {
+    mainLogger.fine(
+      "Stopping shake detection privacy mode (${detector != null})",
+    );
+    detector?.stopListening();
+    detector = null;
+  }
+
+  void _listenToShakes() {
+    _stopListeningToShakes();
+
+    if (!UserPreferencesService().privacyModeUponShaking) {
+      return;
+    }
+
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      return;
+    }
+
+    mainLogger.fine("Starting shake detection privacy mode");
+
+    detector = ShakeDetector.autoStart(
+      onPhoneShake: (_) {
+        TransitiveLocalPreferences().sessionPrivacyMode.set(true);
+      },
+      useFilter: true,
     );
   }
 

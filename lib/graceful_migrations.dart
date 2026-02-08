@@ -1,6 +1,3 @@
-import "dart:convert";
-
-import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
@@ -15,49 +12,6 @@ import "package:logging/logging.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 final Logger _log = Logger("GracefulMigrations");
-
-void migrateButtonOrder() async {
-  const String migrationUuid = "be216298-efca-4d93-85c2-6809ebd34dff";
-
-  try {
-    final SharedPreferencesWithCache prefs =
-        await SharedPreferencesWithCache.create(
-          cacheOptions: SharedPreferencesWithCacheOptions(),
-        );
-
-    final ok = prefs.getString("flow.migration.$migrationUuid");
-
-    if (ok != null) return;
-
-    try {
-      final List<String>? oldValue = prefs.getStringList(
-        "flow.transactionButtonOrder",
-      );
-
-      final List<FlowButtonType>? parsed = oldValue
-          ?.map((value) => (jsonDecode(value) as Map)["value"])
-          .map(
-            (value) => FlowButtonType.values.firstWhere((e) => e.name == value),
-          )
-          .toList();
-
-      UserPreferencesService().transactionButtonOrder =
-          parsed ?? FlowButtonType.defaultOrder;
-
-      await prefs.setString("flow.migration.$migrationUuid", "ok");
-    } catch (e) {
-      _log.warning(
-        "Failed to migrate transactions for migration $migrationUuid",
-        e,
-      );
-    }
-  } catch (e) {
-    _log.warning(
-      "Failed to read migration status for migration $migrationUuid",
-      e,
-    );
-  }
-}
 
 void migratePrimaryCurrencyToDb() async {
   const String migrationUuid = "3fa20881-f866-4b11-943e-dd645bc8b3d5";
@@ -82,6 +36,40 @@ void migratePrimaryCurrencyToDb() async {
     } catch (e) {
       _log.warning(
         "Failed to migrate transactions for migration $migrationUuid",
+        e,
+      );
+    }
+  } catch (e) {
+    _log.warning(
+      "Failed to read migration status for migration $migrationUuid",
+      e,
+    );
+  }
+}
+
+void migratePrivacyPreferencesToUserPreferences() async {
+  const String migrationUuid = "c2c3473a-ea23-4a3d-a247-952861a7435e";
+
+  try {
+    final SharedPreferencesWithCache prefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    final ok = prefs.getString("flow.migration.$migrationUuid");
+
+    if (ok != null) return;
+
+    try {
+      // ignore: deprecated_member_use_from_same_package
+      final bool privacyMode = LocalPreferences().privacyMode.get();
+
+      UserPreferencesService().privacyModeUponLaunch = privacyMode;
+
+      await prefs.setString("flow.migration.$migrationUuid", "ok");
+    } catch (e) {
+      _log.warning(
+        "Failed to migrate privacy preferences for migration $migrationUuid",
         e,
       );
     }

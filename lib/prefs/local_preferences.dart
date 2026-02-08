@@ -46,6 +46,7 @@ class LocalPreferences {
   late final BoolSettingsEntry autoAttachTransactionGeo;
 
   late final BoolSettingsEntry privacyMode;
+  late final BoolSettingsEntry privacyModeUponShaking;
 
   /// This refers to biometric auth, passwords, pins from the operating system
   late final BoolSettingsEntry requireLocalAuth;

@@ -7,6 +7,7 @@
 * Fixed Eny itemized categories
 * Home tab income/expense no longer includes pending transactions
 * Enchanced pasting number into amount input
+* Cryptos now show more decimal places. Closes [#652](https://github.com/flow-mn/flow/issues/652)
 
 ### Changes
 
@@ -21,6 +22,7 @@
 
 * Now you can configure Eny transactions to be added as "pending". Transactions
   that have **transaction date** older than 6 hours is always set as "pending"
+* Now you can enable "shake to mask", which turns on masking upon shaking device
 
 ## 0.18.1
 

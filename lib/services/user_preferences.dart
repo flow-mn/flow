@@ -134,6 +134,18 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get privacyModeUponLaunch => value.privacyModeUponLaunch;
+  set privacyModeUponLaunch(bool newPrivacyModeUponLaunch) {
+    value.privacyModeUponLaunch = newPrivacyModeUponLaunch;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get privacyModeUponShaking => value.privacyModeUponShaking;
+  set privacyModeUponShaking(bool newPrivacyModeUponShaking) {
+    value.privacyModeUponShaking = newPrivacyModeUponShaking;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   bool get useCategoryNameForUntitledTransactions =>
       value.useCategoryNameForUntitledTransactions;
   set useCategoryNameForUntitledTransactions(

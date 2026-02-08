@@ -2,6 +2,7 @@ import "package:flow/data/currencies.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/utils/utils.dart";
+import "package:intl/intl.dart";
 
 class CurrencyRegistryService {
   static CurrencyRegistryService? _instance;
@@ -805,33 +806,41 @@ class CurrencyRegistryService {
   ///
   /// See [ExchangeRatesService]
   static final List<CurrencyData> _cryptoCurrencies = [
-    CurrencyData.crypto(name: "Bitcoin", code: "BTC"),
-    CurrencyData.crypto(name: "Ethereum", code: "ETH"),
-    CurrencyData.crypto(name: "Tether USDt", code: "USDT"),
-    CurrencyData.crypto(name: "XRP", code: "XRP"),
-    CurrencyData.crypto(name: "BNB", code: "BNB"),
-    CurrencyData.crypto(name: "Solana", code: "SOL"),
-    CurrencyData.crypto(name: "USDC", code: "USDC"),
-    CurrencyData.crypto(name: "Dogecoin", code: "DOGE"),
-    CurrencyData.crypto(name: "Cardano", code: "ADA"),
-    CurrencyData.crypto(name: "Bitcoin Cash", code: "BCH"),
-    CurrencyData.crypto(name: "Avalanche", code: "AVAX"),
-    CurrencyData.crypto(name: "Toncoin", code: "TON"),
-    CurrencyData.crypto(name: "Shiba Inu", code: "SHIB"),
-    CurrencyData.crypto(name: "Litecoin", code: "LTC"),
-    CurrencyData.crypto(name: "Hedera", code: "HBAR"),
-    CurrencyData.crypto(name: "Monero", code: "XMR"),
-    CurrencyData.crypto(name: "Dai", code: "DAI"),
-    CurrencyData.crypto(name: "Polkadot", code: "DOT"),
-    CurrencyData.crypto(name: "Uniswap", code: "UNI"),
-    CurrencyData.crypto(name: "Pepe", code: "PEPE"),
-    CurrencyData.crypto(name: "Aave", code: "AAVE"),
-    CurrencyData.crypto(name: "Aptos", code: "APT"),
-    CurrencyData.crypto(name: "OKB", code: "OKB"),
-    CurrencyData.crypto(name: "NEAR Protocol", code: "NEAR"),
-    CurrencyData.crypto(name: "Internet Computer", code: "ICP"),
-    CurrencyData.crypto(name: "Cronos", code: "CRO"),
-    CurrencyData.crypto(name: "Ethereum Classic", code: "ETC"),
+    CurrencyData.crypto(name: "Bitcoin", code: "BTC", decimalDigits: 11),
+    CurrencyData.crypto(name: "Ethereum", code: "ETH", decimalDigits: 18),
+    CurrencyData.crypto(name: "Tether USDt", code: "USDT", decimalDigits: 7),
+    CurrencyData.crypto(name: "XRP", code: "XRP", decimalDigits: 7),
+    CurrencyData.crypto(name: "BNB", code: "BNB", decimalDigits: 8),
+    CurrencyData.crypto(name: "Solana", code: "SOL", decimalDigits: 9),
+    CurrencyData.crypto(name: "USDC", code: "USDC", decimalDigits: 7),
+    CurrencyData.crypto(name: "Dogecoin", code: "DOGE", decimalDigits: 9),
+    CurrencyData.crypto(name: "Cardano", code: "ADA", decimalDigits: 9),
+    CurrencyData.crypto(name: "Bitcoin Cash", code: "BCH", decimalDigits: 9),
+    CurrencyData.crypto(name: "Avalanche", code: "AVAX", decimalDigits: 9),
+    CurrencyData.crypto(name: "Toncoin", code: "TON", decimalDigits: 9),
+    CurrencyData.crypto(name: "Shiba Inu", code: "SHIB", decimalDigits: 9),
+    CurrencyData.crypto(name: "Litecoin", code: "LTC", decimalDigits: 9),
+    CurrencyData.crypto(name: "Hedera", code: "HBAR", decimalDigits: 9),
+    CurrencyData.crypto(name: "Monero", code: "XMR", decimalDigits: 9),
+    CurrencyData.crypto(name: "Dai", code: "DAI", decimalDigits: 9),
+    CurrencyData.crypto(name: "Polkadot", code: "DOT", decimalDigits: 9),
+    CurrencyData.crypto(name: "Uniswap", code: "UNI", decimalDigits: 9),
+    CurrencyData.crypto(name: "Pepe", code: "PEPE", decimalDigits: 9),
+    CurrencyData.crypto(name: "Aave", code: "AAVE", decimalDigits: 9),
+    CurrencyData.crypto(name: "Aptos", code: "APT", decimalDigits: 9),
+    CurrencyData.crypto(name: "OKB", code: "OKB", decimalDigits: 9),
+    CurrencyData.crypto(name: "NEAR Protocol", code: "NEAR", decimalDigits: 9),
+    CurrencyData.crypto(
+      name: "Internet Computer",
+      code: "ICP",
+      decimalDigits: 10,
+    ),
+    CurrencyData.crypto(name: "Cronos", code: "CRO", decimalDigits: 10),
+    CurrencyData.crypto(
+      name: "Ethereum Classic",
+      code: "ETC",
+      decimalDigits: 10,
+    ),
   ];
 
   late final List<CustomCurrencyData> _customCurrencies = [
@@ -907,6 +916,42 @@ class CurrencyRegistryService {
     ..._cryptoCurrencies,
     ..._customCurrencies,
   ];
+
+  int? getPreferredDecimalPrecision(String? currencyCode) {
+    if (currencyCode == null) return null;
+
+    assert(currencyCode.toUpperCase() == currencyCode);
+
+    final CurrencyData? currencyData = groupedCurrencies[currencyCode];
+
+    return currencyData?.decimalDigits ??
+        NumberFormat.simpleCurrency(name: currencyCode).decimalDigits;
+  }
+
+  static final RegExp _trailingZerosRegex = RegExp(r"0+$");
+  int detectDecimalPrecision(num amount, String currencyCode) {
+    if (amount is int) return 0;
+
+    assert(currencyCode.toUpperCase() == currencyCode);
+
+    try {
+      final int maxDecimalPlaces =
+          CurrencyRegistryService()
+              .groupedCurrencies[currencyCode]
+              ?.decimalDigits ??
+          20;
+
+      final String valueStr = amount.toStringAsFixed(maxDecimalPlaces);
+
+      if (!valueStr.contains(".")) {
+        throw Exception("Value does not contain a decimal point");
+      }
+
+      return valueStr.split(".")[1].replaceAll(_trailingZerosRegex, "").length;
+    } catch (e) {
+      return 0;
+    }
+  }
 
   /// [currencyCode] must be all uppercase
   bool isCurrencyCodeValid(String currencyCode) {

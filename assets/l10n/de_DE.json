@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "Die App benötigt Fingerabdruck oder Gesichtserkennung zum Öffnen.",
   "preferences.privacy.appLock.description#iOS": "Die App benötigt nach Face ID oder Touch ID zum Öffnen.",
   "preferences.privacy.appLock.lockAfterClosing": "Nach dem Schließen sperren",
+  "preferences.privacy.maskAtShake": "Zahlen beim Schütteln des Geräts mit (*) maskieren",
   "preferences.privacy.maskAtStartup": "Zahlen (*) beim Start ausblenden",
   "preferences.reminders": "Erinnerung",
   "preferences.reminders.remindDaily": "Täglich erinnern",

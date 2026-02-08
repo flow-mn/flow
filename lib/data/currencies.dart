@@ -10,16 +10,22 @@ class CurrencyData {
 
   final bool isCrypto;
 
+  final int? decimalDigits;
+
   const CurrencyData({
     required this.code,
     required this.country,
     required this.name,
     this.isCrypto = false,
+    this.decimalDigits,
   });
 
-  const CurrencyData.crypto({required this.code, required this.name})
-    : isCrypto = true,
-      country = "@CRYPTO";
+  const CurrencyData.crypto({
+    required this.code,
+    required this.name,
+    this.decimalDigits,
+  }) : isCrypto = true,
+       country = "@CRYPTO";
 }
 
 class CustomCurrencyData extends CurrencyData {

@@ -321,6 +321,7 @@
   "preferences.privacy.appLock.description#Android": "يتطلب التحقق البيومتري لفتح التطبيق",
   "preferences.privacy.appLock.description#iOS": "يتطلب Face ID أو Touch ID لفتح التطبيق",
   "preferences.privacy.appLock.lockAfterClosing": "قفل بعد الإغلاق",
+  "preferences.privacy.maskAtShake": "إخفاء الأرقام (*) عند هزّ الجهاز",
   "preferences.privacy.maskAtStartup": "إخفاء الأرقام (*) عند بدء التشغيل",
   "preferences.reminders": "التذكير",
   "preferences.reminders.remindDaily": "تذكير يومي",

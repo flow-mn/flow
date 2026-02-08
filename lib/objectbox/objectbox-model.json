@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "26:3978302515507676621",
+      "lastPropertyId": "28:7803371152939021971",
       "name": "UserPreferences",
       "properties": [
         {
@@ -487,6 +487,16 @@
           "id": "26:3978302515507676621",
           "name": "scansPendingThresholdInHours",
           "type": 6
+        },
+        {
+          "id": "27:4758372811016538649",
+          "name": "privacyModeUponLaunch",
+          "type": 1
+        },
+        {
+          "id": "28:7803371152939021971",
+          "name": "privacyModeUponShaking",
+          "type": 1
         }
       ],
       "relations": []
