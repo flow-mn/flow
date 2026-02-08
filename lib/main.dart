@@ -48,6 +48,7 @@ import "package:flow/widgets/flow_themes.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
+import "package:flutter/services.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter_quill/flutter_quill.dart";
 import "package:intl/intl.dart";
@@ -342,8 +343,10 @@ class FlowState extends State<Flow> {
     detector = ShakeDetector.autoStart(
       onPhoneShake: (_) {
         TransitiveLocalPreferences().sessionPrivacyMode.set(true);
+        if (LocalPreferences().enableHapticFeedback.get()) {
+          HapticFeedback.mediumImpact();
+        }
       },
-      useFilter: true,
     );
   }
 
