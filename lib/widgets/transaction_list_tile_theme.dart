@@ -32,6 +32,7 @@ class TransactionListTileThemeData {
 
   final bool? useCategoryNameForUntitledTransactions;
   final bool? useAccountIconForLeading;
+  final bool? showExternalSource;
   final bool? showCategory;
 
   final double? spacing;
@@ -48,6 +49,9 @@ class TransactionListTileThemeData {
 
   bool get showCategoryOrDefault => showCategory ?? fallback.showCategory!;
 
+  bool get showExternalSourceOrDefault =>
+      showExternalSource ?? fallback.showExternalSource!;
+
   double get spacingOrDefault => spacing ?? fallback.spacing!;
 
   double get titleSpacingOrDefault => titleSpacing ?? fallback.titleSpacing!;
@@ -56,6 +60,7 @@ class TransactionListTileThemeData {
     this.padding,
     this.useCategoryNameForUntitledTransactions,
     this.useAccountIconForLeading,
+    this.showExternalSource,
     this.showCategory,
     this.spacing,
     this.titleSpacing,
@@ -66,6 +71,7 @@ class TransactionListTileThemeData {
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
         useCategoryNameForUntitledTransactions: true,
         useAccountIconForLeading: false,
+        showExternalSource: true,
         showCategory: false,
         spacing: 8.0,
         titleSpacing: 0.0,
@@ -79,6 +85,7 @@ class TransactionListTileThemeData {
             useCategoryNameForUntitledTransactions,
         useAccountIconForLeading:
             other?.useAccountIconForLeading ?? useAccountIconForLeading,
+        showExternalSource: other?.showExternalSource ?? showExternalSource,
         showCategory: other?.showCategory ?? showCategory,
         spacing: other?.spacing ?? spacing,
         titleSpacing: other?.titleSpacing ?? titleSpacing,
@@ -88,6 +95,7 @@ class TransactionListTileThemeData {
     EdgeInsetsGeometry? padding,
     bool? useCategoryNameForUntitledTransactions,
     bool? useAccountIconForLeading,
+    bool? showExternalSource,
     bool? showCategory,
     double? spacing,
     double? titleSpacing,
@@ -99,6 +107,7 @@ class TransactionListTileThemeData {
           this.useCategoryNameForUntitledTransactions,
       useAccountIconForLeading:
           useAccountIconForLeading ?? this.useAccountIconForLeading,
+      showExternalSource: showExternalSource ?? this.showExternalSource,
       showCategory: showCategory ?? this.showCategory,
       spacing: spacing ?? this.spacing,
       titleSpacing: titleSpacing ?? this.titleSpacing,
@@ -113,6 +122,7 @@ class TransactionListTileThemeData {
         useCategoryNameForUntitledTransactions ==
             other.useCategoryNameForUntitledTransactions &&
         useAccountIconForLeading == other.useAccountIconForLeading &&
+        showExternalSource == other.showExternalSource &&
         showCategory == other.showCategory &&
         spacing == other.spacing &&
         titleSpacing == other.titleSpacing;
@@ -124,6 +134,7 @@ class TransactionListTileThemeData {
       padding,
       useCategoryNameForUntitledTransactions,
       useAccountIconForLeading,
+      showExternalSource,
       showCategory,
       spacing,
       titleSpacing,

@@ -23,7 +23,7 @@ class SelectUntilModeSheet extends StatelessWidget {
                 onTap: () {
                   context.pop(value);
                 },
-                trailing: const DirectionalChevron(),
+                trailing: const LeChevron(),
               ),
             )
             .toList(),

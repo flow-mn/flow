@@ -36,6 +36,8 @@ class _FlowThemesState extends State<FlowThemes> {
             UserPreferencesService().useCategoryNameForUntitledTransactions,
         useAccountIconForLeading:
             UserPreferencesService().transactionListTileShowAccountForLeading,
+        showExternalSource:
+            UserPreferencesService().transactionListTileShowExternalSource,
         showCategory:
             UserPreferencesService().transactionListTileShowCategoryName,
         padding: relaxed

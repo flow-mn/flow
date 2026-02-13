@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "28:7803371152939021971",
+      "lastPropertyId": "29:4843097333162455732",
       "name": "UserPreferences",
       "properties": [
         {
@@ -496,6 +496,11 @@
         {
           "id": "28:7803371152939021971",
           "name": "privacyModeUponShaking",
+          "type": 1
+        },
+        {
+          "id": "29:4843097333162455732",
+          "name": "transactionListTileShowExternalSource",
           "type": 1
         }
       ],

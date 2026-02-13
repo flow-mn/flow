@@ -18,7 +18,6 @@ import "package:flow/utils/extensions.dart";
 import "package:flow/widgets/animated_eny_logo.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/list_header.dart";
-import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
@@ -89,23 +88,21 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("preferences.sync".t(context)),
               leading: const Icon(Symbols.sync_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/sync"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             if (flowDebugMode || NotificationsService.schedulingSupported)
               ListTile(
                 title: Text("preferences.reminders".t(context)),
                 leading: const Icon(Symbols.notifications_rounded),
                 onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
-                trailing: RTLFlipper(
-                  child: const Icon(Symbols.chevron_right_rounded),
-                ),
+                trailing: const LeChevron(),
               ),
             ListTile(
               title: Text("preferences.language".t(context)),
               leading: const Icon(Symbols.language_rounded),
               onTap: () => _updateLanguage(),
               subtitle: Text(FlowLocalizations.of(context).locale.endonym),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.primaryCurrency".t(context)),
@@ -113,7 +110,7 @@ class PreferencesPageState extends State<PreferencesPage> {
               leading: const Icon(Symbols.universal_currency_alt_rounded),
               onTap: () => _updatePrimaryCurrency(),
               subtitle: Text(currentPrimaryCurrency),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.transfer".t(context)),
@@ -124,19 +121,19 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.trashBin".t(context)),
               leading: const Icon(Symbols.delete_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.integrations".t(context)),
@@ -150,7 +147,7 @@ class PreferencesPageState extends State<PreferencesPage> {
               ),
               onTap: () =>
                   _pushAndRefreshAfter("/preferences/integrations/eny"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
@@ -165,7 +162,7 @@ class PreferencesPageState extends State<PreferencesPage> {
               leading: const Icon(Symbols.search_activity_rounded),
               onTap: () =>
                   _pushAndRefreshAfter("/preferences/pendingTransactions"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.transactions.geo".t(context)),
@@ -182,7 +179,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               leading: const Icon(Symbols.list_rounded),
@@ -190,14 +187,14 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter(
                 "/preferences/transactionListItemAppearance",
               ),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               leading: const Icon(Symbols.automation_rounded),
               title: Text("preferences.transactionEntryFlow".t(context)),
               onTap: () =>
                   _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.appearance".t(context)),
@@ -211,7 +208,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 themeNames[currentTheme.name] ?? currentTheme.name,
               ),
               onTap: _openTheme,
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.numpad".t(context)),
@@ -222,7 +219,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                     ? "preferences.numpad.layout.modern".t(context)
                     : "preferences.numpad.layout.classic".t(context),
               ),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.transactionButtonOrder".t(context)),
@@ -234,13 +231,13 @@ class PreferencesPageState extends State<PreferencesPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.changeVisuals".t(context)),
               leading: const Icon(Symbols.moving_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/changeVisuals"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.privacy".t(context)),
@@ -258,13 +255,13 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("fileAttachment.cleanupHangingFiles".t(context)),
               leading: const Icon(Symbols.bug_report_rounded),
               onTap: () => _deleteHangingFiles(),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             ListTile(
               title: Text("preferences.feedback.debugLogs".t(context)),
               leading: const Icon(Symbols.bug_report_rounded),
               onTap: () => context.push("/_debug/logs"),
-              trailing: DirectionalChevron(),
+              trailing: const LeChevron(),
             ),
             const SizedBox(height: 16.0),
           ],

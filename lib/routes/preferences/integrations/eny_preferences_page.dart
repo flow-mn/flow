@@ -71,7 +71,7 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                       child: AnimatedEnyLogo(noAnimation: true),
                     ),
                     title: Text("integrations.eny.dashboard".t(context)),
-                    trailing: const DirectionalChevron(),
+                    trailing: const LeChevron(),
                     onTap: () {
                       openUrl(enyDashboardLink, .externalApplication);
                     },

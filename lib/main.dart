@@ -34,6 +34,7 @@ import "package:flow/providers/transaction_tags_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/integrations/siri_pending.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/navigation.dart";
 import "package:flow/services/notifications.dart";
@@ -216,6 +217,8 @@ class FlowState extends State<Flow> {
       migratePrimaryCurrencyToDb();
       migrateThemePrefsToDb();
       migratePrivacyPreferencesToUserPreferences();
+
+      unawaited(SiriPendingService().resolveSiriTransactions());
     });
 
     _tryUnlockTempLock();
@@ -232,6 +235,7 @@ class FlowState extends State<Flow> {
       onShow: () {
         if (!mounted) return;
         _tryUnlockTempLock();
+        unawaited(SiriPendingService().resolveSiriTransactions());
         if (LocalAuthService.platformSupported &&
             LocalPreferences().requireLocalAuthOnBlur.get()) {
           _tempLock = true;

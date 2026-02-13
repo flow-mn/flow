@@ -225,7 +225,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                       Text(_currency, style: context.textTheme.labelLarge),
                       if (widget.isNewAccount) ...[
                         const SizedBox(width: 8.0),
-                        const DirectionalChevron(),
+                        const LeChevron(),
                       ],
                     ],
                   ),
@@ -242,7 +242,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
                         style: context.textTheme.labelLarge,
                       ),
                       const SizedBox(width: 8.0),
-                      const DirectionalChevron(),
+                      const LeChevron(),
                     ],
                   ),
                   onTap: selectAccountType,

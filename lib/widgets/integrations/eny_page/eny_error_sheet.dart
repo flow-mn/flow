@@ -26,7 +26,7 @@ class EnyErrorSheet extends StatelessWidget {
               }
               context.push("/preferences/integrations/eny");
             },
-            trailing: DirectionalChevron(),
+            trailing: LeChevron(),
             child: Text(
               "integrations.eny.invalidCredentials.configure".t(context),
             ),

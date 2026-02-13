@@ -216,20 +216,20 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
                     _type == TransactionTagType.location)
                   ListTile(
                     enabled: !_locationBusy,
-                    leading: Icon(Symbols.my_location_rounded),
+                    leading: const Icon(Symbols.my_location_rounded),
                     onTap: _useMyLocation,
                     title: Text(
                       "transaction.tags.location.useCurrent".t(context),
                     ),
-                    trailing: DirectionalChevron(),
+                    trailing: const LeChevron(),
                   ),
                 if ((Platform.isAndroid || Platform.isIOS) &&
                     _type == TransactionTagType.contact) ...[
                   ListTile(
-                    leading: Icon(Symbols.contact_page_rounded),
+                    leading: const Icon(Symbols.contact_page_rounded),
                     onTap: _selectContact,
                     title: Text("transaction.tags.contact.select".t(context)),
-                    trailing: DirectionalChevron(),
+                    trailing: const LeChevron(),
                   ),
                   Frame(
                     child: InfoText(

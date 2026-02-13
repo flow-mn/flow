@@ -88,7 +88,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
               const Spacer(),
               Button(
                 onTap: canGenerate ? _generatePDF : null,
-                trailing: DirectionalChevron(),
+                trailing: const LeChevron(),
                 child: Text("general.confirm".t(context)),
               ),
             ],
@@ -128,10 +128,10 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                     }),
                   ),
                   onTap: _selectAccounts,
-                  trailing: DirectionalChevron(),
+                  trailing: const LeChevron(),
                 ),
                 ListTile(
-                  leading: Icon(Symbols.category_rounded),
+                  leading: const Icon(Symbols.category_rounded),
                   title: Text("sync.export.pdf.categories".t(context)),
                   subtitle: Text(
                     "sync.export.pdf.categories.selected".tr({
@@ -140,21 +140,21 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
                     }),
                   ),
                   onTap: _selectCategories,
-                  trailing: DirectionalChevron(),
+                  trailing: const LeChevron(),
                 ),
                 ListTile(
                   leading: Icon(Symbols.schedule_rounded),
                   title: Text("sync.export.pdf.timeRange".t(context)),
                   subtitle: Text(rangeText),
                   onTap: _selectRange,
-                  trailing: DirectionalChevron(),
+                  trailing: const LeChevron(),
                 ),
                 ListTile(
                   leading: Icon(Symbols.expand_content_rounded),
                   title: Text("sync.export.pdf.size".t(context)),
                   subtitle: Text(_useA4 ? "A4" : "Letter"),
                   onTap: _selectPaperSize,
-                  trailing: DirectionalChevron(),
+                  trailing: const LeChevron(),
                 ),
               ],
             ),

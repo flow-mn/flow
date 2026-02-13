@@ -57,7 +57,7 @@ class TagsSection extends StatelessWidget {
             : ListTile(
                 leading: Icon(Symbols.style_rounded),
                 title: Text("transaction.edit.selectTags".t(context)),
-                trailing: DirectionalChevron(),
+                trailing: LeChevron(),
                 onTap: selectTags,
               ),
         onTap: () {

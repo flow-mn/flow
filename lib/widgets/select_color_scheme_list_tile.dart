@@ -63,7 +63,7 @@ class _SelectColorSchemeListTileState extends State<SelectColorSchemeListTile> {
                   ),
                   duration: const Duration(milliseconds: 200),
                 ),
-          DirectionalChevron(),
+          const LeChevron(),
         ],
       ),
     );

@@ -291,7 +291,7 @@ class _StatsTabState extends State<StatsTab>
                               label: Text(
                                 "tabs.stats.categories.seeAll".t(context),
                               ),
-                              icon: DirectionalChevron(),
+                              icon: const LeChevron(),
                               iconAlignment: IconAlignment.end,
                             ),
                           ),

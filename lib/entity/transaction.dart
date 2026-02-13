@@ -91,6 +91,20 @@ class Transaction implements EntityBase {
   /// in [extra].
   List<String> extraTags;
 
+  static const String importedFromSiriTag = "ios:importedFromSiri";
+
+  String? get externalProviderName {
+    if (extraTags.contains(importedFromSiriTag)) {
+      return "Siri";
+    }
+
+    if (extensions.eny != null) {
+      return "Eny";
+    }
+
+    return null;
+  }
+
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   ExtensionsWrapper get extensions => ExtensionsWrapper.parse(extra);

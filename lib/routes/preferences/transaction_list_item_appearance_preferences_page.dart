@@ -30,6 +30,8 @@ class _TransactionListItemAppearancePreferencesPageState
         UserPreferencesService().useCategoryNameForUntitledTransactions;
     final bool transactionListTileShowCategoryName =
         UserPreferencesService().transactionListTileShowCategoryName;
+    final bool transactionListTileShowExternalSource =
+        UserPreferencesService().transactionListTileShowExternalSource;
     final bool transactionListTileShowAccountForLeading =
         UserPreferencesService().transactionListTileShowAccountForLeading;
     final bool transactionListTileRelaxedDensity =
@@ -90,8 +92,20 @@ class _TransactionListItemAppearancePreferencesPageState
               ),
               SwitchListTile(
                 title: Text(
-                  "preferences.transactions.listTile.transactionListTileRelaxedDensity"
+                  "preferences.transactions.listTile.transactionListTileShowExternalSource"
                       .t(context),
+                ),
+                value: transactionListTileShowExternalSource,
+                onChanged: (bool newValue) {
+                  UserPreferencesService()
+                          .transactionListTileShowExternalSource =
+                      newValue;
+                  setState(() {});
+                },
+              ),
+              SwitchListTile(
+                title: Text(
+                  "preferences.transactions.listTile.relaxedDensity".t(context),
                 ),
                 value: transactionListTileRelaxedDensity,
                 onChanged: (bool newValue) {

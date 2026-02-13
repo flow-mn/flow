@@ -103,7 +103,7 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
                     ],
                   ),
                 ),
-                DirectionalChevron(),
+                const LeChevron(),
               ],
             ),
           ),

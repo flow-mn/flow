@@ -63,6 +63,7 @@ class UserPreferences implements EntityBase {
 
   bool transactionListTileShowCategoryName;
   bool transactionListTileShowAccountForLeading;
+  bool transactionListTileShowExternalSource;
   bool transactionListTileRelaxedDensity;
 
   bool createTransactionsPerItemInScans;
@@ -161,6 +162,7 @@ class UserPreferences implements EntityBase {
     this.useCategoryNameForUntitledTransactions = false,
     this.transactionListTileShowCategoryName = false,
     this.transactionListTileShowAccountForLeading = false,
+    this.transactionListTileShowExternalSource = true,
     this.transactionListTileRelaxedDensity = false,
     this.createTransactionsPerItemInScans = true,
     this.scansPendingThresholdInHours = 6,

@@ -37,3 +37,5 @@ const LatLng sukhbaatarSquareCenter = LatLng(
   sukhbaatarSquareCenterLat,
   sukhbaatarSquareCenterLong,
 );
+
+const String iOSAppGroupId = "group.mn.flow.flow";

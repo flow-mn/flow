@@ -23,7 +23,7 @@ class SelectAccountTypeSheet extends StatelessWidget {
               (value) => ListTile(
                 title: Text(value.localizedNameContext(context)),
                 selected: currentlySelected == value,
-                trailing: const DirectionalChevron(),
+                trailing: const LeChevron(),
                 onTap: () => context.pop(value),
               ),
             )

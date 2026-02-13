@@ -55,7 +55,7 @@ class _DescriptionSectionState extends State<DescriptionSection> {
               onTap: () => showEditModal(context),
               title: Text("transaction.description.add".t(context)),
               leading: Icon(Symbols.add_notes_rounded),
-              trailing: const DirectionalChevron(),
+              trailing: const LeChevron(),
             )
           : InkWell(
               onTap: () => showEditModal(context),

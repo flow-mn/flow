@@ -41,7 +41,7 @@ class _ICloudBackupPickerSheetState extends State<ICloudBackupPickerSheet> {
                     title: Text(backup.inferredBackupDate!.toMoment().lll),
                     subtitle: Text(path.extension(backup.path).substring(1)),
                     onTap: () => context.pop(backup),
-                    trailing: DirectionalChevron(),
+                    trailing: LeChevron(),
                   ),
                 )
                 .toList(),

@@ -355,7 +355,7 @@ class EnyService {
           .catchError((error) => false);
       if (succeeded) {
         ExternalToastsService().addToast(
-          "transaction.external.added".tr(),
+          "transaction.external.added.from".tr("Eny"),
           .success,
         );
       }

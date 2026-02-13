@@ -1,3 +1,4 @@
+import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -11,6 +12,7 @@ import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/transaction_list_tile/transaction_subtitle.dart";
 import "package:flow/widgets/transaction_list_tile_theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
@@ -94,29 +96,49 @@ class TransactionListTile extends StatelessWidget {
         ? transaction.extensions.transfer
         : null;
 
-    final TextDirection textDirection = Directionality.of(context);
-
-    final List<String?> subtitleParts = [
-      (transaction.isTransfer && combineTransfers)
-          ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
-          : (AccountsProvider.of(context).getName(transaction.accountUuid) ??
-                transaction.account.target?.name),
+    final List<InlineSpan> subtitleComponents = [
+      TextSpan(
+        text: (transaction.isTransfer && combineTransfers)
+            ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
+            : (AccountsProvider.of(context).getName(transaction.accountUuid) ??
+                  transaction.account.target?.name),
+      ),
       if (effectiveTheme.showCategoryOrDefault &&
           transaction.category.target != null)
-        transaction.category.target!.name,
-      dateString,
+        TextSpan(text: transaction.category.target!.name),
+      if (effectiveTheme.showExternalSourceOrDefault)
+        if (transaction.externalProviderName
+            case String externalProviderName) ...[
+          TextSpan(
+            children: [
+              if (externalProviderName == "Siri")
+                WidgetSpan(
+                  child: Padding(
+                    padding: .only(right: 4.0),
+                    child: Image.asset("assets/images/siri.png", height: 12.0),
+                  ),
+                  alignment: .middle,
+                ),
+              if (externalProviderName == "Eny")
+                WidgetSpan(
+                  child: Padding(
+                    padding: .only(right: 4.0),
+                    child: Image.network(enyLogoUrl, height: 12.0),
+                  ),
+                  alignment: .middle,
+                ),
+              TextSpan(text: externalProviderName),
+            ],
+          ),
+        ],
+      TextSpan(text: dateString),
       if (transaction.transactionDate.isFuture)
-        transaction.isPending == true
-            ? "transaction.pending".t(context)
-            : "transaction.pending.preapproved".t(context),
+        TextSpan(
+          text: transaction.isPending == true
+              ? "transaction.pending".t(context)
+              : "transaction.pending.preapproved".t(context),
+        ),
     ];
-
-    final String subtitle =
-        (textDirection == TextDirection.ltr
-                ? subtitleParts
-                : subtitleParts.reversed)
-            .nonNulls
-            .join(" • ");
 
     final WidgetSpan? titleLeadingIconSpan = transaction.isRecurring
         ? titleIconSpan(context, Symbols.repeat_rounded)
@@ -166,12 +188,7 @@ class TransactionListTile extends StatelessWidget {
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(
-                          subtitle,
-                          style: context.textTheme.labelSmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        TransactionSubtitle(components: subtitleComponents),
                       ],
                     ),
                   ),

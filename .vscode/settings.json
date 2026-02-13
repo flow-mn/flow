@@ -2,5 +2,6 @@
     "cmake.configureOnOpen": false,
     "IDX.aI.enableInlineCompletion": true,
     "IDX.aI.enableCodebaseIndexing": true,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "swift.swiftSDK": "arm64-apple-ios"
 }

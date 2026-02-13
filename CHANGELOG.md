@@ -1,5 +1,21 @@
 # Changelog
 
+## Next
+
+### New features
+
+* Added a Siri integration (intent).
+* Persian (Iran) support thanks to @arefbhrn[https://github.com/arefbhrn]
+
+### Changes
+
+* Added an option to show/hide external source (Eny, Siri) in transactions
+
+### Fixes
+
+* Action arrows are now correctly displayed in RTL languages (Arabic, Persian)
+  IDK why it was flipped, probably Flutter update did something.
+
 ## 0.18.2
 
 ### Fixes

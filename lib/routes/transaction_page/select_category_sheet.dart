@@ -79,7 +79,7 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
                   category.icon,
                   colorScheme: category.colorScheme,
                 ),
-                trailing: widget.showTrailing ? DirectionalChevron() : null,
+                trailing: widget.showTrailing ? LeChevron() : null,
                 onTap: () => context.pop(Optional(category)),
                 selected: widget.currentlySelectedCategoryId == category.id,
               ),

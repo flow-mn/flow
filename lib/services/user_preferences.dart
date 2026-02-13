@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:math";
 
+import "package:flow/constants.dart";
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/prefs/change_visuals.dart";
@@ -163,6 +164,16 @@ class UserPreferencesService {
   ) {
     value.transactionListTileShowCategoryName =
         newTransactionListTileShowCategoryName;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  bool get transactionListTileShowExternalSource =>
+      value.transactionListTileShowExternalSource;
+  set transactionListTileShowExternalSource(
+    bool newTransactionListTileShowExternalSource,
+  ) {
+    value.transactionListTileShowExternalSource =
+        newTransactionListTileShowExternalSource;
     ObjectBox().box<UserPreferences>().put(value);
   }
 
@@ -351,7 +362,7 @@ class UserPreferencesService {
                 .where((e) => e != FlowButtonType.eny)
                 .map((e) => e.value)
                 .join(",");
-      await HomeWidget.setAppGroupId("group.mn.flow.flow");
+      await HomeWidget.setAppGroupId(iOSAppGroupId);
       await HomeWidget.saveWidgetData("buttonOrder", value);
       await Future.wait([
         HomeWidget.updateWidget(

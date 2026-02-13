@@ -70,7 +70,7 @@ class _MoneyFormattingPreferencesPageState
                   "preferences.moneyFormatting.setICUPattern".t(context),
                 ),
                 onTap: updateCustomICUCurrencyFormatter,
-                trailing: const DirectionalChevron(),
+                trailing: const LeChevron(),
               ),
             ],
           ),

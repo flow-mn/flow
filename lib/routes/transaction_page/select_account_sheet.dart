@@ -103,7 +103,7 @@ class _SelectAccountSheetState extends State<SelectAccountSheet> {
                       )
                     : null,
                 leading: FlowIcon(account.icon),
-                trailing: widget.showTrailing ? DirectionalChevron() : null,
+                trailing: widget.showTrailing ? LeChevron() : null,
                 onTap: () => context.pop(account),
                 selected: widget.currentlySelectedAccountId == account.id,
               ),

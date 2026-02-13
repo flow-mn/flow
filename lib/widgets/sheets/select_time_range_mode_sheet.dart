@@ -109,17 +109,17 @@ class SelectTimeRangeModeSheet extends StatelessWidget {
           ListTile(
             title: Text("select.timeRange.mode.byMonth".t(context)),
             onTap: () => context.pop(TimeRangeMode.byMonth),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
           ),
           ListTile(
             title: Text("select.timeRange.mode.byYear".t(context)),
             onTap: () => context.pop(TimeRangeMode.byYear),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
           ),
           ListTile(
             title: Text("select.timeRange.mode.custom".t(context)),
             onTap: () => context.pop(TimeRangeMode.custom),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
           ),
         ],
       ),

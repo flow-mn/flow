@@ -56,7 +56,7 @@ class SelectRecurringUpdateModeSheet extends StatelessWidget {
                 key: ValueKey(mode),
                 title: Text(mode.localizedNameContext(context)),
                 onTap: () => context.pop(mode),
-                trailing: showTrailing ? DirectionalChevron() : null,
+                trailing: showTrailing ? LeChevron() : null,
                 selected: current == mode,
               ),
             ),

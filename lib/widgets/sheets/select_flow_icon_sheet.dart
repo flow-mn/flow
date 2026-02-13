@@ -32,19 +32,19 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
         children: [
           ListTile(
             leading: const Icon(Symbols.category_rounded),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
             title: Text("flowIcon.type.icon".t(context)),
             onTap: () => _selectIcon(),
           ),
           ListTile(
             leading: const Icon(Symbols.glyphs_rounded),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
             title: Text("flowIcon.type.character".t(context)),
             onTap: () => _selectEmoji(),
           ),
           ListTile(
             leading: const Icon(Symbols.image_rounded),
-            trailing: DirectionalChevron(),
+            trailing: const LeChevron(),
             title: Text("flowIcon.type.image".t(context)),
             onTap: () => _selectImage(),
           ),
