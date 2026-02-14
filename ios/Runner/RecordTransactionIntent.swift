@@ -2,7 +2,7 @@ import AppIntents
 
 struct RecordTransactionIntent: AppIntent {
     static var title: LocalizedStringResource = "Record an Expense"
-    static var description: IntentDescription = "Log expenses from Siri."
+    static var description: IntentDescription = "Log expenses"
 
     @Parameter(title: "Account", description: "Exact name, or UUID of the target account")
     var account: String
