@@ -22,7 +22,7 @@ struct RecordTransactionIntent: AppIntent {
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let tx = RecordedTransaction(type: .expense, amount: amount, fromAccount: account, category: category, title: title, notes: notes)
+        let tx = RecordedTransaction(type: .expense, amount: amount, title: title, fromAccount: account, category: category, notes: notes)
         try RecordedTransactionService.append(tx)
         return .result(dialog: "Expense recorded ✅")
     }
