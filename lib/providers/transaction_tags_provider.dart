@@ -1,11 +1,13 @@
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/transaction_tag.dart";
+import "package:flow/entity/transaction_type/payload.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/widgets/transaction_watcher.dart";
 import "package:flutter/material.dart";
+import "package:latlong2/latlong.dart";
 
 class TransactionTagsProviderScope extends StatefulWidget {
   final Widget child;
@@ -65,6 +67,47 @@ class TransactionTagsProvider extends InheritedWidget {
   List<TransactionTag> get tags => _tags ?? [];
 
   String? getName(dynamic id) => get(id)?.title;
+
+  List<TransactionTag> getCloseGeoTags(
+    LatLng latLng, {
+    double thresholdInMeters = 50,
+    List<TransactionTag>? exclusionList,
+  }) {
+    final Distance distance = const Distance();
+
+    final List<(TransactionTag tag, double distanceInMeters)> tagsByDistance =
+        tags
+            .map((tag) {
+              if (exclusionList?.any(
+                    (excludedTag) => excludedTag.uuid == tag.uuid,
+                  ) ==
+                  true) {
+                return (null, double.infinity);
+              }
+              if (tag.parsedPayload?.location
+                  case TransactionTagLocationPayload locationPayload) {
+                final double distanceInMeters = distance.as(
+                  LengthUnit.Meter,
+                  latLng,
+                  locationPayload.latLng,
+                );
+
+                return (tag, distanceInMeters);
+              }
+              return (null, double.infinity);
+            })
+            .where(
+              (tagAndDistance) =>
+                  tagAndDistance.$1 != null &&
+                  tagAndDistance.$2 <= thresholdInMeters,
+            )
+            .cast<(TransactionTag tag, double distanceInMeters)>()
+            .toList();
+
+    tagsByDistance.sort((a, b) => a.$2.compareTo(b.$2));
+
+    return tagsByDistance.map((e) => e.$1).toList();
+  }
 
   TransactionTag? get(dynamic id) => switch (id) {
     String uuid => _tags?.firstWhereOrNull((tag) => tag.uuid == uuid),

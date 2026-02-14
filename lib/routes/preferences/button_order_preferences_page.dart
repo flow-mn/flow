@@ -1,6 +1,6 @@
 import "dart:developer";
 
-import "package:dotted_border/dotted_border.dart";
+import "package:dashed_border/dashed_border.dart";
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/integrations/eny.dart";
@@ -140,37 +140,38 @@ class ButtonOrderPreferencesPageState
       left: position.dx,
       top: position.dy,
       child: Container(
-        decoration: BoxDecoration(borderRadius: .all(widget.radius)),
-        clipBehavior: .none,
-        child: DottedBorder(
-          options: RoundedRectDottedBorderOptions(
+        decoration: BoxDecoration(
+          borderRadius: .all(widget.radius),
+          border: DashedBorder(
             color: Theme.of(context).dividerColor.withAlpha(0x80),
-            strokeWidth: 4.0,
-            radius: widget.radius,
-            strokeCap: .round,
-            dashPattern: const [6.0, 10.0],
+            width: 4.0,
+            borderRadius: BorderRadius.all(widget.radius),
+            dashLength: 6.0,
+            dashGap: 10.0,
+            style: .dashed,
           ),
-          child: SizedBox.square(
-            dimension: size,
-            child: DragTarget<FlowButtonType>(
-              onWillAcceptWithDetails: (details) =>
-                  details.data != transactionType,
-              onAcceptWithDetails: (details) =>
-                  swap(transactionButtonOrder, details.data, transactionType),
-              onMove: (details) => updateAnimationData(
-                transactionButtonOrder,
-                details.data,
-                transactionType,
-              ),
-              builder:
-                  (
-                    BuildContext context,
-                    List<FlowButtonType?> candidateData,
-                    List<dynamic> rejectedData,
-                  ) {
-                    return SizedBox.shrink();
-                  },
+        ),
+        clipBehavior: .none,
+        child: SizedBox.square(
+          dimension: size,
+          child: DragTarget<FlowButtonType>(
+            onWillAcceptWithDetails: (details) =>
+                details.data != transactionType,
+            onAcceptWithDetails: (details) =>
+                swap(transactionButtonOrder, details.data, transactionType),
+            onMove: (details) => updateAnimationData(
+              transactionButtonOrder,
+              details.data,
+              transactionType,
             ),
+            builder:
+                (
+                  BuildContext context,
+                  List<FlowButtonType?> candidateData,
+                  List<dynamic> rejectedData,
+                ) {
+                  return SizedBox.shrink();
+                },
           ),
         ),
       ),

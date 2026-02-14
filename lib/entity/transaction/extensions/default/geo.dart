@@ -88,4 +88,8 @@ class Geo extends TransactionExtension implements Jasonable {
 
   List<double>? toLatLng() =>
       (latitude != null && longitude != null) ? [latitude!, longitude!] : null;
+
+  LatLng? toLatLngPosition() => (latitude != null && longitude != null)
+      ? LatLng(latitude!, longitude!)
+      : null;
 }

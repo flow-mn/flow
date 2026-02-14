@@ -442,6 +442,8 @@ class _TransactionPageState extends State<TransactionPage> {
                       TagsSection(
                         selectTags: selectTags,
                         selectedTags: _selectedTags,
+                        onTagsChanged: onTagsChanged,
+                        location: _geo,
                       ),
                       DescriptionSection(
                         value: _descriptionMarkdown,
@@ -1007,6 +1009,12 @@ class _TransactionPageState extends State<TransactionPage> {
       range: transactionDate.rangeToMax(),
       rules: [MonthlyRecurrenceRule(day: transactionDate.day)],
     );
+
+    setState(() {});
+  }
+
+  void onTagsChanged(List<TransactionTag> newTags) {
+    _selectedTags = newTags;
 
     setState(() {});
   }

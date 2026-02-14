@@ -409,6 +409,8 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Flow uses the photo library when user updates their picture, or chooses to use image as
 			category/account icon</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Flow provides shortcuts to record transactions if you choose to use them</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

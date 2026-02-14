@@ -41,7 +41,7 @@ class GreetingsBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12.0),
-            PrivacyToggler(),
+            const PrivacyToggler(),
           ],
         );
       },

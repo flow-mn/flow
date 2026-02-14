@@ -14,6 +14,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/home/account/no_accounts.dart";
 import "package:flow/widgets/home/home/account/total_balance.dart";
+import "package:flow/widgets/home/privacy_toggler.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -165,6 +166,7 @@ class _AccountsTabState extends State<AccountsTab>
                   ? const Icon(Symbols.check_rounded)
                   : const Icon(Symbols.reorder_rounded),
             ),
+            const PrivacyToggler(),
           ],
         ),
         TotalBalance(),
