@@ -614,8 +614,40 @@ extension TransactionActions on Transaction {
 
   /// Returns the ObjectBox ID for the newly created transaction
   int duplicate() {
-    if (isTransfer) {
-      throw Exception("Cannot duplicate transfer transactions");
+    if (extensions.transfer case Transfer transferDetails) {
+      final Account? fromAccount = AccountsService().findOneSync(
+        transferDetails.fromAccountUuid,
+      );
+      final Account? toAccount = AccountsService().findOneSync(
+        transferDetails.toAccountUuid,
+      );
+
+      if (fromAccount == null || toAccount == null) {
+        _log.severe(
+          "Failed to duplicate transfer transaction due to missing account data",
+        );
+        throw Exception(
+          "Failed to duplicate transfer transaction due to missing account data",
+        );
+      }
+
+      final (int a, _) = fromAccount.transferTo(
+        targetAccount: toAccount,
+        amount: amount,
+        description: description,
+        createdDate: Moment.now(),
+        isPending: isPending,
+        transactionDate: transactionDate,
+        title: title,
+        tags: tags.toList(),
+        attachments: attachments.toList(),
+        extraTags: extraTags,
+        extensions: extensions.data,
+        latitude: extensions.geo?.latitude,
+        longitude: extensions.geo?.longitude,
+      );
+
+      return a;
     }
 
     final Transaction duplicate =
@@ -630,6 +662,7 @@ extension TransactionActions on Transaction {
             uuid: Uuid().v4(),
             extraTags: extraTags,
             subtype: subtype,
+            location: extensions.geo?.toLatLng(),
           )
           ..setTags(tags.toList())
           ..setAttachments(attachments.toList())

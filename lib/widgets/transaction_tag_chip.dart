@@ -28,7 +28,13 @@ class TransactionTagChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final FlowColorScheme? colorScheme = tag.colorScheme;
 
-    final Widget childn = GestureDetector(
+    final Color borderColor = selected
+        ? kTransparent
+        : context.colorScheme.outline.withAlpha(0x80);
+
+    final BorderRadius borderRadius = .circular(8.0);
+
+    final Widget child = GestureDetector(
       onTap: onPressed,
       behavior: onPressed != null ? .opaque : .translucent,
       child: Container(
@@ -37,43 +43,37 @@ class TransactionTagChip extends StatelessWidget {
           color: selected
               ? context.colorScheme.secondary
               : context.colorScheme.surface,
-          borderRadius: .circular(8.0),
+          borderRadius: borderRadius,
           border: isSuggestion
               ? DashedBorder(
-                  color: context.colorScheme.outline.withAlpha(0x80),
-                  width: 2.0,
-                  borderRadius: .circular(8.0),
+                  color: borderColor,
+                  width: 1.0,
+                  borderRadius: borderRadius,
                   dashLength: 4.0,
                   dashGap: 4.0,
                 )
-              : Border.all(
-                  color: selected
-                      ? kTransparent
-                      : context.colorScheme.outline.withAlpha(0x80),
-                  width: 1.0,
-                ),
+              : Border.all(color: borderColor, width: 1.0),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 8.0 + (selected ? 1.0 : (isSuggestion ? 0.0 : 1.0)),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         child: Row(
           spacing: 8.0,
           mainAxisSize: .min,
           children: [
             FlowIcon(tag.icon, colorScheme: colorScheme, size: 16.0),
             Text(tag.title, style: context.textTheme.labelLarge),
-            if (isSuggestion)
-              Icon(
-                Symbols.add_rounded,
-                size: 16.0,
-                color: context.colorScheme.outline,
-              ),
           ],
         ),
       ),
     );
 
-    return childn;
+    if (isSuggestion) {
+      return Badge(
+        label: Icon(Symbols.star_rounded, color: context.colorScheme.onPrimary),
+        backgroundColor: context.colorScheme.primary,
+        child: Opacity(opacity: .7, child: child),
+      );
+    }
+
+    return child;
   }
 }

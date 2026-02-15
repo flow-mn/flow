@@ -579,14 +579,11 @@ class _TransactionPageState extends State<TransactionPage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (!isTransfer)
-                                ListTile(
-                                  leading: Icon(Symbols.content_copy_rounded),
-                                  title: Text(
-                                    "transaction.duplicate".t(context),
-                                  ),
-                                  onTap: () => _duplicate(),
-                                ),
+                              ListTile(
+                                leading: Icon(Symbols.content_copy_rounded),
+                                title: Text("transaction.duplicate".t(context)),
+                                onTap: () => _duplicate(),
+                              ),
                               if (_currentlyEditing.isDeleted == true)
                                 ListTile(
                                   leading: Icon(Symbols.restore_page_rounded),

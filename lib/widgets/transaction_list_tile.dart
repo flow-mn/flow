@@ -72,9 +72,7 @@ class TransactionListTile extends StatelessWidget {
         confirmFn != null && transaction.confirmable();
 
     final bool showDuplicateButton =
-        transaction.isDeleted != true &&
-        !transaction.isTransfer &&
-        duplicateFn != null;
+        transaction.isDeleted != true && duplicateFn != null;
     final bool showHoldButton = confirmFn != null && transaction.holdable();
     final bool showConfirmButton =
         confirmFn != null && transaction.confirmable();

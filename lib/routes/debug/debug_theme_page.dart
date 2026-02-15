@@ -11,6 +11,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
+import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -56,6 +57,15 @@ class DebugThemePage extends StatelessWidget {
                     selected: true,
                   ),
                   ActionChip(label: Text("ActionChip"), onPressed: () {}),
+                  TransactionTagChip(tag: .new(title: "Example Tag")),
+                  TransactionTagChip(
+                    tag: .new(title: "Example Tag"),
+                    selected: true,
+                  ),
+                  TransactionTagChip(
+                    tag: .new(title: "Example Tag"),
+                    isSuggestion: true,
+                  ),
                 ],
               ),
             ),

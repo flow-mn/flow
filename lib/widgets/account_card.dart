@@ -86,10 +86,14 @@ class AccountCard extends StatelessWidget {
                             if (primary)
                               WidgetSpan(
                                 alignment: .middle,
-                                child: Icon(
-                                  Symbols.star_rounded,
-                                  size: context.textTheme.titleSmall?.fontSize,
-                                  color: context.colorScheme.primary,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 4.0),
+                                  child: Icon(
+                                    Symbols.star_rounded,
+                                    size:
+                                        context.textTheme.titleSmall?.fontSize,
+                                    color: context.colorScheme.primary,
+                                  ),
                                 ),
                               ),
                             TextSpan(

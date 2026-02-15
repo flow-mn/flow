@@ -38,6 +38,9 @@ class TagsSection extends StatelessWidget {
       _ => null,
     };
 
+    print("suggestedGeoTags: $suggestedGeoTags");
+    print("location: $location");
+
     final bool hasSuggestedGeoTags = suggestedGeoTags?.isNotEmpty == true;
 
     return Section(
@@ -61,18 +64,17 @@ class TagsSection extends StatelessWidget {
                         onPressed: selectTags,
                         title: "transaction.tags.add".t(context),
                       ),
-                      if (hasSuggestedGeoTags)
-                        ...suggestedGeoTags!.map(
-                          (tag) => TransactionTagChip(
-                            tag: tag,
-                            selected: false,
-                            isSuggestion: true,
-                            onPressed: () {
-                              _addTag(context, tag);
-                            },
-                          ),
+                      ...?suggestedGeoTags?.map(
+                        (tag) => TransactionTagChip(
+                          tag: tag,
+                          selected: false,
+                          isSuggestion: true,
+                          onPressed: () {
+                            _addTag(context, tag);
+                          },
                         ),
-                      ...selectedTags!.map(
+                      ),
+                      ...?selectedTags?.map(
                         (tag) => IgnorePointer(
                           child: TransactionTagChip(tag: tag, selected: true),
                         ),
@@ -102,12 +104,12 @@ class TagsSection extends StatelessWidget {
   }
 
   void _addTag(BuildContext context, TransactionTag tag) {
-    if (selectedTags!.contains(tag)) return;
+    if (selectedTags?.contains(tag) == true) return;
 
     if (LocalPreferences().enableHapticFeedback.get()) {
       HapticFeedback.lightImpact();
     }
 
-    onTagsChanged([...selectedTags!, tag]);
+    onTagsChanged([...?selectedTags, tag]);
   }
 }
