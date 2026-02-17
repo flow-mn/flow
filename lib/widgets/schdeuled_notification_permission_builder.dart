@@ -79,7 +79,14 @@ class _SchdeuledNotificationPermissionBuilderState
 
   Future<void> _checkNotificationPermission() async {
     try {
-      _hasNotificationPermission = await Permission.notification.isGranted;
+      if (Platform.isLinux) {
+        _hasNotificationPermission = false;
+      } else if (Platform.isMacOS) {
+        _hasNotificationPermission =
+            (await NotificationsService().hasPermissions()) ?? false;
+      } else {
+        _hasNotificationPermission = await Permission.notification.isGranted;
+      }
     } finally {
       if (mounted) {
         setState(() {});

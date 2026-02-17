@@ -38,9 +38,6 @@ class TagsSection extends StatelessWidget {
       _ => null,
     };
 
-    print("suggestedGeoTags: $suggestedGeoTags");
-    print("location: $location");
-
     final bool hasSuggestedGeoTags = suggestedGeoTags?.isNotEmpty == true;
 
     return Section(

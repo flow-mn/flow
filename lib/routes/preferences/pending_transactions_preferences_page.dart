@@ -1,9 +1,12 @@
 import "dart:async";
 
+import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/l10n/named_enum.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -31,9 +34,8 @@ class _PendingTransactionPreferencesPageState
 
   @override
   Widget build(BuildContext context) {
-    final int pendingTransactionsHomeTimeframe =
-        LocalPreferences().pendingTransactions.homeTimeframe.get() ??
-        PendingTransactionsLocalPreferences.homeTimeframeDefault;
+    final PendingTimeRange pendingTransactionsHomeTimeframe =
+        UserPreferencesService().homePendingTransactionsTimeRange;
     final bool pendingTransactionsRequireConfrimation = LocalPreferences()
         .pendingTransactions
         .requireConfrimation
@@ -76,24 +78,24 @@ class _PendingTransactionPreferencesPageState
                     child: Wrap(
                       spacing: 12.0,
                       runSpacing: 8.0,
-                      children: [1, 2, 3, 5, 7, 14, 30]
-                          .map(
-                            (value) => FilterChip(
-                              showCheckmark: false,
-                              key: ValueKey(value),
-                              label: Text(
-                                "general.nextNDays".t(context, value),
+                      children: [
+                        ...PendingTimeRange.presets.map(
+                          (value) => FilterChip(
+                            showCheckmark: false,
+                            key: ValueKey(value),
+                            label: Text(
+                              value.localizedNameContext(
+                                context,
+                                value.futureDuration?.inDays,
                               ),
-                              onSelected: (bool selected) => selected
-                                  ? updatePendingTransactionsHomeTimeframe(
-                                      value,
-                                    )
-                                  : null,
-                              selected:
-                                  value == pendingTransactionsHomeTimeframe,
                             ),
-                          )
-                          .toList(),
+                            onSelected: (bool selected) => selected
+                                ? updatePendingTransactionsHomeTimeframe(value)
+                                : null,
+                            selected: value == pendingTransactionsHomeTimeframe,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -219,8 +221,8 @@ class _PendingTransactionPreferencesPageState
     );
   }
 
-  void updatePendingTransactionsHomeTimeframe(int days) async {
-    await LocalPreferences().pendingTransactions.homeTimeframe.set(days);
+  void updatePendingTransactionsHomeTimeframe(PendingTimeRange newValue) async {
+    UserPreferencesService().homePendingTransactionsTimeRange = newValue;
 
     if (mounted) setState(() {});
   }

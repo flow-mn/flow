@@ -31,6 +31,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
         trashBinRetentionDays:
             (json['trashBinRetentionDays'] as num?)?.toInt() ?? 30,
         defaultFilterPreset: json['defaultFilterPreset'] as String?,
+        homePendingTransactionsTimeRangeSerialized:
+            json['homePendingTransactionsTimeRangeSerialized'] as String?,
         enableICloudSync: json['enableICloudSync'] as bool? ?? false,
         iCloudBackupsToKeep:
             (json['iCloudBackupsToKeep'] as num?)?.toInt() ?? 10,
@@ -59,6 +61,8 @@ Map<String, dynamic> _$UserPreferencesToJson(
   'excludeTransfersFromFlow': instance.excludeTransfersFromFlow,
   'trashBinRetentionDays': instance.trashBinRetentionDays,
   'defaultFilterPreset': instance.defaultFilterPreset,
+  'homePendingTransactionsTimeRangeSerialized':
+      instance.homePendingTransactionsTimeRangeSerialized,
   'remindDailyAtRelativeSeconds': instance.remindDailyAtRelativeSeconds,
   'useCategoryNameForUntitledTransactions':
       instance.useCategoryNameForUntitledTransactions,

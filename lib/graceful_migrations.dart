@@ -1,4 +1,5 @@
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -253,6 +254,52 @@ void migrateGeoExtensionToLocation() async {
     } catch (e) {
       _log.warning(
         "Failed to migrate transactions' geo extension to location for migration $migrationUuid",
+        e,
+      );
+    }
+  } catch (e) {
+    _log.warning(
+      "Failed to read migration status for migration $migrationUuid",
+      e,
+    );
+  }
+}
+
+void migrateHomePendingTransactionsRange() async {
+  const String migrationUuid = "2130fe7d-6cdc-45c2-9632-56ba9de56c08";
+
+  try {
+    final SharedPreferencesWithCache prefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    final ok = prefs.getString("flow.migration.$migrationUuid");
+
+    if (ok != null) return;
+
+    try {
+      final int? old = LocalPreferences().pendingTransactions.homeTimeframe
+          .get();
+
+      if (old != null) {
+        final PendingTimeRange newRange = PendingTimeRange.duration(
+          Duration(days: old.abs()),
+        );
+
+        UserPreferencesService().homePendingTransactionsTimeRange = newRange;
+      } else {
+        UserPreferencesService().homePendingTransactionsTimeRange =
+            PendingTimeRange.followHome();
+      }
+
+      await prefs.setString("flow.migration.$migrationUuid", "ok");
+      _log.info(
+        "Migrated home pending transactions range for migration $migrationUuid",
+      );
+    } catch (e) {
+      _log.warning(
+        "Failed to migrate home pending transactions range for migration $migrationUuid",
         e,
       );
     }

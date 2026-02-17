@@ -1,5 +1,6 @@
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/prefs/change_visuals.dart";
+import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
@@ -40,6 +41,15 @@ class UserPreferences implements EntityBase {
 
   /// Le UUID of it
   String? defaultFilterPreset;
+
+  String? homePendingTransactionsTimeRangeSerialized;
+
+  /// The time range for the home pending transactions list
+  ///
+  /// If null, the default time range is used
+  PendingTimeRange get homePendingTransactionsTimeRange =>
+      PendingTimeRange.tryParse(homePendingTransactionsTimeRangeSerialized) ??
+      PendingTimeRange.duration(Duration(days: 7));
 
   /// It's a added to a start of the day
   ///
@@ -170,6 +180,7 @@ class UserPreferences implements EntityBase {
     this.privacyModeUponShaking = false,
     this.trashBinRetentionDays = 30,
     this.defaultFilterPreset,
+    this.homePendingTransactionsTimeRangeSerialized,
     this.enableICloudSync = false,
     this.iCloudBackupsToKeep = 10,
     this.autoBackupIntervalInHours = 72,

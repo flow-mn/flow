@@ -122,7 +122,6 @@ class SyncService {
     }
   }
 
-  // TODO @sadespresso - enable multi-syncer support
   Future<bool> putToAll(
     BackupEntry entry, {
     Function(double)? onProgress,

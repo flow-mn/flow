@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "29:4843097333162455732",
+      "lastPropertyId": "30:5353888497210708730",
       "name": "UserPreferences",
       "properties": [
         {
@@ -502,6 +502,11 @@
           "id": "29:4843097333162455732",
           "name": "transactionListTileShowExternalSource",
           "type": 1
+        },
+        {
+          "id": "30:5353888497210708730",
+          "name": "homePendingTransactionsTimeRangeSerialized",
+          "type": 9
         }
       ],
       "relations": []

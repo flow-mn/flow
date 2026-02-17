@@ -134,31 +134,29 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
                     style: context.textTheme.headlineSmall!,
                     child: title,
                   ),
-                  if (!widget.pendingGroup)
-                    //
-                    MoneyTextBuilder(
-                      builder: (context, formattedSum, originalSum) => RichText(
-                        text: TextSpan(
-                          style: context.textTheme.labelMedium,
-                          children: [
-                            TextSpan(
-                              text: "$formattedSum$exclamation",
-                              style: showMissingExchangeRatesWarning
-                                  ? TextStyle(color: context.colorScheme.error)
-                                  : null,
+                  MoneyTextBuilder(
+                    builder: (context, formattedSum, originalSum) => RichText(
+                      text: TextSpan(
+                        style: context.textTheme.labelMedium,
+                        children: [
+                          TextSpan(
+                            text: "$formattedSum$exclamation",
+                            style: showMissingExchangeRatesWarning
+                                ? TextStyle(color: context.colorScheme.error)
+                                : null,
+                          ),
+                          TextSpan(text: " • "),
+                          TextSpan(
+                            text: "tabs.home.transactionsCount".t(
+                              context,
+                              widget.transactions.renderableCount,
                             ),
-                            TextSpan(text: " • "),
-                            TextSpan(
-                              text: "tabs.home.transactionsCount".t(
-                                context,
-                                widget.transactions.renderableCount,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      money: mergedFlow.totalFlow,
                     ),
+                    money: mergedFlow.totalFlow,
+                  ),
                 ],
               ),
             ),

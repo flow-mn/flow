@@ -72,3 +72,9 @@ CustomTimeRange last30DaysRange([DateTime? anchor]) => (anchor ?? Moment.now())
     .subtract(const Duration(days: 29))
     .startOfDay()
     .rangeTo(Moment.endOfToday());
+
+CustomTimeRange nextNDaysRange(int n, [DateTime? anchor]) =>
+    (anchor ?? Moment.now())
+        .add(Duration(days: n - 1))
+        .startOfDay()
+        .rangeTo(Moment.endOfToday());

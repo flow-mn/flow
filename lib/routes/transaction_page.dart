@@ -855,7 +855,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Future<bool> selectCategory([bool fromAutomatedFlow = false]) async {
-    final categories = CategoriesProvider.of(context).categories;
+    final List<Category> categories = CategoriesProvider.of(context).categories;
 
     if (fromAutomatedFlow && categories.isEmpty) {
       return true;

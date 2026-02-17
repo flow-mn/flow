@@ -4,6 +4,7 @@ import "package:flow/data/actionable_nofications/actionable_notification.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/single_currency_flow.dart";
 import "package:flow/data/transaction_filter.dart";
+import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
@@ -43,7 +44,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late final AppLifecycleListener _listener;
   late final Timer _timer;
 
-  late int _plannedTransactionsNextNDays;
+  late PendingTimeRange _plannedTransactionsTimeRange;
 
   late TransactionFilter defaultFilter;
   DateTime dateKey = Moment.startOfToday();
@@ -53,19 +54,17 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   late TransactionFilter currentFilter;
 
   TransactionFilter get currentFilterWithPlanned {
-    final DateTime plannedTransactionTo = Moment.now()
-        .add(Duration(days: _plannedTransactionsNextNDays))
-        .startOfNextDay();
-
     final TimeRange? timeRange = currentFilter.range?.range;
+    final TimeRange plannedTranasctionsTimeRange = _plannedTransactionsTimeRange
+        .range(homeTimeRange: timeRange);
 
     if (timeRange != null &&
         timeRange.contains(Moment.now()) &&
-        !timeRange.contains(plannedTransactionTo)) {
+        !timeRange.contains(plannedTranasctionsTimeRange.to)) {
       return currentFilter.copyWithOptional(
         range: Optional(
           TransactionFilterTimeRange.fromTimeRange(
-            CustomTimeRange(timeRange.from, plannedTransactionTo),
+            CustomTimeRange(timeRange.from, plannedTranasctionsTimeRange.to),
           ),
         ),
       );
@@ -80,9 +79,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     _updatePlannedTransactionDays();
-    LocalPreferences().pendingTransactions.homeTimeframe.addListener(
-      _updatePlannedTransactionDays,
-    );
 
     _rawUpdateDefaultFilter();
 
@@ -98,6 +94,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     );
 
     UserPreferencesService().valueNotifier.addListener(_rawUpdateDefaultFilter);
+    UserPreferencesService().valueNotifier.addListener(
+      _updatePlannedTransactionDays,
+    );
     ActionableNotificationsService().notifications.addListener(
       _updateActionableNotification,
     );
@@ -109,12 +108,12 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   @override
   void dispose() {
     _listener.dispose();
-    LocalPreferences().pendingTransactions.homeTimeframe.removeListener(
-      _updatePlannedTransactionDays,
-    );
     _timer.cancel();
     UserPreferencesService().valueNotifier.removeListener(
       _rawUpdateDefaultFilter,
+    );
+    UserPreferencesService().valueNotifier.removeListener(
+      _updatePlannedTransactionDays,
     );
     ActionableNotificationsService().notifications.removeListener(
       _updateActionableNotification,
@@ -139,16 +138,16 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           ),
       builder: (context, snapshot) {
         final DateTime now = Moment.now().startOfNextMinute();
-        final DateTime cutoffPlanned = now
-            .add(Duration(days: _plannedTransactionsNextNDays))
-            .startOfNextDay();
+        final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
+          homeTimeRange: currentFilter.range?.range,
+        );
         final List<Transaction>? transactions = snapshot.data;
 
         if (currentFilter.range?.range?.contains(now) == true) {
           transactions?.removeWhere((transaction) {
             if (transaction.transactionDate <= now) return false;
 
-            return transaction.transactionDate > cutoffPlanned;
+            return transaction.transactionDate > cutoffPlanned.to;
           });
         }
 
@@ -336,9 +335,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   }
 
   void _updatePlannedTransactionDays() {
-    _plannedTransactionsNextNDays =
-        LocalPreferences().pendingTransactions.homeTimeframe.get() ??
-        PendingTransactionsLocalPreferences.homeTimeframeDefault;
+    _plannedTransactionsTimeRange =
+        UserPreferencesService().homePendingTransactionsTimeRange;
     setState(() {});
   }
 

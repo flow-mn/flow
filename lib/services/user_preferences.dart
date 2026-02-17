@@ -5,6 +5,7 @@ import "package:flow/constants.dart";
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/prefs/change_visuals.dart";
+import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/user_preferences.dart";
@@ -66,6 +67,17 @@ class UserPreferencesService {
       value.themeName = newThemeName;
       ObjectBox().box<UserPreferences>().put(value);
     }
+  }
+
+  PendingTimeRange get homePendingTransactionsTimeRange =>
+      value.homePendingTransactionsTimeRange;
+
+  set homePendingTransactionsTimeRange(
+    PendingTimeRange newHomePendingTransactionsTimeRange,
+  ) {
+    value.homePendingTransactionsTimeRangeSerialized =
+        newHomePendingTransactionsTimeRange.toString();
+    ObjectBox().box<UserPreferences>().put(value);
   }
 
   ChangeVisuals get changeVisuals {

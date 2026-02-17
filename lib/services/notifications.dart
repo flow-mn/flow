@@ -554,6 +554,7 @@ class NotificationsService {
     return null;
   }
 
+  /// Throws if notifications are not available or permissions are not granted
   Future<void> _checkSupportAndPermission() async {
     if (!available) {
       _log.warning("Notifications not available");

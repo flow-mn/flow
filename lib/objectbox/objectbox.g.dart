@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(29, 4843097333162455732),
+    lastPropertyId: const obx_int.IdUid(30, 5353888497210708730),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -619,6 +619,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(29, 4843097333162455732),
         name: 'transactionListTileShowExternalSource',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(30, 5353888497210708730),
+        name: 'homePendingTransactionsTimeRangeSerialized',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -1640,7 +1646,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final primaryAccountUuidOffset = object.primaryAccountUuid == null
             ? null
             : fbb.writeString(object.primaryAccountUuid!);
-        fbb.startTable(30);
+        final homePendingTransactionsTimeRangeSerializedOffset =
+            object.homePendingTransactionsTimeRangeSerialized == null
+            ? null
+            : fbb.writeString(
+                object.homePendingTransactionsTimeRangeSerialized!,
+              );
+        fbb.startTable(31);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1668,6 +1680,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(26, object.privacyModeUponLaunch);
         fbb.addBool(27, object.privacyModeUponShaking);
         fbb.addBool(28, object.transactionListTileShowExternalSource);
+        fbb.addOffset(29, homePendingTransactionsTimeRangeSerializedOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1723,6 +1736,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final defaultFilterPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 12);
+        final homePendingTransactionsTimeRangeSerializedParam =
+            const fb.StringReader(
+              asciiOptimization: true,
+            ).vTableGetNullable(buffer, rootOffset, 62);
         final enableICloudSyncParam = const fb.BoolReader().vTableGet(
           buffer,
           rootOffset,
@@ -1781,6 +1798,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 privacyModeUponShaking: privacyModeUponShakingParam,
                 trashBinRetentionDays: trashBinRetentionDaysParam,
                 defaultFilterPreset: defaultFilterPresetParam,
+                homePendingTransactionsTimeRangeSerialized:
+                    homePendingTransactionsTimeRangeSerializedParam,
                 enableICloudSync: enableICloudSyncParam,
                 iCloudBackupsToKeep: iCloudBackupsToKeepParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
@@ -2654,6 +2673,10 @@ class UserPreferences_ {
   /// See [UserPreferences.transactionListTileShowExternalSource].
   static final transactionListTileShowExternalSource =
       obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[26]);
+
+  /// See [UserPreferences.homePendingTransactionsTimeRangeSerialized].
+  static final homePendingTransactionsTimeRangeSerialized =
+      obx.QueryStringProperty<UserPreferences>(_entities[6].properties[27]);
 }
 
 /// [Budget] entity fields to define ObjectBox queries.

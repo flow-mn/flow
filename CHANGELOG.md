@@ -4,7 +4,7 @@
 
 ### New features
 
-* Added a Siri integration (intent).
+* Added a Siri integration (intent), fix [#657](https://github.com/flow-mn/flow/issues/657)
 * Persian (Iran) support thanks to @arefbhrn[https://github.com/arefbhrn]
 * Location tags are suggested if you're within 50m of the tag. Requires location
   to be enabled. Closes [#648](https://github.com/flow-mn/flow/issues/648)
@@ -13,6 +13,8 @@
 ### Changes
 
 * Added an option to show/hide external source (Eny, Siri) in transactions
+* Enhanced home tab pending transactions timeframe options, closes [#666](https://github.com/flow-mn/flow/issues/666)
+* Home tab pending transaction group now shows sum and count of transactions
 
 ### Fixes
 
