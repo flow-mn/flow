@@ -576,6 +576,10 @@ extension TransactionActions on Transaction {
   }
 
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
+    if (extraTags.contains(Transaction.importedFromSiriTag)) {
+      updateTransactionDate = false;
+    }
+
     try {
       if (isTransfer) {
         final Transfer? transfer = extensions.transfer;
