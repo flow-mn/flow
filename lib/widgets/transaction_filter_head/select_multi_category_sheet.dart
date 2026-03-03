@@ -1,5 +1,6 @@
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/utils/optional.dart";
 import "package:flow/utils/simple_query_sorter.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -9,7 +10,7 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
 
-/// Pops with [List] of selected [Category]s
+/// Pops with an [Optional] of [List] of selected [Category]s
 class SelectMultiCategorySheet extends StatefulWidget {
   final List<Category> categories;
   final List<String>? selectedUuids;
@@ -62,19 +63,18 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
         alignment: .end,
         children: [
           TextButton.icon(
-            onPressed: () => context.pop(<Category>[]),
-            icon: const Icon(Symbols.block_rounded, fill: 0.0),
-            label: Text("transactions.query.clearSelection".t(context)),
-          ),
-          TextButton.icon(
             onPressed: pop,
             icon: const Icon(Symbols.check_rounded),
             label: Text("general.done".t(context)),
           ),
         ],
       ),
-      leading: showSearchBar
-          ? Frame(
+      leading: Column(
+        mainAxisSize: .min,
+        spacing: 8.0,
+        children: [
+          if (showSearchBar)
+            Frame(
               child: TextField(
                 onChanged: (value) => setState(() => _query = value),
                 textInputAction: TextInputAction.done,
@@ -83,8 +83,22 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
                   prefixIcon: const Icon(Symbols.search_rounded),
                 ),
               ),
-            )
-          : null,
+            ),
+          Frame(
+            child: Align(
+              alignment: AlignmentDirectional.topEnd,
+              child: TextButton(
+                onPressed: _toggleSelectAll,
+                child: Text(
+                  selectedUuids.length == widget.categories.length
+                      ? "general.select.clear".t(context)
+                      : "general.select.all".t(context),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -116,11 +130,20 @@ class _SelectMultiCategorySheetState extends State<SelectMultiCategorySheet> {
     setState(() {});
   }
 
+  void _toggleSelectAll() {
+    if (selectedUuids.length == widget.categories.length) {
+      selectedUuids.clear();
+    } else {
+      selectedUuids.addAll(widget.categories.map((category) => category.uuid));
+    }
+    setState(() {});
+  }
+
   void pop() {
     final List<Category> selectedCategories = widget.categories
         .where((category) => selectedUuids.contains(category.uuid))
         .toList();
 
-    context.pop(selectedCategories);
+    context.pop(Optional(selectedCategories));
   }
 }

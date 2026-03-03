@@ -1,5 +1,15 @@
 # Changelog
 
+## Next
+
+### Fixes
+
+* Past pending transactions now always show up to avoid missing payments
+
+### Changes
+
+* Renovated multi account/category sheets
+
 ## 0.19.1
 
 ### Changes

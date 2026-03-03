@@ -5,6 +5,7 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/sync/export/export_pdf.dart";
+import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -176,7 +177,7 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
   }
 
   void _selectAccounts() async {
-    final List<Account>? selected = await showModalBottomSheet(
+    final Optional<List<Account>>? selected = await showModalBottomSheet(
       context: context,
       builder: (context) => SelectMultiAccountSheet(
         accounts: _accounts,
@@ -185,16 +186,20 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
       isScrollControlled: true,
     );
 
-    if (selected == null) return;
+    if (selected == null ||
+        selected.value == null ||
+        selected.value?.isEmpty == null) {
+      return;
+    }
 
     setState(() {
       _selectedAccounts.clear();
-      _selectedAccounts.addAll(selected.map((account) => account.uuid));
+      _selectedAccounts.addAll(selected.value!.map((account) => account.uuid));
     });
   }
 
   void _selectCategories() async {
-    final List<Category>? selected = await showModalBottomSheet(
+    final Optional<List<Category>>? selected = await showModalBottomSheet(
       context: context,
       builder: (context) => SelectMultiCategorySheet(
         categories: _categories,
@@ -205,10 +210,17 @@ class _ExportPdfPageState extends State<ExportPdfPage> {
 
     if (selected == null) return;
 
-    setState(() {
+    if (selected.value == null) {
       _selectedCategories.clear();
-      _selectedCategories.addAll(selected.map((category) => category.uuid));
-    });
+      _selectedCategories.addAll(_categories.map((category) => category.uuid));
+    } else {
+      _selectedCategories.clear();
+      _selectedCategories.addAll(
+        selected.value?.map((category) => category.uuid) ?? [],
+      );
+    }
+
+    setState(() {});
   }
 
   void _selectRange() async {

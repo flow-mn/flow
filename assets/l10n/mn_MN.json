@@ -256,6 +256,7 @@
   "general.search": "Хайх...",
   "general.select": "Сонгох",
   "general.select.all": "Бүгдийг сонгох",
+  "general.select.clear": "Сонголтыг цэвэрлэх",
   "general.selectLocation": "Байршил сонгох",
   "general.unlockToOpen": "Flow-г нээхийн тулд түгжээг тайлна уу",
   "integrations.eny": "Eny",
