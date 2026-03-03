@@ -256,6 +256,7 @@
   "general.search": "Поиск...",
   "general.select": "Выбрать",
   "general.select.all": "Выбрать все",
+  "general.select.clear": "Очистить выбор",
   "general.selectLocation": "Выберите местоположение",
   "general.unlockToOpen": "Разблокируйте, чтобы открыть Flow",
   "integrations.eny": "Eny",

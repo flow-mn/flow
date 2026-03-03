@@ -256,6 +256,7 @@
   "general.search": "Hledat...",
   "general.select": "Vybrat",
   "general.select.all": "Vybrat vše",
+  "general.select.clear": "Vymazat výběr",
   "general.selectLocation": "Vybrat místo",
   "general.unlockToOpen": "Odemkněte pro otevření Flow",
   "integrations.eny": "Eny",
