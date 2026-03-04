@@ -12,25 +12,20 @@ Future<Map<String, dynamic>?> translate(
   String targetLanguage,
 ) async {
   try {
-    final String? openaiApiKey = Platform.environment["OPENAI_API_KEY"];
-    final OpenAIClient client = OpenAIClient(apiKey: openaiApiKey);
+    final String openaiApiKey = Platform.environment["OPENAI_API_KEY"]!;
+    final OpenAIClient client = OpenAIClient(
+      config: OpenAIConfig(authProvider: ApiKeyProvider(openaiApiKey)),
+    );
 
-    final CreateChatCompletionResponse
-    response = await client.createChatCompletion(
-      request: CreateChatCompletionRequest(
-        model: ChatCompletionModel.modelId("gpt-5-mini"),
-        responseFormat: ResponseFormat.text(
-          type: ResponseFormatType.jsonObject,
-        ),
+    final response = await client.chat.completions.create(
+      ChatCompletionCreateRequest(
+        model: "gpt-5-mini",
+        responseFormat: ResponseFormat.jsonObject(),
         messages: [
-          ChatCompletionMessage.developer(
-            content: ChatCompletionDeveloperMessageContent.text(
-              "You are a professional translator with expertise in user interface design. You will be provided a JSON localization file in english, and you should translate the file into a localization json in $targetLanguage language. If there's no input, just output nothing. The output should be a valid JSON object with the same keys as the input, but with the values translated to $targetLanguage. Do not include any explanations or additional text, just the JSON object.",
-            ),
+          ChatMessage.developer(
+            "You are a professional translator with expertise in user interface design. You will be provided a JSON localization file in english, and you should translate the file into a localization json in $targetLanguage language. If there's no input, just output nothing. The output should be a valid JSON object with the same keys as the input, but with the values translated to $targetLanguage. Do not include any explanations or additional text, just the JSON object.",
           ),
-          ChatCompletionMessage.user(
-            content: ChatCompletionUserMessageContent.string(englishJson),
-          ),
+          ChatMessage.user(englishJson),
         ],
       ),
     );

@@ -101,7 +101,7 @@ class ModalSheet extends StatelessWidget {
                 ),
               ),
             SizedBox(height: titleSpacing),
-            if (title != null) title,
+            ?title,
             if (title != null && (leading != null || child != null))
               SizedBox(height: titleSpacing),
             if (leading != null) ...[

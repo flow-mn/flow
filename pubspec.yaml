@@ -12,7 +12,7 @@ dependencies:
     app_links: ^7.0.0
     archive: ^4.0.7
     auto_size_text: ^3.0.0
-    camera: ^0.11.3
+    camera: ^0.12.0
     charset: ^2.0.1
     connectivity_plus: ^7.0.0
     crop_image: ^1.0.17
@@ -28,7 +28,7 @@ dependencies:
     flutter_app_group_directory: ^1.1.0
     flutter_contacts: ^1.1.9+2
     flutter_dynamic_icon_plus: ^1.4.0
-    flutter_local_notifications: ^20.1.0
+    flutter_local_notifications: ^21.0.0-dev.2
     flutter_localizations:
         sdk: flutter
     flutter_map: ^8.2.2
@@ -61,7 +61,7 @@ dependencies:
     objectbox_flutter_libs: ^5.1.0
     open_app_file: ^4.0.4
     package_info_plus: ^9.0.0
-    pasteboard: ^0.4.0
+    pasteboard: ^0.5.0
     path: ^1.9.1
     path_provider: ^2.1.5
     pdf: ^3.11.3
@@ -73,7 +73,7 @@ dependencies:
     shared_preferences: ^2.5.4
     simple_icons: ^14.6.1
     smooth_page_indicator: ^2.0.1
-    timezone: ^0.10.1
+    timezone: ^0.11.0
     toastification: ^3.0.3
     url_launcher: ^6.3.2
     uuid: ^4.5.2
@@ -89,7 +89,7 @@ dev_dependencies:
         sdk: flutter
     json_serializable: ^6.11.1
     objectbox_generator: ^5.1.0
-    openai_dart: ^0.6.2
+    openai_dart: ^1.0.1
     test: ^1.26.3
 
 dependency_overrides:

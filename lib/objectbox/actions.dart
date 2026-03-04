@@ -948,11 +948,7 @@ extension AccountActions on Account {
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [
-        ...filteredExtensions,
-        transferData,
-        if (recurringExtension != null) recurringExtension,
-      ],
+      extensions: [...filteredExtensions, transferData, ?recurringExtension],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,

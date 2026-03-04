@@ -1263,7 +1263,7 @@ class _TransactionPageState extends State<TransactionPage> {
       );
     }
 
-    final List<TransactionExtension> extensions = [if (_geo != null) _geo!];
+    final List<TransactionExtension> extensions = [?_geo];
 
     if (isTransfer) {
       _selectedAccount!.transferTo(
