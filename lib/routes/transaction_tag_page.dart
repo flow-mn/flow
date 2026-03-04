@@ -15,6 +15,7 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
+import "package:flow/utils/extensions/flutter_contact.dart";
 import "package:flow/utils/extensions/transaction_tag_type.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/delete_button.dart";
@@ -30,7 +31,7 @@ import "package:flow/widgets/sheets/select_contact_sheet.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
-import "package:flutter_contacts/contact.dart";
+import "package:flutter_contacts/flutter_contacts.dart" hide PermissionStatus;
 import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
@@ -377,10 +378,10 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       _payload = (_payload ?? const TransactionTagPayload()).copyWith(
         contact: TransactionContactTag(
           id: contact.id,
-          name: contact.displayName,
+          name: contact.resolvedName,
         ),
       );
-      _titleController.text = contact.displayName;
+      _titleController.text = contact.resolvedName;
       if (_iconData == null ||
           FlowIconData.icon(_type.icon).toString() == _iconData.toString()) {
         final ImageFlowIcon? contactImage = await ImageFlowIcon.tryFromData(

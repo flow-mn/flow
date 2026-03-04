@@ -1,4 +1,7 @@
+import "dart:typed_data";
+
 import "package:flow/l10n/flow_localizations.dart";
+import "package:flow/utils/extensions/flutter_contact.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
@@ -37,7 +40,7 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
     super.initState();
     _query = widget.initialSerach ?? "";
 
-    FlutterContacts.getContacts(withPhoto: true)
+    FlutterContacts.getAll(properties: {.photoFullRes, .photoThumbnail, .name})
         .then((value) {
           contacts = value;
         })
@@ -66,7 +69,7 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
         ? extractTop<Contact>(
             query: normalizedQuery,
             choices: contacts,
-            getter: (contact) => contact.displayName.toLowerCase(),
+            getter: (contact) => contact.resolvedName.toLowerCase(),
             limit: 10,
           ).map((result) => result.choice).toList()
         : contacts;
@@ -103,11 +106,20 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
           itemCount: queriedContacts.length,
           itemBuilder: (context, index) {
             final contact = queriedContacts[index];
+
+            final leading = switch (contact.photo?.fullSize ??
+                contact.photo?.thumbnail) {
+              Uint8List photo? => CircleAvatar(
+                backgroundImage: MemoryImage(photo),
+              ),
+              null => CircleAvatar(child: Text(_contactInitials(contact))),
+            };
+
             return ListTile(
-              leading: (contact.photo == null || contact.photo!.isEmpty)
-                  ? CircleAvatar(child: Text(_contactInitials(contact)))
-                  : CircleAvatar(backgroundImage: MemoryImage(contact.photo!)),
-              title: Text(contact.displayName),
+              leading: leading,
+              title: Text(
+                contact.displayName ?? contact.name?.first ?? "<unnamed>",
+              ),
               subtitle: contact.phones.isNotEmpty
                   ? Text(contact.phones.first.number)
                   : null,
@@ -128,11 +140,14 @@ class _SelectContactSheetState extends State<SelectContactSheet> {
   }
 
   String _contactInitials(Contact contact) {
-    final names = contact.displayName.split(" ");
-    if (names.length == 1) {
-      return names[0].substring(0, 1).toUpperCase();
-    } else if (names.length > 1) {
-      return (names[0].substring(0, 1) + names[1].substring(0, 1))
+    final List<String> nameParts = contact.resolvedName
+        .split(RegExp(r"\s+"))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (nameParts.length == 1) {
+      return nameParts[0].substring(0, 1).toUpperCase();
+    } else if (nameParts.length > 1) {
+      return (nameParts[0].substring(0, 1) + nameParts[1].substring(0, 1))
           .toUpperCase();
     } else {
       return "?";
