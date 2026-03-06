@@ -9,6 +9,7 @@
 ### Changes
 
 * Renovated multi account/category sheets
+* Now all fields of iOS Shortcuts are optional, except `Amount`
 
 ## 0.19.1
 

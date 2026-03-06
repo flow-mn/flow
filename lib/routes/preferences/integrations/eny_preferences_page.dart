@@ -246,6 +246,8 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
 
     try {
       await EnyService().checkCredits();
+    } catch (e) {
+      //
     } finally {
       _busy = false;
       if (mounted) {

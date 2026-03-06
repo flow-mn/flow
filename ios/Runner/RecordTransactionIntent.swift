@@ -5,19 +5,19 @@ struct RecordTransactionIntent: AppIntent {
     static var description: IntentDescription = "Log expenses"
 
     @Parameter(title: "Account", description: "Exact name, or UUID of the target account.")
-    var account: String
+    var account: String?
 
     @Parameter(title: "Amount", description: "Expense amount. Sign doesn't matter.")
     var amount: String
 
     @Parameter(title: "Category", description: "Exact name, or UUID of the target account.")
-    var category: String
+    var category: String?
 
     @Parameter(title: "Notes", description: "Transaction notes. Markdown supported.")
-    var notes: String
+    var notes: String?
 
     @Parameter(title: "Title", description: "Transaction title.")
-    var title: String
+    var title: String?
 
     static var openAppWhenRun = false
 
