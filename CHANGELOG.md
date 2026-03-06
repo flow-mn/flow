@@ -1,6 +1,21 @@
 # Changelog
 
+## Next
+
+### Fixes
+
+* Past pending transactions now always show up to avoid missing payments
+
+### Changes
+
+* Renovated multi account/category sheets
+* Now all fields of iOS Shortcuts are optional, except `Amount`
+
 ## 0.19.1
+
+### Changes
+
+* Now it's possible to create category while adding a transaction, credits to [@r4khul](https://github.com/r4khul)
 
 ### Fixes
 

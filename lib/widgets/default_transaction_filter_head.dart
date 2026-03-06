@@ -1,3 +1,4 @@
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
@@ -274,7 +275,7 @@ class _DefaultTransactionsFilterHeadState
         ? AccountsProvider.of(context).activeAccounts
         : null;
 
-    final List<Account>? accounts = await showModalBottomSheet<List<Account>>(
+    final Optional<List<Account>>? accounts = await showModalBottomSheet(
       context: context,
       builder: (context) => SelectMultiAccountSheet(
         accounts: ObjectBox().getAccounts(),
@@ -285,12 +286,18 @@ class _DefaultTransactionsFilterHeadState
       isScrollControlled: true,
     );
 
-    if (accounts != null) {
+    final StringMultiFilter? accountsFilterOverride = switch (accounts?.value) {
+      List<Account> accountsList when accountsList.isNotEmpty =>
+        StringMultiFilter.whitelist(
+          accountsList.map((account) => account.uuid).toList(),
+        ),
+      _ => null,
+    };
+
+    if (accountsFilterOverride != null) {
       setState(() {
         filter = filter.copyWithOptional(
-          accounts: Optional(
-            .whitelist(accounts.map((account) => account.uuid).toList()),
-          ),
+          accounts: Optional(accountsFilterOverride),
         );
       });
     }
@@ -301,27 +308,31 @@ class _DefaultTransactionsFilterHeadState
         ? CategoriesProvider.of(context).categories
         : null;
 
-    final List<Category>? categories =
-        await showModalBottomSheet<List<Category>>(
-          context: context,
-          builder: (context) => SelectMultiCategorySheet(
-            categories: ObjectBox().getCategories(),
-            selectedUuids: filter.categories?.filter(
-              allCategories?.map((category) => category.uuid).toList() ?? [],
-            ),
-          ),
-          isScrollControlled: true,
-        );
+    final Optional<List<Category>>? categories = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectMultiCategorySheet(
+        categories: ObjectBox().getCategories(),
+        selectedUuids: filter.categories?.filter(
+          allCategories?.map((category) => category.uuid).toList() ?? [],
+        ),
+      ),
+      isScrollControlled: true,
+    );
 
-    if (categories != null) {
-      setState(() {
-        filter = filter.copyWithOptional(
-          categories: Optional(
-            .whitelist(categories.map((category) => category.uuid).toList()),
-          ),
-        );
-      });
-    }
+    final Optional<StringMultiFilter>? categoriesFilter = categories == null
+        ? null
+        : switch (categories.value) {
+            List<Category> categoriesList => Optional<StringMultiFilter>(
+              StringMultiFilter.whitelist(
+                categoriesList.map((category) => category.uuid).toList(),
+              ),
+            ),
+            null => Optional<StringMultiFilter>(null),
+          };
+
+    setState(() {
+      filter = filter.copyWithOptional(categories: categoriesFilter);
+    });
   }
 
   void onSelectTags() async {

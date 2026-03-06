@@ -182,7 +182,11 @@ class TransactionFilter implements Jasonable {
     }
 
     if (categoryUuids != null) {
-      conditions.add(Transaction_.categoryUuid.oneOf(categoryUuids));
+      if (categoryUuids.isEmpty) {
+        conditions.add(Transaction_.categoryUuid.isNull());
+      } else {
+        conditions.add(Transaction_.categoryUuid.oneOf(categoryUuids));
+      }
     }
 
     if (accountUuids != null) {

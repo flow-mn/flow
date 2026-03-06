@@ -53,24 +53,22 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late TransactionFilter currentFilter;
 
-  TransactionFilter get currentFilterWithPlanned {
+  TransactionFilter get normalizedCurrentFilter =>
+      currentFilter.copyWithOptional(isPending: Optional(null));
+
+  TransactionFilter get pendingTransactionsFilter {
     final TimeRange? timeRange = currentFilter.range?.range;
     final TimeRange plannedTranasctionsTimeRange = _plannedTransactionsTimeRange
         .range(homeTimeRange: timeRange);
 
-    if (timeRange != null &&
-        timeRange.contains(Moment.now()) &&
-        !timeRange.contains(plannedTranasctionsTimeRange.to)) {
-      return currentFilter.copyWithOptional(
-        range: Optional(
-          TransactionFilterTimeRange.fromTimeRange(
-            CustomTimeRange(timeRange.from, plannedTranasctionsTimeRange.to),
-          ),
+    return currentFilter.copyWithOptional(
+      range: Optional(
+        TransactionFilterTimeRange.fromTimeRange(
+          CustomTimeRange(Moment.minValue, plannedTranasctionsTimeRange.to),
         ),
-      );
-    }
-
-    return currentFilter;
+      ),
+      isPending: Optional(true),
+    );
   }
 
   late final bool noTransactionsAtAll;
@@ -127,74 +125,86 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
     final bool isFilterModified = currentFilter != defaultFilter;
 
-    return StreamBuilder<List<Transaction>>(
-      key: ValueKey(dateKey),
-      stream: currentFilterWithPlanned
+    return StreamBuilder(
+      stream: normalizedCurrentFilter
           .queryBuilder()
           .watch(triggerImmediately: true)
-          .map(
-            (event) =>
-                event.find().filter(currentFilterWithPlanned.postPredicates),
-          ),
-      builder: (context, snapshot) {
-        final DateTime now = Moment.now().startOfNextMinute();
-        final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
-          homeTimeRange: currentFilter.range?.range,
-        );
-        final List<Transaction>? transactions = snapshot.data;
+          .map((event) => event.find()),
+      builder: (context, currentTransactionsSnapshot) {
+        return StreamBuilder<List<Transaction>>(
+          key: ValueKey(dateKey),
+          stream: pendingTransactionsFilter
+              .queryBuilder()
+              .watch(triggerImmediately: true)
+              .map((event) => event.find()),
+          builder: (context, pendingTransactionsSnapshot) {
+            final DateTime now = Moment.now().startOfNextMinute();
+            final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
+              homeTimeRange: currentFilter.range?.range,
+            );
 
-        if (currentFilter.range?.range?.contains(now) == true) {
-          transactions?.removeWhere((transaction) {
-            if (transaction.transactionDate <= now) return false;
+            final List<Transaction> transactions = [
+              ...?pendingTransactionsSnapshot.data,
+              ...?currentTransactionsSnapshot.data,
+            ];
 
-            return transaction.transactionDate > cutoffPlanned.to;
-          });
-        }
+            if (currentFilter.range?.range?.contains(now) == true) {
+              transactions.removeWhere((transaction) {
+                if (transaction.transactionDate <= now) return false;
 
-        final Widget header = DefaultTransactionsFilterHead(
-          defaultFilter: defaultFilter,
-          current: currentFilter,
-          onChanged: (value) {
-            setState(() {
-              currentFilter = value;
-            });
-          },
-        );
+                return transaction.transactionDate > cutoffPlanned.to;
+              });
+            }
 
-        return CustomScrollView(
-          primary: true,
-          slivers: [
-            PinnedHeaderSliver(
-              child: Container(
-                color: context.colorScheme.surface,
-                child: SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      const Frame.standalone(
-                        withSurface: true,
-                        child: GreetingsBar(),
+            final Widget header = DefaultTransactionsFilterHead(
+              defaultFilter: defaultFilter,
+              current: currentFilter,
+              onChanged: (value) {
+                setState(() {
+                  currentFilter = value;
+                });
+              },
+            );
+
+            return CustomScrollView(
+              primary: true,
+              slivers: [
+                PinnedHeaderSliver(
+                  child: Container(
+                    color: context.colorScheme.surface,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          const Frame.standalone(
+                            withSurface: true,
+                            child: GreetingsBar(),
+                          ),
+                          header,
+                        ],
                       ),
-                      header,
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            switch ((transactions?.length ?? 0, snapshot.hasData)) {
-              (0, true) => SliverFillRemaining(
-                child: NoTransactions(isFilterModified: isFilterModified),
-              ),
-              (_, true) => buildGroupedList(context, now, transactions ?? []),
-              (_, false) => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            },
-            SliverToBoxAdapter(
-              child: SafeArea(child: const SizedBox(height: 96.0)),
-            ),
-          ],
+                switch ((
+                  transactions.length,
+                  currentTransactionsSnapshot.hasData,
+                )) {
+                  (0, true) => SliverFillRemaining(
+                    child: NoTransactions(isFilterModified: isFilterModified),
+                  ),
+                  (_, true) => buildGroupedList(context, now, transactions),
+                  (_, false) => const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                },
+                SliverToBoxAdapter(
+                  child: SafeArea(child: const SizedBox(height: 96.0)),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -227,8 +237,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         final List<Transaction> pendingTransactions = transactions
             .where(
               (transaction) =>
-                  transaction.transactionDate.isAfter(now) ||
-                  transaction.isPending == true,
+                  transaction.isPending == true ||
+                  transaction.transactionDate.isAfter(now),
             )
             .toList();
 

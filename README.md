@@ -20,6 +20,21 @@ seamlessly across platforms.
 
 > You can build and run for Linux and macOS. Haven't tested Windows yet[^2]
 
+## Supercharge Flow with Eny: AI receipt parser
+
+I also made an AI-based receipt parser. Snap a photo of your receipt (yes, inside Flow), and it'll be added. Check it out at <https://eny.gege.mn/>
+
+<!-- markdownlint-disable-next-line -->
+<a href="https://eny.gege.mn">
+  <!-- markdownlint-disable-next-line -->
+  <picture>
+    <!-- markdownlint-disable-next-line -->
+    <source srcset="https://cdn.gege.mn/eny/2026-02-28/5b374d28-43d5-4276-a7b2-dab81ea684be/fxe.png 1x, https://cdn.gege.mn/eny/2026-02-28/5b374d28-43d5-4276-a7b2-dab81ea684be/fxe@2x.png 2x, https://cdn.gege.mn/eny/2026-02-28/5b374d28-43d5-4276-a7b2-dab81ea684be/fxe@3x.png 3x">
+    <!-- markdownlint-disable-next-line -->
+    <img src="https://cdn.gege.mn/eny/2026-02-28/5b374d28-43d5-4276-a7b2-dab81ea684be/fxe.png" alt="Supercharged by Eny: Parse receipts straight from Flow" width="440">
+  </picture>
+</a>
+
 ## Features
 
 * Simple UX helping you efficiently track your finances

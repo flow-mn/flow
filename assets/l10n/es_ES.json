@@ -256,6 +256,7 @@
   "general.search": "Buscar...",
   "general.select": "Seleccionar",
   "general.select.all": "Seleccionar todo",
+  "general.select.clear": "Borrar selección",
   "general.selectLocation": "Elegir ubicación",
   "general.unlockToOpen": "Desbloquear para abrir Flow",
   "integrations.eny": "Eny",

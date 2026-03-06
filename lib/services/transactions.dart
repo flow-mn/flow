@@ -150,6 +150,16 @@ class TransactionsService {
     return transactions;
   }
 
+  List<Transaction> findManySync(TransactionFilter filter) {
+    final Query<Transaction> condition = filter.queryBuilder().build();
+
+    final List<Transaction> transactions = condition.find();
+
+    condition.close();
+
+    return transactions;
+  }
+
   Future<Transaction?> findFirst(TransactionFilter? filter) async {
     if (filter == null) {
       return null;

@@ -129,7 +129,7 @@ class _GroupedTransactionsListViewState
         UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
-      if (header != null) header!,
+      ?header,
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
           widget.headerBuilder(true, entry.key, entry.value),

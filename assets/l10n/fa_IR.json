@@ -256,6 +256,7 @@
   "general.search": "جستجو...",
   "general.select": "انتخاب",
   "general.select.all": "انتخاب همه",
+  "general.select.clear": "پاک کردن انتخاب‌ها",
   "general.selectLocation": "انتخاب موقعیت",
   "general.unlockToOpen": "برای باز کردن Flow قفل را باز کنید",
   "integrations.eny": "Eny",

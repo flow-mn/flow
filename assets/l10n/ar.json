@@ -256,6 +256,7 @@
   "general.search": "ابحث...",
   "general.select": "اختيار",
   "general.select.all": "اختيار الكل",
+  "general.select.clear": "مسح التحديد",
   "general.selectLocation": "اختر الموقع",
   "general.unlockToOpen": "افتح القفل لاستخدام Flow",
   "integrations.eny": "Eny",
