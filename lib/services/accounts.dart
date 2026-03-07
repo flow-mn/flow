@@ -49,7 +49,7 @@ class AccountsService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Account>()
-          .query(Account_.name.equals(name))
+          .query(Account_.name.equals(name, caseSensitive: false))
           .build();
 
       final Account? result = await q.findFirstAsync();
@@ -81,7 +81,7 @@ class AccountsService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Account>()
-          .query(Account_.name.equals(name))
+          .query(Account_.name.equals(name, caseSensitive: false))
           .build();
 
       final Account? result = q.findFirst();

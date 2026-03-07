@@ -17,8 +17,6 @@ class TransactionMultiProgrammableObject {
   }
 
   List<int> save({
-    dynamic fromAccount,
-    dynamic toAccount,
     List<String>? extraTags,
     List<TransactionExtension>? extensions,
     bool? isPendingOverride,
@@ -26,8 +24,6 @@ class TransactionMultiProgrammableObject {
     return t
         .map(
           (transaction) => transaction.save(
-            fromAccount: fromAccount,
-            toAccount: toAccount,
             extraTags: extraTags,
             extensions: extensions,
             isPendingOverride: isPendingOverride,

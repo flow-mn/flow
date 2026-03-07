@@ -145,7 +145,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
             final List<Transaction> transactions = [
               ...?pendingTransactionsSnapshot.data,
-              ...?currentTransactionsSnapshot.data,
+              ...?currentTransactionsSnapshot.data?.where(
+                (t) => t.isPending != true,
+              ),
             ];
 
             if (currentFilter.range?.range?.contains(now) == true) {

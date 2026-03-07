@@ -260,7 +260,10 @@ class _TransactionBatchImportPageState
 
     try {
       for (final TransactionProgrammableObject tpo in tpos) {
-        tpo.save(fromAccount: _fromAccountUuid, toAccount: _toAccountUuid);
+        tpo.save(
+          fromAccountOverride: _fromAccountUuid,
+          toAccountOverride: _toAccountUuid,
+        );
       }
       if (!mounted) return;
 
