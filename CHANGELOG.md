@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.19.3
+
+### Fixes
+
+* Siri/Eny Account exact match name now works, and is case insensitive
+* Fixed pending transactions were duplicated
+
+### Changes
+
+* **Automation**: Exact match for account and category is no longer case-sensitive
+
 ## 0.19.2
 
 ### Fixes

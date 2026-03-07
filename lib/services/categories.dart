@@ -77,7 +77,7 @@ class CategoriesService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Category>()
-          .query(Category_.name.equals(name))
+          .query(Category_.name.equals(name, caseSensitive: false))
           .build();
 
       final Category? result = await q.findFirstAsync();
@@ -109,7 +109,7 @@ class CategoriesService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Category>()
-          .query(Category_.name.equals(name))
+          .query(Category_.name.equals(name, caseSensitive: false))
           .build();
 
       final Category? result = q.findFirst();

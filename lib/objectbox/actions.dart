@@ -1179,8 +1179,8 @@ extension BackupEntryActions on BackupEntry {
 extension TransactionProgrammableObjectActions
     on TransactionProgrammableObject {
   int save({
-    dynamic fromAccount,
-    dynamic toAccount,
+    dynamic fromAccountOverride,
+    dynamic toAccountOverride,
     List<String>? extraTags,
     List<TransactionExtension>? extensions,
     bool? isPendingOverride,
@@ -1188,7 +1188,7 @@ extension TransactionProgrammableObjectActions
     final Account? resolvedFromAccount =
         AccountsService().findOneActiveSync(fromAccountUuid) ??
         AccountsService().findOneActiveSync(fromAccount) ??
-        switch (fromAccount) {
+        switch (fromAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         } ??
@@ -1199,7 +1199,7 @@ extension TransactionProgrammableObjectActions
     Account? resolvedToAccount =
         AccountsService().findOneActiveSync(toAccountUuid) ??
         AccountsService().findOneActiveSync(toAccount) ??
-        switch (toAccount) {
+        switch (toAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         };
