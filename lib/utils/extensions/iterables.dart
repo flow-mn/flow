@@ -20,6 +20,15 @@ extension Iterables<E> on Iterable<E> {
         return map;
       });
 
+  List<E> uniqueBy<T>(T Function(E) selector) {
+    final Map<T, E> items = {};
+    for (final E element in this) {
+      final T key = selector(element);
+      items[key] = element;
+    }
+    return items.values.toList();
+  }
+
   E? firstWhereOrNull(bool Function(E element) test) {
     for (var element in this) {
       if (test(element)) return element;

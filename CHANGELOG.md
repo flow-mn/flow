@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.19.4
+
+### Fixes
+
+* Fixed duplicating transfers reversed their accounts
+* Fixed home page pending transactions not showing, closes [#681](https://github.com/flow-mn/flow/issues/681)
+
+### Changes
+
+* Added an optional `transaction date` field to Shortcut action (iOS)
+
 ## 0.19.3
 
 ### Fixes
