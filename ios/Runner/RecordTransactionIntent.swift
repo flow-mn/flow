@@ -19,6 +19,9 @@ struct RecordTransactionIntent: AppIntent {
     @Parameter(title: "Title", description: "Transaction title.")
     var title: String?
 
+    @Parameter(title: "Date of transaction", description: "Date.")
+    var transactionDate: Date?
+
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
@@ -30,7 +33,8 @@ struct RecordTransactionIntent: AppIntent {
         if let number = formatter.number(from: amount) {
             parsedAmount = number.doubleValue
         } else {
-            let digitsOnly = amount.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+            let digitsOnly = amount.replacingOccurrences(
+                of: "[^0-9]", with: "", options: .regularExpression)
             let hadDecimalSeparator = amount.contains(formatter.decimalSeparator)
             guard let fallbackNumber = Double(digitsOnly) else {
                 throw NSError(domain: "InvalidAmount", code: 1)
@@ -38,7 +42,8 @@ struct RecordTransactionIntent: AppIntent {
             parsedAmount = fallbackNumber / (hadDecimalSeparator ? 100 : 1)
         }
         let tx = RecordedTransaction(
-            type: .expense, amount: parsedAmount, title: title, fromAccount: account, category: category,
+            transactionDate: transactionDate ?? Date(), type: .expense, amount: parsedAmount,
+            title: title, fromAccount: account, category: category,
             notes: notes)
         try RecordedTransactionService.append(tx)
         return .result(dialog: "Expense recorded ✅")

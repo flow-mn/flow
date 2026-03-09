@@ -168,6 +168,7 @@ class _GroupedTransactionsListViewState
             index: index,
             key: ValueKey(transaction.uuid),
             child: TransactionListTile(
+              key: ValueKey(transaction.id),
               combineTransfers: combineTransfers,
               transaction: transaction,
               dismissibleKey: ValueKey(transaction.id),

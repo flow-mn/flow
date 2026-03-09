@@ -637,7 +637,7 @@ extension TransactionActions on Transaction {
 
       final (int a, _) = fromAccount.transferTo(
         targetAccount: toAccount,
-        amount: amount,
+        amount: amount.abs(),
         description: description,
         createdDate: Moment.now(),
         isPending: isPending,
@@ -649,6 +649,7 @@ extension TransactionActions on Transaction {
         extensions: extensions.data,
         latitude: extensions.geo?.latitude,
         longitude: extensions.geo?.longitude,
+        conversionRate: transferDetails.conversionRate,
       );
 
       return a;
