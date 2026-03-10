@@ -66,7 +66,7 @@ dependencies:
     path_provider: ^2.1.5
     pdf: ^3.11.3
     permission_handler: ^12.0.1
-    pie_menu: ^3.3.4
+    pie_menu: ^3.6.0
     recurrence: ^0.3.0
     shake: ^3.0.0
     share_plus: ^12.0.1
