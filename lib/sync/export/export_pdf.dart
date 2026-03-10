@@ -70,9 +70,13 @@ Future<Uint8List> generatePDFContent({
   };
 
   final TransactionFilter filter = TransactionFilter(
-    accounts: options.whitelistedAccounts
-        ?.map((account) => account.uuid)
-        .toList(),
+    accounts: options.whitelistedAccounts == null
+        ? null
+        : .whitelist(
+            options.whitelistedAccounts!
+                .map((account) => account.uuid)
+                .toList(),
+          ),
     range: TransactionFilterTimeRange.fromTimeRange(options.timeRange),
     isPending: false,
     includeDeleted: false,

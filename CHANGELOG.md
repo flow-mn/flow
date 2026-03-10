@@ -1,6 +1,50 @@
 # Changelog
 
-## Next
+## 0.19.4
+
+### Fixes
+
+* Fixed duplicating transfers reversed their accounts
+* Fixed home page pending transactions not showing, closes [#681](https://github.com/flow-mn/flow/issues/681)
+
+### Changes
+
+* Added an optional `transaction date` field to Shortcut action (iOS)
+
+## 0.19.3
+
+### Fixes
+
+* Siri/Eny Account exact match name now works, and is case insensitive
+* Fixed pending transactions were duplicated
+
+### Changes
+
+* **Automation**: Exact match for account and category is no longer case-sensitive
+
+## 0.19.2
+
+### Fixes
+
+* Past pending transactions now always show up to avoid missing payments
+
+### Changes
+
+* Renovated multi account/category sheets
+* Now all fields of iOS Shortcuts are optional, except `Amount`
+
+## 0.19.1
+
+### Changes
+
+* Now it's possible to create category while adding a transaction, credits to [@r4khul](https://github.com/r4khul)
+
+### Fixes
+
+* Fixed "Add an expense" Siri Shortcut struggling with non-US formatted numbers
+* Other minor fixes
+
+## 0.19.0
 
 ### New features
 

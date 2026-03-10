@@ -3,6 +3,7 @@ import "dart:developer";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
@@ -640,7 +641,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
     if (_currentlyEditing == null) return;
 
     final TransactionFilter filter = TransactionFilter(
-      accounts: [_currentlyEditing!.uuid],
+      accounts: StringMultiFilter.whitelist([_currentlyEditing!.uuid]),
     );
 
     final int txnCount = TransactionsService().countMany(filter);

@@ -83,12 +83,14 @@ class TransactionListTile extends StatelessWidget {
       return Container();
     }
 
-    final String resolvedTitle =
-        transaction.title ??
+    final String resolvedTitle = switch (transaction.title) {
+      String title when title.isNotEmpty => title,
+      _ =>
         ((effectiveTheme.useCategoryNameForUntitledTransactionsOrDefault
                 ? transaction.category.target?.name
                 : null) ??
-            "transaction.fallbackTitle".t(context));
+            "transaction.fallbackTitle".t(context)),
+    };
 
     final Transfer? transfer = transaction.isTransfer
         ? transaction.extensions.transfer

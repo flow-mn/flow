@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transactions_filter/group_range.dart";
 import "package:flow/data/transactions_filter/search_data.dart";
 import "package:flow/data/transactions_filter/sort_field.dart";
@@ -7,6 +8,9 @@ import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/accounts.dart";
+import "package:flow/services/categories.dart";
+import "package:flow/services/transaction_tag.dart";
 import "package:flow/utils/json/time_range_converter.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/foundation.dart" hide Category;
@@ -34,14 +38,17 @@ class TransactionFilter implements Jasonable {
 
   final List<TransactionType>? types;
 
-  final List<String>? categories;
-  final List<String>? accounts;
-  final List<String>? tags;
+  @JsonKey(fromJson: StringMultiFilter.fromJsonOrList)
+  final StringMultiFilter? categories;
+  @JsonKey(fromJson: StringMultiFilter.fromJsonOrList)
+  final StringMultiFilter? accounts;
+  @JsonKey(fromJson: StringMultiFilter.fromJsonOrList)
+  final StringMultiFilter? tags;
 
   /// When true, matches transactions that have all of the specified [tags].
   ///
   /// When false, matches transactions that have at least one of the specified [tags].
-  final bool requireAllTags;
+  final bool tagsAndRule;
 
   final bool? hasAttachments;
 
@@ -76,7 +83,7 @@ class TransactionFilter implements Jasonable {
     this.currencies,
     this.extraTag,
     this.hasAttachments,
-    this.requireAllTags = false,
+    this.tagsAndRule = false,
     this.includeDeleted = false,
     this.sortDescending = true,
     this.searchData = const TransactionSearchData(),
@@ -94,20 +101,22 @@ class TransactionFilter implements Jasonable {
     required Set<String> categories,
     required Set<String> tags,
   }) {
-    if (this.accounts?.isNotEmpty == true &&
-        this.accounts!.any((accountUuid) => !accounts.contains(accountUuid))) {
+    if (this.accounts?.items.isNotEmpty == true &&
+        this.accounts!.items.any(
+          (accountUuid) => !accounts.contains(accountUuid),
+        )) {
       return false;
     }
 
-    if (this.categories?.isNotEmpty == true &&
-        this.categories!.any(
+    if (this.categories?.items.isNotEmpty == true &&
+        this.categories!.items.any(
           (categoryUuid) => !categories.contains(categoryUuid),
         )) {
       return false;
     }
 
-    if (this.tags?.isNotEmpty == true &&
-        this.tags!.any((tag) => !tags.contains(tag))) {
+    if (this.tags?.items.isNotEmpty == true &&
+        this.tags!.items.any((tag) => !tags.contains(tag))) {
       return false;
     }
 
@@ -126,95 +135,6 @@ class TransactionFilter implements Jasonable {
     return predicates;
   }
 
-  List<TransactionPredicate> get predicates {
-    final List<TransactionPredicate> predicates = [];
-
-    if (uuids?.isNotEmpty == true) {
-      predicates.add((Transaction t) => uuids!.any((uuid) => t.uuid == uuid));
-    }
-
-    if (range case TimeRange filterTimeRange) {
-      predicates.add(
-        (Transaction t) => filterTimeRange.contains(t.transactionDate),
-      );
-    }
-
-    if (types?.isNotEmpty == true) {
-      predicates.add((Transaction t) => types!.contains(t.type));
-    }
-
-    predicates.add(searchData.predicate);
-
-    if (categories?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) =>
-            categories!.any((category) => t.categoryUuid == category),
-      );
-    }
-
-    if (accounts?.isNotEmpty == true) {
-      predicates.add(
-        (Transaction t) => accounts!.any((account) => t.accountUuid == account),
-      );
-    }
-
-    if (tags?.isNotEmpty == true) {
-      if (requireAllTags) {
-        predicates.add(
-          (Transaction t) =>
-              tags!.every((tag) => t.tags.any((e) => e.uuid == tag)),
-        );
-      } else {
-        predicates.add(
-          (Transaction t) =>
-              tags!.any((tag) => t.tags.any((e) => e.uuid == tag)),
-        );
-      }
-    }
-
-    if (minAmount != null) {
-      predicates.add((Transaction t) => t.amount >= minAmount!);
-    }
-
-    if (maxAmount != null) {
-      predicates.add((Transaction t) => t.amount <= maxAmount!);
-    }
-
-    if (currencies?.isNotEmpty == true) {
-      predicates.add((Transaction t) => currencies!.contains(t.currency));
-    }
-
-    if (isPending != null) {
-      predicates.add((Transaction t) {
-        if (isPending!) {
-          return t.isPending == true;
-        } else {
-          return t.isPending == null || !t.isPending!;
-        }
-      });
-    }
-
-    if (hasAttachments != null) {
-      if (hasAttachments!) {
-        predicates.add((Transaction t) => t.attachments.isNotEmpty);
-      } else {
-        predicates.add((Transaction t) => t.attachments.isEmpty);
-      }
-    }
-
-    if (extraTag != null) {
-      predicates.add((Transaction t) => t.extraTags.contains(extraTag));
-    }
-
-    if (includeDeleted != true) {
-      predicates.add(
-        (Transaction t) => t.isDeleted == null || t.isDeleted == false,
-      );
-    }
-
-    return predicates;
-  }
-
   /// Here, we don't have any fancy fuzzy finding, so
   /// [ignoreKeywordFilter] is enabled by default.
   ///
@@ -222,6 +142,16 @@ class TransactionFilter implements Jasonable {
   /// into memory
   QueryBuilder<Transaction> queryBuilder({bool ignoreKeywordFilter = true}) {
     final List<Condition<Transaction>> conditions = [];
+
+    final List<String>? accountUuids = accounts?.filter(
+      AccountsService().getAllUuidsSync(),
+    );
+    final List<String>? categoryUuids = categories?.filter(
+      CategoriesService().getAllUuidsSync(),
+    );
+    final List<String>? tagUuids = tags?.filter(
+      TransactionTagService().getAllUuidsSync(),
+    );
 
     if (uuids?.isNotEmpty == true) {
       conditions.add(Transaction_.uuid.oneOf(uuids!));
@@ -251,12 +181,16 @@ class TransactionFilter implements Jasonable {
       conditions.add(searchFilter);
     }
 
-    if (categories?.isNotEmpty == true) {
-      conditions.add(Transaction_.categoryUuid.oneOf(categories!));
+    if (categoryUuids != null) {
+      if (categoryUuids.isEmpty) {
+        conditions.add(Transaction_.categoryUuid.isNull());
+      } else {
+        conditions.add(Transaction_.categoryUuid.oneOf(categoryUuids));
+      }
     }
 
-    if (accounts?.isNotEmpty == true) {
-      conditions.add(Transaction_.accountUuid.oneOf(accounts!));
+    if (accountUuids != null) {
+      conditions.add(Transaction_.accountUuid.oneOf(accountUuids));
     }
 
     if (minAmount != null) {
@@ -303,16 +237,19 @@ class TransactionFilter implements Jasonable {
       conditions.isNotEmpty ? conditions.reduce((a, b) => a & b) : null,
     );
 
-    if (tags != null && tags!.isNotEmpty) {
-      if (requireAllTags) {
-        for (final tag in tags!) {
+    if (tagUuids != null) {
+      if (tagsAndRule) {
+        for (final tag in tagUuids) {
           filtered.linkMany(
             Transaction_.tags,
             TransactionTag_.uuid.equals(tag),
           );
         }
       } else {
-        filtered.linkMany(Transaction_.tags, TransactionTag_.uuid.oneOf(tags!));
+        filtered.linkMany(
+          Transaction_.tags,
+          TransactionTag_.uuid.oneOf(tagUuids),
+        );
       }
     }
 
@@ -397,19 +334,19 @@ class TransactionFilter implements Jasonable {
       count++;
     }
 
-    if (!setEquals(categories?.toSet(), other.categories?.toSet())) {
+    if (categories != other.categories) {
       count++;
     }
 
-    if (!setEquals(accounts?.toSet(), other.accounts?.toSet())) {
+    if (accounts != other.accounts) {
       count++;
     }
 
-    if (!setEquals(tags?.toSet(), other.tags?.toSet())) {
+    if (tags != other.tags) {
       count++;
     }
 
-    if (requireAllTags != other.requireAllTags) {
+    if (tagsAndRule != other.tagsAndRule) {
       count++;
     }
 
@@ -432,9 +369,9 @@ class TransactionFilter implements Jasonable {
     Optional<List<TransactionType>>? types,
     Optional<TransactionFilterTimeRange>? range,
     TransactionSearchData? searchData,
-    Optional<List<String>>? categories,
-    Optional<List<String>>? accounts,
-    Optional<List<String>>? tags,
+    Optional<StringMultiFilter>? categories,
+    Optional<StringMultiFilter>? accounts,
+    Optional<StringMultiFilter>? tags,
     Optional<bool>? sortDescending,
     TransactionSortField? sortBy,
     Optional<TransactionGroupRange>? groupBy,
@@ -444,7 +381,7 @@ class TransactionFilter implements Jasonable {
     Optional<List<String>>? currencies,
     Optional<String>? extraTag,
     Optional<bool>? hasAttachments,
-    Optional<bool>? requireAllTags,
+    Optional<bool>? tagsAndRule,
   }) {
     return TransactionFilter(
       types: types != null ? types.value : this.types,
@@ -464,7 +401,7 @@ class TransactionFilter implements Jasonable {
       hasAttachments: hasAttachments != null
           ? hasAttachments.value
           : this.hasAttachments,
-      requireAllTags: requireAllTags?.value ?? this.requireAllTags,
+      tagsAndRule: tagsAndRule?.value ?? this.tagsAndRule,
     );
   }
 
@@ -506,11 +443,11 @@ class TransactionFilter implements Jasonable {
         other.includeDeleted == includeDeleted &&
         other.isPending == isPending &&
         other.extraTag == extraTag &&
+        other.types == types &&
+        other.categories == categories &&
+        other.accounts == accounts &&
         setEquals(other.uuids?.toSet(), uuids?.toSet()) &&
-        setEquals(other.currencies?.toSet(), currencies?.toSet()) &&
-        setEquals(other.types?.toSet(), types?.toSet()) &&
-        setEquals(other.categories?.toSet(), categories?.toSet()) &&
-        setEquals(other.accounts?.toSet(), accounts?.toSet());
+        setEquals(other.currencies?.toSet(), currencies?.toSet());
   }
 
   factory TransactionFilter.fromJson(Map<String, dynamic> json) =>

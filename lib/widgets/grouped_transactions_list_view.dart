@@ -129,7 +129,7 @@ class _GroupedTransactionsListViewState
         UserPreferencesService().combineTransfers;
 
     final List<Object> flattened = [
-      if (header != null) header!,
+      ?header,
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
           widget.headerBuilder(true, entry.key, entry.value),
@@ -168,6 +168,7 @@ class _GroupedTransactionsListViewState
             index: index,
             key: ValueKey(transaction.uuid),
             child: TransactionListTile(
+              key: ValueKey(transaction.id),
               combineTransfers: combineTransfers,
               transaction: transaction,
               dismissibleKey: ValueKey(transaction.id),

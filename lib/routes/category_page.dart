@@ -2,6 +2,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/multi_currency_flow.dart";
 import "package:flow/data/single_currency_flow.dart";
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/category.dart";
@@ -62,7 +63,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
   QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
     range: TransactionFilterTimeRange.fromTimeRange(range),
-    categories: [category!.uuid],
+    categories: StringMultiFilter.whitelist([category!.uuid]),
     sortBy: TransactionSortField.transactionDate,
     sortDescending: true,
   ).queryBuilder();

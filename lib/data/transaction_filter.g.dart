@@ -10,13 +10,9 @@ TransactionFilter _$TransactionFilterFromJson(
   Map<String, dynamic> json,
 ) => TransactionFilter(
   uuids: (json['uuids'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  categories: (json['categories'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-  accounts: (json['accounts'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-  tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  categories: StringMultiFilter.fromJsonOrList(json['categories']),
+  accounts: StringMultiFilter.fromJsonOrList(json['accounts']),
+  tags: StringMultiFilter.fromJsonOrList(json['tags']),
   range: json['range'] == null
       ? null
       : TransactionFilterTimeRange.fromJson(json['range'] as String),
@@ -31,7 +27,7 @@ TransactionFilter _$TransactionFilterFromJson(
       .toList(),
   extraTag: json['extraTag'] as String?,
   hasAttachments: json['hasAttachments'] as bool?,
-  requireAllTags: json['requireAllTags'] as bool? ?? false,
+  tagsAndRule: json['tagsAndRule'] as bool? ?? false,
   includeDeleted: json['includeDeleted'] as bool? ?? false,
   sortDescending: json['sortDescending'] as bool? ?? true,
   searchData: json['searchData'] == null
@@ -54,10 +50,10 @@ Map<String, dynamic> _$TransactionFilterToJson(
   'uuids': instance.uuids,
   'searchData': instance.searchData.toJson(),
   'types': instance.types?.map((e) => _$TransactionTypeEnumMap[e]!).toList(),
-  'categories': instance.categories,
-  'accounts': instance.accounts,
-  'tags': instance.tags,
-  'requireAllTags': instance.requireAllTags,
+  'categories': instance.categories?.toJson(),
+  'accounts': instance.accounts?.toJson(),
+  'tags': instance.tags?.toJson(),
+  'tagsAndRule': instance.tagsAndRule,
   'hasAttachments': instance.hasAttachments,
   'sortDescending': instance.sortDescending,
   'sortBy': _$TransactionSortFieldEnumMap[instance.sortBy]!,

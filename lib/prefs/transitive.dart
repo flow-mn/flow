@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:convert";
 
 import "package:flow/data/prefs/frecency.dart";
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
@@ -206,7 +207,7 @@ class TransitiveLocalPreferences {
     for (final category in categories) {
       try {
         final TransactionFilter filter = TransactionFilter(
-          categories: [category.uuid],
+          categories: StringMultiFilter.whitelist([category.uuid]),
           range: TransactionFilterTimeRange.fromTimeRange(
             (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
           ),
@@ -250,7 +251,7 @@ class TransitiveLocalPreferences {
     for (final account in accounts) {
       try {
         final TransactionFilter filter = TransactionFilter(
-          accounts: [account.uuid],
+          accounts: StringMultiFilter.whitelist([account.uuid]),
           range: TransactionFilterTimeRange.fromTimeRange(
             (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
           ),
@@ -296,7 +297,7 @@ class TransitiveLocalPreferences {
     for (final tag in tags) {
       try {
         final TransactionFilter filter = TransactionFilter(
-          tags: [tag.uuid],
+          tags: StringMultiFilter.whitelist([tag.uuid]),
           range: TransactionFilterTimeRange.fromTimeRange(
             (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
           ),

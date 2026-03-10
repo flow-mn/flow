@@ -2,7 +2,9 @@ import "package:flow/data/money.dart";
 import "package:flow/entity/transaction/type.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/loose_parsers.dart";
+import "package:flow/utils/money_parsing.dart";
 import "package:flow/utils/utils.dart";
+import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
 
 class TransactionProgrammableObject {
@@ -106,6 +108,12 @@ class TransactionProgrammableObject {
       _ => null,
     };
 
+    final bool isPending =
+        (looseString(params["isPending"])?.toLowerCase() == "true")
+        ? true
+        : (transactionDate?.isAfter(DateTime.now().startOfNextMinute()) ??
+              false);
+
     return TransactionProgrammableObject(
       transactionDate: transactionDate,
       categoryUuid: looseString(params["categoryUuid"]),
@@ -118,7 +126,7 @@ class TransactionProgrammableObject {
       toAccountUuid: looseString(params["toAccountUuid"]),
       toAccount: looseString(params["toAccount"]),
       type: type,
-      isPending: looseString(params["isPending"])?.toLowerCase() == "true",
+      isPending: isPending,
       transferConversionRate: looseDouble(params["transferConversionRate"]),
       tagsUuids: looseStringList(params["tagsUuids"]),
       tags: looseStringList(params["tags"]),
@@ -153,6 +161,13 @@ class TransactionProgrammableObject {
 
       if (json["amount"] case num amount) {
         json["amount"] = -(amount.toDouble().abs());
+      }
+
+      if (json["amount"] case String amountString) {
+        final double? amount = parseMoneyString(text: amountString);
+        if (amount != null) {
+          json["amount"] = -(amount.abs());
+        }
       }
 
       return parse(json.cast<String, dynamic>());

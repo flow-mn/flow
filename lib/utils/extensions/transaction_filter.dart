@@ -6,12 +6,21 @@ import "package:flow/entity/transaction/type.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
+import "package:flow/services/accounts.dart";
+import "package:flow/services/categories.dart";
 import "package:flow/utils/time_and_range.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
 
 extension TransactionFilterHelpers on TransactionFilter {
   String summary(BuildContext context) {
+    final int? accountsCount = accounts
+        ?.filter(AccountsService().getAllUuidsSync())
+        .length;
+    final int? categoriesCount = categories
+        ?.filter(CategoriesService().getAllUuidsSync())
+        .length;
+
     final List<String> parts = [];
     if (searchData.keyword != null && searchData.keyword!.isNotEmpty) {
       parts.add('"${searchData.keyword}"');
@@ -25,15 +34,15 @@ extension TransactionFilterHelpers on TransactionFilter {
       ),
     );
 
-    if (accounts?.isNotEmpty == true) {
+    if (accountsCount != null) {
       parts.add(
-        "transactions.query.filter.accounts.n".t(context, accounts!.length),
+        "transactions.query.filter.accounts.n".t(context, accountsCount),
       );
     }
 
-    if (categories?.isNotEmpty == true) {
+    if (categoriesCount != null) {
       parts.add(
-        "transactions.query.filter.categories.n".t(context, categories!.length),
+        "transactions.query.filter.categories.n".t(context, categoriesCount),
       );
     }
 

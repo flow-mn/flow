@@ -32,6 +32,7 @@ import "package:flow/routes/transaction_page/sections/tags_section.dart";
 import "package:flow/routes/transaction_page/select_account_sheet.dart";
 import "package:flow/routes/transaction_page/select_category_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurrence.dart";
+import "package:flow/routes/transaction_page/select_recurrence_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/accounts.dart";
@@ -866,7 +867,6 @@ class _TransactionPageState extends State<TransactionPage> {
           await showModalBottomSheet<Optional<Category>>(
             context: context,
             builder: (context) => SelectCategorySheet(
-              categories: categories,
               currentlySelectedCategoryId: _selectedCategory?.id,
               showTrailing: widget.isNewTransaction,
             ),
@@ -1001,11 +1001,16 @@ class _TransactionPageState extends State<TransactionPage> {
     return true;
   }
 
-  void _setupRecurring() {
-    _recurrence ??= Recurrence(
-      range: transactionDate.rangeToMax(),
-      rules: [MonthlyRecurrenceRule(day: transactionDate.day)],
+  void _setupRecurring() async {
+    final Recurrence? result = await showModalBottomSheet(
+      context: context,
+      builder: (context) => SelectRecurrenceSheet(
+        initialValue: _recurrence,
+        startBounds: transactionDate.rangeToMax(),
+      ),
     );
+
+    _recurrence ??= result;
 
     setState(() {});
   }
@@ -1258,7 +1263,7 @@ class _TransactionPageState extends State<TransactionPage> {
       );
     }
 
-    final List<TransactionExtension> extensions = [if (_geo != null) _geo!];
+    final List<TransactionExtension> extensions = [?_geo];
 
     if (isTransfer) {
       _selectedAccount!.transferTo(

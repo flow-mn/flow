@@ -2,6 +2,7 @@ import "package:auto_size_text/auto_size_text.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/multi_currency_flow.dart";
 import "package:flow/data/single_currency_flow.dart";
+import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
@@ -63,7 +64,7 @@ class _AccountPageState extends State<AccountPage> {
   bool busy = false;
 
   QueryBuilder<Transaction> qb(TimeRange range) => TransactionFilter(
-    accounts: [account!.uuid],
+    accounts: StringMultiFilter.whitelist([account!.uuid]),
     range: TransactionFilterTimeRange.fromTimeRange(range),
     sortBy: TransactionSortField.transactionDate,
     sortDescending: true,

@@ -28,7 +28,8 @@ class Budget implements EntityBase {
   @Unique()
   String name;
 
-  /// [moment_dart](https://pub.dev/packages/moment_dart)'s [TimeRange] compliant string
+  /// [moment_dart](https://pub.dev/packages/moment_dart)'s [TimeRange]
+  /// compliant string
   String range;
 
   @Transient()
@@ -36,26 +37,31 @@ class Budget implements EntityBase {
 
   set timeRange(TimeRange value) => range = value.toString();
 
+  /// When [true], and [timeRange] is [PageableRange], it will automatically
+  /// create a new budget for the next period when the current one expires.
+  bool renewAutomatically;
+
   double amount;
 
   String currency;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  final category = ToOne<Category>();
+  final categories = ToMany<Category>();
 
   @Transient()
-  String? _categoryUuid;
+  List<String>? _categoriesUuids;
 
-  String? get categoryUuid => _categoryUuid ?? category.target?.uuid;
+  List<String>? get categoriesUuids =>
+      _categoriesUuids ?? categories.map((e) => e.uuid).toList();
 
-  set categoryUuid(String? value) {
-    _categoryUuid = value;
+  set categoriesUuids(List<String>? newTagUuids) {
+    _categoriesUuids = newTagUuids ?? <String>[];
   }
 
-  /// This won't be saved until you call `Box.put()`
-  void setCategory(Category? newCategory) {
-    category.target = newCategory;
-    categoryUuid = newCategory?.uuid;
+  void setCategories(List<Category>? newCategories) {
+    categories.clear();
+    categories.addAll(newCategories ?? []);
+    categoriesUuids = categories.map((e) => e.uuid).toList();
   }
 
   Budget({
@@ -64,6 +70,7 @@ class Budget implements EntityBase {
     required this.amount,
     required this.currency,
     required this.range,
+    this.renewAutomatically = true,
     DateTime? createdDate,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = const Uuid().v4();

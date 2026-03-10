@@ -24,6 +24,11 @@ class AccountsService {
     return ObjectBox().box<Account>().getAllAsync();
   }
 
+  List<String> getAllUuidsSync() {
+    final List<Account> accounts = ObjectBox().box<Account>().getAll();
+    return accounts.map((account) => account.uuid).toList();
+  }
+
   Future<Account?> findOne(dynamic identifier) async {
     if (identifier is int) {
       return await getOne(identifier);
@@ -44,7 +49,7 @@ class AccountsService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Account>()
-          .query(Account_.name.equals(name))
+          .query(Account_.name.equals(name, caseSensitive: false))
           .build();
 
       final Account? result = await q.findFirstAsync();
@@ -76,7 +81,7 @@ class AccountsService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Account>()
-          .query(Account_.name.equals(name))
+          .query(Account_.name.equals(name, caseSensitive: false))
           .build();
 
       final Account? result = q.findFirst();

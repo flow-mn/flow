@@ -634,7 +634,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(11, 4948078457888921031),
     name: 'Budget',
-    lastPropertyId: const obx_int.IdUid(9, 6886515900911773491),
+    lastPropertyId: const obx_int.IdUid(11, 3812796204565944657),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -676,28 +676,31 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(7, 801892318627771901),
-        name: 'categoryId',
-        type: 11,
-        flags: 520,
-        indexId: const obx_int.IdUid(21, 7291423328418584896),
-        relationField: 'category',
-        relationTarget: 'Category',
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(8, 4590726328503721316),
-        name: 'categoryUuid',
-        type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(9, 6886515900911773491),
         name: 'range',
         type: 9,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 2444273280228107480),
+        name: 'renewAutomatically',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 3812796204565944657),
+        name: 'categoriesUuids',
+        type: 30,
+        flags: 0,
+      ),
     ],
-    relations: <obx_int.ModelRelation>[],
+    relations: <obx_int.ModelRelation>[
+      obx_int.ModelRelation(
+        id: const obx_int.IdUid(4, 5665142201815113360),
+        name: 'categories',
+        targetId: const obx_int.IdUid(2, 649350347514211469),
+      ),
+    ],
     backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
@@ -998,14 +1001,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
     entities: _entities,
     lastEntityId: const obx_int.IdUid(15, 3741443681678089583),
     lastIndexId: const obx_int.IdUid(27, 5707692371585154920),
-    lastRelationId: const obx_int.IdUid(3, 8693268912561290427),
+    lastRelationId: const obx_int.IdUid(4, 5665142201815113360),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
       3796819593314794683,
       2857566645668229410,
       268813570801700112,
     ],
-    retiredIndexUids: const [],
+    retiredIndexUids: const [7291423328418584896],
     retiredPropertyUids: const [
       620570223027064518,
       4256690661297760083,
@@ -1053,6 +1056,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       610924910099589699,
       3063095817126288040,
       2071092278574175844,
+      801892318627771901,
+      4590726328503721316,
     ],
     retiredRelationUids: const [552720950599490473],
     modelVersion: 5,
@@ -1824,8 +1829,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
     ),
     Budget: obx_int.EntityDefinition<Budget>(
       model: _entities[7],
-      toOneRelations: (Budget object) => [object.category],
-      toManyRelations: (Budget object) => {},
+      toOneRelations: (Budget object) => [],
+      toManyRelations: (Budget object) => {
+        obx_int.RelInfo<Budget>.toMany(4, object.id): object.categories,
+      },
       getId: (Budget object) => object.id,
       setId: (Budget object, int id) {
         object.id = id;
@@ -1834,20 +1841,24 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final uuidOffset = fbb.writeString(object.uuid);
         final nameOffset = fbb.writeString(object.name);
         final currencyOffset = fbb.writeString(object.currency);
-        final categoryUuidOffset = object.categoryUuid == null
-            ? null
-            : fbb.writeString(object.categoryUuid!);
         final rangeOffset = fbb.writeString(object.range);
-        fbb.startTable(10);
+        final categoriesUuidsOffset = object.categoriesUuids == null
+            ? null
+            : fbb.writeList(
+                object.categoriesUuids!
+                    .map(fbb.writeString)
+                    .toList(growable: false),
+              );
+        fbb.startTable(12);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
         fbb.addOffset(3, nameOffset);
         fbb.addFloat64(4, object.amount);
         fbb.addOffset(5, currencyOffset);
-        fbb.addInt64(6, object.category.targetId);
-        fbb.addOffset(7, categoryUuidOffset);
         fbb.addOffset(8, rangeOffset);
+        fbb.addBool(9, object.renewAutomatically);
+        fbb.addOffset(10, categoriesUuidsOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1875,6 +1886,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final rangeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 20, '');
+        final renewAutomaticallyParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          22,
+          false,
+        );
         final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
         );
@@ -1885,21 +1902,21 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 amount: amountParam,
                 currency: currencyParam,
                 range: rangeParam,
+                renewAutomatically: renewAutomaticallyParam,
                 createdDate: createdDateParam,
               )
               ..uuid = const fb.StringReader(
                 asciiOptimization: true,
               ).vTableGet(buffer, rootOffset, 6, '')
-              ..categoryUuid = const fb.StringReader(
-                asciiOptimization: true,
-              ).vTableGetNullable(buffer, rootOffset, 18);
-        object.category.targetId = const fb.Int64Reader().vTableGet(
-          buffer,
-          rootOffset,
-          16,
-          0,
+              ..categoriesUuids = const fb.ListReader<String>(
+                fb.StringReader(asciiOptimization: true),
+                lazy: false,
+              ).vTableGetNullable(buffer, rootOffset, 24);
+        obx_int.InternalToManyAccess.setRelInfo<Budget>(
+          object.categories,
+          store,
+          obx_int.RelInfo<Budget>.toMany(4, object.id),
         );
-        object.category.attach(store);
         return object;
       },
     ),
@@ -2711,19 +2728,24 @@ class Budget_ {
     _entities[7].properties[5],
   );
 
-  /// See [Budget.category].
-  static final category = obx.QueryRelationToOne<Budget, Category>(
+  /// See [Budget.range].
+  static final range = obx.QueryStringProperty<Budget>(
     _entities[7].properties[6],
   );
 
-  /// See [Budget.categoryUuid].
-  static final categoryUuid = obx.QueryStringProperty<Budget>(
+  /// See [Budget.renewAutomatically].
+  static final renewAutomatically = obx.QueryBooleanProperty<Budget>(
     _entities[7].properties[7],
   );
 
-  /// See [Budget.range].
-  static final range = obx.QueryStringProperty<Budget>(
+  /// See [Budget.categoriesUuids].
+  static final categoriesUuids = obx.QueryStringVectorProperty<Budget>(
     _entities[7].properties[8],
+  );
+
+  /// see [Budget.categories]
+  static final categories = obx.QueryRelationToMany<Budget, Category>(
+    _entities[7].relations[0],
   );
 }
 

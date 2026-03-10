@@ -22,6 +22,11 @@ class CategoriesService {
     return ObjectBox().box<Category>().get(id);
   }
 
+  List<String> getAllUuidsSync() {
+    final List<Category> categories = ObjectBox().box<Category>().getAll();
+    return categories.map((category) => category.uuid).toList();
+  }
+
   Future<List<Category>> getAll() async {
     return ObjectBox().box<Category>().getAllAsync();
   }
@@ -72,7 +77,7 @@ class CategoriesService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Category>()
-          .query(Category_.name.equals(name))
+          .query(Category_.name.equals(name, caseSensitive: false))
           .build();
 
       final Category? result = await q.findFirstAsync();
@@ -104,7 +109,7 @@ class CategoriesService {
     if (identifier case String name) {
       final q = ObjectBox()
           .box<Category>()
-          .query(Category_.name.equals(name))
+          .query(Category_.name.equals(name, caseSensitive: false))
           .build();
 
       final Category? result = q.findFirst();

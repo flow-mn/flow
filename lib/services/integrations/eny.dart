@@ -311,19 +311,22 @@ class EnyService {
       if (UserPreferencesService().createTransactionsPerItemInScans) {
         final TransactionMultiProgrammableObject? parsed =
             TransactionMultiProgrammableObject.fromEnyJson(enySuccessResult);
-        parsed?.save(
-          extensions: [
-            EnyReceipt(
-              uuid: const Uuid().v4(),
-              enyImageUrl: enySuccessResult["imageUrl"] as String?,
-              enyReceiptId: id,
-              partOfMultiTransaction: true,
-            ),
-          ],
-          isPendingOverride: markPendingAllTransactions
-              ? true
-              : shouldMarkPending(parsed.t.firstOrNull?.transactionDate),
-        );
+        for (final TransactionProgrammableObject? transaction
+            in parsed?.t ?? []) {
+          transaction?.save(
+            extensions: [
+              EnyReceipt(
+                uuid: const Uuid().v4(),
+                enyImageUrl: enySuccessResult["imageUrl"] as String?,
+                enyReceiptId: id,
+                partOfMultiTransaction: true,
+              ),
+            ],
+            isPendingOverride: markPendingAllTransactions
+                ? true
+                : shouldMarkPending(transaction.transactionDate),
+          );
+        }
 
         completed = parsed != null && parsed.t.isNotEmpty;
         succeeded = completed;

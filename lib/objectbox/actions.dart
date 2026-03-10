@@ -576,6 +576,10 @@ extension TransactionActions on Transaction {
   }
 
   bool confirm([bool confirm = true, bool updateTransactionDate = true]) {
+    if (extraTags.contains(Transaction.importedFromSiriTag)) {
+      updateTransactionDate = false;
+    }
+
     try {
       if (isTransfer) {
         final Transfer? transfer = extensions.transfer;
@@ -633,7 +637,7 @@ extension TransactionActions on Transaction {
 
       final (int a, _) = fromAccount.transferTo(
         targetAccount: toAccount,
-        amount: amount,
+        amount: amount.abs(),
         description: description,
         createdDate: Moment.now(),
         isPending: isPending,
@@ -645,6 +649,7 @@ extension TransactionActions on Transaction {
         extensions: extensions.data,
         latitude: extensions.geo?.latitude,
         longitude: extensions.geo?.longitude,
+        conversionRate: transferDetails.conversionRate,
       );
 
       return a;
@@ -944,11 +949,7 @@ extension AccountActions on Account {
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [
-        ...filteredExtensions,
-        transferData,
-        if (recurringExtension != null) recurringExtension,
-      ],
+      extensions: [...filteredExtensions, transferData, ?recurringExtension],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -1179,8 +1180,8 @@ extension BackupEntryActions on BackupEntry {
 extension TransactionProgrammableObjectActions
     on TransactionProgrammableObject {
   int save({
-    dynamic fromAccount,
-    dynamic toAccount,
+    dynamic fromAccountOverride,
+    dynamic toAccountOverride,
     List<String>? extraTags,
     List<TransactionExtension>? extensions,
     bool? isPendingOverride,
@@ -1188,7 +1189,7 @@ extension TransactionProgrammableObjectActions
     final Account? resolvedFromAccount =
         AccountsService().findOneActiveSync(fromAccountUuid) ??
         AccountsService().findOneActiveSync(fromAccount) ??
-        switch (fromAccount) {
+        switch (fromAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         } ??
@@ -1199,7 +1200,7 @@ extension TransactionProgrammableObjectActions
     Account? resolvedToAccount =
         AccountsService().findOneActiveSync(toAccountUuid) ??
         AccountsService().findOneActiveSync(toAccount) ??
-        switch (toAccount) {
+        switch (toAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         };

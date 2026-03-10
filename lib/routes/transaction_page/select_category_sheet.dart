@@ -1,3 +1,4 @@
+import "package:flow/providers/categories_provider.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/optional.dart";
@@ -13,7 +14,6 @@ import "package:material_symbols_icons/symbols.dart";
 
 /// Pops with [ValueOr<Category>]
 class SelectCategorySheet extends StatefulWidget {
-  final List<Category> categories;
   final int? currentlySelectedCategoryId;
 
   /// Defaults to [true] when there are more than 6 categories.
@@ -23,7 +23,6 @@ class SelectCategorySheet extends StatefulWidget {
 
   const SelectCategorySheet({
     super.key,
-    required this.categories,
     this.currentlySelectedCategoryId,
     this.showSearchBar,
     this.showTrailing = true,
@@ -38,16 +37,20 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showSearchBar =
-        widget.showSearchBar ?? widget.categories.length > 6;
-
-    final List<Category> results = simpleSortByQuery(widget.categories, _query);
+    final List<Category> categories = CategoriesProvider.of(context).categories;
+    final bool showSearchBar = widget.showSearchBar ?? categories.length > 6;
+    final List<Category> results = simpleSortByQuery(categories, _query);
 
     return ModalSheet.scrollable(
       title: Text("transaction.edit.selectCategory".t(context)),
       trailing: ModalOverflowBar(
         alignment: .end,
         children: [
+          TextButton.icon(
+            onPressed: () => context.push("/category/new"),
+            icon: const Icon(Symbols.add_rounded),
+            label: Text("general.new".t(context)),
+          ),
           TextButton.icon(
             onPressed: () => context.pop(const Optional<Category>(null)),
             icon: const Icon(Symbols.block_rounded, fill: 0.0),
