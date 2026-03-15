@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Obnovit data z předchozí zálohy Flow",
   "setup.onboarding.recoverICloudBackup": "Obnovit z iCloudu",
   "setup.onboarding.recoverICloudBackup.description": "Obnovit z iCloudu (poslední synchronizace: {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "Obnovit z iCloudu (načítají se data...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "Obnovit z iCloudu (nenalezeny žádné zálohy)",
   "setup.primaryCurrency.choose": "Vyberte měnu",
   "setup.primaryCurrency.description": "Toto bude vaše primární měna. Můžete ji později změnit v \"Předvolbách\".",
   "setup.primaryCurrency.setup": "Vyberte měnu",

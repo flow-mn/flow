@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Önceki bir Flow yedeklemesinden verileri geri yükleme",
   "setup.onboarding.recoverICloudBackup": "iCloud'dan kurtar",
   "setup.onboarding.recoverICloudBackup.description": "iCloud'dan kurtar (son senkronize: {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "iCloud'dan geri yükle (veriler yükleniyor...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "iCloud'dan geri yükle (yedek bulunamadı)",
   "setup.primaryCurrency.choose": "Bir para birimi seçin",
   "setup.primaryCurrency.description": "Bu sizin birincil para biriminiz olacaktır. Bunu daha sonra \"Tercihler\" menüsünden değiştirebilirsiniz.",
   "setup.primaryCurrency.setup": "Bir para birimi seçin",

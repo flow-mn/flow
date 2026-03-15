@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "بازیابی داده از نسخه پشتیبان قبلی Flow",
   "setup.onboarding.recoverICloudBackup": "بازیابی از iCloud",
   "setup.onboarding.recoverICloudBackup.description": "بازیابی از iCloud (آخرین همگام‌سازی در {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "بازیابی از iCloud (در حال بارگذاری داده‌ها...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "بازیابی از iCloud (هیچ نسخه پشتیبان یافت نشد)",
   "setup.primaryCurrency.choose": "یک ارز انتخاب کنید",
   "setup.primaryCurrency.description": "این ارزِ اصلی شما خواهد بود. بعداً می‌توانید آن را در منوی «تنظیمات» تغییر دهید.",
   "setup.primaryCurrency.setup": "انتخاب یک ارز",

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.19.5
+
+### Fixes
+
+* In the setup screen, iCloud backups option now always shows up on iOS/macOS
+  devices
+* Fixed smart search, transaction type filter not working on home page
+* Fixed Eny integration not working in some scenarios
+
+### Changes
+
+* iOS Shortcut inputs are now trimmed (removes leading and trailing whitespace)
+  for better consistency
+
 ## 0.19.4
 
 ### Fixes
