@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Daten aus einer früheren Flow-Sicherung wiederherstellen.",
   "setup.onboarding.recoverICloudBackup": "Aus iCloud wiederherstellen",
   "setup.onboarding.recoverICloudBackup.description": "Aus iCloud wiederherstellen (zuletzt synchronisiert am {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "Aus iCloud wiederherstellen (Daten werden geladen...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "Aus iCloud wiederherstellen (keine Backups gefunden)",
   "setup.primaryCurrency.choose": "Währung auswählen",
   "setup.primaryCurrency.description": "Das wird deine Hauptwährung sein. Du kannst das später im Menü „Einstellungen“ ändern.",
   "setup.primaryCurrency.setup": "Währung auswählen",

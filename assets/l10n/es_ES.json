@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Restaurar datos desde una copia de seguridad anterior de Flow",
   "setup.onboarding.recoverICloudBackup": "Recuperar desde iCloud",
   "setup.onboarding.recoverICloudBackup.description": "Recuperar desde iCloud (última sincronización el {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "Recuperar desde iCloud (cargando datos...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "Recuperar desde iCloud (no se han encontrado copias de seguridad)",
   "setup.primaryCurrency.choose": "Elegir una moneda",
   "setup.primaryCurrency.description": "Esta será tu moneda principal. Puedes cambiarla más tarde en el menú \"Preferencias\".",
   "setup.primaryCurrency.setup": "Seleccionar una moneda",

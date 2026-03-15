@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
@@ -10,11 +11,12 @@ import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/extensions/backup_entry.dart";
 import "package:flow/widgets/export/export_history/backup_entry_card.dart";
-import "package:flow/widgets/export/export_history/no_backups.dart";
+import "package:flow/widgets/general/empty_state.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/icloud_failed_error_box.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:path/path.dart" as path;
 
 class ExportHistoryPage extends StatefulWidget {
@@ -96,7 +98,13 @@ class _ExportHistoryPageState extends State<ExportHistoryPage> {
                 );
 
                 return switch ((backupEntries?.length ?? 0, snapshot.hasData)) {
-                  (0, true) => const NoBackups(),
+                  (0, true) => EmptyState(
+                    icon: FlowIconData.icon(Symbols.history_rounded),
+                    title: Text("sync.export.history.empty".t(context)),
+                    subtitle: Text(
+                      "sync.export.history.empty.description".t(context),
+                    ),
+                  ),
                   (_, true) => Column(
                     children: [
                       if (ICloudSyncer.supported && !iCloudSyncWorkingFine)

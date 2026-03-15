@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Өмнө нь Flow-с нөөцөлж авсан өгөгдлийг сэргээх",
   "setup.onboarding.recoverICloudBackup": "iCloud-с сэргээх",
   "setup.onboarding.recoverICloudBackup.description": "iCloud-н нөөцөөс сэргээх (сүүлчийнх: {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "iCloud-н нөөцөөс сэргээх (уншиж байна)",
+  "setup.onboarding.recoverICloudBackup.description.none": "iCloud-н нөөцөөс сэргээх (нөөц олдсонгүй)",
   "setup.primaryCurrency.choose": "Үндсэн валют сонгох",
   "setup.primaryCurrency.description": "Энэ таны үндсэн валют болох бөгөөд та үүнийг \"Тохиргоо\" цэсээс өөрчлөх боломжтой.",
   "setup.primaryCurrency.setup": "Валют сонгох",

@@ -11,7 +11,7 @@ import "package:path/path.dart" as path;
 
 /// Pops with [SyncerItem] when a backup is selected.
 class ICloudBackupPickerSheet extends StatefulWidget {
-  final List<SyncerItem> backups;
+  final List<SyncerItem>? backups;
 
   const ICloudBackupPickerSheet({super.key, required this.backups});
 
@@ -23,7 +23,7 @@ class ICloudBackupPickerSheet extends StatefulWidget {
 class _ICloudBackupPickerSheetState extends State<ICloudBackupPickerSheet> {
   @override
   Widget build(BuildContext context) {
-    final List<SyncerItem> eligibleItems = widget.backups
+    final List<SyncerItem> eligibleItems = (widget.backups ?? [])
         .where((item) => item.inferredBackupDate != null)
         .toList();
 
@@ -34,17 +34,25 @@ class _ICloudBackupPickerSheetState extends State<ICloudBackupPickerSheet> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: eligibleItems
-                .map(
-                  (backup) => ListTile(
-                    leading: FlowIcon(backup.path.backupExtensionIcon),
-                    title: Text(backup.inferredBackupDate!.toMoment().lll),
-                    subtitle: Text(path.extension(backup.path).substring(1)),
-                    onTap: () => context.pop(backup),
-                    trailing: LeChevron(),
+            children: [
+              if (eligibleItems.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "setup.onboarding.recoverICloudBackup.noBackups".t(context),
+                    textAlign: TextAlign.center,
                   ),
-                )
-                .toList(),
+                ),
+              ...eligibleItems.map(
+                (backup) => ListTile(
+                  leading: FlowIcon(backup.path.backupExtensionIcon),
+                  title: Text(backup.inferredBackupDate!.toMoment().lll),
+                  subtitle: Text(path.extension(backup.path).substring(1)),
+                  onTap: () => context.pop(backup),
+                  trailing: LeChevron(),
+                ),
+              ),
+            ],
           ),
         ),
       ),

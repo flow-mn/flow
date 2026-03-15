@@ -507,6 +507,8 @@
   "setup.onboarding.importExisting.description": "Восстановить данные из предыдущей резервной копии Flow",
   "setup.onboarding.recoverICloudBackup": "Восстановить из iCloud",
   "setup.onboarding.recoverICloudBackup.description": "Восстановить из iCloud (последняя синхронизация: {lastSynced})",
+  "setup.onboarding.recoverICloudBackup.description.loading": "Восстановление из iCloud (загрузка данных...)",
+  "setup.onboarding.recoverICloudBackup.description.none": "Восстановление из iCloud (резервных копий не найдено)",
   "setup.primaryCurrency.choose": "Выберите валюту",
   "setup.primaryCurrency.description": "Это будет ваша основная валюта. Вы можете изменить это позже в меню \"Настройки\".",
   "setup.primaryCurrency.setup": "Выберите валюту",

@@ -67,7 +67,7 @@ class _AccountsTabState extends State<AccountsTab>
     }
 
     return switch (accounts.length) {
-      0 => const NoAccounts(),
+      0 => NoAccounts(),
       _ => Column(
         spacing: 16.0,
         children: [

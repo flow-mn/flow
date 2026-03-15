@@ -311,7 +311,8 @@ class EnyService {
       if (UserPreferencesService().createTransactionsPerItemInScans) {
         final TransactionMultiProgrammableObject? parsed =
             TransactionMultiProgrammableObject.fromEnyJson(enySuccessResult);
-        for (final transaction in parsed?.t ?? []) {
+        for (final TransactionProgrammableObject? transaction
+            in parsed?.t ?? []) {
           transaction?.save(
             extensions: [
               EnyReceipt(

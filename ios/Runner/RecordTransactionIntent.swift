@@ -43,7 +43,7 @@ struct RecordTransactionIntent: AppIntent {
         }
         let tx = RecordedTransaction(
             transactionDate: transactionDate ?? Date(), type: .expense, amount: parsedAmount,
-            title: title, fromAccount: account, category: category,
+            title: title?.trimmingCharacters(in: .whitespacesAndNewlines), fromAccount: account?.trimmingCharacters(in: .whitespacesAndNewlines), category: category?.trimmingCharacters(in: .whitespacesAndNewlines),
             notes: notes)
         try RecordedTransactionService.append(tx)
         return .result(dialog: "Expense recorded ✅")
