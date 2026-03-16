@@ -561,11 +561,12 @@ packages:
   flutter_dynamic_icon_plus:
     dependency: "direct main"
     description:
-      name: flutter_dynamic_icon_plus
-      sha256: "7721ef2666691064dece879d968fa7e1c4d64aa743ea998e6b1e65a1b482f212"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
+      path: "."
+      ref: HEAD
+      resolved-ref: ac4ea6dba62f033e6c355617c5c54b5ded17cca2
+      url: "git@github.com:sadespresso/flutter_dynamic_icon_plus.git"
+    source: git
+    version: "1.4.1"
   flutter_keyboard_visibility_linux:
     dependency: transitive
     description:

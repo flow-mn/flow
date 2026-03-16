@@ -4,7 +4,6 @@ PODS:
   - Flutter (1.0.0)
   - flutter_dynamic_icon_plus (1.0.0):
     - Flutter
-    - SwiftTryCatch
   - icloud_storage (0.0.1):
     - Flutter
   - ObjectBox (5.2.0)
@@ -15,7 +14,6 @@ PODS:
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
-  - SwiftTryCatch (0.0.1)
 
 DEPENDENCIES:
   - file_saver (from `.symlinks/plugins/file_saver/ios`)
@@ -29,7 +27,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - ObjectBox
-    - SwiftTryCatch
 
 EXTERNAL SOURCES:
   file_saver:
@@ -50,13 +47,12 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   file_saver: 6cdbcddd690cb02b0c1a0c225b37cd805c2bf8b6
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_dynamic_icon_plus: 3ddd12bc2316b98ffdd4048e9cdd3cf51e02095d
+  flutter_dynamic_icon_plus: a7c81df360708aa1c9538f89cd96958fdda608ea
   icloud_storage: e55639f0c0d7cb2b0ba9c0b3d5968ccca9cd9aa2
   ObjectBox: 946c1e8586aaa61e21b6661bab4948d06fdd51c4
   objectbox_flutter_libs: 4d609454f39d002fc850b3019e180fc4760cdf36
   open_app_file: ba67d2bf6cdddfb654b13b713d66bea4974a5adb
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
-  SwiftTryCatch: fb6d2b34abe48efd69578dac919293a44f95b481
 
 PODFILE CHECKSUM: 1ac52b241a59f6195eb0dcd62320a80726757816
 
