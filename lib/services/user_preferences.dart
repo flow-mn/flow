@@ -318,7 +318,12 @@ class UserPreferencesService {
         : FlowButtonType.defaultOrder;
 
     value.transactionButtonOrder = newOrder;
-    _updateButtonsWidgets(newOrder);
+
+    try {
+      _updateButtonsWidgets(newOrder);
+    } catch (e) {
+      // Silent fail, logging inside
+    }
 
     ObjectBox().box<UserPreferences>().put(value);
   }
@@ -386,7 +391,7 @@ class UserPreferencesService {
         HomeWidget.updateWidget(
           name: "FlowTwoEntryLateWidget",
           androidName: "TwoEntryLateReceiver",
-          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryLateReceiver",
+          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryLastReceiver",
         ),
         HomeWidget.updateWidget(
           name: "FlowFourEntryWidget",
