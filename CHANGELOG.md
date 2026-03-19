@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.6
+
+### Changes
+
+* New transaction button animation no longer jumps
+
 ## 0.19.5
 
 ### Fixes
