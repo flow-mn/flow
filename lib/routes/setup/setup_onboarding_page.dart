@@ -28,7 +28,7 @@ class SetupOnboardingPage extends StatefulWidget {
 }
 
 class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
-  bool loading = true;
+  bool iCloudBackupsLoading = true;
   bool busy = false;
 
   List<SyncerItem>? backups = [];
@@ -37,44 +37,56 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
   void initState() {
     super.initState();
 
-    if (ICloudSyncer().syncing) {
-      checkForBackups();
-    } else {
-      loading = false;
-    }
+    checkForBackups();
   }
 
   @override
   Widget build(BuildContext context) {
+    final String iCloudSubtitle = ICloudSyncer.supported
+        ? (iCloudBackupsLoading
+              ? "setup.onboarding.recoverICloudBackup.description.loading".t(
+                  context,
+                )
+              : ((backups?.length ?? 0) > 0
+                    ? ("setup.onboarding.recoverICloudBackup.description".t(
+                        context,
+                        backups?.firstOrNull?.inferredBackupDate
+                                ?.toMoment()
+                                .lll ??
+                            "?",
+                      ))
+                    : ("setup.onboarding.recoverICloudBackup.description.none"
+                          .t(context))))
+        : "";
+
     return Scaffold(
       appBar: AppBar(title: Text("setup.onboarding".t(context))),
-      body: (loading || busy)
+      body: busy
           ? SafeArea(child: const Spinner.center())
           : SingleChildScrollView(
               child: SafeArea(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Column(
+                    spacing: 16.0,
                     children: [
-                      if (backups?.isNotEmpty == true) ...[
+                      if (ICloudSyncer.supported)
                         ActionCard(
                           onTap: () => showICloudBackupModal(),
                           icon: FlowIconData.icon(SimpleIcons.icloud),
                           title: "setup.onboarding.recoverICloudBackup".t(
                             context,
                           ),
-                          subtitle:
-                              "setup.onboarding.recoverICloudBackup.description"
-                                  .t(
-                                    context,
-                                    backups?.firstOrNull?.inferredBackupDate
-                                            ?.toMoment()
-                                            .lll ??
-                                        "-",
-                                  ),
+                          // iCloudBackupsLoading
+                          subtitle: iCloudSubtitle,
                         ),
-                        const SizedBox(height: 16.0),
-                      ],
+                      ActionCard(
+                        onTap: () => context.push("/import?setupMode=true"),
+                        icon: FlowIconData.icon(Symbols.restore_page_rounded),
+                        title: "setup.onboarding.importExisting".t(context),
+                        subtitle: "setup.onboarding.importExisting.description"
+                            .t(context),
+                      ),
                       ActionCard(
                         onTap: () => context.push("/setup/currency"),
                         icon: FlowIconData.icon(Symbols.wand_stars_rounded),
@@ -82,14 +94,6 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                         subtitle: "setup.onboarding.freshStart.description".t(
                           context,
                         ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      ActionCard(
-                        onTap: () => context.push("/import?setupMode=true"),
-                        icon: FlowIconData.icon(Symbols.restore_page_rounded),
-                        title: "setup.onboarding.importExisting".t(context),
-                        subtitle: "setup.onboarding.importExisting.description"
-                            .t(context),
                       ),
                     ],
                   ),
@@ -100,6 +104,10 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
   }
 
   Future<void> waitForICloudInitialUpdate() async {
+    if (!ICloudSyncer.supported) {
+      return;
+    }
+
     if (ICloudSyncer().initialUpdateReceived.value) {
       return;
     }
@@ -122,7 +130,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
     }
 
     try {
-      timer = Timer(const Duration(seconds: 15), () {
+      timer = Timer(const Duration(seconds: 5), () {
         if (!completer.isCompleted) {
           completer.complete();
         }
@@ -151,7 +159,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                 ),
       );
     } finally {
-      loading = false;
+      iCloudBackupsLoading = false;
       if (mounted) {
         setState(() {});
       }
@@ -162,7 +170,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
     try {
       final SyncerItem? result = await showModalBottomSheet(
         context: context,
-        builder: (context) => ICloudBackupPickerSheet(backups: backups!),
+        builder: (context) => ICloudBackupPickerSheet(backups: backups),
         isScrollControlled: true,
       );
 

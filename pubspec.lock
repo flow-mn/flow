@@ -561,11 +561,12 @@ packages:
   flutter_dynamic_icon_plus:
     dependency: "direct main"
     description:
-      name: flutter_dynamic_icon_plus
-      sha256: "7721ef2666691064dece879d968fa7e1c4d64aa743ea998e6b1e65a1b482f212"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
+      path: "."
+      ref: HEAD
+      resolved-ref: ac4ea6dba62f033e6c355617c5c54b5ded17cca2
+      url: "https://github.com/sadespresso/flutter_dynamic_icon_plus.git"
+    source: git
+    version: "1.4.1"
   flutter_keyboard_visibility_linux:
     dependency: transitive
     description:
@@ -1169,10 +1170,10 @@ packages:
     dependency: "direct main"
     description:
       name: markdown
-      sha256: "935e23e1ff3bc02d390bad4d4be001208ee92cc217cb5b5a6c19bc14aaa318c1"
+      sha256: ee85086ad7698b42522c6ad42fe195f1b9898e4d974a1af4576c1a3a176cada9
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.0"
+    version: "7.3.1"
   markdown_quill:
     dependency: "direct main"
     description:
@@ -1417,10 +1418,10 @@ packages:
     dependency: "direct main"
     description:
       name: pdf
-      sha256: "28eacad99bffcce2e05bba24e50153890ad0255294f4dd78a17075a2ba5c8416"
+      sha256: e47a275b267873d5944ad5f5ff0dcc7ac2e36c02b3046a0ffac9b72fd362c44b
       url: "https://pub.dev"
     source: hosted
-    version: "3.11.3"
+    version: "3.12.0"
   permission_handler:
     dependency: "direct main"
     description:
