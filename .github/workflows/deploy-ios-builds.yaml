@@ -1,53 +1,53 @@
 name: Build and deploy iOS builds
 on:
-  push:
-    branches:
-      - "beta"
-      - "stable"
-      - "internal"
+    push:
+        branches:
+            - "beta"
+            - "stable"
+            - "internal"
 jobs:
-  build:
-    runs-on: "macos-26"
-    env:
-      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
-      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-      CERTIFICATE_PRIVATE_KEY: ${{ secrets.CERTIFICATE_PRIVATE_KEY }}
-      APP_STORE_APPLE_ID: ${{ vars.APP_STORE_APPLE_ID }}
-    environment: iOS release
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-      - run: flutter pub get
-      - name: Run tests
-        run: |
-          bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
-          flutter test
-      - name: Install Codemagic CLI tools
-        run: pip install codemagic-cli-tools
-      - name: Set up keychain
-        run: keychain initialize
-      - name: Change directory to ios folder
-        run: cd ios
-      - name: Fetch signing files
-        run: |
-          app-store-connect fetch-signing-files "mn.flow.flow" \
-          --type IOS_APP_STORE \
-          --create
-      - name: Set up signing certificate
-        run: keychain add-certificates
-      - name: Set up signing certificate
-        run: keychain add-certificates
-      - name: Set up code signing settings on Xcode project
-        run: xcode-project use-profiles
-      - name: Build ipa for distribution
-        run: |
-          flutter build ipa --release --no-tree-shake-icons --export-options-plist=$HOME/export_options.plist    
-      - name: Publish the app to App Store Connect
-        run: |
-          APP_FILE=$(find $(pwd) -name "*.ipa")
-          app-store-connect publish \
-          --path "$APP_FILE"    
+    build:
+        runs-on: "macos-26"
+        env:
+            APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+            APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+            APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+            CERTIFICATE_PRIVATE_KEY: ${{ secrets.CERTIFICATE_PRIVATE_KEY }}
+            APP_STORE_APPLE_ID: ${{ vars.APP_STORE_APPLE_ID }}
+        environment: iOS release
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+            - run: flutter pub get
+            - name: Run tests
+              run: |
+                  bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
+                  flutter test
+            - name: Install Codemagic CLI tools
+              run: pip install codemagic-cli-tools
+            - name: Set up keychain
+              run: keychain initialize
+            - name: Change directory to ios folder
+              run: cd ios
+            - name: Fetch signing files
+              run: |
+                  app-store-connect fetch-signing-files "mn.flow.flow" \
+                  --type IOS_APP_STORE \
+                  --create
+            - name: Set up signing certificate
+              run: keychain add-certificates
+            - name: Set up signing certificate
+              run: keychain add-certificates
+            - name: Set up code signing settings on Xcode project
+              run: xcode-project use-profiles
+            - name: Build ipa for distribution
+              run: |
+                  flutter build ipa --release --no-tree-shake-icons --export-options-plist=$HOME/export_options.plist
+            - name: Publish the app to App Store Connect
+              run: |
+                  APP_FILE=$(find $(pwd) -name "*.ipa")
+                  app-store-connect publish \
+                  --path "$APP_FILE"
