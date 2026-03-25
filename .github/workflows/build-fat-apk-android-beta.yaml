@@ -20,7 +20,6 @@ jobs:
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
-                  flutter-version: 3.41.2
             - name: Set release tag name
               run: echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
             - run: flutter pub get
