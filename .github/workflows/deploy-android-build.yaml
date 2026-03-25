@@ -1,76 +1,76 @@
 name: Build and upload APK builds
 on:
-  push:
-    branches:
-      - "stable"
-      - "beta"
-      - "internal"
+    push:
+        branches:
+            - "stable"
+            - "beta"
+            - "internal"
 jobs:
-  build:
-    runs-on: "ubuntu-latest"
-    environment: Android release
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4.0.0
-        with:
-          distribution: "zulu"
-          java-version: "17"
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-      - run: flutter pub get
-      - name: Run tests
-        run: |
-          bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
-          flutter test
-      - name: Setup secrets
-        run: |
-          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
-          echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
-      - name: Build appbundle
-        run: flutter build appbundle --release --no-tree-shake-icons
-      - name: Deploy to Open Testing
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-          packageName: mn.flow.flow
-          releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: beta
-          status: draft
-      - name: Clean up
-        run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
-  build-fat-apk:
-    if: github.ref_type == 'branch' && github.ref == 'refs/heads/internal'
-    runs-on: "ubuntu-latest"
-    environment: Android release
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4.0.0
-        with:
-          distribution: "zulu"
-          java-version: "17"
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-      - run: flutter pub get
-      - name: Run tests
-        run: |
-          bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
-          flutter test
-      - name: Setup secrets
-        run: |
-          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
-          echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
-      - name: Build fat apk
-        run: flutter build apk --release --no-tree-shake-icons
-      - name: Clean up
-        run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release.apk
-          path: build/app/outputs/apk/release/app-release.apk
+    build:
+        runs-on: "ubuntu-latest"
+        environment: Android release
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup JDK 17
+              uses: actions/setup-java@v4.0.0
+              with:
+                  distribution: "zulu"
+                  java-version: "17"
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+            - run: flutter pub get
+            - name: Run tests
+              run: |
+                  bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
+                  flutter test
+            - name: Setup secrets
+              run: |
+                  echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
+                  echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
+            - name: Build appbundle
+              run: flutter build appbundle --release --no-tree-shake-icons
+            - name: Deploy to Open Testing
+              uses: r0adkll/upload-google-play@v1
+              with:
+                  serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+                  packageName: mn.flow.flow
+                  releaseFiles: build/app/outputs/bundle/release/app-release.aab
+                  track: beta
+                  status: draft
+            - name: Clean up
+              run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
+    build-fat-apk:
+        if: github.ref_type == 'branch' && github.ref == 'refs/heads/internal'
+        runs-on: "ubuntu-latest"
+        environment: Android release
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup JDK 17
+              uses: actions/setup-java@v4.0.0
+              with:
+                  distribution: "zulu"
+                  java-version: "17"
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+            - run: flutter pub get
+            - name: Run tests
+              run: |
+                  bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
+                  flutter test
+            - name: Setup secrets
+              run: |
+                  echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > ./android/key.properties
+                  echo "${{ secrets.SIGNING_KEYSTORE }}" | base64 --decode > ./android/flow-upload-keystore.jks
+            - name: Build fat apk
+              run: flutter build apk --release --no-tree-shake-icons
+            - name: Clean up
+              run: rm -rf ./android/key.properties ./android/flow-upload-keystore.jks
+            - name: Upload APK
+              uses: actions/upload-artifact@v4
+              with:
+                  name: app-release.apk
+                  path: build/app/outputs/apk/release/app-release.apk

@@ -1,6 +1,7 @@
+import "dart:math";
+
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/entity/user_preferences.dart";
-import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/user_preferences.dart";
@@ -20,8 +21,20 @@ class NewTransactionButton extends StatefulWidget {
   State<NewTransactionButton> createState() => _NewTransactionButtonState();
 }
 
-class _NewTransactionButtonState extends State<NewTransactionButton> {
-  double _buttonRotationTurns = 0.0;
+class _NewTransactionButtonState extends State<NewTransactionButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 500),
+  );
+  late final _bounceAnimation = Tween(begin: 0.0, end: (45.0 / 180) * pi)
+      .animate(
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Curves.easeOut,
+          reverseCurve: Curves.easeIn,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +75,10 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
             leftClickShowsMenu: true,
             rightClickShowsMenu: true,
             regularPressShowsMenu: true,
-            longPressDuration: Duration.zero,
+            childBounceEnabled: false,
+            pieBounceDuration: .zero,
+            longPressDuration: .zero,
+            longPressShowsMenu: true,
           ),
           onToggle: onToggle,
           actions: buttonOrder
@@ -80,24 +96,24 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
                 ),
               )
               .toList(),
-          child: StatefulBuilder(
-            builder: (context, setState) => Tooltip(
-              message: "transaction.new".t(context),
-              child: Material(
-                color: navbarTheme.transactionButtonBackgroundColor,
-                shape: RoundedRectangleBorder(borderRadius: .circular(32.0)),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: AnimatedRotation(
-                    turns: _buttonRotationTurns,
-                    duration: const Duration(milliseconds: 600),
-                    child: Icon(
-                      Symbols.add_rounded,
-                      fill: 0.0,
-                      color: navbarTheme.transactionButtonForegroundColor,
-                      weight: 600.0,
-                    ),
-                  ),
+          child: Material(
+            color: navbarTheme.transactionButtonBackgroundColor,
+            shape: RoundedRectangleBorder(borderRadius: .circular(32.0)),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: AnimatedBuilder(
+                animation: _bounceAnimation,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _bounceAnimation.value,
+                    child: child,
+                  );
+                },
+                child: Icon(
+                  Symbols.add_rounded,
+                  fill: 0.0,
+                  color: navbarTheme.transactionButtonForegroundColor,
+                  weight: 600.0,
                 ),
               ),
             ),
@@ -108,7 +124,10 @@ class _NewTransactionButtonState extends State<NewTransactionButton> {
   }
 
   void onToggle(bool toggled) {
-    _buttonRotationTurns = toggled ? 0.125 : 0.25;
-    setState(() {});
+    if (toggled) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
   }
 }

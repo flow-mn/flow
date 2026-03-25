@@ -3,7 +3,7 @@ description: A personal finance managing app
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: "0.19.5+334"
+version: "0.19.6+336"
 
 environment:
     sdk: ">=3.10.0 <4.0.0"
@@ -26,11 +26,11 @@ dependencies:
     flutter:
         sdk: flutter
     flutter_app_group_directory: ^1.1.0
-    flutter_contacts: ^2.0.0-beta.2
+    flutter_contacts: ^2.0.0
     flutter_dynamic_icon_plus:
         git:
             url: https://github.com/sadespresso/flutter_dynamic_icon_plus.git
-    flutter_local_notifications: ^21.0.0-dev.2
+    flutter_local_notifications: ^21.0.0
     flutter_localizations:
         sdk: flutter
     flutter_map: ^8.2.2
@@ -47,7 +47,7 @@ dependencies:
     image_picker: ^1.2.1
     in_app_review: ^2.0.11
     intl: ^0.20.2
-    json_annotation: ^4.10.0
+    json_annotation: ^4.11.0
     latlong2: ^0.9.1
     local_auth: ^3.0.0
     local_hero: ^0.3.0
@@ -55,7 +55,7 @@ dependencies:
     logging: ^1.3.0
     logging_appenders: ^2.0.0+1
     lottie: ^3.3.2
-    markdown: ^7.3.0
+    markdown: ^7.3.1
     markdown_quill: ^4.3.0
     material_symbols_icons: ^4.2906.0
     moment_dart: ^5.3.1
@@ -66,7 +66,7 @@ dependencies:
     pasteboard: ^0.5.0
     path: ^1.9.1
     path_provider: ^2.1.5
-    pdf: ^3.11.3
+    pdf: ^3.12.0
     permission_handler: ^12.0.1
     pie_menu: ^3.6.0
     recurrence: ^0.3.0
@@ -78,7 +78,7 @@ dependencies:
     timezone: ^0.11.0
     toastification: ^3.0.3
     url_launcher: ^6.3.2
-    uuid: ^4.5.2
+    uuid: ^4.5.3
     window_manager: ^0.5.1
 
 dev_dependencies:

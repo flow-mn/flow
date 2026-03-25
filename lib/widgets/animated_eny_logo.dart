@@ -2,33 +2,39 @@ import "package:flow/constants.dart";
 import "package:flutter/widgets.dart";
 import "package:lottie/lottie.dart";
 
-class AnimatedEnyLogo extends StatelessWidget {
+class AnimatedEnyLogo extends StatefulWidget {
   final bool noAnimation;
 
   const AnimatedEnyLogo({super.key, this.noAnimation = false});
 
   @override
-  Widget build(BuildContext context) {
-    if (noAnimation) {
-      return _enyLogoBuilder(context, null, null);
-    }
+  State<AnimatedEnyLogo> createState() => _AnimatedEnyLogoState();
+}
 
-    return LottieBuilder.network(
-      enyLogoLottieAnimationUrl,
-      backgroundLoading: true,
-      errorBuilder: _enyLogoBuilder,
-      frameBuilder: (context, child, composition) {
-        if (composition == null) {
-          return _enyLogoBuilder(context, null, null);
+class _AnimatedEnyLogoState extends State<AnimatedEnyLogo> {
+  late final Future<LottieComposition> _composition;
+
+  @override
+  void initState() {
+    super.initState();
+    _composition = NetworkLottie(enyLogoLottieAnimationUrl).load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<LottieComposition>(
+      future: _composition,
+      builder: (context, snapshot) {
+        if (!widget.noAnimation && snapshot.hasData) {
+          return Lottie(composition: snapshot.requireData, repeat: false);
         }
 
-        return child;
+        return _enyLogoBuilder(context);
       },
-      repeat: false,
     );
   }
 
-  Widget _enyLogoBuilder(BuildContext context, _, _) {
+  Widget _enyLogoBuilder(BuildContext context) {
     return Image.network(enyLogoUrl, width: 192.0, height: 192.0);
   }
 }
