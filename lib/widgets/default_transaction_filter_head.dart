@@ -291,13 +291,16 @@ class _DefaultTransactionsFilterHeadState
         StringMultiFilter.whitelist(
           accountsList.map((account) => account.uuid).toList(),
         ),
+      List<Account>() => StringMultiFilter.keepEverything(),
       _ => null,
     };
 
     if (accountsFilterOverride != null) {
       setState(() {
         filter = filter.copyWithOptional(
-          accounts: Optional(accountsFilterOverride),
+          accounts: accountsFilterOverride == StringMultiFilter.keepEverything()
+              ? Optional(null)
+              : Optional(accountsFilterOverride),
         );
       });
     }
