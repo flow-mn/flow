@@ -1,0 +1,367 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ recorded ✅" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تم تسجيل %@ ✅" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "%@ запісана ✅" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "%@ zaznamenáno ✅" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@ erfasst ✅" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ recorded ✅" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%@ registrado ✅" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "%@ ثبت شد ✅" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%@ enregistré ✅" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%@ registrato ✅" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "%@ бүртгэгдлээ ✅" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "%@ zapisano ✅" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "%@ записан ✅" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "%@ kaydedildi ✅" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "%@ записано ✅" } }
+      }
+    },
+    "Account" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الحساب" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Рахунак" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Účet" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Konto" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Account" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cuenta" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "حساب" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compte" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Conto" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Данс" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Konto" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Счёт" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Hesap" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Рахунок" } }
+      }
+    },
+    "Amount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "المبلغ" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Сума" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Částka" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Betrag" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Amount" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Monto" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "مبلغ" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Montant" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Importo" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Дүн" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kwota" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Сумма" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tutar" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Сума" } }
+      }
+    },
+    "Category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الفئة" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Катэгорыя" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Kategorie" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kategorie" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Category" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Categoría" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "دسته‌بندی" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Catégorie" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Categoria" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Ангилал" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kategoria" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Категория" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Kategori" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Категорія" } }
+      }
+    },
+    "Date of transaction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تاريخ المعاملة" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Дата транзакцыі" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Datum transakce" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionsdatum" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Date of transaction" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Fecha de la transacción" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "تاریخ تراکنش" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date de la transaction" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Data della transazione" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээний огноо" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Data transakcji" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Дата транзакции" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem tarihi" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Дата транзакції" } }
+      }
+    },
+    "Date." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التاريخ." } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Дата." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Datum." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Datum." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Date." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Fecha." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "تاریخ." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Date." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Data." } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Огноо." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Data." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Дата." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tarih." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Дата." } }
+      }
+    },
+    "Exact name, or UUID of the target account." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الاسم الدقيق أو UUID للحساب المستهدف." } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Дакладная назва або UUID мэтавага рахунку." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Přesný název nebo UUID cílového účtu." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Genauer Name oder UUID des Zielkontos." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Exact name, or UUID of the target account." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Nombre exacto o UUID de la cuenta." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "نام دقیق یا UUID حساب مقصد." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom exact ou UUID du compte cible." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nome esatto o UUID del conto." } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Дансны нэр эсвэл UUID." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dokładna nazwa lub UUID konta docelowego." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Точное название или UUID целевого счёта." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Hesabın tam adı veya UUID'si." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Точна назва або UUID цільового рахунку." } }
+      }
+    },
+    "Expense" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "مصروف" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Выдатак" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Výdaj" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ausgabe" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Expense" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Gasto" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "هزینه" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dépense" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Spesa" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Зарлага" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wydatek" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Расход" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Gider" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Витрата" } }
+      }
+    },
+    "Income" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "دخل" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Даход" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Příjem" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einnahme" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Income" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ingreso" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "درآمد" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Revenu" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Entrata" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Орлого" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przychód" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Доход" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Gelir" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Дохід" } }
+      }
+    },
+    "Log transactions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تسجيل المعاملات" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Запіс транзакцый" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Zaznamenávání transakcí" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionen erfassen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Log transactions" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Registrar transacciones" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "ثبت تراکنش‌ها" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer des transactions" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Registra le transazioni" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээ бүртгэх" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zapisuj transakcje" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Запись транзакций" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlemleri kaydet" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Запис транзакцій" } }
+      }
+    },
+    "Notes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ملاحظات" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Нататкі" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Poznámky" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Notizen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notes" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Notas" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "یادداشت‌ها" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Notes" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Note" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Тэмдэглэл" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Notatki" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Заметки" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Notlar" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Нотатки" } }
+      }
+    },
+    "Record a Transaction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تسجيل معاملة" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Запісаць транзакцыю" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Zaznamenat transakci" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktion erfassen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Record a Transaction" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Registrar una transacción" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "ثبت تراکنش" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer une transaction" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Registra una transazione" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээ бүртгэх" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zapisz transakcję" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Записать транзакцию" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem Kaydet" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Записати транзакцію" } }
+      }
+    },
+    "Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "العنوان" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Назва" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Název" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titel" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Título" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "عنوان" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Titre" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Titolo" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гарчиг" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tytuł" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Название" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Başlık" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Назва" } }
+      }
+    },
+    "Transaction amount. Sign doesn't matter." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "مبلغ المعاملة. الإشارة غير مهمة." } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Сума транзакцыі. Знак не мае значэння." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Částka transakce. Na znaménku nezáleží." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionsbetrag. Vorzeichen spielt keine Rolle." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transaction amount. Sign doesn't matter." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Monto de la transacción. El signo no importa." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "مبلغ تراکنش. علامت مهم نیست." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Montant de la transaction. Le signe n'a pas d'importance." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Importo della transazione. Il segno non conta." } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээний дүн. Тэмдэг хамаагүй." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kwota transakcji. Znak nie ma znaczenia." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Сумма транзакции. Знак не имеет значения." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem tutarı. İşaret önemli değil." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Сума транзакції. Знак не має значення." } }
+      }
+    },
+    "Transaction notes. Markdown supported." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "ملاحظات المعاملة. يدعم Markdown." } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Нататкі да транзакцыі. Падтрымліваецца Markdown." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Poznámky k transakci. Podporuje Markdown." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionsnotizen. Markdown unterstützt." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transaction notes. Markdown supported." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Notas de la transacción. Se admite Markdown." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "یادداشت تراکنش. Markdown پشتیبانی می‌شود." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Notes de transaction. Markdown pris en charge." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Note della transazione. Markdown supportato." } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээний тэмдэглэл. Markdown дэмжинэ." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Notatki do transakcji. Obsługuje Markdown." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Заметки к транзакции. Поддерживается Markdown." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem notları. Markdown desteklenir." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Нотатки до транзакції. Підтримується Markdown." } }
+      }
+    },
+    "Transaction title." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "عنوان المعاملة." } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Назва транзакцыі." } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Název transakce." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionstitel." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transaction title." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Título de la transacción." } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "عنوان تراکنش." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Titre de la transaction." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Titolo della transazione." } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээний гарчиг." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tytuł transakcji." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Название транзакции." } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem başlığı." } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Назва транзакції." } }
+      }
+    },
+    "Transaction Type" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "نوع المعاملة" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Тып транзакцыі" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Typ transakce" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Transaktionstyp" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transaction Type" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tipo de transacción" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "نوع تراکنش" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Type de transaction" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Tipo di transazione" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Гүйлгээний төрөл" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Typ transakcji" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тип транзакции" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "İşlem türü" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Тип транзакції" } }
+      }
+    },
+    "Transfer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تحويل" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Пераказ" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Převod" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Überweisung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transfer" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Transferencia" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "انتقال" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Transfert" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Trasferimento" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Шилжүүлэг" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Przelew" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Перевод" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Transfer" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Переказ" } }
+      }
+    },
+    "Type" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "النوع" } },
+        "be" : { "stringUnit" : { "state" : "translated", "value" : "Тып" } },
+        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Typ" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Typ" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tipo" } },
+        "fa" : { "stringUnit" : { "state" : "translated", "value" : "نوع" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Type" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Tipo" } },
+        "mn" : { "stringUnit" : { "state" : "translated", "value" : "Төрөл" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Typ" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тип" } },
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tür" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Тип" } }
+      }
+    }
+  },
+  "version" : "1.1"
+}

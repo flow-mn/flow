@@ -1,17 +1,20 @@
 import AppIntents
 
 struct RecordTransactionIntent: AppIntent {
-    static var title: LocalizedStringResource = "Record an Expense"
-    static var description: IntentDescription = "Log expenses"
+    static var title: LocalizedStringResource = "Record a Transaction"
+    static var description: IntentDescription = "Log transactions"
 
     @Parameter(title: "Account", description: "Exact name, or UUID of the target account.")
     var account: String?
 
-    @Parameter(title: "Amount", description: "Expense amount. Sign doesn't matter.")
+    @Parameter(title: "Amount", description: "Transaction amount. Sign doesn't matter.")
     var amount: String
 
     @Parameter(title: "Category", description: "Exact name, or UUID of the target account.")
     var category: String?
+
+    @Parameter(title: "Type")
+    var type: TransactionType?
 
     @Parameter(title: "Notes", description: "Transaction notes. Markdown supported.")
     var notes: String?
@@ -42,10 +45,10 @@ struct RecordTransactionIntent: AppIntent {
             parsedAmount = fallbackNumber / (hadDecimalSeparator ? 100 : 1)
         }
         let tx = RecordedTransaction(
-            transactionDate: transactionDate ?? Date(), type: .expense, amount: parsedAmount,
+            transactionDate: transactionDate ?? Date(), type: type ?? .expense, amount: parsedAmount,
             title: title?.trimmingCharacters(in: .whitespacesAndNewlines), fromAccount: account?.trimmingCharacters(in: .whitespacesAndNewlines), category: category?.trimmingCharacters(in: .whitespacesAndNewlines),
             notes: notes)
         try RecordedTransactionService.append(tx)
-        return .result(dialog: "Expense recorded ✅")
+        return .result(dialog: "\(String(localized: (type ?? .expense).localizedName)) recorded ✅")
     }
 }
