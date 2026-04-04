@@ -54,12 +54,7 @@ class GroupListTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    "${percent.toStringAsFixed(1)}%",
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onSurface.withAlpha(0x99),
-                    ),
-                  ),
+                  Text("${percent.toStringAsFixed(1)}%"),
                 ],
               ),
             ),
