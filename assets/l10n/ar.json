@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "اختر تنسيقًا مخصصًا",
   "preferences.moneyFormatting.setICUPattern.default": "افتراضي",
   "preferences.moneyFormatting.useCurrencySymbol": "استخدام رمز العملة",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً، \"$5\" بدلاً من \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً، \"$5\" بدلاً من \"5USD\"",
   "preferences.numpad": "لوحة الأرقام",
   "preferences.numpad.layout": "تخطيط لوحة الأرقام",
   "preferences.numpad.layout.classic": "كلاسيكي",
