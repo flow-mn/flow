@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.20.0
+
+### New features
+
+* Added Polish, and Belarusian localizations
+* Added list view for Stats > Category page
+
+### Fixes
+
+* In home tab, account selection "Clear selection" now works.
+* Preferences > Money Formatting's Custom Formatting now works
+
 ## 0.19.6
 
 ### Changes
