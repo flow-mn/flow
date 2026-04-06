@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "Select a custom format",
   "preferences.moneyFormatting.setICUPattern.default": "Default",
   "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"$5\" instead of \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"$5\" instead of \"5USD\"",
   "preferences.numpad": "Numpad",
   "preferences.numpad.layout": "Numpad layout",
   "preferences.numpad.layout.classic": "Classic",

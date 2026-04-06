@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "Виберіть користувацький формат",
   "preferences.moneyFormatting.setICUPattern.default": "За замовчуванням",
   "preferences.moneyFormatting.useCurrencySymbol": "Використовувати символ валюти",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "наприклад, \"$5\" замість \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "наприклад, \"$5\" замість \"5USD\"",
   "preferences.numpad": "Цифрова клавіатура",
   "preferences.numpad.layout": "Розкладка цифрової клавіатури",
   "preferences.numpad.layout.classic": "Класична",

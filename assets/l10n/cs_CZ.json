@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "Nastavit vlastní formát",
   "preferences.moneyFormatting.setICUPattern.default": "Výchozí",
   "preferences.moneyFormatting.useCurrencySymbol": "Používat symbol měny",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "např. \"5 $\" místo \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "např. \"5 $\" místo \"5USD\"",
   "preferences.numpad": "Číselná klávesnice",
   "preferences.numpad.layout": "Rozložení číselné klávesnice",
   "preferences.numpad.layout.classic": "Klasické",

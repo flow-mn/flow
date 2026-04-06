@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "Выберите пользовательский формат",
   "preferences.moneyFormatting.setICUPattern.default": "По умолчанию",
   "preferences.moneyFormatting.useCurrencySymbol": "Использовать символ валюты",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "например, \"$5\" вместо \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "например, \"$5\" вместо \"5USD\"",
   "preferences.numpad": "Цифровая клавиатура",
   "preferences.numpad.layout": "Раскладка цифровой клавиатуры",
   "preferences.numpad.layout.classic": "Классическая",

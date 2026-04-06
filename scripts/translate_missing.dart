@@ -50,6 +50,8 @@ final Map<String, String> filenameToTargetLanguageMapping = {
   "fr_FR.json": "French (France)",
   "fa_IR.json": "Persian (Iran)",
   "it_IT.json": "Italian (Italy)",
+  "pl_PL.json": "Polish (Poland)",
+  "be_BY.json": "Belarusian (Belarus)",
   "mn_MN.json": "Mongolian (Mongolia)",
   "ru_RU.json": "Russian (Russia)",
   "tr_TR.json": "Turkish (Turkey)",

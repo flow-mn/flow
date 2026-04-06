@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "Seleccionar un formato personalizado",
   "preferences.moneyFormatting.setICUPattern.default": "Predeterminado",
   "preferences.moneyFormatting.useCurrencySymbol": "Usar símbolo de moneda",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "ej., \"5$\" en lugar de \"5 USD\"",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "ej., \"5$\" en lugar de \"5USD\"",
   "preferences.numpad": "Teclado numérico",
   "preferences.numpad.layout": "Diseño del teclado numérico",
   "preferences.numpad.layout.classic": "Clásico",

@@ -319,7 +319,7 @@
   "preferences.moneyFormatting.setICUPattern": "انتخاب فرمت سفارشی",
   "preferences.moneyFormatting.setICUPattern.default": "پیش‌فرض",
   "preferences.moneyFormatting.useCurrencySymbol": "استفاده از نماد ارز",
-  "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً «$5» به‌جای «5 USD»",
+  "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً «$5» به‌جای «5USD»",
   "preferences.numpad": "صفحه‌کلید عددی",
   "preferences.numpad.layout": "چیدمان صفحه‌کلید عددی",
   "preferences.numpad.layout.classic": "کلاسیک",
