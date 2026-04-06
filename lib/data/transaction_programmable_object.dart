@@ -114,13 +114,21 @@ class TransactionProgrammableObject {
         : (transactionDate?.isAfter(DateTime.now().startOfNextMinute()) ??
               false);
 
+    final double parsedAmount = looseDouble(params["amount"]) ?? 0.0;
+
+    final double normalizedAmount = switch (type) {
+      .income => parsedAmount.abs(),
+      .expense => -(parsedAmount.abs()),
+      _ => parsedAmount,
+    };
+
     return TransactionProgrammableObject(
       transactionDate: transactionDate,
       categoryUuid: looseString(params["categoryUuid"]),
       category: looseString(params["category"]),
       notes: looseString(params["notes"]),
       title: looseString(params["title"]),
-      amount: looseDouble(params["amount"]),
+      amount: normalizedAmount,
       fromAccountUuid: looseString(params["fromAccountUuid"]),
       fromAccount: looseString(params["fromAccount"]),
       toAccountUuid: looseString(params["toAccountUuid"]),

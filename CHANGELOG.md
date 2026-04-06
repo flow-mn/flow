@@ -7,6 +7,13 @@
 * Added Polish, and Belarusian localizations
 * Added list view for Stats > Category page
 
+### Changes
+
+* [iOS] Now it's possible to record incomes from Shortcuts.
+* [iOS] Translated texts in Shortcuts dialogs.
+* TransactionProgrammableObject now enforces amount's sign if it's
+  expense or income.
+
 ### Fixes
 
 * In home tab, account selection "Clear selection" now works.
