@@ -7,13 +7,14 @@ struct SummaryWidgetEntry: TimelineEntry {
     let expense: String
     let incomeLabel: String
     let expenseLabel: String
+    let rangeLabel: String
 }
 
 struct SummaryProvider: TimelineProvider {
     typealias Entry = SummaryWidgetEntry
 
     func placeholder(in context: Context) -> SummaryWidgetEntry {
-        SummaryWidgetEntry(date: Date(), income: "---", expense: "---", incomeLabel: "Income", expenseLabel: "Expense")
+        SummaryWidgetEntry(date: Date(), income: "---", expense: "---", incomeLabel: "Income", expenseLabel: "Expense", rangeLabel: "This month")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SummaryWidgetEntry) -> ()) {
@@ -22,7 +23,8 @@ struct SummaryProvider: TimelineProvider {
         let expense = prefs?.string(forKey: "summaryExpense") ?? "---"
         let incomeLabel = prefs?.string(forKey: "summaryIncomeLabel") ?? "Income"
         let expenseLabel = prefs?.string(forKey: "summaryExpenseLabel") ?? "Expense"
-        let entry = SummaryWidgetEntry(date: Date(), income: income, expense: expense, incomeLabel: incomeLabel, expenseLabel: expenseLabel)
+        let rangeLabel = prefs?.string(forKey: "summaryRangeLabel") ?? "This month"
+        let entry = SummaryWidgetEntry(date: Date(), income: income, expense: expense, incomeLabel: incomeLabel, expenseLabel: expenseLabel, rangeLabel: rangeLabel)
         completion(entry)
     }
 
@@ -38,29 +40,35 @@ struct SummaryWidgetView: View {
     var entry: SummaryWidgetEntry
 
     var body: some View {
-        HStack(spacing: 8) {
-            summaryCard(
-                label: entry.incomeLabel,
-                amount: entry.income,
-                icon: "Income",
-                color: .green
-            )
-            summaryCard(
-                label: entry.expenseLabel,
-                amount: entry.expense,
-                icon: "Expense",
-                color: .red
-            )
+        VStack(alignment: .leading, spacing: 12) {
+            Text(entry.rangeLabel)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .foregroundStyle(.primary)
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+            HStack(spacing: 10) {
+                summaryCard(
+                    label: entry.incomeLabel,
+                    amount: entry.income,
+                    icon: "Income",
+                    color: .green
+                )
+                summaryCard(
+                    label: entry.expenseLabel,
+                    amount: entry.expense,
+                    icon: "Expense",
+                    color: .red
+                )
+            }
         }
-        .padding(12)
     }
 
     @ViewBuilder
     func summaryCard(label: String, amount: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
                 Text(label)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                 Image(icon)
                     .resizable()
@@ -68,15 +76,16 @@ struct SummaryWidgetView: View {
                     .foregroundStyle(color)
                     .frame(width: 14, height: 14)
             }
+            Spacer(minLength: 0)
             Text(amount)
-                .font(.system(.title3, design: .rounded, weight: .semibold))
+                .font(.system(.largeTitle, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(14)
+        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 16))
     }
 }
 
@@ -90,20 +99,14 @@ struct FlowSummaryWidget: Widget {
             SummaryWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemMedium])
         .configurationDisplayName("Flow Summary")
         .description("View your monthly income and expenses at a glance.")
     }
 }
 
-#Preview(as: .systemSmall) {
-    FlowSummaryWidget()
-} timeline: {
-    SummaryWidgetEntry(date: .now, income: "$3.82K", expense: "$1.24K", incomeLabel: "Income", expenseLabel: "Expense")
-}
-
 #Preview(as: .systemMedium) {
     FlowSummaryWidget()
 } timeline: {
-    SummaryWidgetEntry(date: .now, income: "$3.82K", expense: "$1.24K", incomeLabel: "Income", expenseLabel: "Expense")
+    SummaryWidgetEntry(date: .now, income: "$3.82K", expense: "$1.24K", incomeLabel: "Income", expenseLabel: "Expense", rangeLabel: "This month")
 }
