@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:convert";
 
 import "package:flow/l10n/supported_languages.dart";
@@ -137,7 +138,7 @@ class _FlowLocalizationDelegate
           : FlowLocalizations.supportedLocales[1],
     );
     await localization.load();
-    WidgetSummarySync.sync();
+    unawaited(WidgetSummarySync.sync().catchError((_) {}));
     return localization;
   }
 

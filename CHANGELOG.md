@@ -1,10 +1,14 @@
 # Changelog
 
-## next
+## 0.21.0
 
 ### New features
 
-* Added summary home screen widget showing monthly income and expenses (iOS + Android)
+* Added summary home screen widget showing monthly income and expenses by [@PawiX25](https://github.com/PawiX25)
+
+### Fixes
+
+* [Android] Two Entry Last now shows the correct buttons, fixed by [@PawiX25](https://github.com/PawiX25)
 
 ## 0.20.0
 
