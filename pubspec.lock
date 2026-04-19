@@ -1234,10 +1234,10 @@ packages:
     dependency: "direct main"
     description:
       name: moment_dart
-      sha256: c868448a4813e57d07a2a236ea010a4960311895b1166aeaf7a8e0750c2cb0dd
+      sha256: "50e11480f7ec5b9fd4d7441ab383b3c8b169989e95db4089c83835780fa4b0fc"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.1"
+    version: "5.3.2"
   native_toolchain_c:
     dependency: transitive
     description:
