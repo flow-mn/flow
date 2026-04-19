@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="income_green">#FF32CC70</color>
+    <color name="expense_red">#FFFF4040</color>
+</resources>
