@@ -2,6 +2,8 @@
 
 ## 0.21.0
 
+Special thanks to [@PawiX25](https://github.com/PawiX25) for the new widget!
+
 ### New features
 
 * Added summary home screen widget showing monthly income and expenses by [@PawiX25](https://github.com/PawiX25)
