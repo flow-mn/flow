@@ -44,7 +44,7 @@ class TwoEntryLast : GlanceAppWidget() {
 @Composable
 @Preview(widthDp = 100, heightDp = 50)
 private fun Content(context: Context, currentState: HomeWidgetGlanceState) {
-  val buttonOrder = FlowWidgetUtils.getButtonOrder(currentState.preferences).subList(0, 2)
+  val buttonOrder = FlowWidgetUtils.getButtonOrder(currentState.preferences).takeLast(2)
 
   val size = LocalSize.current
   val buttonSize = min((size.width / 2 - 24.dp), (size.height - 16.dp))

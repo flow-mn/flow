@@ -1,0 +1,10 @@
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:label="Flow Summary"
+  android:minWidth="180dp"
+  android:minHeight="55dp"
+  android:targetCellWidth="3"
+  android:targetCellHeight="1"
+  android:resizeMode="horizontal"
+  android:initialLayout="@layout/glance_default_loading_layout">
+</appwidget-provider>

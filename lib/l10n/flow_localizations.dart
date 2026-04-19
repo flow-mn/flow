@@ -1,6 +1,8 @@
+import "dart:async";
 import "dart:convert";
 
 import "package:flow/l10n/supported_languages.dart";
+import "package:flow/services/widget_summary_sync.dart";
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
@@ -136,6 +138,7 @@ class _FlowLocalizationDelegate
           : FlowLocalizations.supportedLocales[1],
     );
     await localization.load();
+    unawaited(WidgetSummarySync.sync().catchError((_) {}));
     return localization;
   }
 
