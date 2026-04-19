@@ -4,6 +4,7 @@ import "package:flow/constants.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/single_currency_flow.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
@@ -47,6 +48,7 @@ class WidgetSummarySync {
 
       final String incomeLabel = TransactionType.income.localizedName;
       final String expenseLabel = TransactionType.expense.localizedName;
+      final String rangeLabel = "account.thisMonth".tr();
 
       if (Platform.isIOS) {
         await HomeWidget.setAppGroupId(iOSAppGroupId);
@@ -56,6 +58,7 @@ class WidgetSummarySync {
       await HomeWidget.saveWidgetData("summaryExpense", formattedExpense);
       await HomeWidget.saveWidgetData("summaryIncomeLabel", incomeLabel);
       await HomeWidget.saveWidgetData("summaryExpenseLabel", expenseLabel);
+      await HomeWidget.saveWidgetData("summaryRangeLabel", rangeLabel);
 
       await HomeWidget.updateWidget(
         name: "FlowSummaryWidget",
