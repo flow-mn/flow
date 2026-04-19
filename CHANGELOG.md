@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+### New features
+
+* Added summary home screen widget showing monthly income and expenses (iOS + Android)
+
 ## 0.20.0
 
 ### New features

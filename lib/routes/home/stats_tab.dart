@@ -62,11 +62,13 @@ class _StatsTabState extends State<StatsTab>
 
     rates = ExchangeRatesService().getPrimaryCurrencyRates();
     ExchangeRatesService().exchangeRatesCache.addListener(_updateRates);
+    UserPreferencesService().valueNotifier.addListener(_updateRates);
   }
 
   @override
   void dispose() {
     ExchangeRatesService().exchangeRatesCache.removeListener(_updateRates);
+    UserPreferencesService().valueNotifier.removeListener(_updateRates);
     super.dispose();
   }
 

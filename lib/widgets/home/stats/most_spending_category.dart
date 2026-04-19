@@ -47,6 +47,13 @@ class _MostSpendingCategoryState extends State<MostSpendingCategory> {
     super.initState();
     range = widget.range;
     fetch();
+    UserPreferencesService().valueNotifier.addListener(fetch);
+  }
+
+  @override
+  void dispose() {
+    UserPreferencesService().valueNotifier.removeListener(fetch);
+    super.dispose();
   }
 
   @override
