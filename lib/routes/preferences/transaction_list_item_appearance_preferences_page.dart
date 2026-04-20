@@ -92,7 +92,7 @@ class _TransactionListItemAppearancePreferencesPageState
               ),
               SwitchListTile(
                 title: Text(
-                  "preferences.transactions.listTile.transactionListTileShowExternalSource"
+                  "preferences.transactions.listTile.showExternalSource"
                       .t(context),
                 ),
                 value: transactionListTileShowExternalSource,
