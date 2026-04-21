@@ -60,38 +60,38 @@ class FlowLocalizations {
   static String _pluralCategory(num n, String langCode) {
     final int i = n.toInt();
     switch (langCode) {
-      case 'pl':
-        if (i == 1) return 'one';
+      case "pl":
+        if (i == 1) return "one";
         if (i % 10 >= 2 && i % 10 <= 4 && (i % 100 < 12 || i % 100 > 14)) {
-          return 'few';
+          return "few";
         }
-        return 'many';
-      case 'ru':
-      case 'uk':
-      case 'be':
-        if (i % 10 == 1 && i % 100 != 11) return 'one';
+        return "many";
+      case "ru":
+      case "uk":
+      case "be":
+        if (i % 10 == 1 && i % 100 != 11) return "one";
         if (i % 10 >= 2 && i % 10 <= 4 && (i % 100 < 12 || i % 100 > 14)) {
-          return 'few';
+          return "few";
         }
-        return 'many';
-      case 'cs':
-        if (i == 1) return 'one';
-        if (i >= 2 && i <= 4) return 'few';
-        return 'other';
-      case 'ar':
-        if (i == 0) return 'zero';
-        if (i == 1) return 'one';
-        if (i == 2) return 'two';
-        if (i % 100 >= 3 && i % 100 <= 10) return 'few';
-        if (i % 100 >= 11) return 'many';
-        return 'other';
-      case 'fr':
-      case 'fa':
-        if (i == 0 || i == 1) return 'one';
-        return 'other';
+        return "many";
+      case "cs":
+        if (i == 1) return "one";
+        if (i >= 2 && i <= 4) return "few";
+        return "other";
+      case "ar":
+        if (i == 0) return "zero";
+        if (i == 1) return "one";
+        if (i == 2) return "two";
+        if (i % 100 >= 3 && i % 100 <= 10) return "few";
+        if (i % 100 >= 11) return "many";
+        return "other";
+      case "fr":
+      case "fa":
+        if (i == 0 || i == 1) return "one";
+        return "other";
       default:
         // en, de, it, tr, es, mn and others: one (n=1), other
-        return i == 1 ? 'one' : 'other';
+        return i == 1 ? "one" : "other";
     }
   }
 
@@ -113,15 +113,12 @@ class FlowLocalizations {
         if (langCode != null) {
           final String category = _pluralCategory(singleValue, langCode);
           final String? pluralText =
-              _localizedValues['$key.$category'] ?? _enUS['$key.$category'];
+              _localizedValues["$key.$category"] ?? _enUS["$key.$category"];
           if (pluralText != null) {
             text = pluralText;
           }
         }
-        return text.replaceAll(
-          RegExp(r"{[^}]*}"),
-          singleValue.toString(),
-        );
+        return text.replaceAll(RegExp(r"{[^}]*}"), singleValue.toString());
       }(),
       Map lookupTable => _fillFromTable(lookupTable, translatedText),
       _ => translatedText,

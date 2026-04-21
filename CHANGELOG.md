@@ -7,10 +7,12 @@ Special thanks to [@PawiX25](https://github.com/PawiX25) for the new widget!
 ### New features
 
 * Added summary home screen widget showing monthly income and expenses by [@PawiX25](https://github.com/PawiX25)
+* Now we support plurals in the localization, [#707](https://github.com/flow-mn/flow/pull/707) by [@PawiX25](https://github.com/PawiX25)
 
 ### Fixes
 
 * [Android] Two Entry Last now shows the correct buttons, fixed by [@PawiX25](https://github.com/PawiX25)
+* Other UX/QoL fixes by [@PawiX25](https://github.com/PawiX25)
 
 ## 0.20.0
 
