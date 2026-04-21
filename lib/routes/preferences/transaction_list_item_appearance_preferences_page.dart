@@ -24,6 +24,14 @@ class TransactionListItemAppearancePreferencesPage extends StatefulWidget {
 
 class _TransactionListItemAppearancePreferencesPageState
     extends State<TransactionListItemAppearancePreferencesPage> {
+  late final List<Transaction> _exampleTransactions;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _exampleTransactions = _buildExampleTransactions();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool useCategoryNameForUntitledTransactions =
@@ -50,7 +58,7 @@ class _TransactionListItemAppearancePreferencesPageState
                 "preferences.transactions.listTile.preview".t(context),
               ),
               const SizedBox(height: 8.0),
-              ...getExampleTransactions().map(
+              ..._exampleTransactions.map(
                 (transaction) => IgnorePointer(
                   child: TransactionListTile(
                     transaction: transaction,
@@ -92,7 +100,7 @@ class _TransactionListItemAppearancePreferencesPageState
               ),
               SwitchListTile(
                 title: Text(
-                  "preferences.transactions.listTile.transactionListTileShowExternalSource"
+                  "preferences.transactions.listTile.showExternalSource"
                       .t(context),
                 ),
                 value: transactionListTileShowExternalSource,
@@ -158,7 +166,9 @@ class _TransactionListItemAppearancePreferencesPageState
     );
   }
 
-  List<Transaction> getExampleTransactions() {
+  List<Transaction> _buildExampleTransactions() {
+    final Random random = Random(42);
+
     final Account payPalExample = Account.preset(
       iconCode: FlowIconData.icon(SimpleIcons.paypal).toString(),
       uuid: "f38c7ea5-1726-4557-800d-d445bd30745f",
@@ -176,7 +186,7 @@ class _TransactionListItemAppearancePreferencesPageState
       Transaction(
           uuid: "71011fa3-c2c5-4767-962a-b965873e6acc",
           transactionDate:
-              DateTime.now() - Duration(days: Random().nextInt(1000)),
+              DateTime.now() - Duration(days: random.nextInt(1000)),
           amount: -6.99,
           currency: "USD",
         )
@@ -186,18 +196,10 @@ class _TransactionListItemAppearancePreferencesPageState
         uuid: "8fea726e-997f-4e19-8012-75d8f9920a33",
         title: "Adbasoi ",
         transactionDate:
-            DateTime.now() - Duration(days: Random().nextInt(1000)),
+            DateTime.now() - Duration(days: random.nextInt(1000)),
         amount: -1.27,
         currency: "USD",
       )..setAccount(payPalExample),
     ];
-
-    //   return Transaction(
-    //   uuid: "3953dd66-d770-4426-9e96-d9c93707a200",
-    //   title: "",
-    //   transactionDate: DateTime.now(),
-    //   amount: -6.7,
-    //   currency: "EUR",
-    // )..setAccount()..setCategory();
   }
 }
