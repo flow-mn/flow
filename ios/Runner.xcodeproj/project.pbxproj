@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		2F58D4ED2F835FDF009C3CCF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2F58D4EC2F835FDF009C3CCF /* Localizable.xcstrings */; };
 		2F5FC4CA2F38B4010045CB46 /* RecordTransactionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5FC4C92F38B4010045CB46 /* RecordTransactionIntent.swift */; };
 		2F5FC4CD2F38B5F80045CB46 /* RecordedTransactionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5FC4CC2F38B5F80045CB46 /* RecordedTransactionService.swift */; };
 		2F5FC4CE2F38B5F80045CB46 /* RecordedTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5FC4CB2F38B5F80045CB46 /* RecordedTransaction.swift */; };
@@ -71,6 +72,7 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		194D79D59363977D137FB4E7 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		2F58D4EC2F835FDF009C3CCF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		2F5FC4C92F38B4010045CB46 /* RecordTransactionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTransactionIntent.swift; sourceTree = "<group>"; };
 		2F5FC4CB2F38B5F80045CB46 /* RecordedTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedTransaction.swift; sourceTree = "<group>"; };
 		2F5FC4CC2F38B5F80045CB46 /* RecordedTransactionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedTransactionService.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				2F5FC4C92F38B4010045CB46 /* RecordTransactionIntent.swift */,
+				2F58D4EC2F835FDF009C3CCF /* Localizable.xcstrings */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -402,6 +405,7 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				2F58D4ED2F835FDF009C3CCF /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,6 +636,7 @@
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -900,6 +905,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -954,6 +960,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

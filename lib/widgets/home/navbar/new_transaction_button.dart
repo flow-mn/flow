@@ -77,6 +77,8 @@ class _NewTransactionButtonState extends State<NewTransactionButton>
             regularPressShowsMenu: true,
             childBounceEnabled: false,
             pieBounceDuration: .zero,
+            longPressDuration: .zero,
+            longPressShowsMenu: true,
           ),
           onToggle: onToggle,
           actions: buttonOrder

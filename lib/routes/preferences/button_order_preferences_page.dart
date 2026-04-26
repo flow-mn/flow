@@ -63,8 +63,10 @@ class ButtonOrderPreferencesPageState
                 child: SizedBox(
                   width: size.width,
                   height: size.height,
+
                   child: Stack(
                     alignment: .center,
+                    clipBehavior: .none,
                     children: [
                       for (int i = 0; i < count; i++)
                         _buildDropZone(

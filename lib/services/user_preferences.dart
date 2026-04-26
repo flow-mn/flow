@@ -16,6 +16,7 @@ import "package:flow/services/currency_registry.dart";
 import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/sync.dart";
+import "package:flow/services/widget_summary_sync.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flutter/material.dart";
 import "package:home_widget/home_widget.dart";
@@ -464,6 +465,7 @@ class UserPreferencesService {
           .then((_) {
             ensurePrimaryAccountAvailability();
             _updateButtonsWidgets(transactionButtonOrder);
+            WidgetSummarySync.sync();
           })
           .catchError((e) {
             _log.warning("Failed to update widgets button order on init: $e");

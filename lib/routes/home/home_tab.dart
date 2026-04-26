@@ -11,6 +11,7 @@ import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/routes/home_page.dart";
 import "package:flow/services/actionable_notifications.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
@@ -27,6 +28,8 @@ import "package:flow/widgets/home/home/no_transactions.dart";
 import "package:flow/widgets/internal_notifications/internal_notification_section.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/transactions_date_header.dart";
+import "package:flow/widgets/transactions_selection_controller.dart";
+import "package:flow/widgets/transactions_selection_scope.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -73,9 +76,13 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late final bool noTransactionsAtAll;
 
+  late final TransactionsSelectionController _selection;
+
   @override
   void initState() {
     super.initState();
+    _selection = TransactionsSelectionController();
+    _selection.addListener(_onSelectionChanged);
     _updatePlannedTransactionDays();
 
     _rawUpdateDefaultFilter();
@@ -105,6 +112,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   @override
   void dispose() {
+    _selection.removeListener(_onSelectionChanged);
+    _selection.dispose();
     _listener.dispose();
     _timer.cancel();
     UserPreferencesService().valueNotifier.removeListener(
@@ -179,43 +188,46 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               },
             );
 
-            return CustomScrollView(
-              primary: true,
-              slivers: [
-                PinnedHeaderSliver(
-                  child: Container(
-                    color: context.colorScheme.surface,
-                    child: SafeArea(
-                      bottom: false,
-                      child: Column(
-                        children: [
-                          const Frame.standalone(
-                            withSurface: true,
-                            child: GreetingsBar(),
-                          ),
-                          header,
-                        ],
+            return TransactionsSelectionScope(
+              controller: _selection,
+              visibleTransactions: transactions,
+              child: CustomScrollView(
+                primary: true,
+                slivers: [
+                  PinnedHeaderSliver(
+                    child: Container(
+                      color: context.colorScheme.surface,
+                      child: SafeArea(
+                        bottom: false,
+                        child: Column(
+                          children: [
+                            const Frame.standalone(
+                              withSurface: true,
+                              child: GreetingsBar(),
+                            ),
+                            header,
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-
-                switch ((
-                  transactions.length,
-                  currentTransactionsSnapshot.hasData,
-                )) {
-                  (0, true) => SliverFillRemaining(
-                    child: NoTransactions(isFilterModified: isFilterModified),
+                  switch ((
+                    transactions.length,
+                    currentTransactionsSnapshot.hasData,
+                  )) {
+                    (0, true) => SliverFillRemaining(
+                      child: NoTransactions(isFilterModified: isFilterModified),
+                    ),
+                    (_, true) => buildGroupedList(context, now, transactions),
+                    (_, false) => const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  },
+                  SliverToBoxAdapter(
+                    child: SafeArea(child: const SizedBox(height: 96.0)),
                   ),
-                  (_, true) => buildGroupedList(context, now, transactions),
-                  (_, false) => const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                },
-                SliverToBoxAdapter(
-                  child: SafeArea(child: const SizedBox(height: 96.0)),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );
@@ -285,6 +297,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
         return GroupedTransactionsListView(
           listType: GroupedTransactionsListViewType.sliverReorderable,
+          selectionController: _selection,
           mainHeader: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -382,6 +395,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     if (_actionableNotification != null) return;
 
     _actionableNotification = ActionableNotificationsService().consume();
+
+    setState(() {});
+  }
+
+  void _onSelectionChanged() {
+    if (!mounted) return;
+
+    HomePage.of(context).toggleNavVisibility(!_selection.active, 0);
 
     setState(() {});
   }

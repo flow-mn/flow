@@ -42,6 +42,7 @@ import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/services/widget_summary_sync.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -149,6 +150,8 @@ void main() async {
     );
   }
 
+  TransactionsService().addListener(() => WidgetSummarySync.sync());
+
   try {
     Moment.minValue = DateTime(0);
     Moment.maxValue = DateTime(4000);
@@ -199,6 +202,9 @@ class FlowState extends State<Flow> {
 
     UserPreferencesService().valueNotifier.addListener(_reloadTheme);
     UserPreferencesService().valueNotifier.addListener(_listenToShakes);
+    UserPreferencesService().valueNotifier.addListener(_syncWidgets);
+
+    ExchangeRatesService().exchangeRatesCache.addListener(_syncWidgets);
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
     LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
@@ -251,6 +257,9 @@ class FlowState extends State<Flow> {
     LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
     UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     UserPreferencesService().valueNotifier.removeListener(_listenToShakes);
+    UserPreferencesService().valueNotifier.removeListener(_syncWidgets);
+
+    ExchangeRatesService().exchangeRatesCache.removeListener(_syncWidgets);
 
     TransactionsService().removeListener(_synchronizePlannedNotifications);
 
@@ -424,6 +433,10 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().tryFetchRates(
       UserPreferencesService().primaryCurrency,
     );
+  }
+
+  void _syncWidgets() {
+    WidgetSummarySync.sync();
   }
 
   void _synchronizePlannedNotifications() {

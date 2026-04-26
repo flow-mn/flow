@@ -92,7 +92,7 @@ class _SelectCurrencyIcuPatternState extends State<SelectCurrencyIcuPattern> {
         ],
       ),
       child: SingleChildScrollView(
-        child: RadioGroup(
+        child: RadioGroup<String?>(
           groupValue: selectedPattern?.value,
           onChanged: (value) {
             setState(() {

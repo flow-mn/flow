@@ -12,10 +12,12 @@ import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/time_and_range.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/group_list_view.dart";
 import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class StatsByGroupPage extends StatefulWidget {
@@ -40,6 +42,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
   FlowAnalytics? analytics;
 
   bool busy = false;
+  bool useListView = false;
 
   @override
   void initState() {
@@ -58,6 +61,16 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
         title: Text(
           widget.byCategory ? "categories".t(context) : "accounts".t(context),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => setState(() => useListView = !useListView),
+            icon: Icon(
+              useListView
+                  ? Symbols.pie_chart_rounded
+                  : Symbols.list_alt_rounded,
+            ),
+          ),
+        ],
       ),
       body: ValueListenableBuilder(
         valueListenable: ExchangeRatesService().exchangeRatesCache,
@@ -115,16 +128,28 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      PieGraphView(
-                        data: expenses,
-                        changeMode: changeMode,
-                        range: range,
-                      ),
-                      PieGraphView(
-                        data: incomes,
-                        changeMode: changeMode,
-                        range: range,
-                      ),
+                      useListView
+                          ? GroupListView(
+                              data: expenses,
+                              changeMode: changeMode,
+                              range: range,
+                            )
+                          : PieGraphView(
+                              data: expenses,
+                              changeMode: changeMode,
+                              range: range,
+                            ),
+                      useListView
+                          ? GroupListView(
+                              data: incomes,
+                              changeMode: changeMode,
+                              range: range,
+                            )
+                          : PieGraphView(
+                              data: incomes,
+                              changeMode: changeMode,
+                              range: range,
+                            ),
                     ],
                   ),
                 ),
@@ -202,7 +227,10 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
         })
         .toList();
 
-    filtered.sort((a, b) => cache[b.key]!.tryCompareTo(cache[a.key]!));
+    filtered.sort(
+      (a, b) =>
+          cache[b.key]!.amount.abs().compareTo(cache[a.key]!.amount.abs()),
+    );
 
     return Map.fromEntries(
       filtered.map(

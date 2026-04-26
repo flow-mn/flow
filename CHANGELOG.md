@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.21.0
+
+### New features
+
+* Now it's possible to multi-select transactions and perform bulk actions.
+  Click on the leading (account/category icon) to start multi-selecting.
+* 
+
+## 0.21.0
+
+Special thanks to [@PawiX25](https://github.com/PawiX25) for the new widget!
+
+### New features
+
+* Added summary home screen widget showing monthly income and expenses by [@PawiX25](https://github.com/PawiX25)
+* Now we support plurals in the localization, [#707](https://github.com/flow-mn/flow/pull/707) by [@PawiX25](https://github.com/PawiX25)
+
+### Fixes
+
+* [Android] Two Entry Last now shows the correct buttons, fixed by [@PawiX25](https://github.com/PawiX25)
+* Other UX/QoL fixes by [@PawiX25](https://github.com/PawiX25)
+
+## 0.20.0
+
+### New features
+
+* Added Polish, and Belarusian localizations
+* Added list view for Stats > Category page
+
+### Changes
+
+* [iOS] Now it's possible to record incomes from Shortcuts.
+* [iOS] Translated texts in Shortcuts dialogs.
+* TransactionProgrammableObject now enforces amount's sign if it's
+  expense or income.
+
+### Fixes
+
+* In home tab, account selection "Clear selection" now works.
+* Preferences > Money Formatting's Custom Formatting now works
+
 ## 0.19.6
 
 ### Changes
