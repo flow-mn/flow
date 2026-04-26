@@ -1,8 +1,12 @@
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
@@ -25,12 +29,11 @@ extension TransactionHelpers on Transaction {
 
   bool holdable([DateTime? anchor]) {
     if (isDeleted == true) return false;
-    if (isPending != true) return false;
+    if (isPending == true) return false;
 
     return transactionDate.isFutureAnchored(
-          anchor ?? Moment.now().startOfMinute(),
-        ) &&
-        isPending == null;
+      anchor ?? Moment.now().startOfMinute(),
+    );
   }
 
   Future<bool> _moveToTrashBinRecurring(BuildContext context) async {
@@ -207,5 +210,153 @@ extension TransactionHelpers on Transaction {
     } catch (e) {
       return this;
     }
+  }
+}
+
+/// Bulk operations applied via a single `putMany`, so watchers emit once.
+class BulkTransactions {
+  static final Logger _log = Logger("BulkTransactions");
+
+  /// Moves every transaction (and its transfer partner) to the trash bin.
+  static int moveToTrashBin(Iterable<Transaction> transactions) {
+    final List<Transaction> list = transactions
+        .where((t) => t.isDeleted != true)
+        .toList();
+    if (list.isEmpty) return 0;
+    final DateTime now = DateTime.now();
+    final List<Transaction> toUpdate = [];
+    final Set<String> seen = {};
+
+    for (final Transaction t in list) {
+      if (!seen.add(t.uuid)) continue;
+      t.deletedDate = now;
+      t.isDeleted = true;
+      toUpdate.add(t);
+      final Transaction? partner = TransactionsService()
+          .findTransferRelatedTransactionSync(t);
+      if (partner != null && seen.add(partner.uuid)) {
+        partner.deletedDate = now;
+        partner.isDeleted = true;
+        toUpdate.add(partner);
+      }
+    }
+
+    try {
+      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+    } catch (e, stackTrace) {
+      _log.severe("Bulk move-to-trash failed", e, stackTrace);
+    }
+    return list.length;
+  }
+
+  /// Recovers every transaction (and its transfer partner) from the trash bin.
+  static int recoverFromTrashBin(Iterable<Transaction> transactions) {
+    final List<Transaction> list = transactions
+        .where((t) => t.isDeleted == true)
+        .toList();
+    if (list.isEmpty) return 0;
+    final List<Transaction> toUpdate = [];
+    final Set<String> seen = {};
+
+    for (final Transaction t in list) {
+      if (!seen.add(t.uuid)) continue;
+      t.isDeleted = false;
+      toUpdate.add(t);
+      // Partner is also in the trash; default findTransferRelatedTransactionSync
+      // skips deleted rows, so opt in.
+      final Transaction? partner = TransactionsService()
+          .findTransferRelatedTransactionSync(t, includeDeleted: true);
+      if (partner != null && seen.add(partner.uuid)) {
+        partner.isDeleted = false;
+        toUpdate.add(partner);
+      }
+    }
+
+    try {
+      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+    } catch (e, stackTrace) {
+      _log.severe("Bulk recover failed", e, stackTrace);
+    }
+    return list.length;
+  }
+
+  /// Confirms every transaction (and its transfer partner), leaving pending.
+  static int confirm(
+    Iterable<Transaction> transactions, {
+    bool updateTransactionDate = true,
+  }) {
+    final List<Transaction> list = transactions.toList();
+    if (list.isEmpty) return 0;
+    final DateTime now = DateTime.now();
+    final List<Transaction> toUpdate = [];
+    final Set<String> seen = {};
+
+    for (final Transaction t in list) {
+      if (!seen.add(t.uuid)) continue;
+      t.isPending = false;
+      if (updateTransactionDate &&
+          !t.extraTags.contains(Transaction.importedFromSiriTag)) {
+        t.transactionDate = now;
+      }
+      toUpdate.add(t);
+      final Transaction? partner = TransactionsService()
+          .findTransferRelatedTransactionSync(t);
+      if (partner != null && seen.add(partner.uuid)) {
+        partner.isPending = false;
+        if (updateTransactionDate &&
+            !partner.extraTags.contains(Transaction.importedFromSiriTag)) {
+          partner.transactionDate = now;
+        }
+        toUpdate.add(partner);
+      }
+    }
+
+    try {
+      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+    } catch (e, stackTrace) {
+      _log.severe("Bulk confirm failed", e, stackTrace);
+    }
+    return list.length;
+  }
+
+  /// Sets [category] on every non-transfer transaction.
+  static int setCategory(
+    Iterable<Transaction> transactions,
+    Category? category,
+  ) {
+    final List<Transaction> list = transactions
+        .where((t) => !t.isTransfer)
+        .toList();
+    if (list.isEmpty) return 0;
+
+    for (final t in list) {
+      t.setCategory(category);
+    }
+
+    try {
+      ObjectBox().box<Transaction>().putMany(list, mode: PutMode.update);
+    } catch (e, stackTrace) {
+      _log.severe("Bulk set category failed", e, stackTrace);
+    }
+    return list.length;
+  }
+
+  /// Sets [account] on every non-transfer transaction whose currency matches.
+  static int setAccount(Iterable<Transaction> transactions, Account account) {
+    final List<Transaction> list = transactions
+        .where((t) => !t.isTransfer && t.currency == account.currency)
+        .toList();
+    if (list.isEmpty) return 0;
+
+    for (final t in list) {
+      t.setAccount(account);
+    }
+
+    try {
+      ObjectBox().box<Transaction>().putMany(list, mode: PutMode.update);
+    } catch (e, stackTrace) {
+      _log.severe("Bulk set account failed", e, stackTrace);
+    }
+    return list.length;
   }
 }

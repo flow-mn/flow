@@ -27,6 +27,8 @@ import "package:flow/widgets/no_result.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/transactions_date_header.dart";
+import "package:flow/widgets/transactions_selection_controller.dart";
+import "package:flow/widgets/transactions_selection_scope.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons/symbols.dart";
@@ -72,12 +74,28 @@ class _CategoryPageState extends State<CategoryPage> {
 
   late TimeRange range;
 
+  late final TransactionsSelectionController _selection;
+
   @override
   void initState() {
     super.initState();
 
     category = ObjectBox().box<Category>().get(widget.categoryId);
     range = widget.initialRange ?? TimeRange.thisMonth();
+    _selection = TransactionsSelectionController();
+    _selection.addListener(_onSelectionChanged);
+  }
+
+  @override
+  void dispose() {
+    _selection.removeListener(_onSelectionChanged);
+    _selection.dispose();
+    super.dispose();
+  }
+
+  void _onSelectionChanged() {
+    if (!mounted) return;
+    setState(() {});
   }
 
   @override
@@ -202,8 +220,11 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ],
           ),
-          body: SafeArea(
-            child: switch (busy) {
+          body: TransactionsSelectionScope(
+            controller: _selection,
+            visibleTransactions: transactions ?? const [],
+            child: SafeArea(
+              child: switch (busy) {
               true => Padding(
                 padding: headerPaddingOutOfList,
                 child: Column(
@@ -223,6 +244,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 ),
               ),
               _ => GroupedTransactionsListView(
+                selectionController: _selection,
                 mainHeader: header,
                 transactions: grouped,
                 pendingTransactions: pendingTransactionsGrouped,
@@ -244,7 +266,8 @@ class _CategoryPageState extends State<CategoryPage> {
                   );
                 },
               ),
-            },
+              },
+            ),
           ),
         );
       },

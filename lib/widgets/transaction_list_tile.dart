@@ -47,6 +47,17 @@ class TransactionListTile extends StatelessWidget {
   /// Defaults to [TransactionGroupRange.day]
   final TransactionGroupRange? groupRange;
 
+  /// When true, the list is in selection mode. Tapping the row toggles
+  /// selection instead of navigating, and slidable actions are suppressed.
+  final bool selectionActive;
+
+  /// Whether this transaction is currently in the selection set.
+  final bool selected;
+
+  /// Called when the user taps to toggle selection. When non-null, tapping
+  /// the leading icon always toggles regardless of [selectionActive].
+  final VoidCallback? onSelectionToggle;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
@@ -59,6 +70,9 @@ class TransactionListTile extends StatelessWidget {
     this.dismissibleKey,
     this.overrideObscure,
     this.theme,
+    this.selectionActive = false,
+    this.selected = false,
+    this.onSelectionToggle,
   });
 
   @override
@@ -68,14 +82,15 @@ class TransactionListTile extends StatelessWidget {
         theme ??
         TransactionListTileThemeData.fallback;
 
-    final bool showPendingConfirmation =
-        confirmFn != null && transaction.confirmable();
+    final bool isLivePending =
+        transaction.isPending == true && transaction.isDeleted != true;
+
+    final bool showPendingConfirmation = confirmFn != null && isLivePending;
 
     final bool showDuplicateButton =
         transaction.isDeleted != true && duplicateFn != null;
     final bool showHoldButton = confirmFn != null && transaction.holdable();
-    final bool showConfirmButton =
-        confirmFn != null && transaction.confirmable();
+    final bool showConfirmButton = confirmFn != null && isLivePending;
 
     if ((combineTransfers || showPendingConfirmation) &&
         transaction.isTransfer &&
@@ -154,11 +169,27 @@ class TransactionListTile extends StatelessWidget {
                 )
               : null);
 
+    final Widget visualLeading = selected
+        ? FlowIcon(FlowIconData.icon(Symbols.check_rounded), plated: true)
+        : buildLeading(context, effectiveTheme);
+
+    final Widget leading = onSelectionToggle != null
+        ? GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => onSelectionToggle!(),
+            child: visualLeading,
+          )
+        : visualLeading;
+
     final Widget listTile = Material(
       type: MaterialType.card,
-      color: kTransparent,
+      color: selected
+          ? context.colorScheme.primary.withAlpha(0x20)
+          : kTransparent,
       child: InkWell(
-        onTap: () => context.push("/transaction/${transaction.id}"),
+        onTap: selectionActive
+            ? (onSelectionToggle ?? () {})
+            : () => context.push("/transaction/${transaction.id}"),
         child: Padding(
           padding: effectiveTheme.paddingOrDefault,
           child: Column(
@@ -167,7 +198,7 @@ class TransactionListTile extends StatelessWidget {
                 crossAxisAlignment: .start,
                 spacing: effectiveTheme.spacingOrDefault,
                 children: [
-                  buildLeading(context, effectiveTheme),
+                  leading,
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -301,6 +332,10 @@ class TransactionListTile extends StatelessWidget {
         ),
     ];
 
+    if (selectionActive) {
+      return KeyedSubtree(key: dismissibleKey, child: listTile);
+    }
+
     return DirectionalSlidable(
       key: dismissibleKey,
       groupTag: "transaction_list_tile",
@@ -370,3 +405,4 @@ class TransactionListTile extends StatelessWidget {
     ),
   );
 }
+
