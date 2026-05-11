@@ -17,8 +17,13 @@ class TagsSection extends StatelessWidget {
   final VoidCallback selectTags;
   final ValueChanged<List<TransactionTag>> onTagsChanged;
 
-  /// Used for suggesting nearby tags based on the transaction's location.
+  /// Transaction's saved location, used for suggesting nearby tags.
   final Geo? location;
+
+  /// Device's current location, used in addition to [location] so that
+  /// suggestions reflect both where the transaction happened and where the
+  /// user is now (useful when editing an older transaction in a new place).
+  final Geo? deviceLocation;
 
   const TagsSection({
     super.key,
@@ -26,19 +31,30 @@ class TagsSection extends StatelessWidget {
     required this.selectTags,
     required this.onTagsChanged,
     this.location,
+    this.deviceLocation,
   });
 
   @override
   Widget build(BuildContext context) {
-    final List<TransactionTag>? suggestedGeoTags = switch (location
-        ?.toLatLngPosition()) {
-      LatLng latLng => TransactionTagsProvider.of(
-        context,
-      ).getCloseGeoTags(latLng, exclusionList: selectedTags),
-      _ => null,
-    };
+    final TransactionTagsProvider provider = TransactionTagsProvider.of(
+      context,
+    );
 
-    final bool hasSuggestedGeoTags = suggestedGeoTags?.isNotEmpty == true;
+    final List<LatLng> suggestionOrigins = [
+      ?location?.toLatLngPosition(),
+      ?deviceLocation?.toLatLngPosition(),
+    ];
+
+    final Set<String> seen = {};
+    final List<TransactionTag> suggestedGeoTags = suggestionOrigins
+        .expand(
+          (origin) =>
+              provider.getCloseGeoTags(origin, exclusionList: selectedTags),
+        )
+        .where((tag) => seen.add(tag.uuid))
+        .toList();
+
+    final bool hasSuggestedGeoTags = suggestedGeoTags.isNotEmpty;
 
     return Section(
       title: "transaction.tags".t(context),
@@ -61,7 +77,7 @@ class TagsSection extends StatelessWidget {
                         onPressed: selectTags,
                         title: "transaction.tags.add".t(context),
                       ),
-                      ...?suggestedGeoTags?.map(
+                      ...suggestedGeoTags.map(
                         (tag) => TransactionTagChip(
                           tag: tag,
                           selected: false,

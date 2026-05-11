@@ -110,6 +110,12 @@ class _TransactionPageState extends State<TransactionPage> {
   Geo? _geo;
   bool _geoHandpicked = false;
 
+  /// Device's current location, fetched independently of [_geo].
+  ///
+  /// Used to surface nearby tag suggestions even when editing an existing
+  /// transaction whose saved location differs from where the user is now.
+  Geo? _deviceGeo;
+
   bool locationFailed = false;
 
   dynamic error;
@@ -242,9 +248,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
     _mapController = enableGeo ? MapController() : null;
 
-    if (widget.isNewTransaction) {
-      tryFetchLocation();
+    tryFetchLocation();
 
+    if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         _orchestrateFlow(transactionEntryFlow);
       });
@@ -445,6 +451,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         selectedTags: _selectedTags,
                         onTagsChanged: onTagsChanged,
                         location: _geo,
+                        deviceLocation: _deviceGeo,
                       ),
                       DescriptionSection(
                         value: _descriptionMarkdown,
@@ -654,7 +661,10 @@ class _TransactionPageState extends State<TransactionPage> {
   void tryFetchLocation() {
     if (Platform.isLinux) return;
     if (LocalPreferences().enableGeo.get() != true) return;
-    if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
+
+    final bool autoAttach =
+        widget.isNewTransaction &&
+        LocalPreferences().autoAttachTransactionGeo.get() == true;
 
     Geolocator.getLastKnownPosition()
         .then((lastKnown) {
@@ -662,12 +672,14 @@ class _TransactionPageState extends State<TransactionPage> {
             return;
           }
 
-          if (_geo != null) {
-            // In case we already have a location, don't override with less accurate one
-            return;
-          }
+          final Geo geo = Geo.fromPosition(lastKnown);
+          _deviceGeo = geo;
 
-          _geo = Geo.fromPosition(lastKnown);
+          // Only seed the transaction's location from a less-accurate
+          // last-known fix when we'd otherwise have nothing.
+          if (autoAttach && _geo == null) {
+            _geo = geo;
+          }
 
           if (mounted) setState(() => {});
         })
@@ -677,7 +689,11 @@ class _TransactionPageState extends State<TransactionPage> {
 
     Geolocator.getCurrentPosition()
         .then((current) {
-          _geo = Geo.fromPosition(current);
+          final Geo geo = Geo.fromPosition(current);
+          _deviceGeo = geo;
+          if (autoAttach) {
+            _geo = geo;
+          }
         })
         .catchError((e, stackTrace) {
           locationFailed = true;
