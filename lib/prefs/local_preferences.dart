@@ -60,6 +60,13 @@ class LocalPreferences {
   /// Used to prevent id collisions
   late final PrimitiveSettingsEntry<int> notificationsIssuedCount;
 
+  /// Comma-separated UUIDs of categories pinned to the YNAB analytics widget.
+  /// Stored as a raw string to avoid jsonDecode(null) crashes on first install.
+  late final PrimitiveSettingsEntry<String> ynabWidgetCategoryUuids;
+
+  /// Visual style for the YNAB widget: "amoled" or "flow" (default).
+  late final PrimitiveSettingsEntry<String> ynabWidgetStyle;
+
   late final PendingTransactionsLocalPreferences pendingTransactions;
   late final TransitiveLocalPreferences transitive;
   late final EnyLocalPreferences eny;
@@ -151,6 +158,16 @@ class LocalPreferences {
       key: "notificationsIssuedCount",
       preferences: _prefs,
       initialValue: 0,
+    );
+
+    ynabWidgetCategoryUuids = PrimitiveSettingsEntry<String>(
+      key: "ynabWidgetCategoryUuids",
+      preferences: _prefs,
+    );
+
+    ynabWidgetStyle = PrimitiveSettingsEntry<String>(
+      key: "ynabWidgetStyle",
+      preferences: _prefs,
     );
 
     pendingTransactions = PendingTransactionsLocalPreferences.initialize(

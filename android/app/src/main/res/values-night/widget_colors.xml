@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="income_green">#FF32CC70</color>
-    <color name="expense_red">#FFFF4040</color>
+    <color name="income_green">#FF72B822</color>
+    <color name="expense_red">#FFBF313D</color>
+    <color name="ynab_background">#FF000000</color>
+    <color name="ynab_text_primary">#FFE0E0E0</color>
+    <color name="ynab_divider">#FF333333</color>
+    <color name="ynab_zero_gray">#FF606060</color>
+    <color name="ynab_pill_zero">#FF3C3E53</color>
+    <!-- Archived: YNAB budget mid-range yellow (not active yet) -->
+    <!-- <color name="ynab_budget_yellow">#FFF3CA18</color> -->
 </resources>
+

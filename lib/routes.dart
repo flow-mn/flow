@@ -40,6 +40,7 @@ import "package:flow/routes/preferences/transaction_geo_preferences_page.dart";
 import "package:flow/routes/preferences/transaction_list_item_appearance_preferences_page.dart";
 import "package:flow/routes/preferences/transfer_preferences_page.dart";
 import "package:flow/routes/preferences/trash_bin_preferences_page.dart";
+import "package:flow/routes/preferences/widget_preferences_page.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flow/routes/profile_page.dart";
 import "package:flow/routes/setup/setup_accounts_page.dart";
@@ -291,6 +292,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: "integrations/eny",
           builder: (context, state) => const EnyPreferencesPage(),
+        ),
+        GoRoute(
+          path: "widget",
+          builder: (context, state) => const WidgetPreferencesPage(),
         ),
       ],
     ),

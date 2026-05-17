@@ -191,6 +191,7 @@ class _FlowLocalizationDelegate
     );
     await localization.load();
     unawaited(WidgetSummarySync.sync().catchError((_) {}));
+    unawaited(WidgetSummarySync.syncYnabWidget().catchError((_) {}));
     return localization;
   }
 

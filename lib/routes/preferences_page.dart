@@ -239,6 +239,17 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter("/preferences/changeVisuals"),
               trailing: const LeChevron(),
             ),
+            ListTile(
+              title: const Text("Widget Settings"),
+              leading: const Icon(Symbols.widgets_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/widget"),
+              subtitle: Text(
+                LocalPreferences().ynabWidgetStyle.value == "amoled"
+                    ? "AMOLED"
+                    : "Flow",
+              ),
+              trailing: const LeChevron(),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.privacy".t(context)),
             const SizedBox(height: 8.0),

@@ -466,6 +466,7 @@ class UserPreferencesService {
             ensurePrimaryAccountAvailability();
             _updateButtonsWidgets(transactionButtonOrder);
             WidgetSummarySync.sync();
+            WidgetSummarySync.syncYnabWidget();
           })
           .catchError((e) {
             _log.warning("Failed to update widgets button order on init: $e");

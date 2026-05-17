@@ -1,4 +1,4 @@
-// Flow - A personal finance tracking app
+ // Flow - A personal finance tracking app
 //
 // Copyright (C) 2024 Batmend Ganbaatar and authors of Flow
 
@@ -151,6 +151,7 @@ void main() async {
   }
 
   TransactionsService().addListener(() => WidgetSummarySync.sync());
+  TransactionsService().addListener(() => WidgetSummarySync.syncYnabWidget());
 
   try {
     Moment.minValue = DateTime(0);
@@ -437,6 +438,7 @@ class FlowState extends State<Flow> {
 
   void _syncWidgets() {
     WidgetSummarySync.sync();
+    WidgetSummarySync.syncYnabWidget();
   }
 
   void _synchronizePlannedNotifications() {
