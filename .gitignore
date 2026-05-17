@@ -54,3 +54,4 @@ app.*.map.json
 /download
 lib/libobjectbox.dylib
 lib/libobjectbox.sovibe_git_config.txt
+vibe_git_config.txt
