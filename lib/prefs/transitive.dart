@@ -154,7 +154,7 @@ class TransitiveLocalPreferences {
     try {
       unawaited(sessionPrivacyMode.set(LocalPreferences().privacyMode.get()));
     } catch (e) {
-      // Silent fail
+      _log.warning("Failed to seed sessionPrivacyMode from privacyMode", e);
     }
 
     try {
@@ -178,7 +178,7 @@ class TransitiveLocalPreferences {
         );
       }
     } catch (e) {
-      // Silent fail
+      _log.warning("Failed to reevaluate frecency caches", e);
     }
   }
 

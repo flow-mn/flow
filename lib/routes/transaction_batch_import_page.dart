@@ -6,7 +6,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/routes/transaction_page/section.dart";
-import "package:flow/routes/transaction_page/select_account_sheet.dart";
+import "package:flow/widgets/sheets/select_account_sheet.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
