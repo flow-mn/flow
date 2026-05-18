@@ -94,6 +94,7 @@ Future<Uint8List> generatePDFContent({
 
     transactions.retainWhere(
       (transaction) =>
+          transaction.categoryUuid == null ||
           whitelistedCategoriesUuids.contains(transaction.categoryUuid),
     );
   }
