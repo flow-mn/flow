@@ -31,9 +31,17 @@ class RecurringTransactionsService {
   factory RecurringTransactionsService() =>
       _instance ??= RecurringTransactionsService._internal();
 
-  RecurringTransactionsService._internal() {
-    _synchronizeAll();
-  }
+  RecurringTransactionsService._internal();
+
+  /// Trigger a synchronization of all active recurring transactions.
+  /// Per-row writes are idempotent (each occurrence's `nextOccurrence`
+  /// guard prevents duplicate transactions), but concurrent invocations
+  /// will both walk the active set and may do redundant work — callers
+  /// should serialize where it matters. Intentionally NOT called from the
+  /// constructor: `FlowState.initState`'s post-frame callback decides when
+  /// to do the first sync so it doesn't race with first-frame rendering or
+  /// other startup work.
+  Future<void> synchronizeAll() => _synchronizeAll();
 
   Future<void> _synchronize(
     RecurringTransaction recurringTransaction, {
@@ -318,7 +326,15 @@ class RecurringTransactionsService {
 
     ObjectBox().box<RecurringTransaction>().put(recurringTransaction);
 
-    _synchronizeAll();
+    unawaited(
+      synchronizeAll().catchError((error, stackTrace) {
+        _log.severe(
+          "Sync after createFromTransaction failed",
+          error,
+          stackTrace,
+        );
+      }),
+    );
 
     return recurringTransaction;
   }

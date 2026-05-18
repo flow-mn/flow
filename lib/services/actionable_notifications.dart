@@ -10,7 +10,10 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/should_execute_scheduled_task.dart";
 import "package:flutter/foundation.dart";
 import "package:in_app_review/in_app_review.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("ActionableNotificationsService");
 
 class ActionableNotificationsService {
   static ActionableNotificationsService? _instance;
@@ -84,7 +87,7 @@ class ActionableNotificationsService {
           );
         }
       } catch (e) {
-        // Silent fail
+        _log.warning("Failed to evaluate RateApp actionable notification", e);
       }
     }
 
@@ -107,7 +110,10 @@ class ActionableNotificationsService {
         );
       }
     } catch (e) {
-      // Silent fail
+      _log.warning(
+        "Failed to evaluate StarOnGitHub actionable notification",
+        e,
+      );
     }
 
     if (_notifications.value.isNotEmpty) {
@@ -152,7 +158,7 @@ class ActionableNotificationsService {
         }
       }
     } catch (e) {
-      // Silent fail
+      _log.warning("Failed to evaluate AutoBackupReminder", e);
     }
   }
 }

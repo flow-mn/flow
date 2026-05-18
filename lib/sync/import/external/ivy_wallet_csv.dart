@@ -55,13 +55,19 @@ class IvyWalletCsvImporter extends Importer<IvyWalletCsv> {
         showShareDialog: false,
         type: BackupEntryType.preImport,
       ).then((value) => safetyBackupFilePath = value.filePath);
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (!ignoreSafetyBackupFail) {
         throw const ImportException(
           "Safety backup failed, aborting mission",
           l10nKey: "error.sync.safetyBackupFailed",
         );
       }
+      _log.severe(
+        "Safety backup failed but ignoreSafetyBackupFail=true; "
+        "proceeding to erase main data with no backup on disk",
+        e,
+        stackTrace,
+      );
     }
 
     try {
