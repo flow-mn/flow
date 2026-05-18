@@ -37,21 +37,20 @@ class ExportPdfOptions {
 Future<Uint8List> generatePDFContent({
   required ExportPdfOptions options,
 }) async {
+  final List<ByteData> loadedAssets = await Future.wait([
+    rootBundle.load("assets/fonts/NotoEmoji-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSansArabic-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSansHebrew-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSans-Regular.ttf"),
+    rootBundle.load("assets/images/flow.png"),
+  ]);
   final List<pw.Font> fontFallbacks = [
-    pw.Font.ttf(await rootBundle.load("assets/fonts/NotoEmoji-Regular.ttf")),
-    pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSansArabic-Regular.ttf"),
-    ),
-    pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSansHebrew-Regular.ttf"),
-    ),
+    pw.Font.ttf(loadedAssets[0]),
+    pw.Font.ttf(loadedAssets[1]),
+    pw.Font.ttf(loadedAssets[2]),
   ];
-  final pw.Font defaultFont = pw.Font.ttf(
-    await rootBundle.load("assets/fonts/NotoSans-Regular.ttf"),
-  );
-  final Uint8List imageBytes = await rootBundle
-      .load("assets/images/flow.png")
-      .then((value) => value.buffer.asUint8List());
+  final pw.Font defaultFont = pw.Font.ttf(loadedAssets[3]);
+  final Uint8List imageBytes = loadedAssets[4].buffer.asUint8List();
 
   final [
     List<Account> accounts,
