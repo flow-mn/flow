@@ -1,5 +1,6 @@
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction/type.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/utils/simple_query_sorter.dart";
@@ -21,11 +22,18 @@ class SelectCategorySheet extends StatefulWidget {
 
   final bool showTrailing;
 
+  /// Categories are sorted by frecency for this transaction type so that —
+  /// for example — an income category isn't surfaced first while logging an
+  /// expense. Defaults to [TransactionType.expense] since that's the
+  /// overwhelmingly common case for unspecified callers (e.g. bulk edits).
+  final TransactionType transactionType;
+
   const SelectCategorySheet({
     super.key,
     this.currentlySelectedCategoryId,
     this.showSearchBar,
     this.showTrailing = true,
+    this.transactionType = TransactionType.expense,
   });
 
   @override
@@ -37,7 +45,9 @@ class _SelectCategorySheetState extends State<SelectCategorySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Category> categories = CategoriesProvider.of(context).categories;
+    final List<Category> categories = CategoriesProvider.of(
+      context,
+    ).categoriesFor(widget.transactionType);
     final bool showSearchBar = widget.showSearchBar ?? categories.length > 6;
     final List<Category> results = simpleSortByQuery(categories, _query);
 

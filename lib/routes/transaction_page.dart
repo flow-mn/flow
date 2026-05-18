@@ -885,6 +885,7 @@ class _TransactionPageState extends State<TransactionPage> {
             builder: (context) => SelectCategorySheet(
               currentlySelectedCategoryId: _selectedCategory?.id,
               showTrailing: widget.isNewTransaction,
+              transactionType: _transactionType,
             ),
             isScrollControlled: true,
           );

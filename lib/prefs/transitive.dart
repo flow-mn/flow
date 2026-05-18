@@ -7,6 +7,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
@@ -30,6 +31,12 @@ class TransitiveLocalPreferences {
   late final BoolSettingsEntry usesMultipleCurrencies;
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
+
+  /// Forces a one-shot rebuild of category frecency the first time the app
+  /// runs after the typed-frecency change, so existing users get
+  /// `category:income` / `category:expense` records backfilled immediately
+  /// instead of waiting for the next daily reevaluation rollover.
+  late final BoolSettingsEntry categoryFrecencyTypedBuilt;
 
   late final DateTimeSettingsEntry lastAutoBackupRanAt;
   late final PrimitiveSettingsEntry<String> lastAutoBackupPath;
@@ -71,6 +78,14 @@ class TransitiveLocalPreferences {
     transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
       key: "transitive.lastTimeFrecencyUpdated",
       preferences: _prefs,
+    );
+
+    categoryFrecencyTypedBuilt = BoolSettingsEntry(
+      // Versioned key: bump the suffix whenever the reevaluation logic
+      // changes in a way that needs to be re-run for existing users.
+      key: "transitive.categoryFrecencyTypedBuilt.v2",
+      preferences: _prefs,
+      initialValue: false,
     );
 
     lastAutoBackupRanAt = DateTimeSettingsEntry(
@@ -147,14 +162,40 @@ class TransitiveLocalPreferences {
           !transitiveLastTimeFrecencyUpdated.get()!.isAtSameDayAs(
             Moment.now(),
           )) {
-        unawaited(_reevaluateCategoryFrecency());
+        unawaited(
+          _reevaluateCategoryFrecency().then(
+            (_) => categoryFrecencyTypedBuilt.set(true),
+          ),
+        );
         unawaited(_reevaluateAccountFrecency());
         unawaited(_reevaluateTransactionTagFrecency());
         unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
+      } else if (!categoryFrecencyTypedBuilt.get()) {
+        unawaited(
+          _reevaluateCategoryFrecency().then(
+            (_) => categoryFrecencyTypedBuilt.set(true),
+          ),
+        );
       }
     } catch (e) {
       // Silent fail
     }
+  }
+
+  static String categoryFrecencyType(TransactionType type) =>
+      "category:${type.value}";
+
+  /// Frecency storage keys to consult for category ranking. When [type] is
+  /// null (e.g. bulk-change-category, or a transfer where categories aren't
+  /// typed), combine income and expense so categories still rank by overall
+  /// usage.
+  static List<String> categoryFrecencyTypesFor(TransactionType? type) {
+    return switch (type) {
+      TransactionType.income || TransactionType.expense => [
+        categoryFrecencyType(type!),
+      ],
+      _ => const ["category:income", "category:expense"],
+    };
   }
 
   Future<FrecencyData?> setFrecencyData(
@@ -204,8 +245,17 @@ class TransitiveLocalPreferences {
       return;
     }
 
+    const List<TransactionType> typesToBuild = [
+      TransactionType.income,
+      TransactionType.expense,
+    ];
+
     for (final category in categories) {
       try {
+        // TransactionFilter.types is a post-query Dart predicate — it is
+        // ignored by ObjectBox count()/findFirst(). Query once per category
+        // and partition by Transaction.type in memory so the income vs
+        // expense split is actually applied.
         final TransactionFilter filter = TransactionFilter(
           categories: StringMultiFilter.whitelist([category.uuid]),
           range: TransactionFilterTimeRange.fromTimeRange(
@@ -215,22 +265,38 @@ class TransitiveLocalPreferences {
           sortDescending: true,
         );
 
-        final int useCount = TransactionsService().countMany(filter);
-        final DateTime lastUsed =
-            TransactionsService().findFirstSync(filter)?.transactionDate ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-
-        unawaited(
-          setFrecencyData(
-            "category",
-            category.uuid,
-            FrecencyData(
-              uuid: category.uuid,
-              lastUsed: lastUsed,
-              useCount: useCount,
-            ),
-          ),
+        final List<Transaction> recent = TransactionsService().findManySync(
+          filter,
         );
+
+        for (final type in typesToBuild) {
+          final List<Transaction> typed = recent
+              .where((t) => t.type == type)
+              .toList();
+
+          if (typed.isEmpty) {
+            unawaited(
+              setFrecencyData(
+                categoryFrecencyType(type),
+                category.uuid,
+                null,
+              ),
+            );
+            continue;
+          }
+
+          unawaited(
+            setFrecencyData(
+              categoryFrecencyType(type),
+              category.uuid,
+              FrecencyData(
+                uuid: category.uuid,
+                lastUsed: typed.first.transactionDate,
+                useCount: typed.length,
+              ),
+            ),
+          );
+        }
       } catch (e, stackTrace) {
         _log.warning(
           "Failed to build category FrecencyData for $category",
