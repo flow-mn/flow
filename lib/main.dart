@@ -219,10 +219,17 @@ class FlowState extends State<Flow> {
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       migrateRemoveTitleFromUntitledTransactions();
-      migrateExtraKeyIndexing();
       migratePrimaryCurrencyToDb();
       migrateThemePrefsToDb();
       migratePrivacyPreferencesToUserPreferences();
+      migrateHomePendingTransactionsRange();
+
+      // Geo migration queries `extraTag: "hasExtension:..."`, which is only
+      // populated by the extra-key indexing migration. Chain them so geo
+      // doesn't run before its data dependency.
+      unawaited(
+        migrateExtraKeyIndexing().then((_) => migrateGeoExtensionToLocation()),
+      );
 
       unawaited(SiriPendingService().resolveSiriTransactions());
     });
