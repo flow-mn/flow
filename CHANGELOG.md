@@ -2,6 +2,14 @@
 
 ## 0.21.0
 
+### New features
+
+* Now it's possible to multi-select transactions and perform bulk actions.
+  Click on the leading (account/category icon) to start multi-selecting.
+* 
+
+## 0.21.0
+
 Special thanks to [@PawiX25](https://github.com/PawiX25) for the new widget!
 
 ### New features

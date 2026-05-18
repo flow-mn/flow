@@ -165,7 +165,7 @@ class FlowStandardReport {
 
     int uncountableDays = 0;
 
-    for (int offset = previous.duration.inDays; offset > 0; offset--) {
+    for (int offset = previous.duration.inDays - 1; offset >= 0; offset--) {
       if (previousDailyExpenditure![offset] == null ||
           previousDailyExpenditure![offset] == 0.0) {
         uncountableDays++;

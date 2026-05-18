@@ -4,8 +4,11 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/internal_notifications/internal_notification_list_tile.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("AutoBackupReminder");
 
 class AutoBackupReminderNotification extends StatelessWidget {
   final AutoBackupReminder notification;
@@ -39,7 +42,10 @@ class AutoBackupReminderNotification extends StatelessWidget {
                   .set(notification.payload!.filePath)
                   .then((_) {})
                   .catchError((e) {
-                    // Silent fail
+                    _log.warning(
+                      "Failed to persist lastSavedAutoBackupPath",
+                      e,
+                    );
                   });
 
               context.showFileShareSheet(

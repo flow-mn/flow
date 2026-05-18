@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/category.dart";
+import "package:flow/entity/transaction/type.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/transitive.dart";
@@ -34,27 +35,7 @@ class _CategoriesProviderScopeState extends State<CategoriesProviderScope> {
 
   void onData(Query<Category> query) {
     setState(() {
-      final List<Category> found = query.find();
-
-      final FrecencyGroup frecencyGroup = FrecencyGroup(
-        found
-            .map(
-              (category) => TransitiveLocalPreferences().getFrecencyData(
-                "category",
-                category.uuid,
-              ),
-            )
-            .nonNulls
-            .toList(),
-      );
-
-      found.sort(
-        (a, b) => frecencyGroup
-            .getScore(b.uuid)
-            .compareTo(frecencyGroup.getScore(a.uuid)),
-      );
-
-      _categories = found;
+      _categories = query.find();
     });
   }
 
@@ -74,7 +55,41 @@ class CategoriesProvider extends InheritedWidget {
 
   bool get ready => _categories != null;
 
-  List<Category> get categories => _categories ?? [];
+  /// Categories sorted by combined (income + expense) frecency. Use
+  /// [categoriesFor] when the transaction's type is known to get a list
+  /// ordered by usage within that type only.
+  List<Category> get categories => categoriesFor(null);
+
+  /// Returns categories sorted by frecency restricted to [type]. Pass null
+  /// when the type is unknown or mixed (bulk edits, transfers) — it falls
+  /// back to combined ranking.
+  List<Category> categoriesFor(TransactionType? type) {
+    final List<Category> list = _categories ?? const [];
+    if (list.isEmpty) return list;
+
+    final List<String> frecencyKeys =
+        TransitiveLocalPreferences.categoryFrecencyTypesFor(type);
+
+    final FrecencyGroup frecencyGroup = FrecencyGroup(
+      list
+          .expand(
+            (category) => frecencyKeys.map(
+              (key) => TransitiveLocalPreferences().getFrecencyData(
+                key,
+                category.uuid,
+              ),
+            ),
+          )
+          .nonNulls
+          .toList(),
+    );
+
+    return [...list]..sort(
+      (a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)),
+    );
+  }
 
   List<String> get uuids =>
       categories.map((category) => category.uuid).toList();

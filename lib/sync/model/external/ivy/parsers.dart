@@ -1,5 +1,8 @@
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:uuid/uuid.dart";
+
+final Logger _log = Logger("IvyParsers");
 
 String? parseOptionalString(dynamic x) {
   if (x is! String) return null;
@@ -67,7 +70,7 @@ DateTime parseDate(dynamic x) {
   try {
     return Moment.parse(x);
   } catch (e) {
-    // Silent fail
+    _log.fine("Moment.parse failed, trying regex fallback", e);
   }
 
   try {

@@ -111,7 +111,10 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
   startupLog.fine("Updating account order list");
 
-  initializeNotifications();
+  // Await so the plugin is ready before TransactionsService listeners can
+  // fire (FlowState.initState wires _synchronizePlannedNotifications), which
+  // otherwise hits NotificationsService.pluginInstance before it's set.
+  await initializeNotifications();
 
   startupLog.fine("Clearing stale transactions from trash bin");
   unawaited(
@@ -139,16 +142,10 @@ void main() async {
     startupLog.severe("Failed to initialize SyncService", e, stackTrace);
   }
 
-  try {
-    startupLog.fine("Initializing RecurringTransactionsService");
-    RecurringTransactionsService();
-  } catch (e, stackTrace) {
-    startupLog.severe(
-      "Failed to initialize RecurringTransactionsService",
-      e,
-      stackTrace,
-    );
-  }
+  // RecurringTransactionsService is intentionally NOT instantiated here.
+  // Eager construction used to run _synchronizeAll() in the constructor,
+  // racing with first-frame work. The first sync is now triggered from
+  // FlowState.initState's post-frame callback (alongside migrations).
 
   TransactionsService().addListener(() => WidgetSummarySync.sync());
 
@@ -158,7 +155,7 @@ void main() async {
     Moment.minValueUtc = DateTime.utc(0);
     Moment.maxValueUtc = DateTime.utc(4000);
   } catch (e) {
-    // Silent fail
+    startupLog.warning("Failed to set Moment min/max values", e);
   }
 
   startupLog.fine("Finally telling Flutter to run the app widget");
@@ -193,6 +190,15 @@ class FlowState extends State<Flow> {
 
   ShakeDetector? detector;
 
+  /// Debounces `_synchronizePlannedNotifications` so a burst of
+  /// `TransactionsService` updates (recurring catch-up, bulk import, etc.)
+  /// coalesces into one `synchronizeNotifications` call instead of N
+  /// overlapping `clearByType + reschedule` cycles that fight each other.
+  Timer? _notificationsSyncDebounce;
+  static const Duration _notificationsSyncDebounceWindow = Duration(
+    milliseconds: 250,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -219,10 +225,28 @@ class FlowState extends State<Flow> {
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       migrateRemoveTitleFromUntitledTransactions();
-      migrateExtraKeyIndexing();
       migratePrimaryCurrencyToDb();
       migrateThemePrefsToDb();
       migratePrivacyPreferencesToUserPreferences();
+      migrateHomePendingTransactionsRange();
+
+      // Geo migration queries `extraTag: "hasExtension:..."`, which is only
+      // populated by the extra-key indexing migration. Chain them so geo
+      // doesn't run before its data dependency.
+      unawaited(
+        migrateExtraKeyIndexing().then((_) => migrateGeoExtensionToLocation()),
+      );
+
+      // First recurring-transactions sync; deferred to here so it doesn't
+      // compete with startup work or first-frame rendering.
+      unawaited(
+        RecurringTransactionsService().synchronizeAll().catchError((error) {
+          mainLogger.severe(
+            "First recurring-transactions sync failed",
+            error,
+          );
+        }),
+      );
 
       unawaited(SiriPendingService().resolveSiriTransactions());
     });
@@ -262,6 +286,7 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().exchangeRatesCache.removeListener(_syncWidgets);
 
     TransactionsService().removeListener(_synchronizePlannedNotifications);
+    _notificationsSyncDebounce?.cancel();
 
     _appLifeCycleListener.dispose();
 
@@ -440,8 +465,11 @@ class FlowState extends State<Flow> {
   }
 
   void _synchronizePlannedNotifications() {
-    TransactionsService().synchronizeNotifications().catchError((error) {
-      startupLog.severe("Failed to synchronize notifications", error);
+    _notificationsSyncDebounce?.cancel();
+    _notificationsSyncDebounce = Timer(_notificationsSyncDebounceWindow, () {
+      TransactionsService().synchronizeNotifications().catchError((error) {
+        startupLog.severe("Failed to synchronize notifications", error);
+      });
     });
   }
 
@@ -517,7 +545,7 @@ void initializePackageVersion() async {
   }
 }
 
-void initializeNotifications() async {
+Future<void> initializeNotifications() async {
   assert(LocalPreferences().runtimeType == LocalPreferences);
 
   await NotificationsService().initialize();

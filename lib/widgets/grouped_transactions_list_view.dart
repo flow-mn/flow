@@ -6,6 +6,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
+import "package:flow/widgets/transactions_selection_controller.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -71,6 +72,11 @@ class GroupedTransactionsListView extends StatefulWidget {
 
   final GroupedTransactionsListViewType listType;
 
+  /// When provided, tiles render with selection affordances and tapping the
+  /// leading icon (or any tap when selection is active) toggles selection.
+  /// Reordering is suppressed while selection is active.
+  final TransactionsSelectionController? selectionController;
+
   const GroupedTransactionsListView({
     super.key,
     required this.transactions,
@@ -87,6 +93,7 @@ class GroupedTransactionsListView extends StatefulWidget {
     this.mainHeaderPadding,
     this.shouldCombineTransferIfNeeded = false,
     this.listType = GroupedTransactionsListViewType.list,
+    this.selectionController,
   });
 
   @override
@@ -109,6 +116,16 @@ class _GroupedTransactionsListViewState
       _privacyModeUpdate,
     );
     UserPreferencesService().valueNotifier.addListener(_rerender);
+    widget.selectionController?.addListener(_rerender);
+  }
+
+  @override
+  void didUpdateWidget(covariant GroupedTransactionsListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectionController != widget.selectionController) {
+      oldWidget.selectionController?.removeListener(_rerender);
+      widget.selectionController?.addListener(_rerender);
+    }
   }
 
   @override
@@ -118,6 +135,7 @@ class _GroupedTransactionsListViewState
     );
 
     UserPreferencesService().valueNotifier.removeListener(_rerender);
+    widget.selectionController?.removeListener(_rerender);
 
     super.dispose();
   }
@@ -167,6 +185,7 @@ class _GroupedTransactionsListViewState
           (Transaction transaction) => ReorderableDelayedDragStartListener(
             index: index,
             key: ValueKey(transaction.uuid),
+            enabled: widget.selectionController?.active != true,
             child: TransactionListTile(
               key: ValueKey(transaction.id),
               combineTransfers: combineTransfers,
@@ -185,6 +204,13 @@ class _GroupedTransactionsListViewState
               duplicateFn: () => transaction.duplicate(),
               overrideObscure: widget.overrideObscure,
               groupRange: widget.groupBy,
+              selectionActive: widget.selectionController?.active ?? false,
+              selected:
+                  widget.selectionController?.contains(transaction.uuid) ??
+                  false,
+              onSelectionToggle: widget.selectionController == null
+                  ? null
+                  : () => widget.selectionController!.toggle(transaction),
             ),
           ),
           (_) => Container(),
@@ -225,6 +251,7 @@ class _GroupedTransactionsListViewState
   }
 
   void _onReorder(int oldIndex, int newIndex, List flattened) {
+    if (widget.selectionController?.active == true) return;
     if (oldIndex == newIndex) return;
 
     final a = flattened[oldIndex];

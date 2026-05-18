@@ -12,7 +12,10 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons/symbols.dart";
+
+final Logger _log = Logger("ExportSuccess");
 
 class ExportSuccess extends StatelessWidget {
   final ExportMode mode;
@@ -100,7 +103,7 @@ class ExportSuccess extends StatelessWidget {
         context.showToast(text: "general.copy.success".t(context));
       }
     } catch (e) {
-      // Silent fail
+      _log.warning("Failed to copy export file path to clipboard", e);
     }
   }
 }

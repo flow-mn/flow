@@ -18,6 +18,8 @@ import "package:flow/widgets/grouped_transactions_list_view.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/transactions_date_header.dart";
+import "package:flow/widgets/transactions_selection_controller.dart";
+import "package:flow/widgets/transactions_selection_scope.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -113,6 +115,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   late final bool showExchangeRatesMissingWarning;
 
+  late final TransactionsSelectionController _selection;
+
   @override
   void initState() {
     super.initState();
@@ -120,73 +124,97 @@ class _TransactionsPageState extends State<TransactionsPage> {
     showExchangeRatesMissingWarning =
         TransitiveLocalPreferences().usesNonPrimaryCurrency.get() &&
         ExchangeRatesService().getPrimaryCurrencyRates() == null;
+    _selection = TransactionsSelectionController();
+    _selection.addListener(_onSelectionChanged);
+  }
+
+  @override
+  void dispose() {
+    _selection.removeListener(_onSelectionChanged);
+    _selection.dispose();
+    super.dispose();
+  }
+
+  void _onSelectionChanged() {
+    if (!mounted) return;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: widget.title == null ? null : Text(widget.title!)),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            PinnedHeaderSliver(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (showExchangeRatesMissingWarning) RatesMissingErrorBox(),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Frame(
-                      child: TimeRangeSelector(
-                        initialValue: _timeRange,
-                        onChanged: (newRange) {
-                          setState(() {
-                            _timeRange = newRange;
-                          });
-                        },
-                      ),
+      body: StreamBuilder<List<Transaction>>(
+        stream: widget
+            .queryFn(_timeRange)
+            .watch(triggerImmediately: true)
+            .map((event) => event.find()),
+        builder: (context, snapshot) {
+          final List<Transaction> visible = snapshot.data ?? const [];
+
+          return TransactionsSelectionScope(
+            controller: _selection,
+            visibleTransactions: visible,
+            child: SafeArea(
+              child: CustomScrollView(
+                slivers: [
+                  PinnedHeaderSliver(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (showExchangeRatesMissingWarning)
+                          RatesMissingErrorBox(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Frame(
+                            child: TimeRangeSelector(
+                              initialValue: _timeRange,
+                              onChanged: (newRange) {
+                                setState(() {
+                                  _timeRange = newRange;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            SliverFillRemaining(
-              child: StreamBuilder<List<Transaction>>(
-                stream: widget
-                    .queryFn(_timeRange)
-                    .watch(triggerImmediately: true)
-                    .map((event) => event.find()),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Spinner.center();
-                  }
+                  SliverFillRemaining(
+                    child: Builder(
+                      builder: (context) {
+                        if (!snapshot.hasData) {
+                          return const Spinner.center();
+                        }
 
-                  if (snapshot.requireData.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "transactions.query.noResult".t(context),
-                              textAlign: TextAlign.center,
-                              style: context.textTheme.headlineSmall,
+                        if (snapshot.requireData.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "transactions.query.noResult".t(context),
+                                    textAlign: TextAlign.center,
+                                    style: context.textTheme.headlineSmall,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  FlowIcon(
+                                    FlowIconData.icon(
+                                      Symbols.family_star_rounded,
+                                    ),
+                                    size: 128.0,
+                                    color: context.colorScheme.primary,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 8.0),
-                            FlowIcon(
-                              FlowIconData.icon(Symbols.family_star_rounded),
-                              size: 128.0,
-                              color: context.colorScheme.primary,
-                            ),
-                            const SizedBox(height: 8.0),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
+                          );
+                        }
 
-                  final DateTime now = DateTime.now().startOfNextMinute();
+                        final DateTime now = DateTime.now().startOfNextMinute();
 
                   final Map<TimeRange, List<Transaction>> transactions =
                       snapshot.requireData
@@ -221,29 +249,38 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             previousValue + element.length,
                       );
 
-                  return GroupedTransactionsListView(
-                    transactions: transactions,
-                    pendingTransactions: pendingTransactions,
-                    headerBuilder: (pendingGroup, range, transactions) =>
-                        TransactionListDateHeader(
-                          pendingGroup: pendingGroup,
-                          range: range,
+                        return GroupedTransactionsListView(
+                          selectionController: _selection,
                           transactions: transactions,
-                        ),
-                    pendingDivider: WavyDivider(),
-                    mainHeader: Frame(
-                      child: Text(
-                        "transactions.count".t(context, totalTransactionsCount),
-                        style: context.textTheme.bodyMedium?.semi(context),
-                      ),
+                          pendingTransactions: pendingTransactions,
+                          headerBuilder: (pendingGroup, range, transactions) =>
+                              TransactionListDateHeader(
+                                pendingGroup: pendingGroup,
+                                range: range,
+                                transactions: transactions,
+                              ),
+                          pendingDivider: WavyDivider(),
+                          mainHeader: Frame(
+                            child: Text(
+                              "transactions.count".t(
+                                context,
+                                totalTransactionsCount,
+                              ),
+                              style: context.textTheme.bodyMedium?.semi(
+                                context,
+                              ),
+                            ),
+                          ),
+                          mainHeaderPadding: EdgeInsets.zero,
+                        );
+                      },
                     ),
-                    mainHeaderPadding: EdgeInsets.zero,
-                  );
-                },
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

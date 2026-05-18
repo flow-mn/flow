@@ -3,9 +3,8 @@ import "dart:developer";
 
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
-import "package:flow/entity/account.dart";
-import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
@@ -32,16 +31,26 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
+
+  static HomePageState of(BuildContext context) =>
+      context.findAncestorStateOfType<HomePageState>()!;
 }
 
-class _HomePageState extends State<HomePage>
+class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   final ScrollController _homeTabScrollController = ScrollController();
 
   late int _currentIndex;
+
+  final Map<int, bool> _hideBottomNav = {
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+  };
 
   bool _navigationListenerRegistered = false;
 
@@ -125,6 +134,8 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final bool hideBottomNav = _hideBottomNav[_currentIndex] ?? false;
+
     return ExternalToastsHandler(
       child: CallbackShortcuts(
         bindings: {
@@ -157,18 +168,26 @@ class _HomePageState extends State<HomePage>
                   left: 0.0,
                   right: 0.0,
                   child: SafeArea(
-                    child: Frame(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Navbar(
-                            onTap: (i) => _navigateTo(i),
-                            activeIndex: _currentIndex,
+                    child: IgnorePointer(
+                      ignoring: hideBottomNav,
+                      child: AnimatedSlide(
+                        offset: Offset(0.0, hideBottomNav ? 2.0 : 0.0),
+                        duration: const Duration(milliseconds: 100),
+                        child: Frame(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Navbar(
+                                onTap: (i) => _navigateTo(i),
+                                activeIndex: _currentIndex,
+                              ),
+                              NewTransactionButton(
+                                onActionTap: (type) =>
+                                    _newTransactionPage(type),
+                              ),
+                            ],
                           ),
-                          NewTransactionButton(
-                            onActionTap: (type) => _newTransactionPage(type),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -197,8 +216,14 @@ class _HomePageState extends State<HomePage>
   }
 
   void _newTransactionPage(FlowButtonType? type) {
-    // Generally, this wouldn't happen in production environment
-    if (ObjectBox().box<Account>().count(limit: 1) == 0) {
+    // Generally, this wouldn't happen in production environment.
+    // Read via AccountsProvider so we don't hit ObjectBox on every FAB tap.
+    // Treat the not-yet-ready state as "no accounts" too — opening
+    // TransactionPage without a resolved account list would land the user
+    // in a broken form. Original code did a synchronous count() so it was
+    // never ambiguous.
+    final accountsProvider = AccountsProvider.of(context);
+    if (!accountsProvider.ready || accountsProvider.allAccounts.isEmpty) {
       context.push("/account/new");
       return;
     }
@@ -259,5 +284,16 @@ class _HomePageState extends State<HomePage>
     } catch (e) {
       return false;
     }
+  }
+
+  void showNav(int index) => toggleNavVisibility(true, index);
+  void hideNav(int index) => toggleNavVisibility(false, index);
+
+  void toggleNavVisibility(bool show, int index) {
+    _hideBottomNav[index] = !show;
+
+    if (!mounted) return;
+
+    setState(() {});
   }
 }
