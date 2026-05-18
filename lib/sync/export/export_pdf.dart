@@ -251,6 +251,11 @@ Future<Uint8List> generatePDFContent({
     useRelative: false,
   );
 
+  final String generatedAt = DateTime.now().format(
+    payload: "LLL",
+    forceLocal: true,
+  );
+
   pw.Widget footer(context) => pw.Container(
     width: double.infinity,
     margin: pw.EdgeInsets.only(top: 16.0),
@@ -328,17 +333,39 @@ Future<Uint8List> generatePDFContent({
                   pw.Text("Flow"),
                 ],
               ),
-              pw.Column(
+              pw.Row(
                 mainAxisSize: .min,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Opacity(
-                    opacity: 0.5,
-                    child: pw.Text(
-                      "sync.export.pdf.timeRange".tr(),
-                      style: fineTextStyle.copyWith(),
-                    ),
+                  pw.Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Opacity(
+                        opacity: 0.5,
+                        child: pw.Text(
+                          "sync.export.pdf.generatedAt".tr(),
+                          style: fineTextStyle.copyWith(),
+                        ),
+                      ),
+                      pw.Text(generatedAt),
+                    ],
                   ),
-                  pw.Text(options.timeRange.format(useRelative: false)),
+                  pw.SizedBox(width: 16.0),
+                  pw.Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Opacity(
+                        opacity: 0.5,
+                        child: pw.Text(
+                          "sync.export.pdf.timeRange".tr(),
+                          style: fineTextStyle.copyWith(),
+                        ),
+                      ),
+                      pw.Text(options.timeRange.format(useRelative: false)),
+                    ],
+                  ),
                 ],
               ),
             ],
