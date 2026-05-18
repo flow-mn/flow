@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "Выбрана {n} (з {total})",
   "sync.export.pdf.categories": "Катэгорыі",
   "sync.export.pdf.categories.selected": "Выбрана {n} (з {total})",
+  "sync.export.pdf.generatedAt": "Сфарміравана ў",
   "sync.export.pdf.header": "Flow - Асабістыя фінансавыя запісы (неафіцыйна, {range})",
   "sync.export.pdf.notice[0]": "Згенеравана праз ",
   "sync.export.pdf.notice[1]": ". Гэта не юрыдычны дакумент. Гэта не фінансавая справаздача. Гэта не чэк. Гэта ні ў якім разе не адлюстраванне рэальнасці. Дакумент прызначаны толькі для асабістага выкарыстання.",

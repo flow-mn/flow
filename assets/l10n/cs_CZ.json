@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "Vybráno {n} z {total}",
   "sync.export.pdf.categories": "Kategorie",
   "sync.export.pdf.categories.selected": "Vybráno {n} (z {total})",
+  "sync.export.pdf.generatedAt": "Vygenerováno",
   "sync.export.pdf.header": "Flow - Osobní finanční záznamy (neoficiální, {range})",
   "sync.export.pdf.notice[0]": "Vytvořeno pomocí ",
   "sync.export.pdf.notice[1]": ". Toto není právní dokument, finanční výkaz ani účtenka. Je určeno pouze pro osobní použití.",

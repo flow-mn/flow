@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "تم اختيار {n} (من أصل {total})",
   "sync.export.pdf.categories": "الفئات",
   "sync.export.pdf.categories.selected": "المختارة {n} (من أصل {total})",
+  "sync.export.pdf.generatedAt": "تم الإنشاء في",
   "sync.export.pdf.header": "Flow - السجلات المالية الشخصية (غير رسمية، {range})",
   "sync.export.pdf.notice[0]": "تم الإنشاء بواسطة ",
   "sync.export.pdf.notice[1]": ". هذا ليس مستندًا قانونيًا. هذا ليس بيانًا ماليًا. هذه ليست إيصالًا. هذا لا يمثل الواقع بأي شكل من الأشكال. هذا مخصص للاستخدام الشخصي فقط.",

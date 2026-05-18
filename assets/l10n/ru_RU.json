@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "Выбрано {n} (из {total})",
   "sync.export.pdf.categories": "Категории",
   "sync.export.pdf.categories.selected": "Выбрано {n} из {total}",
+  "sync.export.pdf.generatedAt": "Создано}",
   "sync.export.pdf.header": "Flow - Личные финансовые записи (неофициально, {range})",
   "sync.export.pdf.notice[0]": "Создано с помощью ",
   "sync.export.pdf.notice[1]": ". Это не является юридическим документом. Это не является финансовым отчетом. Это не является квитанцией. Это не представляет реальность ни в каком виде. Это предназначено только для личного использования.",
