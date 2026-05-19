@@ -42,6 +42,18 @@ final Logger _log = Logger("ObjectBoxActions");
 
 typedef RelevanceScoredTitle = ({String title, double relevancy});
 
+/// Result of [MainActions.suggestCategoryForTitle].
+///
+/// [confidence] is the dominant category's share of total recency-weighted
+/// votes (1.0 = every matching past transaction used this category).
+/// [matchCount] is the raw number of past transactions whose title matched
+/// AND whose category equals the suggested one.
+typedef SuggestedCategory = ({
+  Category category,
+  double confidence,
+  int matchCount,
+});
+
 extension MainActions on ObjectBox {
   /// Returns the grand total of all accounts in primary currency in the primary currency
   Money getPrimaryCurrencyGrandTotal() {
@@ -390,6 +402,110 @@ extension MainActions on ObjectBox {
 
       return (title: items.first.title, relevancy: max);
     }).toList();
+  }
+
+  /// Tier-1 behavioral suggestion: given a title the user has just confirmed,
+  /// look up past transactions with the same title and return the dominant
+  /// category — weighted by recency so a recent shift in habit overrides a
+  /// long-stale default.
+  ///
+  /// Returns null when there isn't enough history to be useful. Callers are
+  /// expected to only apply this when no category has been chosen yet — this
+  /// function never assumes it should overwrite an existing selection.
+  ///
+  /// Deterministic, no AI, no embeddings.
+  Future<SuggestedCategory?> suggestCategoryForTitle({
+    required String title,
+    TransactionType? type,
+    int? accountId,
+    int minOccurrences = 2,
+    double minConfidence = 0.6,
+    int lookbackDays = 365,
+  }) async {
+    final String normalized = title.trim();
+    if (normalized.isEmpty) return null;
+
+    final TransactionFilter filter = TransactionFilter(
+      searchData: TransactionSearchData(
+        includeDescription: false,
+        keyword: normalized,
+        mode: TransactionSearchMode.exact,
+      ),
+      range: TransactionFilterTimeRange(
+        Moment.now()
+            .subtract(Duration(days: lookbackDays))
+            .rangeTo(Moment.now())
+            .encodeShort(),
+      ),
+    );
+
+    final List<Transaction> matches = await TransactionsService()
+        .findMany(filter)
+        .catchError((error, stackTrace) {
+          _log.warning(
+            "Failed to fetch transactions for category suggestion",
+            error,
+            stackTrace,
+          );
+          return <Transaction>[];
+        });
+
+    if (matches.length < minOccurrences) return null;
+
+    final DateTime now = DateTime.now();
+    final Map<int, double> weightedVotes = {};
+    final Map<int, Category> byId = {};
+    final Map<int, int> rawCounts = {};
+    double totalWeight = 0;
+
+    for (final Transaction t in matches) {
+      if (t.isTransfer) continue;
+      if (type != null && t.type != type) continue;
+
+      final Category? cat = t.category.target;
+      if (cat == null) continue;
+
+      final int daysAgo = now.difference(t.transactionDate).inDays.abs();
+      double weight = _recencyWeight(daysAgo);
+
+      if (accountId != null && t.account.targetId == accountId) {
+        weight *= 1.25;
+      }
+
+      weightedVotes.update(cat.id, (v) => v + weight, ifAbsent: () => weight);
+      rawCounts.update(cat.id, (v) => v + 1, ifAbsent: () => 1);
+      byId[cat.id] = cat;
+      totalWeight += weight;
+    }
+
+    if (totalWeight == 0 || weightedVotes.isEmpty) return null;
+
+    MapEntry<int, double>? winner;
+    for (final entry in weightedVotes.entries) {
+      if (winner == null || entry.value > winner.value) {
+        winner = entry;
+      }
+    }
+    if (winner == null) return null;
+
+    final double confidence = winner.value / totalWeight;
+    final int rawCount = rawCounts[winner.key] ?? 0;
+    if (confidence < minConfidence) return null;
+    if (rawCount < minOccurrences) return null;
+
+    return (
+      category: byId[winner.key]!,
+      confidence: confidence,
+      matchCount: rawCount,
+    );
+  }
+
+  /// 30-day half-life: 0 days → 1.0, 30 days → 0.5, 90 days → 0.125.
+  /// Keeps the dominant choice responsive to recent behavior without
+  /// erasing long-running habits entirely.
+  double _recencyWeight(int daysAgo) {
+    if (daysAgo <= 0) return 1.0;
+    return math.pow(0.5, daysAgo / 30).toDouble();
   }
 
   Future<void> _normalizeSortOrders() async {
@@ -1134,8 +1250,10 @@ extension AccountActions on Account {
             TransitiveLocalPreferences.categoryFrecencyType(resolvedType),
           // Transfers don't carry a category in normal flows, so this branch
           // is a safety fallback — bucket it with expenses.
-          TransactionType.transfer => TransitiveLocalPreferences
-              .categoryFrecencyType(TransactionType.expense),
+          TransactionType.transfer =>
+            TransitiveLocalPreferences.categoryFrecencyType(
+              TransactionType.expense,
+            ),
         };
         unawaited(
           TransitiveLocalPreferences()

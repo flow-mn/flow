@@ -334,6 +334,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         transactionDate: _transactionDate,
                         fallbackTitle: fallbackTitle,
                         onSubmitted: (_) => save(),
+                        onConfirmed: _onTitleConfirmed,
                       ),
                       Center(
                         child: InkWell(
@@ -900,6 +901,33 @@ class _TransactionPageState extends State<TransactionPage> {
     }
 
     return false;
+  }
+
+  /// Tier-1 behavioral suggestion: when the user commits a title — by picking
+  /// an autocomplete option or submitting the field — try to infer the
+  /// category from their past transactions with the same title. Only fills
+  /// when no category has been chosen yet, so it never overrides a manual
+  /// selection.
+  void _onTitleConfirmed(String title) async {
+    if (!widget.isNewTransaction) return;
+    if (_selectedCategory != null) return;
+    if (isTransfer) return;
+    if (title.trim().isEmpty) return;
+
+    final SuggestedCategory? suggestion = await ObjectBox()
+        .suggestCategoryForTitle(
+          title: title,
+          type: _transactionType,
+          accountId: _selectedAccount?.id,
+        );
+
+    if (suggestion == null) return;
+    if (!mounted) return;
+    if (_selectedCategory != null) return;
+
+    setState(() {
+      _selectedCategory = suggestion.category;
+    });
   }
 
   void selectTransactionDate() async {

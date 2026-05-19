@@ -22,6 +22,11 @@ class TitleInput extends StatelessWidget {
 
   final Function(String) onSubmitted;
 
+  /// Fires whenever the user commits a title — by picking an autocomplete
+  /// option or by submitting the text field. Used to trigger downstream
+  /// suggestions (e.g. category prefill from past transactions).
+  final void Function(String title)? onConfirmed;
+
   const TitleInput({
     super.key,
     required this.focusNode,
@@ -34,6 +39,7 @@ class TitleInput extends StatelessWidget {
     required this.transactionType,
     required this.fallbackTitle,
     required this.onSubmitted,
+    this.onConfirmed,
   });
 
   @override
@@ -46,6 +52,7 @@ class TitleInput extends StatelessWidget {
         displayStringForOption: (option) => option.title,
         onSelected: (option) {
           controller.text = option.title;
+          onConfirmed?.call(option.title);
         },
         optionsViewBuilder: (context, onSelected, options) => Container(
           decoration: BoxDecoration(
@@ -89,7 +96,10 @@ class TitleInput extends StatelessWidget {
                   style: context.textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                   maxLength: Transaction.maxTitleLength,
-                  onSubmitted: onSubmitted,
+                  onSubmitted: (value) {
+                    onConfirmed?.call(value);
+                    onSubmitted(value);
+                  },
                   autocorrect: false,
                   decoration: InputDecoration(
                     hintText: fallbackTitle,
