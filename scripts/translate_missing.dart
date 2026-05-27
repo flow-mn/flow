@@ -56,6 +56,7 @@ final Map<String, String> filenameToTargetLanguageMapping = {
   "ru_RU.json": "Russian (Russia)",
   "tr_TR.json": "Turkish (Turkey)",
   "uk_UA.json": "Ukrainian (Ukraine)",
+  "zh_TW.json": "Traditional Chinese (Taiwan)",
 };
 
 Future<void> translateMissingKeys(
