@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+### New features
+
+* Added Traditional Chinese (Taiwan) localizations
+
 ## 0.22.0
 
 ### New features
