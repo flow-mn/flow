@@ -14,7 +14,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:pasteboard/pasteboard.dart";
 import "package:path/path.dart" as path;
 

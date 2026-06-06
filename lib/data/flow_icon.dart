@@ -84,8 +84,11 @@ class IconFlowIcon extends FlowIconData {
 
     return FlowIconData.icon(
       IconData(
+        // ignore: non_const_argument_for_const_parameter
         int.parse(codePointHex, radix: 16),
+        // ignore: non_const_argument_for_const_parameter
         fontFamily: fontFamily,
+        // ignore: non_const_argument_for_const_parameter
         fontPackage: fontPackage,
       ),
     );

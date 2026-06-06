@@ -17,7 +17,7 @@ import "package:flow/widgets/transaction_list_tile_theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class TransactionListTile extends StatelessWidget {

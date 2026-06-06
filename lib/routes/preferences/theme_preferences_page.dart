@@ -10,7 +10,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/theme_petal_selector.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class ThemePreferencesPage extends StatefulWidget {
   const ThemePreferencesPage({super.key});

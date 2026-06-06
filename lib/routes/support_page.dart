@@ -11,7 +11,7 @@ import "package:flow/widgets/action_card.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flutter/material.dart";
 import "package:in_app_review/in_app_review.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class SupportPage extends StatelessWidget {

@@ -16,7 +16,7 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/icloud_failed_error_box.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:path/path.dart" as path;
 
 class ExportHistoryPage extends StatefulWidget {

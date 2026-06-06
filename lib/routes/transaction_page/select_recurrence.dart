@@ -6,7 +6,7 @@ import "package:flow/routes/transaction_page/select_recurrence/select_until_mode
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/custom_popups.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:recurrence/recurrence.dart";
 

@@ -5,7 +5,7 @@ import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class InputOccurrencesSheet extends StatefulWidget {
   final int? initialValue;

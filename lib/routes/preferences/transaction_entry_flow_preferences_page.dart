@@ -7,7 +7,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class TransactionEntryFlowPreferencesPage extends StatefulWidget {
   const TransactionEntryFlowPreferencesPage({super.key});
@@ -105,7 +105,7 @@ class _TransactionEntryFlowPreferencesPageState
               ),
               ReorderableListView(
                 shrinkWrap: true,
-                onReorder: onReorder,
+                onReorderItem: onReorderItem,
                 proxyDecorator: proxyDecorator,
                 physics: NeverScrollableScrollPhysics(),
                 children: _actions
@@ -170,7 +170,7 @@ class _TransactionEntryFlowPreferencesPageState
     );
   }
 
-  void onReorder(int oldIndex, int newIndex) {
+  void onReorderItem(int oldIndex, int newIndex) {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }

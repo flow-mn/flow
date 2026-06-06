@@ -35,7 +35,7 @@ import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class AccountEditPage extends StatefulWidget {
   /// Account Object ID

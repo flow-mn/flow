@@ -2,7 +2,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences_page.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class Haptics extends StatefulWidget {
   const Haptics({super.key});

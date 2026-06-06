@@ -6,7 +6,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:share_plus/share_plus.dart";
 
 class DebugICloudPage extends StatefulWidget {

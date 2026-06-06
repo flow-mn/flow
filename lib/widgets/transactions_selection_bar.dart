@@ -2,7 +2,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/transactions_selection_controller.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Persistent bottom overlay shown while [controller.active].
 class TransactionsSelectionBottomBar extends StatelessWidget {

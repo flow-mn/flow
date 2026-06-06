@@ -3,7 +3,7 @@ import "package:flow/data/setup/default_accounts.dart";
 import "package:flow/data/setup/default_categories.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Falls back to [fallback]
 FlowIconData guessPresetIcon(

@@ -19,7 +19,7 @@ import "package:flow/widgets/select_color_scheme_list_tile.dart";
 import "package:flow/widgets/sheets/select_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class CategoryEditPage extends StatefulWidget {
   final int categoryId;

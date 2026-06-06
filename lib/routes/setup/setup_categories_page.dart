@@ -14,7 +14,7 @@ import "package:flow/widgets/setup/categories/category_preset_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:local_hero/local_hero.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class SetupCategoriesPage extends StatefulWidget {
   /// When [true], the page will close itself upon completion.

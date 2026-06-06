@@ -31,7 +31,7 @@ import "package:flow/widgets/transactions_selection_controller.dart";
 import "package:flow/widgets/transactions_selection_scope.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class AccountPage extends StatefulWidget {

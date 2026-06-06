@@ -36,7 +36,7 @@ import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:permission_handler/permission_handler.dart";
 
 class TransactionTagPage extends StatefulWidget {

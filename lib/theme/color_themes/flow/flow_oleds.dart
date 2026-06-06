@@ -3,7 +3,7 @@ import "dart:ui";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/flow_theme_group.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 final FlowColorScheme _defaultOledBase = FlowColorScheme(
   name: "defaultOledBase",

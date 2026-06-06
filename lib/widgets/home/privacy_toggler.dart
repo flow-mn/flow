@@ -1,6 +1,6 @@
 import "package:flow/prefs/transitive.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class PrivacyToggler extends StatelessWidget {
   const PrivacyToggler({super.key});

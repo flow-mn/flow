@@ -3,7 +3,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/widgets/internal_notifications/internal_notification_list_tile.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class TurnOnICloudSyncNotification extends StatelessWidget {
   final TurnOnICloudNotification notification;

@@ -21,7 +21,7 @@ import "package:flow/widgets/transaction_batch_import_page/tpo_preview_list_item
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class TransactionBatchImportPage extends StatefulWidget {
   final TransactionMultiProgrammableObject? params;

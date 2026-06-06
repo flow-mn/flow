@@ -8,7 +8,7 @@ import "package:flow/widgets/transaction_tag_add_chip.dart";
 import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Pops with a [List<TransactionTag>]
 class SelectTransactionTagsSheet extends StatefulWidget {

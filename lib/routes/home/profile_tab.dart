@@ -15,10 +15,10 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/preferences/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -126,6 +126,38 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () => context.push("/preferences"),
           ),
           if (flowDebugMode) ...[
+            const SizedBox(height: 32.0),
+            const ListHeader("Analytics lab"),
+            ListTile(
+              title: const Text("Net worth over time"),
+              leading: const Icon(Symbols.trending_up_rounded),
+              onTap: () => context.push("/_debug/analytics/net-worth"),
+            ),
+            ListTile(
+              title: const Text("Monthly wrapped"),
+              leading: const Icon(Symbols.bar_chart_rounded),
+              onTap: () => context.push("/_debug/analytics/wrapped"),
+            ),
+            ListTile(
+              title: const Text("Subscriptions & recurring"),
+              leading: const Icon(Symbols.autorenew_rounded),
+              onTap: () => context.push("/_debug/analytics/recurring"),
+            ),
+            ListTile(
+              title: const Text("Spending calendar"),
+              leading: const Icon(Symbols.calendar_month_rounded),
+              onTap: () => context.push("/_debug/analytics/calendar"),
+            ),
+            ListTile(
+              title: const Text("Cash flow (Sankey)"),
+              leading: const Icon(Symbols.alt_route_rounded),
+              onTap: () => context.push("/_debug/analytics/cash-flow"),
+            ),
+            ListTile(
+              title: const Text("Spending map"),
+              leading: const Icon(Symbols.map_rounded),
+              onTap: () => context.push("/_debug/analytics/map"),
+            ),
             const SizedBox(height: 32.0),
             const ListHeader("Debug options"),
             ListTile(
