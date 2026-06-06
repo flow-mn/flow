@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "Sélectionné {n} (sur {total})",
   "sync.export.pdf.categories": "Catégories",
   "sync.export.pdf.categories.selected": "Sélectionné(s) {n} (sur {total})",
+  "sync.export.pdf.generatedAt": "Généré le",
   "sync.export.pdf.header": "Flow - Registres financiers personnels (non officiel, {range})",
   "sync.export.pdf.notice[0]": "Généré par ",
   "sync.export.pdf.notice[1]": ". Ce document n'est pas légal. Ce n'est pas un relevé financier. Ce n'est pas un reçu. Ce document ne représente en aucun cas la réalité. Il est destiné uniquement à un usage personnel.",

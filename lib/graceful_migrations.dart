@@ -131,7 +131,7 @@ void migrateRemoveTitleFromUntitledTransactions() async {
   }
 }
 
-void migrateExtraKeyIndexing() async {
+Future<void> migrateExtraKeyIndexing() async {
   const String migrationUuid = "80323fa8-861c-4483-86db-4b66be64a499";
 
   try {
@@ -219,7 +219,7 @@ void migrateThemePrefsToDb() async {
   }
 }
 
-void migrateGeoExtensionToLocation() async {
+Future<void> migrateGeoExtensionToLocation() async {
   const String migrationUuid = "2d592b08-96e0-4ba7-b5de-3bc1a28edace";
 
   try {

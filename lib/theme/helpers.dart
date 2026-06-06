@@ -2,7 +2,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/theme/flow_custom_colors.dart";
 import "package:flow/theme/pie_theme_extension.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:pie_menu/pie_menu.dart";
 
 extension ThemeAccessor on BuildContext {

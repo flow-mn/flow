@@ -37,21 +37,20 @@ class ExportPdfOptions {
 Future<Uint8List> generatePDFContent({
   required ExportPdfOptions options,
 }) async {
+  final List<ByteData> loadedAssets = await Future.wait([
+    rootBundle.load("assets/fonts/NotoEmoji-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSansArabic-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSansHebrew-Regular.ttf"),
+    rootBundle.load("assets/fonts/NotoSans-Regular.ttf"),
+    rootBundle.load("assets/images/flow.png"),
+  ]);
   final List<pw.Font> fontFallbacks = [
-    pw.Font.ttf(await rootBundle.load("assets/fonts/NotoEmoji-Regular.ttf")),
-    pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSansArabic-Regular.ttf"),
-    ),
-    pw.Font.ttf(
-      await rootBundle.load("assets/fonts/NotoSansHebrew-Regular.ttf"),
-    ),
+    pw.Font.ttf(loadedAssets[0]),
+    pw.Font.ttf(loadedAssets[1]),
+    pw.Font.ttf(loadedAssets[2]),
   ];
-  final pw.Font defaultFont = pw.Font.ttf(
-    await rootBundle.load("assets/fonts/NotoSans-Regular.ttf"),
-  );
-  final Uint8List imageBytes = await rootBundle
-      .load("assets/images/flow.png")
-      .then((value) => value.buffer.asUint8List());
+  final pw.Font defaultFont = pw.Font.ttf(loadedAssets[3]);
+  final Uint8List imageBytes = loadedAssets[4].buffer.asUint8List();
 
   final [
     List<Account> accounts,
@@ -94,6 +93,7 @@ Future<Uint8List> generatePDFContent({
 
     transactions.retainWhere(
       (transaction) =>
+          transaction.categoryUuid == null ||
           whitelistedCategoriesUuids.contains(transaction.categoryUuid),
     );
   }
@@ -250,6 +250,11 @@ Future<Uint8List> generatePDFContent({
     useRelative: false,
   );
 
+  final String generatedAt = DateTime.now().format(
+    payload: "LLL",
+    forceLocal: true,
+  );
+
   pw.Widget footer(context) => pw.Container(
     width: double.infinity,
     margin: pw.EdgeInsets.only(top: 16.0),
@@ -327,17 +332,39 @@ Future<Uint8List> generatePDFContent({
                   pw.Text("Flow"),
                 ],
               ),
-              pw.Column(
+              pw.Row(
                 mainAxisSize: .min,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Opacity(
-                    opacity: 0.5,
-                    child: pw.Text(
-                      "sync.export.pdf.timeRange".tr(),
-                      style: fineTextStyle.copyWith(),
-                    ),
+                  pw.Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Opacity(
+                        opacity: 0.5,
+                        child: pw.Text(
+                          "sync.export.pdf.generatedAt".tr(),
+                          style: fineTextStyle.copyWith(),
+                        ),
+                      ),
+                      pw.Text(generatedAt),
+                    ],
                   ),
-                  pw.Text(options.timeRange.format(useRelative: false)),
+                  pw.SizedBox(width: 16.0),
+                  pw.Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Opacity(
+                        opacity: 0.5,
+                        child: pw.Text(
+                          "sync.export.pdf.timeRange".tr(),
+                          style: fineTextStyle.copyWith(),
+                        ),
+                      ),
+                      pw.Text(options.timeRange.format(useRelative: false)),
+                    ],
+                  ),
                 ],
               ),
             ],

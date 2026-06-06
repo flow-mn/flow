@@ -5,7 +5,7 @@ import "package:flow/widgets/general/rtl_flipper.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class PendingTransactionsHeader extends StatelessWidget {

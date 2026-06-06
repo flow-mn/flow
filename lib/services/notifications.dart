@@ -72,7 +72,7 @@ class NotificationsService {
     try {
       tz.initializeTimeZones();
     } catch (e) {
-      // silent fail
+      _log.warning("Failed to initialize timezone database", e);
     }
 
     try {
@@ -167,7 +167,7 @@ class NotificationsService {
     try {
       await pluginInstance.cancelAll();
     } catch (e) {
-      // Silent fail
+      _log.warning("Failed to cancel all notifications", e);
     }
   }
 

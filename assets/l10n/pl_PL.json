@@ -558,6 +558,7 @@
   "sync.export.pdf.accounts.selected": "Wybrano {n} (z {total})",
   "sync.export.pdf.categories": "Kategorie",
   "sync.export.pdf.categories.selected": "Wybrano {n} (z {total})",
+  "sync.export.pdf.generatedAt": "Wygenerowano",
   "sync.export.pdf.header": "Flow - Osobisty rejestr finansów (nieoficjalny, {range})",
   "sync.export.pdf.notice[0]": "Wygenerowano przez ",
   "sync.export.pdf.notice[1]": ". Dokument ten nie ma wartości prawnej ani księgowej. Nie jest dowodem zakupu ani obrazem rzeczywistości w jakiejkolwiek formie. Został przygotowany wyłącznie do prywatnego użytku.",

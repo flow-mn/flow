@@ -8,7 +8,7 @@ import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Pops with a [Optional] ICU pattern number formatter, or [Optional] null
 /// from a pre-defined list of patterns.

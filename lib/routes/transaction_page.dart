@@ -29,8 +29,6 @@ import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/routes/transaction_page/sections/description_section.dart";
 import "package:flow/routes/transaction_page/sections/files_section.dart";
 import "package:flow/routes/transaction_page/sections/tags_section.dart";
-import "package:flow/routes/transaction_page/select_account_sheet.dart";
-import "package:flow/routes/transaction_page/select_category_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurrence.dart";
 import "package:flow/routes/transaction_page/select_recurrence_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
@@ -51,6 +49,8 @@ import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/location_picker_sheet.dart";
 import "package:flow/widgets/open_street_map.dart";
+import "package:flow/widgets/sheets/select_account_sheet.dart";
+import "package:flow/widgets/sheets/select_category_sheet.dart";
 import "package:flow/widgets/sheets/select_transaction_tags_sheet.dart";
 import "package:flow/widgets/transaction/imported_from_eny.dart";
 import "package:flow/widgets/transaction/imported_from_siri.dart";
@@ -64,7 +64,7 @@ import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:recurrence/recurrence.dart";
 import "package:uuid/uuid.dart";
@@ -109,6 +109,12 @@ class _TransactionPageState extends State<TransactionPage> {
 
   Geo? _geo;
   bool _geoHandpicked = false;
+
+  /// Device's current location, fetched independently of [_geo].
+  ///
+  /// Used to surface nearby tag suggestions even when editing an existing
+  /// transaction whose saved location differs from where the user is now.
+  Geo? _deviceGeo;
 
   bool locationFailed = false;
 
@@ -242,9 +248,9 @@ class _TransactionPageState extends State<TransactionPage> {
 
     _mapController = enableGeo ? MapController() : null;
 
-    if (widget.isNewTransaction) {
-      tryFetchLocation();
+    tryFetchLocation();
 
+    if (widget.isNewTransaction) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         _orchestrateFlow(transactionEntryFlow);
       });
@@ -445,6 +451,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         selectedTags: _selectedTags,
                         onTagsChanged: onTagsChanged,
                         location: _geo,
+                        deviceLocation: _deviceGeo,
                       ),
                       DescriptionSection(
                         value: _descriptionMarkdown,
@@ -654,7 +661,10 @@ class _TransactionPageState extends State<TransactionPage> {
   void tryFetchLocation() {
     if (Platform.isLinux) return;
     if (LocalPreferences().enableGeo.get() != true) return;
-    if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
+
+    final bool autoAttach =
+        widget.isNewTransaction &&
+        LocalPreferences().autoAttachTransactionGeo.get() == true;
 
     Geolocator.getLastKnownPosition()
         .then((lastKnown) {
@@ -662,12 +672,14 @@ class _TransactionPageState extends State<TransactionPage> {
             return;
           }
 
-          if (_geo != null) {
-            // In case we already have a location, don't override with less accurate one
-            return;
-          }
+          final Geo geo = Geo.fromPosition(lastKnown);
+          _deviceGeo = geo;
 
-          _geo = Geo.fromPosition(lastKnown);
+          // Only seed the transaction's location from a less-accurate
+          // last-known fix when we'd otherwise have nothing.
+          if (autoAttach && _geo == null) {
+            _geo = geo;
+          }
 
           if (mounted) setState(() => {});
         })
@@ -677,7 +689,11 @@ class _TransactionPageState extends State<TransactionPage> {
 
     Geolocator.getCurrentPosition()
         .then((current) {
-          _geo = Geo.fromPosition(current);
+          final Geo geo = Geo.fromPosition(current);
+          _deviceGeo = geo;
+          if (autoAttach) {
+            _geo = geo;
+          }
         })
         .catchError((e, stackTrace) {
           locationFailed = true;
@@ -869,6 +885,7 @@ class _TransactionPageState extends State<TransactionPage> {
             builder: (context) => SelectCategorySheet(
               currentlySelectedCategoryId: _selectedCategory?.id,
               showTrailing: widget.isNewTransaction,
+              transactionType: _transactionType,
             ),
             isScrollControlled: true,
           );

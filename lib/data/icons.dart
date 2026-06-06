@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
-import "package:material_symbols_icons/iconname_to_unicode_map.dart";
-import "package:material_symbols_icons/symbols.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:material_symbols_icons_flow/iconname_to_unicode_map.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 List<IconData> querySimpleIcons(String query) {
   final String trimmed = query.trim();
@@ -18,8 +18,12 @@ List<IconData> querySimpleIcons(String query) {
   return queryResults.map((key) => SimpleIcons.values[key]!).toList();
 }
 
-IconData _getMaterialSymbolsForCodepoint(int codepoint) =>
-    IconDataRounded(codepoint);
+IconData _getMaterialSymbolsForCodepoint(int codepoint) => IconData(
+  // ignore: non_const_argument_for_const_parameter
+  codepoint,
+  fontFamily: "MaterialSymbolsRounded",
+  fontPackage: "material_symbols_icons_flow",
+);
 
 List<IconData> queryMaterialSymbols(String query) {
   final String trimmed = query.trim();
@@ -72,7 +76,6 @@ const List<IconData> fSimpleIcons = [
   SimpleIcons.googleadmob,
   SimpleIcons.googleadsense,
   SimpleIcons.googleads,
-  SimpleIcons.amazonpay,
   SimpleIcons.samsungpay,
 ];
 const List<IconData> fMaterialSymbols = [

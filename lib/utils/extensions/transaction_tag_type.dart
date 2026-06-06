@@ -1,6 +1,6 @@
 import "package:flow/entity/transaction/tag_type.dart";
 import "package:flutter/widgets.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 extension TransactionTagTypeExtension on TransactionTagType {
   IconData get icon {

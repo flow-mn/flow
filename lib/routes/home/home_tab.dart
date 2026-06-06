@@ -78,6 +78,12 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   late final TransactionsSelectionController _selection;
 
+  StreamSubscription<List<Transaction>>? _currentTransactionsSub;
+  StreamSubscription<List<Transaction>>? _pendingTransactionsSub;
+  List<Transaction>? _currentTransactions;
+  List<Transaction>? _pendingTransactions;
+  bool _readyToSubscribe = false;
+
   @override
   void initState() {
     super.initState();
@@ -108,10 +114,15 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     _updateActionableNotification();
 
     ExchangeRatesService().getPrimaryCurrencyRates();
+
+    _readyToSubscribe = true;
+    _subscribeToTransactions();
   }
 
   @override
   void dispose() {
+    _currentTransactionsSub?.cancel();
+    _pendingTransactionsSub?.cancel();
     _selection.removeListener(_onSelectionChanged);
     _selection.dispose();
     _listener.dispose();
@@ -128,110 +139,127 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 
+  /// Resubscribe to ObjectBox transaction streams using the current filter
+  /// values. Cheap to call repeatedly; we only re-open queries when filter
+  /// values actually changed upstream (e.g. via [onChanged], date rollover,
+  /// or planned-range preference). The old StreamBuilders rebuilt and
+  /// resubscribed on every frame — this avoids that.
+  void _subscribeToTransactions() {
+    if (!_readyToSubscribe) return;
+
+    _currentTransactionsSub?.cancel();
+    _currentTransactionsSub = normalizedCurrentFilter
+        .queryBuilder()
+        .watch(triggerImmediately: true)
+        .map((event) => event.find())
+        .listen((txns) {
+          if (!mounted) return;
+          setState(() {
+            _currentTransactions = txns;
+          });
+        });
+
+    _pendingTransactionsSub?.cancel();
+    _pendingTransactionsSub = pendingTransactionsFilter
+        .queryBuilder()
+        .watch(triggerImmediately: true)
+        .map((event) => event.find())
+        .listen((txns) {
+          if (!mounted) return;
+          setState(() {
+            _pendingTransactions = txns;
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
     final bool isFilterModified = currentFilter != defaultFilter;
+    final List<Transaction>? currentTxns = _currentTransactions;
+    final List<Transaction>? pendingTxns = _pendingTransactions;
+    final bool hasCurrent = currentTxns != null;
 
-    return StreamBuilder(
-      stream: normalizedCurrentFilter
-          .queryBuilder()
-          .watch(triggerImmediately: true)
-          .map((event) => event.find()),
-      builder: (context, currentTransactionsSnapshot) {
-        return StreamBuilder<List<Transaction>>(
-          key: ValueKey(dateKey),
-          stream: pendingTransactionsFilter
-              .queryBuilder()
-              .watch(triggerImmediately: true)
-              .map((event) => event.find()),
-          builder: (context, pendingTransactionsSnapshot) {
-            final DateTime now = Moment.now().startOfNextMinute();
-            final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
-              homeTimeRange: currentFilter.range?.range,
-            );
+    final DateTime now = Moment.now().startOfNextMinute();
+    final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
+      homeTimeRange: currentFilter.range?.range,
+    );
 
-            final List<Transaction> transactions = [
-              ...?pendingTransactionsSnapshot.data?.where(
-                (transaction) =>
-                    pendingTransactionsFilter.postPredicates.every(
-                      (predicate) => predicate(transaction),
-                    ) &&
-                    normalizedCurrentFilter.range?.range?.contains(
-                          transaction.transactionDate,
-                        ) !=
-                        true,
-              ),
-              ...?currentTransactionsSnapshot.data?.where(
-                (transaction) => normalizedCurrentFilter.postPredicates.every(
-                  (predicate) => predicate(transaction),
+    final List<Transaction> transactions = [
+      ...?pendingTxns?.where(
+        (transaction) =>
+            pendingTransactionsFilter.postPredicates.every(
+              (predicate) => predicate(transaction),
+            ) &&
+            normalizedCurrentFilter.range?.range?.contains(
+                  transaction.transactionDate,
+                ) !=
+                true,
+      ),
+      ...?currentTxns?.where(
+        (transaction) => normalizedCurrentFilter.postPredicates.every(
+          (predicate) => predicate(transaction),
+        ),
+      ),
+    ];
+
+    if (currentFilter.range?.range?.contains(now) == true) {
+      transactions.removeWhere((transaction) {
+        if (transaction.transactionDate <= now) return false;
+
+        return transaction.transactionDate > cutoffPlanned.to;
+      });
+    }
+
+    final Widget header = DefaultTransactionsFilterHead(
+      defaultFilter: defaultFilter,
+      current: currentFilter,
+      onChanged: (value) {
+        setState(() {
+          currentFilter = value;
+        });
+        _subscribeToTransactions();
+      },
+    );
+
+    return TransactionsSelectionScope(
+      controller: _selection,
+      visibleTransactions: transactions,
+      child: CustomScrollView(
+        primary: true,
+        slivers: [
+          PinnedHeaderSliver(
+            child: Container(
+              color: context.colorScheme.surface,
+              child: SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    const Frame.standalone(
+                      withSurface: true,
+                      child: GreetingsBar(),
+                    ),
+                    header,
+                  ],
                 ),
               ),
-            ];
-
-            if (currentFilter.range?.range?.contains(now) == true) {
-              transactions.removeWhere((transaction) {
-                if (transaction.transactionDate <= now) return false;
-
-                return transaction.transactionDate > cutoffPlanned.to;
-              });
-            }
-
-            final Widget header = DefaultTransactionsFilterHead(
-              defaultFilter: defaultFilter,
-              current: currentFilter,
-              onChanged: (value) {
-                setState(() {
-                  currentFilter = value;
-                });
-              },
-            );
-
-            return TransactionsSelectionScope(
-              controller: _selection,
-              visibleTransactions: transactions,
-              child: CustomScrollView(
-                primary: true,
-                slivers: [
-                  PinnedHeaderSliver(
-                    child: Container(
-                      color: context.colorScheme.surface,
-                      child: SafeArea(
-                        bottom: false,
-                        child: Column(
-                          children: [
-                            const Frame.standalone(
-                              withSurface: true,
-                              child: GreetingsBar(),
-                            ),
-                            header,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  switch ((
-                    transactions.length,
-                    currentTransactionsSnapshot.hasData,
-                  )) {
-                    (0, true) => SliverFillRemaining(
-                      child: NoTransactions(isFilterModified: isFilterModified),
-                    ),
-                    (_, true) => buildGroupedList(context, now, transactions),
-                    (_, false) => const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  },
-                  SliverToBoxAdapter(
-                    child: SafeArea(child: const SizedBox(height: 96.0)),
-                  ),
-                ],
-              ),
-            );
+            ),
+          ),
+          switch ((transactions.length, hasCurrent)) {
+            (0, true) => SliverFillRemaining(
+              child: NoTransactions(isFilterModified: isFilterModified),
+            ),
+            (_, true) => buildGroupedList(context, now, transactions),
+            (_, false) => const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            ),
           },
-        );
-      },
+          SliverToBoxAdapter(
+            child: SafeArea(child: const SizedBox(height: 96.0)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -374,14 +402,25 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     _plannedTransactionsTimeRange =
         UserPreferencesService().homePendingTransactionsTimeRange;
     setState(() {});
+    _subscribeToTransactions();
   }
 
   void refreshDateKeyAndDefaultFilter() {
     if (!mounted) return;
     _rawUpdateDefaultFilter();
+    final DateTime newDateKey = Moment.startOfToday();
+    // Always rebuild so `now` (used in build() to partition pending vs.
+    // current transactions and to compute the planned-window cutoff) and
+    // the `isFilterModified` indicator stay fresh. Only re-open the
+    // ObjectBox query streams when the day actually rolled over — they
+    // don't depend on `now`.
+    final bool dayChanged = newDateKey != dateKey;
     setState(() {
-      dateKey = Moment.startOfToday();
+      dateKey = newDateKey;
     });
+    if (dayChanged) {
+      _subscribeToTransactions();
+    }
   }
 
   void _rawUpdateDefaultFilter() {

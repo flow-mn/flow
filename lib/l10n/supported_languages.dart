@@ -19,4 +19,5 @@ final Map<Locale, (String, String)> supportedLanguages = {
   const Locale("uk", "UA"): ("Ukrainian (Ukraine)", "Українська (Україна)"),
   const Locale("ar"): ("Arabic", "العربية"),
   const Locale("fa", "IR"): ("Persian (Iran)", "فارسی (ایران)"),
+  const Locale("zh", "TW"): ("Chinese (Traditional, Taiwan)", "正體中文 (台灣)"),
 };

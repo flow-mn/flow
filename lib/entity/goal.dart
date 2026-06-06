@@ -4,7 +4,7 @@ import "package:flow/entity/account.dart";
 import "package:flow/utils/json/time_range_converter.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:objectbox/objectbox.dart";
 import "package:uuid/uuid.dart";

@@ -8,6 +8,12 @@ import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
 import "package:flow/routes/community/contributors_page.dart";
+import "package:flow/routes/debug/analytics/debug_cash_flow_page.dart";
+import "package:flow/routes/debug/analytics/debug_net_worth_page.dart";
+import "package:flow/routes/debug/analytics/debug_recurring_page.dart";
+import "package:flow/routes/debug/analytics/debug_spending_calendar_page.dart";
+import "package:flow/routes/debug/analytics/debug_spending_map_page.dart";
+import "package:flow/routes/debug/analytics/debug_wrapped_page.dart";
 import "package:flow/routes/debug/debug_icloud_page.dart";
 import "package:flow/routes/debug/debug_log_page.dart";
 import "package:flow/routes/debug/debug_logs_page.dart";
@@ -488,6 +494,30 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/_debug/theme",
       builder: (context, state) => DebugThemePage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/net-worth",
+      builder: (context, state) => const DebugNetWorthPage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/wrapped",
+      builder: (context, state) => const DebugWrappedPage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/recurring",
+      builder: (context, state) => const DebugRecurringPage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/calendar",
+      builder: (context, state) => const DebugSpendingCalendarPage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/cash-flow",
+      builder: (context, state) => const DebugCashFlowPage(),
+    ),
+    GoRoute(
+      path: "/_debug/analytics/map",
+      builder: (context, state) => const DebugSpendingMapPage(),
     ),
     GoRoute(
       path: "/_debug/scheduledNotifications",

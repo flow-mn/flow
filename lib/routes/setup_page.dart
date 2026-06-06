@@ -6,7 +6,7 @@ import "package:flow/widgets/setup/privacy_slide.dart";
 import "package:flow/widgets/setup/welcome_slide.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:smooth_page_indicator/smooth_page_indicator.dart";
 
 class SetupPage extends StatefulWidget {

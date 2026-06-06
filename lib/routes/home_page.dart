@@ -3,9 +3,8 @@ import "dart:developer";
 
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
-import "package:flow/entity/account.dart";
-import "package:flow/objectbox.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/providers/accounts_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/routes/home/accounts_tab.dart";
 import "package:flow/routes/home/home_tab.dart";
@@ -217,8 +216,14 @@ class HomePageState extends State<HomePage>
   }
 
   void _newTransactionPage(FlowButtonType? type) {
-    // Generally, this wouldn't happen in production environment
-    if (ObjectBox().box<Account>().count(limit: 1) == 0) {
+    // Generally, this wouldn't happen in production environment.
+    // Read via AccountsProvider so we don't hit ObjectBox on every FAB tap.
+    // Treat the not-yet-ready state as "no accounts" too — opening
+    // TransactionPage without a resolved account list would land the user
+    // in a broken form. Original code did a synchronous count() so it was
+    // never ambiguous.
+    final accountsProvider = AccountsProvider.of(context);
+    if (!accountsProvider.ready || accountsProvider.allAccounts.isEmpty) {
       context.push("/account/new");
       return;
     }

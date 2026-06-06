@@ -21,7 +21,7 @@ import "package:flow/widgets/transactions_date_header.dart";
 import "package:flow/widgets/transactions_selection_controller.dart";
 import "package:flow/widgets/transactions_selection_scope.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 /// Generic transactions page that can be used to display list of transactions

@@ -8,7 +8,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class GroupListTile extends StatelessWidget {
   final ChartData chartData;

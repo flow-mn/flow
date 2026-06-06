@@ -8,7 +8,7 @@ import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/import_wizard/import_item_list_tile.dart";
 import "package:flow/widgets/scaffold_actions.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class BackupInfoV1 extends StatelessWidget {
   final VoidCallback onClickStart;

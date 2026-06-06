@@ -7,8 +7,8 @@ import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/markdown_view.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 class DescriptionSection extends StatefulWidget {
   final String? value;

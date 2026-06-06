@@ -7,7 +7,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class EnyPrivacyNotice extends StatelessWidget {
   const EnyPrivacyNotice({super.key});

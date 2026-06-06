@@ -10,9 +10,9 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 class TransactionListItemAppearancePreferencesPage extends StatefulWidget {
   const TransactionListItemAppearancePreferencesPage({super.key});

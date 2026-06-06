@@ -3,7 +3,7 @@ import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/widgets/transaction_tag_chip.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class TransactionTagAddChip extends StatelessWidget {
   final String? title;
