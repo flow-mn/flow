@@ -4,10 +4,12 @@ import "package:material_symbols_icons_flow/iconname_to_unicode_map.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:simple_icons_flow/simple_icons_flow.dart";
 
-List<IconData> querySimpleIcons(String query) {
+/// Returns slug → glyph entries so the picker can persist the stable Simple
+/// Icons slug (see [SimpleIconFlowIcon]) rather than a drift-prone code point.
+List<MapEntry<String, IconData>> querySimpleIcons(String query) {
   final String trimmed = query.trim();
 
-  if (trimmed.isEmpty) return SimpleIcons.values.values.toList();
+  if (trimmed.isEmpty) return SimpleIcons.values.entries.toList();
 
   final List<String> queryResults = extractTop<String>(
     query: trimmed.startsWith(RegExp(r"\d")) ? "n$trimmed" : trimmed,
@@ -15,7 +17,9 @@ List<IconData> querySimpleIcons(String query) {
     limit: 50,
   ).map((extractedResult) => extractedResult.choice).toList();
 
-  return queryResults.map((key) => SimpleIcons.values[key]!).toList();
+  return queryResults
+      .map((key) => MapEntry(key, SimpleIcons.values[key]!))
+      .toList();
 }
 
 IconData _getMaterialSymbolsForCodepoint(int codepoint) => IconData(

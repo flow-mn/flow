@@ -1,4 +1,5 @@
 import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/constants.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
@@ -19,6 +20,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/bento/analytics_bento.dart";
 import "package:flow/widgets/home/stats/info_card_with_delta.dart";
 import "package:flow/widgets/home/stats/most_spending_category.dart";
 import "package:flow/widgets/home/stats/no_data.dart";
@@ -76,7 +78,7 @@ class _StatsTabState extends State<StatsTab>
   Widget build(BuildContext context) {
     super.build(context);
 
-    if (busy && intervalFlowReport == null) {
+    if (!flowDebugMode && busy && intervalFlowReport == null) {
       return Spinner.center();
     }
 
@@ -102,12 +104,26 @@ class _StatsTabState extends State<StatsTab>
             ),
           ),
         ),
-        if (showMissingExchangeRatesWarning) ...[
+        if (!flowDebugMode && showMissingExchangeRatesWarning) ...[
           RatesMissingErrorBox(),
           const SizedBox(height: 12.0),
         ],
         Expanded(
-          child: hasData
+          child: flowDebugMode
+              ? SingleChildScrollView(
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        const SizedBox(height: 16.0),
+                        AnalyticsBento(range: range),
+                        const SizedBox(height: 96.0),
+                      ],
+                    ),
+                  ),
+                )
+              : hasData
               ? SingleChildScrollView(
                   child: SafeArea(
                     top: false,
@@ -319,6 +335,10 @@ class _StatsTabState extends State<StatsTab>
   }
 
   Future<void> fetch() async {
+    // In debug the Stats tab renders the bento dashboard, whose tiles each
+    // fetch their own data; the interval reports below are unused there.
+    if (flowDebugMode) return;
+
     setState(() {
       busy = true;
     });

@@ -6,6 +6,7 @@ import "package:cross_file/cross_file.dart";
 import "package:flow/objectbox.dart";
 import "package:flutter/material.dart";
 import "package:path/path.dart" as path;
+import "package:simple_icons_flow/simple_icons_flow.dart";
 import "package:uuid/uuid.dart";
 
 /// An icon, emoji, or image used for [Account] or [Category]
@@ -13,6 +14,7 @@ abstract class FlowIconData {
   const FlowIconData();
 
   factory FlowIconData.icon(IconData iconData) => IconFlowIcon(iconData);
+  factory FlowIconData.simpleIcon(String slug) => SimpleIconFlowIcon(slug);
   factory FlowIconData.emoji(String char) => CharacterFlowIcon(char);
   factory FlowIconData.image(String path) => ImageFlowIcon(path);
 
@@ -21,6 +23,7 @@ abstract class FlowIconData {
 
     return switch (type) {
       "IconFlowIcon" => IconFlowIcon.parse(serialized),
+      "SimpleIconFlowIcon" => SimpleIconFlowIcon.parse(serialized),
       "ImageFlowIcon" => ImageFlowIcon.parse(serialized),
       "CharacterFlowIcon" => CharacterFlowIcon.parse(serialized),
       _ => throw UnimplementedError(),
@@ -72,6 +75,19 @@ class IconFlowIcon extends FlowIconData {
 
   const IconFlowIcon(this.iconData);
 
+  /// Legacy [IconData.fontPackage] values that predate Flow's own forks of
+  /// the icon packages. Icons saved before the rename still carry the
+  /// original package name, so we remap on parse to keep their glyphs
+  /// resolvable. The font families and code points are unchanged.
+  ///
+  /// Note: `simple_icons` brand icons are migrated to [SimpleIconFlowIcon]
+  /// (slug-based) by `migrateSimpleIconsToSlug`; the entry below is only a
+  /// best-effort fallback for any un-migrated legacy/backup data.
+  static const Map<String, String> _fontPackageMigration = {
+    "material_symbols_icons": "material_symbols_icons_flow",
+    "simple_icons": "simple_icons_flow",
+  };
+
   @override
   String toString() {
     return "IconFlowIcon:${iconData.fontFamily},${iconData.fontPackage},${iconData.codePoint.toRadixString(16)}";
@@ -89,10 +105,41 @@ class IconFlowIcon extends FlowIconData {
         // ignore: non_const_argument_for_const_parameter
         fontFamily: fontFamily,
         // ignore: non_const_argument_for_const_parameter
-        fontPackage: fontPackage,
+        fontPackage: _fontPackageMigration[fontPackage] ?? fontPackage,
       ),
     );
   }
+
+  static FlowIconData? tryParse(String serialized) {
+    try {
+      return parse(serialized);
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
+/// A Simple Icons brand glyph, stored by its **slug** (the stable key in
+/// [SimpleIcons.values], e.g. `paypal`) rather than a code point.
+///
+/// Simple Icons reassigns code points sequentially every release, so a stored
+/// code point silently points at a different brand after a package bump. The
+/// slug is stable across releases, so we persist that and resolve the glyph at
+/// render time.
+class SimpleIconFlowIcon extends FlowIconData {
+  final String slug;
+
+  const SimpleIconFlowIcon(this.slug);
+
+  /// The resolved glyph, or `null` when the slug is no longer present in the
+  /// bundled Simple Icons version (removed or renamed upstream).
+  IconData? get iconData => SimpleIcons.values[slug];
+
+  @override
+  String toString() => "SimpleIconFlowIcon:$slug";
+
+  static FlowIconData parse(String serialized) =>
+      FlowIconData.simpleIcon(serialized.split(":").last);
 
   static FlowIconData? tryParse(String serialized) {
     try {
