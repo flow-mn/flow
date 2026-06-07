@@ -1,53 +1,44 @@
-import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/services/exchange_rates.dart";
-import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
-import "package:flow/widgets/debug/analytics/insight_card.dart";
-import "package:flow/widgets/debug/analytics/spending_heatmap.dart";
-import "package:flow/widgets/debug/analytics/weekday_bars.dart";
+import "package:flow/utils/extensions.dart";
+import "package:flow/utils/primary_currency_dependent_state.dart";
+import "package:flow/widgets/analytics/insight_card.dart";
+import "package:flow/widgets/analytics/spending_heatmap.dart";
+import "package:flow/widgets/analytics/weekday_bars.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/stats/emphasized_text.dart";
+import "package:flow/widgets/stats/missing_rates_notice.dart";
+import "package:flow/widgets/stats/stats_app_bar.dart";
+import "package:flow/widgets/stats/stats_empty_state.dart";
+import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
-/// [dev] Spending calendar — a heatmap of daily spend intensity.
+/// Spending calendar — a heatmap of daily spend intensity.
 ///
 /// Bins expenses by [Transaction.transactionDate] and renders a GitHub-style
 /// grid, plus a weekday breakdown. The weekday rhythm is computed here because
 /// `TrendsReport.expenseByWeekday` is never populated upstream.
-class DebugSpendingCalendarPage extends StatefulWidget {
-  const DebugSpendingCalendarPage({super.key});
+class SpendingCalendarPage extends StatefulWidget {
+  const SpendingCalendarPage({super.key});
 
   @override
-  State<DebugSpendingCalendarPage> createState() =>
-      _DebugSpendingCalendarPageState();
+  State<SpendingCalendarPage> createState() => _SpendingCalendarPageState();
 }
 
-enum _Period {
-  m3("3M", 13),
-  m6("6M", 26),
-  y1("1Y", 53);
-
-  final String label;
-  final int weeks;
-
-  const _Period(this.label, this.weeks);
-}
-
-class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
-  _Period period = _Period.m6;
+class _SpendingCalendarPageState extends State<SpendingCalendarPage>
+    with PrimaryCurrencyDependentState<SpendingCalendarPage> {
+  TimeRange range = TimeRange.thisYear();
 
   bool busy = false;
   bool missingRates = false;
-
-  late String primaryCurrency;
-  ExchangeRates? rates;
 
   Map<DateTime, double> dailyExpense = {};
   Map<int, double> weekdayExpense = {};
@@ -56,43 +47,30 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
   DateTime to = DateTime.now();
 
   @override
-  void initState() {
-    super.initState();
-
-    primaryCurrency = UserPreferencesService().primaryCurrency;
-    rates = ExchangeRatesService().getPrimaryCurrencyRates();
-
-    fetch();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final bool hasData = dailyExpense.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Spending calendar (dev)"),
-        elevation: 0.0,
-        scrolledUnderElevation: 1.0,
-        centerTitle: false,
-        shadowColor: context.colorScheme.onSurface.withAlpha(0x40),
-        backgroundColor: context.colorScheme.surface,
-        surfaceTintColor: kTransparent,
+      appBar: StatsAppBar(
+        title: "tabs.stats.analytics.spendingCalendar".t(context),
       ),
       body: SafeArea(
         child: busy && dailyExpense.isEmpty
             ? const Spinner.center()
             : SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     const SizedBox(height: 16.0),
                     Frame(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: .start,
                         children: [
                           Text(
-                            "Spent in ${period.label}",
+                            "tabs.stats.analytics.calendar.spentIn".t(
+                              context,
+                              range.format(useRelative: false),
+                            ),
                             style: context.textTheme.titleSmall?.semi(context),
                           ),
                           const SizedBox(height: 2.0),
@@ -107,17 +85,9 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
                     ),
                     const SizedBox(height: 16.0),
                     Frame(
-                      child: Wrap(
-                        spacing: 8.0,
-                        children: _Period.values
-                            .map(
-                              (p) => FilterChip(
-                                label: Text(p.label),
-                                selected: p == period,
-                                onSelected: busy ? null : (_) => _setPeriod(p),
-                              ),
-                            )
-                            .toList(),
+                      child: TimeRangeSelector(
+                        initialValue: range,
+                        onChanged: _updateRange,
                       ),
                     ),
                     const SizedBox(height: 16.0),
@@ -131,12 +101,9 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
                         ),
                       )
                     else
-                      const Frame(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 48.0),
-                          child: Center(
-                            child: Text("No spending in this window."),
-                          ),
+                      StatsEmptyState(
+                        message: "tabs.stats.analytics.noSpendingWindow".t(
+                          context,
                         ),
                       ),
                     if (weekdayExpense.isNotEmpty) ...[
@@ -145,13 +112,9 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
                     ],
                     if (missingRates) ...[
                       const SizedBox(height: 8.0),
-                      Frame(
-                        child: Text(
-                          "Some non-primary currency amounts were skipped "
-                          "(missing exchange rates).",
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.flowColors.expense,
-                          ),
+                      MissingRatesNotice(
+                        message: "tabs.stats.analytics.missingRatesAmounts".t(
+                          context,
                         ),
                       ),
                     ],
@@ -170,18 +133,10 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
 
     return InsightCard(
       icon: Symbols.calendar_month_rounded,
-      label: "Rhythm",
-      title: Text.rich(
-        TextSpan(
-          children: [
-            const TextSpan(text: "Your priciest day is "),
-            TextSpan(
-              text: _weekdayName(topWeekday),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const TextSpan(text: "."),
-          ],
-        ),
+      label: "tabs.stats.analytics.rhythm".t(context),
+      title: EmphasizedText(
+        template: "tabs.stats.analytics.calendar.priciestDay".t(context),
+        value: _weekdayName(topWeekday),
       ),
       child: WeekdayBars(
         byWeekday: weekdayExpense,
@@ -191,12 +146,13 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
     );
   }
 
-  void _setPeriod(_Period value) {
-    if (value == period) return;
-    period = value;
+  void _updateRange(TimeRange value) {
+    if (value == range) return;
+    range = value;
     fetch();
   }
 
+  @override
   Future<void> fetch() async {
     if (!mounted) return;
     setState(() {
@@ -206,18 +162,14 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
     bool missing = false;
 
     try {
-      primaryCurrency = UserPreferencesService().primaryCurrency;
-      rates = ExchangeRatesService().getPrimaryCurrencyRates();
-
+      // Heatmap cells past today render empty, so cap the grid at "now" when
+      // the range runs into the future (e.g. the remainder of this year).
       final DateTime now = DateTime.now();
-      to = now;
-      from = now.subtract(Duration(days: period.weeks * 7));
+      from = range.from;
+      to = range.to.isAfter(now) ? now : range.to;
 
       final List<Transaction> transactions = await ObjectBox()
-          .transcationsByRange(
-            CustomTimeRange(from, to),
-            includeTransfers: false,
-          );
+          .transcationsByRange(range, includeTransfers: false);
 
       final Map<DateTime, double> daily = {};
       final Map<int, double> weekday = {};
@@ -226,7 +178,10 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
       for (final Transaction transaction in transactions) {
         if (transaction.type != TransactionType.expense) continue;
 
-        final double? converted = _convert(transaction.money, primaryCurrency);
+        final double? converted = transaction.money.tryConvertAmount(
+          primaryCurrency,
+          rates,
+        );
         if (converted == null) {
           missing = true;
           continue;
@@ -252,19 +207,6 @@ class _DebugSpendingCalendarPageState extends State<DebugSpendingCalendarPage> {
     } finally {
       busy = false;
       if (mounted) setState(() {});
-    }
-  }
-
-  double? _convert(Money money, String currency) {
-    if (money.currency == currency) return money.amount;
-
-    final ExchangeRates? rates = this.rates;
-    if (rates == null) return null;
-
-    try {
-      return money.convert(currency, rates).amount;
-    } catch (_) {
-      return null;
     }
   }
 

@@ -229,6 +229,7 @@ class FlowState extends State<Flow> {
       migrateThemePrefsToDb();
       migratePrivacyPreferencesToUserPreferences();
       migrateHomePendingTransactionsRange();
+      unawaited(migrateSimpleIconsToSlug());
 
       // Geo migration queries `extraTag: "hasExtension:..."`, which is only
       // populated by the extra-key indexing migration. Chain them so geo

@@ -251,7 +251,16 @@ extension MainActions on ObjectBox {
       final K? associatedData = associateBy?.call(transaction);
 
       flow[key] ??= MultiCurrencyFlow<K>(associatedData: associatedData);
-      flow[key]!.add(transaction.money);
+
+      // A single transaction with an invalid/unsupported currency code makes
+      // [Transaction.money] (and [MultiCurrencyFlow.add]) throw. Skip just that
+      // transaction instead of aborting the entire aggregation, which would
+      // otherwise leave every consumer of this grouping with empty results.
+      try {
+        flow[key]!.add(transaction.money);
+      } catch (_) {
+        continue;
+      }
     }
 
     return flow;
@@ -1134,8 +1143,10 @@ extension AccountActions on Account {
             TransitiveLocalPreferences.categoryFrecencyType(resolvedType),
           // Transfers don't carry a category in normal flows, so this branch
           // is a safety fallback — bucket it with expenses.
-          TransactionType.transfer => TransitiveLocalPreferences
-              .categoryFrecencyType(TransactionType.expense),
+          TransactionType.transfer =>
+            TransitiveLocalPreferences.categoryFrecencyType(
+              TransactionType.expense,
+            ),
         };
         unawaited(
           TransitiveLocalPreferences()

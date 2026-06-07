@@ -87,6 +87,14 @@ class FlowIcon extends StatelessWidget {
         color: color,
         fill: fill,
       ),
+      SimpleIconFlowIcon simpleIcon => Icon(
+        // Falls back to a neutral glyph if the brand was removed/renamed
+        // upstream and the slug no longer resolves.
+        simpleIcon.iconData ?? Symbols.help_rounded,
+        size: size,
+        color: color,
+        fill: fill,
+      ),
       ImageFlowIcon image => ClipRRect(
         borderRadius: borderRadius.subtract(.circular(platePadding.top)),
         child: Image.file(
