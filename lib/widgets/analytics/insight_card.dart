@@ -46,7 +46,7 @@ class InsightCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             mainAxisSize: MainAxisSize.min,
             children: [
               if (hasHeader) ...[
@@ -57,7 +57,7 @@ class InsightCard extends StatelessWidget {
                       const SizedBox(width: 8.0),
                     ],
                     if (label != null)
-                      _Pill(label: label!, accent: resolvedAccent),
+                      _buildPill(context, label!, resolvedAccent),
                   ],
                 ),
                 const SizedBox(height: 10.0),
@@ -82,16 +82,8 @@ class InsightCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class _Pill extends StatelessWidget {
-  final String label;
-  final Color accent;
-
-  const _Pill({required this.label, required this.accent});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPill(BuildContext context, String label, Color accent) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
       decoration: BoxDecoration(

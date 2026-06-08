@@ -3,6 +3,7 @@ import "dart:async";
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
@@ -41,6 +42,25 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24.0),
           const Center(child: ProfileCard()),
           const SizedBox(height: 24.0),
+          ListTile(
+            title: Text("tabs.stats.insights".t(context)),
+            leading: const Icon(Symbols.insights_rounded),
+            trailing: LocalPreferences().openedInsightsIndex.get()
+                ? null
+                : Badge(
+                    label: Text("general.new".t(context)),
+                    backgroundColor: context.colorScheme.primary,
+                    textColor: context.colorScheme.onPrimary,
+                  ),
+            onTap: () {
+              final entry = LocalPreferences().openedInsightsIndex;
+              if (!entry.get()) {
+                entry.set(true);
+                setState(() {});
+              }
+              context.push("/stats/insights");
+            },
+          ),
           ListTile(
             title: Text("accounts".t(context)),
             leading: const Icon(Symbols.wallet_rounded),
@@ -124,38 +144,6 @@ class _ProfileTabState extends State<ProfileTab> {
             title: Text("tabs.profile.preferences".t(context)),
             leading: const Icon(Symbols.settings_rounded),
             onTap: () => context.push("/preferences"),
-          ),
-          const SizedBox(height: 32.0),
-          ListHeader("tabs.stats.insights".t(context)),
-          ListTile(
-            title: Text("tabs.profile.analytics.netWorth".t(context)),
-            leading: const Icon(Symbols.trending_up_rounded),
-            onTap: () => context.push("/stats/net-worth"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.analytics.wrapped".t(context)),
-            leading: const Icon(Symbols.bar_chart_rounded),
-            onTap: () => context.push("/stats/wrapped"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.analytics.recurring".t(context)),
-            leading: const Icon(Symbols.autorenew_rounded),
-            onTap: () => context.push("/stats/recurring"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.analytics.calendar".t(context)),
-            leading: const Icon(Symbols.calendar_month_rounded),
-            onTap: () => context.push("/stats/calendar"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.analytics.cashFlow".t(context)),
-            leading: const Icon(Symbols.alt_route_rounded),
-            onTap: () => context.push("/stats/cash-flow"),
-          ),
-          ListTile(
-            title: Text("tabs.profile.analytics.map".t(context)),
-            leading: const Icon(Symbols.map_rounded),
-            onTap: () => context.push("/stats/map"),
           ),
           if (flowDebugMode) ...[
             const SizedBox(height: 32.0),

@@ -57,7 +57,10 @@ class _NetWorthTileState extends State<NetWorthTile>
           const SizedBox(height: 4.0),
           MoneyDeltaLabel(
             delta: Money(currentAmount - firstAmount, primaryCurrency),
-            suffixLabel: "tabs.stats.analytics.inRange".t(context, "${_months}M"),
+            suffixLabel: "tabs.stats.analytics.inRange".t(
+              context,
+              "${_months}M",
+            ),
             iconSize: 16.0,
             initiallyAbbreviated: true,
             suffixStyle: context.textTheme.bodySmall?.semi(context),
@@ -90,10 +93,9 @@ class _NetWorthTileState extends State<NetWorthTile>
         double total = 0.0;
         for (final Account account in accounts) {
           total +=
-              account.balanceAt(anchor).tryConvertAmount(
-                primaryCurrency,
-                rates,
-              ) ??
+              account
+                  .balanceAt(anchor)
+                  .tryConvertAmount(primaryCurrency, rates) ??
               0.0;
         }
         return total;

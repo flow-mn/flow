@@ -58,6 +58,10 @@ class TransactionListTile extends StatelessWidget {
   /// the leading icon always toggles regardless of [selectionActive].
   final VoidCallback? onSelectionToggle;
 
+  /// Renders an eye badge on the leading icon to mark the row as a read-only
+  /// preview — e.g. projected recurring occurrences that aren't real entries.
+  final bool preview;
+
   const TransactionListTile({
     super.key,
     required this.transaction,
@@ -73,6 +77,7 @@ class TransactionListTile extends StatelessWidget {
     this.selectionActive = false,
     this.selected = false,
     this.onSelectionToggle,
+    this.preview = false,
   });
 
   @override
@@ -171,6 +176,8 @@ class TransactionListTile extends StatelessWidget {
 
     final Widget visualLeading = selected
         ? FlowIcon(FlowIconData.icon(Symbols.check_rounded), plated: true)
+        : preview
+        ? _previewBadged(context, buildLeading(context, effectiveTheme))
         : buildLeading(context, effectiveTheme);
 
     final Widget leading = onSelectionToggle != null
@@ -372,6 +379,37 @@ class TransactionListTile extends StatelessWidget {
       fill: transaction.category.target != null ? 1.0 : 0.0,
       color: colorScheme?.primary,
       plateColor: colorScheme?.secondary,
+    );
+  }
+
+  /// Overlays a small eye badge on the bottom-right of a leading [icon] to flag
+  /// the row as a non-editable preview. There's no shared badge component in the
+  /// app, so this is a deliberate one-off.
+  Widget _previewBadged(BuildContext context, Widget icon) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        icon,
+        Positioned(
+          right: -1.0,
+          bottom: -1.0,
+          child: DecoratedBox(
+            // A surface-colored ring separates the badge from the icon plate.
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Icon(
+                Symbols.visibility_rounded,
+                size: 12.0,
+                color: context.flowColors.semi,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

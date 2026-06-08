@@ -11,12 +11,14 @@ import "package:flow/utils/extensions.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/analytics/insight_card.dart";
 import "package:flow/widgets/analytics/weekday_bars.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/stats/emphasized_text.dart";
 import "package:flow/widgets/stats/missing_rates_notice.dart";
 import "package:flow/widgets/stats/stats_app_bar.dart";
 import "package:flow/widgets/stats/stats_empty_state.dart";
 import "package:flow/widgets/stats/wrapped/mini_bars.dart";
+import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -38,6 +40,10 @@ class _WrappedPageState extends State<WrappedPage>
   bool busy = false;
   bool missingRates = false;
 
+  /// The period being "wrapped". The selector pages this; the insight cards
+  /// compare it against its trailing periods (see [_recentPeriods]).
+  TimeRange range = TimeRange.thisMonth();
+
   List<Transaction> thisMonthTransactions = [];
   TrendsReport? trends;
 
@@ -56,42 +62,57 @@ class _WrappedPageState extends State<WrappedPage>
 
   @override
   Widget build(BuildContext context) {
-    final String month = DateTime.now().toMoment().format("MMMM");
-
     return Scaffold(
-      appBar: StatsAppBar(
-        title: "tabs.stats.analytics.wrapped.title".t(context, month),
-      ),
+      appBar: StatsAppBar(title: "tabs.stats.analytics.wrapped".t(context)),
       body: SafeArea(
-        child: busy && trends == null
-            ? const Spinner.center()
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    const SizedBox(height: 8.0),
-                    if (thisMonthTransactions.isEmpty)
-                      StatsEmptyState(
-                        message: "tabs.stats.analytics.wrapped.noTransactions".t(
-                          context,
-                        ),
-                      )
-                    else
-                      ..._buildInsightCards(context),
-                    if (missingRates) ...[
-                      const SizedBox(height: 8.0),
-                      MissingRatesNotice(
-                        message: "tabs.stats.analytics.missingRatesAmounts".t(
-                          context,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 96.0),
-                  ],
-                ),
+        child: Column(
+          children: [
+            Frame.standalone(
+              child: TimeRangeSelector(
+                initialValue: range,
+                onChanged: _updateRange,
               ),
+            ),
+            Expanded(
+              child: busy && trends == null
+                  ? const Spinner.center()
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          const SizedBox(height: 8.0),
+                          if (thisMonthTransactions.isEmpty)
+                            StatsEmptyState(
+                              message:
+                                  "tabs.stats.analytics.wrapped.noTransactions"
+                                      .t(context),
+                            )
+                          else
+                            ..._buildInsightCards(context),
+                          if (missingRates) ...[
+                            const SizedBox(height: 8.0),
+                            MissingRatesNotice(
+                              message:
+                                  "tabs.stats.analytics.missingRatesAmounts".t(
+                                    context,
+                                  ),
+                            ),
+                          ],
+                          const SizedBox(height: 96.0),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _updateRange(TimeRange value) {
+    if (value == range) return;
+    range = value;
+    fetch();
   }
 
   List<Widget> _buildInsightCards(BuildContext context) {
@@ -187,7 +208,8 @@ class _WrappedPageState extends State<WrappedPage>
         ? "tabs.stats.analytics.wrapped.noExpenses".t(context)
         : "tabs.stats.analytics.wrapped.biggest".t(context, {
             "title":
-                biggestExpense!.title ?? "tabs.stats.analytics.untitled".t(context),
+                biggestExpense!.title ??
+                "tabs.stats.analytics.untitled".t(context),
             "amount": Money(biggestExpenseConverted, primaryCurrency).formatted,
             "date": biggestExpense!.transactionDate.toMoment().format("MMM D"),
           });
@@ -213,17 +235,17 @@ class _WrappedPageState extends State<WrappedPage>
     bool missing = false;
 
     try {
-      final List<TimeRange> months = _recentMonths(4);
+      final List<TimeRange> periods = _recentPeriods(range, 4);
 
       final FlowAnalytics<Category?> current = await ObjectBox()
-          .flowByCategories(range: months.first);
+          .flowByCategories(range: periods.first);
       final List<FlowAnalytics<Category?>> previous = [];
-      for (final TimeRange range in months.skip(1)) {
-        previous.add(await ObjectBox().flowByCategories(range: range));
+      for (final TimeRange period in periods.skip(1)) {
+        previous.add(await ObjectBox().flowByCategories(range: period));
       }
 
       thisMonthTransactions = await ObjectBox().transcationsByRange(
-        months.first,
+        periods.first,
         includeTransfers: false,
       );
 
@@ -339,13 +361,33 @@ class _WrappedPageState extends State<WrappedPage>
     return missing;
   }
 
-  List<TimeRange> _recentMonths(int count) {
-    final List<TimeRange> months = [TimeRange.thisMonth()];
+  /// The selected [anchor] plus the [count] - 1 immediately preceding periods,
+  /// newest first.
+  ///
+  /// Pageable ranges (week/month/year) page backwards via [PageableRange.last].
+  /// Non-pageable custom ranges fall back to equal-length preceding spans so the
+  /// period-over-period comparison degrades sensibly instead of repeating the
+  /// same range. Unbounded ranges (all-time) have no meaningful preceding
+  /// period — and their span overflows [DateTime] arithmetic — so the list
+  /// simply stops at the anchor.
+  List<TimeRange> _recentPeriods(TimeRange anchor, int count) {
+    final List<TimeRange> periods = [anchor];
     for (int i = 1; i < count; i++) {
-      final TimeRange previous = months.last;
-      months.add(previous is PageableRange ? previous.last : previous);
+      final TimeRange previous = periods.last;
+      if (previous is PageableRange) {
+        periods.add(previous.last);
+      } else {
+        if (previous.from <= Moment.minValue ||
+            previous.to >= Moment.maxValue) {
+          break;
+        }
+        final Duration span = previous.duration;
+        periods.add(
+          CustomTimeRange(previous.from.subtract(span), previous.from),
+        );
+      }
     }
-    return months;
+    return periods;
   }
 
   String _weekdayName(int weekday) {

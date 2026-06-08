@@ -1,4 +1,5 @@
 import "package:flow/data/money.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
@@ -6,10 +7,13 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/categories.dart";
 import "package:flow/services/recurring_transactions.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
+import "package:flow/utils/extensions/recurring_transaction.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/stats/missing_rates_notice.dart";
 import "package:flow/widgets/stats/recurring/recurring_summary_header.dart";
@@ -19,6 +23,7 @@ import "package:flow/widgets/time_range_selector.dart";
 import "package:flow/widgets/transaction_list_tile.dart";
 import "package:flow/widgets/transactions_date_header.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
 
 /// Subscriptions & recurring radar.
@@ -51,6 +56,11 @@ class _RecurringPageState extends State<RecurringPage>
   double totalIncome = 0.0;
   double totalExpense = 0.0;
 
+  /// Maps an already-logged occurrence's list key to its real transaction id.
+  /// Occurrences absent here are still upcoming previews — badged with an eye
+  /// and non-openable.
+  Map<String, int> _loggedIdByKey = {};
+
   @override
   Widget build(BuildContext context) {
     final List<Transaction> displayed = occurrences.take(_maxRows).toList();
@@ -67,12 +77,6 @@ class _RecurringPageState extends State<RecurringPage>
                   crossAxisAlignment: .start,
                   children: [
                     const SizedBox(height: 16.0),
-                    RecurringSummaryHeader(
-                      income: Money(totalIncome, primaryCurrency),
-                      expense: Money(totalExpense, primaryCurrency),
-                      count: occurrences.length,
-                    ),
-                    const SizedBox(height: 16.0),
                     Frame(
                       child: TimeRangeSelector(
                         initialValue: range,
@@ -80,21 +84,35 @@ class _RecurringPageState extends State<RecurringPage>
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    if (activeCount == 0)
-                      StatsEmptyState(
+                    ListHeader(
+                      "tabs.stats.analytics.recurring.projectedTitle".t(
+                        context,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    RecurringSummaryHeader(
+                      income: Money(totalIncome, primaryCurrency),
+                      expense: Money(totalExpense, primaryCurrency),
+                      count: occurrences.length,
+                    ),
+                    const SizedBox(height: 16.0),
+                    switch ((activeCount, occurrences.isEmpty)) {
+                      (0, _) => StatsEmptyState(
                         message: "tabs.stats.analytics.recurring.none".t(
                           context,
                         ),
-                      )
-                    else if (occurrences.isEmpty)
-                      StatsEmptyState(
+                      ),
+                      (_, true) => StatsEmptyState(
                         message:
                             "tabs.stats.analytics.recurring.nothingUpcoming".t(
                               context,
                             ),
-                      )
-                    else
-                      ..._buildGroups(context, grouped),
+                      ),
+                      (_, false) => Column(
+                        crossAxisAlignment: .start,
+                        children: _buildGroups(context, grouped),
+                      ),
+                    },
                     if (hidden > 0) ...[
                       const SizedBox(height: 8.0),
                       Frame(
@@ -142,19 +160,26 @@ class _RecurringPageState extends State<RecurringPage>
       );
 
       for (final Transaction transaction in entry.value) {
-        // Projections aren't real rows: render them read-only so the universal
-        // tile's tap/swipe affordances don't act on a non-existent entity.
+        // Projections aren't real rows. [IgnorePointer] suppresses the tile's
+        // own tap (which opens a transaction by id a projection lacks) and its
+        // swipe (which acts on a real entity); the outer [GestureDetector] adds
+        // back a tap-only affordance that opens the logged entry, or toasts if
+        // this occurrence is still just a projection.
         rows.add(
-          AbsorbPointer(
-            child: TransactionListTile(
-              key: ValueKey(
-                "${transaction.uuid}-"
-                "${transaction.transactionDate.microsecondsSinceEpoch}",
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _openOccurrence(context, transaction),
+            child: IgnorePointer(
+              child: TransactionListTile(
+                key: ValueKey(_occurrenceKey(transaction)),
+                transaction: transaction,
+                recoverFromTrashFn: null,
+                moveToTrashFn: null,
+                combineTransfers: false,
+                preview: !_loggedIdByKey.containsKey(
+                  _occurrenceKey(transaction),
+                ),
               ),
-              transaction: transaction,
-              recoverFromTrashFn: null,
-              moveToTrashFn: null,
-              combineTransfers: false,
             ),
           ),
         );
@@ -168,6 +193,39 @@ class _RecurringPageState extends State<RecurringPage>
     if (value == range) return;
     range = value;
     fetch();
+  }
+
+  /// Stable per-occurrence key (rule template uuid + date), shared by the row's
+  /// [ValueKey] and the [_loggedIdByKey] lookup.
+  String _occurrenceKey(Transaction occurrence) =>
+      "${occurrence.uuid}-"
+      "${occurrence.transactionDate.microsecondsSinceEpoch}";
+
+  /// Opens the real transaction behind a tapped occurrence when it's already
+  /// been logged; otherwise explains it's still an upcoming projection.
+  void _openOccurrence(BuildContext context, Transaction occurrence) {
+    final int? loggedId = _loggedIdByKey[_occurrenceKey(occurrence)];
+
+    if (loggedId == null) {
+      context.showToast(
+        text: "tabs.stats.analytics.recurring.notLoggedYet".t(context),
+        type: .info,
+      );
+      return;
+    }
+
+    context.push("/transaction/$loggedId");
+  }
+
+  /// The real transaction a rule logged on [date], if any (matched by day).
+  Transaction? _matchLogged(List<Transaction> logged, DateTime date) {
+    for (final Transaction transaction in logged) {
+      final DateTime d = transaction.transactionDate;
+      if (d.year == date.year && d.month == date.month && d.day == date.day) {
+        return transaction;
+      }
+    }
+    return null;
   }
 
   @override
@@ -185,6 +243,7 @@ class _RecurringPageState extends State<RecurringPage>
       query.close();
 
       final List<Transaction> result = [];
+      final Map<String, int> loggedIds = {};
       double income = 0.0;
       double expense = 0.0;
       int active = 0;
@@ -194,6 +253,12 @@ class _RecurringPageState extends State<RecurringPage>
         if (_decodeTemplate(recurring) == null) continue;
 
         active++;
+
+        // Real transactions this rule has already generated; occurrences that
+        // match one (by day) are actual entries, not previews.
+        final List<Transaction> logged = TransactionsService().findManySync(
+          TransactionFilter(extraTag: recurring.extensionIdentifierTag),
+        );
 
         final String? categoryUuid = recurring.template.categoryUuid;
         final Category? category = categoryUuid == null
@@ -213,6 +278,11 @@ class _RecurringPageState extends State<RecurringPage>
             ..setCategory(category);
 
           result.add(occurrence);
+
+          final Transaction? loggedMatch = _matchLogged(logged, date);
+          if (loggedMatch != null) {
+            loggedIds[_occurrenceKey(occurrence)] = loggedMatch.id;
+          }
 
           final double? converted = occurrence.money.tryConvertAmount(
             primaryCurrency,
@@ -237,6 +307,7 @@ class _RecurringPageState extends State<RecurringPage>
       result.sort((a, b) => a.transactionDate.compareTo(b.transactionDate));
 
       occurrences = result;
+      _loggedIdByKey = loggedIds;
       activeCount = active;
       totalIncome = income;
       totalExpense = expense;

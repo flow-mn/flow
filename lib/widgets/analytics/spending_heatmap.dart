@@ -1,4 +1,5 @@
 import "package:flow/data/money.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -44,10 +45,10 @@ class SpendingHeatmap extends StatelessWidget {
     final double columnWidth = cellSize + gap;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             _WeekdayLabels(
               cellSize: cellSize,
@@ -59,7 +60,7 @@ class SpendingHeatmap extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 reverse: true,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     SizedBox(
                       height: _headerHeight,
@@ -276,9 +277,12 @@ class _Legend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: .end,
       children: [
-        Text("Less", style: context.textTheme.labelSmall?.semi(context)),
+        Text(
+          "tabs.stats.analytics.heatmap.less".t(context),
+          style: context.textTheme.labelSmall?.semi(context),
+        ),
         const SizedBox(width: 6.0),
         ...List.generate(5, (level) {
           return Padding(
@@ -294,7 +298,10 @@ class _Legend extends StatelessWidget {
           );
         }),
         const SizedBox(width: 6.0),
-        Text("More", style: context.textTheme.labelSmall?.semi(context)),
+        Text(
+          "tabs.stats.analytics.heatmap.more".t(context),
+          style: context.textTheme.labelSmall?.semi(context),
+        ),
       ],
     );
   }

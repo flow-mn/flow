@@ -1,9 +1,11 @@
 import "package:flow/l10n/extensions.dart";
+import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/home/stats/bento/calendar_tile.dart";
 import "package:flow/widgets/home/stats/bento/cash_flow_tile.dart";
 import "package:flow/widgets/home/stats/bento/map_tile.dart";
 import "package:flow/widgets/home/stats/bento/net_worth_tile.dart";
+import "package:flow/widgets/home/stats/bento/pace_tile.dart";
 import "package:flow/widgets/home/stats/bento/recurring_tile.dart";
 import "package:flow/widgets/home/stats/bento/top_categories_tile.dart";
 import "package:flow/widgets/home/stats/bento/wrapped_tile.dart";
@@ -12,9 +14,9 @@ import "package:moment_dart/moment_dart.dart";
 
 /// The Stats bento dashboard, split into two sections.
 ///
-/// The top section is **range-bound**: [CashFlowTile] and [TopCategoriesTile]
-/// follow the [range] picked by the Stats tab's time-range selector, so they
-/// belong directly beneath it.
+/// The top section is **range-bound**: [CashFlowTile], [PaceTile], and
+/// [TopCategoriesTile] follow the [range] picked by the Stats tab's time-range
+/// selector, so they belong directly beneath it.
 ///
 /// Below an "Insights" header sits the **timeless** section: net worth,
 /// wrapped, the spending calendar, recurring, and the spending map each show
@@ -32,13 +34,14 @@ class AnalyticsBento extends StatelessWidget {
     // from overflowing under large accessibility font settings.
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: 1.3,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Frame(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             // Range-bound — these respond to the selected time range.
             CashFlowTile(range: range),
+            const SizedBox(height: 12.0),
+            PaceTile(range: range),
             const SizedBox(height: 12.0),
             TopCategoriesTile(range: range),
             const SizedBox(height: 24.0),

@@ -1,14 +1,16 @@
+import "package:auto_size_text/auto_size_text.dart";
+import "package:flow/data/flow_standard_report.dart";
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/theme/primary_colors.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/analytics/sankey_diagram.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/spinner.dart";
+import "package:flow/widgets/home/stats/info_card_with_delta.dart";
 import "package:flow/widgets/stats/cash_flow/cash_flow_legend.dart";
 import "package:flow/widgets/stats/cash_flow/cash_flow_summary.dart";
 import "package:flow/widgets/stats/missing_rates_notice.dart";
@@ -45,16 +47,32 @@ class _CashFlowPageState extends State<CashFlowPage>
   double totalIncome = 0.0;
   double totalExpense = 0.0;
 
+  /// Drives the forecast headline and the daily-average cards. Fetched
+  /// alongside the Sankey aggregation but kept independent, so the averages
+  /// still render if the per-category pass fails.
+  FlowStandardReport? report;
+
+  final AutoSizeGroup _averagesGroup = AutoSizeGroup();
+
   @override
   Widget build(BuildContext context) {
-    final String label = range.format(useRelative: false);
     final bool hasData = sources.isNotEmpty && targets.isNotEmpty;
     final double net = totalIncome - totalExpense;
 
+    final FlowStandardReport? stats = report;
+
+    // The forecast only means something when the range still has days left to
+    // run and there's movement to project; for a closed range the projection
+    // equals the actual total, so it's folded into the summary only here.
+    Money? forecast;
+    if (stats != null &&
+        range.contains(DateTime.now()) &&
+        (stats.incomeSum.amount != 0 || stats.expenseSum.amount != 0)) {
+      forecast = stats.currentExpenseSumForecast ?? stats.expenseSum;
+    }
+
     return Scaffold(
-      appBar: StatsAppBar(
-        title: "${"tabs.stats.analytics.cashFlow".t(context)} · $label",
-      ),
+      appBar: StatsAppBar(title: "tabs.stats.analytics.cashFlow".t(context)),
       body: SafeArea(
         child: busy && sources.isEmpty
             ? const Spinner.center()
@@ -74,6 +92,12 @@ class _CashFlowPageState extends State<CashFlowPage>
                       income: Money(totalIncome, primaryCurrency),
                       expense: Money(totalExpense, primaryCurrency),
                       net: Money(net, primaryCurrency),
+                      forecast: forecast,
+                      forecastComparison: stats?.previousExpenseSum,
+                      forecastLabel: "tabs.stats.intervalReport.forecast".t(
+                        context,
+                        range.format(),
+                      ),
                     ),
                     const SizedBox(height: 16.0),
                     if (failed)
@@ -84,7 +108,10 @@ class _CashFlowPageState extends State<CashFlowPage>
                       )
                     else if (hasData) ...[
                       Frame(
-                        child: SankeyDiagram(sources: sources, targets: targets),
+                        child: SankeyDiagram(
+                          sources: sources,
+                          targets: targets,
+                        ),
                       ),
                       const SizedBox(height: 24.0),
                       ListHeader("tabs.stats.analytics.income".t(context)),
@@ -100,6 +127,12 @@ class _CashFlowPageState extends State<CashFlowPage>
                           context,
                         ),
                       ),
+                    if (stats != null &&
+                        (stats.incomeSum.amount != 0 ||
+                            stats.expenseSum.amount != 0)) ...[
+                      const SizedBox(height: 24.0),
+                      _buildAverages(context, stats),
+                    ],
                     if (missingRates) ...[
                       const SizedBox(height: 12.0),
                       MissingRatesNotice(
@@ -122,12 +155,71 @@ class _CashFlowPageState extends State<CashFlowPage>
     fetch();
   }
 
+  /// Per-day averages for expense, income, and flow, each with a delta against
+  /// the previous comparable period when one exists.
+  Widget _buildAverages(BuildContext context, FlowStandardReport stats) {
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        ListHeader("tabs.stats.intervalReport.averages@day".t(context)),
+        const SizedBox(height: 8.0),
+        Frame(
+          child: Column(
+            spacing: 16.0,
+            children: [
+              Row(
+                spacing: 16.0,
+                children: [
+                  Expanded(
+                    child: InfoCardWithDelta(
+                      title: "tabs.stats.intervalReport.averages.expense".t(
+                        context,
+                      ),
+                      autoSizeGroup: _averagesGroup,
+                      money: stats.dailyAvgExpenditure,
+                      previousMoney: stats.previousDailyAvgExpenditure,
+                      invertDelta: true,
+                    ),
+                  ),
+                  Expanded(
+                    child: InfoCardWithDelta(
+                      title: "tabs.stats.intervalReport.averages.income".t(
+                        context,
+                      ),
+                      autoSizeGroup: _averagesGroup,
+                      money: stats.dailyAvgIncome,
+                      previousMoney: stats.previousDailyAvgIncome,
+                    ),
+                  ),
+                ],
+              ),
+              InfoCardWithDelta(
+                title: "tabs.stats.intervalReport.averages.flow".t(context),
+                autoSizeGroup: _averagesGroup,
+                money: stats.dailyAvgFlow,
+                previousMoney: stats.previousDailyAvgFlow,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Future<void> fetch() async {
     if (!mounted) return;
     setState(() {
       busy = true;
     });
+
+    // Powers the forecast + averages; isolated from the Sankey aggregation so a
+    // failure on either side doesn't blank out the other.
+    try {
+      report = await FlowStandardReport.generate(range, rates);
+    } catch (_) {
+      report = null;
+    }
 
     bool missing = false;
     bool error = false;
@@ -142,6 +234,7 @@ class _CashFlowPageState extends State<CashFlowPage>
       final Color otherColor = context.colorScheme.onSurface.withAlpha(0x66);
       final Color incomeColor = context.flowColors.income;
       final Color expenseColor = context.flowColors.expense;
+      final List<Color> palette = context.chartAccents;
 
       final List<SankeyDatum> incomeNodes = [];
       final List<SankeyDatum> expenseNodes = [];
@@ -159,7 +252,7 @@ class _CashFlowPageState extends State<CashFlowPage>
             "tabs.stats.analytics.uncategorized".tr();
         final Color color =
             flow.associatedData?.colorScheme?.primary ??
-            accentColors[colorIndex++ % accentColors.length];
+            palette[colorIndex++ % palette.length];
 
         final double incomeAmount = single.totalIncome.amount;
         final double expenseAmount = single.totalExpense.amount.abs();

@@ -131,9 +131,8 @@ class _NetWorthPageState extends State<NetWorthPage>
                           height: 120.0,
                           child: Center(
                             child: Text(
-                              "tabs.stats.analytics.netWorth.notEnoughHistory".t(
-                                context,
-                              ),
+                              "tabs.stats.analytics.netWorth.notEnoughHistory"
+                                  .t(context),
                             ),
                           ),
                         ),
@@ -147,7 +146,9 @@ class _NetWorthPageState extends State<NetWorthPage>
                       ),
                     ],
                     const SizedBox(height: 32.0),
-                    ListHeader("tabs.stats.analytics.netWorth.byAccount".t(context)),
+                    ListHeader(
+                      "tabs.stats.analytics.netWorth.byAccount".t(context),
+                    ),
                     const SizedBox(height: 8.0),
                     ..._buildShareRows(context),
                     const SizedBox(height: 96.0),

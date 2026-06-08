@@ -6,6 +6,7 @@ import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flow/widgets/stats/cash_flow/cash_flow_figure.dart";
 import "package:flow/widgets/stats/cash_flow/cash_flow_flow_bar.dart";
+import "package:flow/widgets/trend.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 
@@ -19,11 +20,22 @@ class CashFlowSummary extends StatelessWidget {
   final Money expense;
   final Money net;
 
+  /// Optional projected end-of-range expense, shown as a footer beneath the
+  /// in/out figures. When null the footer is omitted. [forecastLabel] is the
+  /// caption (e.g. "Expense forecast for June") and [forecastComparison] the
+  /// previous period's expense, used for the trend.
+  final Money? forecast;
+  final Money? forecastComparison;
+  final String? forecastLabel;
+
   const CashFlowSummary({
     super.key,
     required this.income,
     required this.expense,
     required this.net,
+    this.forecast,
+    this.forecastComparison,
+    this.forecastLabel,
   });
 
   @override
@@ -38,7 +50,7 @@ class CashFlowSummary extends StatelessWidget {
         builder: (context) => Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Row(
                 children: [
@@ -59,7 +71,7 @@ class CashFlowSummary extends StatelessWidget {
                   const SizedBox(width: 12.0),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
@@ -108,6 +120,45 @@ class CashFlowSummary extends StatelessWidget {
                   ),
                 ],
               ),
+              if (forecast case final Money forecast) ...[
+                const SizedBox(height: 16.0),
+                Container(
+                  height: 1.0,
+                  color: context.colorScheme.onSurface.withAlpha(0x1a),
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        forecastLabel ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: context.colorScheme.onSecondary.withAlpha(
+                            0x99,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    MoneyText(
+                      forecast,
+                      displayAbsoluteAmount: true,
+                      initiallyAbbreviated: true,
+                      tapToToggleAbbreviation: true,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: context.flowColors.expense,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (forecastComparison case final Money previous) ...[
+                      const SizedBox(width: 8.0),
+                      Trend.fromMoney(current: forecast, previous: previous),
+                    ],
+                  ],
+                ),
+              ],
             ],
           ),
         ),
