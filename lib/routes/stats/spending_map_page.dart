@@ -86,6 +86,13 @@ class _SpendingMapPageState extends State<SpendingMapPage>
                   children: [
                     const SizedBox(height: 16.0),
                     Frame(
+                      child: TimeRangeSelector(
+                        initialValue: range,
+                        onChanged: _updateRange,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Frame(
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
@@ -109,13 +116,6 @@ class _SpendingMapPageState extends State<SpendingMapPage>
                             style: context.textTheme.bodyMedium?.semi(context),
                           ),
                         ],
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Frame(
-                      child: TimeRangeSelector(
-                        initialValue: range,
-                        onChanged: _updateRange,
                       ),
                     ),
                     const SizedBox(height: 16.0),

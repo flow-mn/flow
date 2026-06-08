@@ -16,8 +16,12 @@ final FlowColorScheme _defaultLightBase = FlowColorScheme(
   secondary: const Color(0xfff5ccff),
   onSecondary: const Color(0xff33004f),
   customColors: FlowCustomColors(
-    income: Color(0xFF32CC70),
-    expense: Color(0xFFFF4040),
+    // Deepened from the punchy web green/red so they stay legible on the pale
+    // pastel `secondary` card (and the near-white surface) across every light
+    // scheme — the bright originals dropped to ~1.5:1 on the cards. Shared by
+    // all 16 light schemes via copyWith. See also [monochrome].
+    income: Color(0xFF15803D),
+    expense: Color(0xFFC42525),
     semi: Color(0xFF6A666D),
   ),
 ); // contrast: 5.82456471142964

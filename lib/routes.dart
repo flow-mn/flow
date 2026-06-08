@@ -50,6 +50,7 @@ import "package:flow/routes/setup/setup_profile_page.dart";
 import "package:flow/routes/setup/setup_profile_picture_page.dart";
 import "package:flow/routes/setup_page.dart";
 import "package:flow/routes/stats/cash_flow_page.dart";
+import "package:flow/routes/stats/insights_page.dart";
 import "package:flow/routes/stats/net_worth_page.dart";
 import "package:flow/routes/stats/recurring_page.dart";
 import "package:flow/routes/stats/spending_calendar_page.dart";
@@ -494,6 +495,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/_debug/theme",
       builder: (context, state) => DebugThemePage(),
+    ),
+    GoRoute(
+      path: "/stats/insights",
+      builder: (context, state) => const InsightsPage(),
     ),
     GoRoute(
       path: "/stats/net-worth",

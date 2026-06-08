@@ -21,7 +21,11 @@ class CashFlowFigure extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget dot = _Dot(color: color);
+    final Widget dot = Container(
+      width: 8.0,
+      height: 8.0,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
     final Widget labelText = Text(
       label,
       style: context.textTheme.labelSmall?.semi(context),
@@ -49,21 +53,6 @@ class CashFlowFigure extends StatelessWidget {
               const SizedBox(width: 8.0),
               value,
             ],
-    );
-  }
-}
-
-class _Dot extends StatelessWidget {
-  final Color color;
-
-  const _Dot({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8.0,
-      height: 8.0,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

@@ -1,7 +1,6 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
-import "package:flow/theme/primary_colors.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/home/stats/bento/bento_tile.dart";
@@ -84,6 +83,11 @@ class _TopCategoriesTileState extends State<TopCategoriesTile>
     try {
       final analytics = await ObjectBox().flowByCategories(range: widget.range);
 
+      // Resolve the theme palette only after the await — the first fetch runs
+      // from initState (via the mixin), before inherited widgets are readable.
+      if (!mounted) return;
+      final List<Color> palette = context.chartAccents;
+
       final List<_Slice> next = [];
       int colorIndex = 0;
 
@@ -101,7 +105,7 @@ class _TopCategoriesTileState extends State<TopCategoriesTile>
             "tabs.stats.analytics.uncategorized".tr();
         final Color color =
             flow.associatedData?.colorScheme?.primary ??
-            accentColors[colorIndex++ % accentColors.length];
+            palette[colorIndex++ % palette.length];
 
         next.add(_Slice(name: name, amount: expense, color: color));
       }

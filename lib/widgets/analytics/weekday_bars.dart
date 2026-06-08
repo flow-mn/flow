@@ -29,7 +29,7 @@ class WeekdayBars extends StatelessWidget {
     return SizedBox(
       height: 56.0,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: .end,
         children: List.generate(7, (index) {
           final int weekday = index + 1;
           final double value = byWeekday[weekday] ?? 0.0;

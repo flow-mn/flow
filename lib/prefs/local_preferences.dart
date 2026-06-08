@@ -55,6 +55,12 @@ class LocalPreferences {
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
+  /// Whether the user has opened the Insights index at least once.
+  ///
+  /// Drives the one-time "New" badge on the Insights entry in the Profile tab:
+  /// it flips to true on the first tap, after which the badge never shows again.
+  late final BoolSettingsEntry openedInsightsIndex;
+
   /// Number of notifications issued by the app
   ///
   /// Used to prevent id collisions
@@ -139,6 +145,12 @@ class LocalPreferences {
       key: "useCurrencySymbol",
       preferences: _prefs,
       initialValue: true,
+    );
+
+    openedInsightsIndex = BoolSettingsEntry(
+      key: "openedInsightsIndex",
+      preferences: _prefs,
+      initialValue: false,
     );
 
     lastRequestedAppStoreReview = DateTimeSettingsEntry(

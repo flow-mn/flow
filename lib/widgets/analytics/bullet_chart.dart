@@ -50,23 +50,32 @@ class BulletChart extends StatelessWidget {
           child: Stack(
             children: [
               // Full track.
-              Container(
-                decoration: BoxDecoration(
-                  color: track,
-                  borderRadius: BorderRadius.all(Radius.circular(height / 2)),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: track,
+                    borderRadius: BorderRadius.all(Radius.circular(height / 2)),
+                  ),
                 ),
               ),
               // Qualitative band up to the target.
-              Container(
-                width: targetX,
-                decoration: BoxDecoration(
-                  color: band,
-                  borderRadius: BorderRadius.all(Radius.circular(height / 2)),
+              Positioned(
+                left: 0.0,
+                top: 0.0,
+                bottom: 0.0,
+                child: Container(
+                  width: targetX,
+                  decoration: BoxDecoration(
+                    color: band,
+                    borderRadius: BorderRadius.all(Radius.circular(height / 2)),
+                  ),
                 ),
               ),
-              // Measure bar.
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: height * 0.28),
+              // Measure bar, inset vertically so the track reads behind it.
+              Positioned(
+                left: 0.0,
+                top: height * 0.28,
+                bottom: height * 0.28,
                 child: Container(
                   width: valueWidth,
                   decoration: BoxDecoration(

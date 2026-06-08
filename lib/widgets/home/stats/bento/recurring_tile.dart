@@ -92,6 +92,11 @@ class _RecurringTileState extends State<RecurringTile>
         final Transaction? template = _decodeTemplate(recurring);
         if (template == null) continue;
 
+        // Only expenses are "charges". Counting income/transfer recurrings
+        // here would inflate the upcoming count while contributing nothing to
+        // the outflow total, leaving the two figures describing different sets.
+        if (template.type != TransactionType.expense) continue;
+
         final Money? money = _templateMoney(template);
         if (money == null) continue;
 
@@ -100,14 +105,12 @@ class _RecurringTileState extends State<RecurringTile>
         );
         count += occurrences.length;
 
-        if (template.type == TransactionType.expense) {
-          final double? converted = money.tryConvertAmount(
-            primaryCurrency,
-            rates,
-          );
-          if (converted != null) {
-            totalOutflow += converted.abs() * occurrences.length;
-          }
+        final double? converted = money.tryConvertAmount(
+          primaryCurrency,
+          rates,
+        );
+        if (converted != null) {
+          totalOutflow += converted.abs() * occurrences.length;
         }
       }
 
