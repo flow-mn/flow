@@ -56,7 +56,7 @@ import "package:flutter_quill/flutter_quill.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
 import "package:logging_appenders/logging_appenders.dart";
-import "package:material_symbols_icons/material_symbols_icons.dart";
+import "package:material_symbols_icons_flow/material_symbols_icons.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:path/path.dart" as path;
@@ -229,6 +229,7 @@ class FlowState extends State<Flow> {
       migrateThemePrefsToDb();
       migratePrivacyPreferencesToUserPreferences();
       migrateHomePendingTransactionsRange();
+      unawaited(migrateSimpleIconsToSlug());
 
       // Geo migration queries `extraTag: "hasExtension:..."`, which is only
       // populated by the extra-key indexing migration. Chain them so geo

@@ -12,11 +12,7 @@ List<String> getKeys(File file) {
 
 const _pluralSuffixes = [".zero", ".one", ".two", ".few", ".many", ".other"];
 
-bool _isPluralVariant(String key) {
-  return _pluralSuffixes.any((suffix) => key.endsWith(suffix));
-}
-
-String _baseKey(String key) {
+String _strippedBaseKey(String key) {
   for (final suffix in _pluralSuffixes) {
     if (key.endsWith(suffix)) {
       return key.substring(0, key.length - suffix.length);
@@ -24,6 +20,18 @@ String _baseKey(String key) {
   }
   return key;
 }
+
+/// A key is only a plural variant when it ends in a plural suffix *and* the
+/// stripped base key actually exists in the base (en) file. This avoids
+/// misclassifying real, standalone keys that merely happen to end in a plural
+/// suffix (e.g. `tabs.profile.other`, `tabs.stats.analytics.other`) as plural
+/// variants.
+bool _isPluralVariant(String key, Set<String> baseFileKeys) {
+  if (!_pluralSuffixes.any((suffix) => key.endsWith(suffix))) return false;
+  return baseFileKeys.contains(_strippedBaseKey(key));
+}
+
+String _baseKey(String key) => _strippedBaseKey(key);
 
 void main() {
   final Directory directory = Directory("assets/l10n");
@@ -39,6 +47,7 @@ void main() {
   });
 
   final List<String> keys = getKeys(baseFile);
+  final Set<String> baseFileKeys = keys.toSet();
 
   test("No duplicate keys in base file", () {
     final Set<String> uniqueKeys = keys.toSet();
@@ -46,7 +55,7 @@ void main() {
   });
 
   final List<String> baseKeys =
-      keys.where((k) => !_isPluralVariant(k)).toList();
+      keys.where((k) => !_isPluralVariant(k, baseFileKeys)).toList();
   final Set<String> baseKeySet = baseKeys.toSet();
 
   for (final entry in directory.listSync()) {
@@ -59,7 +68,7 @@ void main() {
     test("File $name has all base keys in same order", () {
       final languageKeys = getKeys(entry);
       final languageBaseKeys =
-          languageKeys.where((k) => !_isPluralVariant(k)).toList();
+          languageKeys.where((k) => !_isPluralVariant(k, baseFileKeys)).toList();
 
       expect(languageBaseKeys.length, baseKeys.length,
           reason: "Key count mismatch");
@@ -73,7 +82,7 @@ void main() {
 
       for (int i = 0; i < languageKeys.length; i++) {
         final key = languageKeys[i];
-        if (!_isPluralVariant(key)) continue;
+        if (!_isPluralVariant(key, baseFileKeys)) continue;
 
         final base = _baseKey(key);
         expect(baseKeySet.contains(base), true,

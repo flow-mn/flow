@@ -2,7 +2,7 @@ import "package:flow/entity/category.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/category_card.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class CategoryPresetCard extends StatelessWidget {
   final Function(bool) onSelect;

@@ -6,7 +6,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class ImageDropZone extends StatefulWidget {
   final Function(XFile? file)? onFileDropped;

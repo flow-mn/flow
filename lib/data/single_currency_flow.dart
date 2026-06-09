@@ -57,10 +57,16 @@ class SingleCurrencyFlow<T> {
       _expenseCount++;
       if (money.currency == this.currency) {
         _expenseSum += amount;
-      } else if (rates != null) {
-        _expenseSum += money.convert(this.currency, rates).amount;
       } else {
-        _hasMissingData = true;
+        // Converting can throw when a rate is missing; per this class's
+        // contract that is "missing data", never a hard failure that would
+        // abort the whole aggregation for one unconvertible transaction.
+        final double? converted = _tryConvert(money, rates);
+        if (converted == null) {
+          _hasMissingData = true;
+        } else {
+          _expenseSum += converted;
+        }
       }
 
       return;
@@ -70,13 +76,26 @@ class SingleCurrencyFlow<T> {
       _incomeCount++;
       if (money.currency == this.currency) {
         _incomeSum += amount;
-      } else if (rates != null) {
-        _incomeSum += money.convert(this.currency, rates).amount;
       } else {
-        _hasMissingData = true;
+        final double? converted = _tryConvert(money, rates);
+        if (converted == null) {
+          _hasMissingData = true;
+        } else {
+          _incomeSum += converted;
+        }
       }
 
       return;
+    }
+  }
+
+  double? _tryConvert(Money money, ExchangeRates? rates) {
+    if (rates == null) return null;
+
+    try {
+      return money.convert(currency, rates).amount;
+    } catch (_) {
+      return null;
     }
   }
 

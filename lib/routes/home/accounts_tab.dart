@@ -17,7 +17,7 @@ import "package:flow/widgets/home/home/account/total_balance.dart";
 import "package:flow/widgets/home/privacy_toggler.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class AccountsTab extends StatefulWidget {
   const AccountsTab({super.key});
@@ -104,8 +104,8 @@ class _AccountsTabState extends State<AccountsTab>
                           ),
                           proxyDecorator: proxyDecorator,
                           itemCount: accounts.length,
-                          onReorder: (oldIndex, newIndex) =>
-                              onReorder(accounts, oldIndex, newIndex),
+                          onReorderItem: (oldIndex, newIndex) =>
+                              onReorderItem(accounts, oldIndex, newIndex),
                         ),
                       )
                     : ListView(
@@ -207,7 +207,11 @@ class _AccountsTabState extends State<AccountsTab>
     });
   }
 
-  void onReorder(List<Account> currentAccounts, int oldIndex, int newIndex) {
+  void onReorderItem(
+    List<Account> currentAccounts,
+    int oldIndex,
+    int newIndex,
+  ) {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }

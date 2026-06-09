@@ -1,7 +1,7 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/backup_entry.dart";
-import "package:material_symbols_icons/symbols.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 enum ActionableNotificationPriority {
   low(0),

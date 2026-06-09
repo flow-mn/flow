@@ -18,7 +18,7 @@ import "package:flow/widgets/transaction_filter_head/select_multi_category_sheet
 import "package:flutter/foundation.dart" hide Category;
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class ExportPdfPage extends StatefulWidget {

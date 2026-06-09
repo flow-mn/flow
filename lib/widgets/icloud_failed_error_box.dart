@@ -3,7 +3,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class ICloudFailedErrorBox extends StatefulWidget {
   const ICloudFailedErrorBox({super.key});

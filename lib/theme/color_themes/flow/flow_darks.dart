@@ -4,7 +4,7 @@ import "package:flow/theme/flow_theme_group.dart";
 import "dart:ui";
 
 import "package:flow/theme/flow_color_scheme.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 final FlowColorScheme _defaultDarkBase = FlowColorScheme(
   name: "defaultDarkBase",

@@ -22,7 +22,7 @@ import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
 import "package:go_router/go_router.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:permission_handler/permission_handler.dart";
 
 final Logger _log = Logger("PreferencesPage");

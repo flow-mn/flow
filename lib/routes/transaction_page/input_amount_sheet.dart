@@ -14,7 +14,7 @@ import "package:flow/widgets/numpad.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 enum CalculatorOperation { add, subtract, multiply, divide }
 

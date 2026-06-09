@@ -9,7 +9,7 @@ import "package:flow/widgets/integrations/eny_page/eny_privacy_notice.dart";
 import "package:flow/widgets/scaffold_actions.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class IntegrateEnyPage extends StatefulWidget {
   final String apiKey;

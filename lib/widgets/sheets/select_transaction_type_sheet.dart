@@ -6,7 +6,7 @@ import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class SelectTransactionTypeSheet extends StatelessWidget {
   final TransactionType? currentlySelected;

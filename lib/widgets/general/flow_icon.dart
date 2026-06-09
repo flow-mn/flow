@@ -6,7 +6,7 @@ import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/surface.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:path/path.dart";
 
 class FlowIcon extends StatelessWidget {
@@ -83,6 +83,14 @@ class FlowIcon extends StatelessWidget {
     return switch (data) {
       IconFlowIcon icon => Icon(
         icon.iconData,
+        size: size,
+        color: color,
+        fill: fill,
+      ),
+      SimpleIconFlowIcon simpleIcon => Icon(
+        // Falls back to a neutral glyph if the brand was removed/renamed
+        // upstream and the slug no longer resolves.
+        simpleIcon.iconData ?? Symbols.help_rounded,
         size: size,
         color: color,
         fill: fill,

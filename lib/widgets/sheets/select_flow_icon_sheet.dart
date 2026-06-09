@@ -7,7 +7,7 @@ import "package:flow/widgets/sheets/select_flow_icon_sheet/select_icon_flow_icon
 import "package:flow/widgets/sheets/select_flow_icon_sheet/select_image_flow_icon_sheet.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Pops with [FlowIconData] or [null]
 class SelectFlowIconSheet extends StatefulWidget {

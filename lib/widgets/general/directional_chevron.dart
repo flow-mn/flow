@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class LeChevron extends StatelessWidget {
   const LeChevron({super.key});

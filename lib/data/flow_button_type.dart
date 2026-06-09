@@ -2,7 +2,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flutter/material.dart";
 import "package:json_annotation/json_annotation.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 @JsonEnum(valueField: "value")
 enum FlowButtonType with LocalizedEnum {
