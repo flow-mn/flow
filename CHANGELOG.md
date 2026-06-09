@@ -1,10 +1,11 @@
 # Changelog
 
-## next
+## 0.23.0
 
 ### New features
 
 * Added Traditional Chinese (Taiwan) localizations
+* Revamped the stats tab, and added insights
 
 ## 0.22.0
 
