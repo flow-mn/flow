@@ -81,6 +81,13 @@ class _NetWorthPageState extends State<NetWorthPage>
                   children: [
                     const SizedBox(height: 16.0),
                     Frame(
+                      child: TimeRangeSelector(
+                        initialValue: range,
+                        onChanged: _updateRange,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Frame(
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
@@ -104,13 +111,6 @@ class _NetWorthPageState extends State<NetWorthPage>
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Frame(
-                      child: TimeRangeSelector(
-                        initialValue: range,
-                        onChanged: _updateRange,
                       ),
                     ),
                     const SizedBox(height: 16.0),
