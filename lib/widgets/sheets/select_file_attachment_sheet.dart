@@ -7,7 +7,7 @@ import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 /// Pops with a List of [XFile]
 class SelectFileAttachmentSheet extends StatefulWidget {

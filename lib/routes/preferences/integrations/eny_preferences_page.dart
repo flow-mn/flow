@@ -13,7 +13,7 @@ import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/integrations/eny_page/eny_privacy_notice.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class EnyPreferencesPage extends StatefulWidget {
   const EnyPreferencesPage({super.key});

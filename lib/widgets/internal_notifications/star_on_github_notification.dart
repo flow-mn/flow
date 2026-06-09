@@ -4,7 +4,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/internal_notifications/internal_notification_list_tile.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/material_symbols_icons.dart";
+import "package:material_symbols_icons_flow/material_symbols_icons.dart";
 
 class StarOnGithubNotification extends StatelessWidget {
   final StarOnGitHub notification;

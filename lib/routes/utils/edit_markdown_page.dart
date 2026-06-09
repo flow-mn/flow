@@ -9,7 +9,7 @@ import "package:flutter_quill/flutter_quill.dart";
 import "package:go_router/go_router.dart";
 import "package:markdown/markdown.dart" as md;
 import "package:markdown_quill/markdown_quill.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class EditMarkdownPageProps {
   final String? initialValue;

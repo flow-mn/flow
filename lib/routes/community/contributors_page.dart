@@ -6,7 +6,7 @@ import "package:flow/theme/helpers.dart";
 import "package:flow/widgets/community/contributors/contributor_card.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class ContributorsPage extends StatefulWidget {
   const ContributorsPage({super.key});

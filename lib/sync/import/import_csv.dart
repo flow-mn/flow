@@ -19,7 +19,7 @@ import "package:flow/utils/extensions/iterables.dart";
 import "package:flow/utils/guess_preset_icon.dart";
 import "package:flutter/material.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:uuid/uuid.dart";
 import "package:uuid/v4.dart";
 

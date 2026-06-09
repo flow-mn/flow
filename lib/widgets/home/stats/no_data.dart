@@ -3,7 +3,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/empty_state.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class NoData extends StatelessWidget {
   final VoidCallback? selectTimeRange;

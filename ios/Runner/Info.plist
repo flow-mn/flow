@@ -401,6 +401,9 @@
 			transactions.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Flow uses Face ID if you choose to require Face ID to open the app for authentication</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location is used if you choose to auto-attach your current location to your
+			transactions.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used if you choose to auto-attach your current location to your
 			transactions.</string>

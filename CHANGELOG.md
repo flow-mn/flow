@@ -1,12 +1,24 @@
 # Changelog
 
-## 0.21.0
+## next
+
+### New features
+
+* Added Traditional Chinese (Taiwan) localizations
+
+## 0.22.0
 
 ### New features
 
 * Now it's possible to multi-select transactions and perform bulk actions.
   Click on the leading (account/category icon) to start multi-selecting.
-* 
+* Nearby tag suggestions now also consider your current device location, not
+  just the transaction's saved location, closes [#719](https://github.com/flow-mn/flow/pull/719)
+
+### Fixes
+
+* Optimizations, and potential race-condition fixes, so you shall expect some
+  stability improvements.
 
 ## 0.21.0
 

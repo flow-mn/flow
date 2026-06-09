@@ -12,7 +12,7 @@ import "package:flutter_contacts/flutter_contacts.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:go_router/go_router.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 final Logger _log = Logger("SelectContactSheet");
 

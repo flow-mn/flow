@@ -32,7 +32,7 @@ import "package:flow/widgets/transaction_filter_head/transaction_filter_chip.dar
 import "package:flow/widgets/transaction_filter_head/transaction_search_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class DefaultTransactionsFilterHead extends StatefulWidget {
   final TransactionFilter current;

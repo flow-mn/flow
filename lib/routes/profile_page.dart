@@ -11,7 +11,7 @@ import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/profile_picture.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:path/path.dart" as path;
 
 class ProfilePage extends StatefulWidget {

@@ -17,7 +17,7 @@ import "package:flow/widgets/home/stats/pie_graph_view.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flow/widgets/time_range_selector.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class StatsByGroupPage extends StatefulWidget {

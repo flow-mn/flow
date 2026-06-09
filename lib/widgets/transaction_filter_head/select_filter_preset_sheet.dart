@@ -20,7 +20,7 @@ import "package:flow/widgets/transaction_filter_head/select_filter_preset_sheet/
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:objectbox/objectbox.dart";
 
 /// Pops with an [Optional<TransactionFilter>] when a preset is selected.

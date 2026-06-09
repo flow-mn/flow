@@ -9,7 +9,7 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flutter/material.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 final Logger _log = Logger("LockApp");
 

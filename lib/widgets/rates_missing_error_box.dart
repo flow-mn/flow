@@ -6,7 +6,7 @@ import "package:flow/utils/extensions/toast.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flutter/material.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class RatesMissingErrorBox extends StatefulWidget {
   const RatesMissingErrorBox({super.key});

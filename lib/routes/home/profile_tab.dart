@@ -3,6 +3,7 @@ import "dart:async";
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
@@ -15,10 +16,10 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/preferences/profile_card.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -41,6 +42,25 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24.0),
           const Center(child: ProfileCard()),
           const SizedBox(height: 24.0),
+          ListTile(
+            title: Text("tabs.stats.insights".t(context)),
+            leading: const Icon(Symbols.insights_rounded),
+            trailing: LocalPreferences().openedInsightsIndex.get()
+                ? null
+                : Badge(
+                    label: Text("general.new".t(context)),
+                    backgroundColor: context.colorScheme.primary,
+                    textColor: context.colorScheme.onPrimary,
+                  ),
+            onTap: () {
+              final entry = LocalPreferences().openedInsightsIndex;
+              if (!entry.get()) {
+                entry.set(true);
+                setState(() {});
+              }
+              context.push("/stats/insights");
+            },
+          ),
           ListTile(
             title: Text("accounts".t(context)),
             leading: const Icon(Symbols.wallet_rounded),

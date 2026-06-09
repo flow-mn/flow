@@ -12,8 +12,8 @@ import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/import/file_select_area.dart";
 import "package:flutter/material.dart";
 import "package:logging/logging.dart";
-import "package:material_symbols_icons/symbols.dart";
-import "package:simple_icons/simple_icons.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 final Logger _log = Logger("ImportPage");
 

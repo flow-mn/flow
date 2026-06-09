@@ -1,5 +1,9 @@
+import "package:flow/data/flow_icon.dart";
+import "package:flow/data/legacy_simple_icons_codepoints.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/pending_time_range.dart";
+import "package:flow/entity/account.dart";
+import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -11,6 +15,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:logging/logging.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:simple_icons_flow/simple_icons_flow.dart";
 
 final Logger _log = Logger("GracefulMigrations");
 
@@ -300,6 +305,91 @@ void migrateHomePendingTransactionsRange() async {
     } catch (e) {
       _log.warning(
         "Failed to migrate home pending transactions range for migration $migrationUuid",
+        e,
+      );
+    }
+  } catch (e) {
+    _log.warning(
+      "Failed to read migration status for migration $migrationUuid",
+      e,
+    );
+  }
+}
+
+/// Converts Simple Icons brand icons stored as a code-point [IconFlowIcon] into
+/// the slug-based [SimpleIconFlowIcon].
+///
+/// Simple Icons reassigns code points every release, so a stored code point is
+/// only meaningful for the version it was saved with. Flow shipped
+/// simple_icons 14.6.1; [legacySimpleIconsCodepoints] maps those code points
+/// forward to the bundled 16.20.0 build, from which we recover the stable slug.
+/// This is the *only* remaining use of that table — once this migration has
+/// propagated, the migration and the table can both be deleted.
+Future<void> migrateSimpleIconsToSlug() async {
+  const String migrationUuid = "598a1c1d-1d53-44e0-9035-e005c5420538";
+
+  try {
+    final SharedPreferencesWithCache prefs =
+        await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions(),
+        );
+
+    final ok = prefs.getString("flow.migration.$migrationUuid");
+
+    if (ok != null) return;
+
+    try {
+      // 16.20.0 code point -> slug, built once from the bundled font.
+      final Map<int, String> codePointToSlug = {
+        for (final entry in SimpleIcons.values.entries)
+          entry.value.codePoint: entry.key,
+      };
+
+      String? slugForIconCode(String iconCode) {
+        final FlowIconData? parsed = FlowIconData.tryParse(iconCode);
+        if (parsed is! IconFlowIcon) return null;
+        if (parsed.iconData.fontFamily != "SimpleIcons") return null;
+
+        // Stored code points are 14.6.1; map them forward before resolving.
+        // A value already at 16.20.0 isn't a table key, so it passes through.
+        final int codePoint =
+            legacySimpleIconsCodepoints[parsed.iconData.codePoint] ??
+            parsed.iconData.codePoint;
+        return codePointToSlug[codePoint];
+      }
+
+      final List<Account> changedAccounts = [];
+      for (final Account account in ObjectBox().box<Account>().getAll()) {
+        final String? slug = slugForIconCode(account.iconCode);
+        if (slug == null) continue;
+        account.iconCode = SimpleIconFlowIcon(slug).toString();
+        changedAccounts.add(account);
+      }
+
+      final List<Category> changedCategories = [];
+      for (final Category category in ObjectBox().box<Category>().getAll()) {
+        final String? slug = slugForIconCode(category.iconCode);
+        if (slug == null) continue;
+        category.iconCode = SimpleIconFlowIcon(slug).toString();
+        changedCategories.add(category);
+      }
+
+      if (changedAccounts.isNotEmpty) {
+        await ObjectBox().box<Account>().putManyAsync(changedAccounts);
+      }
+      if (changedCategories.isNotEmpty) {
+        await ObjectBox().box<Category>().putManyAsync(changedCategories);
+      }
+
+      await prefs.setString("flow.migration.$migrationUuid", "ok");
+      _log.info(
+        "Migrated ${changedAccounts.length} account(s) and "
+        "${changedCategories.length} category(ies) to slug-based brand icons "
+        "for migration $migrationUuid",
+      );
+    } catch (e) {
+      _log.warning(
+        "Failed to migrate Simple Icons to slugs for migration $migrationUuid",
         e,
       );
     }

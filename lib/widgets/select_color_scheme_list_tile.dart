@@ -9,7 +9,7 @@ import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/sheets/select_color_scheme_sheet.dart";
 import "package:flutter/material.dart" hide Flow;
-import "package:material_symbols_icons/symbols.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 
 class SelectColorSchemeListTile extends StatefulWidget {
   final bool inferLeading;
