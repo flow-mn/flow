@@ -63,6 +63,13 @@ class _SpendingCalendarPageState extends State<SpendingCalendarPage>
                   children: [
                     const SizedBox(height: 16.0),
                     Frame(
+                      child: TimeRangeSelector(
+                        initialValue: range,
+                        onChanged: _updateRange,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Frame(
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
@@ -81,13 +88,6 @@ class _SpendingCalendarPageState extends State<SpendingCalendarPage>
                             tapToToggleAbbreviation: true,
                           ),
                         ],
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Frame(
-                      child: TimeRangeSelector(
-                        initialValue: range,
-                        onChanged: _updateRange,
                       ),
                     ),
                     const SizedBox(height: 16.0),

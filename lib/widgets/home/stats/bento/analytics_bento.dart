@@ -38,10 +38,15 @@ class AnalyticsBento extends StatelessWidget {
         child: Column(
           crossAxisAlignment: .start,
           children: [
-            // Range-bound — these respond to the selected time range.
-            CashFlowTile(range: range),
-            const SizedBox(height: 12.0),
-            PaceTile(range: range),
+            // Range-bound — these respond to the selected time range. Cash
+            // flow and pace share a row to stay compact; each takes half.
+            Row(
+              spacing: 12.0,
+              children: [
+                Expanded(child: CashFlowTile(range: range)),
+                Expanded(child: PaceTile(range: range)),
+              ],
+            ),
             const SizedBox(height: 12.0),
             TopCategoriesTile(range: range),
             const SizedBox(height: 24.0),

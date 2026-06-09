@@ -80,6 +80,8 @@ class _PaceTileState extends State<PaceTile>
                   ? "tabs.stats.analytics.pace.projected"
                   : "tabs.stats.analytics.pace.totalSpent")
               .t(context),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: context.textTheme.labelMedium?.semi(context),
         ),
         const SizedBox(height: 2.0),
@@ -108,12 +110,18 @@ class _PaceTileState extends State<PaceTile>
         ),
         const Spacer(),
         Row(
+          mainAxisAlignment: .spaceBetween,
           children: [
-            Text(
-              "tabs.stats.analytics.pace.perDay".t(context),
-              style: context.textTheme.bodySmall?.semi(context),
+            Flexible(
+              child: Text(
+                "tabs.stats.analytics.pace.perDay".t(context),
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.bodySmall?.semi(context),
+              ),
             ),
-            const Spacer(),
+            const SizedBox(width: 8.0),
             Flexible(
               child: MoneyText(
                 report.dailyAvgExpenditure,

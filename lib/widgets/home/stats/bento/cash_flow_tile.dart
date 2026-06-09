@@ -65,55 +65,82 @@ class _CashFlowTileState extends State<CashFlowTile>
           : Column(
               crossAxisAlignment: .start,
               children: [
-                Row(
-                  crossAxisAlignment: .center,
-                  children: [
-                    Icon(
-                      saved
-                          ? Symbols.savings_rounded
-                          : Symbols.trending_down_rounded,
-                      color: netColor,
-                      size: 18.0,
-                    ),
-                    const SizedBox(width: 6.0),
-                    Text(
-                      (saved
-                              ? "tabs.stats.analytics.saved"
-                              : "tabs.stats.analytics.overspent")
-                          .t(context),
-                      style: context.textTheme.labelMedium?.semi(context),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: MoneyText(
-                        Money(saved ? net : -net, primaryCurrency),
-                        style: context.textTheme.titleLarge?.copyWith(
-                          color: netColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        autoSize: true,
-                        initiallyAbbreviated: true,
-                        textAlign: TextAlign.end,
+                LayoutBuilder(
+                  builder: (context, constraints) => Row(
+                    crossAxisAlignment: .center,
+                    children: [
+                      Icon(
+                        saved
+                            ? Symbols.savings_rounded
+                            : Symbols.trending_down_rounded,
+                        color: netColor,
+                        size: 18.0,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 6.0),
+                      // Cap the label so a long localized "Overspent"
+                      // ellipsizes instead of overflowing the narrow tile; the
+                      // net figure keeps the rest and stays pinned right.
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: constraints.maxWidth * 0.55,
+                        ),
+                        child: Text(
+                          (saved
+                                  ? "tabs.stats.analytics.saved"
+                                  : "tabs.stats.analytics.overspent")
+                              .t(context),
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelMedium?.semi(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      Expanded(
+                        child: MoneyText(
+                          Money(saved ? net : -net, primaryCurrency),
+                          style: context.textTheme.titleLarge?.copyWith(
+                            color: netColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          autoSize: true,
+                          initiallyAbbreviated: true,
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12.0),
                 CashFlowFlowBar(income: income, expense: expense),
                 const SizedBox(height: 8.0),
+                // Each figure claims half the row and scales down rather than
+                // overflowing when the tile is narrow (e.g. paired with Pace).
                 Row(
                   children: [
-                    CashFlowFigure(
-                      label: "tabs.stats.analytics.in".t(context),
-                      money: Money(income, primaryCurrency),
-                      color: context.flowColors.income,
+                    Expanded(
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: CashFlowFigure(
+                          label: "tabs.stats.analytics.in".t(context),
+                          money: Money(income, primaryCurrency),
+                          color: context.flowColors.income,
+                        ),
+                      ),
                     ),
-                    const Spacer(),
-                    CashFlowFigure(
-                      label: "tabs.stats.analytics.out".t(context),
-                      money: Money(expense, primaryCurrency),
-                      color: context.flowColors.expense,
-                      alignEnd: true,
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: CashFlowFigure(
+                          label: "tabs.stats.analytics.out".t(context),
+                          money: Money(expense, primaryCurrency),
+                          color: context.flowColors.expense,
+                          alignEnd: true,
+                        ),
+                      ),
                     ),
                   ],
                 ),
