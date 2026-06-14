@@ -41,7 +41,7 @@ dependencies:
     fuzzywuzzy: ^1.2.0
     geolocator: ^14.0.2
     go_router: ^17.1.0
-    home_widget: ^0.9.0
+    home_widget: ^0.9.3
     http: ^1.5.0
     icloud_storage: ^2.2.0
     image_picker: ^1.2.1
