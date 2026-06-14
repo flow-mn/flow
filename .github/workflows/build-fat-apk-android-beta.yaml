@@ -3,6 +3,11 @@ on:
     release:
         types: [published]
     workflow_dispatch:
+        inputs:
+            tag:
+                description: "Release tag to build from and attach the APK to (e.g. 0.23.0)"
+                required: true
+                type: string
 
 jobs:
     build:
@@ -11,6 +16,8 @@ jobs:
         permissions: write-all
         steps:
             - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.inputs.tag || github.ref }}
             - name: Setup JDK 17
               uses: actions/setup-java@v4.0.0
               with:
@@ -21,7 +28,12 @@ jobs:
               with:
                   channel: stable
             - name: Set release tag name
-              run: echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+              run: |
+                  if [ -n "${{ github.event.inputs.tag }}" ]; then
+                    echo "RELEASE_TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+                  else
+                    echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+                  fi
             - run: flutter pub get
             - name: Run tests
               run: |
@@ -37,5 +49,5 @@ jobs:
               env:
                   GH_TOKEN: ${{ github.token }}
               run: |
-                  gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk
-                  gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk.sha1
+                  gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk --clobber
+                  gh release upload ${{ env.RELEASE_TAG }} ./build/app/outputs/flutter-apk/app-release.apk.sha1 --clobber
