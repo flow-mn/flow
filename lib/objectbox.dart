@@ -4,6 +4,7 @@ import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/setup/default_accounts.dart";
 import "package:flow/data/setup/default_categories.dart";
+import "package:flow/data/setup/demo_data.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
@@ -15,8 +16,8 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/entity/user_preferences.dart";
-import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flutter/widgets.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -24,6 +25,30 @@ import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart";
 
 final Logger _log = Logger("ObjectBox-Flow");
+
+/// Realistic tags attached to the generated demo transactions. Kept short and
+/// recognizable so they look good in screenshots (unlike random dictionary
+/// words). Keys here must match the tag keys used by [DemoDataGenerator].
+const List<String> _demoTagTitles = [
+  "work",
+  "subscription",
+  "bills",
+  "groceries",
+  "dining",
+  "coffee",
+  "vacation",
+  "family",
+  "friends",
+  "online",
+  "health",
+  "transport",
+  "fun",
+  "gifts",
+  "charity",
+  "pets",
+  "reimbursable",
+  "gadgets",
+];
 
 class ObjectBox {
   static ObjectBox? _instance;
@@ -116,188 +141,133 @@ class ObjectBox {
     return path.join(appDataDir.path, subdirectory);
   }
 
+  /// Seeds a rich, multi-year demo history for screenshots and presentations.
+  ///
+  /// Creates realistic tags, the preset categories, the preset accounts plus a
+  /// credit card, ~3 years of generated transactions, and a few budgets/goals
+  /// so every screen looks populated. See [DemoDataGenerator].
+  ///
+  /// The generated data is **non-deterministic** — each run produces a
+  /// different (but plausible) history.
   Future<void> createAndPutDebugData() async {
     if (box<Account>().count(limit: 1) > 0 ||
         box<Category>().count(limit: 1) > 0) {
       return;
     }
 
-    await box<TransactionTag>().putAndGetManyAsync([
-      TransactionTag(title: "airport"),
-      TransactionTag(title: "description"),
-      TransactionTag(title: "strategy"),
-      TransactionTag(title: "injury"),
-      TransactionTag(title: "association"),
-      TransactionTag(title: "skill"),
-      TransactionTag(title: "operation"),
-      TransactionTag(title: "introduction"),
-      TransactionTag(title: "depression"),
-      TransactionTag(title: "user"),
-      TransactionTag(title: "height"),
-      TransactionTag(title: "map"),
-      TransactionTag(title: "collection"),
-      TransactionTag(title: "way"),
-      TransactionTag(title: "story"),
-      TransactionTag(title: "ambition"),
-      TransactionTag(title: "hall"),
-      TransactionTag(title: "reflection"),
-      TransactionTag(title: "thing"),
-      TransactionTag(title: "election"),
-      TransactionTag(title: "woman"),
-      TransactionTag(title: "protection"),
-      TransactionTag(title: "membership"),
-      TransactionTag(title: "birthday"),
-      TransactionTag(title: "series"),
-      TransactionTag(title: "passion"),
-      TransactionTag(title: "pollution"),
-      TransactionTag(title: "argument"),
-      TransactionTag(title: "population"),
-      TransactionTag(title: "drama"),
-      TransactionTag(title: "combination"),
-      TransactionTag(title: "death"),
-      TransactionTag(title: "profession"),
-      TransactionTag(title: "philosophy"),
-      TransactionTag(title: "heart"),
-      TransactionTag(title: "hat"),
-      TransactionTag(title: "winner"),
-      TransactionTag(title: "disaster"),
-      TransactionTag(title: "entry"),
-      TransactionTag(title: "decision"),
-      TransactionTag(title: "topic"),
-      TransactionTag(title: "guest"),
-      TransactionTag(title: "platform"),
-      TransactionTag(title: "college"),
-      TransactionTag(title: "charity"),
-      TransactionTag(title: "historian"),
-      TransactionTag(title: "problem"),
-      TransactionTag(title: "tea"),
-      TransactionTag(title: "wife"),
-      TransactionTag(title: "stranger"),
-      TransactionTag(title: "Broadcast"),
-      TransactionTag(title: "Donor"),
-      TransactionTag(title: "Epoxy"),
-      TransactionTag(title: "Icecream"),
-      TransactionTag(title: "Juice"),
-      TransactionTag(title: "Photograph"),
-      TransactionTag(title: "Quantity"),
-      TransactionTag(title: "Roundabout"),
-      TransactionTag(title: "Shaker"),
-      TransactionTag(title: "Spring"),
-    ]);
+    final List<TransactionTag> tags = await box<TransactionTag>()
+        .putAndGetManyAsync(
+          _demoTagTitles
+              .map((title) => TransactionTag(title: title))
+              .toList(),
+        );
+    final Map<String, TransactionTag> tagsByTitle = {
+      for (final tag in tags) tag.title: tag,
+    };
 
-    final categories = await box<Category>().putAndGetManyAsync(
-      getCategoryPresets().map((e) {
-        e.id = 0;
-        return e;
-      }).toList(),
-    );
+    final List<Category> categories = await box<Category>()
+        .putAndGetManyAsync(
+          getCategoryPresets().map((e) {
+            e.id = 0;
+            return e;
+          }).toList(),
+        );
 
-    final services = categories.firstWhere(
-      (element) =>
-          element.iconCode ==
-          const IconFlowIcon(Symbols.cloud_circle_rounded).toString(),
-    );
-    final coffee = categories.firstWhere(
-      (element) =>
-          element.iconCode ==
-          const IconFlowIcon(Symbols.local_cafe_rounded).toString(),
-    );
-    final gift = categories.firstWhere(
-      (element) =>
-          element.iconCode ==
-          const IconFlowIcon(
-            Symbols.featured_seasonal_and_gifts_rounded,
-          ).toString(),
-    );
-    final paycheck = categories.firstWhere(
-      (element) =>
-          element.iconCode ==
-          const IconFlowIcon(Symbols.wallet_rounded).toString(),
-    );
-    final rent = categories.firstWhere(
-      (element) =>
-          element.iconCode ==
-          const IconFlowIcon(Symbols.request_quote_rounded).toString(),
-    );
-
-    final [main, cash, savings] = getAccountPresets("USD").map((e) {
+    final List<Account> presets = getAccountPresets("USD").map((e) {
       e.id = 0;
       return e;
     }).toList();
+    final Account creditCardPreset =
+        Account.preset(
+          name: "Credit Card",
+          currency: "USD",
+          iconCode: FlowIconData.icon(Symbols.credit_card_rounded).toString(),
+          uuid: "1f3c9d2e-8a47-4b6e-9c21-7d5f0a2b6e41",
+          type: AccountType.creditLineValue,
+          creditLimit: 5000,
+          excludeFromTotalBalance: true,
+        )..id = 0;
 
-    main
-      ..updateBalanceAndSave(
-        420.69,
-        title: "Initial balance",
-        transactionDate: DateTime.now() - const Duration(days: 5),
-      )
-      ..createAndSaveTransaction(
-        amount: -1.99,
-        title: "iCloud",
-        category: services,
-        transactionDate: DateTime.now() - const Duration(days: 4),
-      )
-      ..createAndSaveTransaction(
-        amount: -15.49,
-        title: "Netflix",
-        category: services,
-        transactionDate: DateTime.now() - const Duration(days: 4),
-      )
-      ..createAndSaveTransaction(
-        amount: -6.50,
-        title: "Iced Mocha",
-        category: coffee,
-        transactionDate: DateTime.now() - const Duration(days: 4),
-      )
-      ..createAndSaveTransaction(
-        amount: -6.50,
-        title: "Iced Mocha",
-        category: coffee,
-        transactionDate: DateTime.now() - const Duration(days: 3),
-      )
-      ..createAndSaveTransaction(
-        amount: -6.50,
-        title: "Iced Mocha",
-        category: coffee,
-        transactionDate: DateTime.now() - const Duration(days: 2),
-      )
-      ..createAndSaveTransaction(
-        amount: 680.98,
-        title: "Paycheck (last month)",
-        category: paycheck,
-        transactionDate: DateTime.now() - const Duration(days: 1),
-      )
-      ..createAndSaveTransaction(
-        amount: -99.01,
-        title: "Gift for Stella",
-        category: gift,
-        transactionDate: DateTime.now() - const Duration(days: 1),
-      );
+    final List<Account> accounts = await box<Account>().putAndGetManyAsync([
+      ...presets,
+      creditCardPreset,
+    ]);
+    final [main, cash, savings, creditCard] = accounts;
 
-    savings
-      ..updateBalanceAndSave(
-        69420,
-        title: "Savings initial balance",
-        transactionDate: DateTime.now() - const Duration(days: 6),
-      )
-      ..createAndSaveTransaction(
-        amount: -1960,
-        title: "Rent",
-        category: rent,
-        transactionDate: DateTime.now() - const Duration(days: 6),
-      );
+    final DemoDataGenerator generator = DemoDataGenerator(
+      main: main,
+      cash: cash,
+      savings: savings,
+      creditCard: creditCard,
+      categories: categories,
+      tags: tagsByTitle,
+    );
 
-    final [main2, ..., savings2] = await box<Account>().putAndGetManyAsync([
-      main,
-      cash,
-      savings,
+    await box<Transaction>().putManyAsync(generator.generate());
+
+    _createDemoBudgetsAndGoals(categories: categories, savings: savings);
+  }
+
+  /// Populates the budgets and goals screens with a handful of realistic
+  /// entries tied to the demo data.
+  void _createDemoBudgetsAndGoals({
+    required List<Category> categories,
+    required Account savings,
+  }) {
+    final Map<String, Category> byCode = {
+      for (final category in categories) category.iconCode: category,
+    };
+    Category? cat(IconData icon) => byCode[IconFlowIcon(icon).toString()];
+
+    final String monthlyRange = MonthTimeRange.fromDateTime(
+      DateTime.now(),
+    ).toString();
+
+    final Budget groceries = Budget(
+      name: "Groceries",
+      amount: 450,
+      currency: "USD",
+      range: monthlyRange,
+    )..setCategories([?cat(Symbols.grocery_rounded)]);
+
+    final Budget eatingOut = Budget(
+      name: "Eating out",
+      amount: 300,
+      currency: "USD",
+      range: monthlyRange,
+    )..setCategories([
+      ?cat(Symbols.restaurant_rounded),
+      ?cat(Symbols.local_cafe_rounded),
+      ?cat(Symbols.bakery_dining_rounded),
     ]);
 
-    main2.transferTo(
-      amount: 250,
-      targetAccount: savings2,
-      transactionDate: DateTime.now() - const Duration(days: 1),
-    );
+    final Budget shopping = Budget(
+      name: "Shopping",
+      amount: 400,
+      currency: "USD",
+      range: monthlyRange,
+    )..setCategories([?cat(Symbols.shopping_cart_rounded)]);
+
+    box<Budget>().putMany([groceries, eatingOut, shopping]);
+
+    // One goal already reached, one still in progress — shows both states.
+    final Goal emergencyFund = Goal(
+      name: "Emergency fund",
+      targetBalance: 20000,
+      currency: "USD",
+      range: null,
+      iconCode: FlowIconData.icon(Symbols.savings_rounded).toString(),
+    )..setAccount(savings);
+
+    final Goal house = Goal(
+      name: "House down payment",
+      targetBalance: 90000,
+      currency: "USD",
+      range: null,
+      iconCode: FlowIconData.icon(Symbols.home_rounded).toString(),
+    )..setAccount(savings);
+
+    box<Goal>().putMany([emergencyFund, house]);
   }
 
   /// Deletes everything except for
