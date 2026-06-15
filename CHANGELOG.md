@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.23.1
+
+### Fixes
+
+* Fixed selecting icons
+
 ## 0.23.0
 
 ### New features
