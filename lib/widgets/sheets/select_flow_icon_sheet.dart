@@ -54,7 +54,7 @@ class _SelectFlowIconSheetState extends State<SelectFlowIconSheet>
   }
 
   void _selectIcon() async {
-    final FlowIconData? result = await showModalBottomSheet<IconFlowIcon>(
+    final FlowIconData? result = await showModalBottomSheet<FlowIconData>(
       context: context,
       builder: (context) =>
           SelectIconFlowIconSheet(initialValue: widget.current),
