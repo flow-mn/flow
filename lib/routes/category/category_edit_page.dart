@@ -8,6 +8,7 @@ import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/theme.dart";
@@ -157,7 +158,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     _currentlyEditing.iconCode = iconCodeOrError;
     _currentlyEditing.colorSchemeName = _colorSchemeName;
 
-    ObjectBox().box<Category>().put(_currentlyEditing, mode: PutMode.update);
+    ObjectBox().box<Category>().putSynced(
+      _currentlyEditing,
+      mode: PutMode.update,
+    );
 
     context.pop();
   }
@@ -178,7 +182,10 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     );
 
     unawaited(
-      ObjectBox().box<Category>().putAsync(category, mode: PutMode.insert),
+      ObjectBox().box<Category>().putSyncedAsync(
+        category,
+        mode: PutMode.insert,
+      ),
     );
 
     context.showToast(text: "category.new.success".t(context));

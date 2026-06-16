@@ -24,12 +24,20 @@ class Profile implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
   @Transient()
   String get imagePath => "$uuid.png";
 
-  Profile({this.id = 0, DateTime? createdDate, required this.name})
-    : createdDate = createdDate ?? DateTime.now(),
-      uuid = const Uuid().v4();
+  Profile({
+    this.id = 0,
+    DateTime? createdDate,
+    this.updatedAt,
+    required this.name,
+  }) : createdDate = createdDate ?? DateTime.now(),
+       uuid = const Uuid().v4();
 
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);

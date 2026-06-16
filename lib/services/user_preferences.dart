@@ -12,6 +12,7 @@ import "package:flow/entity/user_preferences.dart";
 import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/notifications.dart";
@@ -36,19 +37,19 @@ class UserPreferencesService {
   bool get combineTransfers => value.combineTransfers;
   set combineTransfers(bool newCombineTransfers) {
     value.combineTransfers = newCombineTransfers;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get enableICloudSync => value.enableICloudSync;
   set enableICloudSync(bool newEnableICloudSync) {
     value.enableICloudSync = newEnableICloudSync;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get themeChangesAppIcon => value.themeChangesAppIcon;
   set themeChangesAppIcon(bool newThemeChangesAppIcon) {
     value.themeChangesAppIcon = newThemeChangesAppIcon;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   String get themeName {
@@ -66,7 +67,7 @@ class UserPreferencesService {
   set themeName(String? newThemeName) {
     if (validateThemeName(newThemeName)) {
       value.themeName = newThemeName;
-      ObjectBox().box<UserPreferences>().put(value);
+      ObjectBox().box<UserPreferences>().putSynced(value);
     }
   }
 
@@ -78,7 +79,7 @@ class UserPreferencesService {
   ) {
     value.homePendingTransactionsTimeRangeSerialized =
         newHomePendingTransactionsTimeRange.toString();
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   ChangeVisuals get changeVisuals {
@@ -89,7 +90,7 @@ class UserPreferencesService {
 
   set changeVisuals(ChangeVisuals newChangeVisuals) {
     value.changeVisuals = newChangeVisuals.serialize();
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   int? get trashBinRetentionDays => value.trashBinRetentionDays;
@@ -100,7 +101,7 @@ class UserPreferencesService {
       value.trashBinRetentionDays = min(max(0, newTrashBinRetentionDays), 365);
     }
 
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   int? get iCloudBackupsToKeep => value.iCloudBackupsToKeep;
@@ -109,7 +110,7 @@ class UserPreferencesService {
 
     value.trashBinRetentionDays = newICloudBackupsToKeep;
 
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   int? get autoBackupIntervalInHours => value.autoBackupIntervalInHours;
@@ -123,7 +124,7 @@ class UserPreferencesService {
       );
     }
 
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
 
     SyncService().triggerAutoBackup();
   }
@@ -139,25 +140,25 @@ class UserPreferencesService {
       );
     }
 
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get excludeTransfersFromFlow => value.excludeTransfersFromFlow;
   set excludeTransfersFromFlow(bool newExcludeTransfersFromFlow) {
     value.excludeTransfersFromFlow = newExcludeTransfersFromFlow;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get privacyModeUponLaunch => value.privacyModeUponLaunch;
   set privacyModeUponLaunch(bool newPrivacyModeUponLaunch) {
     value.privacyModeUponLaunch = newPrivacyModeUponLaunch;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get privacyModeUponShaking => value.privacyModeUponShaking;
   set privacyModeUponShaking(bool newPrivacyModeUponShaking) {
     value.privacyModeUponShaking = newPrivacyModeUponShaking;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get useCategoryNameForUntitledTransactions =>
@@ -167,7 +168,7 @@ class UserPreferencesService {
   ) {
     value.useCategoryNameForUntitledTransactions =
         newUseCategoryNameForUntitledTransactions;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get transactionListTileShowCategoryName =>
@@ -177,7 +178,7 @@ class UserPreferencesService {
   ) {
     value.transactionListTileShowCategoryName =
         newTransactionListTileShowCategoryName;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get transactionListTileShowExternalSource =>
@@ -187,7 +188,7 @@ class UserPreferencesService {
   ) {
     value.transactionListTileShowExternalSource =
         newTransactionListTileShowExternalSource;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get transactionListTileRelaxedDensity =>
@@ -197,7 +198,7 @@ class UserPreferencesService {
   ) {
     value.transactionListTileRelaxedDensity =
         newTransactionListTileRelaxedDensity;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get transactionListTileShowAccountForLeading =>
@@ -207,7 +208,7 @@ class UserPreferencesService {
   ) {
     value.transactionListTileShowAccountForLeading =
         newTransactionListTileShowAccountForLeading;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   bool get createTransactionsPerItemInScans =>
@@ -217,13 +218,13 @@ class UserPreferencesService {
   ) {
     value.createTransactionsPerItemInScans =
         newCreateTransactionsPerItemInScans;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   String? get defaultFilterPresetUuid => value.defaultFilterPreset;
   set defaultFilterPresetUuid(String? uuid) {
     value.defaultFilterPreset = uuid;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   String? get _primaryAccountUuidRaw => value.primaryAccountUuid;
@@ -254,7 +255,7 @@ class UserPreferencesService {
 
   set primaryAccountUuid(String? newPrimaryAccountUuid) {
     value.primaryAccountUuid = newPrimaryAccountUuid;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   String get primaryCurrency {
@@ -299,14 +300,14 @@ class UserPreferencesService {
     }
 
     value.primaryCurrency = newPrimaryCurrency;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   String? get icuCurrencyFormattingPattern =>
       value.icuCurrencyFormattingPattern;
   set icuCurrencyFormattingPattern(String? newIcuCurrencyFormattingPattern) {
     value.icuCurrencyFormattingPattern = newIcuCurrencyFormattingPattern;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   List<FlowButtonType> get transactionButtonOrder =>
@@ -321,13 +322,13 @@ class UserPreferencesService {
     value.transactionButtonOrder = newOrder;
     _updateButtonsWidgets(newOrder);
 
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   Duration? get remindDailyAt => value.remindDailyAt;
   set remindDailyAt(Duration? duration) {
     value.remindDailyAt = duration?.abs();
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
     if (duration == null) {
       NotificationsService().clearByType(
         FlowNotificationPayloadItemType.reminder,
@@ -340,7 +341,7 @@ class UserPreferencesService {
   TransactionEntryFlow get transactionEntryFlow => value.transactionEntryFlow;
   set transactionEntryFlow(TransactionEntryFlow newEntryFlow) {
     value.transactionEntryFlow = newEntryFlow;
-    ObjectBox().box<UserPreferences>().put(value);
+    ObjectBox().box<UserPreferences>().putSynced(value);
   }
 
   TransactionFilterPreset? get defaultFilterPreset {

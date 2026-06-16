@@ -7,6 +7,7 @@ import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
@@ -242,7 +243,10 @@ class BulkTransactions {
     }
 
     try {
-      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+      ObjectBox().box<Transaction>().putManySynced(
+        toUpdate,
+        mode: PutMode.update,
+      );
     } catch (e, stackTrace) {
       _log.severe("Bulk move-to-trash failed", e, stackTrace);
     }
@@ -273,7 +277,10 @@ class BulkTransactions {
     }
 
     try {
-      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+      ObjectBox().box<Transaction>().putManySynced(
+        toUpdate,
+        mode: PutMode.update,
+      );
     } catch (e, stackTrace) {
       _log.severe("Bulk recover failed", e, stackTrace);
     }
@@ -312,7 +319,10 @@ class BulkTransactions {
     }
 
     try {
-      ObjectBox().box<Transaction>().putMany(toUpdate, mode: PutMode.update);
+      ObjectBox().box<Transaction>().putManySynced(
+        toUpdate,
+        mode: PutMode.update,
+      );
     } catch (e, stackTrace) {
       _log.severe("Bulk confirm failed", e, stackTrace);
     }
@@ -334,7 +344,7 @@ class BulkTransactions {
     }
 
     try {
-      ObjectBox().box<Transaction>().putMany(list, mode: PutMode.update);
+      ObjectBox().box<Transaction>().putManySynced(list, mode: PutMode.update);
     } catch (e, stackTrace) {
       _log.severe("Bulk set category failed", e, stackTrace);
     }
@@ -353,7 +363,7 @@ class BulkTransactions {
     }
 
     try {
-      ObjectBox().box<Transaction>().putMany(list, mode: PutMode.update);
+      ObjectBox().box<Transaction>().putManySynced(list, mode: PutMode.update);
     } catch (e, stackTrace) {
       _log.severe("Bulk set account failed", e, stackTrace);
     }

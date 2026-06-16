@@ -23,6 +23,7 @@ import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/services/categories.dart";
@@ -197,6 +198,7 @@ extension MainActions on ObjectBox {
   Future<void> updateAccountOrderList({
     List<Account>? accounts,
     bool ignoreIfNoUnsetValue = false,
+    bool markUpdated = true,
   }) async {
     accounts ??= await ObjectBox().box<Account>().getAllAsync();
 
@@ -209,7 +211,13 @@ extension MainActions on ObjectBox {
       accounts[e.$1].sortOrder = e.$1;
     }
 
-    await ObjectBox().box<Account>().putManyAsync(accounts);
+    // Only a user-initiated reorder bumps the sync clock; the startup
+    // normalization pass must leave imported/untouched records' updatedAt alone.
+    if (markUpdated) {
+      await ObjectBox().box<Account>().putManySyncedAsync(accounts);
+    } else {
+      await ObjectBox().box<Account>().putManyAsync(accounts);
+    }
     await _normalizeSortOrders();
   }
 

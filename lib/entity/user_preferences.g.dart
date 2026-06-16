@@ -8,6 +8,10 @@ part of 'user_preferences.dart';
 
 UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
     UserPreferences(
+        updatedAt: _$JsonConverterFromJson<String, DateTime>(
+          json['updatedAt'],
+          const UTCDateTimeConverter().fromJson,
+        ),
         combineTransfers: json['combineTransfers'] as bool? ?? true,
         excludeTransfersFromFlow:
             json['excludeTransfersFromFlow'] as bool? ?? true,
@@ -57,6 +61,10 @@ Map<String, dynamic> _$UserPreferencesToJson(
   UserPreferences instance,
 ) => <String, dynamic>{
   'uuid': instance.uuid,
+  'updatedAt': _$JsonConverterToJson<String, DateTime>(
+    instance.updatedAt,
+    const UTCDateTimeConverter().toJson,
+  ),
   'combineTransfers': instance.combineTransfers,
   'excludeTransfersFromFlow': instance.excludeTransfersFromFlow,
   'trashBinRetentionDays': instance.trashBinRetentionDays,
@@ -90,3 +98,13 @@ Map<String, dynamic> _$UserPreferencesToJson(
   'changeVisuals': instance.changeVisuals,
   'transactionEntryFlowJson': instance.transactionEntryFlowJson,
 };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) => json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) => value == null ? null : toJson(value);

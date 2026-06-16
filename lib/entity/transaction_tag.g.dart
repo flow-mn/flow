@@ -13,6 +13,10 @@ TransactionTag _$TransactionTagFromJson(Map<String, dynamic> json) =>
         json['createdDate'],
         const UTCDateTimeConverter().fromJson,
       ),
+      updatedAt: _$JsonConverterFromJson<String, DateTime>(
+        json['updatedAt'],
+        const UTCDateTimeConverter().fromJson,
+      ),
       isDeleted: json['isDeleted'] as bool?,
       deletedDate: _$JsonConverterFromJson<String, DateTime>(
         json['deletedDate'],
@@ -29,6 +33,10 @@ Map<String, dynamic> _$TransactionTagToJson(TransactionTag instance) =>
     <String, dynamic>{
       'uuid': instance.uuid,
       'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
+      'updatedAt': _$JsonConverterToJson<String, DateTime>(
+        instance.updatedAt,
+        const UTCDateTimeConverter().toJson,
+      ),
       'isDeleted': instance.isDeleted,
       'deletedDate': _$JsonConverterToJson<String, DateTime>(
         instance.deletedDate,

@@ -33,6 +33,10 @@ class TransactionFilterPreset implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
   @Transient()
   static TransactionFilter defaultFilter = TransactionFilter(
     range: TransactionFilterTimeRange.thisMonth,
@@ -41,6 +45,7 @@ class TransactionFilterPreset implements EntityBase {
   TransactionFilterPreset({
     this.id = 0,
     DateTime? createdDate,
+    this.updatedAt,
     required this.jsonTransactionFilter,
     required this.name,
   }) : createdDate = createdDate ?? DateTime.now(),

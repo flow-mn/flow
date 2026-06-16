@@ -22,6 +22,15 @@ RecurringTransaction _$RecurringTransactionFromJson(
     json['createdDate'],
     const UTCDateTimeConverter().fromJson,
   ),
+  updatedAt: _$JsonConverterFromJson<String, DateTime>(
+    json['updatedAt'],
+    const UTCDateTimeConverter().fromJson,
+  ),
+  isDeleted: json['isDeleted'] as bool?,
+  deletedDate: _$JsonConverterFromJson<String, DateTime>(
+    json['deletedDate'],
+    const UTCDateTimeConverter().fromJson,
+  ),
   uuid: json['uuid'] as String?,
 );
 
@@ -34,6 +43,15 @@ Map<String, dynamic> _$RecurringTransactionToJson(
   'range': instance.range,
   'rules': instance.rules,
   'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
+  'updatedAt': _$JsonConverterToJson<String, DateTime>(
+    instance.updatedAt,
+    const UTCDateTimeConverter().toJson,
+  ),
+  'isDeleted': instance.isDeleted,
+  'deletedDate': _$JsonConverterToJson<String, DateTime>(
+    instance.deletedDate,
+    const UTCDateTimeConverter().toJson,
+  ),
   'lastGeneratedTransactionDate': _$JsonConverterToJson<String, DateTime>(
     instance.lastGeneratedTransactionDate,
     const UTCDateTimeConverter().toJson,

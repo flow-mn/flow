@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1185109045851542775",
-      "lastPropertyId": "16:5820369881987699214",
+      "lastPropertyId": "19:7212437512418668163",
       "name": "Account",
       "properties": [
         {
@@ -29,7 +29,7 @@
         {
           "id": "4:98438281425253729",
           "name": "name",
-          "indexId": "2:7523580271093772442",
+          "indexId": "29:4173115205475700725",
           "type": 9,
           "flags": 2080
         },
@@ -72,13 +72,28 @@
           "id": "16:5820369881987699214",
           "name": "colorSchemeName",
           "type": 9
+        },
+        {
+          "id": "17:5285463839874654765",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "18:518325510707114206",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "19:7212437512418668163",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "2:649350347514211469",
-      "lastPropertyId": "10:8207473128907508304",
+      "lastPropertyId": "13:8078496722003691178",
       "name": "Category",
       "properties": [
         {
@@ -102,7 +117,7 @@
         {
           "id": "4:6997289246296566376",
           "name": "name",
-          "indexId": "4:2391044209964121362",
+          "indexId": "31:4530464520374892602",
           "type": 9,
           "flags": 2080
         },
@@ -115,13 +130,28 @@
           "id": "10:8207473128907508304",
           "name": "colorSchemeName",
           "type": 9
+        },
+        {
+          "id": "11:6246323340540582110",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "12:4912601841289839374",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "13:8078496722003691178",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "5:3298987588431022631",
-      "lastPropertyId": "5:3781626172731013526",
+      "lastPropertyId": "6:7352090381944114487",
       "name": "Profile",
       "properties": [
         {
@@ -145,6 +175,11 @@
         {
           "id": "4:5771346759499657768",
           "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "6:7352090381944114487",
+          "name": "updatedAt",
           "type": 10
         }
       ],
@@ -191,7 +226,7 @@
     },
     {
       "id": "7:5357777579468740615",
-      "lastPropertyId": "25:1116277179564620916",
+      "lastPropertyId": "26:2992515607542303552",
       "name": "Transaction",
       "properties": [
         {
@@ -309,6 +344,11 @@
           "id": "25:1116277179564620916",
           "name": "attachmentsUuids",
           "type": 30
+        },
+        {
+          "id": "26:2992515607542303552",
+          "name": "updatedAt",
+          "type": 10
         }
       ],
       "relations": [
@@ -326,7 +366,7 @@
     },
     {
       "id": "9:292195687144521768",
-      "lastPropertyId": "5:6338065131616428464",
+      "lastPropertyId": "6:7183561558190119232",
       "name": "TransactionFilterPreset",
       "properties": [
         {
@@ -356,13 +396,18 @@
           "id": "5:6338065131616428464",
           "name": "jsonTransactionFilter",
           "type": 9
+        },
+        {
+          "id": "6:7183561558190119232",
+          "name": "updatedAt",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "30:5353888497210708730",
+      "lastPropertyId": "31:9002411733375865497",
       "name": "UserPreferences",
       "properties": [
         {
@@ -507,13 +552,18 @@
           "id": "30:5353888497210708730",
           "name": "homePendingTransactionsTimeRangeSerialized",
           "type": 9
+        },
+        {
+          "id": "31:9002411733375865497",
+          "name": "updatedAt",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "11:4948078457888921031",
-      "lastPropertyId": "11:3812796204565944657",
+      "lastPropertyId": "14:5561762043666740336",
       "name": "Budget",
       "properties": [
         {
@@ -537,7 +587,7 @@
         {
           "id": "4:473869210125712621",
           "name": "name",
-          "indexId": "20:8336098329051704990",
+          "indexId": "30:5387899333611663585",
           "type": 9,
           "flags": 2080
         },
@@ -565,6 +615,21 @@
           "id": "11:3812796204565944657",
           "name": "categoriesUuids",
           "type": 30
+        },
+        {
+          "id": "12:9089889208019864179",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "13:3203632076239824972",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "14:5561762043666740336",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": [
@@ -577,7 +642,7 @@
     },
     {
       "id": "12:800756592587838565",
-      "lastPropertyId": "11:420551111786793892",
+      "lastPropertyId": "14:9212889725243991448",
       "name": "RecurringTransaction",
       "properties": [
         {
@@ -589,7 +654,9 @@
         {
           "id": "2:2358830362322475217",
           "name": "uuid",
-          "type": 9
+          "indexId": "28:6042833120049801952",
+          "type": 9,
+          "flags": 2080
         },
         {
           "id": "3:7015715332193102336",
@@ -625,13 +692,28 @@
           "id": "10:651096412135846367",
           "name": "lastGeneratedTransactionDate",
           "type": 10
+        },
+        {
+          "id": "12:4531332751804763203",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "13:5940905236726193377",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "14:9212889725243991448",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "13:1815911240017711144",
-      "lastPropertyId": "11:3938547905203366311",
+      "lastPropertyId": "12:7965063110237257455",
       "name": "TransactionTag",
       "properties": [
         {
@@ -686,13 +768,18 @@
           "id": "11:3938547905203366311",
           "name": "colorSchemeName",
           "type": 9
+        },
+        {
+          "id": "12:7965063110237257455",
+          "name": "updatedAt",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "14:7904423998243143112",
-      "lastPropertyId": "10:3196587516305976411",
+      "lastPropertyId": "13:8443311567653309077",
       "name": "Goal",
       "properties": [
         {
@@ -716,7 +803,7 @@
         {
           "id": "4:4538446564856671516",
           "name": "name",
-          "indexId": "25:1837035268504934837",
+          "indexId": "32:758177677405128017",
           "type": 9,
           "flags": 2080
         },
@@ -752,13 +839,28 @@
           "id": "10:3196587516305976411",
           "name": "accountUuid",
           "type": 9
+        },
+        {
+          "id": "11:8950522037304629188",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "12:5781236928296021245",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "13:8443311567653309077",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "15:3741443681678089583",
-      "lastPropertyId": "6:5739129158582967162",
+      "lastPropertyId": "9:6906899214786496550",
       "name": "FileAttachment",
       "properties": [
         {
@@ -788,13 +890,28 @@
           "id": "6:5739129158582967162",
           "name": "filePath",
           "type": 9
+        },
+        {
+          "id": "7:6705610695292226890",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "8:8208224878319139238",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "9:6906899214786496550",
+          "name": "deletedDate",
+          "type": 10
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "15:3741443681678089583",
-  "lastIndexId": "27:5707692371585154920",
+  "lastIndexId": "32:758177677405128017",
   "lastRelationId": "4:5665142201815113360",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -805,7 +922,11 @@
     268813570801700112
   ],
   "retiredIndexUids": [
-    7291423328418584896
+    7291423328418584896,
+    7523580271093772442,
+    8336098329051704990,
+    2391044209964121362,
+    1837035268504934837
   ],
   "retiredPropertyUids": [
     620570223027064518,

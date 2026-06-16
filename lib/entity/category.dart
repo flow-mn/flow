@@ -24,6 +24,15 @@ class Category implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   static const int maxNameLength = 48;
 
   @Unique()
@@ -55,6 +64,9 @@ class Category implements EntityBase {
     required this.iconCode,
     DateTime? createdDate,
     this.colorSchemeName,
+    this.updatedAt,
+    this.isDeleted,
+    this.deletedDate,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = const Uuid().v4();
 

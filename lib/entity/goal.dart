@@ -27,6 +27,15 @@ class Goal implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   @Unique()
   String name;
 
@@ -82,6 +91,9 @@ class Goal implements EntityBase {
     required this.range,
     this.iconCode,
     DateTime? createdDate,
+    this.updatedAt,
+    this.isDeleted,
+    this.deletedDate,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = const Uuid().v4();
 

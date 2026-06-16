@@ -3,6 +3,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/services/notifications.dart";
@@ -90,9 +91,9 @@ class TransactionsService {
   }
 
   Future<List<int>> upsertMany(List<Transaction> transactions) async {
-    final List<int> ids = await ObjectBox().box<Transaction>().putManyAsync(
-      transactions,
-    );
+    final List<int> ids = await ObjectBox()
+        .box<Transaction>()
+        .putManySyncedAsync(transactions);
 
     return ids;
   }
@@ -228,22 +229,24 @@ class TransactionsService {
   }
 
   Future<int> upsertOne(Transaction updateTransaction) async {
-    return await ObjectBox().box<Transaction>().putAsync(updateTransaction);
+    return await ObjectBox().box<Transaction>().putSyncedAsync(
+      updateTransaction,
+    );
   }
 
   int upsertOneSync(Transaction updateTransaction) {
-    return ObjectBox().box<Transaction>().put(updateTransaction);
+    return ObjectBox().box<Transaction>().putSynced(updateTransaction);
   }
 
   Future<int> updateOne(Transaction updateTransaction) async {
-    return await ObjectBox().box<Transaction>().putAsync(
+    return await ObjectBox().box<Transaction>().putSyncedAsync(
       updateTransaction,
       mode: PutMode.update,
     );
   }
 
   int updateOneSync(Transaction updateTransaction) {
-    return ObjectBox().box<Transaction>().put(
+    return ObjectBox().box<Transaction>().putSynced(
       updateTransaction,
       mode: PutMode.update,
     );

@@ -30,6 +30,10 @@ class Transaction implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
   @Property(type: PropertyType.date)
   DateTime transactionDate;
 
@@ -236,6 +240,7 @@ class Transaction implements EntityBase {
     required this.uuid,
     DateTime? transactionDate,
     DateTime? createdDate,
+    this.updatedAt,
     this.extraTags = const <String>[],
   }) : createdDate = createdDate ?? DateTime.now(),
        transactionDate = transactionDate ?? createdDate ?? DateTime.now();

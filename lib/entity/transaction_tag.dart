@@ -25,6 +25,10 @@ class TransactionTag extends EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
   bool? isDeleted;
 
   @Property(type: PropertyType.date)
@@ -80,6 +84,7 @@ class TransactionTag extends EntityBase {
     this.id = 0,
     String? uuid,
     DateTime? createdDate,
+    this.updatedAt,
     this.isDeleted,
     this.deletedDate,
     required this.title,

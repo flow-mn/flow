@@ -11,6 +11,7 @@ import "package:flow/prefs/transitive.dart";
 import "package:intl/intl.dart";
 import "package:local_settings/local_settings.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:uuid/uuid.dart";
 
 export "./pending_transactions.dart";
 export "./transitive.dart";
@@ -23,6 +24,10 @@ class LocalPreferences {
 
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
+
+  /// Stable per-installation id identifying this device for sync. Generated
+  /// once via [getOrCreateDeviceId]; never synced or exported.
+  late final PrimitiveSettingsEntry<String> deviceId;
 
   /// Whether to use phone numpad layout
   ///
@@ -75,6 +80,10 @@ class LocalPreferences {
 
     primaryCurrency = PrimitiveSettingsEntry<String>(
       key: "primaryCurrency",
+      preferences: _prefs,
+    );
+    deviceId = PrimitiveSettingsEntry<String>(
+      key: "deviceId",
       preferences: _prefs,
     );
     usePhoneNumpadLayout = BoolSettingsEntry(
@@ -210,6 +219,17 @@ class LocalPreferences {
     }
 
     return primaryCurrencyName;
+  }
+
+  /// This device's stable sync id, generated and persisted on first call.
+  /// Local-only: never synced or exported.
+  String getOrCreateDeviceId() {
+    final String? existing = deviceId.value;
+    if (existing != null && existing.isNotEmpty) return existing;
+
+    final String generated = const Uuid().v4();
+    deviceId.set(generated);
+    return generated;
   }
 
   factory LocalPreferences() {

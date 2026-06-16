@@ -13,6 +13,7 @@ import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/accounts.dart";
@@ -239,7 +240,7 @@ class RecurringTransactionsService {
 
       recurringTransaction.lastGeneratedTransactionDate = nextOccurence;
 
-      ObjectBox().box<RecurringTransaction>().put(
+      ObjectBox().box<RecurringTransaction>().putSynced(
         recurringTransaction,
         mode: PutMode.update,
       );
@@ -324,7 +325,7 @@ class RecurringTransactionsService {
       lastGeneratedTransactionDate: transaction.transactionDate,
     );
 
-    ObjectBox().box<RecurringTransaction>().put(recurringTransaction);
+    ObjectBox().box<RecurringTransaction>().putSynced(recurringTransaction);
 
     unawaited(
       synchronizeAll().catchError((error, stackTrace) {
@@ -383,7 +384,7 @@ class RecurringTransactionsService {
   }
 
   Future<void> update(RecurringTransaction recurringTransaction) async {
-    await ObjectBox().box<RecurringTransaction>().putAsync(
+    await ObjectBox().box<RecurringTransaction>().putSyncedAsync(
       recurringTransaction,
       mode: PutMode.update,
     );
@@ -392,7 +393,7 @@ class RecurringTransactionsService {
   }
 
   void updateSync(RecurringTransaction recurringTransaction) {
-    ObjectBox().box<RecurringTransaction>().put(
+    ObjectBox().box<RecurringTransaction>().putSynced(
       recurringTransaction,
       mode: PutMode.update,
     );

@@ -12,6 +12,7 @@ import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/helpers.dart";
@@ -441,7 +442,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       ..colorSchemeName = _colorSchemeName
       ..payload = _payload?.serialize();
 
-    ObjectBox().box<TransactionTag>().put(
+    ObjectBox().box<TransactionTag>().putSynced(
       _currentlyEditing!,
       mode: PutMode.update,
     );
@@ -468,7 +469,7 @@ class _TransactionTagPageState extends State<TransactionTagPage> {
       iconCode: iconCodeOrError,
     );
 
-    final int insertedId = ObjectBox().box<TransactionTag>().put(
+    final int insertedId = ObjectBox().box<TransactionTag>().putSynced(
       tag,
       mode: PutMode.insert,
     );

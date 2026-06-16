@@ -20,6 +20,10 @@ class UserPreferences implements EntityBase {
   @Unique()
   String uuid;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
   /// Whether to combine transfer transactions in the transaction list
   ///
   /// Doesn't necessarily combine the transactions, but rather
@@ -167,6 +171,7 @@ class UserPreferences implements EntityBase {
   UserPreferences({
     this.id = 0,
     DateTime? createdDate,
+    this.updatedAt,
     this.combineTransfers = true,
     this.excludeTransfersFromFlow = true,
     this.useCategoryNameForUntitledTransactions = false,

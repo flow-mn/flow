@@ -5,6 +5,7 @@ import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:logging/logging.dart";
 import "package:path/path.dart" as path;
 import "package:uuid/uuid.dart";
@@ -26,7 +27,7 @@ class FileAttachmentService {
   void upsertManySync(List<FileAttachment> fileAttachments) {
     try {
       final box = ObjectBox().box<FileAttachment>();
-      box.putMany(fileAttachments);
+      box.putManySynced(fileAttachments);
     } catch (e, stackTrace) {
       _log.severe("Failed to upsert FileAttachments", e, stackTrace);
     }

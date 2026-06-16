@@ -13,6 +13,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -472,7 +473,10 @@ class _AccountEditPageState extends State<AccountEditPage> {
     _currentlyEditing!.excludeFromTotalBalance = _excludeFromTotalBalance;
     _currentlyEditing!.archived = _archived;
 
-    ObjectBox().box<Account>().put(_currentlyEditing!, mode: PutMode.update);
+    ObjectBox().box<Account>().putSynced(
+      _currentlyEditing!,
+      mode: PutMode.update,
+    );
 
     if (_archived) {
       try {
@@ -514,19 +518,22 @@ class _AccountEditPageState extends State<AccountEditPage> {
       unawaited(
         ObjectBox()
             .box<Account>()
-            .putAndGetAsync(account, mode: PutMode.insert)
+            .putAndGetSyncedAsync(account, mode: PutMode.insert)
             .then((value) {
               value.updateBalanceAndSave(
                 _balance,
                 title: "account.updateBalance.transactionTitle".tr(),
                 transactionDate: _updateBalanceAt,
               );
-              ObjectBox().box<Account>().putAsync(value);
+              ObjectBox().box<Account>().putSyncedAsync(value);
             }),
       );
     } else {
       unawaited(
-        ObjectBox().box<Account>().putAsync(account, mode: PutMode.insert),
+        ObjectBox().box<Account>().putSyncedAsync(
+          account,
+          mode: PutMode.insert,
+        ),
       );
     }
 

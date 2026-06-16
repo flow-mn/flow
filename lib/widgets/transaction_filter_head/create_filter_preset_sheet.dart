@@ -2,6 +2,7 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
@@ -94,7 +95,7 @@ class _CreateFilterPresetSheetState extends State<CreateFilterPresetSheet> {
         return;
       }
 
-      ObjectBox().box<TransactionFilterPreset>().put(
+      ObjectBox().box<TransactionFilterPreset>().putSynced(
         TransactionFilterPreset(
           name: _controller.text,
           jsonTransactionFilter: widget.filter.serialize(),

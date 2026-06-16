@@ -7,6 +7,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/objectbox/sync_box.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/profile_picture.dart";
 import "package:flutter/material.dart";
@@ -142,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       _profile.name = _nameController.text;
 
-      await ObjectBox().box<Profile>().putAsync(_profile);
+      await ObjectBox().box<Profile>().putSyncedAsync(_profile);
 
       if (mounted) {
         context.pop();

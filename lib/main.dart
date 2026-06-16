@@ -108,7 +108,10 @@ void main() async {
   await LocalPreferences.initialize();
 
   /// Set `sortOrder` values if there are any unset (-1) values
-  await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
+  await ObjectBox().updateAccountOrderList(
+    ignoreIfNoUnsetValue: true,
+    markUpdated: false,
+  );
   startupLog.fine("Updating account order list");
 
   // Await so the plugin is ready before TransactionsService listeners can
@@ -242,10 +245,7 @@ class FlowState extends State<Flow> {
       // compete with startup work or first-frame rendering.
       unawaited(
         RecurringTransactionsService().synchronizeAll().catchError((error) {
-          mainLogger.severe(
-            "First recurring-transactions sync failed",
-            error,
-          );
+          mainLogger.severe("First recurring-transactions sync failed", error);
         }),
       );
 

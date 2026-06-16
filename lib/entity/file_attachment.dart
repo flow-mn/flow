@@ -23,6 +23,15 @@ class FileAttachment extends EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   /// Display name. If null, the file name will be used.
   String? name;
 
@@ -40,6 +49,9 @@ class FileAttachment extends EntityBase {
     this.name,
     required this.filePath,
     DateTime? createdDate,
+    this.updatedAt,
+    this.isDeleted,
+    this.deletedDate,
   }) : uuid = const Uuid().v4(),
        createdDate = createdDate ?? DateTime.now();
 

@@ -26,6 +26,10 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) =>
           json['createdDate'],
           const UTCDateTimeConverter().fromJson,
         ),
+        updatedAt: _$JsonConverterFromJson<String, DateTime>(
+          json['updatedAt'],
+          const UTCDateTimeConverter().fromJson,
+        ),
         extraTags:
             (json['extraTags'] as List<dynamic>?)
                 ?.map((e) => e as String)
@@ -51,6 +55,10 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
     <String, dynamic>{
       'uuid': instance.uuid,
       'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
+      'updatedAt': _$JsonConverterToJson<String, DateTime>(
+        instance.updatedAt,
+        const UTCDateTimeConverter().toJson,
+      ),
       'transactionDate': const UTCDateTimeConverter().toJson(
         instance.transactionDate,
       ),

@@ -18,6 +18,7 @@ class RecurringTransaction extends EntityBase {
   int id;
 
   @override
+  @Unique()
   String uuid;
 
   /// Serialized [Transaction] object. This is used as a template for
@@ -76,6 +77,15 @@ class RecurringTransaction extends EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   /// This marks the last generated transaction date
   @Property(type: PropertyType.date)
   DateTime? lastGeneratedTransactionDate;
@@ -91,6 +101,9 @@ class RecurringTransaction extends EntityBase {
     this.transferToAccountUuid,
     this.lastGeneratedTransactionDate,
     DateTime? createdDate,
+    this.updatedAt,
+    this.isDeleted,
+    this.deletedDate,
     String? uuid,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = uuid ?? const Uuid().v4();

@@ -28,6 +28,15 @@ class Account implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @override
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  bool? isDeleted;
+
+  @Property(type: PropertyType.date)
+  DateTime? deletedDate;
+
   static const int maxNameLength = 48;
 
   @Unique()
@@ -109,6 +118,9 @@ class Account implements EntityBase {
     this.sortOrder = -1,
     this.type = AccountType.debitValue,
     DateTime? createdDate,
+    this.updatedAt,
+    this.isDeleted,
+    this.deletedDate,
   }) : createdDate = createdDate ?? DateTime.now(),
        uuid = const Uuid().v4();
 

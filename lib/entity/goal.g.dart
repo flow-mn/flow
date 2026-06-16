@@ -17,6 +17,15 @@ Goal _$GoalFromJson(Map<String, dynamic> json) =>
           json['createdDate'],
           const UTCDateTimeConverter().fromJson,
         ),
+        updatedAt: _$JsonConverterFromJson<String, DateTime>(
+          json['updatedAt'],
+          const UTCDateTimeConverter().fromJson,
+        ),
+        isDeleted: json['isDeleted'] as bool?,
+        deletedDate: _$JsonConverterFromJson<String, DateTime>(
+          json['deletedDate'],
+          const UTCDateTimeConverter().fromJson,
+        ),
       )
       ..uuid = json['uuid'] as String
       ..timeRange = _$JsonConverterFromJson<String, TimeRange>(
@@ -28,6 +37,15 @@ Goal _$GoalFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GoalToJson(Goal instance) => <String, dynamic>{
   'uuid': instance.uuid,
   'createdDate': const UTCDateTimeConverter().toJson(instance.createdDate),
+  'updatedAt': _$JsonConverterToJson<String, DateTime>(
+    instance.updatedAt,
+    const UTCDateTimeConverter().toJson,
+  ),
+  'isDeleted': instance.isDeleted,
+  'deletedDate': _$JsonConverterToJson<String, DateTime>(
+    instance.deletedDate,
+    const UTCDateTimeConverter().toJson,
+  ),
   'name': instance.name,
   'range': instance.range,
   'timeRange': _$JsonConverterToJson<String, TimeRange>(
