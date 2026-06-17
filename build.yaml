@@ -1,0 +1,10 @@
+# Drift stores DateTime values as ISO-8601 TEXT (not unix-epoch INT) so they
+# match the `Column.text(...)` date columns declared in the PowerSync schema
+# (lib/drift/flow_schema.dart). PowerSync syncs raw column values, so the
+# on-disk representation must be consistent between Drift and PowerSync.
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true

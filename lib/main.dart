@@ -21,6 +21,7 @@ import "dart:ui";
 
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
+import "package:flow/drift/migration/run_migration.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -250,6 +251,11 @@ class FlowState extends State<Flow> {
       );
 
       unawaited(SiriPendingService().resolveSiriTransactions());
+
+      // One-time, transparent copy of all ObjectBox data into the new Drift +
+      // PowerSync (SQLite) database. Read-only against ObjectBox, so it runs
+      // safely in the background while the app keeps using ObjectBox.
+      unawaited(migrateObjectBoxToDriftIfNeeded());
     });
 
     _tryUnlockTempLock();
