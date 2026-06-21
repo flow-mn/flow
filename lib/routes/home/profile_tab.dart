@@ -94,11 +94,6 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 32.0),
           ListHeader("tabs.profile.community".t(context)),
           ListTile(
-            title: Text("tabs.profile.joinDiscord".t(context)),
-            leading: const Icon(SimpleIcons.discord),
-            onTap: () => openUrl(discordInviteLink),
-          ),
-          ListTile(
             title: Text("tabs.profile.support".t(context)),
             leading: const Icon(Symbols.favorite_rounded),
             onTap: () => context.push("/support"),
