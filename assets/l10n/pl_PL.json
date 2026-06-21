@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Możesz także nas wesprzeć, przesyłając nam opinie i nowe pomysły, by ulepszyć aplikację.",
   "support.starOnGitHub": "Zostaw gwiazdkę na GitHub",
   "support.starOnGitHub.description": "Zostawienie gwiazdki dla Flow na GitHubie ułatwia odkrycie aplikacji innym osobom",
+  "support.tip.error": "Nie udało się rozpocząć zakupu. Spróbuj ponownie.",
+  "support.tip.thankYou": "Dziękujemy za wsparcie Flow! 💜",
   "sync.export": "Eksportuj",
   "sync.export.asCSV": "Jako plik CSV",
   "sync.export.asCSV.description": "Nie można wykorzystać do przywracania danych! Idealne do otwierania w programach takich jak Arkusze Google",

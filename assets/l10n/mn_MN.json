@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Та өөрийн санал хүсэлтээ бидэнд хэлснээр Flow-г сайжруулахад туслах боломжтой.",
   "support.starOnGitHub": "GitHub репод од өгөх",
   "support.starOnGitHub.description": "Од нь Flow-г илүү олон хүнд хүрэхэд туслана",
+  "support.tip.error": "Худалдан авалтыг эхлүүлэхэд алдаа гарлаа. Дахин оролдоно уу.",
+  "support.tip.thankYou": "Flow-ийг дэмжсэнд баярлалаа! 💜",
   "sync.export": "Нөөцлөх",
   "sync.export.asCSV": "CSV хүснэгтээр",
   "sync.export.asCSV.description": "Буцааж сэргээх боломжгүй! Google Sheets гэх мэт программуудад нээж харахад тохиромжтой",

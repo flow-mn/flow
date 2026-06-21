@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Můžete nám také pomoci tím, že nám poskytnete zpětnou vazbu a navrhnete nápady, jak Flow vylepšit.",
   "support.starOnGitHub": "Dejte hvězdičku na GitHubu",
   "support.starOnGitHub.description": "Označení projektu Flow hvězdičkou na GitHubu pomáhá ostatním lidem objevit tuto aplikaci.",
+  "support.tip.error": "Nepodařilo se spustit nákup. Zkuste to prosím znovu.",
+  "support.tip.thankYou": "Děkujeme, že podporujete Flow! 💜",
   "sync.export": "Exportovat",
   "sync.export.asCSV": "jako CSV",
   "sync.export.asCSV.description": "Nelze použít pro obnovu/import! Ideální pro otevření v tabulkových procesorech.",
