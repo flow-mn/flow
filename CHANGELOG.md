@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.23.2
+
+### Fixes
+
+* Fixed stats tab may be out of sync
+
+### Changes
+
+* Location picker now features a "current location" button
+* Added "Tip the creator" in-app purchase for iOS
+
 ## 0.23.1
 
 ### Fixes

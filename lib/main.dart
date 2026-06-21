@@ -34,6 +34,7 @@ import "package:flow/providers/transaction_tags_provider.dart";
 import "package:flow/routes.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/in_app_purchase.dart";
 import "package:flow/services/integrations/siri_pending.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/navigation.dart";
@@ -127,6 +128,15 @@ void main() async {
   ExchangeRatesService().init();
 
   CurrencyRegistryService();
+
+  if (Platform.isIOS) {
+    startupLog.fine("Initializing TipService");
+    unawaited(
+      TipService().init().catchError((error) {
+        startupLog.warning("Failed to initialize TipService", error);
+      }),
+    );
+  }
 
   try {
     startupLog.fine("Initializing user preferences service");

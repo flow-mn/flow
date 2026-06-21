@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "يمكنك أيضًا دعمنا بتقديم الملاحظات وأفكار الاقتراحات لتحسين Flow.",
   "support.starOnGitHub": "أضف نجمة على جيثب",
   "support.starOnGitHub.description": "إضافة نجمة لـ Flow على جيثب تساعد الآخرين في اكتشافه",
+  "support.tip.error": "تعذر بدء عملية الشراء. الرجاء المحاولة مرة أخرى.",
+  "support.tip.thankYou": "شكرًا لدعمك لـ Flow! 💜",
   "sync.export": "تصدير",
   "sync.export.asCSV": "كملف CSV",
   "sync.export.asCSV.description": "لا يمكن استخدامه للاستعادة/الاستيراد! مثالي للفتح في برامج مثل Google Sheets",

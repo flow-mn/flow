@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Vous pouvez également nous soutenir en donnant des retours et en suggérant des idées pour améliorer Flow.",
   "support.starOnGitHub": "Étoile sur GitHub",
   "support.starOnGitHub.description": "Étoiler Flow sur GitHub aide les gens à découvrir Flow",
+  "support.tip.error": "Impossible de démarrer l'achat. Veuillez réessayer.",
+  "support.tip.thankYou": "Merci de soutenir Flow ! 💜",
   "sync.export": "Exporter",
   "sync.export.asCSV": "En CSV",
   "sync.export.asCSV.description": "Ne peut pas être utilisé pour la restauration/importation! Idéal pour ouvrir dans des logiciels comme Google Sheets",

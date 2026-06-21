@@ -2,17 +2,18 @@ import "dart:io";
 
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/modal_overflow_bar.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/open_street_map.dart";
 import "package:flutter/material.dart";
+import "package:flutter_map/flutter_map.dart";
 import "package:geolocator/geolocator.dart";
 import "package:go_router/go_router.dart";
 import "package:latlong2/latlong.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
+import "package:permission_handler/permission_handler.dart";
 
 final Logger _log = Logger("LocationPickerSheet");
 
@@ -31,9 +32,13 @@ class LocationPickerSheet extends StatefulWidget {
 }
 
 class _LocationPickerSheetState extends State<LocationPickerSheet> {
+  final MapController _mapController = MapController();
+
   late LatLng center;
 
-  bool useCurrentLocationWhenAvailable = false;
+  bool _locationBusy = false;
+
+  bool get _myLocationAvailable => Platform.isAndroid || Platform.isIOS;
 
   @override
   void initState() {
@@ -43,9 +48,12 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       widget.latitude ?? sukhbaatarSquareCenterLat,
       widget.longitude ?? sukhbaatarSquareCenterLong,
     );
+  }
 
-    useCurrentLocationWhenAvailable =
-        widget.latitude == null || widget.longitude == null;
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,55 +83,70 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       ),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * .75,
-        child: OpenStreetMap(
-          center: center,
-          onTap: (pos) => setState(() {
-            useCurrentLocationWhenAvailable = false;
-            center = pos;
-          }),
+        child: Stack(
+          children: [
+            OpenStreetMap(
+              mapController: _mapController,
+              center: center,
+              onTap: (pos) => setState(() => center = pos),
+            ),
+            if (_myLocationAvailable)
+              Positioned(
+                right: 16.0,
+                bottom: 16.0,
+                child: FloatingActionButton.small(
+                  heroTag: null,
+                  tooltip: "transaction.tags.location.useCurrent".t(context),
+                  onPressed: _locationBusy ? null : _useMyLocation,
+                  child: _locationBusy
+                      ? const SizedBox.square(
+                          dimension: 20.0,
+                          child: CircularProgressIndicator(strokeWidth: 2.0),
+                        )
+                      : const Icon(Symbols.my_location_rounded),
+                ),
+              ),
+          ],
         ),
       ),
     );
   }
 
-  void tryFetchLocation() {
-    if (Platform.isLinux) return;
-    if (LocalPreferences().enableGeo.get() != true) return;
-    if (LocalPreferences().autoAttachTransactionGeo.get() != true) return;
+  Future<void> _useMyLocation() async {
+    if (_locationBusy) return;
 
-    Geolocator.getLastKnownPosition()
-        .then((lastKnown) {
-          if (lastKnown == null) {
-            return;
-          }
+    setState(() => _locationBusy = true);
 
-          if (!useCurrentLocationWhenAvailable) return;
+    try {
+      final PermissionStatus status = await Permission.locationWhenInUse
+          .request();
 
+      switch (status) {
+        case PermissionStatus.limited:
+        case PermissionStatus.granted:
+          break;
+        default:
           if (mounted) {
-            setState(() {
-              center = LatLng(lastKnown.latitude, lastKnown.longitude);
-            });
+            context.showErrorToast(
+              error: "preferences.transactions.geo.auto.permissionDenied".t(
+                context,
+              ),
+            );
           }
-        })
-        .catchError((e) {
-          _log.warning("Failed to get last known location", e);
-        });
+          return;
+      }
 
-    Geolocator.getCurrentPosition()
-        .then((current) {
-          if (!useCurrentLocationWhenAvailable) return;
+      final Position position = await Geolocator.getCurrentPosition();
+      if (!mounted) return;
 
-          center = LatLng(current.latitude, current.longitude);
-        })
-        .catchError((e) {
-          _log.warning("Failed to get current location", e);
-        })
-        .whenComplete(() {
-          if (mounted) {
-            setState(() {
-              useCurrentLocationWhenAvailable = false;
-            });
-          }
-        });
+      final LatLng point = LatLng(position.latitude, position.longitude);
+      setState(() => center = point);
+      _mapController.move(point, _mapController.camera.zoom);
+    } catch (e, stackTrace) {
+      _log.warning("Failed to get current location", e, stackTrace);
+    } finally {
+      _locationBusy = false;
+      if (mounted) setState(() {});
+    }
   }
 }

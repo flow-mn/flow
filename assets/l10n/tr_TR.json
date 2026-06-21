@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Flow'u daha iyi hale getirmek için geri bildirim ve öneri fikirleri vererek de bize destek olabilirsiniz.",
   "support.starOnGitHub": "GitHub'da yıldız verin",
   "support.starOnGitHub.description": "Flow'a GitHub'da yıldız vermek, insanların Flow'u keşfetmesine yardımcı olur",
+  "support.tip.error": "Satın alma başlatılamadı. Lütfen tekrar deneyin.",
+  "support.tip.thankYou": "Flow'u desteklediğiniz için teşekkür ederiz! 💜",
   "sync.export": "Dışa aktarma",
   "sync.export.asCSV": "CSV olarak",
   "sync.export.asCSV.description": "Geri yükleme/içe aktarma için kullanılamaz! Google E-Tablolar gibi yazılımlarda açmak için ideal",

@@ -537,6 +537,8 @@
   "support.requestFeatures.description": "Вы таксама можаце падтрымаць нас, пакінуўшы водгук і прапанаваўшы ідэі па паляпшэнні Flow.",
   "support.starOnGitHub": "Паставіць зорку на GitHub",
   "support.starOnGitHub.description": "Зорка для Flow на GitHub дапамагае людзям знаходзіць Flow",
+  "support.tip.error": "Не ўдалося пачаць пакупку. Калі ласка, паспрабуйце яшчэ раз.",
+  "support.tip.thankYou": "Дзякуй за падтрымку Flow! 💜",
   "sync.export": "Экспарт",
   "sync.export.asCSV": "Як CSV",
   "sync.export.asCSV.description": "Немагчыма выкарыстоўваць для аднаўлення/імпарту! Ідэальна для адкрыцця ў такіх праграмах, як Google Sheets",
