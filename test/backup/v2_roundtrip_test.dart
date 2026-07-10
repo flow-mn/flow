@@ -2,12 +2,14 @@ import "dart:convert";
 import "dart:io";
 
 import "package:flow/entity/account.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/sync/export/export_v2.dart";
 import "package:flow/sync/model/model_v2.dart";
 import "package:flutter_test/flutter_test.dart";
+import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart" as path;
 
 import "../database_test.dart" show objectboxTestRootDir;
@@ -170,6 +172,58 @@ void main() async {
         }
       },
     );
+
+    test(
+      "Every budget field + category links survive roundtrip",
+      () async {
+        final Category category = ObjectBox().box<Category>().getAll().first;
+
+        final Budget original = Budget(
+          name: "Roundtrip budget",
+          amount: 500.0,
+          currency: "USD",
+          range: MonthTimeRange.fromDateTime(DateTime.now()).toString(),
+        )..setCategories([category]);
+
+        ObjectBox().box<Budget>().put(original);
+
+        final SyncModelV2 parsed = SyncModelV2.fromJson(
+          jsonDecode(await generateBackupJSONContentV2())
+              as Map<String, dynamic>,
+        );
+
+        expect(parsed.budgets, isNotNull);
+        final Budget? roundtripped = parsed.budgets!
+            .where((budget) => budget.uuid == original.uuid)
+            .firstOrNull;
+
+        expect(
+          roundtripped,
+          isNotNull,
+          reason: "Budget ${original.uuid} (${original.name}) lost",
+        );
+        expect(roundtripped!.name, original.name);
+        expect(roundtripped.amount, original.amount);
+        expect(roundtripped.currency, original.currency);
+        expect(roundtripped.range, original.range);
+        expect(roundtripped.renewAutomatically, original.renewAutomatically);
+        expect(roundtripped.categoriesUuids, [category.uuid]);
+      },
+    );
+
+    test("Backups without budgets parse with null budgets", () {
+      final SyncModelV2 parsed = SyncModelV2.fromJson({
+        "versionCode": 2,
+        "exportDate": DateTime.now().toUtc().toIso8601String(),
+        "username": "Test",
+        "appVersion": "0.0.0",
+        "accounts": [],
+        "categories": [],
+        "transactions": [],
+      });
+
+      expect(parsed.budgets, isNull);
+    });
 
     tearDownAll(() async {
       await testCleanupObject(

@@ -32,6 +32,7 @@ import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/providers/transaction_tags_provider.dart";
 import "package:flow/routes.dart";
+import "package:flow/services/budget.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/in_app_purchase.dart";
@@ -260,6 +261,13 @@ class FlowState extends State<Flow> {
       );
 
       unawaited(SiriPendingService().resolveSiriTransactions());
+
+      unawaited(
+        BudgetService().renewDueBudgets().catchError((error) {
+          mainLogger.severe("Failed to renew due budgets", error);
+          return 0;
+        }),
+      );
     });
 
     _tryUnlockTempLock();
