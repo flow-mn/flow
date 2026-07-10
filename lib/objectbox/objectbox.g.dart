@@ -18,6 +18,7 @@ import '../entity/account.dart';
 import '../entity/backup_entry.dart';
 import '../entity/budget.dart';
 import '../entity/category.dart';
+import '../entity/emi.dart';
 import '../entity/file_attachment.dart';
 import '../entity/goal.dart';
 import '../entity/profile.dart';
@@ -954,6 +955,137 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(16, 4830514355115831368),
+    name: 'Emi',
+    lastPropertyId: const obx_int.IdUid(19, 9197850623863321172),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 8831015618429222140),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 1508297414409534930),
+        name: 'uuid',
+        type: 9,
+        flags: 2080,
+        indexId: const obx_int.IdUid(28, 2494653015461797186),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 890261514587453762),
+        name: 'createdDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 2315433959425802959),
+        name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 8514013076629906282),
+        name: 'description',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 3170364854542038014),
+        name: 'totalAmount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 3339449958192721698),
+        name: 'installmentAmount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7136386826711877991),
+        name: 'totalInstallments',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 6729194502065436054),
+        name: 'paidInstallments',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 8878969028807554231),
+        name: 'remainingInstallments',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(11, 6236564898739132895),
+        name: 'paidAmount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 341928807796190815),
+        name: 'remainingAmount',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 6042698273855448470),
+        name: 'startDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(14, 6535570131504946806),
+        name: 'nextDueDate',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(15, 5796550891231618560),
+        name: 'accountId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(29, 2880346028504368550),
+        relationField: 'account',
+        relationTarget: 'Account',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(16, 1029005073536401838),
+        name: 'accountUuid',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(17, 4606341681781646043),
+        name: 'categoryId',
+        type: 11,
+        flags: 520,
+        indexId: const obx_int.IdUid(30, 436111186719433506),
+        relationField: 'category',
+        relationTarget: 'Category',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(18, 6251230679534709417),
+        name: 'categoryUuid',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(19, 9197850623863321172),
+        name: 'status',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -999,8 +1131,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(15, 3741443681678089583),
-    lastIndexId: const obx_int.IdUid(27, 5707692371585154920),
+    lastEntityId: const obx_int.IdUid(16, 4830514355115831368),
+    lastIndexId: const obx_int.IdUid(30, 436111186719433506),
     lastRelationId: const obx_int.IdUid(4, 5665142201815113360),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
@@ -2255,6 +2387,167 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    Emi: obx_int.EntityDefinition<Emi>(
+      model: _entities[12],
+      toOneRelations: (Emi object) => [object.account, object.category],
+      toManyRelations: (Emi object) => {},
+      getId: (Emi object) => object.id,
+      setId: (Emi object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Emi object, fb.Builder fbb) {
+        final uuidOffset = fbb.writeString(object.uuid);
+        final titleOffset = fbb.writeString(object.title);
+        final descriptionOffset = object.description == null
+            ? null
+            : fbb.writeString(object.description!);
+        final accountUuidOffset = object.accountUuid == null
+            ? null
+            : fbb.writeString(object.accountUuid!);
+        final categoryUuidOffset = object.categoryUuid == null
+            ? null
+            : fbb.writeString(object.categoryUuid!);
+        final statusOffset = fbb.writeString(object.status);
+        fbb.startTable(20);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, uuidOffset);
+        fbb.addInt64(2, object.createdDate.millisecondsSinceEpoch);
+        fbb.addOffset(3, titleOffset);
+        fbb.addOffset(4, descriptionOffset);
+        fbb.addFloat64(5, object.totalAmount);
+        fbb.addFloat64(6, object.installmentAmount);
+        fbb.addInt64(7, object.totalInstallments);
+        fbb.addInt64(8, object.paidInstallments);
+        fbb.addInt64(9, object.remainingInstallments);
+        fbb.addFloat64(10, object.paidAmount);
+        fbb.addFloat64(11, object.remainingAmount);
+        fbb.addInt64(12, object.startDate.millisecondsSinceEpoch);
+        fbb.addInt64(13, object.nextDueDate?.millisecondsSinceEpoch);
+        fbb.addInt64(14, object.account.targetId);
+        fbb.addOffset(15, accountUuidOffset);
+        fbb.addInt64(16, object.category.targetId);
+        fbb.addOffset(17, categoryUuidOffset);
+        fbb.addOffset(18, statusOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final nextDueDateValue = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          30,
+        );
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final descriptionParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 12);
+        final totalAmountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          14,
+          0,
+        );
+        final installmentAmountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          0,
+        );
+        final totalInstallmentsParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          18,
+          0,
+        );
+        final paidInstallmentsParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          20,
+          0,
+        );
+        final remainingInstallmentsParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          22,
+          0,
+        );
+        final paidAmountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          24,
+          0,
+        );
+        final remainingAmountParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          26,
+          0,
+        );
+        final startDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0),
+        );
+        final nextDueDateParam = nextDueDateValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(nextDueDateValue);
+        final statusParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 40, '');
+        final createdDateParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+        );
+        final object =
+            Emi(
+                id: idParam,
+                title: titleParam,
+                description: descriptionParam,
+                totalAmount: totalAmountParam,
+                installmentAmount: installmentAmountParam,
+                totalInstallments: totalInstallmentsParam,
+                paidInstallments: paidInstallmentsParam,
+                remainingInstallments: remainingInstallmentsParam,
+                paidAmount: paidAmountParam,
+                remainingAmount: remainingAmountParam,
+                startDate: startDateParam,
+                nextDueDate: nextDueDateParam,
+                status: statusParam,
+                createdDate: createdDateParam,
+              )
+              ..uuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGet(buffer, rootOffset, 6, '')
+              ..accountUuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 34)
+              ..categoryUuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGetNullable(buffer, rootOffset, 38);
+        object.account.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          32,
+          0,
+        );
+        object.account.attach(store);
+        object.category.targetId = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          36,
+          0,
+        );
+        object.category.attach(store);
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -2923,5 +3216,99 @@ class FileAttachment_ {
   /// See [FileAttachment.filePath].
   static final filePath = obx.QueryStringProperty<FileAttachment>(
     _entities[11].properties[4],
+  );
+}
+
+/// [Emi] entity fields to define ObjectBox queries.
+class Emi_ {
+  /// See [Emi.id].
+  static final id = obx.QueryIntegerProperty<Emi>(_entities[12].properties[0]);
+
+  /// See [Emi.uuid].
+  static final uuid = obx.QueryStringProperty<Emi>(_entities[12].properties[1]);
+
+  /// See [Emi.createdDate].
+  static final createdDate = obx.QueryDateProperty<Emi>(
+    _entities[12].properties[2],
+  );
+
+  /// See [Emi.title].
+  static final title = obx.QueryStringProperty<Emi>(
+    _entities[12].properties[3],
+  );
+
+  /// See [Emi.description].
+  static final description = obx.QueryStringProperty<Emi>(
+    _entities[12].properties[4],
+  );
+
+  /// See [Emi.totalAmount].
+  static final totalAmount = obx.QueryDoubleProperty<Emi>(
+    _entities[12].properties[5],
+  );
+
+  /// See [Emi.installmentAmount].
+  static final installmentAmount = obx.QueryDoubleProperty<Emi>(
+    _entities[12].properties[6],
+  );
+
+  /// See [Emi.totalInstallments].
+  static final totalInstallments = obx.QueryIntegerProperty<Emi>(
+    _entities[12].properties[7],
+  );
+
+  /// See [Emi.paidInstallments].
+  static final paidInstallments = obx.QueryIntegerProperty<Emi>(
+    _entities[12].properties[8],
+  );
+
+  /// See [Emi.remainingInstallments].
+  static final remainingInstallments = obx.QueryIntegerProperty<Emi>(
+    _entities[12].properties[9],
+  );
+
+  /// See [Emi.paidAmount].
+  static final paidAmount = obx.QueryDoubleProperty<Emi>(
+    _entities[12].properties[10],
+  );
+
+  /// See [Emi.remainingAmount].
+  static final remainingAmount = obx.QueryDoubleProperty<Emi>(
+    _entities[12].properties[11],
+  );
+
+  /// See [Emi.startDate].
+  static final startDate = obx.QueryDateProperty<Emi>(
+    _entities[12].properties[12],
+  );
+
+  /// See [Emi.nextDueDate].
+  static final nextDueDate = obx.QueryDateProperty<Emi>(
+    _entities[12].properties[13],
+  );
+
+  /// See [Emi.account].
+  static final account = obx.QueryRelationToOne<Emi, Account>(
+    _entities[12].properties[14],
+  );
+
+  /// See [Emi.accountUuid].
+  static final accountUuid = obx.QueryStringProperty<Emi>(
+    _entities[12].properties[15],
+  );
+
+  /// See [Emi.category].
+  static final category = obx.QueryRelationToOne<Emi, Category>(
+    _entities[12].properties[16],
+  );
+
+  /// See [Emi.categoryUuid].
+  static final categoryUuid = obx.QueryStringProperty<Emi>(
+    _entities[12].properties[17],
+  );
+
+  /// See [Emi.status].
+  static final status = obx.QueryStringProperty<Emi>(
+    _entities[12].properties[18],
   );
 }

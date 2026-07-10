@@ -443,4 +443,3 @@ class TransactionListTile extends StatelessWidget {
     ),
   );
 }
-

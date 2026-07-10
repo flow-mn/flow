@@ -71,7 +71,10 @@ class _WrappedTileState extends State<WrappedTile>
                   mainAxisSize: .min,
                   children: [
                     Text(
-                      "tabs.stats.analytics.wrapped.tileTitle".t(context, month),
+                      "tabs.stats.analytics.wrapped.tileTitle".t(
+                        context,
+                        month,
+                      ),
                       style: context.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

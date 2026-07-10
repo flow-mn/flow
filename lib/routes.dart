@@ -7,6 +7,9 @@ import "package:flow/routes/accounts_page.dart";
 import "package:flow/routes/categories_page.dart";
 import "package:flow/routes/category/category_edit_page.dart";
 import "package:flow/routes/category_page.dart";
+import "package:flow/routes/emi/emi_detail_page.dart";
+import "package:flow/routes/emi/emi_edit_page.dart";
+import "package:flow/routes/emi/emi_list_page.dart";
 import "package:flow/routes/community/contributors_page.dart";
 import "package:flow/routes/debug/debug_icloud_page.dart";
 import "package:flow/routes/debug/debug_log_page.dart";
@@ -221,6 +224,33 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/accounts",
       builder: (context, state) => const AccountsPage(),
+    ),
+    GoRoute(
+      path: "/emi-tracker",
+      builder: (context, state) => const EmiListPage(),
+    ),
+    GoRoute(
+      path: "/emi-tracker/new",
+      pageBuilder: (context, state) => const MaterialPage(
+        child: EmiEditPage.create(),
+        fullscreenDialog: true,
+      ),
+    ),
+    GoRoute(
+      path: "/emi-tracker/:id",
+      builder: (context, state) =>
+          EmiDetailPage(emiId: int.tryParse(state.pathParameters["id"]!) ?? -1),
+      routes: [
+        GoRoute(
+          path: "edit",
+          pageBuilder: (context, state) => MaterialPage(
+            child: EmiEditPage.edit(
+              emiId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+            ),
+            fullscreenDialog: true,
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: "/transactionTags",

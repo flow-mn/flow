@@ -225,47 +225,47 @@ class _CategoryPageState extends State<CategoryPage> {
             visibleTransactions: transactions ?? const [],
             child: SafeArea(
               child: switch (busy) {
-              true => Padding(
-                padding: headerPaddingOutOfList,
-                child: Column(
-                  children: [
-                    header,
-                    const Expanded(child: Spinner.center()),
-                  ],
+                true => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: Spinner.center()),
+                    ],
+                  ),
                 ),
-              ),
-              false when noTransactions => Padding(
-                padding: headerPaddingOutOfList,
-                child: Column(
-                  children: [
-                    header,
-                    const Expanded(child: NoResult()),
-                  ],
+                false when noTransactions => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: NoResult()),
+                    ],
+                  ),
                 ),
-              ),
-              _ => GroupedTransactionsListView(
-                selectionController: _selection,
-                mainHeader: header,
-                transactions: grouped,
-                pendingTransactions: pendingTransactionsGrouped,
-                pendingDivider: WavyDivider(),
-                groupHeaderPadding: widget.headerPadding,
-                mainHeaderPadding: EdgeInsets.zero,
-                headerBuilder: (pendingGroup, range, transactions) {
-                  if (pendingGroup) {
-                    return PendingTransactionsHeader(
+                _ => GroupedTransactionsListView(
+                  selectionController: _selection,
+                  mainHeader: header,
+                  transactions: grouped,
+                  pendingTransactions: pendingTransactionsGrouped,
+                  pendingDivider: WavyDivider(),
+                  groupHeaderPadding: widget.headerPadding,
+                  mainHeaderPadding: EdgeInsets.zero,
+                  headerBuilder: (pendingGroup, range, transactions) {
+                    if (pendingGroup) {
+                      return PendingTransactionsHeader(
+                        transactions: transactions,
+                        range: range,
+                        badgeCount: actionNeededCount,
+                      );
+                    }
+
+                    return TransactionListDateHeader(
                       transactions: transactions,
                       range: range,
-                      badgeCount: actionNeededCount,
                     );
-                  }
-
-                  return TransactionListDateHeader(
-                    transactions: transactions,
-                    range: range,
-                  );
-                },
-              ),
+                  },
+                ),
               },
             ),
           ),

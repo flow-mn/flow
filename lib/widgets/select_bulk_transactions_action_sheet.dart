@@ -38,9 +38,7 @@ class SelectBulkTransactionsActionSheet extends StatelessWidget {
             : null);
 
     return ModalSheet.scrollable(
-      title: Text(
-        "transaction.bulk.selected".t(context, controller.count),
-      ),
+      title: Text("transaction.bulk.selected".t(context, controller.count)),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -216,38 +216,40 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
                         final DateTime now = DateTime.now().startOfNextMinute();
 
-                  final Map<TimeRange, List<Transaction>> transactions =
-                      snapshot.requireData
-                          .where(
-                            (transaction) =>
-                                !transaction.transactionDate.isAfter(now) &&
-                                transaction.isPending != true,
-                          )
-                          .groupByDate();
-                  final Map<TimeRange, List<Transaction>> pendingTransactions =
-                      snapshot.requireData
-                          .where(
-                            (transaction) =>
-                                transaction.transactionDate.isAfter(now) ||
-                                transaction.isPending == true,
-                          )
-                          .groupByDate();
+                        final Map<TimeRange, List<Transaction>> transactions =
+                            snapshot.requireData
+                                .where(
+                                  (transaction) =>
+                                      !transaction.transactionDate.isAfter(
+                                        now,
+                                      ) &&
+                                      transaction.isPending != true,
+                                )
+                                .groupByDate();
+                        final Map<TimeRange, List<Transaction>>
+                        pendingTransactions = snapshot.requireData
+                            .where(
+                              (transaction) =>
+                                  transaction.transactionDate.isAfter(now) ||
+                                  transaction.isPending == true,
+                            )
+                            .groupByDate();
 
-                  final int totalTransactionsCount =
-                      transactions.values.fold<int>(
-                        0,
-                        (previousValue, element) =>
-                            /// Since the [GroupedTransactionList] below isn't able to combine
-                            /// transfer transactions, we need to count them separately.
-                            previousValue + element.length,
-                      ) +
-                      pendingTransactions.values.fold<int>(
-                        0,
-                        (previousValue, element) =>
-                            /// Since the [GroupedTransactionList] below isn't able to combine
-                            /// transfer transactions, we need to count them separately.
-                            previousValue + element.length,
-                      );
+                        final int totalTransactionsCount =
+                            transactions.values.fold<int>(
+                              0,
+                              (previousValue, element) =>
+                                  /// Since the [GroupedTransactionList] below isn't able to combine
+                                  /// transfer transactions, we need to count them separately.
+                                  previousValue + element.length,
+                            ) +
+                            pendingTransactions.values.fold<int>(
+                              0,
+                              (previousValue, element) =>
+                                  /// Since the [GroupedTransactionList] below isn't able to combine
+                                  /// transfer transactions, we need to count them separately.
+                                  previousValue + element.length,
+                            );
 
                         return GroupedTransactionsListView(
                           selectionController: _selection,

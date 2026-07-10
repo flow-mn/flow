@@ -71,6 +71,11 @@ class _ProfileTabState extends State<ProfileTab> {
             leading: const Icon(Symbols.category_rounded),
             onTap: () => context.push("/categories"),
           ),
+          ListTile(
+            title: Text("emi.tracker".t(context)),
+            leading: const Icon(Symbols.receipt_long_rounded),
+            onTap: () => context.push("/emi-tracker"),
+          ),
           // ListTile(
           //   title: Text("budgets".t(context)),
           //   leading: const Icon(Symbols.money_bag_rounded),

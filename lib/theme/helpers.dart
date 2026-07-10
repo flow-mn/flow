@@ -19,8 +19,7 @@ extension ThemeAccessor on BuildContext {
   /// dark surfaces but wash out on light ones, so fall back to the saturated,
   /// contrast-checked [primaryColors] in light mode. Both lists share a length,
   /// so callers can index either with `% length`.
-  List<Color> get chartAccents =>
-      Theme.of(this).brightness == Brightness.dark
+  List<Color> get chartAccents => Theme.of(this).brightness == Brightness.dark
       ? accentColors
       : primaryColors;
 }

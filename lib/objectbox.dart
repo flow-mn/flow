@@ -157,36 +157,32 @@ class ObjectBox {
 
     final List<TransactionTag> tags = await box<TransactionTag>()
         .putAndGetManyAsync(
-          _demoTagTitles
-              .map((title) => TransactionTag(title: title))
-              .toList(),
+          _demoTagTitles.map((title) => TransactionTag(title: title)).toList(),
         );
     final Map<String, TransactionTag> tagsByTitle = {
       for (final tag in tags) tag.title: tag,
     };
 
-    final List<Category> categories = await box<Category>()
-        .putAndGetManyAsync(
-          getCategoryPresets().map((e) {
-            e.id = 0;
-            return e;
-          }).toList(),
-        );
+    final List<Category> categories = await box<Category>().putAndGetManyAsync(
+      getCategoryPresets().map((e) {
+        e.id = 0;
+        return e;
+      }).toList(),
+    );
 
     final List<Account> presets = getAccountPresets("USD").map((e) {
       e.id = 0;
       return e;
     }).toList();
-    final Account creditCardPreset =
-        Account.preset(
-          name: "Credit Card",
-          currency: "USD",
-          iconCode: FlowIconData.icon(Symbols.credit_card_rounded).toString(),
-          uuid: "1f3c9d2e-8a47-4b6e-9c21-7d5f0a2b6e41",
-          type: AccountType.creditLineValue,
-          creditLimit: 5000,
-          excludeFromTotalBalance: true,
-        )..id = 0;
+    final Account creditCardPreset = Account.preset(
+      name: "Credit Card",
+      currency: "USD",
+      iconCode: FlowIconData.icon(Symbols.credit_card_rounded).toString(),
+      uuid: "1f3c9d2e-8a47-4b6e-9c21-7d5f0a2b6e41",
+      type: AccountType.creditLineValue,
+      creditLimit: 5000,
+      excludeFromTotalBalance: true,
+    )..id = 0;
 
     final List<Account> accounts = await box<Account>().putAndGetManyAsync([
       ...presets,
@@ -230,16 +226,17 @@ class ObjectBox {
       range: monthlyRange,
     )..setCategories([?cat(Symbols.grocery_rounded)]);
 
-    final Budget eatingOut = Budget(
-      name: "Eating out",
-      amount: 300,
-      currency: "USD",
-      range: monthlyRange,
-    )..setCategories([
-      ?cat(Symbols.restaurant_rounded),
-      ?cat(Symbols.local_cafe_rounded),
-      ?cat(Symbols.bakery_dining_rounded),
-    ]);
+    final Budget eatingOut =
+        Budget(
+          name: "Eating out",
+          amount: 300,
+          currency: "USD",
+          range: monthlyRange,
+        )..setCategories([
+          ?cat(Symbols.restaurant_rounded),
+          ?cat(Symbols.local_cafe_rounded),
+          ?cat(Symbols.bakery_dining_rounded),
+        ]);
 
     final Budget shopping = Budget(
       name: "Shopping",

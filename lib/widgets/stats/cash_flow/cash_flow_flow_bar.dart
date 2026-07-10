@@ -8,7 +8,11 @@ class CashFlowFlowBar extends StatelessWidget {
   final double income;
   final double expense;
 
-  const CashFlowFlowBar({super.key, required this.income, required this.expense});
+  const CashFlowFlowBar({
+    super.key,
+    required this.income,
+    required this.expense,
+  });
 
   @override
   Widget build(BuildContext context) {

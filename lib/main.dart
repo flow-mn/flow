@@ -252,10 +252,7 @@ class FlowState extends State<Flow> {
       // compete with startup work or first-frame rendering.
       unawaited(
         RecurringTransactionsService().synchronizeAll().catchError((error) {
-          mainLogger.severe(
-            "First recurring-transactions sync failed",
-            error,
-          );
+          mainLogger.severe("First recurring-transactions sync failed", error);
         }),
       );
 

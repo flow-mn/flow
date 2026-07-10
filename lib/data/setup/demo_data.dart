@@ -182,7 +182,11 @@ class DemoDataGenerator {
   void _planTrips() {
     _tripDays = {};
     for (int year = _start.year; year <= end.year; year++) {
-      final DateTime summer = DateTime(year, 7 + rng.nextInt(2), 1 + rng.nextInt(20));
+      final DateTime summer = DateTime(
+        year,
+        7 + rng.nextInt(2),
+        1 + rng.nextInt(20),
+      );
       if (_within(summer)) _tripDays.add(_dayKey(summer));
 
       if (_chance(0.5)) {
@@ -700,7 +704,9 @@ class DemoDataGenerator {
           amount: _money(18, 80),
           date: _at(night),
           categoryKey: _chance(0.6) ? "eatingOut" : "entertainment",
-          title: _chance(0.6) ? _pick(_diningTitles) : _pick(_entertainmentTitles),
+          title: _chance(0.6)
+              ? _pick(_diningTitles)
+              : _pick(_entertainmentTitles),
           tagKeys: const ["vacation"],
           prefer: _cardOr(main, 0.8),
         );

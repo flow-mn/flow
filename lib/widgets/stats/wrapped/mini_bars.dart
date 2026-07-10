@@ -7,7 +7,11 @@ class MiniBars extends StatelessWidget {
   final List<double> values;
   final Color highlightColor;
 
-  const MiniBars({super.key, required this.values, required this.highlightColor});
+  const MiniBars({
+    super.key,
+    required this.values,
+    required this.highlightColor,
+  });
 
   @override
   Widget build(BuildContext context) {

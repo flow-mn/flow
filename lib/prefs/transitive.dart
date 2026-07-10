@@ -191,9 +191,8 @@ class TransitiveLocalPreferences {
   /// usage.
   static List<String> categoryFrecencyTypesFor(TransactionType? type) {
     return switch (type) {
-      TransactionType.income || TransactionType.expense => [
-        categoryFrecencyType(type!),
-      ],
+      TransactionType.income ||
+      TransactionType.expense => [categoryFrecencyType(type!)],
       _ => const ["category:income", "category:expense"],
     };
   }
@@ -276,11 +275,7 @@ class TransitiveLocalPreferences {
 
           if (typed.isEmpty) {
             unawaited(
-              setFrecencyData(
-                categoryFrecencyType(type),
-                category.uuid,
-                null,
-              ),
+              setFrecencyData(categoryFrecencyType(type), category.uuid, null),
             );
             continue;
           }

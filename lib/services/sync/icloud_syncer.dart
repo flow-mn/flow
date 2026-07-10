@@ -159,10 +159,7 @@ class ICloudSyncer implements Syncer {
               }
             })
             .catchError((error) {
-              _log.warning(
-                "iCloud download progress callback failed",
-                error,
-              );
+              _log.warning("iCloud download progress callback failed", error);
             }),
       );
 

@@ -100,8 +100,9 @@ class _TransactionListItemAppearancePreferencesPageState
               ),
               SwitchListTile(
                 title: Text(
-                  "preferences.transactions.listTile.showExternalSource"
-                      .t(context),
+                  "preferences.transactions.listTile.showExternalSource".t(
+                    context,
+                  ),
                 ),
                 value: transactionListTileShowExternalSource,
                 onChanged: (bool newValue) {
@@ -195,8 +196,7 @@ class _TransactionListItemAppearancePreferencesPageState
       Transaction(
         uuid: "8fea726e-997f-4e19-8012-75d8f9920a33",
         title: "Adbasoi ",
-        transactionDate:
-            DateTime.now() - Duration(days: random.nextInt(1000)),
+        transactionDate: DateTime.now() - Duration(days: random.nextInt(1000)),
         amount: -1.27,
         currency: "USD",
       )..setAccount(payPalExample),

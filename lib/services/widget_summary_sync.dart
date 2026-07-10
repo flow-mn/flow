@@ -19,10 +19,9 @@ final Logger _log = Logger("WidgetSummarySync");
 class WidgetSummarySync {
   static Future<void> sync() async {
     try {
-      final String primaryCurrency =
-          UserPreferencesService().primaryCurrency;
-      final ExchangeRates? rates =
-          ExchangeRatesService().getPrimaryCurrencyRates();
+      final String primaryCurrency = UserPreferencesService().primaryCurrency;
+      final ExchangeRates? rates = ExchangeRatesService()
+          .getPrimaryCurrencyRates();
 
       final TimeRange range = TimeRange.thisMonth();
 
@@ -32,19 +31,20 @@ class WidgetSummarySync {
       final now = DateTime.now();
 
       final SingleCurrencyFlow flow =
-          SingleCurrencyFlow(currency: primaryCurrency)
-            ..addAll(
-              transactions
-                  .where((t) => !t.transactionDate.isAfter(now))
-                  .where((t) => t.isPending != true)
-                  .map((t) => t.money),
-              rates,
-            );
+          SingleCurrencyFlow(currency: primaryCurrency)..addAll(
+            transactions
+                .where((t) => !t.transactionDate.isAfter(now))
+                .where((t) => t.isPending != true)
+                .map((t) => t.money),
+            rates,
+          );
 
-      final String formattedIncome =
-          flow.totalIncome.formatMoney(compact: true);
-      final String formattedExpense =
-          flow.totalExpense.abs().formatMoney(compact: true);
+      final String formattedIncome = flow.totalIncome.formatMoney(
+        compact: true,
+      );
+      final String formattedExpense = flow.totalExpense.abs().formatMoney(
+        compact: true,
+      );
 
       final String incomeLabel = TransactionType.income.localizedName;
       final String expenseLabel = TransactionType.expense.localizedName;

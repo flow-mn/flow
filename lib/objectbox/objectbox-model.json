@@ -791,10 +791,122 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "16:4830514355115831368",
+      "lastPropertyId": "19:9197850623863321172",
+      "name": "Emi",
+      "properties": [
+        {
+          "id": "1:8831015618429222140",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1508297414409534930",
+          "name": "uuid",
+          "indexId": "28:2494653015461797186",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:890261514587453762",
+          "name": "createdDate",
+          "type": 10
+        },
+        {
+          "id": "4:2315433959425802959",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "5:8514013076629906282",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "6:3170364854542038014",
+          "name": "totalAmount",
+          "type": 8
+        },
+        {
+          "id": "7:3339449958192721698",
+          "name": "installmentAmount",
+          "type": 8
+        },
+        {
+          "id": "8:7136386826711877991",
+          "name": "totalInstallments",
+          "type": 6
+        },
+        {
+          "id": "9:6729194502065436054",
+          "name": "paidInstallments",
+          "type": 6
+        },
+        {
+          "id": "10:8878969028807554231",
+          "name": "remainingInstallments",
+          "type": 6
+        },
+        {
+          "id": "11:6236564898739132895",
+          "name": "paidAmount",
+          "type": 8
+        },
+        {
+          "id": "12:341928807796190815",
+          "name": "remainingAmount",
+          "type": 8
+        },
+        {
+          "id": "13:6042698273855448470",
+          "name": "startDate",
+          "type": 10
+        },
+        {
+          "id": "14:6535570131504946806",
+          "name": "nextDueDate",
+          "type": 10
+        },
+        {
+          "id": "15:5796550891231618560",
+          "name": "accountId",
+          "indexId": "29:2880346028504368550",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "Account"
+        },
+        {
+          "id": "16:1029005073536401838",
+          "name": "accountUuid",
+          "type": 9
+        },
+        {
+          "id": "17:4606341681781646043",
+          "name": "categoryId",
+          "indexId": "30:436111186719433506",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "Category"
+        },
+        {
+          "id": "18:6251230679534709417",
+          "name": "categoryUuid",
+          "type": 9
+        },
+        {
+          "id": "19:9197850623863321172",
+          "name": "status",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "15:3741443681678089583",
-  "lastIndexId": "27:5707692371585154920",
+  "lastEntityId": "16:4830514355115831368",
+  "lastIndexId": "30:436111186719433506",
   "lastRelationId": "4:5665142201815113360",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

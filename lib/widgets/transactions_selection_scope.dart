@@ -120,9 +120,8 @@ class _TransactionsSelectionScopeState
         await showModalBottomSheet<TransactionsBulkAction>(
           context: context,
           isScrollControlled: true,
-          builder: (context) => SelectBulkTransactionsActionSheet(
-            controller: widget.controller,
-          ),
+          builder: (context) =>
+              SelectBulkTransactionsActionSheet(controller: widget.controller),
         );
     if (action == null || !mounted) return;
     switch (action) {
@@ -215,13 +214,12 @@ class _TransactionsSelectionScopeState
     final List<Transaction> selected = _selectedFromVisible();
     if (selected.isEmpty || widget.controller.hasAnyTransfer) return;
 
-    final Optional<Category>? result = await showModalBottomSheet<
-      Optional<Category>
-    >(
-      context: context,
-      builder: (context) => const SelectCategorySheet(),
-      isScrollControlled: true,
-    );
+    final Optional<Category>? result =
+        await showModalBottomSheet<Optional<Category>>(
+          context: context,
+          builder: (context) => const SelectCategorySheet(),
+          isScrollControlled: true,
+        );
     if (result == null || !mounted) return;
     if (!await _confirmIfBulk(
       selected.length,
@@ -247,10 +245,9 @@ class _TransactionsSelectionScopeState
     }
 
     final String currency = widget.controller.currencies.first;
-    final List<Account> candidates = AccountsProvider.of(context)
-        .activeAccounts
-        .where((a) => a.currency == currency)
-        .toList();
+    final List<Account> candidates = AccountsProvider.of(
+      context,
+    ).activeAccounts.where((a) => a.currency == currency).toList();
 
     final Account? result = await showModalBottomSheet<Account>(
       context: context,

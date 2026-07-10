@@ -232,50 +232,50 @@ class _AccountPageState extends State<AccountPage> {
             visibleTransactions: transactions ?? const [],
             child: SafeArea(
               child: switch (busy) {
-              true => Padding(
-                padding: headerPaddingOutOfList,
-                child: Column(
-                  children: [
-                    header,
-                    const Expanded(child: Spinner.center()),
-                  ],
+                true => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: Spinner.center()),
+                    ],
+                  ),
                 ),
-              ),
-              false when noTransactions => Padding(
-                padding: headerPaddingOutOfList,
-                child: Column(
-                  children: [
-                    header,
-                    const Expanded(child: NoResult()),
-                  ],
+                false when noTransactions => Padding(
+                  padding: headerPaddingOutOfList,
+                  child: Column(
+                    children: [
+                      header,
+                      const Expanded(child: NoResult()),
+                    ],
+                  ),
                 ),
-              ),
-              _ => GroupedTransactionsListView(
-                listType: GroupedTransactionsListViewType.reorderable,
-                selectionController: _selection,
-                mainHeader: header,
-                transactions: grouped,
-                pendingTransactions: pendingTransactionsGrouped,
-                pendingDivider: WavyDivider(),
-                groupHeaderPadding: widget.headerPadding,
-                mainHeaderPadding: widget.headerPadding
-                    .copyWith(left: 0.0, right: 0.0)
-                    .copyWith(top: firstHeaderTopPadding),
-                headerBuilder: (pendingGroup, range, transactions) {
-                  if (pendingGroup) {
-                    return PendingTransactionsHeader(
+                _ => GroupedTransactionsListView(
+                  listType: GroupedTransactionsListViewType.reorderable,
+                  selectionController: _selection,
+                  mainHeader: header,
+                  transactions: grouped,
+                  pendingTransactions: pendingTransactionsGrouped,
+                  pendingDivider: WavyDivider(),
+                  groupHeaderPadding: widget.headerPadding,
+                  mainHeaderPadding: widget.headerPadding
+                      .copyWith(left: 0.0, right: 0.0)
+                      .copyWith(top: firstHeaderTopPadding),
+                  headerBuilder: (pendingGroup, range, transactions) {
+                    if (pendingGroup) {
+                      return PendingTransactionsHeader(
+                        transactions: transactions,
+                        range: range,
+                        badgeCount: actionNeededCount,
+                      );
+                    }
+
+                    return TransactionListDateHeader(
                       transactions: transactions,
                       range: range,
-                      badgeCount: actionNeededCount,
                     );
-                  }
-
-                  return TransactionListDateHeader(
-                    transactions: transactions,
-                    range: range,
-                  );
-                },
-              ),
+                  },
+                ),
               },
             ),
           ),
