@@ -51,6 +51,7 @@ import "package:flow/routes/setup/setup_onboarding_page.dart";
 import "package:flow/routes/setup/setup_profile_page.dart";
 import "package:flow/routes/setup/setup_profile_picture_page.dart";
 import "package:flow/routes/setup_page.dart";
+import "package:flow/routes/stats/budgets_overview_page.dart";
 import "package:flow/routes/stats/cash_flow_page.dart";
 import "package:flow/routes/stats/insights_page.dart";
 import "package:flow/routes/stats/net_worth_page.dart";
@@ -224,19 +225,15 @@ final GoRouter router = GoRouter(
       path: "/accounts",
       builder: (context, state) => const AccountsPage(),
     ),
-    GoRoute(
-      path: "/budgets",
-      builder: (context, state) => const BudgetsPage(),
-    ),
+    GoRoute(path: "/budgets", builder: (context, state) => const BudgetsPage()),
     GoRoute(
       path: "/budgets/new",
       builder: (context, state) => const BudgetPage.create(),
     ),
     GoRoute(
       path: "/budgets/:id",
-      builder: (context, state) => BudgetPage(
-        budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1,
-      ),
+      builder: (context, state) =>
+          BudgetPage(budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1),
     ),
     GoRoute(
       path: "/transactionTags",
@@ -539,6 +536,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/stats/map",
       builder: (context, state) => const SpendingMapPage(),
+    ),
+    GoRoute(
+      path: "/stats/budgets",
+      builder: (context, state) => const BudgetsOverviewPage(),
     ),
     GoRoute(
       path: "/_debug/scheduledNotifications",

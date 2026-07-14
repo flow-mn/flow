@@ -3,10 +3,12 @@ import "package:flow/data/single_currency_flow.dart";
 import "package:flow/data/money.dart";
 import "package:flow/entity/budget.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/analytics/bullet_chart.dart";
 import "package:flow/widgets/analytics/insight_card.dart";
+import "package:flow/widgets/budgets/budget_category_chips.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -54,7 +56,18 @@ class BudgetCard extends StatelessWidget {
           ),
           subtitle: _periodLabel(),
           onTap: () => context.push("/budgets/${budget.id}"),
-          child: BulletChart(value: spent, target: budget.amount),
+          child: Column(
+            crossAxisAlignment: .start,
+            mainAxisSize: .min,
+            children: [
+              BudgetCategoryChips(
+                categories: budget.categories.toList(),
+                allSpendingLabel: "budget.categories.allShort".t(context),
+              ),
+              const SizedBox(height: 12.0),
+              BulletChart(value: spent, target: budget.amount),
+            ],
+          ),
         );
       },
     );

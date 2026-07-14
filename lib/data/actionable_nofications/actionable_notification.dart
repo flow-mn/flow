@@ -1,3 +1,4 @@
+import "package:flow/data/budget_progress.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
@@ -6,6 +7,7 @@ import "package:simple_icons_flow/simple_icons_flow.dart";
 enum ActionableNotificationPriority {
   low(0),
   medium(10),
+  mediumHigh(15),
   high(20),
   critical(30);
 
@@ -60,6 +62,20 @@ class RateApp extends ActionableNotification<bool> {
       ActionableNotificationPriority.medium;
 
   RateApp({required this.payload});
+}
+
+class BudgetAlert extends ActionableNotification<BudgetProgress> {
+  @override
+  final FlowIconData icon = const IconFlowIcon(Symbols.money_bag_rounded);
+
+  @override
+  final BudgetProgress payload;
+
+  @override
+  final ActionableNotificationPriority priority =
+      ActionableNotificationPriority.mediumHigh;
+
+  BudgetAlert({required this.payload});
 }
 
 class AutoBackupReminder extends ActionableNotification<BackupEntry?> {

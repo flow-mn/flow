@@ -10,13 +10,14 @@ import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/budgets/budget_category_chips.dart";
 import "package:flow/widgets/delete_button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/form_close_button.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
-import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/general/surface.dart";
 import "package:flow/data/money.dart";
 import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flow/widgets/time_range_selector.dart";
@@ -62,12 +63,14 @@ class _BudgetPageState extends State<BudgetPage> {
         ? null
         : ObjectBox().box<Budget>().get(widget.budgetId);
 
+    // Initialize the controller unconditionally so dispose() is always safe —
+    // the error branch (e.g. a since-deleted budget opened via a deep link)
+    // otherwise leaves this `late final` unset and dispose() would throw.
+    _nameTextController = TextEditingController(text: _currentlyEditing?.name);
+
     if (!widget.isNewBudget && _currentlyEditing == null) {
       error = "Budget with id ${widget.budgetId} was not found";
     } else {
-      _nameTextController = TextEditingController(
-        text: _currentlyEditing?.name,
-      );
       _amount = _currentlyEditing?.amount ?? 0.0;
       _currency =
           _currentlyEditing?.currency ??
@@ -90,10 +93,6 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget build(BuildContext context) {
     if (error != null) return const ErrorPage();
 
-    const EdgeInsets contentPadding = EdgeInsets.symmetric(horizontal: 16.0);
-
-    final bool pageable = _timeRange is PageableRange;
-
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40.0,
@@ -111,94 +110,240 @@ class _BudgetPageState extends State<BudgetPage> {
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: .start,
+              mainAxisSize: .min,
+              crossAxisAlignment: .stretch,
               children: [
-                const SizedBox(height: 16.0),
-                Padding(
-                  padding: contentPadding,
-                  child: TextFormField(
-                    controller: _nameTextController,
-                    validator: validateNameField,
-                    decoration: InputDecoration(
-                      label: Text("budget.name".t(context)),
-                      focusColor: context.colorScheme.secondary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ListTile(
-                  title: Text("budget.amount".t(context)),
-                  leading: const Icon(Symbols.money_bag_rounded),
-                  trailing: MoneyText(Money(_amount, _currency)),
-                  onTap: inputAmount,
-                ),
-                ListTile(
-                  title: Text("currency".t(context)),
-                  leading: const Icon(Symbols.universal_currency_alt_rounded),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 4.0,
-                    children: [Text(_currency), const LeChevron()],
-                  ),
-                  onTap: selectCurrency,
-                ),
-                ListTile(
-                  title: Text("budget.categories".t(context)),
-                  leading: const Icon(Symbols.category_rounded),
-                  subtitle: Text(
-                    _categories.isEmpty
-                        ? "budget.categories.all".t(context)
-                        : _categories
-                              .map((category) => category.name)
-                              .join(", "),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: const LeChevron(),
-                  onTap: selectCategories,
-                ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 24.0),
+                _buildHero(context),
+                const SizedBox(height: 24.0),
+                _buildScopeCard(context),
                 Frame(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: InfoText(
                     child: Text("budget.categories.description".t(context)),
                   ),
                 ),
-                const SizedBox(height: 16.0),
-                ListHeader("budget.period".t(context)),
-                const SizedBox(height: 8.0),
-                Frame(
-                  child: TimeRangeSelector(
-                    initialValue: _timeRange,
-                    onChanged: updateTimeRange,
-                  ),
-                ),
-                CheckboxListTile(
-                  value: pageable && _renewAutomatically,
-                  onChanged: pageable ? updateRenewAutomatically : null,
-                  title: Text("budget.renewAutomatically".t(context)),
-                ),
-                const SizedBox(height: 8.0),
-                Frame(
-                  child: InfoText(
-                    child: Text(
-                      "budget.renewAutomatically.description".t(context),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 10.0),
+                _buildPeriodCard(context),
                 if (_currentlyEditing != null) ...[
                   const SizedBox(height: 36.0),
-                  DeleteButton(
-                    onTap: _deleteBudget,
-                    label: Text("budget.delete".t(context)),
+                  Center(
+                    child: DeleteButton(
+                      onTap: _deleteBudget,
+                      label: Text("budget.delete".t(context)),
+                    ),
                   ),
-                  const SizedBox(height: 16.0),
                 ],
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHero(BuildContext context) {
+    return Column(
+      mainAxisSize: .min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+            onTap: inputAmount,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: MoneyText(
+                Money(_amount, _currency),
+                style: context.textTheme.displayMedium,
+                autoSize: true,
+                textAlign: .center,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        _buildCurrencyChip(context),
+        const SizedBox(height: 12.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48.0),
+          child: TextFormField(
+            controller: _nameTextController,
+            validator: validateNameField,
+            textAlign: .center,
+            style: context.textTheme.titleMedium,
+            decoration: InputDecoration(
+              hintText: "budget.name".t(context),
+              hintStyle: context.textTheme.titleMedium?.semi(context),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
+              border: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: context.colorScheme.onSurface.withAlpha(0x30),
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: context.colorScheme.primary),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrencyChip(BuildContext context) {
+    return Material(
+      color: context.colorScheme.onSurface.withAlpha(0x14),
+      shape: const StadiumBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: selectCurrency,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12.0, 4.0, 8.0, 4.0),
+          child: Row(
+            mainAxisSize: .min,
+            spacing: 4.0,
+            children: [
+              const Icon(Symbols.universal_currency_alt_rounded, size: 16.0),
+              Text(
+                _currency,
+                style: context.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              IconTheme.merge(
+                data: const IconThemeData(size: 16.0),
+                child: const LeChevron(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScopeCard(BuildContext context) {
+    return Surface(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      builder: (context) => InkWell(
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+        onTap: selectCategories,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: .min,
+            crossAxisAlignment: .start,
+            children: [
+              _buildCardHeader(
+                context,
+                icon: Symbols.category_rounded,
+                label: "budget.scope".t(context),
+                trailing: const LeChevron(),
+              ),
+              const SizedBox(height: 12.0),
+              BudgetCategoryChips(
+                categories: _categories,
+                allSpendingLabel: "budget.categories.allShort".t(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPeriodCard(BuildContext context) {
+    final bool pageable = _timeRange is PageableRange;
+
+    return Surface(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          children: [
+            _buildCardHeader(
+              context,
+              icon: Symbols.calendar_month_rounded,
+              label: "budget.period".t(context),
+            ),
+            const SizedBox(height: 12.0),
+            // The selector's month button is card-colored, so it only reads
+            // against a contrasting fill. Frame it in a rounded `surface` inset
+            // — the same bg/button pairing it gets on stats pages — so it looks
+            // like a deliberate control group instead of a mismatched band.
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 6.0,
+              ),
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+              ),
+              child: TimeRangeSelector(
+                initialValue: _timeRange,
+                onChanged: updateTimeRange,
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            CheckboxListTile(
+              value: pageable && _renewAutomatically,
+              onChanged: pageable ? updateRenewAutomatically : null,
+              title: Text("budget.renewAutomatically".t(context)),
+              contentPadding: EdgeInsets.zero,
+            ),
+            const SizedBox(height: 4.0),
+            InfoText(
+              child: Text("budget.renewAutomatically.description".t(context)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Mirrors the pill header style of `InsightCard`.
+  Widget _buildCardHeader(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    Widget? trailing,
+  }) {
+    final Color accent = context.colorScheme.primary;
+
+    return Row(
+      children: [
+        Icon(icon, color: accent, size: 20.0),
+        const SizedBox(width: 8.0),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+          decoration: BoxDecoration(
+            color: accent.withAlpha(0x28),
+            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+          ),
+          child: Text(
+            label.toUpperCase(),
+            style: context.textTheme.labelSmall?.copyWith(
+              color: accent,
+              letterSpacing: 0.6,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        if (trailing != null) ...[const Spacer(), trailing],
+      ],
     );
   }
 

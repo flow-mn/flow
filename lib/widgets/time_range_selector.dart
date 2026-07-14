@@ -13,10 +13,16 @@ class TimeRangeSelector extends StatefulWidget {
 
   final Function(TimeRange) onChanged;
 
+  /// Fill painted behind the selector. Defaults to [ColorScheme.surface] so it
+  /// blends into a scaffold; pass [Colors.transparent] when hosting it inside a
+  /// card or other colored container so it doesn't paint a mismatched band.
+  final Color? backgroundColor;
+
   const TimeRangeSelector({
     super.key,
     required this.initialValue,
     required this.onChanged,
+    this.backgroundColor,
   });
 
   @override
@@ -59,7 +65,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
     final TextDirection textDirection = Directionality.of(context);
 
     return Container(
-      color: context.colorScheme.surface,
+      color: widget.backgroundColor ?? context.colorScheme.surface,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
