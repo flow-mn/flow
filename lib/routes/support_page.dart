@@ -9,6 +9,7 @@ import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/action_card.dart";
 import "package:flow/widgets/general/button.dart";
+import "package:flow/widgets/tip_card.dart";
 import "package:flutter/material.dart";
 import "package:in_app_review/in_app_review.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
@@ -40,6 +41,25 @@ class SupportPage extends StatelessWidget {
             children: [
               Text("support.description".t(context)),
               const SizedBox(height: 16.0),
+              if (Platform.isIOS) ...[
+                const TipCard(),
+                const SizedBox(height: 16.0),
+              ] else if (!Platform.isMacOS) ...[
+                ActionCard(
+                  title: "support.donateDeveloper".t(context),
+                  subtitle: "support.donateDeveloper.description".t(context),
+                  icon: FlowIconData.icon(Symbols.favorite_rounded),
+                  trailing: Button(
+                    backgroundColor: context.colorScheme.surface,
+                    trailing: const Icon(Symbols.chevron_right_rounded),
+                    child: Expanded(
+                      child: Text("support.donateDeveloper.action".t(context)),
+                    ),
+                    onTap: () => openUrl(maintainerKoFiLink),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
               if (supportsReview)
                 ActionCard(
                   title: "support.leaveAReview".t(context),
@@ -71,20 +91,6 @@ class SupportPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               ActionCard(
-                title: "support.requestFeatures".t(context),
-                subtitle: "support.requestFeatures.description".t(context),
-                icon: FlowIconData.icon(Symbols.emoji_objects_rounded),
-                trailing: Button(
-                  backgroundColor: context.colorScheme.surface,
-                  trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text("support.requestFeatures.action".t(context)),
-                  ),
-                  onTap: () => openUrl(flowGitHubIssuesLink),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ActionCard(
                 title: "support.contribute".t(context),
                 subtitle: "support.contribute.description".t(context),
                 icon: FlowIconData.icon(Symbols.code_rounded),
@@ -95,22 +101,6 @@ class SupportPage extends StatelessWidget {
                   onTap: () => openUrl(flowGitHubRepoLink),
                 ),
               ),
-              if (!(Platform.isIOS || Platform.isMacOS)) ...[
-                const SizedBox(height: 16.0),
-                ActionCard(
-                  title: "support.donateDeveloper".t(context),
-                  subtitle: "support.donateDeveloper.description".t(context),
-                  icon: FlowIconData.icon(Symbols.favorite_rounded),
-                  trailing: Button(
-                    backgroundColor: context.colorScheme.surface,
-                    trailing: const Icon(Symbols.chevron_right_rounded),
-                    child: Expanded(
-                      child: Text("support.donateDeveloper.action".t(context)),
-                    ),
-                    onTap: () => openUrl(maintainerKoFiLink),
-                  ),
-                ),
-              ],
               const SizedBox(height: 16.0),
             ],
           ),

@@ -37,8 +37,10 @@ class Budget implements EntityBase {
 
   set timeRange(TimeRange value) => range = value.toString();
 
-  /// When [true], and [timeRange] is [PageableRange], it will automatically
-  /// create a new budget for the next period when the current one expires.
+  /// When [true], and [timeRange] is [PageableRange], [timeRange] advances
+  /// to the current period once the previous one ends.
+  ///
+  /// See `BudgetService.renewDueBudgets`
   bool renewAutomatically;
 
   double amount;

@@ -1,10 +1,28 @@
 # Changelog
 
-## next
+## 0.23.2
+
+### Fixes
+
+* Fixed stats tab may be out of sync
+
+### Changes
+
+* Location picker now features a "current location" button
+* Added "Tip the creator" in-app purchase for iOS
+
+## 0.23.1
+
+### Fixes
+
+* Fixed selecting icons
+
+## 0.23.0
 
 ### New features
 
 * Added Traditional Chinese (Taiwan) localizations
+* Revamped the stats tab, and added insights
 
 ## 0.22.0
 

@@ -1,4 +1,5 @@
 import "package:flow/entity/account.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
@@ -21,6 +22,9 @@ class SyncModelV2 extends SyncModelBase {
   final List<TransactionFilterPreset>? transactionFilterPresets;
   final List<TransactionTag>? transactionTags;
   final List<FileAttachment>? attachments;
+
+  /// Backups made before budgets existed lack this field.
+  final List<Budget>? budgets;
   final Profile? profile;
   final UserPreferences? userPreferences;
   final String? primaryCurrency;
@@ -37,6 +41,7 @@ class SyncModelV2 extends SyncModelBase {
     required this.transactionFilterPresets,
     required this.transactionTags,
     required this.attachments,
+    required this.budgets,
     required this.profile,
     required this.userPreferences,
     required this.primaryCurrency,

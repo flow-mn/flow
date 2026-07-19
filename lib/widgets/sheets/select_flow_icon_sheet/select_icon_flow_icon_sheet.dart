@@ -92,22 +92,38 @@ class _SelectIconFlowIconSheetState extends State<SelectIconFlowIconSheet>
         controller: _controller,
         children: [
           GridView.builder(
-            itemBuilder: (context, index) => IconButton(
-              onPressed: () => updateSimpleIcon(simpleIconsResult[index].key),
-              icon: Icon(simpleIconsResult[index].value),
-              iconSize: 48.0,
-            ),
+            itemBuilder: (context, index) {
+              final bool selected =
+                  value is IconFlowIcon &&
+                  (value as IconFlowIcon).iconData ==
+                      simpleIconsResult[index].value;
+
+              return IconButton(
+                onPressed: () => updateSimpleIcon(simpleIconsResult[index].key),
+                icon: Icon(simpleIconsResult[index].value),
+                iconSize: 48.0,
+                isSelected: selected,
+              );
+            },
             itemCount: simpleIconsResult.length,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 72.0,
             ),
           ),
           GridView.builder(
-            itemBuilder: (context, index) => IconButton(
-              onPressed: () => updateIcon(materialSymbolsResult[index]),
-              icon: Icon(materialSymbolsResult[index]),
-              iconSize: 48.0,
-            ),
+            itemBuilder: (context, index) {
+              final bool selected =
+                  value is IconFlowIcon &&
+                  (value as IconFlowIcon).iconData ==
+                      materialSymbolsResult[index];
+
+              return IconButton(
+                onPressed: () => updateIcon(materialSymbolsResult[index]),
+                icon: Icon(materialSymbolsResult[index]),
+                iconSize: 48.0,
+                isSelected: selected,
+              );
+            },
             itemCount: materialSymbolsResult.length,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 72.0,
