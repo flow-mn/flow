@@ -2,4 +2,7 @@
 <resources>
     <color name="income_green">#FF32CC70</color>
     <color name="expense_red">#FFFF4040</color>
+    <color name="budget_warning">#B0FF4040</color>
+    <!-- Same role as the light variant, inverted so it stays visible. -->
+    <color name="budget_bar_track">#33FFFFFF</color>
 </resources>

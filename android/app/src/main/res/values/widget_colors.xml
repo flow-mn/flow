@@ -2,4 +2,12 @@
 <resources>
     <color name="income_green">#FF32CC70</color>
     <color name="expense_red">#FFFF4040</color>
+    <!--
+      Flow has no warning hue. The app softens the expense colour to ~69% alpha
+      for "nearing"; this is that same red pre-multiplied, so the budget widgets
+      don't introduce a fourth status colour into the product.
+    -->
+    <color name="budget_warning">#B0FF4040</color>
+    <!-- Unfilled part of a budget progress bar, sitting on surfaceVariant. -->
+    <color name="budget_bar_track">#1F000000</color>
 </resources>

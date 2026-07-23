@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget-picker labels and widget-side fallbacks.
+
+  The app itself localizes through Flutter, so these never appear inside Flow's
+  UI. The widget process has no access to Flutter's translations, which is why
+  the payload ships every user-visible string pre-localized — these are only
+  used for the launcher's own chrome and for the moments where the payload is
+  missing a label entirely.
+-->
+<resources>
+  <string name="budget_rollup_widget_label">Flow Budgets</string>
+  <string name="budget_rollup_widget_description">Which budgets need attention, plus the one furthest along.</string>
+
+  <string name="budget_pinned_widget_label">Flow Budget</string>
+  <string name="budget_pinned_widget_description">One budget\'s progress, or whichever budget needs attention.</string>
+
+  <!-- Configuration activity -->
+  <string name="budget_widget_config_budget">Budget</string>
+  <string name="budget_widget_config_auto">Any budget that needs attention</string>
+  <string name="budget_widget_config_no_budgets">No budgets yet. The widget will follow whichever budget needs attention.</string>
+  <string name="budget_widget_config_privacy">Privacy</string>
+  <string name="budget_widget_config_hide_amounts">Hide amounts</string>
+  <string name="budget_widget_config_hide_amounts_summary">Show progress and status only — no money on your home screen.</string>
+  <string name="budget_widget_config_save">Save</string>
+  <string name="budget_widget_config_cancel">Cancel</string>
+
+  <!--
+    Fallbacks for labels the payload is allowed to omit (a sync that fires
+    before Flow's translations load drops the key rather than publishing "").
+  -->
+  <string name="budget_widget_title">Budgets</string>
+  <string name="budget_widget_empty">Set a spending budget</string>
+  <string name="budget_widget_missing_budget">No budgets yet</string>
+  <string name="budget_widget_on_track">All on track</string>
+  <string name="budget_widget_period_ended">Period ended</string>
+  <string name="budget_widget_status_healthy">On track</string>
+  <string name="budget_widget_status_warning">Nearing limit</string>
+  <string name="budget_widget_status_over">Over budget</string>
+
+  <!--
+    The only formatting the widget does itself. The percentage is NOT here:
+    `percentLabel` arrives pre-formatted in the app's locale, and re-deriving it
+    from the int would format in the device locale instead. This separator sits
+    between two already-formatted amounts, so it is layout, not formatting.
+  -->
+  <string name="budget_widget_amounts">%1$s / %2$s</string>
+</resources>
