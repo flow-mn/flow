@@ -4,6 +4,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/account/account_edit_page.dart";
 import "package:flow/routes/account_page.dart";
 import "package:flow/routes/accounts_page.dart";
+import "package:flow/routes/budget_detail_page.dart";
 import "package:flow/routes/budget_page.dart";
 import "package:flow/routes/budgets_page.dart";
 import "package:flow/routes/categories_page.dart";
@@ -232,6 +233,12 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: "/budgets/:id",
+      builder: (context, state) => BudgetDetailPage(
+        budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      ),
+    ),
+    GoRoute(
+      path: "/budgets/:id/edit",
       builder: (context, state) =>
           BudgetPage(budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1),
     ),
