@@ -71,7 +71,7 @@ class ActionableNotificationsService {
       return;
     }
 
-    tryAddBudgetAlert();
+    await tryAddBudgetAlert();
 
     if (_notifications.value.isNotEmpty) {
       return;
@@ -174,7 +174,7 @@ class ActionableNotificationsService {
     }
   }
 
-  void tryAddBudgetAlert() {
+  Future<void> tryAddBudgetAlert() async {
     try {
       final DateTime? lastShown = TransitiveLocalPreferences()
           .lastBudgetAlertShowedAt
@@ -187,8 +187,10 @@ class ActionableNotificationsService {
       final ExchangeRates? rates = ExchangeRatesService()
           .getPrimaryCurrencyRates();
 
-      final List<BudgetProgress> progresses = BudgetService()
-          .computeAllProgress(rates: rates);
+      // Runs at startup, so the scan goes to a background isolate — this must
+      // not compete with first-frame work.
+      final List<BudgetProgress> progresses = await BudgetService()
+          .computeAllProgressAsync(rates: rates);
 
       BudgetProgress? urgent;
       for (final BudgetProgress p in progresses) {

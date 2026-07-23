@@ -1,4 +1,5 @@
 import "dart:io";
+import "dart:typed_data";
 
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
@@ -131,6 +132,53 @@ class ObjectBox {
     return _instance = ObjectBox._internal(store);
   }
 
+  /// Binds a background isolate to the store already open on the main isolate.
+  ///
+  /// Statics are per-isolate, so a spawned isolate starts with no [_instance]
+  /// and every `ObjectBox()` call in it would throw. Pass [reference] — read
+  /// from `ObjectBox().store.reference` on the main isolate, which is sendable
+  /// — and this wires up a second handle to the same underlying store, so
+  /// services that go through `ObjectBox().box<T>()` work unchanged.
+  ///
+  /// Do NOT call this on the main isolate; [initialize] owns that. Always pair
+  /// it with [detachIsolate] in a `finally`.
+  ///
+  /// Throws rather than no-opping when a store is already open, so that the
+  /// pairing above can't turn into `detachIsolate()` closing the app's live
+  /// handle. Only [detachIsolate] can undo this call.
+  static ObjectBox attachIsolate(ByteData reference) {
+    if (_instance != null) {
+      throw StateError(
+        "ObjectBox is already open on this isolate. attachIsolate is for "
+        "background isolates that have no store of their own.",
+      );
+    }
+
+    _attachedToForeignStore = true;
+
+    return _instance = ObjectBox._internal(
+      Store.fromReference(getObjectBoxModel(), reference),
+    );
+  }
+
+  /// Whether this isolate's [_instance] came from [attachIsolate].
+  ///
+  /// Guards [detachIsolate] so a stray call on the main isolate can't close
+  /// the store the whole app is running on.
+  static bool _attachedToForeignStore = false;
+
+  /// Closes this isolate's handle from [attachIsolate]. No-op anywhere else.
+  ///
+  /// Only the handle: the underlying store belongs to the main isolate and
+  /// stays open.
+  static void detachIsolate() {
+    if (!_attachedToForeignStore) return;
+
+    _instance?.store.close();
+    _instance = null;
+    _attachedToForeignStore = false;
+  }
+
   static Future<String> _appDataDirectory({Directory? supportDir}) async {
     if (customDirectory != null) {
       return path.join(customDirectory!, subdirectory);
@@ -157,36 +205,32 @@ class ObjectBox {
 
     final List<TransactionTag> tags = await box<TransactionTag>()
         .putAndGetManyAsync(
-          _demoTagTitles
-              .map((title) => TransactionTag(title: title))
-              .toList(),
+          _demoTagTitles.map((title) => TransactionTag(title: title)).toList(),
         );
     final Map<String, TransactionTag> tagsByTitle = {
       for (final tag in tags) tag.title: tag,
     };
 
-    final List<Category> categories = await box<Category>()
-        .putAndGetManyAsync(
-          getCategoryPresets().map((e) {
-            e.id = 0;
-            return e;
-          }).toList(),
-        );
+    final List<Category> categories = await box<Category>().putAndGetManyAsync(
+      getCategoryPresets().map((e) {
+        e.id = 0;
+        return e;
+      }).toList(),
+    );
 
     final List<Account> presets = getAccountPresets("USD").map((e) {
       e.id = 0;
       return e;
     }).toList();
-    final Account creditCardPreset =
-        Account.preset(
-          name: "Credit Card",
-          currency: "USD",
-          iconCode: FlowIconData.icon(Symbols.credit_card_rounded).toString(),
-          uuid: "1f3c9d2e-8a47-4b6e-9c21-7d5f0a2b6e41",
-          type: AccountType.creditLineValue,
-          creditLimit: 5000,
-          excludeFromTotalBalance: true,
-        )..id = 0;
+    final Account creditCardPreset = Account.preset(
+      name: "Credit Card",
+      currency: "USD",
+      iconCode: FlowIconData.icon(Symbols.credit_card_rounded).toString(),
+      uuid: "1f3c9d2e-8a47-4b6e-9c21-7d5f0a2b6e41",
+      type: AccountType.creditLineValue,
+      creditLimit: 5000,
+      excludeFromTotalBalance: true,
+    )..id = 0;
 
     final List<Account> accounts = await box<Account>().putAndGetManyAsync([
       ...presets,
@@ -230,16 +274,17 @@ class ObjectBox {
       range: monthlyRange,
     )..setCategories([?cat(Symbols.grocery_rounded)]);
 
-    final Budget eatingOut = Budget(
-      name: "Eating out",
-      amount: 300,
-      currency: "USD",
-      range: monthlyRange,
-    )..setCategories([
-      ?cat(Symbols.restaurant_rounded),
-      ?cat(Symbols.local_cafe_rounded),
-      ?cat(Symbols.bakery_dining_rounded),
-    ]);
+    final Budget eatingOut =
+        Budget(
+          name: "Eating out",
+          amount: 300,
+          currency: "USD",
+          range: monthlyRange,
+        )..setCategories([
+          ?cat(Symbols.restaurant_rounded),
+          ?cat(Symbols.local_cafe_rounded),
+          ?cat(Symbols.bakery_dining_rounded),
+        ]);
 
     final Budget shopping = Budget(
       name: "Shopping",

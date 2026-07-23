@@ -7,6 +7,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/routes/error_page.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet.dart";
+import "package:flow/services/budget.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
@@ -51,6 +52,17 @@ class _BudgetPageState extends State<BudgetPage> {
   late bool _renewAutomatically;
   late List<Category> _categories;
 
+  /// The period shown when the form opened.
+  ///
+  /// [Budget.range] is an anchor that can sit many periods behind the live one,
+  /// so [hasChanged] has to compare against what the user was actually shown —
+  /// comparing against the stored anchor would report a change the moment the
+  /// form opened and trap them behind a discard prompt.
+  ///
+  /// Not `late`: the error branch below never reaches the assignment, and an
+  /// unset `late final` would throw rather than show the error page.
+  String _initialRange = "";
+
   Budget? _currentlyEditing;
 
   dynamic error;
@@ -75,11 +87,15 @@ class _BudgetPageState extends State<BudgetPage> {
       _currency =
           _currentlyEditing?.currency ??
           UserPreferencesService().primaryCurrency;
-      _timeRange =
-          _currentlyEditing?.timeRange ??
-          MonthTimeRange.fromDateTime(DateTime.now());
+      // Show the period the budget is tracking right now, not its anchor — for
+      // a renewing budget those diverge as soon as the first period rolls over,
+      // and "July 2026" on an August budget reads as a bug.
+      _timeRange = _currentlyEditing == null
+          ? MonthTimeRange.fromDateTime(DateTime.now())
+          : BudgetService().currentPeriod(_currentlyEditing!);
       _renewAutomatically = _currentlyEditing?.renewAutomatically ?? true;
       _categories = _currentlyEditing?.categories.toList() ?? [];
+      _initialRange = _timeRange.toString();
     }
   }
 
@@ -387,7 +403,9 @@ class _BudgetPageState extends State<BudgetPage> {
           context: context,
           builder: (context) => SelectMultiCategorySheet(
             categories: ObjectBox().getCategories(),
-            selectedUuids: _categories.map((category) => category.uuid).toList(),
+            selectedUuids: _categories
+                .map((category) => category.uuid)
+                .toList(),
           ),
           isScrollControlled: true,
         );
@@ -418,7 +436,7 @@ class _BudgetPageState extends State<BudgetPage> {
       return budget.name != _nameTextController.text.trim() ||
           budget.amount != _amount ||
           budget.currency != _currency ||
-          budget.range != _timeRange.toString() ||
+          _initialRange != _timeRange.toString() ||
           budget.renewAutomatically != _renewAutomatically ||
           !setEquals(
             budget.categories.map((category) => category.uuid).toSet(),
@@ -491,7 +509,7 @@ class _BudgetPageState extends State<BudgetPage> {
     sameNameQuery.close();
 
     if (!isNameUnique) {
-      return "error.input.duplicate.accountName".t(context, trimmed);
+      return "error.input.duplicate.budgetName".t(context, trimmed);
     }
 
     return null;
@@ -509,12 +527,10 @@ class _BudgetPageState extends State<BudgetPage> {
     if (confirmation == true) {
       ObjectBox().box<Budget>().remove(_currentlyEditing!.id);
 
-      if (mounted) {
-        context.pop();
-        GoRouter.of(context).popUntil((route) {
-          return route.path != "/budgets/:id";
-        });
-      }
+      // Only pops the editor. The detail page underneath re-reads the budget
+      // when the editor returns, finds it gone, and pops itself — so the stack
+      // unwinds without this route having to reason about what's below it.
+      if (mounted) context.pop();
     }
   }
 }

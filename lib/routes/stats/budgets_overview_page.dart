@@ -1,11 +1,12 @@
 import "package:flow/data/budget_progress.dart";
 import "package:flow/data/flow_icon.dart";
-import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/budget_change_aware_state.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/budgets/budget_card.dart";
+import "package:flow/widgets/budgets/budget_insight_row.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/empty_state.dart";
 import "package:flow/widgets/general/list_header.dart";
@@ -34,7 +35,9 @@ class BudgetsOverviewPage extends StatefulWidget {
 }
 
 class _BudgetsOverviewPageState extends State<BudgetsOverviewPage>
-    with PrimaryCurrencyDependentState<BudgetsOverviewPage> {
+    with
+        PrimaryCurrencyDependentState<BudgetsOverviewPage>,
+        BudgetChangeAwareState<BudgetsOverviewPage> {
   /// How many budgets get a recommendation row; progresses arrive sorted
   /// most-urgent first, so the cut keeps the ones that matter.
   static const int _maxRecommendations = 4;
@@ -88,9 +91,7 @@ class _BudgetsOverviewPageState extends State<BudgetsOverviewPage>
                     ),
                     if (actionable.isNotEmpty) ...[
                       const SizedBox(height: 24.0),
-                      ListHeader(
-                        "budget.overview.recommendations".t(context),
-                      ),
+                      ListHeader("budget.overview.recommendations".t(context)),
                       const SizedBox(height: 8.0),
                       ..._buildRecommendations(context, actionable),
                     ],
@@ -261,83 +262,8 @@ class _BudgetsOverviewPageState extends State<BudgetsOverviewPage>
   ) {
     return actionable
         .take(_maxRecommendations)
-        .map(
-          (progress) => _buildRecommendationRow(
-            context,
-            icon: _insightIcon(progress.primaryInsight),
-            tint: _statusTint(context, progress.status),
-            message: _insightMessage(context, progress),
-          ),
-        )
+        .map((progress) => BudgetInsightRow(progress: progress))
         .toList();
-  }
-
-  Widget _buildRecommendationRow(
-    BuildContext context, {
-    required IconData icon,
-    required Color tint,
-    required String message,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-      child: Row(
-        crossAxisAlignment: .start,
-        children: [
-          Icon(icon, color: tint, size: 20.0),
-          const SizedBox(width: 12.0),
-          Expanded(child: Text(message, style: context.textTheme.bodyMedium)),
-        ],
-      ),
-    );
-  }
-
-  Color _statusTint(BuildContext context, BudgetStatus status) =>
-      switch (status) {
-        BudgetStatus.over => context.flowColors.expense,
-        // No dedicated warning color in the palette; a softened expense reads
-        // as "caution" without introducing a new hue.
-        BudgetStatus.warning => context.flowColors.expense.withAlpha(0xb0),
-        BudgetStatus.healthy => context.flowColors.semi,
-      };
-
-  IconData _insightIcon(BudgetInsightType insight) => switch (insight) {
-    BudgetInsightType.over => Symbols.error_circle_rounded,
-    BudgetInsightType.nearingLimit => Symbols.warning_rounded,
-    BudgetInsightType.overpacing => Symbols.speed_rounded,
-    BudgetInsightType.onTrack => Symbols.check_circle_rounded,
-    BudgetInsightType.underspending => Symbols.savings_rounded,
-  };
-
-  String _insightMessage(BuildContext context, BudgetProgress progress) {
-    return switch (progress.primaryInsight) {
-      BudgetInsightType.over => "budget.insight.over".t(context, {
-        "amount": progress.overBy.formatted,
-        "name": progress.budget.name,
-      }),
-      BudgetInsightType.nearingLimit =>
-        "budget.insight.nearingLimit".t(context, {
-          "name": progress.budget.name,
-          "percent": "${progress.percent}",
-          // nearingLimit only fires while the period is still live, so there is
-          // always time left; round the trailing partial day up to avoid "0d".
-          "days": "${progress.daysLeft < 1 ? 1 : progress.daysLeft}",
-        }),
-      BudgetInsightType.overpacing => "budget.insight.overpacing".t(context, {
-        "name": progress.budget.name,
-        "amount": Money(
-          progress.limit.amount * (progress.projectedRatio - 1),
-          progress.currency,
-        ).formatted,
-      }),
-      BudgetInsightType.onTrack => "budget.insight.onTrack".t(context, {
-        "name": progress.budget.name,
-        "amount": progress.remaining.formatted,
-      }),
-      BudgetInsightType.underspending => "budget.insight.underspending".t(
-        context,
-        {"name": progress.budget.name, "amount": progress.remaining.formatted},
-      ),
-    };
   }
 
   @override
@@ -348,11 +274,7 @@ class _BudgetsOverviewPageState extends State<BudgetsOverviewPage>
     });
 
     try {
-      // The app may have crossed a period boundary since startup; advance
-      // auto-renewing budgets to their current period before computing.
-      await BudgetService().renewDueBudgets();
-
-      progresses = BudgetService().computeAllProgress(rates: rates);
+      progresses = await BudgetService().computeAllProgressAsync(rates: rates);
       summary = BudgetService().computeSummary(
         progresses.where((progress) => progress.isCurrent).toList(),
       );

@@ -74,7 +74,7 @@ class BudgetCard extends StatelessWidget {
   }
 
   String _periodLabel() {
-    final TimeRange range = budget.timeRange;
+    final TimeRange range = BudgetService().currentPeriod(budget);
 
     return switch (range) {
       MonthTimeRange monthTimeRange => monthTimeRange.from.format(
