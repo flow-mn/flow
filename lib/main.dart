@@ -43,7 +43,7 @@ import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
-import "package:flow/services/widget_summary_sync.dart";
+import "package:flow/services/home_widgets.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
@@ -157,7 +157,8 @@ void main() async {
   // racing with first-frame work. The first sync is now triggered from
   // FlowState.initState's post-frame callback (alongside migrations).
 
-  TransactionsService().addListener(() => WidgetSummarySync.sync());
+  TransactionsService().addListener(() => HomeWidgets.syncAll());
+  HomeWidgets.watchForChanges();
 
   try {
     Moment.minValue = DateTime(0);
@@ -469,7 +470,7 @@ class FlowState extends State<Flow> {
   }
 
   void _syncWidgets() {
-    WidgetSummarySync.sync();
+    HomeWidgets.syncAll();
   }
 
   void _synchronizePlannedNotifications() {
