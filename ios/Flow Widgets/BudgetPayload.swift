@@ -98,7 +98,16 @@ enum BudgetStatus: String, Codable {
 }
 
 struct BudgetItem: Codable, Identifiable {
-    /// `Budget.id` — stable, this is what the pinned widget stores.
+    /// `Budget.uuid` — the only handle that survives backup/restore, and so the
+    /// only thing the pinned widget is allowed to *store*.
+    ///
+    /// The app's export omits ObjectBox ids, so a restore reinserts every
+    /// budget and renumbers it: "Eating out" comes back as a different `id`,
+    /// and that `id` may already belong to a different budget.
+    let uuid: String
+    /// `Budget.id` as of *this* payload. Safe to build a deep link from, since
+    /// the link is made from the same snapshot being rendered. Never persist
+    /// it — that is what `uuid` is for.
     let id: Int
     let name: String
     // Pre-formatted, compacted money. Never rendered when "Hide amounts" is on.
@@ -128,6 +137,7 @@ struct BudgetItem: Codable, Identifiable {
     let hasMissingData: Bool
 
     init(
+        uuid: String,
         id: Int,
         name: String,
         spent: String?,
@@ -144,6 +154,7 @@ struct BudgetItem: Codable, Identifiable {
         periodLabel: String?,
         hasMissingData: Bool
     ) {
+        self.uuid = uuid
         self.id = id
         self.name = name
         self.spent = spent
@@ -163,6 +174,10 @@ struct BudgetItem: Codable, Identifiable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        // Both are required: an entry with no uuid can't be pinned, and one
+        // with no id can't be linked to. Failing the decode drops the whole
+        // payload to the placeholder, which beats a half-usable budget list.
+        uuid = try container.decode(String.self, forKey: .uuid)
         id = try container.decode(Int.self, forKey: .id)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         spent = try container.decodeIfPresent(String.self, forKey: .spent)
@@ -280,7 +295,16 @@ struct BudgetLabels: Codable {
 }
 
 extension BudgetPayload {
-    func budget(id: Int?) -> BudgetItem? {
+    /// The lookup for anything that was *stored* — i.e. a pinned widget's
+    /// choice, which has to survive a restore renumbering every budget.
+    func budget(uuid: String?) -> BudgetItem? {
+        guard let uuid, !uuid.isEmpty else { return nil }
+        return budgets.first { $0.uuid == uuid }
+    }
+
+    /// Only valid within one payload: `summary.worstId` is an id from this same
+    /// snapshot, so it can't have drifted out from under the list beside it.
+    private func budget(id: Int?) -> BudgetItem? {
         guard let id else { return nil }
         return budgets.first { $0.id == id }
     }
@@ -301,7 +325,7 @@ enum BudgetPayloadStore {
     static let appGroupId = "group.mn.flow.flow"
     static let payloadKey = "budgetsPayload"
     /// Bump only together with `BudgetWidgetSync.payloadVersion` on the Dart side.
-    static let supportedVersion = 1
+    static let supportedVersion = 2
 
     /// One shared read for both widgets and for the budget picker's entity query.
     ///

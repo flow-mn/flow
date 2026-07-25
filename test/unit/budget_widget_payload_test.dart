@@ -109,7 +109,7 @@ void main() {
     final Map<String, dynamic> payload = await BudgetWidgetSync.buildPayload();
 
     expect(payload["version"], BudgetWidgetSync.payloadVersion);
-    expect(payload["version"], 1);
+    expect(payload["version"], 2);
   });
 
   test("no budgets yields an empty list, not a missing key", () async {
@@ -133,6 +133,8 @@ void main() {
       final Map<String, dynamic> budget =
           (payload["budgets"] as List).single as Map<String, dynamic>;
 
+      expect(budget["uuid"], isA<String>());
+      expect(budget["uuid"], isNotEmpty);
       expect(budget["id"], isA<int>());
       expect(budget["name"], "Groceries");
       expect(budget["spent"], isA<String>());
@@ -211,6 +213,43 @@ void main() {
       contains(summary["worstId"]),
     );
   });
+
+  test(
+    "a budget's uuid outlives the backup round-trip that renumbers its id",
+    () async {
+      final Account account = makeAccount();
+      final Budget original = makeBudget("Groceries", 100.0);
+      spend(account, 40.0);
+
+      final int idBeforeRestore = original.id;
+      final String uuid = original.uuid;
+
+      final Map<String, dynamic> before = await BudgetWidgetSync.buildPayload();
+
+      expect(
+        ((before["budgets"] as List).single as Map<String, dynamic>)["uuid"],
+        uuid,
+      );
+
+      // What a restore actually does. `Budget.toJson` omits `id`, so the budget
+      // is reinserted and ObjectBox issues a fresh one — while `uuid` comes
+      // back untouched.
+      final Map<String, dynamic> exported = original.toJson();
+      obx.box<Budget>().removeAll();
+      obx.box<Budget>().put(Budget.fromJson(exported));
+
+      final Map<String, dynamic> after = await BudgetWidgetSync.buildPayload();
+      final Map<String, dynamic> entry =
+          (after["budgets"] as List).single as Map<String, dynamic>;
+
+      // The handle both widgets pin by. Unchanged, so a widget pinned to
+      // "Groceries" still shows Groceries after the user restores a backup.
+      expect(entry["uuid"], uuid);
+      // The handle they must never store: it moved. Pinning by this is how a
+      // widget ends up rendering whichever budget inherited the old number.
+      expect(entry["id"], isNot(idBeforeRestore));
+    },
+  );
 
   test("budgets arrive most-urgent first", () async {
     final Account account = makeAccount();

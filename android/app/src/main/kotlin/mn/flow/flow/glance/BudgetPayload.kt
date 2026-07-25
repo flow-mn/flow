@@ -29,6 +29,16 @@ enum class BudgetStatus {
 }
 
 data class BudgetEntry(
+  /**
+   * `Budget.uuid` — the only handle that survives backup/restore, and so the
+   * only one [BudgetWidgetConfigStore] may persist.
+   *
+   * The app's export omits ObjectBox ids, so a restore reinserts every budget
+   * and renumbers it: a widget pinned by [id] would come back pointing at
+   * whichever budget inherited that number.
+   */
+  val uuid: String,
+  /** Current as of this payload only. Never store it — see [uuid]. */
   val id: Long,
   val name: String,
   val spent: String?,
@@ -87,7 +97,18 @@ data class BudgetPayload(
   val budgets: List<BudgetEntry>,
   val labels: BudgetLabels,
 ) {
-  fun budgetById(id: Long?): BudgetEntry? =
+  /**
+   * The lookup for anything that was *stored* — i.e. the pinned widget's
+   * choice, which has to survive a restore renumbering every budget.
+   */
+  fun budgetByUuid(uuid: String?): BudgetEntry? =
+    if (uuid.isNullOrEmpty()) null else budgets.firstOrNull { it.uuid == uuid }
+
+  /**
+   * Only valid within one payload: [BudgetSummary.worstId] is an id from this
+   * same snapshot, so it can't have drifted out from under the list beside it.
+   */
+  private fun budgetById(id: Long?): BudgetEntry? =
     if (id == null) null else budgets.firstOrNull { it.id == id }
 
   /** The single most urgent budget, or null when there are none. */
@@ -96,7 +117,7 @@ data class BudgetPayload(
 
   companion object {
     const val PAYLOAD_KEY = "budgetsPayload"
-    const val SUPPORTED_VERSION = 1
+    const val SUPPORTED_VERSION = 2
 
     /**
      * Returns null for every unusable input — key absent, blank, malformed, or
@@ -139,11 +160,15 @@ data class BudgetPayload(
       val budgets = ArrayList<BudgetEntry>(json.length())
       for (i in 0 until json.length()) {
         val entry = json.optJSONObject(i) ?: continue
+        // Both are required: an entry with no uuid can't be pinned, and one
+        // with no id can't be linked to.
+        val uuid = entry.optStringOrNull("uuid") ?: continue
         val id = entry.optLongOrNull("id") ?: continue
         val percent = entry.optInt("percent", 0)
 
         budgets.add(
           BudgetEntry(
+            uuid = uuid,
             id = id,
             // The one string with no sensible fallback: a nameless budget is
             // better shown blank than shown somebody else's word for "budget".

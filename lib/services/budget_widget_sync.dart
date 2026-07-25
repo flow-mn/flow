@@ -44,7 +44,12 @@ class BudgetWidgetSync {
   /// process that writes this, so an old extension can and will read a new
   /// payload. It checks this and falls back to its placeholder rather than
   /// mis-rendering fields it doesn't understand.
-  static const int payloadVersion = 1;
+  ///
+  /// - 1: initial shape.
+  /// - 2: added `uuid` to each budget. A v1 extension pins by ObjectBox id,
+  ///   which does not survive backup/restore — better it show a placeholder
+  ///   than confidently render the wrong budget.
+  static const int payloadVersion = 2;
 
   /// Builds the payload without touching any platform channel.
   ///
@@ -117,6 +122,14 @@ class BudgetWidgetSync {
   }
 
   static Map<String, dynamic> _budgetJson(BudgetProgress progress) => {
+    // The only durable handle on a budget. `Budget.toJson` doesn't write `id`,
+    // so a restore reinserts every budget with `id = 0` and ObjectBox hands out
+    // fresh ids — "Eating out" can come back as a different number, and that
+    // number can already belong to something else. Anything a widget *persists*
+    // (the pinned choice) has to key on this.
+    "uuid": progress.budget.uuid,
+    // Still published, and still what deep links use: a link is built from the
+    // payload being rendered right now, so its id is current by construction.
     "id": progress.budget.id,
     "name": progress.budget.name,
     // Pre-formatted and compacted: the extension has no access to the user's
