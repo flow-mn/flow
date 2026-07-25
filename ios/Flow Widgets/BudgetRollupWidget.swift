@@ -204,7 +204,7 @@ struct FlowBudgetRollupWidget: Widget {
     BudgetRollupEntry(
         date: .now,
         payload: BudgetPayload(
-            version: 1,
+            version: 2,
             updatedAt: "2026-07-22T09:14:03.123Z",
             summary: BudgetSummary(
                 budgetCount: 3,
@@ -215,6 +215,7 @@ struct FlowBudgetRollupWidget: Widget {
             ),
             budgets: [
                 BudgetItem(
+                    uuid: "c3a91e58-7d24-4b16-8f05-1e93a7c60b42",
                     id: 4,
                     name: "Хүнс",
                     spent: "₮1.24сая",
@@ -232,6 +233,7 @@ struct FlowBudgetRollupWidget: Widget {
                     hasMissingData: false
                 ),
                 BudgetItem(
+                    uuid: "5f2b1c74-0f1a-4c3e-9a7d-2b6e8c1d4a90",
                     id: 7,
                     name: "Түлш",
                     spent: "₮380мянга",

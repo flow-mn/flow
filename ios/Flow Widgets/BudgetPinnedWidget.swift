@@ -14,20 +14,22 @@ struct BudgetPinnedEntry: TimelineEntry {
     let date: Date
     let payload: BudgetPayload?
     /// `BudgetChoice.automaticId` means "whichever budget needs attention".
-    let selectedId: Int
+    /// Otherwise a `Budget.uuid`, which is what makes the pin survive a
+    /// backup/restore — see `BudgetChoice.id`.
+    let selectedUuid: String
     let hideAmounts: Bool
 
     /// `nil` means nothing to show — either no budgets at all, or the pinned
     /// budget has since been deleted. `isMissingPin` tells those apart.
     var budget: BudgetItem? {
         guard let payload else { return nil }
-        if selectedId == BudgetChoice.automaticId { return payload.worst }
-        return payload.budget(id: selectedId)
+        if selectedUuid == BudgetChoice.automaticId { return payload.worst }
+        return payload.budget(uuid: selectedUuid)
     }
 
     var isMissingPin: Bool {
         guard let payload, !payload.isEmpty else { return false }
-        return selectedId != BudgetChoice.automaticId && payload.budget(id: selectedId) == nil
+        return selectedUuid != BudgetChoice.automaticId && payload.budget(uuid: selectedUuid) == nil
     }
 
     var labels: BudgetLabels {
@@ -43,7 +45,7 @@ struct BudgetPinnedProvider: AppIntentTimelineProvider {
         BudgetPinnedEntry(
             date: Date(),
             payload: nil,
-            selectedId: BudgetChoice.automaticId,
+            selectedUuid: BudgetChoice.automaticId,
             hideAmounts: false
         )
     }
@@ -55,7 +57,7 @@ struct BudgetPinnedProvider: AppIntentTimelineProvider {
         BudgetPinnedEntry(
             date: Date(),
             payload: BudgetPayloadStore.load(),
-            selectedId: configuration.selectedId,
+            selectedUuid: configuration.selectedUuid,
             hideAmounts: configuration.hideAmounts
         )
     }
@@ -264,6 +266,15 @@ struct FlowBudgetPinnedWidget: Widget {
         .description("Track a single budget, or whichever one needs attention.")
     }
 
+    /// Links by ObjectBox id even though the pin is stored by uuid: the id
+    /// comes from the budget just resolved out of the payload being rendered,
+    /// so it is current by construction, and the app routes budgets by id
+    /// everywhere else.
+    ///
+    /// The gap that leaves: a restore renumbers ids *and* re-syncs the payload,
+    /// but a tap in between carries an id from the stale one. If nothing owns
+    /// that id any more, `/budgets/:id` falls back to the list; if a different
+    /// budget has inherited it, the tap opens that one instead.
     private func destination(for entry: BudgetPinnedEntry) -> URL? {
         if let id = entry.budget?.id {
             return URL(string: "flow-mn:///budgets/\(id)")
@@ -273,7 +284,7 @@ struct FlowBudgetPinnedWidget: Widget {
 }
 
 private let previewPinnedPayload = BudgetPayload(
-    version: 1,
+    version: 2,
     updatedAt: "2026-07-22T09:14:03.123Z",
     summary: BudgetSummary(
         budgetCount: 3,
@@ -284,6 +295,7 @@ private let previewPinnedPayload = BudgetPayload(
     ),
     budgets: [
         BudgetItem(
+            uuid: "5f2b1c74-0f1a-4c3e-9a7d-2b6e8c1d4a90",
             id: 7,
             name: "Хоол, ундаа",
             spent: "₮420мянга",
@@ -318,13 +330,13 @@ private let previewPinnedPayload = BudgetPayload(
     BudgetPinnedEntry(
         date: .now,
         payload: previewPinnedPayload,
-        selectedId: BudgetChoice.automaticId,
+        selectedUuid: BudgetChoice.automaticId,
         hideAmounts: false
     )
     BudgetPinnedEntry(
         date: .now,
         payload: previewPinnedPayload,
-        selectedId: 7,
+        selectedUuid: "5f2b1c74-0f1a-4c3e-9a7d-2b6e8c1d4a90",
         hideAmounts: true
     )
 }
@@ -335,7 +347,7 @@ private let previewPinnedPayload = BudgetPayload(
     BudgetPinnedEntry(
         date: .now,
         payload: previewPinnedPayload,
-        selectedId: 7,
+        selectedUuid: "5f2b1c74-0f1a-4c3e-9a7d-2b6e8c1d4a90",
         hideAmounts: false
     )
 }

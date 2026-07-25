@@ -44,8 +44,12 @@ abstract class BudgetWidgetConfigActivity : Activity() {
   private var hideAmountsSwitch: Switch? = null
   private var budgetGroup: RadioGroup? = null
 
-  /** Parallel to the radio group: index -> budget id, null for "auto". */
-  private val optionIds = ArrayList<Long?>()
+  /**
+   * Parallel to the radio group: index -> `Budget.uuid`, null for "auto".
+   *
+   * Uuids, not ObjectBox ids — see [BudgetWidgetConfigStore.Config.budgetUuid].
+   */
+  private val optionUuids = ArrayList<String?>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -110,7 +114,7 @@ abstract class BudgetWidgetConfigActivity : Activity() {
 
     if (showsBudgetPicker) {
       root.addView(sectionHeader(R.string.budget_widget_config_budget))
-      root.addView(buildBudgetPicker(payload, existing.budgetId))
+      root.addView(buildBudgetPicker(payload, existing.budgetUuid))
     }
 
     root.addView(sectionHeader(R.string.budget_widget_config_privacy))
@@ -156,14 +160,14 @@ abstract class BudgetWidgetConfigActivity : Activity() {
     setPadding(0, dp(24), 0, dp(8))
   }
 
-  private fun buildBudgetPicker(payload: BudgetPayload?, selectedId: Long?): View {
+  private fun buildBudgetPicker(payload: BudgetPayload?, selectedUuid: String?): View {
     val group = RadioGroup(this).apply { orientation = LinearLayout.VERTICAL }
     budgetGroup = group
-    optionIds.clear()
+    optionUuids.clear()
 
     // Always first, and always available: resolves to `summary.worstId` at
     // render time rather than being baked in here.
-    optionIds.add(null)
+    optionUuids.add(null)
     group.addView(
       RadioButton(this).apply {
         id = View.generateViewId()
@@ -174,7 +178,7 @@ abstract class BudgetWidgetConfigActivity : Activity() {
 
     val budgets = payload?.budgets.orEmpty()
     for (budget in budgets) {
-      optionIds.add(budget.id)
+      optionUuids.add(budget.uuid)
       group.addView(
         RadioButton(this).apply {
           id = View.generateViewId()
@@ -197,7 +201,7 @@ abstract class BudgetWidgetConfigActivity : Activity() {
 
     // A previously pinned budget that has since been deleted falls back to
     // auto rather than leaving nothing selected.
-    val selectedIndex = optionIds.indexOf(selectedId).takeIf { it >= 0 } ?: 0
+    val selectedIndex = optionUuids.indexOf(selectedUuid).takeIf { it >= 0 } ?: 0
     (group.getChildAt(selectedIndex) as? RadioButton)?.isChecked = true
 
     return group
@@ -223,14 +227,14 @@ abstract class BudgetWidgetConfigActivity : Activity() {
   }
 
   private fun save() {
-    val budgetId = if (showsBudgetPicker) selectedBudgetId() else null
+    val budgetUuid = if (showsBudgetPicker) selectedBudgetUuid() else null
 
     BudgetWidgetConfigStore.write(
       this,
       appWidgetId,
       BudgetWidgetConfigStore.Config(
         hideAmounts = hideAmountsSwitch?.isChecked == true,
-        budgetId = budgetId,
+        budgetUuid = budgetUuid,
       ),
     )
 
@@ -251,7 +255,7 @@ abstract class BudgetWidgetConfigActivity : Activity() {
     finish()
   }
 
-  private fun selectedBudgetId(): Long? {
+  private fun selectedBudgetUuid(): String? {
     val group = budgetGroup ?: return null
     val checkedId = group.checkedRadioButtonId
     if (checkedId == View.NO_ID) return null
@@ -260,7 +264,7 @@ abstract class BudgetWidgetConfigActivity : Activity() {
       .firstOrNull { group.getChildAt(it).id == checkedId }
       ?: return null
 
-    return optionIds.getOrNull(index)
+    return optionUuids.getOrNull(index)
   }
 
   private fun dp(value: Int): Int =

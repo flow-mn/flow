@@ -29,9 +29,9 @@ import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 /**
  * 2x2 pinned budget: one budget, one bar, one number.
  *
- * The budget is chosen in the configuration activity — either a specific id or
- * "any budget that needs attention", which resolves to `summary.worstId` at
- * render time. The distinction matters: a widget that silently changes subject
+ * The budget is chosen in the configuration activity — either a specific
+ * budget, stored by uuid, or "any budget that needs attention", which resolves
+ * to `summary.worstId` at render time. The distinction matters: a widget that silently changes subject
  * on someone who pinned "Groceries" trains distrust of every red bar on the
  * home screen.
  */
@@ -77,19 +77,19 @@ private fun Content(
       return@Frame
     }
 
-    // A null budgetId means "auto"; a non-null one that no longer resolves
+    // A null budgetUuid means "auto"; a non-null one that no longer resolves
     // means the user deleted the budget this widget was pinned to.
-    val entry = if (config.budgetId == null) {
+    val entry = if (config.budgetUuid == null) {
       payload.worst
     } else {
-      payload.budgetById(config.budgetId)
+      payload.budgetByUuid(config.budgetUuid)
     }
 
     if (entry == null) {
       BudgetWidgetUi.EmptyState(
         context = context,
         title = BudgetWidgetLabels.title(context, payload),
-        message = if (config.budgetId == null) {
+        message = if (config.budgetUuid == null) {
           BudgetWidgetLabels.empty(context, payload)
         } else {
           BudgetWidgetLabels.missingBudget(context, payload)

@@ -20,12 +20,18 @@ import WidgetKit
 /// separate toggle — means a user who picked "Groceries" keeps seeing
 /// Groceries. The widget never silently changes subject on them.
 struct BudgetChoice: AppEntity {
-    let id: Int
+    /// `Budget.uuid`, never the ObjectBox id.
+    ///
+    /// AppIntents persists this with the widget configuration, so it outlives
+    /// the payload it came from — including across a backup/restore, which
+    /// renumbers every ObjectBox id. Keyed by id, a widget pinned to "Eating
+    /// out" would come back pointing at whichever budget inherited that number.
+    let id: String
     let name: String
 
-    /// Sentinel id for "Any budget that needs attention". Real `Budget.id`s are
-    /// ObjectBox ids and always positive.
-    static let automaticId: Int = -1
+    /// Sentinel for "Any budget that needs attention". Real ids are v4 uuids,
+    /// so this can never collide with one.
+    static let automaticId: String = "automatic"
 
     static var automatic: BudgetChoice {
         BudgetChoice(id: automaticId, name: String(localized: "Any budget that needs attention"))
@@ -55,17 +61,17 @@ struct BudgetChoiceQuery: EntityQuery {
     func suggestedEntities() async throws -> [BudgetChoice] {
         var choices: [BudgetChoice] = [.automatic]
         if let payload = BudgetPayloadStore.load() {
-            choices.append(contentsOf: payload.budgets.map { BudgetChoice(id: $0.id, name: $0.name) })
+            choices.append(contentsOf: payload.budgets.map { BudgetChoice(id: $0.uuid, name: $0.name) })
         }
         return choices
     }
 
-    func entities(for identifiers: [Int]) async throws -> [BudgetChoice] {
+    func entities(for identifiers: [String]) async throws -> [BudgetChoice] {
         let payload = BudgetPayloadStore.load()
         return identifiers.map { identifier in
             if identifier == BudgetChoice.automaticId { return .automatic }
-            if let match = payload?.budgets.first(where: { $0.id == identifier }) {
-                return BudgetChoice(id: match.id, name: match.name)
+            if let match = payload?.budget(uuid: identifier) {
+                return BudgetChoice(id: match.uuid, name: match.name)
             }
             // The budget was deleted. Resolving to nil here would make the
             // configuration look unset; keeping the id alive lets the widget
@@ -110,7 +116,15 @@ struct BudgetPinnedConfigurationIntent: WidgetConfigurationIntent {
 
     /// `nil` (never configured) behaves as automatic, so a freshly dropped
     /// widget shows something useful immediately.
-    var selectedId: Int {
+    ///
+    /// There is deliberately no migration for a configuration written while
+    /// budgets were keyed by ObjectBox id: that keying never shipped, so the
+    /// only devices holding one are ours. Where such a configuration lands is
+    /// unverified — AppIntents may fail to decode the old `Int` identifier and
+    /// arrive `nil`, or surface it as `"7"` / `"-1"`, which `entities(for:)`
+    /// keeps alive as the "budget is gone" state. Re-pick the budget on any
+    /// test device that shows it.
+    var selectedUuid: String {
         budget?.id ?? BudgetChoice.automaticId
     }
 }
