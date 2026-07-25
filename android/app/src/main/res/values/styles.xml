@@ -15,4 +15,19 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    <!-- Budget widget configuration screen. Plain DeviceDefault rather than
+         AppCompat: this activity runs before the Flutter engine exists and
+         inflates only framework views, so it has nothing to gain from
+         AppCompat's view substitution. Dark mode comes from the values-night
+         variant, the same way NormalTheme switches above. -->
+    <style name="BudgetWidgetConfigTheme" parent="@android:style/Theme.DeviceDefault.Light">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- No action bar. targetSdk 36 forces edge-to-edge, so a
+             DeviceDefault action bar draws *over* this activity's own
+             un-inset content: the screen's title ended up hidden behind it
+             and the first section header jammed under its bottom edge. The
+             activity already draws its own title, so the bar is redundant. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

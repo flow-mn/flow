@@ -16,11 +16,7 @@ enum BudgetStatus {
 
 /// Whether the current spend rate projects to land under, on, or over the
 /// limit by the end of the period.
-enum BudgetPace {
-  under,
-  on,
-  over,
-}
+enum BudgetPace { under, on, over }
 
 /// The single most relevant rule-based takeaway for a budget. The UI maps
 /// each value to a localized sentence (see `budget.insight.*`).
@@ -42,12 +38,20 @@ enum BudgetInsightType {
 }
 
 /// A pure, point-in-time view of how a [Budget] is tracking against its limit
-/// for its current period.
+/// over one period.
 ///
 /// All money is expressed in the budget's own [Budget.currency]. Construct via
 /// `BudgetService.computeProgress` rather than directly.
 class BudgetProgress {
   final Budget budget;
+
+  /// The period this progress covers.
+  ///
+  /// Deliberately explicit rather than read off [budget]: [Budget.range] is a
+  /// non-moving *anchor*, and a budget has as many periods as you care to page
+  /// to (see `BudgetService.currentPeriod`). This is whichever one was measured
+  /// — usually the live period, but any past period computes the same way.
+  final TimeRange range;
 
   /// Absolute spend within the period, in [Budget.currency].
   final Money spent;
@@ -64,6 +68,7 @@ class BudgetProgress {
 
   const BudgetProgress({
     required this.budget,
+    required this.range,
     required this.spent,
     required this.limit,
     required this.asOf,
@@ -88,19 +93,18 @@ class BudgetProgress {
     return diff.amount > 0 ? diff : Money(0.0, currency);
   }
 
-  /// Fraction of the budget's period that has elapsed at [asOf], clamped to
-  /// 0..1. A period entirely in the past reads as `1`.
+  /// Fraction of [range] that has elapsed at [asOf], clamped to 0..1. A period
+  /// entirely in the past reads as `1`.
   double get periodElapsed {
-    final TimeRange range = budget.timeRange;
     final int total = range.to.difference(range.from).inSeconds;
     if (total <= 0) return 1.0;
     final int elapsed = asOf.difference(range.from).inSeconds;
     return (elapsed / total).clamp(0.0, 1.0);
   }
 
-  /// Whole days remaining in the period; `0` once it has ended.
+  /// Whole days remaining in [range]; `0` once it has ended.
   int get daysLeft {
-    final DateTime to = budget.timeRange.to;
+    final DateTime to = range.to;
     if (!to.isAfter(asOf)) return 0;
     return to.difference(asOf).inDays;
   }
@@ -126,17 +130,13 @@ class BudgetProgress {
     return BudgetPace.on;
   }
 
-  /// Whether the budget's period includes [asOf] — i.e. this is the live
-  /// period, not a stale past one that never renewed.
-  bool get isCurrent {
-    final TimeRange range = budget.timeRange;
-    return !range.from.isAfter(asOf) && range.to.isAfter(asOf);
-  }
+  /// Whether [range] includes [asOf] — i.e. this is the live period rather
+  /// than a past one being inspected.
+  bool get isCurrent => range.contains(asOf);
 
   /// True when the budget warrants a nudge: at/over the warning threshold in
   /// its live period.
-  bool get needsAttention =>
-      isCurrent && status != BudgetStatus.healthy;
+  bool get needsAttention => isCurrent && status != BudgetStatus.healthy;
 
   /// The single most relevant rule-based takeaway.
   BudgetInsightType get primaryInsight {

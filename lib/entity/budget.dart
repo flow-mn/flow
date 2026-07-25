@@ -29,7 +29,11 @@ class Budget implements EntityBase {
   String name;
 
   /// [moment_dart](https://pub.dev/packages/moment_dart)'s [TimeRange]
-  /// compliant string
+  /// compliant string.
+  ///
+  /// An **anchor**, not a moving window: it records one period of the budget's
+  /// series and is never rewritten as periods roll over. Ask
+  /// `BudgetService.currentPeriod` for the period being tracked right now.
   String range;
 
   @Transient()
@@ -37,10 +41,12 @@ class Budget implements EntityBase {
 
   set timeRange(TimeRange value) => range = value.toString();
 
-  /// When [true], and [timeRange] is [PageableRange], [timeRange] advances
-  /// to the current period once the previous one ends.
+  /// When [true], and [timeRange] is [PageableRange], the budget follows its
+  /// series — the tracked period is derived from [range] and the current
+  /// moment, so it rolls over on its own. When [false], the budget is a
+  /// one-off that stays on [range] forever.
   ///
-  /// See `BudgetService.renewDueBudgets`
+  /// Nothing is written either way. See `BudgetService.currentPeriod`.
   bool renewAutomatically;
 
   double amount;

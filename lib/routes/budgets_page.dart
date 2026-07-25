@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flow/entity/budget.dart";
 import "package:flow/l10n/flow_localizations.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -22,14 +20,6 @@ class BudgetsPage extends StatefulWidget {
 
 class _BudgetsPageState extends State<BudgetsPage> {
   QueryBuilder<Budget> qb() => BudgetService().allQb();
-
-  @override
-  void initState() {
-    super.initState();
-
-    // The app may have crossed a period boundary since startup.
-    unawaited(BudgetService().renewDueBudgets());
-  }
 
   @override
   Widget build(BuildContext context) {

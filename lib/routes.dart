@@ -1,9 +1,12 @@
 import "package:flow/data/transaction_multi_programmable_object.dart";
 import "package:flow/data/transaction_programmable_object.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
 import "package:flow/routes/account/account_edit_page.dart";
 import "package:flow/routes/account_page.dart";
 import "package:flow/routes/accounts_page.dart";
+import "package:flow/routes/budget_detail_page.dart";
 import "package:flow/routes/budget_page.dart";
 import "package:flow/routes/budgets_page.dart";
 import "package:flow/routes/categories_page.dart";
@@ -79,6 +82,25 @@ import "package:moment_dart/moment_dart.dart";
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
+
+/// Sends a `/budgets/:id` route to the budgets list when the id doesn't resolve
+/// to a stored budget, instead of dead-ending on the 404 error page.
+///
+/// The id reaches this route from three places that can all outlive the budget
+/// they point at: the in-app budget alert, home-screen widget deep links
+/// (`flow-mn:///budgets/:id`), and donated Siri shortcuts. A budget that was
+/// deleted — or whose ObjectBox id drifted after a data reset — used to render
+/// a bare "page not found". Falling back to the list keeps the entry point
+/// useful rather than broken.
+String? _budgetExistsOrList(BuildContext context, GoRouterState state) {
+  final int? id = int.tryParse(state.pathParameters["id"] ?? "");
+
+  if (id == null || ObjectBox().box<Budget>().get(id) == null) {
+    return "/budgets";
+  }
+
+  return null;
+}
 
 final GoRouter router = GoRouter(
   navigatorKey: globalNavigatorKey,
@@ -232,6 +254,14 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: "/budgets/:id",
+      redirect: _budgetExistsOrList,
+      builder: (context, state) => BudgetDetailPage(
+        budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+      ),
+    ),
+    GoRoute(
+      path: "/budgets/:id/edit",
+      redirect: _budgetExistsOrList,
       builder: (context, state) =>
           BudgetPage(budgetId: int.tryParse(state.pathParameters["id"]!) ?? -1),
     ),

@@ -1,0 +1,18 @@
+<!--
+  API 31+ variant: targetCell sizing, a picker description, and
+  `reconfigurable` so the hide-amounts toggle can be changed without deleting
+  and re-adding the widget. Matches the two_entry widget's xml/xml-v31 split.
+-->
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:label="@string/budget_rollup_widget_label"
+  android:description="@string/budget_rollup_widget_description"
+  android:minWidth="250dp"
+  android:minHeight="110dp"
+  android:targetCellWidth="4"
+  android:targetCellHeight="2"
+  android:resizeMode="horizontal|vertical"
+  android:widgetFeatures="reconfigurable"
+  android:configure="mn.flow.flow.glance.BudgetRollupConfigActivity"
+  android:initialLayout="@layout/glance_default_loading_layout">
+</appwidget-provider>

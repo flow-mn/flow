@@ -2,6 +2,7 @@ import "package:flow/data/budget_progress.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/budget_change_aware_state.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/analytics/bullet_chart.dart";
 import "package:flow/widgets/home/stats/bento/bento_tile.dart";
@@ -25,7 +26,9 @@ class BudgetTile extends StatefulWidget {
 }
 
 class _BudgetTileState extends State<BudgetTile>
-    with PrimaryCurrencyDependentState<BudgetTile> {
+    with
+        PrimaryCurrencyDependentState<BudgetTile>,
+        BudgetChangeAwareState<BudgetTile> {
   bool busy = true;
   bool loaded = false;
 
@@ -67,7 +70,10 @@ class _BudgetTileState extends State<BudgetTile>
         ),
         const SizedBox(height: 4.0),
         Text(
-          "tabs.stats.analytics.budgets.tracked".t(context, summary.budgetCount),
+          "tabs.stats.analytics.budgets.tracked".t(
+            context,
+            summary.budgetCount,
+          ),
           style: context.textTheme.bodySmall?.semi(context),
         ),
       ],
@@ -137,10 +143,10 @@ class _BudgetTileState extends State<BudgetTile>
   @override
   Future<void> fetch() async {
     try {
-      final List<BudgetProgress> progresses = BudgetService()
-          .computeAllProgress(rates: rates)
-          .where((progress) => progress.isCurrent)
-          .toList();
+      final List<BudgetProgress> progresses =
+          (await BudgetService().computeAllProgressAsync(
+            rates: rates,
+          )).where((progress) => progress.isCurrent).toList();
       summary = BudgetService().computeSummary(progresses);
       loaded = true;
     } finally {
