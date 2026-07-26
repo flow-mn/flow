@@ -546,7 +546,7 @@
   "sync.export.asZIP": "As backup (zip)",
   "sync.export.asZIP.description": "Can be fully restored later. Includes attached files",
   "sync.export.autoBackup": "Auto-backup",
-  "sync.export.deleteCloudBackupConfirmation": "Deleting this backup will also delete the iCloud copy. This action is not irreversible!",
+  "sync.export.deleteCloudBackupConfirmation": "Deleting this backup will also delete the iCloud copy. This action is irreversible!",
   "sync.export.fileDeleted": "File not found",
   "sync.export.history": "Backup history",
   "sync.export.history.description": "See backups made by you, and created automatically",
