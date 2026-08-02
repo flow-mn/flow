@@ -90,7 +90,7 @@ class ExtensionsWrapper {
             .toList(),
       );
     } catch (e) {
-      _log.warning("An error occured during deserializing: $e");
+      _log.warning("An error occurred during deserializing: $e");
       return const ExtensionsWrapper.empty();
     }
   }
