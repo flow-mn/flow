@@ -6,10 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -26,7 +29,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import mn.flow.flow.MainActivity
 import mn.flow.flow.R
 
 /**
@@ -59,39 +61,65 @@ object BudgetWidgetUi {
     BudgetStatus.HEALTHY -> ColorProvider(R.color.budget_ghost_income)
   }
 
-  /** Every budget widget opens the app; matches the Summary widget. */
-  fun launchAppIntent(context: Context): Intent =
-    Intent(context, MainActivity::class.java).apply {
+  /**
+   * A deep link into the app, the way [FlowWidgetUtils.EntryButton] does it.
+   *
+   * A bare `Intent(context, MainActivity::class)` carries no action and no data,
+   * so it can only ever cold-open the home tab — which is what these widgets
+   * used to do. The manifest already accepts the `flow-mn` scheme.
+   *
+   * Pinned to our own package: `flow-mn` is a custom scheme, so any installed
+   * app may register it and become a resolution candidate for this tap. Without
+   * [Intent.setPackage] a widget tap could raise a chooser, or open a
+   * Flow-lookalike. [path] must be absolute — it lands after the scheme's empty
+   * authority, so a relative one would silently become the host and resolve to
+   * nothing.
+   */
+  fun deepLinkIntent(context: Context, path: String): Intent {
+    require(path.startsWith("/")) { "Deep-link path must be absolute: $path" }
+
+    return Intent(Intent.ACTION_VIEW, "flow-mn://$path".toUri()).apply {
+      setPackage(context.packageName)
       addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
+  }
 
   /**
-   * The widget's outer chrome: launcher background, tap-to-open, and the 16dp
-   * surface card the rest of Flow's widgets sit on.
+   * The widget's outer chrome: one surface that *is* the widget, plus
+   * tap-to-open.
+   *
+   * Deliberately a single background rather than a card floating inside an
+   * inset: the launcher already draws a rounded, themed container behind every
+   * widget, so a second rounded card inside it reads as a border around a
+   * screenshot rather than as the widget itself. [appWidgetBackground] marks
+   * this box as *the* background so the launcher's own rounding and Material You
+   * theming apply to it, and the system radius keeps the corners identical to
+   * every other widget on the home screen instead of a hard-coded 16dp that
+   * only matches on some launchers.
+   *
+   * [destination] is the `flow-mn` path a tap opens — the pinned widget passes
+   * its own budget, the roll-up passes the overview it mirrors.
    */
   @Composable
-  fun Frame(context: Context, padding: Dp, content: @Composable () -> Unit) {
+  fun Frame(
+    padding: Dp,
+    destination: String,
+    content: @Composable () -> Unit,
+  ) {
     Box(
       modifier = GlanceModifier
-        .background(GlanceTheme.colors.widgetBackground)
         .fillMaxSize()
-        .clickable(onClick = actionStartActivity(launchAppIntent(context))),
+        .appWidgetBackground()
+        .background(GlanceTheme.colors.widgetBackground)
+        .cornerRadius(android.R.dimen.system_app_widget_background_radius)
+        .clickable(
+          onClick = actionStartActivity(
+            deepLinkIntent(LocalContext.current, destination),
+          ),
+        )
+        .padding(padding),
     ) {
-      Box(
-        modifier = GlanceModifier
-          .fillMaxSize()
-          .padding(8.dp),
-      ) {
-        Box(
-          modifier = GlanceModifier
-            .fillMaxSize()
-            .background(GlanceTheme.colors.surfaceVariant)
-            .cornerRadius(16.dp)
-            .padding(padding),
-        ) {
-          content()
-        }
-      }
+      content()
     }
   }
 
