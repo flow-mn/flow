@@ -280,7 +280,7 @@ class ButtonOrderPreferencesPageState
 
       UserPreferencesService().transactionButtonOrder = copiedOrder;
     } catch (e) {
-      log("An error was occured while swapping transaction button order: $e");
+      log("An error was occurred while swapping transaction button order: $e");
     } finally {
       busy = false;
 

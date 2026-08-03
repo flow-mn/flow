@@ -550,7 +550,7 @@ void initializePackageVersion() async {
     startupLog.fine("App version: $appVersion");
     startupLog.fine("Store: ${value.installerStore}");
   } catch (e) {
-    startupLog.warning("An error was occured while fetching app version", e);
+    startupLog.warning("An error was occurred while fetching app version", e);
   }
 }
 
