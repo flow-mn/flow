@@ -36,19 +36,44 @@ extension BudgetStatus {
 }
 
 /// Roll-up progress indicator.
+///
+/// Draws to `ratio` faintly and to `confirmedRatio` solid, so pending spend
+/// reads as committed-but-not-yet-gone. Passing them equal — the default —
+/// gives the plain single-fill bar.
 struct BudgetProgressBar: View {
     let ratio: Double
+    var confirmedRatio: Double? = nil
     let color: Color
     var height: CGFloat = 8
 
+    /// Anything non-zero gets at least a round dot; a hairline reads as an
+    /// empty bar, which means something else entirely.
+    private func width(_ fraction: Double, in available: CGFloat) -> CGFloat {
+        guard fraction > 0 else { return 0 }
+        return min(available, max(height, available * fraction))
+    }
+
     var body: some View {
         GeometryReader { geometry in
+            let total = width(ratio, in: geometry.size.width)
+            let confirmed = width(min(confirmedRatio ?? ratio, ratio), in: geometry.size.width)
+
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(.fill.tertiary)
-                Capsule()
-                    .fill(color)
-                    .frame(width: max(height, geometry.size.width * ratio))
+                // Full-length ghost with the solid fill layered over it, so the
+                // seam is a rounded cap inside a rounded cap rather than two
+                // capsules butting together.
+                if total > confirmed {
+                    Capsule()
+                        .fill(color.opacity(0.35))
+                        .frame(width: total)
+                }
+                if confirmed > 0 {
+                    Capsule()
+                        .fill(color)
+                        .frame(width: confirmed)
+                }
             }
         }
         .frame(height: height)
@@ -59,6 +84,8 @@ struct BudgetProgressBar: View {
 /// better than a hairline bar at that size.
 struct BudgetProgressRing: View {
     let ratio: Double
+    /// The cleared part of `ratio`. Nil draws one solid arc.
+    var confirmedRatio: Double? = nil
     let percentText: String
     let color: Color
     var lineWidth: CGFloat = 8
@@ -68,13 +95,25 @@ struct BudgetProgressRing: View {
     var fontSize: CGFloat = 19
 
     var body: some View {
+        let confirmed = min(confirmedRatio ?? ratio, ratio)
+
         ZStack {
             Circle()
                 .stroke(.fill.tertiary, lineWidth: lineWidth)
-            Circle()
-                .trim(from: 0, to: max(0.005, ratio))
-                .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                .rotationEffect(.degrees(-90))
+            // Ghost arc out to the committed total, solid arc over it to what
+            // has actually cleared.
+            if ratio > confirmed {
+                Circle()
+                    .trim(from: 0, to: max(0.005, ratio))
+                    .stroke(color.opacity(0.35), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
+            if confirmed > 0 {
+                Circle()
+                    .trim(from: 0, to: max(0.005, confirmed))
+                    .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
             Text(percentText)
                 .font(.system(size: fontSize, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)

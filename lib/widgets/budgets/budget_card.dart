@@ -1,6 +1,5 @@
+import "package:flow/data/budget_progress.dart";
 import "package:flow/data/exchange_rates.dart";
-import "package:flow/data/single_currency_flow.dart";
-import "package:flow/data/money.dart";
 import "package:flow/entity/budget.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -35,13 +34,13 @@ class BudgetCard extends StatelessWidget {
           .watch(triggerImmediately: true)
           .map((event) => event.find()),
       builder: (context, snapshot) {
-        final SingleCurrencyFlow spentFlow = BudgetService().computeSpent(
+        // The stream already holds this period's transactions, so this reuses
+        // them rather than letting `computeProgress` run its own query.
+        final BudgetProgress progress = BudgetService().computeProgress(
           budget,
-          snapshot.data ?? const [],
-          rates,
+          rates: rates,
+          transactions: snapshot.data ?? const [],
         );
-
-        final double spent = spentFlow.totalExpense.amount.abs();
 
         return InsightCard(
           icon: Symbols.money_bag_rounded,
@@ -49,9 +48,9 @@ class BudgetCard extends StatelessWidget {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              MoneyText(Money(spent, budget.currency)),
+              MoneyText(progress.spent),
               const Text(" / "),
-              MoneyText(Money(budget.amount, budget.currency)),
+              MoneyText(progress.limit),
             ],
           ),
           subtitle: _periodLabel(),
@@ -65,7 +64,12 @@ class BudgetCard extends StatelessWidget {
                 allSpendingLabel: "budget.categories.allShort".t(context),
               ),
               const SizedBox(height: 12.0),
-              BulletChart(value: spent, target: budget.amount),
+              BulletChart(
+                value: progress.spent.amount,
+                target: progress.limit.amount,
+                pending: progress.pendingSpent.amount,
+                paceRatio: progress.isCurrent ? progress.periodElapsed : null,
+              ),
             ],
           ),
         );

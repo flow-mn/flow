@@ -138,7 +138,13 @@ private fun Content(
       )
 
       Spacer(modifier = GlanceModifier.height(6.dp))
-      BudgetWidgetUi.BudgetBar(barWidth, entry.ratio, entry.status, height = 8.dp)
+      BudgetWidgetUi.BudgetBar(
+        barWidth,
+        entry.ratio,
+        entry.status,
+        height = 8.dp,
+        confirmedRatio = entry.confirmedRatio,
+      )
       Spacer(modifier = GlanceModifier.height(6.dp))
 
       Text(

@@ -193,7 +193,12 @@ private fun WorstBudget(
     }
 
     Spacer(modifier = GlanceModifier.height(5.dp))
-    BudgetWidgetUi.BudgetBar(barWidth, entry.ratio, entry.status)
+    BudgetWidgetUi.BudgetBar(
+      barWidth,
+      entry.ratio,
+      entry.status,
+      confirmedRatio = entry.confirmedRatio,
+    )
     Spacer(modifier = GlanceModifier.height(5.dp))
 
     Row(

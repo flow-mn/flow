@@ -118,6 +118,8 @@ class _BudgetTileState extends State<BudgetTile>
           BulletChart(
             value: worst.spent.amount,
             target: worst.limit.amount,
+            pending: worst.pendingSpent.amount,
+            paceRatio: worst.isCurrent ? worst.periodElapsed : null,
             height: 12.0,
           ),
           const SizedBox(height: 8.0),

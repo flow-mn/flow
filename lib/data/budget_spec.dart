@@ -39,8 +39,12 @@ class BudgetSpec {
 class BudgetSpend {
   final int correlationId;
 
-  /// Absolute spend over the period, in the spec's currency.
+  /// Absolute spend over the period, in the spec's currency. Includes
+  /// [pendingSpent].
   final double spent;
+
+  /// The still-pending slice of [spent].
+  final double pendingSpent;
 
   /// A foreign-currency transaction couldn't be converted, so [spent] is an
   /// undercount.
@@ -49,6 +53,7 @@ class BudgetSpend {
   const BudgetSpend({
     required this.correlationId,
     required this.spent,
+    required this.pendingSpent,
     required this.hasMissingData,
   });
 }

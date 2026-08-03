@@ -53,8 +53,16 @@ data class BudgetEntry(
    * otherwise mix digit styles between this and every other string here.
    */
   val percentLabel: String,
-  /** Not clamped — an over-budget entry exceeds 1.0. Clamp at the call site. */
+  /**
+   * Not clamped — an over-budget entry exceeds 1.0. Clamp at the call site.
+   * Includes pending spend.
+   */
   val ratio: Double,
+  /**
+   * The part of [ratio] that has actually cleared. Bars fill solid to here and
+   * carry on as a lighter ghost tail out to [ratio].
+   */
+  val confirmedRatio: Double,
   /** Colour and branching only — [statusLabel] is what the user reads. */
   val status: BudgetStatus,
   /**
@@ -117,7 +125,7 @@ data class BudgetPayload(
 
   companion object {
     const val PAYLOAD_KEY = "budgetsPayload"
-    const val SUPPORTED_VERSION = 2
+    const val SUPPORTED_VERSION = 3
 
     /**
      * Returns null for every unusable input — key absent, blank, malformed, or
@@ -182,6 +190,11 @@ data class BudgetPayload(
             // blank-hero-number guard rather than a supported code path.
             percentLabel = entry.optStringOrNull("percentLabel") ?: "$percent%",
             ratio = entry.optDouble("ratio", 0.0).let { if (it.isNaN()) 0.0 else it },
+            // Defaulting to `ratio` means "all of it cleared", so a payload
+            // missing the key draws one solid bar rather than an all-ghost one.
+            confirmedRatio = entry.optDouble("confirmedRatio", Double.NaN)
+              .let { if (it.isNaN()) entry.optDouble("ratio", 0.0) else it }
+              .let { if (it.isNaN()) 0.0 else it },
             status = BudgetStatus.parse(entry.optStringOrNull("status")),
             statusLabel = entry.optStringOrNull("statusLabel"),
             daysLeft = entry.optInt("daysLeft", 0),

@@ -49,6 +49,16 @@ object BudgetWidgetUi {
     BudgetStatus.HEALTHY -> ColorProvider(R.color.income_green)
   }
 
+  /**
+   * [statusColor] at ~35%, for the pending part of a bar. Pre-multiplied
+   * resources rather than an alpha modifier, which Glance doesn't have.
+   */
+  fun ghostColor(status: BudgetStatus): ColorProvider = when (status) {
+    BudgetStatus.OVER -> ColorProvider(R.color.budget_ghost_expense)
+    BudgetStatus.WARNING -> ColorProvider(R.color.budget_ghost_warning)
+    BudgetStatus.HEALTHY -> ColorProvider(R.color.budget_ghost_income)
+  }
+
   /** Every budget widget opens the app; matches the Summary widget. */
   fun launchAppIntent(context: Context): Intent =
     Intent(context, MainActivity::class.java).apply {
@@ -91,10 +101,25 @@ object BudgetWidgetUi {
    * the percent text carry that information instead.
    */
   @Composable
-  fun BudgetBar(width: Dp, ratio: Double, status: BudgetStatus, height: Dp = 6.dp) {
-    val clamped = ratio.coerceIn(0.0, 1.0).toFloat()
+  fun BudgetBar(
+    width: Dp,
+    ratio: Double,
+    status: BudgetStatus,
+    height: Dp = 6.dp,
+    confirmedRatio: Double = ratio,
+  ) {
     val track = width.coerceAtLeast(0.dp)
-    val filled = track * clamped
+
+    // A sliver of colour reads as "barely started"; zero width reads as a
+    // rendering bug, so never draw less than a dot.
+    fun band(fraction: Double): Dp {
+      val clamped = fraction.coerceIn(0.0, 1.0).toFloat()
+      if (clamped <= 0f) return 0.dp
+      return minOf(track, maxOf(track * clamped, height))
+    }
+
+    val total = band(ratio)
+    val confirmed = band(minOf(confirmedRatio, ratio))
 
     Box(
       modifier = GlanceModifier
@@ -103,12 +128,22 @@ object BudgetWidgetUi {
         .background(ColorProvider(R.color.budget_bar_track))
         .cornerRadius(height / 2),
     ) {
-      if (clamped > 0f) {
+      // Full-length ghost with the solid fill on top of it, so the seam between
+      // them is a rounded cap nested inside a rounded cap. Glance has no alpha
+      // modifier, so the ghost is a pre-multiplied colour resource.
+      if (total > confirmed) {
         Box(
           modifier = GlanceModifier
-            // A sliver of colour reads as "barely started"; zero width reads as
-            // a rendering bug, so never draw less than a dot.
-            .width(maxOf(filled, height))
+            .width(total)
+            .height(height)
+            .background(ghostColor(status))
+            .cornerRadius(height / 2),
+        ) {}
+      }
+      if (confirmed > 0.dp) {
+        Box(
+          modifier = GlanceModifier
+            .width(confirmed)
             .height(height)
             .background(statusColor(status))
             .cornerRadius(height / 2),
