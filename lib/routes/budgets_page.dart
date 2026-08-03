@@ -5,6 +5,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/widgets/budgets/budget_card.dart";
+import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/rates_missing_error_box.dart";
 import "package:flutter/material.dart";
@@ -43,10 +44,16 @@ class _BudgetsPageState extends State<BudgetsPage> {
 
             return ListView(
               children: [
-                ListTile(
-                  title: Text("budgets.new".t(context)),
-                  leading: const Icon(Symbols.add_rounded),
-                  onTap: () => context.push("/budgets/new"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 6.0,
+                  ),
+                  child: Button(
+                    onTap: () => context.push("/budgets/new"),
+                    leading: const Icon(Symbols.add_rounded),
+                    child: Text("budgets.new".t(context)),
+                  ),
                 ),
                 if (showMissingExchangeRatesWarning)
                   const RatesMissingErrorBox(),
