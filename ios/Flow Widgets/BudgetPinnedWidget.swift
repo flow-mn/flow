@@ -124,6 +124,7 @@ struct BudgetPinnedView: View {
             if usesRing {
                 BudgetProgressRing(
                     ratio: budget.clampedRatio,
+                    confirmedRatio: budget.clampedConfirmedRatio,
                     percentText: budget.percentText,
                     color: tint
                 )
@@ -133,7 +134,11 @@ struct BudgetPinnedView: View {
                 // being legible, which is the point at which the bar is better.
                 .frame(maxWidth: .infinity, minHeight: 36, maxHeight: .infinity)
             } else {
-                BudgetProgressBar(ratio: budget.clampedRatio, color: tint)
+                BudgetProgressBar(
+                    ratio: budget.clampedRatio,
+                    confirmedRatio: budget.clampedConfirmedRatio,
+                    color: tint
+                )
             }
 
             VStack(alignment: .leading, spacing: 1) {
@@ -165,6 +170,7 @@ struct BudgetPinnedView: View {
             if usesRing {
                 BudgetProgressRing(
                     ratio: budget.clampedRatio,
+                    confirmedRatio: budget.clampedConfirmedRatio,
                     percentText: budget.percentText,
                     color: tint,
                     lineWidth: 11,
@@ -184,7 +190,11 @@ struct BudgetPinnedView: View {
                     }
                 }
                 if !usesRing {
-                    BudgetProgressBar(ratio: budget.clampedRatio, color: tint)
+                    BudgetProgressBar(
+                        ratio: budget.clampedRatio,
+                        confirmedRatio: budget.clampedConfirmedRatio,
+                        color: tint
+                    )
                 }
                 BudgetStatusLabel(
                     budget: budget,
@@ -284,7 +294,7 @@ struct FlowBudgetPinnedWidget: Widget {
 }
 
 private let previewPinnedPayload = BudgetPayload(
-    version: 2,
+    version: 3,
     updatedAt: "2026-07-22T09:14:03.123Z",
     summary: BudgetSummary(
         budgetCount: 3,
@@ -305,6 +315,7 @@ private let previewPinnedPayload = BudgetPayload(
             percent: 84,
             percentLabel: "84%",
             ratio: 0.84,
+            confirmedRatio: 0.66,
             status: .warning,
             statusLabel: "Хязгаарт дөхсөн",
             daysLeft: 9,

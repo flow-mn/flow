@@ -71,7 +71,9 @@ private fun Content(
   )
   val worst = payload?.worst
 
-  BudgetWidgetUi.Frame(context, padding = 14.dp) {
+  // The overview, not the plain list: this widget *is* that page in
+  // miniature, so a tap should expand what it shows.
+  BudgetWidgetUi.Frame(padding = 16.dp, destination = "/stats/budgets") {
     if (payload == null || payload.budgets.isEmpty()) {
       BudgetWidgetUi.EmptyState(
         context = context,
@@ -81,9 +83,9 @@ private fun Content(
       return@Frame
     }
 
-    // Frame padding (14dp) and the widget's own 8dp inset both eat into the
-    // bar; 4dp of slack keeps it off the rounded corner on tight launchers.
-    val barWidth = LocalSize.current.width - 8.dp * 2 - 14.dp * 2 - 4.dp
+    // The frame's single 16dp inset, plus 4dp of slack so the bar stays off
+    // the rounded corner on launchers that round more aggressively.
+    val barWidth = LocalSize.current.width - 16.dp * 2 - 4.dp
 
     val overCount = payload.summary.overCount
     val warningCount = payload.summary.warningCount
@@ -193,7 +195,12 @@ private fun WorstBudget(
     }
 
     Spacer(modifier = GlanceModifier.height(5.dp))
-    BudgetWidgetUi.BudgetBar(barWidth, entry.ratio, entry.status)
+    BudgetWidgetUi.BudgetBar(
+      barWidth,
+      entry.ratio,
+      entry.status,
+      confirmedRatio = entry.confirmedRatio,
+    )
     Spacer(modifier = GlanceModifier.height(5.dp))
 
     Row(

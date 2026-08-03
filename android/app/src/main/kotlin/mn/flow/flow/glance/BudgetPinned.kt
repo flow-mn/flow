@@ -67,7 +67,24 @@ private fun Content(
     state.preferences.getString(BudgetPayload.PAYLOAD_KEY, null)
   )
 
-  BudgetWidgetUi.Frame(context, padding = 12.dp) {
+  // A null budgetUuid means "auto"; a non-null one that no longer resolves
+  // means the user deleted the budget this widget was pinned to. Resolved out
+  // here rather than inside the frame because the tap destination depends on it.
+  val entry = if (payload == null) {
+    null
+  } else if (config.budgetUuid == null) {
+    payload.worst
+  } else {
+    payload.budgetByUuid(config.budgetUuid)
+  }
+
+  // Linking by id even though the pin is stored by uuid: this id comes off the
+  // payload being rendered right now, so it is current by construction, and the
+  // app routes budgets by id. With no budget resolved there is nothing specific
+  // to open, so fall back to the list.
+  val destination = if (entry == null) "/budgets" else "/budgets/${entry.id}"
+
+  BudgetWidgetUi.Frame(padding = 16.dp, destination = destination) {
     if (payload == null || payload.budgets.isEmpty()) {
       BudgetWidgetUi.EmptyState(
         context = context,
@@ -75,14 +92,6 @@ private fun Content(
         message = BudgetWidgetLabels.empty(context, payload),
       )
       return@Frame
-    }
-
-    // A null budgetUuid means "auto"; a non-null one that no longer resolves
-    // means the user deleted the budget this widget was pinned to.
-    val entry = if (config.budgetUuid == null) {
-      payload.worst
-    } else {
-      payload.budgetByUuid(config.budgetUuid)
     }
 
     if (entry == null) {
@@ -98,7 +107,9 @@ private fun Content(
       return@Frame
     }
 
-    val barWidth = LocalSize.current.width - 8.dp * 2 - 12.dp * 2 - 4.dp
+    // The frame's single 16dp inset, plus 4dp of slack so the bar stays off
+    // the rounded corner on launchers that round more aggressively.
+    val barWidth = LocalSize.current.width - 16.dp * 2 - 4.dp
 
     Column(modifier = GlanceModifier.fillMaxSize()) {
       Text(
@@ -138,7 +149,13 @@ private fun Content(
       )
 
       Spacer(modifier = GlanceModifier.height(6.dp))
-      BudgetWidgetUi.BudgetBar(barWidth, entry.ratio, entry.status, height = 8.dp)
+      BudgetWidgetUi.BudgetBar(
+        barWidth,
+        entry.ratio,
+        entry.status,
+        height = 8.dp,
+        confirmedRatio = entry.confirmedRatio,
+      )
       Spacer(modifier = GlanceModifier.height(6.dp))
 
       Text(

@@ -49,7 +49,11 @@ class BudgetWidgetSync {
   /// - 2: added `uuid` to each budget. A v1 extension pins by ObjectBox id,
   ///   which does not survive backup/restore — better it show a placeholder
   ///   than confidently render the wrong budget.
-  static const int payloadVersion = 2;
+  /// - 3: `spent`/`ratio` now include pending spend, and `confirmedRatio`
+  ///   marks how much of it has actually cleared so a bar can draw the rest as
+  ///   a ghost. A v2 extension would draw the new, larger `spent` as though all
+  ///   of it had cleared.
+  static const int payloadVersion = 3;
 
   /// Builds the payload without touching any platform channel.
   ///
@@ -146,6 +150,11 @@ class BudgetWidgetSync {
     // render digits in one style beside payload strings in another.
     "percentLabel": _formatPercent(progress.percent),
     "ratio": progress.ratio,
+    // Where the solid fill stops and the ghost tail begins. Sent as a ratio
+    // rather than an amount because it only ever drives bar geometry — the
+    // widgets have no room to spell a second figure out, and a money string
+    // nothing renders is a "Hide amounts" leak waiting to be introduced.
+    "confirmedRatio": progress.confirmedRatio,
     "status": progress.status.name,
     // The status as a word. `status` alone is a machine value, and colour
     // can't carry it: iOS 18 tinted rendering flattens every hue to one, and

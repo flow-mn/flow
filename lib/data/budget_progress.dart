@@ -54,7 +54,20 @@ class BudgetProgress {
   final TimeRange range;
 
   /// Absolute spend within the period, in [Budget.currency].
+  ///
+  /// Includes [pendingSpent]. Money you've scheduled is money the period is
+  /// already committed to, so it counts against the limit — every derived
+  /// figure here ([ratio], [status], [primaryInsight], …) is measured on the
+  /// committed total, not just what has cleared.
   final Money spent;
+
+  /// The still-pending slice of [spent] — planned or unconfirmed transactions
+  /// dated inside the period.
+  ///
+  /// Broken out so the UI can render it as a lighter "ghost" segment: it
+  /// counts, but it hasn't actually left the account yet and shouldn't look
+  /// like it has.
+  final Money pendingSpent;
 
   /// The budgeted amount, in [Budget.currency].
   final Money limit;
@@ -70,6 +83,7 @@ class BudgetProgress {
     required this.budget,
     required this.range,
     required this.spent,
+    required this.pendingSpent,
     required this.limit,
     required this.asOf,
     this.hasMissingData = false,
@@ -77,6 +91,18 @@ class BudgetProgress {
 
   /// The budget's currency, shared by [spent] and [limit].
   String get currency => limit.currency;
+
+  /// The part of [spent] that has actually been confirmed.
+  Money get confirmedSpent => spent - pendingSpent;
+
+  /// [confirmedSpent] / limit — where the solid part of a progress bar ends,
+  /// with [ratio] marking the end of the ghost segment. `0` when the limit is
+  /// non-positive.
+  double get confirmedRatio =>
+      limit.amount > 0 ? (confirmedSpent.amount / limit.amount) : 0.0;
+
+  /// Whether there is any pending spend worth drawing.
+  bool get hasPending => pendingSpent.amount > 0;
 
   /// Spent / limit. `0` when the limit is non-positive.
   double get ratio => limit.amount > 0 ? (spent.amount / limit.amount) : 0.0;
@@ -111,10 +137,18 @@ class BudgetProgress {
 
   /// Extrapolated end-of-period ratio if spending continues at the current
   /// rate. Falls back to [ratio] before any of the period has elapsed.
+  ///
+  /// Only [confirmedRatio] is run through the rate — pending spend is already
+  /// dated, so it's added once at face value instead. Extrapolating it would
+  /// count a lump sum twice: once for being committed, and again for every day
+  /// left in the period. Rent scheduled for the 28th would otherwise have a
+  /// budget projecting a 5× overshoot on the 2nd with nothing actually spent.
   double get projectedRatio {
     final double elapsed = periodElapsed;
     if (elapsed <= 0.0) return ratio;
-    return ratio / elapsed;
+
+    final double pendingRatio = ratio - confirmedRatio;
+    return (confirmedRatio / elapsed) + pendingRatio;
   }
 
   BudgetStatus get status {

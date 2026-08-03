@@ -26,6 +26,7 @@ void main() {
 
   BudgetProgress progressOf({
     required double spent,
+    double pending = 0.0,
     double limit = 100.0,
     DateTime? asOf,
     TimeRange? range,
@@ -34,6 +35,7 @@ void main() {
     budget: budgetOf(amount: limit),
     range: range ?? june,
     spent: Money(spent, "USD"),
+    pendingSpent: Money(pending, "USD"),
     limit: Money(limit, "USD"),
     asOf: asOf ?? DateTime(2026, 6, 21),
     hasMissingData: hasMissingData,
@@ -66,6 +68,81 @@ void main() {
       final BudgetProgress over = progressOf(spent: 120.0);
       expect(over.remaining.amount, moreOrLessEquals(-20.0));
       expect(over.overBy.amount, moreOrLessEquals(20.0));
+    });
+  });
+
+  group("the pending split", () {
+    test("pending is part of spent, not something added to it", () {
+      final BudgetProgress p = progressOf(spent: 60.0, pending: 25.0);
+
+      expect(p.spent.amount, moreOrLessEquals(60.0));
+      expect(p.confirmedSpent.amount, moreOrLessEquals(35.0));
+      expect(p.ratio, moreOrLessEquals(0.6));
+      expect(p.confirmedRatio, moreOrLessEquals(0.35));
+    });
+
+    test("a scheduled payment can be what tips a budget over", () {
+      // The whole point of counting pending: 80 spent with 30 more already
+      // committed is not a healthy budget, however little has cleared.
+      final BudgetProgress p = progressOf(spent: 110.0, pending: 30.0);
+
+      expect(p.status, BudgetStatus.over);
+      expect(p.primaryInsight, BudgetInsightType.over);
+      expect(p.confirmedSpent.amount, moreOrLessEquals(80.0));
+    });
+
+    test("no pending leaves the confirmed figures identical to spent", () {
+      final BudgetProgress p = progressOf(spent: 84.0);
+
+      expect(p.hasPending, isFalse);
+      expect(p.confirmedSpent.amount, moreOrLessEquals(p.spent.amount));
+      expect(p.confirmedRatio, moreOrLessEquals(p.ratio));
+    });
+
+    test("an all-pending budget has nothing confirmed to draw", () {
+      final BudgetProgress p = progressOf(spent: 40.0, pending: 40.0);
+
+      expect(p.hasPending, isTrue);
+      expect(p.confirmedSpent.amount, moreOrLessEquals(0.0));
+      expect(p.confirmedRatio, moreOrLessEquals(0.0));
+    });
+
+    test("a scheduled lump sum is not extrapolated as a run rate", () {
+      // 2 of 30 days elapsed, nothing actually spent, one 30.0 payment already
+      // scheduled for later in the month. Running that through the rate would
+      // project a 4.5x overshoot and cry "overpacing" about a healthy budget.
+      final BudgetProgress p = progressOf(
+        spent: 30.0,
+        pending: 30.0,
+        asOf: DateTime(2026, 6, 3),
+      );
+
+      expect(p.projectedRatio, moreOrLessEquals(0.3));
+      expect(p.pace, BudgetPace.under);
+      expect(p.primaryInsight, isNot(BudgetInsightType.overpacing));
+    });
+
+    test("confirmed spend is still extrapolated normally", () {
+      // Same period position, but the 30.0 actually cleared — two days in and
+      // already 30% down really is on course to overshoot.
+      final BudgetProgress p = progressOf(
+        spent: 30.0,
+        asOf: DateTime(2026, 6, 3),
+      );
+
+      expect(p.projectedRatio, greaterThan(1.0));
+      expect(p.pace, BudgetPace.over);
+    });
+
+    test("a non-positive limit zeroes confirmedRatio too, not just ratio", () {
+      final BudgetProgress p = progressOf(
+        spent: 50.0,
+        pending: 20.0,
+        limit: 0.0,
+      );
+
+      expect(p.ratio, 0.0);
+      expect(p.confirmedRatio, 0.0);
     });
   });
 

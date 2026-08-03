@@ -126,7 +126,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage>
                       selectionController: _selection,
                       mainHeader: header,
                       mainHeaderPadding: EdgeInsets.zero,
-                      transactions: transactions.nonPending.groupByDate(),
+                      // Pending transactions count towards the total, so they
+                      // belong in the list that explains it. The list marks
+                      // them as pending on its own.
+                      transactions: transactions.groupByDate(),
                       headerBuilder: (pendingGroup, range, transactions) =>
                           TransactionListDateHeader(
                             transactions: transactions,
@@ -169,7 +172,9 @@ class _BudgetDetailPageState extends State<BudgetDetailPage>
                             child: Text(
                               "budget.detail.unavailable".t(context),
                               textAlign: .center,
-                              style: context.textTheme.bodyMedium?.semi(context),
+                              style: context.textTheme.bodyMedium?.semi(
+                                context,
+                              ),
                             ),
                           ),
                   )
@@ -248,6 +253,8 @@ class _BudgetDetailPageState extends State<BudgetDetailPage>
         BulletChart(
           value: progress.spent.amount,
           target: progress.limit.amount,
+          pending: progress.pendingSpent.amount,
+          paceRatio: progress.isCurrent ? progress.periodElapsed : null,
           height: 14.0,
         ),
         const SizedBox(height: 12.0),

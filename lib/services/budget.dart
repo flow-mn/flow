@@ -111,8 +111,11 @@ class BudgetService {
     ).queryBuilder();
   }
 
-  /// Sums [transactions] into [budget]'s currency. Pending transactions
-  /// don't count towards the budget.
+  /// Sums [transactions] into [budget]'s currency, **pending included**.
+  ///
+  /// A scheduled rent payment dated inside the period is money the period is
+  /// already committed to, so it counts. [computePendingSpent] recovers the
+  /// pending slice on its own for the UI's ghost segment.
   ///
   /// [SingleCurrencyFlow.hasMissingData] is set when a foreign-currency
   /// transaction couldn't be converted due to missing [rates].
@@ -121,7 +124,16 @@ class BudgetService {
     Iterable<Transaction> transactions,
     ExchangeRates? rates,
   ) {
-    return transactions.nonPending.flow.merge(budget.currency, rates);
+    return transactions.flow.merge(budget.currency, rates);
+  }
+
+  /// The pending-only slice of [computeSpent], in [budget]'s currency.
+  SingleCurrencyFlow computePendingSpent(
+    Budget budget,
+    Iterable<Transaction> transactions,
+    ExchangeRates? rates,
+  ) {
+    return transactions.pending.flow.merge(budget.currency, rates);
   }
 
   /// A computed [BudgetProgress] for [budget] over [range], defaulting to its
@@ -158,11 +170,20 @@ class BudgetService {
     }
 
     final SingleCurrencyFlow spentFlow = computeSpent(budget, txns, rates);
+    final SingleCurrencyFlow pendingFlow = computePendingSpent(
+      budget,
+      txns,
+      rates,
+    );
 
     return BudgetProgress(
       budget: budget,
       range: period,
       spent: Money(spentFlow.totalExpense.amount.abs(), budget.currency),
+      pendingSpent: Money(
+        pendingFlow.totalExpense.amount.abs(),
+        budget.currency,
+      ),
       limit: Money(budget.amount, budget.currency),
       asOf: now,
       hasMissingData: spentFlow.hasMissingData,
@@ -283,6 +304,7 @@ class BudgetService {
             budget: budget,
             range: currentPeriod(budget, asOf: now),
             spent: Money(spend.spent, budget.currency),
+            pendingSpent: Money(spend.pendingSpent, budget.currency),
             limit: Money(budget.amount, budget.currency),
             asOf: now,
             hasMissingData: spend.hasMissingData,
@@ -455,6 +477,7 @@ class BudgetService {
           budget: budget,
           range: periods[i],
           spent: Money(spend.spent, budget.currency),
+          pendingSpent: Money(spend.pendingSpent, budget.currency),
           limit: Money(budget.amount, budget.currency),
           asOf: now,
           hasMissingData: spend.hasMissingData,
@@ -570,7 +593,11 @@ BudgetSpend _spendFor(BudgetSpec spec, ExchangeRates? rates) {
   final List<Transaction> transactions = query.find();
   query.close();
 
-  final SingleCurrencyFlow spentFlow = transactions.nonPending.flow.merge(
+  final SingleCurrencyFlow spentFlow = transactions.flow.merge(
+    spec.currency,
+    rates,
+  );
+  final SingleCurrencyFlow pendingFlow = transactions.pending.flow.merge(
     spec.currency,
     rates,
   );
@@ -578,6 +605,7 @@ BudgetSpend _spendFor(BudgetSpec spec, ExchangeRates? rates) {
   return BudgetSpend(
     correlationId: spec.correlationId,
     spent: spentFlow.totalExpense.amount.abs(),
+    pendingSpent: pendingFlow.totalExpense.amount.abs(),
     hasMissingData: spentFlow.hasMissingData,
   );
 }

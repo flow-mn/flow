@@ -130,7 +130,11 @@ struct BudgetRollupView: View {
                     .lineLimit(1)
             }
 
-            BudgetProgressBar(ratio: budget.clampedRatio, color: tint)
+            BudgetProgressBar(
+                ratio: budget.clampedRatio,
+                confirmedRatio: budget.clampedConfirmedRatio,
+                color: tint
+            )
 
             HStack(spacing: 5) {
                 // The word, not just the bar's colour — tinted rendering keeps
@@ -190,7 +194,10 @@ struct FlowBudgetRollupWidget: Widget {
         ) { entry in
             BudgetRollupView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
-                .widgetURL(URL(string: "flow-mn:///budgets"))
+                // The overview, not the plain list: this widget *is* the
+                // overview in miniature, so a tap should expand what it shows
+                // rather than drop you somewhere adjacent.
+                .widgetURL(URL(string: "flow-mn:///stats/budgets"))
         }
         .supportedFamilies([.systemMedium])
         .configurationDisplayName("Budgets")
@@ -204,7 +211,7 @@ struct FlowBudgetRollupWidget: Widget {
     BudgetRollupEntry(
         date: .now,
         payload: BudgetPayload(
-            version: 2,
+            version: 3,
             updatedAt: "2026-07-22T09:14:03.123Z",
             summary: BudgetSummary(
                 budgetCount: 3,
@@ -225,6 +232,7 @@ struct FlowBudgetRollupWidget: Widget {
                     percent: 124,
                     percentLabel: "124%",
                     ratio: 1.24,
+                    confirmedRatio: 1.24,
                     status: .over,
                     statusLabel: "Хязгаар хэтэрсэн",
                     daysLeft: 9,
@@ -243,6 +251,7 @@ struct FlowBudgetRollupWidget: Widget {
                     percent: 84,
                     percentLabel: "84%",
                     ratio: 0.84,
+                    confirmedRatio: 0.62,
                     status: .warning,
                     statusLabel: "Хязгаарт дөхсөн",
                     daysLeft: 9,

@@ -72,12 +72,13 @@ void main() {
     return account;
   }
 
-  void spend(Account account, double amount) {
+  void spend(Account account, double amount, {bool pending = false}) {
     final Transaction transaction = Transaction(
       amount: -amount.abs(),
       currency: "USD",
       uuid: const Uuid().v4(),
       transactionDate: insideThisMonth,
+      isPending: pending ? true : null,
     );
     transaction.account.target = account;
     obx.box<Transaction>().put(transaction);
@@ -109,7 +110,7 @@ void main() {
     final Map<String, dynamic> payload = await BudgetWidgetSync.buildPayload();
 
     expect(payload["version"], BudgetWidgetSync.payloadVersion);
-    expect(payload["version"], 2);
+    expect(payload["version"], 3);
   });
 
   test("no budgets yields an empty list, not a missing key", () async {
@@ -145,6 +146,7 @@ void main() {
       expect(budget["percentLabel"], isA<String>());
       expect(budget["percentLabel"], isNotEmpty);
       expect(budget["ratio"], isA<double>());
+      expect(budget["confirmedRatio"], isA<double>());
       expect(budget["status"], "healthy");
       expect(budget["daysLeft"], isA<int>());
       // May be absent when translations aren't loaded — see the labels test.
@@ -168,11 +170,35 @@ void main() {
       // Everything the amount-free rendering draws from, none of it monetary.
       expect(budget["percent"], 92);
       expect(budget["ratio"], moreOrLessEquals(0.92));
+      // The ghost tail is geometry, so it survives "Hide amounts" too.
+      expect(budget["confirmedRatio"], moreOrLessEquals(0.92));
       expect(budget["status"], "warning");
       expect(budget["periodLabel"], isNotEmpty);
       expect(budget["name"], isNotEmpty);
     },
   );
+
+  test("pending spend ships as a ghost split, not as a second total", () async {
+    makeBudget("Groceries", 100.0);
+    final Account account = makeAccount();
+    spend(account, 30.0);
+    spend(account, 20.0, pending: true);
+
+    final Map<String, dynamic> payload = await BudgetWidgetSync.buildPayload();
+
+    final Map<String, dynamic> budget =
+        (payload["budgets"] as List).single as Map<String, dynamic>;
+
+    // `ratio` is the committed total — that is what the percentage says, and
+    // what the widget's bar has to reach.
+    expect(budget["ratio"], moreOrLessEquals(0.5));
+    expect(budget["percent"], 50);
+    // `confirmedRatio` is where the solid fill stops and the ghost starts.
+    expect(budget["confirmedRatio"], moreOrLessEquals(0.3));
+    // Deliberately no money field for the pending slice: nothing renders it, and
+    // an unrendered amount is a "Hide amounts" leak waiting to happen.
+    expect(budget.containsKey("pendingSpent"), isFalse);
+  });
 
   test("ratio is left unclamped so an overrun is representable", () async {
     makeBudget("Groceries", 100.0);

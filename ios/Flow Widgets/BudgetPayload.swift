@@ -124,8 +124,11 @@ struct BudgetItem: Codable, Identifiable {
     let percent: Int
     /// Pre-formatted percentage, e.g. "84%". Optional purely for decode safety.
     let percentLabel: String?
-    /// NOT clamped — an over-budget entry exceeds 1.0.
+    /// NOT clamped — an over-budget entry exceeds 1.0. Includes pending spend.
     let ratio: Double
+    /// The part of `ratio` that has actually cleared. Bars fill solid to here
+    /// and continue as a lighter "ghost" tail out to `ratio`.
+    let confirmedRatio: Double
     /// Drives colour and bar geometry. Never rendered — use `statusText`.
     let status: BudgetStatus
     /// May be absent (contract rule 6) — use `statusText`, never this directly.
@@ -147,6 +150,7 @@ struct BudgetItem: Codable, Identifiable {
         percent: Int,
         percentLabel: String?,
         ratio: Double,
+        confirmedRatio: Double,
         status: BudgetStatus,
         statusLabel: String?,
         daysLeft: Int,
@@ -164,6 +168,7 @@ struct BudgetItem: Codable, Identifiable {
         self.percent = percent
         self.percentLabel = percentLabel
         self.ratio = ratio
+        self.confirmedRatio = confirmedRatio
         self.status = status
         self.statusLabel = statusLabel
         self.daysLeft = daysLeft
@@ -187,6 +192,9 @@ struct BudgetItem: Codable, Identifiable {
         percent = try container.decodeIfPresent(Int.self, forKey: .percent) ?? 0
         percentLabel = try container.decodeIfPresent(String.self, forKey: .percentLabel)
         ratio = try container.decodeIfPresent(Double.self, forKey: .ratio) ?? 0
+        // Falling back to `ratio` means "all of it cleared", so a payload that
+        // somehow omits this draws one solid bar rather than an all-ghost one.
+        confirmedRatio = try container.decodeIfPresent(Double.self, forKey: .confirmedRatio) ?? ratio
         status = try container.decodeIfPresent(BudgetStatus.self, forKey: .status) ?? .healthy
         statusLabel = try container.decodeIfPresent(String.self, forKey: .statusLabel)
         daysLeft = try container.decodeIfPresent(Int.self, forKey: .daysLeft) ?? 0
@@ -199,6 +207,13 @@ struct BudgetItem: Codable, Identifiable {
     var clampedRatio: Double {
         guard ratio.isFinite else { return 0 }
         return min(max(ratio, 0), 1)
+    }
+
+    /// `clampedRatio`'s confirmed counterpart, never past it — a ghost tail
+    /// that ran backwards would render as a solid bar overhanging its own total.
+    var clampedConfirmedRatio: Double {
+        guard confirmedRatio.isFinite else { return 0 }
+        return min(max(confirmedRatio, 0), clampedRatio)
     }
 
     /// Never blank. Falls back to English only when the app omitted the label
@@ -325,7 +340,7 @@ enum BudgetPayloadStore {
     static let appGroupId = "group.mn.flow.flow"
     static let payloadKey = "budgetsPayload"
     /// Bump only together with `BudgetWidgetSync.payloadVersion` on the Dart side.
-    static let supportedVersion = 2
+    static let supportedVersion = 3
 
     /// One shared read for both widgets and for the budget picker's entity query.
     ///

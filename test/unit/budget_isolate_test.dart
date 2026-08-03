@@ -178,7 +178,7 @@ void main() {
     );
   });
 
-  test("pending transactions do not count", () async {
+  test("pending transactions count, and stay separable", () async {
     final Account account = makeAccount();
     spend(account, 20.0);
 
@@ -197,10 +197,31 @@ void main() {
     final List<BudgetProgress> progresses = await BudgetService()
         .computeAllProgressAsync();
 
-    expect(
-      forName(progresses, "Everything").spent.amount,
-      moreOrLessEquals(20.0),
-    );
+    final BudgetProgress progress = forName(progresses, "Everything");
+
+    // Scheduled spending is spending the period is already committed to, so it
+    // counts against the limit...
+    expect(progress.spent.amount, moreOrLessEquals(520.0));
+    expect(progress.pendingSpent.amount, moreOrLessEquals(500.0));
+    // ...while staying recoverable, so the bar can draw it as a ghost tail
+    // rather than as money that has already gone.
+    expect(progress.confirmedSpent.amount, moreOrLessEquals(20.0));
+  });
+
+  test("a budget with nothing pending reports none", () async {
+    final Account account = makeAccount();
+    spend(account, 20.0);
+
+    makeBudget(name: "Nothing pending");
+
+    final List<BudgetProgress> progresses = await BudgetService()
+        .computeAllProgressAsync();
+
+    final BudgetProgress progress = forName(progresses, "Nothing pending");
+
+    expect(progress.spent.amount, moreOrLessEquals(20.0));
+    expect(progress.pendingSpent.amount, moreOrLessEquals(0.0));
+    expect(progress.hasPending, isFalse);
   });
 
   test(
