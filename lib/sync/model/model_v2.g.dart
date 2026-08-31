@@ -32,6 +32,9 @@ SyncModelV2 _$SyncModelV2FromJson(Map<String, dynamic> json) => SyncModelV2(
   attachments: (json['attachments'] as List<dynamic>?)
       ?.map((e) => FileAttachment.fromJson(e as Map<String, dynamic>))
       .toList(),
+  budgets: (json['budgets'] as List<dynamic>?)
+      ?.map((e) => Budget.fromJson(e as Map<String, dynamic>))
+      .toList(),
   profile: json['profile'] == null
       ? null
       : Profile.fromJson(json['profile'] as Map<String, dynamic>),
@@ -56,6 +59,7 @@ Map<String, dynamic> _$SyncModelV2ToJson(SyncModelV2 instance) =>
       'transactionFilterPresets': instance.transactionFilterPresets,
       'transactionTags': instance.transactionTags,
       'attachments': instance.attachments,
+      'budgets': instance.budgets,
       'profile': instance.profile,
       'userPreferences': instance.userPreferences,
       'primaryCurrency': instance.primaryCurrency,

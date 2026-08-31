@@ -63,12 +63,6 @@ flutter {
   source = "../.."
 }
 
-configurations {
-  debugImplementation {
-    exclude(group = "io.objectbox", module = "objectbox-android")
-  }
-}
-
 dependencies {
   implementation("androidx.window:window:1.5.0")
   implementation("androidx.window:window-java:1.5.0")
@@ -79,6 +73,5 @@ dependencies {
   implementation("androidx.compose.foundation:foundation-layout:1.9.4")
 
   coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-  debugImplementation("io.objectbox:objectbox-android-objectbrowser:5.1.0")
   debugImplementation("androidx.glance:glance-appwidget-preview:1.1.1")
 }

@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:flow/entity/account.dart";
 import "package:flow/entity/backup_entry.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
@@ -196,6 +197,19 @@ class ImportV2 extends Importer {
       await ObjectBox().box<TransactionFilterPreset>().putManyAsync(
         data.transactionFilterPresets!,
       );
+    }
+
+    // Resurrect [Budget]s
+    //
+    // Resolve ToMany<Category> [categories] by `uuid`. Categories are
+    // already in place by this point.
+    if (data.budgets?.isNotEmpty == true) {
+      progressNotifier.value = ImportV2Progress.writingBudgets;
+      final List<Budget> budgets = data.budgets!
+          .map(_resolveCategoriesForBudget)
+          .toList();
+      await ObjectBox().box<Budget>().putManyAsync(budgets);
+      _log.fine("Imported ${budgets.length} budgets");
     }
 
     if (data.profile != null) {
@@ -403,6 +417,40 @@ class ImportV2 extends Importer {
     return transaction;
   }
 
+  Budget _resolveCategoriesForBudget(Budget budget) {
+    final List<String> categoriesUuids = budget.categoriesUuids ?? [];
+
+    if (categoriesUuids.isEmpty) {
+      return budget;
+    }
+
+    final Query<Category> categoryQuery = ObjectBox()
+        .box<Category>()
+        .query(Category_.uuid.oneOf(categoriesUuids))
+        .build();
+
+    final List<Category> foundCategories = categoryQuery.find();
+
+    categoryQuery.close();
+
+    if (foundCategories.length != categoriesUuids.length) {
+      final Set<String> foundUuids = foundCategories
+          .map((category) => category.uuid)
+          .toSet();
+      final Iterable<String> missingUuids = categoriesUuids.where(
+        (uuid) => !foundUuids.contains(uuid),
+      );
+
+      _log.warning(
+        "Failed to link category to budget because: Cannot find category(s) (${missingUuids.join(", ")})",
+      );
+    }
+
+    budget.setCategories(foundCategories);
+
+    return budget;
+  }
+
   Transaction _resolveFileAttachmentsForTransaction(Transaction transaction) {
     if (transaction.attachmentsUuids?.isEmpty == true) {
       throw Exception("This transaction lacks `attachmentsUuids`");
@@ -446,6 +494,7 @@ enum ImportV2Progress with LocalizedEnum {
   writingRecurringTransactions,
   writingTransactions,
   writingTranscationFilterPresets,
+  writingBudgets,
   writingProfile,
   writingUserPreferences,
   settingPrimaryCurrency,

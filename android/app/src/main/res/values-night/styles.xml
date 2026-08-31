@@ -15,4 +15,11 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    <!-- Dark variant of the budget widget configuration screen. -->
+    <style name="BudgetWidgetConfigTheme" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Mirrors the light theme; see the comment there. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

@@ -1,10 +1,15 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flow/data/actionable_nofications/actionable_notification.dart";
+import "package:flow/data/budget_progress.dart";
+import "package:flow/data/exchange_rates.dart";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/budget.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/should_execute_scheduled_task.dart";
@@ -52,6 +57,7 @@ class ActionableNotificationsService {
   ///
   /// Adds the following notifications:
   /// - Auto backup reminder
+  /// - Budget alert
   /// - Rate app
   /// - Star on GitHub
   void checkAndAddNotifications() async {
@@ -60,6 +66,12 @@ class ActionableNotificationsService {
     }
 
     tryAddAutoBackupReminder();
+
+    if (_notifications.value.isNotEmpty) {
+      return;
+    }
+
+    await tryAddBudgetAlert();
 
     if (_notifications.value.isNotEmpty) {
       return;
@@ -159,6 +171,43 @@ class ActionableNotificationsService {
       }
     } catch (e) {
       _log.warning("Failed to evaluate AutoBackupReminder", e);
+    }
+  }
+
+  Future<void> tryAddBudgetAlert() async {
+    try {
+      final DateTime? lastShown = TransitiveLocalPreferences()
+          .lastBudgetAlertShowedAt
+          .get();
+
+      if (!shouldExecuteScheduledTask(const Duration(days: 3), lastShown)) {
+        return;
+      }
+
+      final ExchangeRates? rates = ExchangeRatesService()
+          .getPrimaryCurrencyRates();
+
+      // Runs at startup, so the scan goes to a background isolate — this must
+      // not compete with first-frame work.
+      final List<BudgetProgress> progresses = await BudgetService()
+          .computeAllProgressAsync(rates: rates);
+
+      BudgetProgress? urgent;
+      for (final BudgetProgress p in progresses) {
+        if (p.needsAttention) {
+          urgent = p;
+          break;
+        }
+      }
+
+      if (urgent == null) return;
+
+      add(BudgetAlert(payload: urgent));
+      unawaited(
+        TransitiveLocalPreferences().lastBudgetAlertShowedAt.set(Moment.now()),
+      );
+    } catch (e) {
+      _log.warning("Failed to evaluate BudgetAlert actionable notification", e);
     }
   }
 }

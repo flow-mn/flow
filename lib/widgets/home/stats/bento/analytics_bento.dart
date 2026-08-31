@@ -1,6 +1,7 @@
 import "package:flow/l10n/extensions.dart";
 import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/list_header.dart";
+import "package:flow/widgets/home/stats/bento/budget_tile.dart";
 import "package:flow/widgets/home/stats/bento/calendar_tile.dart";
 import "package:flow/widgets/home/stats/bento/cash_flow_tile.dart";
 import "package:flow/widgets/home/stats/bento/map_tile.dart";
@@ -19,8 +20,8 @@ import "package:moment_dart/moment_dart.dart";
 /// selector, so they belong directly beneath it.
 ///
 /// Below an "Insights" header sits the **timeless** section: net worth,
-/// wrapped, the spending calendar, recurring, and the spending map each show
-/// their own natural window and ignore the selected month. Grouping them apart
+/// wrapped, budgets, the spending calendar, recurring, and the spending map
+/// each show their own natural window and ignore the selected month. Grouping them apart
 /// keeps the range selector from implying control it doesn't have. The same
 /// pages are also reachable from Profile → Insights.
 class AnalyticsBento extends StatelessWidget {
@@ -60,6 +61,8 @@ class AnalyticsBento extends StatelessWidget {
             const WrappedTile(),
             const SizedBox(height: 12.0),
             const NetWorthTile(),
+            const SizedBox(height: 12.0),
+            const BudgetTile(),
             const SizedBox(height: 12.0),
             const Row(
               spacing: 12.0,

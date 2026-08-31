@@ -1,21 +1,18 @@
 PODS:
   - file_saver (0.0.1):
     - FlutterMacOS
-  - flutter_contacts (0.0.1):
-    - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - icloud_storage (0.0.1):
     - FlutterMacOS
-  - ObjectBox (5.2.0)
+  - ObjectBox (5.3.0)
   - objectbox_flutter_libs (0.0.1):
     - FlutterMacOS
-    - ObjectBox (= 5.2.0)
+    - ObjectBox (= 5.3.0)
   - screen_retriever_macos (0.0.1):
     - FlutterMacOS
 
 DEPENDENCIES:
   - file_saver (from `Flutter/ephemeral/.symlinks/plugins/file_saver/macos`)
-  - flutter_contacts (from `Flutter/ephemeral/.symlinks/plugins/flutter_contacts/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - icloud_storage (from `Flutter/ephemeral/.symlinks/plugins/icloud_storage/macos`)
   - objectbox_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/objectbox_flutter_libs/macos`)
@@ -28,8 +25,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   file_saver:
     :path: Flutter/ephemeral/.symlinks/plugins/file_saver/macos
-  flutter_contacts:
-    :path: Flutter/ephemeral/.symlinks/plugins/flutter_contacts/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   icloud_storage:
@@ -41,11 +36,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   file_saver: e35bd97de451dde55ff8c38862ed7ad0f3418d0f
-  flutter_contacts: 22579d648c4278eefa588e8392499f10540a24b2
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   icloud_storage: eb5b0f20687cf5a4fabc0b541f3b079cd6df7dcb
-  ObjectBox: 946c1e8586aaa61e21b6661bab4948d06fdd51c4
-  objectbox_flutter_libs: 52ffb4ad42870c47886c2c6a7528e76b770af6d9
+  ObjectBox: 2aae8ad350012cb53c6e7848064307cf68617f73
+  objectbox_flutter_libs: c6ec3df598aa194da1cdf929fc9640bbc8f58be1
   screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
 
 PODFILE CHECKSUM: 3d7cd7f90b4de5948ed6e76869b40159643b2f0c

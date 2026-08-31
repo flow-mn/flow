@@ -5,6 +5,7 @@ import "package:archive/archive_io.dart";
 import "package:flow/constants.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/account.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/profile.dart";
@@ -56,6 +57,9 @@ Future<String> generateBackupJSONContentV2() async {
       .getAllAsync();
   syncLogger.fine("Finished fetching file attachments");
 
+  final List<Budget> budgets = await ObjectBox().box<Budget>().getAllAsync();
+  syncLogger.fine("Finished fetching budgets");
+
   final DateTime exportDate = DateTime.now().toUtc();
 
   final Query<Profile> firstProfileQuery = ObjectBox()
@@ -101,6 +105,7 @@ Future<String> generateBackupJSONContentV2() async {
     userPreferences: userPreferences,
     recurringTransactions: recurringTransactions,
     attachments: attachments,
+    budgets: budgets,
     primaryCurrency:
         userPreferences?.primaryCurrency ??
         UserPreferencesService().primaryCurrency,
