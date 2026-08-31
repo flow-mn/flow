@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Count-bearing fallbacks for `labels` keys the payload may omit. Dart normally
+  ships these already pluralized in the user's language; these exist only so a
+  payload written before translations loaded still renders a real sentence.
+-->
+<resources>
+  <plurals name="budget_widget_over_count">
+    <item quantity="one">%1$d over limit</item>
+    <item quantity="other">%1$d over limit</item>
+  </plurals>
+
+  <plurals name="budget_widget_nearing_count">
+    <item quantity="one">%1$d nearing limit</item>
+    <item quantity="other">%1$d nearing limit</item>
+  </plurals>
+
+  <plurals name="budget_widget_tracked_count">
+    <item quantity="one">%1$d budget</item>
+    <item quantity="other">%1$d budgets</item>
+  </plurals>
+
+  <plurals name="budget_widget_days_left">
+    <item quantity="one">%1$d day left</item>
+    <item quantity="other">%1$d days left</item>
+  </plurals>
+</resources>

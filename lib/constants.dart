@@ -8,14 +8,10 @@ const bool debugBuild = false;
 
 bool get flowDebugMode => kDebugMode || debugBuild;
 
-final Uri discordInviteLink = Uri.parse("https://discord.gg/Ndh9VDeZa4");
 final Uri maintainerKoFiLink = Uri.parse("https://flow.gege.mn/donate");
 final Uri website = Uri.parse("https://flow.gege.mn");
 final Uri guideUrl = Uri.parse("https://flow.gege.mn/docs");
 final Uri flowGitHubRepoLink = Uri.parse("https://github.com/flow-mn/flow");
-final Uri flowGitHubIssuesLink = Uri.parse(
-  "https://github.com/flow-mn/flow/issues",
-);
 final Uri maintainerGitHubLink = Uri.parse("https://github.com/sadespresso");
 final Uri enyHomeLink = Uri.parse("https://eny.gege.mn");
 final Uri enyDashboardLink = Uri.parse("https://eny.gege.mn/dash");

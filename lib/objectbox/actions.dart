@@ -714,6 +714,8 @@ extension TransactionListActions on Iterable<Transaction> {
       where((transaction) => transaction.amount > 0);
   Iterable<Transaction> get nonPending =>
       where((transaction) => transaction.isPending != true);
+  Iterable<Transaction> get pending =>
+      where((transaction) => transaction.isPending == true);
   Iterable<Transaction> get nonDeleted =>
       where((transaction) => transaction.isDeleted != true);
 

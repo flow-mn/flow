@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.24.0
+
+### Features
+
+* **Budgets.** Set a spending limit for a period, over all spending or only
+  chosen categories. Budgets live under Profile → Budgets, with an overview in
+  the Stats tab.
+* Each budget gets its own page: progress for the current period, how it's
+  pacing, its recent periods, and every transaction counting towards it.
+* Budgets overview surfaces which budgets are over or nearing their limit, and
+  what to do about it.
+* Planned and pending transactions count towards a budget — money you've
+  scheduled is money the period is committed to. Progress bars draw that part
+  in a lighter shade, so you can still see what has actually cleared.
+* Home screen widgets for budgets on iOS and Android, including a variant that
+  shows progress without revealing any amounts. Tapping one opens the budget
+  it's showing.
+* Budgets are included in backups, and restore from any v2 backup.
+* An in-app alert when a budget goes over, or gets close.
+
+### Changes
+
+* Renewing budgets no longer overwrite the period that just ended, so past
+  periods stay viewable.
+
 ## 0.23.2
 
 ### Fixes

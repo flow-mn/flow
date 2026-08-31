@@ -91,20 +91,6 @@ class SupportPage extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               ActionCard(
-                title: "support.requestFeatures".t(context),
-                subtitle: "support.requestFeatures.description".t(context),
-                icon: FlowIconData.icon(Symbols.emoji_objects_rounded),
-                trailing: Button(
-                  backgroundColor: context.colorScheme.surface,
-                  trailing: const Icon(Symbols.chevron_right_rounded),
-                  child: Expanded(
-                    child: Text("support.requestFeatures.action".t(context)),
-                  ),
-                  onTap: () => openUrl(flowGitHubIssuesLink),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ActionCard(
                 title: "support.contribute".t(context),
                 subtitle: "support.contribute.description".t(context),
                 icon: FlowIconData.icon(Symbols.code_rounded),

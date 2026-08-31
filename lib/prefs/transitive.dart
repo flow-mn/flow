@@ -50,6 +50,7 @@ class TransitiveLocalPreferences {
   late final PrimitiveSettingsEntry<String> lastSavedAutoBackupPath;
   late final DateTimeSettingsEntry lastRateAppShowedAt;
   late final DateTimeSettingsEntry lastStarOnGitHubShowedAt;
+  late final DateTimeSettingsEntry lastBudgetAlertShowedAt;
 
   factory TransitiveLocalPreferences() {
     if (_instance == null) {
@@ -122,6 +123,11 @@ class TransitiveLocalPreferences {
 
     lastStarOnGitHubShowedAt = DateTimeSettingsEntry(
       key: "transitive.lastStarOnGitHubShowedAt",
+      preferences: _prefs,
+    );
+
+    lastBudgetAlertShowedAt = DateTimeSettingsEntry(
+      key: "transitive.lastBudgetAlertShowedAt",
       preferences: _prefs,
     );
 

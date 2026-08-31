@@ -67,12 +67,14 @@ class NavigationService {
       return;
     }
 
-    if (uri.pathSegments.join("/") == "transaction/new") {
+    final String path = uri.pathSegments.join("/");
+
+    if (path == "transaction/new") {
       NavigationService().add("/transaction/new?${uri.query}");
       return;
     }
 
-    if (uri.pathSegments.join("/") == "integrate/eny") {
+    if (path == "integrate/eny") {
       if (uri.queryParameters["apiKey"] case String candidate
           when candidate.startsWith("eny")) {
         NavigationService().add("/integrate/eny?${uri.query}");
@@ -81,5 +83,28 @@ class NavigationService {
       }
       return;
     }
+
+    // Budget home-screen widgets: the rollup opens the overview it mirrors,
+    // the pinned one opens the budget it is showing.
+    if (path == "budgets" || path == "stats/budgets") {
+      NavigationService().add("/$path");
+      return;
+    }
+
+    final List<String> segments = uri.pathSegments;
+    if (segments.length == 2 &&
+        segments.first == "budgets" &&
+        int.tryParse(segments[1]) != null) {
+      // An id that no longer resolves — restored backup, deleted budget — is
+      // sent to the list by the router's `_budgetExistsOrList` redirect rather
+      // than landing on a dead page.
+      NavigationService().add("/budgets/${segments[1]}");
+      return;
+    }
+
+    // Deliberately an allowlist, not a catch-all forward: a custom URL scheme
+    // is claimable by anything on the device, so an arbitrary path from one
+    // would be an open redirect into any route in the app.
+    _log.warning("No route matches app link URI: $uri");
   }
 }

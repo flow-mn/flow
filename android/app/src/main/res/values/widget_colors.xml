@@ -2,4 +2,22 @@
 <resources>
     <color name="income_green">#FF32CC70</color>
     <color name="expense_red">#FFFF4040</color>
+    <!--
+      Flow has no warning hue. The app softens the expense colour to ~69% alpha
+      for "nearing"; this is that same red pre-multiplied, so the budget widgets
+      don't introduce a fourth status colour into the product.
+    -->
+    <color name="budget_warning">#B0FF4040</color>
+    <!-- Unfilled part of a budget progress bar, sitting on surfaceVariant. -->
+    <color name="budget_bar_track">#1F000000</color>
+    <!--
+      Ghost tail: the pending, not-yet-cleared part of a budget bar. Glance has
+      no alpha modifier, so each status colour needs its own pre-multiplied
+      variant at ~35%. No values-night override — the hues are identical in both
+      themes, and only budget_bar_track has to invert.
+    -->
+    <color name="budget_ghost_income">#5932CC70</color>
+    <color name="budget_ghost_expense">#59FF4040</color>
+    <!-- 35% of budget_warning, which is itself already ~69% expense_red. -->
+    <color name="budget_ghost_warning">#3DFF4040</color>
 </resources>
