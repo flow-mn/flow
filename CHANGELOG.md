@@ -1,5 +1,13 @@
 # Changelog
 
+## next
+
+### Fixes
+
+* Fixed new transaction button not responding when accessible navigation is
+  enabled
+* Fixed transaction menu closing on small finger movements
+
 ## 0.24.0
 
 ### Features

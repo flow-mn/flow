@@ -44,7 +44,6 @@ class ThemeFactory {
       overlayColor: colorScheme.surface.withAlpha(0xe0),
       pointerColor: kTransparent,
       angleOffset: 0.0,
-      pointerSize: 2.0,
       tooltipTextStyle: flowTextTheme.displaySmall!.copyWith(
         color: colorScheme.onSurface,
       ),
