@@ -1,12 +1,13 @@
 # Changelog
 
-## next
+## 0.24.1
 
 ### Fixes
 
-* Fixed new transaction button not responding when accessible navigation is
-  enabled
-* Fixed transaction menu closing on small finger movements
+* Fixed new transaction button not working when accessibility services (e.g.
+  TalkBack) are enabled
+* Fixed new transaction menu closing on small finger movements
+* Fixed Traditional Chinese (Taiwan) translations, [#758](https://github.com/flow-mn/flow/pull/758) by [@olivertzeng](https://github.com/olivertzeng)
 
 ## 0.24.0
 
