@@ -9,6 +9,7 @@ import "package:flow/providers/accounts_provider.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/transaction.dart";
+import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
@@ -274,6 +275,18 @@ class TransactionListTile extends StatelessWidget {
                             ),
                           ),
                           overrideObscure: overrideObscure,
+                        )
+                      else
+                        ApproximateMoneyText(
+                          transaction.money,
+                          displayAbsoluteAmount:
+                              transaction.isTransfer && combineTransfers,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: context.colorScheme.onSurface.withAlpha(
+                              0x80,
+                            ),
+                          ),
+                          overrideObscure: overrideObscure,
                         ),
                     ],
                   ),
@@ -443,4 +456,3 @@ class TransactionListTile extends StatelessWidget {
     ),
   );
 }
-

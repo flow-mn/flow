@@ -41,6 +41,7 @@ import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -338,14 +339,29 @@ class _TransactionPageState extends State<TransactionPage> {
                       Center(
                         child: InkWell(
                           onTap: inputAmount,
-                          child: Center(
-                            child: Text(
-                              Money(
-                                _amount,
-                                _selectedAccount?.currency ?? primaryCurrency,
-                              ).formatMoney(),
-                              style: context.textTheme.displayMedium,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                Money(
+                                  _amount,
+                                  _selectedAccount?.currency ?? primaryCurrency,
+                                ).formatMoney(),
+                                style: context.textTheme.displayMedium,
+                              ),
+                              ApproximateMoneyText(
+                                Money(
+                                  _amount,
+                                  _selectedAccount?.currency ?? primaryCurrency,
+                                ),
+                                overrideObscure: false,
+                                textAlign: .center,
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: context.colorScheme.onSurface
+                                      .withAlpha(0x80),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
