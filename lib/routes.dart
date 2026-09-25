@@ -79,6 +79,7 @@ import "package:flow/sync/import/import_v2.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -148,14 +149,21 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => MaterialPage(
         child: TransactionPage.edit(
           transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+          initialRecurrence: Recurrence.tryParse(
+            state.uri.queryParameters["recurrence"] ?? "",
+          ),
         ),
         fullscreenDialog: true,
       ),
     ),
     GoRoute(
       path: "/transactions",
-      builder: (context, state) =>
-          TransactionsPage.all(title: "transactions.all".t(context)),
+      builder: (context, state) => TransactionsPage.all(
+        title: "transactions.all".t(context),
+        initialRange: TimeRange.tryParse(
+          state.uri.queryParameters["range"] ?? "",
+        ),
+      ),
     ),
     GoRoute(
       path: "/transactions/pending",

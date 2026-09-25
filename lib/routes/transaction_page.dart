@@ -77,11 +77,19 @@ class TransactionPage extends StatefulWidget {
 
   final TransactionProgrammableObject? params;
 
+  /// Suggested recurrence for a transaction that isn't recurring yet.
+  final Recurrence? initialRecurrence;
+
   bool get isNewTransaction => transactionId == 0;
 
-  const TransactionPage.create({super.key, this.params}) : transactionId = 0;
-  const TransactionPage.edit({super.key, required this.transactionId})
-    : params = null;
+  const TransactionPage.create({super.key, this.params})
+    : transactionId = 0,
+      initialRecurrence = null;
+  const TransactionPage.edit({
+    super.key,
+    required this.transactionId,
+    this.initialRecurrence,
+  }) : params = null;
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -240,6 +248,8 @@ class _TransactionPageState extends State<TransactionPage> {
             _currentlyEditing.extensions.recurring?.uuid,
           );
           _recurrence = _recurringTransaction?.recurrence;
+        } else {
+          _recurrence = widget.initialRecurrence;
         }
       }
     }
