@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "Crecimiento de los gastos",
   "preferences.changeVisuals.incomeIncrease": "Crecimiento de los ingresos",
   "preferences.dateFormat": "Formato de fecha",
+  "preferences.dateFormat.absoluteDateHeaders": "Mostrar fechas exactas en los encabezados",
+  "preferences.dateFormat.system": "Según el idioma",
   "preferences.feedback": "Problemas y comentarios",
   "preferences.feedback.debugLogs": "Ver registros de depuración",
   "preferences.hapticFeedback": "Respuesta táctil de botones",

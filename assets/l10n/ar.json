@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "زيادة النفقات",
   "preferences.changeVisuals.incomeIncrease": "زيادة الدخل",
   "preferences.dateFormat": "تنسيق التاريخ",
+  "preferences.dateFormat.absoluteDateHeaders": "عرض التواريخ الدقيقة في عناوين القائمة",
+  "preferences.dateFormat.system": "افتراضي اللغة",
   "preferences.feedback": "مشاكل وملاحظات",
   "preferences.feedback.debugLogs": "عرض سجلات التصحيح",
   "preferences.hapticFeedback": "ردود فعل الأزرار",

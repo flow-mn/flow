@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "支出增加",
   "preferences.changeVisuals.incomeIncrease": "收入增加",
   "preferences.dateFormat": "日期格式",
+  "preferences.dateFormat.absoluteDateHeaders": "在列表標題中顯示具體日期",
+  "preferences.dateFormat.system": "跟隨語言",
   "preferences.feedback": "問題與回饋",
   "preferences.feedback.debugLogs": "檢視偵錯日誌",
   "preferences.hapticFeedback": "按鈕回饋",

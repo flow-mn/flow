@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(30, 5353888497210708730),
+    lastPropertyId: const obx_int.IdUid(32, 5426961238010158288),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -624,6 +624,18 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(30, 5353888497210708730),
         name: 'homePendingTransactionsTimeRangeSerialized',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(31, 8739212611241568931),
+        name: 'transactionListAbsoluteDateHeaders',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(32, 5426961238010158288),
+        name: 'dateFormatPreset',
         type: 9,
         flags: 0,
       ),
@@ -1657,7 +1669,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
             : fbb.writeString(
                 object.homePendingTransactionsTimeRangeSerialized!,
               );
-        fbb.startTable(31);
+        final dateFormatPresetOffset = object.dateFormatPreset == null
+            ? null
+            : fbb.writeString(object.dateFormatPreset!);
+        fbb.startTable(33);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1686,6 +1701,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(27, object.privacyModeUponShaking);
         fbb.addBool(28, object.transactionListTileShowExternalSource);
         fbb.addOffset(29, homePendingTransactionsTimeRangeSerializedOffset);
+        fbb.addBool(30, object.transactionListAbsoluteDateHeaders);
+        fbb.addOffset(31, dateFormatPresetOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1720,6 +1737,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
             .vTableGet(buffer, rootOffset, 60, false);
         final transactionListTileRelaxedDensityParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 46, false);
+        final transactionListAbsoluteDateHeadersParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 64, false);
         final createTransactionsPerItemInScansParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 52, false);
         final scansPendingThresholdInHoursParam = const fb.Int64Reader()
@@ -1758,6 +1777,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final icuCurrencyFormattingPatternParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 30);
+        final dateFormatPresetParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 66);
         final primaryCurrencyParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 34);
@@ -1796,6 +1818,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                     transactionListTileShowExternalSourceParam,
                 transactionListTileRelaxedDensity:
                     transactionListTileRelaxedDensityParam,
+                transactionListAbsoluteDateHeaders:
+                    transactionListAbsoluteDateHeadersParam,
                 createTransactionsPerItemInScans:
                     createTransactionsPerItemInScansParam,
                 scansPendingThresholdInHours: scansPendingThresholdInHoursParam,
@@ -1809,6 +1833,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 iCloudBackupsToKeep: iCloudBackupsToKeepParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
                 icuCurrencyFormattingPattern: icuCurrencyFormattingPatternParam,
+                dateFormatPreset: dateFormatPresetParam,
                 primaryCurrency: primaryCurrencyParam,
                 primaryAccountUuid: primaryAccountUuidParam,
                 transactionButtonOrderJoined: transactionButtonOrderJoinedParam,
@@ -2694,6 +2719,15 @@ class UserPreferences_ {
   /// See [UserPreferences.homePendingTransactionsTimeRangeSerialized].
   static final homePendingTransactionsTimeRangeSerialized =
       obx.QueryStringProperty<UserPreferences>(_entities[6].properties[27]);
+
+  /// See [UserPreferences.transactionListAbsoluteDateHeaders].
+  static final transactionListAbsoluteDateHeaders =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[28]);
+
+  /// See [UserPreferences.dateFormatPreset].
+  static final dateFormatPreset = obx.QueryStringProperty<UserPreferences>(
+    _entities[6].properties[29],
+  );
 }
 
 /// [Budget] entity fields to define ObjectBox queries.

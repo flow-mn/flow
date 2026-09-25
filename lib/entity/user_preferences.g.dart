@@ -21,6 +21,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['transactionListTileShowExternalSource'] as bool? ?? true,
         transactionListTileRelaxedDensity:
             json['transactionListTileRelaxedDensity'] as bool? ?? false,
+        transactionListAbsoluteDateHeaders:
+            json['transactionListAbsoluteDateHeaders'] as bool? ?? false,
         createTransactionsPerItemInScans:
             json['createTransactionsPerItemInScans'] as bool? ?? true,
         scansPendingThresholdInHours:
@@ -40,6 +42,7 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             (json['autoBackupIntervalInHours'] as num?)?.toInt() ?? 72,
         icuCurrencyFormattingPattern:
             json['icuCurrencyFormattingPattern'] as String?,
+        dateFormatPreset: json['dateFormatPreset'] as String?,
         primaryCurrency: json['primaryCurrency'] as String?,
         primaryAccountUuid: json['primaryAccountUuid'] as String?,
         transactionButtonOrderJoined:
@@ -74,11 +77,14 @@ Map<String, dynamic> _$UserPreferencesToJson(
       instance.transactionListTileShowExternalSource,
   'transactionListTileRelaxedDensity':
       instance.transactionListTileRelaxedDensity,
+  'transactionListAbsoluteDateHeaders':
+      instance.transactionListAbsoluteDateHeaders,
   'createTransactionsPerItemInScans': instance.createTransactionsPerItemInScans,
   'scansPendingThresholdInHours': instance.scansPendingThresholdInHours,
   'privacyModeUponLaunch': instance.privacyModeUponLaunch,
   'privacyModeUponShaking': instance.privacyModeUponShaking,
   'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
+  'dateFormatPreset': instance.dateFormatPreset,
   'primaryCurrency': instance.primaryCurrency,
   'primaryAccountUuid': instance.primaryAccountUuid,
   'autoBackupIntervalInHours': instance.autoBackupIntervalInHours,

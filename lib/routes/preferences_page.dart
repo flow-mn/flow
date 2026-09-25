@@ -135,6 +135,12 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
               trailing: const LeChevron(),
             ),
+            ListTile(
+              title: Text("preferences.dateFormat".t(context)),
+              leading: const Icon(Symbols.calendar_month_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/dateFormat"),
+              trailing: const LeChevron(),
+            ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.integrations".t(context)),
             const SizedBox(height: 8.0),

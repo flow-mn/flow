@@ -1,4 +1,5 @@
 import "package:flow/data/budget_progress.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flutter/material.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -143,6 +144,9 @@ class _Bar extends StatelessWidget {
   String _label() => switch (progress.range) {
     MonthTimeRange month => month.from.format(payload: "MMM"),
     YearTimeRange year => year.year.toString(),
-    _ => progress.range.from.format(payload: "D/M"),
+    _ => progress.range.from.format(
+      payload:
+          UserPreferencesService().dateFormatPreset.dayMonthPattern ?? "D/M",
+    ),
   };
 }

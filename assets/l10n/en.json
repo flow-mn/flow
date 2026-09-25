@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "Expense growth",
   "preferences.changeVisuals.incomeIncrease": "Income growth",
   "preferences.dateFormat": "Date format",
+  "preferences.dateFormat.absoluteDateHeaders": "Show exact dates in list headers",
+  "preferences.dateFormat.system": "Language default",
   "preferences.feedback": "Problems and feedback",
   "preferences.feedback.debugLogs": "View debug logs",
   "preferences.hapticFeedback": "Button feedback",

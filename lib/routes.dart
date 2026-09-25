@@ -33,6 +33,7 @@ import "package:flow/routes/integrate/integrate_eny_page.dart";
 import "package:flow/routes/integrations/eny_page.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/change_preferences_page.dart";
+import "package:flow/routes/preferences/date_format_preferences_page.dart";
 import "package:flow/routes/preferences/integrations/eny_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
@@ -328,6 +329,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: "moneyFormatting",
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
+        ),
+        GoRoute(
+          path: "dateFormat",
+          builder: (context, state) => const DateFormatPreferencesPage(),
         ),
         GoRoute(
           path: "sync",

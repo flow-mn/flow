@@ -5,6 +5,7 @@ import "package:flow/constants.dart";
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/flow_notification_payload.dart";
 import "package:flow/data/prefs/change_visuals.dart";
+import "package:flow/data/prefs/date_format_preset.dart";
 import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction_filter_preset.dart";
@@ -200,6 +201,16 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get transactionListAbsoluteDateHeaders =>
+      value.transactionListAbsoluteDateHeaders;
+  set transactionListAbsoluteDateHeaders(
+    bool newTransactionListAbsoluteDateHeaders,
+  ) {
+    value.transactionListAbsoluteDateHeaders =
+        newTransactionListAbsoluteDateHeaders;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   bool get transactionListTileShowAccountForLeading =>
       value.transactionListTileShowAccountForLeading;
   set transactionListTileShowAccountForLeading(
@@ -306,6 +317,13 @@ class UserPreferencesService {
       value.icuCurrencyFormattingPattern;
   set icuCurrencyFormattingPattern(String? newIcuCurrencyFormattingPattern) {
     value.icuCurrencyFormattingPattern = newIcuCurrencyFormattingPattern;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
+  DateFormatPreset get dateFormatPreset =>
+      DateFormatPreset.tryParse(value.dateFormatPreset) ?? .system;
+  set dateFormatPreset(DateFormatPreset newDateFormatPreset) {
+    value.dateFormatPreset = newDateFormatPreset.value;
     ObjectBox().box<UserPreferences>().put(value);
   }
 

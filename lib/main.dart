@@ -21,6 +21,7 @@ import "dart:ui";
 
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/prefs/date_format_preset.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -187,6 +188,7 @@ class FlowState extends State<Flow> {
   late final AppLifecycleListener _appLifeCycleListener;
 
   Locale _locale = FlowLocalizations.supportedLocales.first;
+  DateFormatPreset _dateFormatPreset = .system;
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeFactory _themeFactory = ThemeFactory.fromThemeName(null);
@@ -220,6 +222,7 @@ class FlowState extends State<Flow> {
     UserPreferencesService().valueNotifier.addListener(_reloadTheme);
     UserPreferencesService().valueNotifier.addListener(_listenToShakes);
     UserPreferencesService().valueNotifier.addListener(_syncWidgets);
+    UserPreferencesService().valueNotifier.addListener(_reloadDateFormat);
 
     ExchangeRatesService().exchangeRatesCache.addListener(_syncWidgets);
 
@@ -291,6 +294,7 @@ class FlowState extends State<Flow> {
     UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     UserPreferencesService().valueNotifier.removeListener(_listenToShakes);
     UserPreferencesService().valueNotifier.removeListener(_syncWidgets);
+    UserPreferencesService().valueNotifier.removeListener(_reloadDateFormat);
 
     ExchangeRatesService().exchangeRatesCache.removeListener(_syncWidgets);
 
@@ -456,9 +460,30 @@ class FlowState extends State<Flow> {
       "Setting moment_dart localization to ${newMomentLocalization.locale}",
     );
 
-    Moment.setGlobalLocalization(newMomentLocalization);
+    _dateFormatPreset = UserPreferencesService().dateFormatPreset;
+
+    Moment.setGlobalLocalization(
+      _dateFormatPreset.apply(newMomentLocalization),
+    );
 
     Intl.defaultLocale = overriddenLocale.code;
+
+    setState(() {});
+  }
+
+  void _reloadDateFormat() {
+    final DateFormatPreset dateFormatPreset =
+        UserPreferencesService().dateFormatPreset;
+
+    if (_dateFormatPreset == dateFormatPreset) return;
+
+    _dateFormatPreset = dateFormatPreset;
+
+    mainLogger.fine("Setting date format preset to ${dateFormatPreset.value}");
+
+    Moment.setGlobalLocalization(
+      dateFormatPreset.apply(Moment.defaultLocalization),
+    );
 
     setState(() {});
   }

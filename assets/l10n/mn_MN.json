@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "Зарлага өсөх",
   "preferences.changeVisuals.incomeIncrease": "Орлого өсөх",
   "preferences.dateFormat": "Огнооны хэв",
+  "preferences.dateFormat.absoluteDateHeaders": "Гарчигт яг огноог харуулах",
+  "preferences.dateFormat.system": "Хэлний үндсэн",
   "preferences.feedback": "Асуудал ",
   "preferences.feedback.debugLogs": "Дибаг лог харах",
   "preferences.hapticFeedback": "Товчны хариу",

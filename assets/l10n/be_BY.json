@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "Рост выбаткаў",
   "preferences.changeVisuals.incomeIncrease": "Рост даходаў",
   "preferences.dateFormat": "Фармат даты",
+  "preferences.dateFormat.absoluteDateHeaders": "Паказваць дакладныя даты ў загалоўках",
+  "preferences.dateFormat.system": "Паводле мовы",
   "preferences.feedback": "Праблемы і зваротная сувязь",
   "preferences.feedback.debugLogs": "Прагляд журналаў адладкі",
   "preferences.hapticFeedback": "Водгук кнопак",

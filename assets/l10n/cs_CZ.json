@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "Nárůst výdajů",
   "preferences.changeVisuals.incomeIncrease": "Nárůst příjmů",
   "preferences.dateFormat": "Formát data",
+  "preferences.dateFormat.absoluteDateHeaders": "Zobrazit přesná data v záhlavích",
+  "preferences.dateFormat.system": "Podle jazyka",
   "preferences.feedback": "Problémy a zpětná vazba",
   "preferences.feedback.debugLogs": "Zobrazit protokoly ladění",
   "preferences.hapticFeedback": "Haptická odezva",

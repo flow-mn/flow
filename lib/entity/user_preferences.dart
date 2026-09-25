@@ -1,5 +1,6 @@
 import "package:flow/data/flow_button_type.dart";
 import "package:flow/data/prefs/change_visuals.dart";
+import "package:flow/data/prefs/date_format_preset.dart";
 import "package:flow/data/transactions_filter/pending_time_range.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/user_preferences/transaction_entry_flow.dart";
@@ -76,6 +77,8 @@ class UserPreferences implements EntityBase {
   bool transactionListTileShowExternalSource;
   bool transactionListTileRelaxedDensity;
 
+  bool transactionListAbsoluteDateHeaders;
+
   bool createTransactionsPerItemInScans;
   int? scansPendingThresholdInHours;
 
@@ -83,6 +86,9 @@ class UserPreferences implements EntityBase {
   bool privacyModeUponShaking;
 
   String? icuCurrencyFormattingPattern;
+
+  /// Serialized version of [DateFormatPreset]
+  String? dateFormatPreset;
 
   String? primaryCurrency;
 
@@ -174,6 +180,7 @@ class UserPreferences implements EntityBase {
     this.transactionListTileShowAccountForLeading = false,
     this.transactionListTileShowExternalSource = true,
     this.transactionListTileRelaxedDensity = false,
+    this.transactionListAbsoluteDateHeaders = false,
     this.createTransactionsPerItemInScans = true,
     this.scansPendingThresholdInHours = 6,
     this.privacyModeUponLaunch = false,
@@ -185,6 +192,7 @@ class UserPreferences implements EntityBase {
     this.iCloudBackupsToKeep = 10,
     this.autoBackupIntervalInHours = 72,
     this.icuCurrencyFormattingPattern,
+    this.dateFormatPreset,
     this.primaryCurrency,
     this.primaryAccountUuid,
     this.transactionButtonOrderJoined,

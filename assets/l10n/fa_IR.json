@@ -364,6 +364,8 @@
   "preferences.changeVisuals.expenseIncrease": "افزایش هزینه",
   "preferences.changeVisuals.incomeIncrease": "افزایش درآمد",
   "preferences.dateFormat": "فرمت تاریخ",
+  "preferences.dateFormat.absoluteDateHeaders": "نمایش تاریخ دقیق در سرتیترها",
+  "preferences.dateFormat.system": "پیش‌فرض زبان",
   "preferences.feedback": "مشکلات و بازخورد",
   "preferences.feedback.debugLogs": "مشاهده لاگ‌های دیباگ",
   "preferences.hapticFeedback": "بازخورد دکمه",
