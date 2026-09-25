@@ -255,7 +255,7 @@ class PreferencesPageState extends State<PreferencesPage> {
             ),
             ListTile(
               title: Text("fileAttachment.cleanupHangingFiles".t(context)),
-              leading: const Icon(Symbols.bug_report_rounded),
+              leading: const Icon(Symbols.folder_delete_rounded),
               onTap: () => _deleteHangingFiles(),
               trailing: const LeChevron(),
             ),
