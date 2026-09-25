@@ -117,6 +117,31 @@ void main() {
       expect(monthStartOf(result.slot), DateTime(2026, 2));
       expect(result.offset, 2);
     });
+
+    test("matches the nearest calendar charge day, every day and anchor", () {
+      for (
+        DateTime date = DateTime(2023, 12, 1, 12);
+        date.isBefore(DateTime(2025, 3, 1));
+        date = DateTime(date.year, date.month, date.day + 1, 12)
+      ) {
+        for (int anchorDay = 1; anchorDay <= 31; anchorDay++) {
+          final int index = monthIndexOf(date);
+          final List<int> offsets = [
+            for (int slot = index - 1; slot <= index + 1; slot++)
+              dayDifference(chargeDayOf(slot, anchorDay), date),
+          ];
+          int best = 0;
+          for (int i = 1; i < offsets.length; i++) {
+            if (offsets[i].abs() < offsets[best].abs()) best = i;
+          }
+
+          expect(nearestSlot(date, anchorDay), (
+            slot: index - 1 + best,
+            offset: offsets[best],
+          ), reason: "$date, anchor $anchorDay");
+        }
+      }
+    });
   });
 
   group("normalizeTitle", () {
