@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Zahlen nicht abkürzen, wenn es möglich ist.",
   "preferences.moneyFormatting.setICUPattern": "Eigenes Format auswählen",
   "preferences.moneyFormatting.setICUPattern.default": "Standard",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Ungefähren Betrag anzeigen",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Fremdwährungsbeträge auch in der Hauptwährung anzeigen",
   "preferences.moneyFormatting.useCurrencySymbol": "Währungssymbol verwenden",
   "preferences.moneyFormatting.useCurrencySymbol.description": "z.B. „5€“ statt „5 EUR“",
   "preferences.numpad": "Ziffernblock",

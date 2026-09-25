@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Не скарачаць лічбы, калі гэта магчыма",
   "preferences.moneyFormatting.setICUPattern": "Выбраць карыстальніцкі фармат",
   "preferences.moneyFormatting.setICUPattern.default": "Па змаўчанні",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Паказваць прыблізную суму",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Таксама паказваць замежныя сумы ў асноўнай валюце",
   "preferences.moneyFormatting.useCurrencySymbol": "Выкарыстоўваць сімвал валюты",
   "preferences.moneyFormatting.useCurrencySymbol.description": "напр., \"$5\" замест \"5USD\"",
   "preferences.numpad": "Лічбавая панэль",

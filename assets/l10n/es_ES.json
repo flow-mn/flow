@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "No abreviar números cuando sea posible",
   "preferences.moneyFormatting.setICUPattern": "Seleccionar un formato personalizado",
   "preferences.moneyFormatting.setICUPattern.default": "Predeterminado",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Mostrar importe aproximado",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Mostrar también importes extranjeros en tu moneda principal",
   "preferences.moneyFormatting.useCurrencySymbol": "Usar símbolo de moneda",
   "preferences.moneyFormatting.useCurrencySymbol.description": "ej., \"5$\" en lugar de \"5USD\"",
   "preferences.numpad": "Teclado numérico",

@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Nezkracovat velká čísla (např. 1 000 000 místo 1M).",
   "preferences.moneyFormatting.setICUPattern": "Nastavit vlastní formát",
   "preferences.moneyFormatting.setICUPattern.default": "Výchozí",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Zobrazit přibližnou částku",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Zobrazovat cizí částky i v primární měně",
   "preferences.moneyFormatting.useCurrencySymbol": "Používat symbol měny",
   "preferences.moneyFormatting.useCurrencySymbol.description": "např. \"5 $\" místo \"5USD\"",
   "preferences.numpad": "Číselná klávesnice",

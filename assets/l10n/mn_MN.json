@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Тоог хураахгүй бүтнээр нь харуулах",
   "preferences.moneyFormatting.setICUPattern": "Өөр хэлбэр сонгох",
   "preferences.moneyFormatting.setICUPattern.default": "Өгөгдмөл",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Ойролцоо дүнг харуулах",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Гадаад валютын дүнг үндсэн валютаар давхар харуулах",
   "preferences.moneyFormatting.useCurrencySymbol": "Тэмдэгт ашиглах",
   "preferences.moneyFormatting.useCurrencySymbol.description": "Жишээлбэл, \"MNT 3,200\" гэхийн оронд \"3,200₮\"",
   "preferences.numpad": "Тоон товчлуур",
