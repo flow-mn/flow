@@ -21,6 +21,8 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             json['transactionListTileShowExternalSource'] as bool? ?? true,
         transactionListTileRelaxedDensity:
             json['transactionListTileRelaxedDensity'] as bool? ?? false,
+        transactionListAbsoluteDateHeaders:
+            json['transactionListAbsoluteDateHeaders'] as bool? ?? false,
         createTransactionsPerItemInScans:
             json['createTransactionsPerItemInScans'] as bool? ?? true,
         scansPendingThresholdInHours:
@@ -74,6 +76,8 @@ Map<String, dynamic> _$UserPreferencesToJson(
       instance.transactionListTileShowExternalSource,
   'transactionListTileRelaxedDensity':
       instance.transactionListTileRelaxedDensity,
+  'transactionListAbsoluteDateHeaders':
+      instance.transactionListAbsoluteDateHeaders,
   'createTransactionsPerItemInScans': instance.createTransactionsPerItemInScans,
   'scansPendingThresholdInHours': instance.scansPendingThresholdInHours,
   'privacyModeUponLaunch': instance.privacyModeUponLaunch,

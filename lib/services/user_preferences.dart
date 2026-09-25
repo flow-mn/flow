@@ -200,6 +200,16 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get transactionListAbsoluteDateHeaders =>
+      value.transactionListAbsoluteDateHeaders;
+  set transactionListAbsoluteDateHeaders(
+    bool newTransactionListAbsoluteDateHeaders,
+  ) {
+    value.transactionListAbsoluteDateHeaders =
+        newTransactionListAbsoluteDateHeaders;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   bool get transactionListTileShowAccountForLeading =>
       value.transactionListTileShowAccountForLeading;
   set transactionListTileShowAccountForLeading(

@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Du kannst diesen Bereich in den Einstellungen ausblenden.",
   "preferences.transactions.geo.enable": "Aktivieren",
   "preferences.transactions.listTile": "Aussehen der Listeneinträge",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Genaue Daten in Listenüberschriften anzeigen",
   "preferences.transactions.listTile.fallbackToCategoryName": "Kategorie anzeigen bei Buchungen ohne Titel",
   "preferences.transactions.listTile.leading": "Symbol am Anfang",
   "preferences.transactions.listTile.leading.account": "Konto",

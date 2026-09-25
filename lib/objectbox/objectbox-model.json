@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "30:5353888497210708730",
+      "lastPropertyId": "31:8739212611241568931",
       "name": "UserPreferences",
       "properties": [
         {
@@ -507,6 +507,11 @@
           "id": "30:5353888497210708730",
           "name": "homePendingTransactionsTimeRangeSerialized",
           "type": 9
+        },
+        {
+          "id": "31:8739212611241568931",
+          "name": "transactionListAbsoluteDateHeaders",
+          "type": 1
         }
       ],
       "relations": []

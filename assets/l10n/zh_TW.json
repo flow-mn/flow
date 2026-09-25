@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "您可以在設定中隱藏此區塊",
   "preferences.transactions.geo.enable": "啟用",
   "preferences.transactions.listTile": "清單項目外觀",
+  "preferences.transactions.listTile.absoluteDateHeaders": "在列表標題中顯示具體日期",
   "preferences.transactions.listTile.fallbackToCategoryName": "未命名交易顯示分類名稱",
   "preferences.transactions.listTile.leading": "開頭圖示",
   "preferences.transactions.listTile.leading.account": "帳戶",

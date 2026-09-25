@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Ви можете приховати цей розділ у налаштуваннях",
   "preferences.transactions.geo.enable": "Увімкнути",
   "preferences.transactions.listTile": "Зовнішній вигляд елемента списку",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Показувати точні дати в заголовках",
   "preferences.transactions.listTile.fallbackToCategoryName": "Показувати категорію для транзакцій без назви",
   "preferences.transactions.listTile.leading": "Провідний значок",
   "preferences.transactions.listTile.leading.account": "Рахунок",

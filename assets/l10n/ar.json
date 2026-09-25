@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "يمكنك إخفاء هذا القسم من الإعدادات",
   "preferences.transactions.geo.enable": "تفعيل",
   "preferences.transactions.listTile": "مظهر عناصر القائمة",
+  "preferences.transactions.listTile.absoluteDateHeaders": "عرض التواريخ الدقيقة في عناوين القائمة",
   "preferences.transactions.listTile.fallbackToCategoryName": "عرض الفئة للمعاملات بدون عنوان",
   "preferences.transactions.listTile.leading": "الأيقونة الرئيسية",
   "preferences.transactions.listTile.leading.account": "الحساب",

@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(30, 5353888497210708730),
+    lastPropertyId: const obx_int.IdUid(31, 8739212611241568931),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -625,6 +625,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(30, 5353888497210708730),
         name: 'homePendingTransactionsTimeRangeSerialized',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(31, 8739212611241568931),
+        name: 'transactionListAbsoluteDateHeaders',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1657,7 +1663,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
             : fbb.writeString(
                 object.homePendingTransactionsTimeRangeSerialized!,
               );
-        fbb.startTable(31);
+        fbb.startTable(32);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1686,6 +1692,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(27, object.privacyModeUponShaking);
         fbb.addBool(28, object.transactionListTileShowExternalSource);
         fbb.addOffset(29, homePendingTransactionsTimeRangeSerializedOffset);
+        fbb.addBool(30, object.transactionListAbsoluteDateHeaders);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1720,6 +1727,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
             .vTableGet(buffer, rootOffset, 60, false);
         final transactionListTileRelaxedDensityParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 46, false);
+        final transactionListAbsoluteDateHeadersParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 64, false);
         final createTransactionsPerItemInScansParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 52, false);
         final scansPendingThresholdInHoursParam = const fb.Int64Reader()
@@ -1796,6 +1805,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                     transactionListTileShowExternalSourceParam,
                 transactionListTileRelaxedDensity:
                     transactionListTileRelaxedDensityParam,
+                transactionListAbsoluteDateHeaders:
+                    transactionListAbsoluteDateHeadersParam,
                 createTransactionsPerItemInScans:
                     createTransactionsPerItemInScansParam,
                 scansPendingThresholdInHours: scansPendingThresholdInHoursParam,
@@ -2694,6 +2705,10 @@ class UserPreferences_ {
   /// See [UserPreferences.homePendingTransactionsTimeRangeSerialized].
   static final homePendingTransactionsTimeRangeSerialized =
       obx.QueryStringProperty<UserPreferences>(_entities[6].properties[27]);
+
+  /// See [UserPreferences.transactionListAbsoluteDateHeaders].
+  static final transactionListAbsoluteDateHeaders =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[28]);
 }
 
 /// [Budget] entity fields to define ObjectBox queries.

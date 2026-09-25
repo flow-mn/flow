@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Tuto sekci můžete skrýt v nastavení.",
   "preferences.transactions.geo.enable": "Povolit",
   "preferences.transactions.listTile": "Vzhled položky v seznamu",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Zobrazit přesná data v záhlavích",
   "preferences.transactions.listTile.fallbackToCategoryName": "Zobrazit název kategorie u transakcí bez názvu",
   "preferences.transactions.listTile.leading": "Hlavní ikona",
   "preferences.transactions.listTile.leading.account": "Účet",

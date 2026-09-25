@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Bu bölümü ayarlardan gizleyebilirsiniz",
   "preferences.transactions.geo.enable": "Etkinleştirmek",
   "preferences.transactions.listTile": "Liste öğesi görünümü",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Başlıklarda tam tarihleri göster",
   "preferences.transactions.listTile.fallbackToCategoryName": "Başlıksız işlemler için kategoriyi göster",
   "preferences.transactions.listTile.leading": "Önde gelen simge",
   "preferences.transactions.listTile.leading.account": "Hesap",

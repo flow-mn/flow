@@ -76,6 +76,8 @@ class UserPreferences implements EntityBase {
   bool transactionListTileShowExternalSource;
   bool transactionListTileRelaxedDensity;
 
+  bool transactionListAbsoluteDateHeaders;
+
   bool createTransactionsPerItemInScans;
   int? scansPendingThresholdInHours;
 
@@ -174,6 +176,7 @@ class UserPreferences implements EntityBase {
     this.transactionListTileShowAccountForLeading = false,
     this.transactionListTileShowExternalSource = true,
     this.transactionListTileRelaxedDensity = false,
+    this.transactionListAbsoluteDateHeaders = false,
     this.createTransactionsPerItemInScans = true,
     this.scansPendingThresholdInHours = 6,
     this.privacyModeUponLaunch = false,

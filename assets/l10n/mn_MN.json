@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Энэ хэсгийг тохиргооноос нуух боломжтой",
   "preferences.transactions.geo.enable": "Идэвхжүүлэх",
   "preferences.transactions.listTile": "Жагсаалтад харагдах байдал",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Гарчигт яг огноог харуулах",
   "preferences.transactions.listTile.fallbackToCategoryName": "Гарчиггүй бол ангиллыг харуулах",
   "preferences.transactions.listTile.leading": "Толгой дүрс",
   "preferences.transactions.listTile.leading.account": "Данс",

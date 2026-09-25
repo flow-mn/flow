@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "می‌توانید این بخش را در تنظیمات مخفی کنید",
   "preferences.transactions.geo.enable": "فعال کردن",
   "preferences.transactions.listTile": "نمایش آیتم‌های لیست",
+  "preferences.transactions.listTile.absoluteDateHeaders": "نمایش تاریخ دقیق در سرتیترها",
   "preferences.transactions.listTile.fallbackToCategoryName": "برای تراکنش‌های بدون عنوان، دسته‌بندی را نشان بده",
   "preferences.transactions.listTile.leading": "آیکن ابتدای آیتم",
   "preferences.transactions.listTile.leading.account": "حساب",

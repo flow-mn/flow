@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Вы можете скрыть этот раздел в настройках",
   "preferences.transactions.geo.enable": "Включить",
   "preferences.transactions.listTile": "Внешний вид элемента списка",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Показывать точные даты в заголовках",
   "preferences.transactions.listTile.fallbackToCategoryName": "Показывать категорию для транзакций без названия",
   "preferences.transactions.listTile.leading": "Ведущий значок",
   "preferences.transactions.listTile.leading.account": "Счет",

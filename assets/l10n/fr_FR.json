@@ -445,6 +445,7 @@
   "preferences.transactions.geo.disableInstructions": "Vous pouvez masquer cette section dans les paramètres",
   "preferences.transactions.geo.enable": "Activer",
   "preferences.transactions.listTile": "Apparence des éléments de la liste",
+  "preferences.transactions.listTile.absoluteDateHeaders": "Afficher les dates exactes dans les en-têtes",
   "preferences.transactions.listTile.fallbackToCategoryName": "Afficher la catégorie pour les transactions sans titre",
   "preferences.transactions.listTile.leading": "Icône principale",
   "preferences.transactions.listTile.leading.account": "Compte",
