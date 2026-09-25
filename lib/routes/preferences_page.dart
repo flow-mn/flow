@@ -84,19 +84,8 @@ class PreferencesPageState extends State<PreferencesPage> {
       body: SafeArea(
         child: ListView(
           children: [
-            ListTile(
-              title: Text("preferences.sync".t(context)),
-              leading: const Icon(Symbols.sync_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/sync"),
-              trailing: const LeChevron(),
-            ),
-            if (flowDebugMode || NotificationsService.schedulingSupported)
-              ListTile(
-                title: Text("preferences.reminders".t(context)),
-                leading: const Icon(Symbols.notifications_rounded),
-                onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
-                trailing: const LeChevron(),
-              ),
+            ListHeader("preferences.general".t(context)),
+            const SizedBox(height: 8.0),
             ListTile(
               title: Text("preferences.language".t(context)),
               leading: const Icon(Symbols.language_rounded),
@@ -113,23 +102,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const LeChevron(),
             ),
             ListTile(
-              title: Text("preferences.transfer".t(context)),
-              leading: const Icon(Symbols.sync_alt_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/transfer"),
-              subtitle: Text(
-                "preferences.transfer.description".t(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: const LeChevron(),
-            ),
-            ListTile(
-              title: Text("preferences.trashBin".t(context)),
-              leading: const Icon(Symbols.delete_rounded),
-              onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
-              trailing: const LeChevron(),
-            ),
-            ListTile(
               title: Text("preferences.moneyFormatting".t(context)),
               leading: const Icon(Symbols.numbers_rounded),
               onTap: () => _pushAndRefreshAfter("/preferences/moneyFormatting"),
@@ -141,23 +113,35 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter("/preferences/dateFormat"),
               trailing: const LeChevron(),
             ),
-            const SizedBox(height: 24.0),
-            ListHeader("preferences.integrations".t(context)),
-            const SizedBox(height: 8.0),
-            ListTile(
-              title: Text("Eny"),
-              leading: const SizedBox(
-                width: 24.0,
-                height: 24.0,
-                child: AnimatedEnyLogo(),
+            if (flowDebugMode || NotificationsService.schedulingSupported)
+              ListTile(
+                title: Text("preferences.reminders".t(context)),
+                leading: const Icon(Symbols.notifications_rounded),
+                onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
+                trailing: const LeChevron(),
               ),
-              onTap: () =>
-                  _pushAndRefreshAfter("/preferences/integrations/eny"),
-              trailing: const LeChevron(),
-            ),
+            const Haptics(),
             const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
             const SizedBox(height: 8.0),
+            ListTile(
+              leading: const Icon(Symbols.automation_rounded),
+              title: Text("preferences.transactionEntryFlow".t(context)),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
+              trailing: const LeChevron(),
+            ),
+            ListTile(
+              title: Text("preferences.transfer".t(context)),
+              leading: const Icon(Symbols.sync_alt_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/transfer"),
+              subtitle: Text(
+                "preferences.transfer.description".t(context),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const LeChevron(),
+            ),
             ListTile(
               title: Text("preferences.transactions.pending".t(context)),
               subtitle: Text(
@@ -193,13 +177,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               onTap: () => _pushAndRefreshAfter(
                 "/preferences/transactionListItemAppearance",
               ),
-              trailing: const LeChevron(),
-            ),
-            ListTile(
-              leading: const Icon(Symbols.automation_rounded),
-              title: Text("preferences.transactionEntryFlow".t(context)),
-              onTap: () =>
-                  _pushAndRefreshAfter("/preferences/transactionEntryFlow"),
               trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
@@ -246,23 +223,45 @@ class PreferencesPageState extends State<PreferencesPage> {
               trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
-            ListHeader("preferences.privacy".t(context)),
+            ListHeader("preferences.privacyAndSecurity".t(context)),
             const SizedBox(height: 8.0),
             const Privacy(),
             if (_showLockApp) ...[const SizedBox(height: 8.0), const LockApp()],
             const SizedBox(height: 24.0),
-            ListHeader("preferences.hapticFeedback".t(context)),
+            ListHeader("preferences.data".t(context)),
             const SizedBox(height: 8.0),
-            const Haptics(),
-            const SizedBox(height: 24.0),
-            ListHeader("preferences.feedback".t(context)),
-            const SizedBox(height: 8.0),
+            ListTile(
+              title: Text("preferences.sync".t(context)),
+              leading: const Icon(Symbols.sync_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/sync"),
+              trailing: const LeChevron(),
+            ),
+            ListTile(
+              title: Text("Eny"),
+              leading: const SizedBox(
+                width: 24.0,
+                height: 24.0,
+                child: AnimatedEnyLogo(),
+              ),
+              onTap: () =>
+                  _pushAndRefreshAfter("/preferences/integrations/eny"),
+              trailing: const LeChevron(),
+            ),
+            ListTile(
+              title: Text("preferences.trashBin".t(context)),
+              leading: const Icon(Symbols.delete_rounded),
+              onTap: () => _pushAndRefreshAfter("/preferences/trashBin"),
+              trailing: const LeChevron(),
+            ),
             ListTile(
               title: Text("fileAttachment.cleanupHangingFiles".t(context)),
               leading: const Icon(Symbols.bug_report_rounded),
               onTap: () => _deleteHangingFiles(),
               trailing: const LeChevron(),
             ),
+            const SizedBox(height: 24.0),
+            ListHeader("preferences.feedback".t(context)),
+            const SizedBox(height: 8.0),
             ListTile(
               title: Text("preferences.feedback.debugLogs".t(context)),
               leading: const Icon(Symbols.bug_report_rounded),
