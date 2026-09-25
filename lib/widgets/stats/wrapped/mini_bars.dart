@@ -7,7 +7,18 @@ class MiniBars extends StatelessWidget {
   final List<double> values;
   final Color highlightColor;
 
-  const MiniBars({super.key, required this.values, required this.highlightColor});
+  final double height;
+
+  /// Gap between two bars.
+  final double spacing;
+
+  const MiniBars({
+    super.key,
+    required this.values,
+    required this.highlightColor,
+    this.height = 44.0,
+    this.spacing = 8.0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +28,7 @@ class MiniBars extends StatelessWidget {
     final Color base = context.colorScheme.onSurface.withAlpha(0x33);
 
     return SizedBox(
-      height: 44.0,
+      height: height,
       child: Row(
         crossAxisAlignment: .end,
         children: values.asMap().entries.map((entry) {
@@ -26,7 +37,7 @@ class MiniBars extends StatelessWidget {
 
           return Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: EdgeInsets.symmetric(horizontal: spacing / 2),
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: FractionallySizedBox(
