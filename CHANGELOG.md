@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.25.0
+
+### Features
+
+* Transactions in a foreign currency now show an approximate amount in your
+  primary currency (e.g., "≈ R$25"). Can be turned off in Money formatting,
+  closes [#760](https://github.com/flow-mn/flow/issues/760)
+* Added date format preference, and an option to show exact dates in list
+  headers, [#761](https://github.com/flow-mn/flow/issues/761)
+* Categories/accounts stats now open as a ranked list with share bars,
+  [#761](https://github.com/flow-mn/flow/issues/761)
+
+### Changes
+
+* Reorganized preferences
+* Pie chart now uses category colors, shows the total, and opens the category
+  when you tap a selected slice again
+
+### Fixes
+
+* Fixed exchange rates being fetched for the wrong currency at startup, and
+  not refreshing after changing the primary currency
+
 ## 0.24.1
 
 ### Fixes
