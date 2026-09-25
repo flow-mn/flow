@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Не скорочувати числа, коли це можливо",
   "preferences.moneyFormatting.setICUPattern": "Виберіть користувацький формат",
   "preferences.moneyFormatting.setICUPattern.default": "За замовчуванням",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Показувати приблизну суму",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Також показувати іноземні суми в основній валюті",
   "preferences.moneyFormatting.useCurrencySymbol": "Використовувати символ валюти",
   "preferences.moneyFormatting.useCurrencySymbol.description": "наприклад, \"$5\" замість \"5USD\"",
   "preferences.numpad": "Цифрова клавіатура",

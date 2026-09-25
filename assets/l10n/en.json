@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Don't abbreviate numbers when possible",
   "preferences.moneyFormatting.setICUPattern": "Select a custom format",
   "preferences.moneyFormatting.setICUPattern.default": "Default",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Show approximate amount",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Also show foreign amounts in your primary currency",
   "preferences.moneyFormatting.useCurrencySymbol": "Use currency symbol",
   "preferences.moneyFormatting.useCurrencySymbol.description": "e.g., \"$5\" instead of \"5USD\"",
   "preferences.numpad": "Numpad",

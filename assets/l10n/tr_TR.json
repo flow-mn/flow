@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Mümkün olduğunca sayıları kısaltmayın",
   "preferences.moneyFormatting.setICUPattern": "Özel bir biçim seçin",
   "preferences.moneyFormatting.setICUPattern.default": "Varsayılan",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Yaklaşık tutarı göster",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Yabancı tutarları ana para biriminde de göster",
   "preferences.moneyFormatting.useCurrencySymbol": "Para birimi simgesini kullan",
   "preferences.moneyFormatting.useCurrencySymbol.description": "örneğin, \"5$\" yerine \"5 ABD Doları\"",
   "preferences.numpad": "Sayısal tuş takımı",

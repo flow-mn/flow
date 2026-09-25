@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Non abbreviare i numeri quando possibile",
   "preferences.moneyFormatting.setICUPattern": "Seleziona un formato personalizzato",
   "preferences.moneyFormatting.setICUPattern.default": "Predefinito",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Mostra importo approssimativo",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Mostra anche gli importi esteri nella valuta principale",
   "preferences.moneyFormatting.useCurrencySymbol": "Usa simbolo valuta",
   "preferences.moneyFormatting.useCurrencySymbol.description": "Ad esempio, \"€5\" invece di \"5 EUR\"",
   "preferences.numpad": "Tastierino numerico",

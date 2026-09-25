@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Nie skracaj liczb, jeśli to możliwe",
   "preferences.moneyFormatting.setICUPattern": "Wybierz niestandardowy format",
   "preferences.moneyFormatting.setICUPattern.default": "Domyślny",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Pokaż przybliżoną kwotę",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Pokazuj też kwoty obce w walucie głównej",
   "preferences.moneyFormatting.useCurrencySymbol": "Użyj symbolu waluty",
   "preferences.moneyFormatting.useCurrencySymbol.description": "np. \"$5\" zamiast \"5USD\"",
   "preferences.numpad": "Klawiatura numeryczna",

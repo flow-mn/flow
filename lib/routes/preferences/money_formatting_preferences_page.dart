@@ -23,6 +23,9 @@ class _MoneyFormattingPreferencesPageState
   Widget build(BuildContext context) {
     final bool preferFullAmounts = LocalPreferences().preferFullAmounts.get();
     final bool useCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
+    final bool showApproximatePrimaryAmount = LocalPreferences()
+        .showApproximatePrimaryAmount
+        .get();
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.moneyFormatting".t(context))),
@@ -65,6 +68,19 @@ class _MoneyFormattingPreferencesPageState
                 value: useCurrencySymbol,
                 onChanged: updateUseCurrencySymbol,
               ),
+              CheckboxListTile(
+                title: Text(
+                  "preferences.moneyFormatting.showApproximatePrimaryAmount".t(
+                    context,
+                  ),
+                ),
+                subtitle: Text(
+                  "preferences.moneyFormatting.showApproximatePrimaryAmount.description"
+                      .t(context),
+                ),
+                value: showApproximatePrimaryAmount,
+                onChanged: updateShowApproximatePrimaryAmount,
+              ),
               ListTile(
                 title: Text(
                   "preferences.moneyFormatting.setICUPattern".t(context),
@@ -91,6 +107,18 @@ class _MoneyFormattingPreferencesPageState
     if (newUseCurrencySymbol == null) return;
 
     await LocalPreferences().useCurrencySymbol.set(newUseCurrencySymbol);
+
+    if (mounted) setState(() {});
+  }
+
+  void updateShowApproximatePrimaryAmount(
+    bool? newShowApproximatePrimaryAmount,
+  ) async {
+    if (newShowApproximatePrimaryAmount == null) return;
+
+    await LocalPreferences().showApproximatePrimaryAmount.set(
+      newShowApproximatePrimaryAmount,
+    );
 
     if (mounted) setState(() {});
   }

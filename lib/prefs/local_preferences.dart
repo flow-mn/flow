@@ -55,6 +55,10 @@ class LocalPreferences {
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
+  /// Whether to show foreign currency amounts converted to the primary
+  /// currency, e.g., "≈ R$25"
+  late final BoolSettingsEntry showApproximatePrimaryAmount;
+
   /// Whether the user has opened the Insights index at least once.
   ///
   /// Drives the one-time "New" badge on the Insights entry in the Profile tab:
@@ -143,6 +147,11 @@ class LocalPreferences {
     );
     useCurrencySymbol = BoolSettingsEntry(
       key: "useCurrencySymbol",
+      preferences: _prefs,
+      initialValue: true,
+    );
+    showApproximatePrimaryAmount = BoolSettingsEntry(
+      key: "showApproximatePrimaryAmount",
       preferences: _prefs,
       initialValue: true,
     );

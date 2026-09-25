@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "Не сокращать числа, когда это возможно",
   "preferences.moneyFormatting.setICUPattern": "Выберите пользовательский формат",
   "preferences.moneyFormatting.setICUPattern.default": "По умолчанию",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "Показывать примерную сумму",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Также показывать иностранные суммы в основной валюте",
   "preferences.moneyFormatting.useCurrencySymbol": "Использовать символ валюты",
   "preferences.moneyFormatting.useCurrencySymbol.description": "например, \"$5\" вместо \"5USD\"",
   "preferences.numpad": "Цифровая клавиатура",

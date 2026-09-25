@@ -376,6 +376,8 @@
   "preferences.moneyFormatting.preferFull.description": "尽可能不缩写数字",
   "preferences.moneyFormatting.setICUPattern": "选择自定义格式",
   "preferences.moneyFormatting.setICUPattern.default": "默认",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount": "显示近似金额",
+  "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "同时以主要货币显示外币金额",
   "preferences.moneyFormatting.useCurrencySymbol": "使用货币符号",
   "preferences.moneyFormatting.useCurrencySymbol.description": "例如：使用“$5”取代“5USD”",
   "preferences.numpad": "数字键盘",

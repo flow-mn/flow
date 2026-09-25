@@ -1,4 +1,5 @@
 import "package:flow/data/money.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/extensions/money.dart";
@@ -7,7 +8,8 @@ import "package:flow/widgets/general/money_text_raw.dart";
 import "package:flutter/material.dart";
 
 /// Shows [money] converted to the primary currency using the latest rates,
-/// e.g., "≈ R$25". Renders nothing when conversion isn't possible or needed.
+/// e.g., "≈ R$25". Renders nothing when conversion isn't possible or needed,
+/// or when [LocalPreferences.showApproximatePrimaryAmount] is off.
 class ApproximateMoneyText extends StatelessWidget {
   final Money money;
 
@@ -39,25 +41,35 @@ class ApproximateMoneyText extends StatelessWidget {
     if (money.currency == primaryCurrency) return const SizedBox.shrink();
 
     return ValueListenableBuilder(
-      valueListenable: ExchangeRatesService().exchangeRatesCache,
-      builder: (context, exchangeRatesCache, child) {
-        final double? converted = money.tryConvertAmount(
-          primaryCurrency,
-          exchangeRatesCache?.get(primaryCurrency),
-        );
+      valueListenable:
+          LocalPreferences().showApproximatePrimaryAmount.valueNotifier,
+      builder: (context, showApproximatePrimaryAmount, child) {
+        if (showApproximatePrimaryAmount == false) {
+          return const SizedBox.shrink();
+        }
 
-        if (converted == null) return const SizedBox.shrink();
+        return ValueListenableBuilder(
+          valueListenable: ExchangeRatesService().exchangeRatesCache,
+          builder: (context, exchangeRatesCache, child) {
+            final double? converted = money.tryConvertAmount(
+              primaryCurrency,
+              exchangeRatesCache?.get(primaryCurrency),
+            );
 
-        return MoneyTextBuilder(
-          money: Money(converted, primaryCurrency),
-          displayAbsoluteAmount: displayAbsoluteAmount,
-          overrideObscure: overrideObscure,
-          builder: (context, text, money) => MoneyTextRaw(
-            text: "≈ $text",
-            style: style,
-            textAlign: textAlign,
-            maxLines: 1,
-          ),
+            if (converted == null) return const SizedBox.shrink();
+
+            return MoneyTextBuilder(
+              money: Money(converted, primaryCurrency),
+              displayAbsoluteAmount: displayAbsoluteAmount,
+              overrideObscure: overrideObscure,
+              builder: (context, text, money) => MoneyTextRaw(
+                text: "≈ $text",
+                style: style,
+                textAlign: textAlign,
+                maxLines: 1,
+              ),
+            );
+          },
         );
       },
     );
