@@ -11,6 +11,9 @@ final DateTime august = DateTime(2026, 8);
 final DateTime september = DateTime(2026, 9);
 final DateTime lateSeptember = DateTime(2026, 9, 25, 18);
 
+/// For suggestions, which only show while their month is in progress.
+final DateTime lateAugust = DateTime(2026, 8, 25, 18);
+
 /// Feb..Jul 2026, the baseline of August.
 const List<int> augustBaseline = [2, 3, 4, 5, 6, 7];
 
@@ -31,18 +34,22 @@ void main() {
       }
       ledger.steadyMonth(2026, 9, random, throughDay: 25);
 
-      for (final DateTime month in [august, september]) {
-        final InsightReport report = ledger.analyze(month, now: lateSeptember);
+      final InsightReport closed = ledger.analyze(august, now: lateSeptember);
+      expect(closed.status, InsightReportStatus.ready);
+      expect(closed.insights, isEmpty);
 
-        expect(report.status, InsightReportStatus.ready);
-        expect(report.insights, hasLength(1));
+      final InsightReport report = ledger.analyze(
+        september,
+        now: lateSeptember,
+      );
+      expect(report.status, InsightReportStatus.ready);
+      expect(report.insights, hasLength(1));
 
-        final RecurringChargeInsight insight =
-            report.insights.single as RecurringChargeInsight;
-        expect(insight.series.title, "Spotify");
-        expect(insight.series.anchorDay, 3);
-        expect(insight.series.cadence, RecurringCadence.monthly);
-      }
+      final RecurringChargeInsight insight =
+          report.insights.single as RecurringChargeInsight;
+      expect(insight.series.title, "Spotify");
+      expect(insight.series.anchorDay, 3);
+      expect(insight.series.cadence, RecurringCadence.monthly);
     });
 
     test("a traveler's flight is named, and the month is fine without it", () {
@@ -173,7 +180,7 @@ void main() {
         );
       }
 
-      final InsightReport report = ledger.analyze(august, now: lateSeptember);
+      final InsightReport report = ledger.analyze(august, now: lateAugust);
 
       expect(only<PriceChangeInsight>(report), isEmpty);
       expect(
@@ -764,7 +771,7 @@ void main() {
 
       final InsightReport repeated = build(
         paidLastYear: true,
-      ).analyze(august, now: lateSeptember);
+      ).analyze(august, now: lateAugust);
 
       expect(only<MonthPaceInsight>(repeated), isEmpty);
       expect(only<NewCategoryInsight>(repeated), isEmpty);
@@ -774,7 +781,7 @@ void main() {
       );
       expect(
         only<MonthPaceInsight>(
-          build(paidLastYear: false).analyze(august, now: lateSeptember),
+          build(paidLastYear: false).analyze(august, now: lateAugust),
         ),
         hasLength(1),
       );
@@ -971,7 +978,7 @@ void main() {
       final TestLedger ledger = withCharge("Netflix", List.filled(6, 15.49));
 
       final RecurringChargeInsight insight = only<RecurringChargeInsight>(
-        ledger.analyze(august, now: lateSeptember),
+        ledger.analyze(august, now: lateAugust),
       ).single;
 
       expect(insight.key, "recurringCharge:title:netflix");
@@ -1001,12 +1008,12 @@ void main() {
       );
       final TestLedger manual = withCharge("Netflix", List.filled(6, 15.49));
 
-      expect(generated.analyze(august, now: lateSeptember).insights, isEmpty);
+      expect(generated.analyze(august, now: lateAugust).insights, isEmpty);
       expect(
         manual
             .analyze(
               august,
-              now: lateSeptember,
+              now: lateAugust,
               templates: const [
                 InsightRecurringTemplate(title: "Netflix", amount: 15.49),
               ],
@@ -1019,7 +1026,7 @@ void main() {
     test("cheap charges under the floor aren't suggested", () {
       final TestLedger ledger = withCharge("App", List.filled(6, 2.99));
 
-      expect(ledger.analyze(august, now: lateSeptember).insights, isEmpty);
+      expect(ledger.analyze(august, now: lateAugust).insights, isEmpty);
     });
 
     test("a variable bill isn't suggested", () {
@@ -1032,7 +1039,7 @@ void main() {
         88.0,
       ]);
 
-      expect(ledger.analyze(august, now: lateSeptember).insights, isEmpty);
+      expect(ledger.analyze(august, now: lateAugust).insights, isEmpty);
     });
 
     test("only the biggest suggestion per month", () {
@@ -1043,7 +1050,7 @@ void main() {
 
       final List<RecurringChargeInsight> suggestions =
           only<RecurringChargeInsight>(
-            ledger.analyze(august, now: lateSeptember, limit: 10),
+            ledger.analyze(august, now: lateAugust, limit: 10),
           );
 
       expect(suggestions.single.series.title, "Netflix");
@@ -1125,7 +1132,7 @@ void main() {
       ledger.spend(DateTime(2025, 8, 20), 139.0, title: "Prime");
       ledger.spend(DateTime(2026, 8, 20), 139.0, title: "Prime");
 
-      final InsightReport report = ledger.analyze(august, now: lateSeptember);
+      final InsightReport report = ledger.analyze(august, now: lateAugust);
       final RecurringChargeInsight insight =
           report.insights.single as RecurringChargeInsight;
 
@@ -1333,6 +1340,164 @@ void main() {
           hasLength(1),
         );
       });
+    });
+  });
+
+  group("demo-like ledger", () {
+    /// Jul 2024 through [now], rent paid at a different hour each month
+    /// unless [rentHour] is given. Rent goes from 1,590 to 1,690 in
+    /// [raisedIn], if any.
+    TestLedger demo(DateTime now, {int? rentHour, DateTime? raisedIn}) {
+      final math.Random random = math.Random(11);
+      final TestLedger ledger = TestLedger();
+      const List<int> hours = [7, 12, 19, 21, 23];
+
+      for (int i = 0; ; i++) {
+        final DateTime month = DateTime(2024, 7 + i);
+        if (month.isAfter(now)) break;
+
+        final bool current = month.year == now.year && month.month == now.month;
+
+        ledger.demoMonth(
+          month.year,
+          month.month,
+          random,
+          rentHour: rentHour ?? hours[i % hours.length],
+          rent: raisedIn == null || !month.isBefore(raisedIn) ? 1690.0 : 1590.0,
+          throughDay: current ? now.day : 31,
+        );
+      }
+
+      return ledger;
+    }
+
+    void trip(TestLedger ledger, int month) {
+      ledger.spend(DateTime(2026, month, 10, 8), 320.0, title: "Flight");
+      for (int day = 10; day < 14; day++) {
+        ledger.spend(DateTime(2026, month, day, 22), 210.0, title: "Hotel");
+      }
+      ledger.spend(DateTime(2026, month, 14, 18), 320.0, title: "Flight");
+    }
+
+    test("suggestions only show while their month is in progress", () {
+      final TestLedger ledger = demo(lateSeptember);
+
+      for (int month = 10; month <= 20; month++) {
+        expect(
+          only<RecurringChargeInsight>(
+            ledger.analyze(DateTime(2025, month), now: lateSeptember),
+          ),
+          isEmpty,
+          reason: "${DateTime(2025, month)}",
+        );
+      }
+
+      expect(
+        only<RecurringChargeInsight>(
+          ledger.analyze(september, now: lateSeptember),
+        ).single.series.title,
+        "Rent",
+      );
+    });
+
+    test("this month's charge is in its series, whatever time it was paid", () {
+      for (final int hour in [0, 7, 19, 23]) {
+        for (final DateTime now in [
+          lateSeptember,
+          DateTime(2026, 9, 1, 23, 59, 59),
+        ]) {
+          final TestLedger ledger = demo(now, rentHour: hour);
+          final InsightTransaction rent = ledger.transactions.lastWhere(
+            (transaction) => transaction.title == "Rent",
+          );
+
+          final RecurringChargeInsight insight = only<RecurringChargeInsight>(
+            ledger.analyze(september, now: now),
+          ).single;
+
+          expect(rent.date, DateTime(2026, 9, 1, hour, 59), reason: "$now");
+          expect(insight.series.occurrences, hasLength(27), reason: "$now");
+          expect(
+            insight.series.occurrences.last.transactionUuid,
+            rent.uuid,
+            reason: "$hour:59, $now",
+          );
+          expect(insight.transactionUuids.first, rent.uuid);
+        }
+      }
+    });
+
+    test("a closed month's series ends with that month", () {
+      final TestLedger ledger = demo(lateSeptember, raisedIn: august);
+
+      final PriceChangeInsight change = only<PriceChangeInsight>(
+        ledger.analyze(august, now: lateSeptember),
+      ).single;
+
+      expect(change.previousAmount, 1590.0);
+      expect(change.currentAmount, 1690.0);
+      expect(change.series.occurrences, hasLength(26));
+      expect(change.changedOn.month, 8);
+    });
+
+    test("a yearly rent raise shows, even after an earlier one", () {
+      final TestLedger ledger = TestLedger();
+      final math.Random random = math.Random(5);
+
+      for (int i = 0; i < 27; i++) {
+        final DateTime month = DateTime(2024, 7 + i);
+        ledger.demoMonth(
+          month.year,
+          month.month,
+          random,
+          rent: i < 3
+              ? 1480.0
+              : i < 15
+              ? 1590.0
+              : 1690.0,
+          throughDay: i == 26 ? 25 : 31,
+        );
+      }
+
+      final PriceChangeInsight change = only<PriceChangeInsight>(
+        ledger.analyze(DateTime(2025, 10), now: lateSeptember),
+      ).single;
+      expect(change.previousAmount, 1590.0);
+      expect(change.currentAmount, 1690.0);
+
+      expect(
+        only<RecurringChargeInsight>(
+          ledger.analyze(september, now: lateSeptember),
+        ).single.series.typicalAmount,
+        1690.0,
+      );
+    });
+
+    test("rent never explains an unusual month", () {
+      for (final DateTime month in [DateTime(2026, 7), september]) {
+        final TestLedger ledger = demo(lateSeptember);
+        trip(ledger, month.month);
+
+        final MonthPaceInsight pace = only<MonthPaceInsight>(
+          ledger.analyze(month, now: lateSeptember),
+        ).single;
+
+        expect(pace.direction, InsightDirection.above, reason: "$month");
+        expect(pace.attribution, isNull, reason: "$month");
+        expect(pace.dominantDriver?.categoryUuid, isNot("rent"));
+      }
+    });
+
+    test("a big one-off purchase still explains it", () {
+      final TestLedger ledger = demo(lateSeptember);
+      ledger.spend(DateTime(2026, 7, 12, 20), 1500.0, title: "Laptop");
+
+      expect(
+        only<MonthPaceInsight>(
+          ledger.analyze(DateTime(2026, 7), now: lateSeptember),
+        ).single.attribution?.title,
+        "Laptop",
+      );
     });
   });
 }

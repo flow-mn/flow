@@ -32,6 +32,11 @@ class _Expense {
 
   String get uuid => source.uuid;
   String? get categoryUuid => source.categoryUuid;
+
+  /// A fixed monthly charge or a yearly one seen before. Usual by
+  /// definition, so it never explains an unusual month.
+  bool get isRoutine =>
+      (monthlySeries?.isFixedPrice ?? false) || isYearlyRepeat;
 }
 
 /// Local, deterministic spending insights for one month.
@@ -113,7 +118,8 @@ class InsightEngine {
         ..._categoryDrops(),
         ..._newCategories(),
       ],
-      ..._recurringCharges(),
+      // Suggesting to track a charge only helps while the month is current.
+      if (_inProgress) ..._recurringCharges(),
       ..._priceChanges(),
     ];
 
@@ -313,9 +319,11 @@ class InsightEngine {
       .map((expense) => expense.uuid)
       .toList();
 
-  /// The biggest expense, when it covers most of [delta].
+  /// The biggest unusual expense, when it covers most of [delta].
   InsightAttribution? _attribute(Iterable<_Expense> expenses, double delta) {
-    final _Expense? biggest = _biggestFirst(expenses).firstOrNull;
+    final _Expense? biggest = _biggestFirst(
+      expenses.where((expense) => !expense.isRoutine),
+    ).firstOrNull;
 
     if (biggest == null ||
         biggest.amount < delta * InsightThresholds.attributionShare) {
@@ -597,7 +605,7 @@ class InsightEngine {
   bool _changedPriceThisMonth(RecurringSeries series) =>
       series.isFixedPrice &&
       series.priceChangeIndex == series.occurrences.length - 1 &&
-      series.priceChangeIndex! >= 2 &&
+      series.priceChangeIndex! - (series.previousPriceIndex ?? 0) >= 2 &&
       _chargedThisMonth(series);
 
   List<RecurringChargeInsight> _recurringCharges() => [

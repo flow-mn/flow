@@ -198,6 +198,59 @@ void main() {
       expect(found.single.typicalAmount, 17.99);
     });
 
+    test("a second price change compares with the price right before", () {
+      final List<RecurringSeries> found = detect(
+        charges(
+          monthly(1, count: 25),
+          title: "Rent",
+          amounts: [
+            ...List.filled(12, 1480.0),
+            ...List.filled(12, 1590.0),
+            1690.0,
+          ],
+        ),
+      );
+
+      expect(found.single.priceChangeIndex, 24);
+      expect(found.single.previousAmount, 1590.0);
+      expect(found.single.typicalAmount, 1690.0);
+    });
+
+    test("a bill that wobbles has no price to change", () {
+      final List<RecurringSeries> found = detect(
+        charges(
+          monthly(22, count: 27),
+          title: "Water",
+          amounts: [
+            ...[30.63, 34.27, 33.31, 28.06, 36.19, 27.73, 31.47, 31.39],
+            ...[35.95, 37.63, 31.4, 29.23, 36.51, 29.13, 26.52, 28.64],
+            ...[29.96, 27.48, 27.32, 32.55, 32.04, 33.84, 32.46, 32.07],
+            ...[33.06, 32.38, 22.12],
+          ],
+        ),
+      );
+
+      expect(found.single.priceChangeIndex, isNull);
+    });
+
+    test("after two price changes, the latest price is typical", () {
+      final List<RecurringSeries> found = detect(
+        charges(
+          monthly(1, count: 26),
+          title: "Rent",
+          amounts: [
+            ...List.filled(12, 1480.0),
+            ...List.filled(12, 1590.0),
+            1690.0,
+            1690.0,
+          ],
+        ),
+      );
+
+      expect(found.single.priceChangeIndex, 24);
+      expect(found.single.typicalAmount, 1690.0);
+    });
+
     test("small currency wobble is still one fixed price", () {
       final List<RecurringSeries> found = detect(
         charges(

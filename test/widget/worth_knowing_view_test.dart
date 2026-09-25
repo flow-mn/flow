@@ -97,6 +97,7 @@ void main() {
     InsightReport? report, {
     InsightFormatter format = usd,
     int hiddenTypeCount = 0,
+    bool stale = false,
     ValueChanged<Insight>? onOpen,
     ValueChanged<RecurringChargeInsight>? onTrack,
     VoidCallback? onManageHidden,
@@ -121,6 +122,7 @@ void main() {
                 report: report,
                 format: format,
                 hiddenTypeCount: hiddenTypeCount,
+                stale: stale,
                 onOpen: onOpen ?? (_) {},
                 onTrack: onTrack ?? (_) {},
                 onManageHidden: onManageHidden ?? () {},
@@ -318,6 +320,28 @@ void main() {
       await tester.tap(find.text("Track as recurring"));
       expect(tracked, [spotify]);
       expect(opened, isEmpty);
+    });
+
+    testWidgets("a previous month's rows can't be opened while loading", (
+      tester,
+    ) async {
+      final List<Insight> opened = [];
+      final List<RecurringChargeInsight> tracked = [];
+      await pump(
+        tester,
+        report([spotify]),
+        stale: true,
+        onOpen: opened.add,
+        onTrack: tracked.add,
+      );
+
+      await tester.tap(
+        text("Spotify looks like a monthly charge."),
+        warnIfMissed: false,
+      );
+      await tester.tap(find.text("Track as recurring"), warnIfMissed: false);
+      expect(opened, isEmpty);
+      expect(tracked, isEmpty);
     });
 
     testWidgets("rows are capped by the engine, not the view", (tester) async {

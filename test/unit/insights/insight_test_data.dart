@@ -127,6 +127,62 @@ class TestLedger {
     }
   }
 
+  /// A month like the app's demo data: untracked rent of 1,690 on the 1st
+  /// at [rentHour]:59, subscriptions, bills and daily spend, with seeded
+  /// noise.
+  void demoMonth(
+    int year,
+    int month,
+    math.Random random, {
+    int rentHour = 21,
+    double rent = 1690.0,
+    int throughDay = 31,
+  }) {
+    final int days = DateTime(year, month + 1, 0).day;
+
+    void add(DateTime date, double amount, String title, String category) {
+      if (date.day > throughDay) return;
+
+      spend(date, amount, title: title, category: category);
+    }
+
+    DateTime at(int day) =>
+        DateTime(year, month, day, 7 + random.nextInt(15), random.nextInt(60));
+
+    add(DateTime(year, month, 1, rentHour, 59), rent, "Rent", "rent");
+    add(at(1), 39.0, "Gym membership", "fitness");
+    add(at(2), 2.99, "iCloud+", "subscriptions");
+    add(at(5), 17.99, "Netflix", "subscriptions");
+    add(at(6), 59.0, "Internet", "utils");
+    add(at(9), 11.99, "Spotify", "subscriptions");
+    add(at(12), 20.0, "ChatGPT Plus", "subscriptions");
+    add(at(18), 42.0 + random.nextDouble() * 10, "Phone bill", "utils");
+    add(at(20), 45.0 + random.nextDouble() * 30, "Electricity", "utils");
+    add(at(22), 22.0 + random.nextDouble() * 16, "Water", "utils");
+
+    const List<String> diners = ["Lunch", "Dinner", "Pizza", "Sushi", "Ramen"];
+
+    for (int day = 1; day <= days; day++) {
+      if (random.nextDouble() < 0.55) {
+        add(at(day), 3.25 + random.nextDouble() * 3.5, "Latte", "drinks");
+      }
+      if (random.nextDouble() < 0.25) {
+        add(at(day), 16.0 + random.nextDouble() * 80, "Groceries", "food");
+      }
+      if (random.nextDouble() < 0.3) {
+        add(
+          at(day),
+          10.0 + random.nextDouble() * 46,
+          diners[random.nextInt(diners.length)],
+          "dining",
+        );
+      }
+      if (random.nextDouble() < 0.4) {
+        add(at(day), 2.5 + random.nextDouble() * 13.5, "Subway", "transport");
+      }
+    }
+  }
+
   InsightReport analyze(
     DateTime month, {
     required DateTime now,
