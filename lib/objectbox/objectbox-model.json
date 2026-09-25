@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "31:8739212611241568931",
+      "lastPropertyId": "32:5426961238010158288",
       "name": "UserPreferences",
       "properties": [
         {
@@ -512,6 +512,11 @@
           "id": "31:8739212611241568931",
           "name": "transactionListAbsoluteDateHeaders",
           "type": 1
+        },
+        {
+          "id": "32:5426961238010158288",
+          "name": "dateFormatPreset",
+          "type": 9
         }
       ],
       "relations": []

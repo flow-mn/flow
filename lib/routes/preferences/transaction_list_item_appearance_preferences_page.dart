@@ -44,8 +44,6 @@ class _TransactionListItemAppearancePreferencesPageState
         UserPreferencesService().transactionListTileShowAccountForLeading;
     final bool transactionListTileRelaxedDensity =
         UserPreferencesService().transactionListTileRelaxedDensity;
-    final bool transactionListAbsoluteDateHeaders =
-        UserPreferencesService().transactionListAbsoluteDateHeaders;
 
     return Scaffold(
       appBar: AppBar(
@@ -120,19 +118,6 @@ class _TransactionListItemAppearancePreferencesPageState
                 value: transactionListTileRelaxedDensity,
                 onChanged: (bool newValue) {
                   UserPreferencesService().transactionListTileRelaxedDensity =
-                      newValue;
-                  setState(() {});
-                },
-              ),
-              SwitchListTile(
-                title: Text(
-                  "preferences.transactions.listTile.absoluteDateHeaders".t(
-                    context,
-                  ),
-                ),
-                value: transactionListAbsoluteDateHeaders,
-                onChanged: (bool newValue) {
-                  UserPreferencesService().transactionListAbsoluteDateHeaders =
                       newValue;
                   setState(() {});
                 },
