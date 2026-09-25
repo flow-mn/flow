@@ -8,12 +8,11 @@ import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/main.dart";
-import "package:flow/theme/primary_colors.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/chart_data.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/stats/pie_percent_badge.dart";
-import "package:flutter/material.dart" hide Flow;
+import "package:flutter/material.dart";
 
 class GroupPieChart<T> extends StatefulWidget {
   final EdgeInsets chartPadding;
@@ -57,6 +56,9 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
 
   String? selectedKey;
 
+  /// Selection before the current touch, so only a re-tap opens a slice
+  String? _keyAtTouchStart;
+
   @override
   void initState() {
     super.initState();
@@ -77,17 +79,11 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
         ? null
         : data[selectedKey!];
 
-    final Money? selectedSectionTotal = selectedSection?.money;
+    final Map<String, Color> colors = data.resolveColors(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 16.0),
-        Text(
-          "tabs.stats.chart.total".t(context),
-          style: context.textTheme.labelMedium,
-        ),
-        MoneyText(totalAmount, style: context.textTheme.headlineMedium),
         Padding(
           padding: widget.chartPadding,
           child: ConstrainedBox(
@@ -111,33 +107,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                     children: [
                       PieChart(
                         PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback: (event, response) {
-                              if (!event.isInterestedForInteractions ||
-                                  response == null ||
-                                  response.touchedSection == null) {
-                                return;
-                              }
-
-                              final int index =
-                                  response.touchedSection!.touchedSectionIndex;
-
-                              if (index > -1) {
-                                final String newSelectedKey = data.entries
-                                    .elementAt(index)
-                                    .key;
-
-                                // if (!usingMouse &&
-                                //     newSelectedKey == selectedKey) {
-                                //   widget.onReselect?.call(newSelectedKey);
-                                // }
-
-                                setState(() {
-                                  selectedKey = newSelectedKey;
-                                });
-                              }
-                            },
-                          ),
+                          pieTouchData: PieTouchData(touchCallback: _onTouch),
                           sectionsSpace: 1.0,
                           centerSpaceRadius: centerHoleDiameter / 2,
                           startDegreeOffset: -90.0,
@@ -146,7 +116,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                                 (e) => sectionData(
                                   data[e.$2.key]!,
                                   selected: e.$2.key == selectedKey,
-                                  index: e.$1,
+                                  color: colors[e.$2.key]!,
                                   radius: radius,
                                 ),
                               )
@@ -165,15 +135,17 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    resolveName(
-                                      selectedSection?.associatedData,
-                                    ),
+                                    selectedSection == null
+                                        ? "tabs.stats.chart.total".t(context)
+                                        : resolveName(
+                                            selectedSection.associatedData,
+                                          ),
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   MoneyText(
-                                    selectedSectionTotal,
+                                    selectedSection?.money ?? totalAmount,
                                     displayAbsoluteAmount: true,
                                     textAlign: TextAlign.center,
                                     style: context.textTheme.headlineSmall,
@@ -195,20 +167,40 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
     );
   }
 
+  void _onTouch(FlTouchEvent event, PieTouchResponse? response) {
+    final int index = response?.touchedSection?.touchedSectionIndex ?? -1;
+    final String? key = index > -1 && index < data.length
+        ? data.keys.elementAt(index)
+        : null;
+
+    // One tap fires both pan down and tap down, so check reselect on tap up
+    if (event is FlPanDownEvent) {
+      _keyAtTouchStart = selectedKey;
+    }
+
+    if (event is FlTapUpEvent) {
+      if (key != null && key == _keyAtTouchStart) {
+        widget.onReselect?.call(key);
+      }
+      return;
+    }
+
+    if (!event.isInterestedForInteractions || key == null) return;
+
+    setState(() {
+      selectedKey = key;
+    });
+  }
+
   PieChartSectionData sectionData(
     ChartData<T> data, {
     required double radius,
+    required Color color,
     bool selected = false,
-    int index = 0,
   }) {
-    final bool usingDarkTheme = Flow.of(context).useDarkTheme;
-
-    final Color color = (usingDarkTheme
-        ? accentColors
-        : primaryColors)[index % primaryColors.length];
-    final Color backgroundColor = (usingDarkTheme
-        ? primaryColors
-        : accentColors)[index % primaryColors.length];
+    final Color backgroundColor =
+        data.colorScheme?.secondary ??
+        Color.alphaBlend(color.withAlpha(0x40), context.colorScheme.surface);
 
     return PieChartSectionData(
       color: color,
@@ -221,7 +213,7 @@ class _GroupPieChartState<T> extends State<GroupPieChart<T>> {
               data.associatedData,
               color: color,
               backgroundColor: backgroundColor,
-              percent: data.displayTotal / totalAmount.amount,
+              percent: data.displayTotal / totalAmount.amount.abs(),
             )
           : null,
       badgePositionPercentageOffset: 0.8,
