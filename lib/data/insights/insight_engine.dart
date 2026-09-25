@@ -605,7 +605,7 @@ class InsightEngine {
   bool _changedPriceThisMonth(RecurringSeries series) =>
       series.isFixedPrice &&
       series.priceChangeIndex == series.occurrences.length - 1 &&
-      series.priceChangeIndex! >= 2 &&
+      series.priceChangeIndex! - (series.previousPriceIndex ?? 0) >= 2 &&
       _chargedThisMonth(series);
 
   List<RecurringChargeInsight> _recurringCharges() => [

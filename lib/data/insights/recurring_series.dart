@@ -53,6 +53,10 @@ class RecurringSeries {
   /// Index in [occurrences] where the current price starts, if it changed.
   final int? priceChangeIndex;
 
+  /// Index in [occurrences] where the price before [priceChangeIndex]
+  /// starts, if that changed too.
+  final int? previousPriceIndex;
+
   final String? categoryUuid;
   final String? accountUuid;
 
@@ -67,6 +71,7 @@ class RecurringSeries {
     required this.occurrences,
     required this.isFixedPrice,
     required this.priceChangeIndex,
+    this.previousPriceIndex,
     required this.categoryUuid,
     required this.accountUuid,
     required this.isTracked,
@@ -80,7 +85,11 @@ class RecurringSeries {
   /// Median amount before the price change.
   double? get previousAmount => priceChangeIndex == null
       ? null
-      : median(occurrences.take(priceChangeIndex!).map((item) => item.amount));
+      : median(
+          occurrences
+              .sublist(previousPriceIndex ?? 0, priceChangeIndex)
+              .map((item) => item.amount),
+        );
 
   double get annualCost => typicalAmount * cadence.perYear;
 
@@ -184,10 +193,8 @@ RecurringSeries? _detect(
 
   final List<double> amounts = items.map((item) => item.amount.abs()).toList();
 
-  final ({bool isFixedPrice, int? priceChangeIndex})? price = _price(
-    amounts,
-    rhythm.cadence,
-  );
+  final ({bool isFixedPrice, int? priceChangeIndex, int? previousPriceIndex})?
+  price = _price(amounts, rhythm.cadence);
 
   if (price == null) return null;
 
@@ -213,6 +220,7 @@ RecurringSeries? _detect(
     occurrences: occurrences,
     isFixedPrice: price.isFixedPrice,
     priceChangeIndex: price.priceChangeIndex,
+    previousPriceIndex: price.previousPriceIndex,
     categoryUuid: _mostCommon(items.map((item) => item.categoryUuid)),
     accountUuid: _mostCommon(items.map((item) => item.accountUuid)),
     isTracked:
@@ -327,44 +335,94 @@ RecurringSeries? _detect(
   return (cadence: .yearly, anchorDay: items.last.date.day);
 }
 
-/// A fixed price, a fixed price with one change, or (monthly only) a
-/// variable bill. Null when amounts are all over the place.
-({bool isFixedPrice, int? priceChangeIndex})? _price(
+/// A fixed price, a fixed price that changed, or (monthly only) a variable
+/// bill. Null when amounts are all over the place.
+({bool isFixedPrice, int? priceChangeIndex, int? previousPriceIndex})? _price(
   List<double> amounts,
   RecurringCadence cadence,
 ) {
   // Two yearly charges can't tell a price change from two different things.
   if (amounts.length >= InsightThresholds.recurringMinOccurrences) {
-    for (int split = amounts.length - 1; split >= 1; split--) {
-      if (_isPriceChange(amounts.sublist(0, split), amounts.sublist(split))) {
-        return (isFixedPrice: true, priceChangeIndex: split);
-      }
+    final List<int?> changes = _latestPriceChanges(amounts);
+    final int? change = changes.last;
+
+    if (change != null) {
+      return (
+        isFixedPrice: true,
+        priceChangeIndex: change,
+        previousPriceIndex: changes[change],
+      );
     }
   }
 
   final double variation = coefficientOfVariation(amounts);
 
   if (variation <= InsightThresholds.recurringMaxVariation) {
-    return (isFixedPrice: true, priceChangeIndex: null);
+    return (
+      isFixedPrice: true,
+      priceChangeIndex: null,
+      previousPriceIndex: null,
+    );
   }
 
   if (cadence == .monthly &&
       variation <= InsightThresholds.variableChargeMaxVariation) {
-    return (isFixedPrice: false, priceChangeIndex: null);
+    return (
+      isFixedPrice: false,
+      priceChangeIndex: null,
+      previousPriceIndex: null,
+    );
   }
 
   return null;
 }
 
+/// Where the latest price change starts in the first `n` [amounts], for
+/// every `n`. Each change is measured against the price right before it,
+/// so a yearly raise still shows after an earlier one.
+List<int?> _latestPriceChanges(List<double> amounts) {
+  final List<int?> changes = List.filled(amounts.length + 1, null);
+
+  for (int end = 3; end <= amounts.length; end++) {
+    final double wobble = _wobble(amounts.sublist(0, end));
+
+    for (int split = end - 1; split >= 2; split--) {
+      final int start = changes[split] ?? 0;
+
+      // A price needs two charges, so a one-off discount isn't one.
+      if (split - start < 2) continue;
+
+      if (_isPriceChange(
+        amounts.sublist(start, split),
+        amounts.sublist(split, end),
+        wobble,
+      )) {
+        changes[end] = split;
+        break;
+      }
+    }
+  }
+
+  return changes;
+}
+
+/// Typical move from one charge to the next. Unlike the spread, a price
+/// change barely moves it.
+double _wobble(List<double> amounts) => median([
+  for (int i = 1; i < amounts.length; i++)
+    if (amounts[i - 1] > 0.0)
+      (amounts[i] - amounts[i - 1]).abs() / amounts[i - 1],
+]);
+
 /// Both sides steady, and the step clearly bigger than their wobble (a
 /// charge converted from another currency moves a little every month).
-bool _isPriceChange(List<double> before, List<double> after) {
+bool _isPriceChange(List<double> before, List<double> after, double wobble) {
   final double noise = math.max(
-    coefficientOfVariation(before),
-    coefficientOfVariation(after),
+    wobble,
+    math.max(coefficientOfVariation(before), coefficientOfVariation(after)),
   );
 
-  if (noise > InsightThresholds.recurringMaxVariation) return false;
+  if (noise > InsightThresholds.priceChangeMaxNoise) return false;
 
   final double previous = median(before);
   final double change = (median(after) - previous).abs();

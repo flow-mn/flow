@@ -1440,6 +1440,39 @@ void main() {
       expect(change.changedOn.month, 8);
     });
 
+    test("a yearly rent raise shows, even after an earlier one", () {
+      final TestLedger ledger = TestLedger();
+      final math.Random random = math.Random(5);
+
+      for (int i = 0; i < 27; i++) {
+        final DateTime month = DateTime(2024, 7 + i);
+        ledger.demoMonth(
+          month.year,
+          month.month,
+          random,
+          rent: i < 3
+              ? 1480.0
+              : i < 15
+              ? 1590.0
+              : 1690.0,
+          throughDay: i == 26 ? 25 : 31,
+        );
+      }
+
+      final PriceChangeInsight change = only<PriceChangeInsight>(
+        ledger.analyze(DateTime(2025, 10), now: lateSeptember),
+      ).single;
+      expect(change.previousAmount, 1590.0);
+      expect(change.currentAmount, 1690.0);
+
+      expect(
+        only<RecurringChargeInsight>(
+          ledger.analyze(september, now: lateSeptember),
+        ).single.series.typicalAmount,
+        1690.0,
+      );
+    });
+
     test("rent never explains an unusual month", () {
       for (final DateTime month in [DateTime(2026, 7), september]) {
         final TestLedger ledger = demo(lateSeptember);

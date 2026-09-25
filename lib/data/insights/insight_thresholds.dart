@@ -84,6 +84,9 @@ abstract final class InsightThresholds {
   /// The step must also beat this many times the charges' own wobble.
   static const double priceChangeNoiseMultiple = 3.0;
 
+  /// Charges wobbling more than this are bills without a price to change.
+  static const double priceChangeMaxNoise = 0.05;
+
   /// Bigger jumps are more likely a different charge than a price change.
   static const double priceChangeMaxRatio = 0.5;
 
