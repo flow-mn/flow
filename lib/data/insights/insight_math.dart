@@ -6,8 +6,15 @@ int monthIndexOf(DateTime date) => date.year * 12 + date.month - 1;
 DateTime monthStartOf(int monthIndex) =>
     DateTime(monthIndex ~/ 12, monthIndex % 12 + 1);
 
-int daysInMonth(int monthIndex) =>
-    DateTime.utc(monthIndex ~/ 12, monthIndex % 12 + 2, 0).day;
+int daysInMonth(int monthIndex) {
+  final int year = monthIndex ~/ 12;
+
+  return switch (monthIndex % 12 + 1) {
+    2 => year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 29 : 28,
+    4 || 6 || 9 || 11 => 30,
+    _ => 31,
+  };
+}
 
 /// Calendar days from [from] to [to], ignoring time of day and DST.
 int dayDifference(DateTime from, DateTime to) => DateTime.utc(
@@ -25,19 +32,29 @@ DateTime chargeDayOf(int monthIndex, int anchorDay) => DateTime(
 
 /// The month whose charge on [anchorDay] is nearest to [date], and the signed
 /// distance in days (positive when [date] is late).
+///
+/// Plain day arithmetic: this runs for every charge and candidate day, and
+/// local [DateTime]s are slow on iOS.
 ({int slot, int offset}) nearestSlot(DateTime date, int anchorDay) {
   final int index = monthIndexOf(date);
 
-  ({int slot, int offset})? best;
+  int chargeDay(int slot) => math.min(anchorDay, daysInMonth(slot));
 
-  for (int slot = index - 1; slot <= index + 1; slot++) {
-    final int offset = dayDifference(chargeDayOf(slot, anchorDay), date);
-    if (best == null || offset.abs() < best.offset.abs()) {
-      best = (slot: slot, offset: offset);
-    }
-  }
+  final List<({int slot, int offset})> candidates = [
+    (
+      slot: index - 1,
+      offset: date.day + daysInMonth(index - 1) - chargeDay(index - 1),
+    ),
+    (slot: index, offset: date.day - chargeDay(index)),
+    (
+      slot: index + 1,
+      offset: date.day - daysInMonth(index) - chargeDay(index + 1),
+    ),
+  ];
 
-  return best!;
+  return candidates.reduce(
+    (best, next) => next.offset.abs() < best.offset.abs() ? next : best,
+  );
 }
 
 /// Returns 0.0 for an empty list.
