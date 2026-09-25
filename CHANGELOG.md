@@ -11,6 +11,9 @@
   headers, [#761](https://github.com/flow-mn/flow/issues/761)
 * Categories/accounts stats now open as a ranked list with share bars,
   [#761](https://github.com/flow-mn/flow/issues/761)
+* Added "Worth knowing" to the stats tab: on-device observations like spending
+  spikes, unusual categories, and charges that look recurring, closes
+  [#761](https://github.com/flow-mn/flow/issues/761)
 
 ### Changes
 
