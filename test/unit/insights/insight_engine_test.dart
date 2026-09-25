@@ -1371,6 +1371,14 @@ void main() {
       return ledger;
     }
 
+    void trip(TestLedger ledger, int month) {
+      ledger.spend(DateTime(2026, month, 10, 8), 320.0, title: "Flight");
+      for (int day = 10; day < 14; day++) {
+        ledger.spend(DateTime(2026, month, day, 22), 210.0, title: "Hotel");
+      }
+      ledger.spend(DateTime(2026, month, 14, 18), 320.0, title: "Flight");
+    }
+
     test("suggestions only show while their month is in progress", () {
       final TestLedger ledger = demo(lateSeptember);
 
@@ -1430,6 +1438,33 @@ void main() {
       expect(change.currentAmount, 1690.0);
       expect(change.series.occurrences, hasLength(26));
       expect(change.changedOn.month, 8);
+    });
+
+    test("rent never explains an unusual month", () {
+      for (final DateTime month in [DateTime(2026, 7), september]) {
+        final TestLedger ledger = demo(lateSeptember);
+        trip(ledger, month.month);
+
+        final MonthPaceInsight pace = only<MonthPaceInsight>(
+          ledger.analyze(month, now: lateSeptember),
+        ).single;
+
+        expect(pace.direction, InsightDirection.above, reason: "$month");
+        expect(pace.attribution, isNull, reason: "$month");
+        expect(pace.dominantDriver?.categoryUuid, isNot("rent"));
+      }
+    });
+
+    test("a big one-off purchase still explains it", () {
+      final TestLedger ledger = demo(lateSeptember);
+      ledger.spend(DateTime(2026, 7, 12, 20), 1500.0, title: "Laptop");
+
+      expect(
+        only<MonthPaceInsight>(
+          ledger.analyze(DateTime(2026, 7), now: lateSeptember),
+        ).single.attribution?.title,
+        "Laptop",
+      );
     });
   });
 }
