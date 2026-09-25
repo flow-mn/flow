@@ -47,6 +47,7 @@ class GroupShareBar extends StatelessWidget {
         child: SizedBox(
           height: height,
           child: Row(
+            crossAxisAlignment: .stretch,
             spacing: 2.0,
             children: segments
                 .map(

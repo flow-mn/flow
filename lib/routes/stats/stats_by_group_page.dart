@@ -13,6 +13,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/utils/time_and_range.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/group_list_view.dart";
@@ -74,20 +75,22 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
               onSelectionChanged: (selection) =>
                   updateUseChart(selection.first),
               showSelectedIcon: false,
-              style: const ButtonStyle(
+              style: SegmentedButton.styleFrom(
                 visualDensity: VisualDensity.compact,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                selectedBackgroundColor: context.colorScheme.primary,
+                selectedForegroundColor: context.colorScheme.onPrimary,
               ),
               segments: [
                 ButtonSegment<bool>(
                   value: false,
                   icon: const Icon(Symbols.view_list_rounded),
-                  label: Text("tabs.stats.byGroup.view.list".t(context)),
+                  tooltip: "tabs.stats.byGroup.view.list".t(context),
                 ),
                 ButtonSegment<bool>(
                   value: true,
                   icon: const Icon(Symbols.donut_large_rounded),
-                  label: Text("tabs.stats.byGroup.view.chart".t(context)),
+                  tooltip: "tabs.stats.byGroup.view.chart".t(context),
                 ),
               ],
             ),

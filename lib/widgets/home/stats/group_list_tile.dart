@@ -48,11 +48,31 @@ class GroupListTile extends StatelessWidget {
                   mainAxisSize: .min,
                   crossAxisAlignment: .start,
                   children: [
-                    Text(
-                      chartData.resolveName(context),
-                      style: context.textTheme.bodyLarge,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      spacing: 8.0,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            chartData.resolveName(context),
+                            style: context.textTheme.bodyLarge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          percent < 0.1
+                              ? "<0.1%"
+                              : "${percent.toStringAsFixed(1)}%",
+                          style: context.textTheme.bodySmall?.semi(context),
+                        ),
+                        MoneyText(
+                          chartData.money,
+                          displayAbsoluteAmount: true,
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 6.0),
                     ClipRRect(
@@ -67,23 +87,6 @@ class GroupListTile extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              Column(
-                mainAxisSize: .min,
-                crossAxisAlignment: .end,
-                children: [
-                  MoneyText(
-                    chartData.money,
-                    displayAbsoluteAmount: true,
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    percent < 0.1 ? "<0.1%" : "${percent.toStringAsFixed(1)}%",
-                    style: context.textTheme.bodySmall?.semi(context),
-                  ),
-                ],
               ),
             ],
           ),
