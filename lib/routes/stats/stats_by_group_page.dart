@@ -3,7 +3,6 @@ import "dart:async";
 import "package:flow/data/chart_data.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
-import "package:flow/data/group_sort_mode.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/multi_currency_flow.dart";
 import "package:flow/entity/transaction.dart";
@@ -46,9 +45,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
   FlowAnalytics? analytics;
 
   bool busy = false;
-  bool useChart = LocalPreferences().statsByGroupUseChart.get();
-
-  GroupSortMode sortMode = .amount;
+  bool useChart = false;
 
   @override
   void initState() {
@@ -165,8 +162,6 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                               range: range,
                               type: TransactionType.expense,
                               byCategory: widget.byCategory,
-                              sortMode: sortMode,
-                              onSortModeChanged: updateSortMode,
                             ),
                       useChart
                           ? PieGraphView(
@@ -180,8 +175,6 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                               range: range,
                               type: TransactionType.income,
                               byCategory: widget.byCategory,
-                              sortMode: sortMode,
-                              onSortModeChanged: updateSortMode,
                             ),
                     ],
                   ),
@@ -197,14 +190,6 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
   void updateUseChart(bool newValue) {
     setState(() {
       useChart = newValue;
-    });
-
-    unawaited(LocalPreferences().statsByGroupUseChart.set(newValue));
-  }
-
-  void updateSortMode(GroupSortMode newMode) {
-    setState(() {
-      sortMode = newMode;
     });
   }
 

@@ -1,17 +1,12 @@
 import "package:flow/data/chart_data.dart";
-import "package:flow/data/group_sort_mode.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/l10n/extensions.dart";
-import "package:flow/l10n/named_enum.dart";
-import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/chart_data.dart";
 import "package:flow/widgets/home/stats/group_list_tile.dart";
 import "package:flow/widgets/home/stats/group_summary_card.dart";
 import "package:flow/widgets/home/stats/no_data.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class GroupListView extends StatelessWidget {
@@ -22,9 +17,6 @@ class GroupListView extends StatelessWidget {
   final bool byCategory;
   final void Function() changeMode;
 
-  final GroupSortMode sortMode;
-  final ValueChanged<GroupSortMode> onSortModeChanged;
-
   const GroupListView({
     super.key,
     required this.data,
@@ -32,8 +24,6 @@ class GroupListView extends StatelessWidget {
     required this.type,
     required this.byCategory,
     required this.changeMode,
-    required this.sortMode,
-    required this.onSortModeChanged,
   });
 
   @override
@@ -46,16 +36,7 @@ class GroupListView extends StatelessWidget {
     final double total = data.displayTotal;
     final double maxAmount = data.values.first.displayTotal;
 
-    final List<ChartData> sorted = switch (sortMode) {
-      .amount => data.values.toList(),
-      .alphabetical =>
-        data.values.toList()..sort(
-          (a, b) => a
-              .resolveName(context)
-              .toLowerCase()
-              .compareTo(b.resolveName(context).toLowerCase()),
-        ),
-    };
+    final List<ChartData> sorted = data.values.toList();
 
     return CustomScrollView(
       slivers: [
@@ -65,25 +46,6 @@ class GroupListView extends StatelessWidget {
             colors: colors,
             type: type,
             byCategory: byCategory,
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          sliver: SliverToBoxAdapter(
-            child: Row(
-              mainAxisAlignment: .spaceBetween,
-              children: [
-                ActionChip(
-                  avatar: const Icon(Symbols.swap_vert_rounded),
-                  label: Text(sortMode.localizedNameContext(context)),
-                  onPressed: () => onSortModeChanged(sortMode.next),
-                ),
-                Text(
-                  "tabs.stats.byGroup.percentOfTotal".t(context),
-                  style: context.textTheme.bodySmall?.semi(context),
-                ),
-              ],
-            ),
           ),
         ),
         SliverPadding(

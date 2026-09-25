@@ -65,9 +65,6 @@ class LocalPreferences {
   /// it flips to true on the first tap, after which the badge never shows again.
   late final BoolSettingsEntry openedInsightsIndex;
 
-  /// Whether the by-category/account stats page opens in chart mode
-  late final BoolSettingsEntry statsByGroupUseChart;
-
   /// Number of notifications issued by the app
   ///
   /// Used to prevent id collisions
@@ -161,12 +158,6 @@ class LocalPreferences {
 
     openedInsightsIndex = BoolSettingsEntry(
       key: "openedInsightsIndex",
-      preferences: _prefs,
-      initialValue: false,
-    );
-
-    statsByGroupUseChart = BoolSettingsEntry(
-      key: "statsByGroupUseChart",
       preferences: _prefs,
       initialValue: false,
     );
