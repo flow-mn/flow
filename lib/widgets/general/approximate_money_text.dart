@@ -38,7 +38,9 @@ class ApproximateMoneyText extends StatelessWidget {
   Widget build(BuildContext context) {
     final String primaryCurrency = UserPreferencesService().primaryCurrency;
 
-    if (money.currency == primaryCurrency) return const SizedBox.shrink();
+    if (money.currency == primaryCurrency || money.amount == 0) {
+      return const SizedBox.shrink();
+    }
 
     return ValueListenableBuilder(
       valueListenable:

@@ -125,9 +125,6 @@ void main() async {
     }),
   );
 
-  startupLog.fine("Initializing exchange rates service");
-  ExchangeRatesService().init();
-
   CurrencyRegistryService();
 
   if (Platform.isIOS) {
@@ -145,6 +142,10 @@ void main() async {
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
+
+  // Depends on [UserPreferencesService] for the primary currency
+  startupLog.fine("Initializing exchange rates service");
+  ExchangeRatesService().init();
 
   try {
     startupLog.fine("Initializing SyncService");
@@ -189,6 +190,7 @@ class FlowState extends State<Flow> {
 
   Locale _locale = FlowLocalizations.supportedLocales.first;
   DateFormatPreset _dateFormatPreset = .system;
+  String? _primaryCurrency;
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeFactory _themeFactory = ThemeFactory.fromThemeName(null);
@@ -227,7 +229,7 @@ class FlowState extends State<Flow> {
     ExchangeRatesService().exchangeRatesCache.addListener(_syncWidgets);
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
+    UserPreferencesService().valueNotifier.addListener(_refreshExchangeRates);
 
     _tempLock = LocalPreferences().requireLocalAuth.get();
 
@@ -290,7 +292,9 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+    UserPreferencesService().valueNotifier.removeListener(
+      _refreshExchangeRates,
+    );
     UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     UserPreferencesService().valueNotifier.removeListener(_listenToShakes);
     UserPreferencesService().valueNotifier.removeListener(_syncWidgets);
@@ -489,9 +493,13 @@ class FlowState extends State<Flow> {
   }
 
   void _refreshExchangeRates() {
-    ExchangeRatesService().tryFetchRates(
-      UserPreferencesService().primaryCurrency,
-    );
+    final String primaryCurrency = UserPreferencesService().primaryCurrency;
+
+    if (_primaryCurrency == primaryCurrency) return;
+
+    _primaryCurrency = primaryCurrency;
+
+    ExchangeRatesService().tryFetchRates(primaryCurrency);
   }
 
   void _syncWidgets() {
