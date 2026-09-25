@@ -113,7 +113,8 @@ class InsightEngine {
         ..._categoryDrops(),
         ..._newCategories(),
       ],
-      ..._recurringCharges(),
+      // Suggesting to track a charge only helps while the month is current.
+      if (_inProgress) ..._recurringCharges(),
       ..._priceChanges(),
     ];
 
