@@ -44,7 +44,7 @@ class NetWorthChart extends StatelessWidget {
     DurationUnit.second ||
     DurationUnit.minute ||
     DurationUnit.hour => "MMM D, HH:mm",
-    DurationUnit.day || DurationUnit.week => "MMM D, YYYY",
+    DurationUnit.day || DurationUnit.week => "ll",
     DurationUnit.month => "MMM YYYY",
     DurationUnit.year => "YYYY",
   };
