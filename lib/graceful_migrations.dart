@@ -15,7 +15,6 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:logging/logging.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:simple_icons_flow/simple_icons_flow.dart";
 
 final Logger _log = Logger("GracefulMigrations");
 
@@ -321,8 +320,8 @@ void migrateHomePendingTransactionsRange() async {
 ///
 /// Simple Icons reassigns code points every release, so a stored code point is
 /// only meaningful for the version it was saved with. Flow shipped
-/// simple_icons 14.6.1; [legacySimpleIconsCodepoints] maps those code points
-/// forward to the bundled 16.20.0 build, from which we recover the stable slug.
+/// simple_icons 14.6.1; [legacySimpleIconsCodepointToSlug] maps those code
+/// points straight to their stable slug, independent of the bundled version.
 /// This is the *only* remaining use of that table — once this migration has
 /// propagated, the migration and the table can both be deleted.
 Future<void> migrateSimpleIconsToSlug() async {
@@ -339,23 +338,14 @@ Future<void> migrateSimpleIconsToSlug() async {
     if (ok != null) return;
 
     try {
-      // 16.20.0 code point -> slug, built once from the bundled font.
-      final Map<int, String> codePointToSlug = {
-        for (final entry in SimpleIcons.values.entries)
-          entry.value.codePoint: entry.key,
-      };
-
       String? slugForIconCode(String iconCode) {
         final FlowIconData? parsed = FlowIconData.tryParse(iconCode);
         if (parsed is! IconFlowIcon) return null;
         if (parsed.iconData.fontFamily != "SimpleIcons") return null;
 
-        // Stored code points are 14.6.1; map them forward before resolving.
-        // A value already at 16.20.0 isn't a table key, so it passes through.
-        final int codePoint =
-            legacySimpleIconsCodepoints[parsed.iconData.codePoint] ??
-            parsed.iconData.codePoint;
-        return codePointToSlug[codePoint];
+        // Stored code points are 14.6.1. Slugs missing from the bundled
+        // build (removed upstream) are left as they are.
+        return legacySimpleIconsCodepointToSlug[parsed.iconData.codePoint];
       }
 
       final List<Account> changedAccounts = [];
