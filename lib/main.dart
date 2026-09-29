@@ -143,6 +143,16 @@ void main() async {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
 
+  // Must run after [UserPreferencesService] has loaded from ObjectBox
+  unawaited(
+    TransitiveLocalPreferences().sessionPrivacyMode
+        .set(UserPreferencesService().privacyModeUponLaunch)
+        .catchError((error) {
+          startupLog.warning("Failed to seed session privacy mode", error);
+          return false;
+        }),
+  );
+
   // Depends on [UserPreferencesService] for the primary currency
   startupLog.fine("Initializing exchange rates service");
   ExchangeRatesService().init();

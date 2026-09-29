@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/legacy_simple_icons_codepoints.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -70,6 +72,9 @@ void migratePrivacyPreferencesToUserPreferences() async {
       final bool privacyMode = LocalPreferences().privacyMode.get();
 
       UserPreferencesService().privacyModeUponLaunch = privacyMode;
+      if (privacyMode) {
+        unawaited(TransitiveLocalPreferences().sessionPrivacyMode.set(true));
+      }
 
       await prefs.setString("flow.migration.$migrationUuid", "ok");
     } catch (e) {

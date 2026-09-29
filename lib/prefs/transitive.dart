@@ -10,7 +10,6 @@ import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -155,12 +154,6 @@ class TransitiveLocalPreferences {
       );
     } catch (e, stackTrace) {
       _log.warning("Cannot update transitive properties", e, stackTrace);
-    }
-
-    try {
-      unawaited(sessionPrivacyMode.set(LocalPreferences().privacyMode.get()));
-    } catch (e) {
-      _log.warning("Failed to seed sessionPrivacyMode from privacyMode", e);
     }
 
     try {
