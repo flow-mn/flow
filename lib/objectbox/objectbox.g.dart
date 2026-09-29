@@ -724,7 +724,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 800756592587838565),
     name: 'RecurringTransaction',
-    lastPropertyId: const obx_int.IdUid(11, 420551111786793892),
+    lastPropertyId: const obx_int.IdUid(12, 7730179234101270201),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -779,6 +779,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(10, 651096412135846367),
         name: 'lastGeneratedTransactionDate',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 7730179234101270201),
+        name: 'variableAmount',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1979,7 +1985,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final transferToAccountUuidOffset = object.transferToAccountUuid == null
             ? null
             : fbb.writeString(object.transferToAccountUuid!);
-        fbb.startTable(12);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, jsonTransactionTemplateOffset);
@@ -1992,6 +1998,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           9,
           object.lastGeneratedTransactionDate?.millisecondsSinceEpoch,
         );
+        fbb.addBool(11, object.variableAmount);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -2010,6 +2017,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           buffer,
           rootOffset,
           16,
+          false,
+        );
+        final variableAmountParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          26,
           false,
         );
         final rulesParam = const fb.ListReader<String>(
@@ -2040,6 +2053,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = RecurringTransaction(
           id: idParam,
           disabled: disabledParam,
+          variableAmount: variableAmountParam,
           rules: rulesParam,
           jsonTransactionTemplate: jsonTransactionTemplateParam,
           range: rangeParam,
@@ -2845,6 +2859,11 @@ class RecurringTransaction_ {
   /// See [RecurringTransaction.lastGeneratedTransactionDate].
   static final lastGeneratedTransactionDate =
       obx.QueryDateProperty<RecurringTransaction>(_entities[8].properties[8]);
+
+  /// See [RecurringTransaction.variableAmount].
+  static final variableAmount = obx.QueryBooleanProperty<RecurringTransaction>(
+    _entities[8].properties[9],
+  );
 }
 
 /// [TransactionTag] entity fields to define ObjectBox queries.

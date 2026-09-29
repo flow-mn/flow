@@ -1029,7 +1029,7 @@ void main() {
       expect(ledger.analyze(august, now: lateAugust).insights, isEmpty);
     });
 
-    test("a variable bill isn't suggested", () {
+    test("a steady variable bill is suggested", () {
       final TestLedger ledger = withCharge("Electricity", [
         82.0,
         140.0,
@@ -1039,7 +1039,64 @@ void main() {
         88.0,
       ]);
 
-      expect(ledger.analyze(august, now: lateAugust).insights, isEmpty);
+      final RecurringChargeInsight insight = only<RecurringChargeInsight>(
+        ledger.analyze(august, now: lateAugust),
+      ).single;
+
+      expect(insight.series.isFixedPrice, isFalse);
+    });
+
+    test("an erratic variable bill isn't suggested", () {
+      final TestLedger ledger = withCharge("Electricity", [
+        50.0,
+        140.0,
+        60.0,
+        130.0,
+        45.0,
+        120.0,
+      ]);
+
+      expect(
+        only<RecurringChargeInsight>(ledger.analyze(august, now: lateAugust)),
+        isEmpty,
+      );
+    });
+
+    test("a variable bill needs 4 charges to be suggested", () {
+      final TestLedger ledger = withCharge("Electricity", [82.0, 140.0, 95.0]);
+
+      expect(
+        only<RecurringChargeInsight>(ledger.analyze(august, now: lateAugust)),
+        isEmpty,
+      );
+    });
+
+    test("a variable template tracks the bill regardless of amount", () {
+      final TestLedger ledger = withCharge("Electricity", [
+        82.0,
+        140.0,
+        95.0,
+        61.0,
+        120.0,
+        88.0,
+      ]);
+
+      expect(
+        only<RecurringChargeInsight>(
+          ledger.analyze(
+            august,
+            now: lateAugust,
+            templates: const [
+              InsightRecurringTemplate(
+                title: "Electricity",
+                amount: 300.0,
+                variableAmount: true,
+              ),
+            ],
+          ),
+        ),
+        isEmpty,
+      );
     });
 
     test("only the biggest suggestion per month", () {

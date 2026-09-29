@@ -81,15 +81,20 @@ class TransactionPage extends StatefulWidget {
   /// Suggested recurrence for a transaction that isn't recurring yet.
   final Recurrence? initialRecurrence;
 
+  /// Suggested [RecurringTransaction.variableAmount] for [initialRecurrence]
+  final bool initialVariableAmount;
+
   bool get isNewTransaction => transactionId == 0;
 
   const TransactionPage.create({super.key, this.params})
     : transactionId = 0,
-      initialRecurrence = null;
+      initialRecurrence = null,
+      initialVariableAmount = false;
   const TransactionPage.edit({
     super.key,
     required this.transactionId,
     this.initialRecurrence,
+    this.initialVariableAmount = false,
   }) : params = null;
 
   @override
@@ -143,6 +148,8 @@ class _TransactionPageState extends State<TransactionPage> {
   RecurringTransaction? _recurringTransaction;
 
   Recurrence? _recurrence;
+
+  bool _variableAmount = false;
 
   DateTime? _transactionDate;
 
@@ -249,8 +256,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _currentlyEditing.extensions.recurring?.uuid,
           );
           _recurrence = _recurringTransaction?.recurrence;
+          _variableAmount = _recurringTransaction?.variableAmount ?? false;
         } else {
           _recurrence = widget.initialRecurrence;
+          _variableAmount = widget.initialVariableAmount;
         }
       }
     }
@@ -525,10 +534,28 @@ class _TransactionPageState extends State<TransactionPage> {
                         child: AnimatedSize(
                           duration: const Duration(milliseconds: 300),
                           child: _recurrence != null
-                              ? SelectRecurrence(
-                                  initialValue: _recurrence,
-                                  onChanged: updateRecurrence,
-                                  startBounds: startBounds,
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SelectRecurrence(
+                                      initialValue: _recurrence,
+                                      onChanged: updateRecurrence,
+                                      startBounds: startBounds,
+                                    ),
+                                    SwitchListTile(
+                                      title: Text(
+                                        "transaction.recurring.variableAmount"
+                                            .t(context),
+                                      ),
+                                      subtitle: Text(
+                                        "transaction.recurring.variableAmount.description"
+                                            .t(context),
+                                      ),
+                                      secondary: Icon(Symbols.tune_rounded),
+                                      value: _variableAmount,
+                                      onChanged: updateVariableAmount,
+                                    ),
+                                  ],
                                 )
                               : ListTile(
                                   leading: Icon(Symbols.repeat_rounded),
@@ -978,6 +1005,12 @@ class _TransactionPageState extends State<TransactionPage> {
     setState(() {});
   }
 
+  void updateVariableAmount(bool value) {
+    setState(() {
+      _variableAmount = value;
+    });
+  }
+
   void _postSelectTransactionDate() async {
     final bool pendingTransactionsRequireConfrimation = LocalPreferences()
         .pendingTransactions
@@ -1119,7 +1152,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (originalTransactionWasRecurring) {
       final List<RecurringUpdateMode> availableModes = [
-        if (_recurrence == _recurringTransaction!.recurrence)
+        if (_recurrence == _recurringTransaction!.recurrence &&
+            _variableAmount == _recurringTransaction!.variableAmount)
           RecurringUpdateMode.current,
         RecurringUpdateMode.thisAndFuture,
       ];
@@ -1160,6 +1194,7 @@ class _TransactionPageState extends State<TransactionPage> {
           isPending: _isPending,
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
           recurrence: _recurrence,
+          variableRecurringAmount: _variableAmount,
           tags: _selectedTags,
           attachments: _attachments,
         );
@@ -1216,6 +1251,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transferToAccountUuid: isTransfer
                 ? _selectedAccountTransferTo?.uuid
                 : null,
+            variableAmount: _variableAmount,
           );
     }
 
@@ -1271,6 +1307,7 @@ class _TransactionPageState extends State<TransactionPage> {
             _recurrence?.range ?? recurringTransaction.timeRange;
         recurringTransaction.recurrenceRules =
             _recurrence?.rules ?? recurringTransaction.recurrenceRules;
+        recurringTransaction.variableAmount = _variableAmount;
         recurringTransaction.transferToAccountUuid =
             _selectedAccountTransferTo?.uuid ??
             recurringTransaction.transferToAccountUuid;
@@ -1320,6 +1357,7 @@ class _TransactionPageState extends State<TransactionPage> {
         isPending: _isPending,
         conversionRate: crossCurrencyTransfer ? _conversionRate : null,
         recurrence: _recurrence,
+        variableRecurringAmount: _variableAmount,
         tags: _selectedTags,
         attachments: _attachments,
         latitude: _geo?.latitude,
@@ -1335,6 +1373,7 @@ class _TransactionPageState extends State<TransactionPage> {
         extensions: extensions,
         isPending: _isPending,
         recurrence: _recurrence,
+        variableRecurringAmount: _variableAmount,
         tags: _selectedTags,
         attachments: _attachments,
         latitude: _geo?.latitude,
@@ -1377,7 +1416,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _attachments?.map((attachment) => attachment.uuid).toSet(),
             _currentlyEditing.attachments.map((file) => file.uuid).toSet(),
           ) ||
-          _currentlyEditing.transactionDate != _transactionDate;
+          _currentlyEditing.transactionDate != _transactionDate ||
+          _variableAmount !=
+              (_recurringTransaction?.variableAmount ??
+                  widget.initialVariableAmount);
     }
 
     return _amount != 0 ||

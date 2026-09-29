@@ -592,7 +592,7 @@
     },
     {
       "id": "12:800756592587838565",
-      "lastPropertyId": "11:420551111786793892",
+      "lastPropertyId": "12:7730179234101270201",
       "name": "RecurringTransaction",
       "properties": [
         {
@@ -640,6 +640,11 @@
           "id": "10:651096412135846367",
           "name": "lastGeneratedTransactionDate",
           "type": 10
+        },
+        {
+          "id": "12:7730179234101270201",
+          "name": "variableAmount",
+          "type": 1
         }
       ],
       "relations": []

@@ -16,6 +16,9 @@
   [#761](https://github.com/flow-mn/flow/issues/761)
 * Added an option to hide zero decimals (e.g., "$3" instead of "$3.00") in
   Money formatting
+* Recurring transactions can now have a varying amount (e.g., utility bills).
+  They're added as pending with an estimate, and ask for the actual amount
+  when you confirm. "Worth knowing" suggests these too
 
 ### Changes
 
@@ -30,6 +33,8 @@
 * Fixed exchange rates being fetched for the wrong currency at startup, and
   not refreshing after changing the primary currency
 * Fixed "Mask numbers at startup" not working
+* Fixed recurring transactions not being set up when saved with the default
+  recurrence
 * Fixed transfers losing their location and attachments after editing
 * Fixed brand icons in tags and old backups showing the wrong brand
 

@@ -53,6 +53,13 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   void initState() {
     super.initState();
     _setRecurrence(widget.initialValue);
+
+    // Report the default, so saving it untouched still sets up recurrence
+    if (widget.initialValue == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onChanged(_recurrence);
+      });
+    }
   }
 
   @override

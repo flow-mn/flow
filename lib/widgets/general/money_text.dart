@@ -21,6 +21,9 @@ class MoneyText extends StatefulWidget {
   final bool displayAbsoluteAmount;
   final bool omitCurrency;
 
+  /// Prefixes "~" for estimates, e.g., "~$42"
+  final bool approximate;
+
   /// Uses 3-letter-code instead of the currency symbol.
   ///
   /// e.g., '€' instead of 'EUR'
@@ -55,6 +58,7 @@ class MoneyText extends StatefulWidget {
     this.initiallyAbbreviated = false,
     this.displayAbsoluteAmount = false,
     this.omitCurrency = false,
+    this.approximate = false,
     this.maxLines = 1,
     this.overrideUseCurrencySymbol,
     this.overrideObscure,
@@ -100,7 +104,7 @@ class _MoneyTextState extends State<MoneyText> {
             widget.onTap != null || widget.tapToToggleAbbreviation;
 
         return MoneyTextRaw(
-          text: text,
+          text: widget.approximate ? "~$text" : text,
           style: widget.style,
           textAlign: widget.textAlign,
           maxLines: widget.maxLines,

@@ -608,10 +608,19 @@ class InsightEngine {
       series.priceChangeIndex! - (series.previousPriceIndex ?? 0) >= 2 &&
       _chargedThisMonth(series);
 
+  bool _isSuggestableVariable(RecurringSeries series) =>
+      series.cadence == .monthly &&
+      series.occurrences.length >=
+          InsightThresholds.variableSuggestionMinOccurrences &&
+      coefficientOfVariation(
+            series.occurrences.map((item) => item.amount).toList(),
+          ) <=
+          InsightThresholds.variableSuggestionMaxVariation;
+
   List<RecurringChargeInsight> _recurringCharges() => [
     for (final RecurringSeries series in _series)
       // A price change says more this month; the suggestion can wait.
-      if (series.isFixedPrice &&
+      if ((series.isFixedPrice || _isSuggestableVariable(series)) &&
           !series.isTracked &&
           _chargedThisMonth(series) &&
           !_changedPriceThisMonth(series) &&

@@ -448,6 +448,38 @@ void main() {
       expect(found.single.isTracked, isTrue);
     });
 
+    test("a tracked variable bill has no price change", () {
+      final TestLedger ledger = TestLedger();
+      final List<double> amounts = [40.0, 40.0, 40.0, 60.0, 60.0, 60.0];
+      final List<DateTime> dates = monthly(3);
+
+      for (int i = 0; i < dates.length; i++) {
+        ledger.spend(
+          dates[i],
+          amounts[i],
+          title: "Water",
+          recurringUuid: "r-1",
+        );
+      }
+
+      expect(detect(ledger).single.priceChangeIndex, 3);
+
+      final RecurringSeries series = detect(
+        ledger,
+        templates: const [
+          InsightRecurringTemplate(
+            title: "Water",
+            amount: 40.0,
+            uuid: "r-1",
+            variableAmount: true,
+          ),
+        ],
+      ).single;
+
+      expect(series.isFixedPrice, isFalse);
+      expect(series.priceChangeIndex, isNull);
+    });
+
     test("a template with another title or amount doesn't match", () {
       final List<RecurringSeries> found = detect(
         charges(monthly(3)),

@@ -346,7 +346,9 @@ class _InsightEvidenceSheetState extends State<InsightEvidenceSheet> {
       NewCategoryInsight() => "$_prefix.rule.newCategory".t(context, {
         "months": months,
       }),
-      RecurringChargeInsight() => "$_prefix.rule.recurringCharge".t(context),
+      RecurringChargeInsight() => "$_prefix.rule.recurringCharge".t(context, {
+        "count": InsightThresholds.variableSuggestionMinOccurrences,
+      }),
       PriceChangeInsight() => "$_prefix.rule.priceChange".t(context, {
         "percent": format.percent(InsightThresholds.priceChangeMinRatio),
       }),

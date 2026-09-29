@@ -11,11 +11,15 @@ class FlowCard extends StatelessWidget {
   final TransactionType type;
   final Money flow;
 
+  /// Prefixes "~" when [flow] includes estimates
+  final bool approximate;
+
   const FlowCard({
     super.key,
     required this.flow,
     required this.type,
     this.autoSizeGroup,
+    this.approximate = false,
   });
 
   @override
@@ -33,7 +37,7 @@ class FlowCard extends StatelessWidget {
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           child: AutoSizeText(
-            flow.abs().formatted,
+            "${approximate ? "~" : ""}${flow.abs().formatted}",
             style: context.textTheme.displaySmall?.copyWith(
               color: type.color(context),
             ),

@@ -240,6 +240,7 @@ class TransactionListTile extends StatelessWidget {
                         transaction.money,
                         displayAbsoluteAmount:
                             transaction.isTransfer && combineTransfers,
+                        approximate: transaction.isAmountEstimate,
                         style: context.textTheme.bodyLarge?.copyWith(
                           color: transaction.type.color(context),
                           fontWeight: FontWeight.bold,
