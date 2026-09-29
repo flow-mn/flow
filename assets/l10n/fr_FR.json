@@ -960,6 +960,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Cette action supprimera toutes les transactions associées et empêchera la création de nouvelles transactions. La récupération des transactions depuis la corbeille ne provoquera pas la création de nouvelles transactions.",
   "transaction.recurring.edit": "Modifier la transaction récurrente",
   "transaction.recurring.setup": "Configurer la transaction récurrente",
+  "transaction.recurring.variableAmount": "Montant variable",
+  "transaction.recurring.variableAmount.description": "Demande le montant à chaque fois",
   "transaction.tags": "Étiquettes",
   "transaction.tags.add": "Ajouter des étiquettes",
   "transaction.tags.contact.name": "Nom du contact",

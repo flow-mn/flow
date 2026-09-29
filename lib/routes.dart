@@ -153,6 +153,8 @@ final GoRouter router = GoRouter(
           initialRecurrence: Recurrence.tryParse(
             state.uri.queryParameters["recurrence"] ?? "",
           ),
+          initialVariableAmount:
+              state.uri.queryParameters["variableAmount"] == "true",
         ),
         fullscreenDialog: true,
       ),

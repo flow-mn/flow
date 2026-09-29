@@ -954,6 +954,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Энэ үйлдэл нь холбоотой бүх гүйлгээг устгах бөгөөд, цаашид шинэ гүйлгээ үүсгэхгүй. Хогийн савнаас устгсан гүйлгээнүүдийг сэргээх боломжтой боловч шинэ гүйлгээг дахиж үүсэхгүй.",
   "transaction.recurring.edit": "Давтамжит гүйлгээг засварлах",
   "transaction.recurring.setup": "Давтамжит гүйлгээ тохируулах",
+  "transaction.recurring.variableAmount": "Дүн өөрчлөгддөг",
+  "transaction.recurring.variableAmount.description": "Дүнг тухай бүрт асууна",
   "transaction.tags": "Шошго",
   "transaction.tags.add": "Шошго нэмэх",
   "transaction.tags.contact.name": "Хүний нэр",

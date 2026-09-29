@@ -954,6 +954,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "این کار همه تراکنش‌های مرتبط را حذف می‌کند و ساخت تراکنش‌های جدید را متوقف می‌کند. بازیابی تراکنش‌ها از سطل زباله باعث ساخت دوباره تراکنش‌های جدید نمی‌شود.",
   "transaction.recurring.edit": "ویرایش تراکنش تکرارشونده",
   "transaction.recurring.setup": "تنظیم تراکنش تکرارشونده",
+  "transaction.recurring.variableAmount": "مبلغ متغیر است",
+  "transaction.recurring.variableAmount.description": "هر بار مبلغ را می‌پرسد",
   "transaction.tags": "برچسب‌ها",
   "transaction.tags.add": "افزودن برچسب‌ها",
   "transaction.tags.contact.name": "نام مخاطب",

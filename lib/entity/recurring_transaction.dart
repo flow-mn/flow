@@ -82,9 +82,14 @@ class RecurringTransaction extends EntityBase {
 
   bool disabled;
 
+  /// Amount changes each time, e.g., utility bills. Generated transactions
+  /// are pending with an estimate, and ask for the amount upon confirmation.
+  bool variableAmount;
+
   RecurringTransaction({
     this.id = 0,
     this.disabled = false,
+    this.variableAmount = false,
     required this.rules,
     required this.jsonTransactionTemplate,
     required this.range,

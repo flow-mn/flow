@@ -959,6 +959,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Damit löschst du alle dazugehörigen Buchungen. Es werden auch keine neuen Buchungen mehr erstellt. Wenn du die Buchungen aus dem Papierkorb wiederherstellst, werden trotzdem keine neuen Buchungen erstellt.",
   "transaction.recurring.edit": "Wiederkehrende Buchung bearbeiten",
   "transaction.recurring.setup": "Wiederkehrende Buchung einrichten",
+  "transaction.recurring.variableAmount": "Betrag variiert",
+  "transaction.recurring.variableAmount.description": "Fragt jedes Mal nach dem Betrag",
   "transaction.tags": "Tags",
   "transaction.tags.add": "Tags hinzufügen",
   "transaction.tags.contact.name": "Kontaktname",

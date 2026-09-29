@@ -188,13 +188,20 @@ class RecurringTransactionsService {
         );
       }
 
-      final bool isPending = nextOccurence.isAfter(anchor)
-          ? PendingTransactionsLocalPreferences().requireConfrimation.get()
-          : false;
+      // Variable amounts are estimates, so they wait for the actual amount
+      final bool isPending =
+          recurringTransaction.variableAmount ||
+          (nextOccurence.isAfter(anchor) &&
+              PendingTransactionsLocalPreferences().requireConfrimation.get());
+
+      final double amount = recurringTransaction.estimateAmount(
+        template,
+        relatedTransactions,
+      );
 
       if (to == null) {
         from.createAndSaveTransaction(
-          amount: template.amount,
+          amount: amount,
           category: category,
           tags: tags,
           title: template.title,
@@ -207,6 +214,7 @@ class RecurringTransactionsService {
               initialTransactionDate: nextOccurence,
               uuid: recurringTransaction.uuid,
               relatedTransactionUuid: generatedTransactionUuid,
+              variableAmount: recurringTransaction.variableAmount,
             ),
           ],
           isPending: isPending,
@@ -219,7 +227,7 @@ class RecurringTransactionsService {
         final (int fromObjectId, int toObjectId) = from.transferTo(
           targetAccount: to,
           tags: tags,
-          amount: template.amount.abs(),
+          amount: amount.abs(),
           title: template.title,
           description: template.description,
           transactionDate: nextOccurence,
@@ -227,6 +235,7 @@ class RecurringTransactionsService {
             Recurring(
               uuid: recurringTransaction.uuid,
               initialTransactionDate: nextOccurence,
+              variableAmount: recurringTransaction.variableAmount,
             ),
           ],
           isPending: isPending,
@@ -298,6 +307,7 @@ class RecurringTransactionsService {
     required Recurrence recurrence,
     String? uuidOverride,
     String? transferToAccountUuid,
+    bool variableAmount = false,
   }) {
     if (identifier == null) {
       throw ArgumentError("identifier must be a Transaction or an identifier");
@@ -319,6 +329,7 @@ class RecurringTransactionsService {
       uuid: uuidOverride ?? const Uuid().v4(),
       jsonTransactionTemplate: jsonEncode(transaction.toJson()),
       transferToAccountUuid: transferToAccountUuid,
+      variableAmount: variableAmount,
       range: recurrence.range.encodeShort(),
       rules: recurrence.rules.map((e) => e.serialize()).toList(),
       lastGeneratedTransactionDate: transaction.transactionDate,

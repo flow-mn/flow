@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/objectbox/actions.dart";
@@ -199,7 +201,13 @@ class _GroupedTransactionsListViewState
                     .updateDateUponConfirmation
                     .get();
 
-                transaction.confirm(confirm, updateTransactionDate);
+                if (confirm) {
+                  unawaited(
+                    transaction.confirmPrompted(context, updateTransactionDate),
+                  );
+                } else {
+                  transaction.confirm(false, updateTransactionDate);
+                }
               },
               duplicateFn: () => transaction.duplicate(),
               overrideObscure: widget.overrideObscure,

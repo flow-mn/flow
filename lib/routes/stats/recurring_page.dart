@@ -3,6 +3,8 @@ import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
+import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/categories.dart";
@@ -56,6 +58,10 @@ class _RecurringPageState extends State<RecurringPage>
   double totalIncome = 0.0;
   double totalExpense = 0.0;
 
+  /// Whether the totals include variable amount estimates
+  bool approximateIncome = false;
+  bool approximateExpense = false;
+
   /// Maps an already-logged occurrence's list key to its real transaction id.
   /// Occurrences absent here are still upcoming previews — badged with an eye
   /// and non-openable.
@@ -94,6 +100,8 @@ class _RecurringPageState extends State<RecurringPage>
                       income: Money(totalIncome, primaryCurrency),
                       expense: Money(totalExpense, primaryCurrency),
                       count: occurrences.length,
+                      approximateIncome: approximateIncome,
+                      approximateExpense: approximateExpense,
                     ),
                     const SizedBox(height: 16.0),
                     switch ((activeCount, occurrences.isEmpty)) {
@@ -246,11 +254,14 @@ class _RecurringPageState extends State<RecurringPage>
       final Map<String, int> loggedIds = {};
       double income = 0.0;
       double expense = 0.0;
+      bool incomeEstimated = false;
+      bool expenseEstimated = false;
       int active = 0;
 
       for (final RecurringTransaction recurring in recurrings) {
         // Validate the template once; a stale currency code throws on `money`.
-        if (_decodeTemplate(recurring) == null) continue;
+        final Transaction? template = _decodeTemplate(recurring);
+        if (template == null) continue;
 
         active++;
 
@@ -259,6 +270,8 @@ class _RecurringPageState extends State<RecurringPage>
         final List<Transaction> logged = TransactionsService().findManySync(
           TransactionFilter(extraTag: recurring.extensionIdentifierTag),
         );
+
+        final double estimate = recurring.estimateAmount(template, logged);
 
         final String? categoryUuid = recurring.template.categoryUuid;
         final Category? category = categoryUuid == null
@@ -284,6 +297,10 @@ class _RecurringPageState extends State<RecurringPage>
             loggedIds[_occurrenceKey(occurrence)] = loggedMatch.id;
           }
 
+          final bool estimated =
+              recurring.variableAmount &&
+              _estimateOccurrence(occurrence, loggedMatch, estimate);
+
           final double? converted = occurrence.money.tryConvertAmount(
             primaryCurrency,
             rates,
@@ -296,8 +313,10 @@ class _RecurringPageState extends State<RecurringPage>
           switch (occurrence.type) {
             case TransactionType.income:
               income += converted.abs();
+              incomeEstimated |= estimated;
             case TransactionType.expense:
               expense += converted.abs();
+              expenseEstimated |= estimated;
             case TransactionType.transfer:
               break;
           }
@@ -311,11 +330,41 @@ class _RecurringPageState extends State<RecurringPage>
       activeCount = active;
       totalIncome = income;
       totalExpense = expense;
+      approximateIncome = incomeEstimated;
+      approximateExpense = expenseEstimated;
       missingRates = missing;
     } finally {
       busy = false;
       if (mounted) setState(() {});
     }
+  }
+
+  /// Shows the confirmed amount if [logged] has one, [estimate] otherwise.
+  ///
+  /// Returns whether [occurrence] ended up with an estimate.
+  bool _estimateOccurrence(
+    Transaction occurrence,
+    Transaction? logged,
+    double estimate,
+  ) {
+    if (logged != null &&
+        logged.isPending != true &&
+        logged.accountUuid == occurrence.accountUuid) {
+      occurrence.amount = logged.amount;
+      return false;
+    }
+
+    occurrence
+      ..amount = estimate
+      ..extensions = ExtensionsWrapper([
+        ...occurrence.extensions.data.where((ext) => ext is! Recurring),
+        Recurring(
+          uuid: occurrence.extensions.recurring?.uuid ?? occurrence.uuid,
+          initialTransactionDate: occurrence.transactionDate,
+          variableAmount: true,
+        ),
+      ]);
+    return true;
   }
 
   Transaction? _decodeTemplate(RecurringTransaction recurring) {

@@ -193,10 +193,19 @@ RecurringSeries? _detect(
 
   final List<double> amounts = items.map((item) => item.amount.abs()).toList();
 
-  final ({bool isFixedPrice, int? priceChangeIndex, int? previousPriceIndex})?
-  price = _price(amounts, rhythm.cadence);
+  ({bool isFixedPrice, int? priceChangeIndex, int? previousPriceIndex})? price =
+      _price(amounts, rhythm.cadence);
 
   if (price == null) return null;
+
+  // Tracked as variable, so there's no price to change
+  if (_isVariableTemplate(key, items.last.title, templates)) {
+    price = (
+      isFixedPrice: false,
+      priceChangeIndex: null,
+      previousPriceIndex: null,
+    );
+  }
 
   final List<RecurringOccurrence> occurrences = items
       .map(
@@ -451,12 +460,30 @@ bool _matchesTemplate(
 
   return templates.any((template) {
     if (normalizeTitle(template.title) != title) return false;
+    if (template.variableAmount) return true;
 
     final double amount = template.amount.abs();
     final double tolerance = amount * InsightThresholds.templateAmountTolerance;
 
     return amounts.any((value) => (value - amount).abs() <= tolerance);
   });
+}
+
+bool _isVariableTemplate(
+  String key,
+  String? seriesTitle,
+  List<InsightRecurringTemplate> templates,
+) {
+  final String? title = normalizeTitle(seriesTitle);
+
+  return templates.any(
+    (template) =>
+        template.variableAmount &&
+        ((template.uuid != null &&
+                (key == "recurring:${template.uuid}" ||
+                    key.startsWith("recurring:${template.uuid}:"))) ||
+            (title != null && normalizeTitle(template.title) == title)),
+  );
 }
 
 /// Ties go to the most recent value.

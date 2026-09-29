@@ -985,6 +985,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Это действие удалит все связанные транзакции и прекратит создание новых транзакций. Восстановление транзакций из корзины не приведет к созданию новых транзакций.",
   "transaction.recurring.edit": "Редактировать повторяющуюся транзакцию",
   "transaction.recurring.setup": "Настроить повторяющуюся транзакцию",
+  "transaction.recurring.variableAmount": "Сумма меняется",
+  "transaction.recurring.variableAmount.description": "Спрашивает сумму каждый раз",
   "transaction.tags": "Теги",
   "transaction.tags.add": "Добавить теги",
   "transaction.tags.contact.name": "Имя контакта",

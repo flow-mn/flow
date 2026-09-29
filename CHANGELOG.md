@@ -16,6 +16,9 @@
   [#761](https://github.com/flow-mn/flow/issues/761)
 * Added an option to hide zero decimals (e.g., "$3" instead of "$3.00") in
   Money formatting
+* Recurring transactions can now have a varying amount (e.g., utility bills).
+  They're added as pending with an estimate, and ask for the actual amount
+  when you confirm. "Worth knowing" suggests these too
 
 ### Changes
 

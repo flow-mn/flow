@@ -227,7 +227,9 @@ class _InsightSummaryBuilder {
     final RecurringSeries series = insight.series;
 
     final Map<String, String> values = {
-      "amount": format.money(series.typicalAmount),
+      "amount":
+          "${series.isFixedPrice ? "" : "~"}"
+          "${format.money(series.typicalAmount)}",
       "times": _t("times", series.occurrences.length),
       ...InsightSummary.dayValues(series.anchorDay),
       "weekday": DateTime(2024, 1, series.anchorDay).toMoment().format("dddd"),

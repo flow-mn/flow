@@ -972,6 +972,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "سيؤدي هذا الإجراء إلى حذف جميع المعاملات المرتبطة، وإيقاف إنشاء معاملات جديدة. استعادة المعاملات من سلة المهملات لن تؤدي إلى إنشاء معاملات جديدة.",
   "transaction.recurring.edit": "تعديل المعاملة المتكررة",
   "transaction.recurring.setup": "إعداد المعاملة المتكررة",
+  "transaction.recurring.variableAmount": "المبلغ متغير",
+  "transaction.recurring.variableAmount.description": "يطلب المبلغ في كل مرة",
   "transaction.tags": "الوسوم",
   "transaction.tags.add": "إضافة وسوم",
   "transaction.tags.contact.name": "اسم جهة الاتصال",

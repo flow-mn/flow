@@ -954,6 +954,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "This action will delete all related transactions, and stop new transactions from being created. Recovering the transactions from trash bin wouldn't cause it to create new transactions.",
   "transaction.recurring.edit": "Edit recurring transaction",
   "transaction.recurring.setup": "Setup recurring transaction",
+  "transaction.recurring.variableAmount": "Amount varies",
+  "transaction.recurring.variableAmount.description": "Asks for the amount each time",
   "transaction.tags": "Tags",
   "transaction.tags.add": "Add tags",
   "transaction.tags.contact.name": "Contact name",

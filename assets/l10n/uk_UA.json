@@ -985,6 +985,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Ця дія видалить усі пов'язані транзакції та припинить створення нових транзакцій. Відновлення транзакцій з кошика не призведе до створення нових транзакцій.",
   "transaction.recurring.edit": "Редагувати повторювану транзакцію",
   "transaction.recurring.setup": "Налаштувати повторювану транзакцію",
+  "transaction.recurring.variableAmount": "Сума змінюється",
+  "transaction.recurring.variableAmount.description": "Запитує суму щоразу",
   "transaction.tags": "Теги",
   "transaction.tags.add": "Додати теги",
   "transaction.tags.contact.name": "Ім’я контакту",

@@ -42,7 +42,17 @@ class InsightRecurringTemplate {
   /// Absolute amount, in the primary currency.
   final double amount;
 
-  const InsightRecurringTemplate({required this.title, required this.amount});
+  final String? uuid;
+
+  /// Amount changes each time, so only the title has to match.
+  final bool variableAmount;
+
+  const InsightRecurringTemplate({
+    required this.title,
+    required this.amount,
+    this.uuid,
+    this.variableAmount = false,
+  });
 }
 
 /// An insight the UI has shown before, used for the cooldown.

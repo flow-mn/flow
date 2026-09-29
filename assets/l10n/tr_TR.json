@@ -954,6 +954,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Bu işlem, ilgili tüm işlemleri silecek ve yeni işlemlerin oluşturulmasını durduracaktır. İşlemleri çöp kutusundan kurtarmak yeni işlemlerin oluşturulmasına neden olmayacaktır.",
   "transaction.recurring.edit": "Yinelenen işlemi düzenle",
   "transaction.recurring.setup": "Yinelenen işlemi ayarlayın",
+  "transaction.recurring.variableAmount": "Tutar değişken",
+  "transaction.recurring.variableAmount.description": "Her seferinde tutarı sorar",
   "transaction.tags": "Etiketler",
   "transaction.tags.add": "Etiket ekle",
   "transaction.tags.contact.name": "Kişi adı",

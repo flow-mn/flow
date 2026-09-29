@@ -985,6 +985,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Гэтае дзеянне выдаліць усе звязаныя транзакцыі і спыніць стварэнне новых. Аднаўленне транзакцый з кошыка не прымусіць іх ствараць новыя транзакцыі.",
   "transaction.recurring.edit": "Рэдагаваць перыядычную транзакцыю",
   "transaction.recurring.setup": "Наладзіць перыядычную транзакцыю",
+  "transaction.recurring.variableAmount": "Сума змяняецца",
+  "transaction.recurring.variableAmount.description": "Пытаецца суму кожны раз",
   "transaction.tags": "Тэгі",
   "transaction.tags.add": "Дадаць тэгі",
   "transaction.tags.contact.name": "Імя кантакту",

@@ -35,7 +35,7 @@ abstract final class InsightActions {
     );
 
     await context.push(
-      "/transaction/${latest.id}?recurrence=${Uri.encodeQueryComponent(recurrence.serialize())}",
+      "/transaction/${latest.id}?recurrence=${Uri.encodeQueryComponent(recurrence.serialize())}&variableAmount=${!series.isFixedPrice}",
     );
   }
 

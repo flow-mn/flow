@@ -954,6 +954,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "这将删除所有相关的交易，并停止创建新交易。即使从回收站恢复交易，也不会让它重新开始创建新交易。",
   "transaction.recurring.edit": "编辑周期性交易",
   "transaction.recurring.setup": "设置周期性交易",
+  "transaction.recurring.variableAmount": "金额不固定",
+  "transaction.recurring.variableAmount.description": "每次询问金额",
   "transaction.tags": "标签",
   "transaction.tags.add": "添加标签",
   "transaction.tags.contact.name": "联系人名称",

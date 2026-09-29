@@ -84,7 +84,14 @@ List<InsightRecurringTemplate> insightTemplatesOf(
 
     if (amount == null) continue;
 
-    result.add(InsightRecurringTemplate(title: template.title, amount: amount));
+    result.add(
+      InsightRecurringTemplate(
+        title: template.title,
+        amount: amount,
+        uuid: recurring.uuid,
+        variableAmount: recurring.variableAmount,
+      ),
+    );
   }
 
   return result;

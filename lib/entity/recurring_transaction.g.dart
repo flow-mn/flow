@@ -10,6 +10,7 @@ RecurringTransaction _$RecurringTransactionFromJson(
   Map<String, dynamic> json,
 ) => RecurringTransaction(
   disabled: json['disabled'] as bool? ?? false,
+  variableAmount: json['variableAmount'] as bool? ?? false,
   rules: (json['rules'] as List<dynamic>).map((e) => e as String).toList(),
   jsonTransactionTemplate: json['jsonTransactionTemplate'] as String,
   range: json['range'] as String,
@@ -39,6 +40,7 @@ Map<String, dynamic> _$RecurringTransactionToJson(
     const UTCDateTimeConverter().toJson,
   ),
   'disabled': instance.disabled,
+  'variableAmount': instance.variableAmount,
 };
 
 Value? _$JsonConverterFromJson<Json, Value>(

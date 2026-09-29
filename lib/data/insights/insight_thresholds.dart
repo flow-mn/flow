@@ -75,6 +75,10 @@ abstract final class InsightThresholds {
   /// month boundaries, never suggested.
   static const double variableChargeMaxVariation = 0.5;
 
+  /// Variable bills need a longer, steadier history to be suggested.
+  static const int variableSuggestionMinOccurrences = 4;
+  static const double variableSuggestionMaxVariation = 0.35;
+
   /// Amounts further apart than this ratio are split into separate series.
   static const double amountClusterRatio = 1.25;
 

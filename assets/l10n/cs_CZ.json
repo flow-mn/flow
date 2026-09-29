@@ -973,6 +973,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Tato akce odstraní všechny související transakce a zastaví vytváření nových. Obnovení transakcí z koše nezpůsobí opětovné vytváření nových transakcí.",
   "transaction.recurring.edit": "Upravit opakující se transakci",
   "transaction.recurring.setup": "Nastavit opakující se transakci",
+  "transaction.recurring.variableAmount": "Částka se mění",
+  "transaction.recurring.variableAmount.description": "Pokaždé se zeptá na částku",
   "transaction.tags": "Štítky",
   "transaction.tags.add": "Přidat štítky",
   "transaction.tags.contact.name": "Jméno kontaktu",

@@ -6,7 +6,9 @@ import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
@@ -25,6 +27,36 @@ extension TransactionHelpers on Transaction {
     return transactionDate.isPastAnchored(
       anchor ?? Moment.now().endOfNextMinute(),
     );
+  }
+
+  /// Pending estimate of a variable amount recurring transaction
+  bool get isAmountEstimate =>
+      isPending == true &&
+      isDeleted != true &&
+      extensions.recurring?.variableAmount == true;
+
+  /// Confirms, asking for the actual amount first if it's an estimate.
+  Future<bool> confirmPrompted(
+    BuildContext context, [
+    bool updateTransactionDate = true,
+  ]) async {
+    if (!isAmountEstimate) return confirm(true, updateTransactionDate);
+
+    final double? amount = await showModalBottomSheet<double>(
+      context: context,
+      builder: (context) => InputAmountSheet(
+        initialAmount: this.amount.abs(),
+        currency: currency,
+        title: title,
+        lockSign: true,
+        allowNegative: false,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (amount == null) return false;
+
+    return confirmWithAmount(amount, updateTransactionDate);
   }
 
   bool holdable([DateTime? anchor]) {

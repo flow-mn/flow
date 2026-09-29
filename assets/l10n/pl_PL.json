@@ -979,6 +979,8 @@
   "transaction.recurring.delete.deleteAllDisclaimer": "Ta akcja usunie wszystkie powiązane transakcje i wstrzyma tworzenie nowych. Przywrócenie ich z kosza nie przywróci ich cykliczności.",
   "transaction.recurring.edit": "Edytuj transakcję cykliczną",
   "transaction.recurring.setup": "Ustaw transakcję cykliczną",
+  "transaction.recurring.variableAmount": "Kwota się zmienia",
+  "transaction.recurring.variableAmount.description": "Pyta o kwotę za każdym razem",
   "transaction.tags": "Tagi",
   "transaction.tags.add": "Dodaj tagi",
   "transaction.tags.contact.name": "Nazwa kontaktu",

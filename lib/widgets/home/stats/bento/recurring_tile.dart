@@ -1,10 +1,13 @@
 import "package:flow/data/money.dart";
+import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/recurring_transactions.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
+import "package:flow/utils/extensions/recurring_transaction.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
 import "package:flow/widgets/general/money_text.dart";
 import "package:flow/widgets/home/stats/bento/bento_tile.dart";
@@ -32,6 +35,9 @@ class _RecurringTileState extends State<RecurringTile>
   double outflow = 0.0;
   int upcoming = 0;
 
+  /// Whether [outflow] includes variable amount estimates
+  bool approximate = false;
+
   @override
   Widget build(BuildContext context) {
     return BentoTile(
@@ -56,6 +62,7 @@ class _RecurringTileState extends State<RecurringTile>
             style: context.textTheme.headlineSmall,
             autoSize: true,
             initiallyAbbreviated: true,
+            approximate: approximate,
           ),
           const SizedBox(height: 8.0),
           Text(
@@ -87,6 +94,7 @@ class _RecurringTileState extends State<RecurringTile>
 
       double totalOutflow = 0.0;
       int count = 0;
+      bool estimated = false;
 
       for (final RecurringTransaction recurring in recurrings) {
         final Transaction? template = _decodeTemplate(recurring);
@@ -97,13 +105,14 @@ class _RecurringTileState extends State<RecurringTile>
         // the outflow total, leaving the two figures describing different sets.
         if (template.type != TransactionType.expense) continue;
 
-        final Money? money = _templateMoney(template);
+        final Money? money = _estimateMoney(recurring, template);
         if (money == null) continue;
 
         final List<DateTime> occurrences = recurring.recurrence.occurrences(
           subrange: window,
         );
         count += occurrences.length;
+        estimated |= recurring.variableAmount && occurrences.isNotEmpty;
 
         final double? converted = money.tryConvertAmount(
           primaryCurrency,
@@ -116,6 +125,7 @@ class _RecurringTileState extends State<RecurringTile>
 
       outflow = totalOutflow;
       upcoming = count;
+      approximate = estimated;
       loaded = true;
     } finally {
       busy = false;
@@ -131,9 +141,18 @@ class _RecurringTileState extends State<RecurringTile>
     }
   }
 
-  Money? _templateMoney(Transaction template) {
+  Money? _estimateMoney(RecurringTransaction recurring, Transaction template) {
     try {
-      return template.money;
+      if (!recurring.variableAmount) return template.money;
+
+      final List<Transaction> logged = TransactionsService().findManySync(
+        TransactionFilter(extraTag: recurring.extensionIdentifierTag),
+      );
+
+      return Money(
+        recurring.estimateAmount(template, logged),
+        template.currency,
+      );
     } catch (_) {
       return null;
     }
