@@ -327,8 +327,6 @@ void migrateHomePendingTransactionsRange() async {
 /// only meaningful for the version it was saved with. Flow shipped
 /// simple_icons 14.6.1; [legacySimpleIconsCodepointToSlug] maps those code
 /// points straight to their stable slug, independent of the bundled version.
-/// This is the *only* remaining use of that table — once this migration has
-/// propagated, the migration and the table can both be deleted.
 Future<void> migrateSimpleIconsToSlug() async {
   const String migrationUuid = "598a1c1d-1d53-44e0-9035-e005c5420538";
 
@@ -343,14 +341,14 @@ Future<void> migrateSimpleIconsToSlug() async {
     if (ok != null) return;
 
     try {
+      // [IconFlowIcon.parse] resolves legacy brand code points to slugs.
+      // Slugs missing from the bundled build (removed upstream) are left as
+      // they are.
       String? slugForIconCode(String iconCode) {
+        if (!iconCode.startsWith("IconFlowIcon:")) return null;
         final FlowIconData? parsed = FlowIconData.tryParse(iconCode);
-        if (parsed is! IconFlowIcon) return null;
-        if (parsed.iconData.fontFamily != "SimpleIcons") return null;
-
-        // Stored code points are 14.6.1. Slugs missing from the bundled
-        // build (removed upstream) are left as they are.
-        return legacySimpleIconsCodepointToSlug[parsed.iconData.codePoint];
+        if (parsed is! SimpleIconFlowIcon || parsed.slug.isEmpty) return null;
+        return parsed.slug;
       }
 
       final List<Account> changedAccounts = [];
