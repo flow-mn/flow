@@ -33,6 +33,8 @@
 * Fixed exchange rates being fetched for the wrong currency at startup, and
   not refreshing after changing the primary currency
 * Fixed "Mask numbers at startup" not working
+* Fixed recurring transactions not being set up when saved with the default
+  recurrence
 * Fixed transfers losing their location and attachments after editing
 * Fixed brand icons in tags and old backups showing the wrong brand
 
