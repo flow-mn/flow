@@ -1,5 +1,6 @@
 import "package:flow/data/money.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:flutter/material.dart";
 
@@ -64,6 +65,7 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
       _privacyModeUpdate,
     );
     LocalPreferences().useCurrencySymbol.addListener(_useCurrencySymbolUpdate);
+    UserPreferencesService().valueNotifier.addListener(_userPreferencesUpdate);
 
     globalPrivacyMode = TransitiveLocalPreferences().sessionPrivacyMode.get();
     globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
@@ -94,6 +96,9 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
     LocalPreferences().useCurrencySymbol.removeListener(
       _useCurrencySymbolUpdate,
     );
+    UserPreferencesService().valueNotifier.removeListener(
+      _userPreferencesUpdate,
+    );
 
     super.dispose();
   }
@@ -113,6 +118,11 @@ class _MoneyTextBuilderState extends State<MoneyTextBuilder> {
 
   void _useCurrencySymbolUpdate() {
     globalUseCurrencySymbol = LocalPreferences().useCurrencySymbol.get();
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  void _userPreferencesUpdate() {
     if (!mounted) return;
     setState(() {});
   }

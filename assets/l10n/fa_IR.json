@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "پیش‌فرض",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "نمایش مبلغ تقریبی",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "مبالغ ارزی را به ارز اصلی هم نشان بده",
+  "preferences.moneyFormatting.hideZeroDecimals": "پنهان کردن اعشار صفر",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "نمایش «3» به جای «3.00»",
   "preferences.moneyFormatting.useCurrencySymbol": "استفاده از نماد ارز",
   "preferences.moneyFormatting.useCurrencySymbol.description": "مثلاً «$5» به‌جای «5USD»",
   "preferences.numpad": "صفحه‌کلید عددی",

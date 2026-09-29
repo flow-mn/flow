@@ -26,6 +26,7 @@ class _MoneyFormattingPreferencesPageState
     final bool showApproximatePrimaryAmount = LocalPreferences()
         .showApproximatePrimaryAmount
         .get();
+    final bool hideZeroDecimals = UserPreferencesService().hideZeroDecimals;
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.moneyFormatting".t(context))),
@@ -81,6 +82,18 @@ class _MoneyFormattingPreferencesPageState
                 value: showApproximatePrimaryAmount,
                 onChanged: updateShowApproximatePrimaryAmount,
               ),
+              CheckboxListTile(
+                title: Text(
+                  "preferences.moneyFormatting.hideZeroDecimals".t(context),
+                ),
+                subtitle: Text(
+                  "preferences.moneyFormatting.hideZeroDecimals.description".t(
+                    context,
+                  ),
+                ),
+                value: hideZeroDecimals,
+                onChanged: updateHideZeroDecimals,
+              ),
               ListTile(
                 title: Text(
                   "preferences.moneyFormatting.setICUPattern".t(context),
@@ -119,6 +132,14 @@ class _MoneyFormattingPreferencesPageState
     await LocalPreferences().showApproximatePrimaryAmount.set(
       newShowApproximatePrimaryAmount,
     );
+
+    if (mounted) setState(() {});
+  }
+
+  void updateHideZeroDecimals(bool? newHideZeroDecimals) {
+    if (newHideZeroDecimals == null) return;
+
+    UserPreferencesService().hideZeroDecimals = newHideZeroDecimals;
 
     if (mounted) setState(() {});
   }

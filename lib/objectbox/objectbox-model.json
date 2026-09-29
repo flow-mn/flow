@@ -362,7 +362,7 @@
     },
     {
       "id": "10:7829328581176695647",
-      "lastPropertyId": "32:5426961238010158288",
+      "lastPropertyId": "33:7003500790338467583",
       "name": "UserPreferences",
       "properties": [
         {
@@ -517,6 +517,11 @@
           "id": "32:5426961238010158288",
           "name": "dateFormatPreset",
           "type": 9
+        },
+        {
+          "id": "33:7003500790338467583",
+          "name": "hideZeroDecimals",
+          "type": 1
         }
       ],
       "relations": []

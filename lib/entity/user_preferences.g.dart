@@ -42,6 +42,7 @@ UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
             (json['autoBackupIntervalInHours'] as num?)?.toInt() ?? 72,
         icuCurrencyFormattingPattern:
             json['icuCurrencyFormattingPattern'] as String?,
+        hideZeroDecimals: json['hideZeroDecimals'] as bool? ?? false,
         dateFormatPreset: json['dateFormatPreset'] as String?,
         primaryCurrency: json['primaryCurrency'] as String?,
         primaryAccountUuid: json['primaryAccountUuid'] as String?,
@@ -84,6 +85,7 @@ Map<String, dynamic> _$UserPreferencesToJson(
   'privacyModeUponLaunch': instance.privacyModeUponLaunch,
   'privacyModeUponShaking': instance.privacyModeUponShaking,
   'icuCurrencyFormattingPattern': instance.icuCurrencyFormattingPattern,
+  'hideZeroDecimals': instance.hideZeroDecimals,
   'dateFormatPreset': instance.dateFormatPreset,
   'primaryCurrency': instance.primaryCurrency,
   'primaryAccountUuid': instance.primaryAccountUuid,

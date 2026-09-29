@@ -87,6 +87,9 @@ class UserPreferences implements EntityBase {
 
   String? icuCurrencyFormattingPattern;
 
+  /// Omits decimals for whole amounts, e.g., $3 instead of $3.00
+  bool hideZeroDecimals;
+
   /// Serialized version of [DateFormatPreset]
   String? dateFormatPreset;
 
@@ -192,6 +195,7 @@ class UserPreferences implements EntityBase {
     this.iCloudBackupsToKeep = 10,
     this.autoBackupIntervalInHours = 72,
     this.icuCurrencyFormattingPattern,
+    this.hideZeroDecimals = false,
     this.dateFormatPreset,
     this.primaryCurrency,
     this.primaryAccountUuid,

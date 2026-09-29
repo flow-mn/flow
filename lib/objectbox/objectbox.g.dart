@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(32, 5426961238010158288),
+    lastPropertyId: const obx_int.IdUid(33, 7003500790338467583),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -637,6 +637,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(32, 5426961238010158288),
         name: 'dateFormatPreset',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(33, 7003500790338467583),
+        name: 'hideZeroDecimals',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1672,7 +1678,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final dateFormatPresetOffset = object.dateFormatPreset == null
             ? null
             : fbb.writeString(object.dateFormatPreset!);
-        fbb.startTable(33);
+        fbb.startTable(34);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1703,6 +1709,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(29, homePendingTransactionsTimeRangeSerializedOffset);
         fbb.addBool(30, object.transactionListAbsoluteDateHeaders);
         fbb.addOffset(31, dateFormatPresetOffset);
+        fbb.addBool(32, object.hideZeroDecimals);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1777,6 +1784,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final icuCurrencyFormattingPatternParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 30);
+        final hideZeroDecimalsParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          68,
+          false,
+        );
         final dateFormatPresetParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 66);
@@ -1833,6 +1846,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 iCloudBackupsToKeep: iCloudBackupsToKeepParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
                 icuCurrencyFormattingPattern: icuCurrencyFormattingPatternParam,
+                hideZeroDecimals: hideZeroDecimalsParam,
                 dateFormatPreset: dateFormatPresetParam,
                 primaryCurrency: primaryCurrencyParam,
                 primaryAccountUuid: primaryAccountUuidParam,
@@ -2727,6 +2741,11 @@ class UserPreferences_ {
   /// See [UserPreferences.dateFormatPreset].
   static final dateFormatPreset = obx.QueryStringProperty<UserPreferences>(
     _entities[6].properties[29],
+  );
+
+  /// See [UserPreferences.hideZeroDecimals].
+  static final hideZeroDecimals = obx.QueryBooleanProperty<UserPreferences>(
+    _entities[6].properties[30],
   );
 }
 

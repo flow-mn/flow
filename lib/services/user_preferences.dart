@@ -320,6 +320,12 @@ class UserPreferencesService {
     ObjectBox().box<UserPreferences>().put(value);
   }
 
+  bool get hideZeroDecimals => value.hideZeroDecimals;
+  set hideZeroDecimals(bool newHideZeroDecimals) {
+    value.hideZeroDecimals = newHideZeroDecimals;
+    ObjectBox().box<UserPreferences>().put(value);
+  }
+
   DateFormatPreset get dateFormatPreset =>
       DateFormatPreset.tryParse(value.dateFormatPreset) ?? .system;
   set dateFormatPreset(DateFormatPreset newDateFormatPreset) {

@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "Standard",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "Ungefähren Betrag anzeigen",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Fremdwährungsbeträge auch in der Hauptwährung anzeigen",
+  "preferences.moneyFormatting.hideZeroDecimals": "Nachkommastellen bei ganzen Beträgen ausblenden",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "z.B. „3“ statt „3,00“",
   "preferences.moneyFormatting.useCurrencySymbol": "Währungssymbol verwenden",
   "preferences.moneyFormatting.useCurrencySymbol.description": "z.B. „5€“ statt „5 EUR“",
   "preferences.numpad": "Ziffernblock",

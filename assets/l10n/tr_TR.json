@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "Varsayılan",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "Yaklaşık tutarı göster",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Yabancı tutarları ana para biriminde de göster",
+  "preferences.moneyFormatting.hideZeroDecimals": "Sıfır ondalıkları gizle",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "\"3,00\" yerine \"3\" göster",
   "preferences.moneyFormatting.useCurrencySymbol": "Para birimi simgesini kullan",
   "preferences.moneyFormatting.useCurrencySymbol.description": "örneğin, \"5$\" yerine \"5 ABD Doları\"",
   "preferences.numpad": "Sayısal tuş takımı",

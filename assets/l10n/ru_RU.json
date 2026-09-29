@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "По умолчанию",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "Показывать примерную сумму",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Также показывать иностранные суммы в основной валюте",
+  "preferences.moneyFormatting.hideZeroDecimals": "Скрывать нулевые дроби",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "Показывать «3» вместо «3,00»",
   "preferences.moneyFormatting.useCurrencySymbol": "Использовать символ валюты",
   "preferences.moneyFormatting.useCurrencySymbol.description": "например, \"$5\" вместо \"5USD\"",
   "preferences.numpad": "Цифровая клавиатура",

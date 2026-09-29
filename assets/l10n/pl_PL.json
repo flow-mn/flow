@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "Domyślny",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "Pokaż przybliżoną kwotę",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Pokazuj też kwoty obce w walucie głównej",
+  "preferences.moneyFormatting.hideZeroDecimals": "Ukryj zerowe miejsca dziesiętne",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "Pokazuj „3” zamiast „3,00”",
   "preferences.moneyFormatting.useCurrencySymbol": "Użyj symbolu waluty",
   "preferences.moneyFormatting.useCurrencySymbol.description": "np. \"$5\" zamiast \"5USD\"",
   "preferences.numpad": "Klawiatura numeryczna",

@@ -380,6 +380,8 @@
   "preferences.moneyFormatting.setICUPattern.default": "Predefinito",
   "preferences.moneyFormatting.showApproximatePrimaryAmount": "Mostra importo approssimativo",
   "preferences.moneyFormatting.showApproximatePrimaryAmount.description": "Mostra anche gli importi esteri nella valuta principale",
+  "preferences.moneyFormatting.hideZeroDecimals": "Nascondi decimali a zero",
+  "preferences.moneyFormatting.hideZeroDecimals.description": "Mostra \"3\" invece di \"3,00\"",
   "preferences.moneyFormatting.useCurrencySymbol": "Usa simbolo valuta",
   "preferences.moneyFormatting.useCurrencySymbol.description": "Ad esempio, \"€5\" invece di \"5 EUR\"",
   "preferences.numpad": "Tastierino numerico",
