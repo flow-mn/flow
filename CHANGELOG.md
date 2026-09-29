@@ -14,6 +14,8 @@
 * Added "Worth knowing" to the stats tab: on-device observations like spending
   spikes, unusual categories, and charges that look recurring, closes
   [#761](https://github.com/flow-mn/flow/issues/761)
+* Added an option to hide zero decimals (e.g., "$3" instead of "$3.00") in
+  Money formatting
 
 ### Changes
 
@@ -27,6 +29,9 @@
 
 * Fixed exchange rates being fetched for the wrong currency at startup, and
   not refreshing after changing the primary currency
+* Fixed "Mask numbers at startup" not working
+* Fixed transfers losing their location and attachments after editing
+* Fixed brand icons in tags and old backups showing the wrong brand
 
 ## 0.24.1
 
