@@ -20,6 +20,8 @@
 * Reorganized preferences
 * Pie chart now uses category colors, shows the total, and opens the category
   when you tap a selected slice again
+* Updated icons: Material Symbols 4.2960.0 and Simple Icons (brand icons)
+  16.23.0
 
 ### Fixes
 
