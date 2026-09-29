@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "{month} harcaması, önceki {months} ayın medyanıyla karşılaştırıldı.",
   "tabs.stats.worthKnowing.rule.newCategory": "Bir kategoride {months} aydır ilk kez harcama olduğunda gösterilir.",
   "tabs.stats.worthKnowing.rule.priceChange": "Düzenli bir ödeme {percent} veya daha fazla değiştiğinde gösterilir.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Aynı başlıklı, sabit tutarlı ve düzenli tekrarlanan ödemeler.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Aynı başlıklı ve düzenli tekrarlanan ödemeler. Faturalar gibi değişken tutarlı ödemeler için en az {count} ödeme gerekir.",
   "tabs.stats.worthKnowing.seeTransactions": "Bu işlemleri gör",
   "tabs.stats.worthKnowing.times": "şimdiye kadar {count} kez",
   "tabs.stats.worthKnowing.times.one": "şimdiye kadar {count} kez",

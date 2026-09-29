@@ -54,7 +54,7 @@ extension TransactionHelpers on Transaction {
       isScrollControlled: true,
     );
 
-    if (amount == null) return false;
+    if (amount == null || amount == 0) return false;
 
     return confirmWithAmount(amount, updateTransactionDate);
   }
@@ -313,6 +313,8 @@ class BulkTransactions {
   }
 
   /// Confirms every transaction (and its transfer partner), leaving pending.
+  ///
+  /// Skips estimates, they need the actual amount.
   static int confirm(
     Iterable<Transaction> transactions, {
     bool updateTransactionDate = true,
@@ -323,8 +325,12 @@ class BulkTransactions {
     final List<Transaction> toUpdate = [];
     final Set<String> seen = {};
 
+    int count = 0;
+
     for (final Transaction t in list) {
+      if (t.isAmountEstimate) continue;
       if (!seen.add(t.uuid)) continue;
+      count++;
       t.isPending = false;
       if (updateTransactionDate &&
           !t.extraTags.contains(Transaction.importedFromSiriTag)) {
@@ -348,7 +354,7 @@ class BulkTransactions {
     } catch (e, stackTrace) {
       _log.severe("Bulk confirm failed", e, stackTrace);
     }
-    return list.length;
+    return count;
   }
 
   /// Sets [category] on every non-transfer transaction.

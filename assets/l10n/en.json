@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Spending in {month}, compared with the median of the previous {months} months.",
   "tabs.stats.worthKnowing.rule.newCategory": "Shown when a category has spending for the first time in {months} months.",
   "tabs.stats.worthKnowing.rule.priceChange": "Shown when a repeating charge changes by {percent} or more.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Charges with the same title and a steady amount, repeating on a regular schedule.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Charges with the same title, repeating on a regular schedule. Bills that vary, like utilities, need at least {count} charges.",
   "tabs.stats.worthKnowing.seeTransactions": "See these transactions",
   "tabs.stats.worthKnowing.times": "{count} times so far",
   "tabs.stats.worthKnowing.times.one": "{count} time so far",

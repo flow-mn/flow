@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Gasto de {month}, comparado con la mediana de los {months} meses anteriores.",
   "tabs.stats.worthKnowing.rule.newCategory": "Aparece cuando una categoría tiene gastos por primera vez en {months} meses.",
   "tabs.stats.worthKnowing.rule.priceChange": "Aparece cuando un cargo periódico cambia un {percent} o más.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Cargos con el mismo título e importe estable que se repiten con regularidad.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Cargos con el mismo título que se repiten con regularidad. Las facturas variables, como los suministros, necesitan al menos {count} cargos.",
   "tabs.stats.worthKnowing.seeTransactions": "Ver estas transacciones",
   "tabs.stats.worthKnowing.times": "{count} veces hasta ahora",
   "tabs.stats.worthKnowing.times.one": "{count} vez hasta ahora",

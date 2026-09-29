@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Dépenses de {month}, comparées à la médiane des {months} mois précédents.",
   "tabs.stats.worthKnowing.rule.newCategory": "Affiché quand une catégorie a des dépenses pour la première fois depuis {months} mois.",
   "tabs.stats.worthKnowing.rule.priceChange": "Affiché quand un prélèvement régulier change de {percent} ou plus.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Prélèvements au même titre et au montant stable, qui reviennent régulièrement.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Prélèvements au même titre, qui reviennent régulièrement. Les factures variables, comme l'électricité, demandent au moins {count} prélèvements.",
   "tabs.stats.worthKnowing.seeTransactions": "Voir ces transactions",
   "tabs.stats.worthKnowing.times": "{count} fois jusqu'ici",
   "tabs.stats.worthKnowing.times.one": "{count} fois jusqu'ici",

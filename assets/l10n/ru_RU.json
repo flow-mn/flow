@@ -884,7 +884,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Расходы за период «{month}» в сравнении с медианой {months} прошлых мес.",
   "tabs.stats.worthKnowing.rule.newCategory": "Показывается, когда в категории впервые за {months} мес. появляются расходы.",
   "tabs.stats.worthKnowing.rule.priceChange": "Показывается, когда регулярный платёж меняется на {percent} или больше.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Платежи с одинаковым названием и стабильной суммой, которые повторяются регулярно.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Платежи с одинаковым названием, которые повторяются регулярно. Для меняющихся счетов, как коммунальные, нужно не меньше {count} платежей.",
   "tabs.stats.worthKnowing.seeTransactions": "Показать эти транзакции",
   "tabs.stats.worthKnowing.times": "{count} раз уже",
   "tabs.stats.worthKnowing.times.few": "{count} раза уже",

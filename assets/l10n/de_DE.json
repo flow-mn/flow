@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Ausgaben im {month}, verglichen mit dem Median der letzten {months} Monate.",
   "tabs.stats.worthKnowing.rule.newCategory": "Erscheint, wenn eine Kategorie zum ersten Mal seit {months} Monaten Ausgaben hat.",
   "tabs.stats.worthKnowing.rule.priceChange": "Erscheint, wenn sich eine wiederkehrende Zahlung um {percent} oder mehr ändert.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Zahlungen mit gleichem Titel und festem Betrag, die regelmäßig wiederkehren.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Zahlungen mit gleichem Titel, die regelmäßig wiederkehren. Schwankende Rechnungen wie Nebenkosten brauchen mindestens {count} Zahlungen.",
   "tabs.stats.worthKnowing.seeTransactions": "Diese Buchungen ansehen",
   "tabs.stats.worthKnowing.times": "bisher {count}-mal",
   "tabs.stats.worthKnowing.times.one": "bisher {count}-mal",

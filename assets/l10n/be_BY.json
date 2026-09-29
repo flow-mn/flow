@@ -884,7 +884,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Выдаткі за перыяд «{month}» у параўнанні з медыянай {months} папярэдніх мес.",
   "tabs.stats.worthKnowing.rule.newCategory": "З'яўляецца, калі ў катэгорыі ўпершыню за {months} мес. ёсць выдаткі.",
   "tabs.stats.worthKnowing.rule.priceChange": "З'яўляецца, калі рэгулярны плацёж мяняецца на {percent} ці больш.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Плацяжы з аднолькавай назвай і сталай сумай, якія рэгулярна паўтараюцца.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Плацяжы з аднолькавай назвай, якія рэгулярна паўтараюцца. Для зменлівых рахункаў, як камунальныя, патрэбна не менш за {count} плацяжы.",
   "tabs.stats.worthKnowing.seeTransactions": "Паказаць гэтыя транзакцыі",
   "tabs.stats.worthKnowing.times": "ужо {count} разоў",
   "tabs.stats.worthKnowing.times.few": "ужо {count} разы",

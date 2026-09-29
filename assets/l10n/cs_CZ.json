@@ -881,7 +881,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Výdaje za {month} ve srovnání s mediánem {months} předchozích měsíců.",
   "tabs.stats.worthKnowing.rule.newCategory": "Zobrazí se, když má kategorie výdaje poprvé za {months} měsíců.",
   "tabs.stats.worthKnowing.rule.priceChange": "Zobrazí se, když se pravidelná platba změní o {percent} nebo více.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Platby se stejným názvem a stálou částkou, které se pravidelně opakují.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Platby se stejným názvem, které se pravidelně opakují. Proměnlivé účty, jako energie, potřebují alespoň {count} platby.",
   "tabs.stats.worthKnowing.seeTransactions": "Zobrazit tyto transakce",
   "tabs.stats.worthKnowing.times": "zatím {count}krát",
   "tabs.stats.worthKnowing.times.few": "zatím {count}krát",

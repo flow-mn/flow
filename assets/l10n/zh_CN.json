@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "{month}的支出，与前 {months} 个月的中位数对比。",
   "tabs.stats.worthKnowing.rule.newCategory": "当某分类 {months} 个月来首次有支出时显示。",
   "tabs.stats.worthKnowing.rule.priceChange": "当定期扣款变动 {percent} 或以上时显示。",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "标题相同、金额稳定、按固定周期重复的扣款。",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "标题相同、按固定周期重复的扣款。金额浮动的账单（如水电费）至少需要 {count} 次扣款。",
   "tabs.stats.worthKnowing.seeTransactions": "查看这些交易",
   "tabs.stats.worthKnowing.times": "已 {count} 次",
   "tabs.stats.worthKnowing.times.one": "已 {count} 次",

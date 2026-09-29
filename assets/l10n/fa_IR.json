@@ -877,7 +877,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "هزینهٔ {month}، در مقایسه با میانهٔ {months} ماه قبل.",
   "tabs.stats.worthKnowing.rule.newCategory": "وقتی دسته‌ای برای اولین بار در {months} ماه هزینه داشته باشد نمایش داده می‌شود.",
   "tabs.stats.worthKnowing.rule.priceChange": "وقتی یک پرداخت تکراری {percent} یا بیشتر تغییر کند نمایش داده می‌شود.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "پرداخت‌هایی با عنوان یکسان و مبلغ ثابت که مرتب تکرار می‌شوند.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "پرداخت‌هایی با عنوان یکسان که مرتب تکرار می‌شوند. قبض‌های متغیر، مثل آب و برق، دست‌کم {count} پرداخت لازم دارند.",
   "tabs.stats.worthKnowing.seeTransactions": "دیدن این تراکنش‌ها",
   "tabs.stats.worthKnowing.times": "تا حالا {count} بار",
   "tabs.stats.worthKnowing.times.one": "تا حالا {count} بار",

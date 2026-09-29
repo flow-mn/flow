@@ -199,7 +199,7 @@ RecurringSeries? _detect(
   if (price == null) return null;
 
   // Tracked as variable, so there's no price to change
-  if (_isVariableTemplate(key, items.last.title, templates)) {
+  if (_isVariableTemplate(key, templates)) {
     price = (
       isFixedPrice: false,
       priceChangeIndex: null,
@@ -471,20 +471,14 @@ bool _matchesTemplate(
 
 bool _isVariableTemplate(
   String key,
-  String? seriesTitle,
   List<InsightRecurringTemplate> templates,
-) {
-  final String? title = normalizeTitle(seriesTitle);
-
-  return templates.any(
-    (template) =>
-        template.variableAmount &&
-        ((template.uuid != null &&
-                (key == "recurring:${template.uuid}" ||
-                    key.startsWith("recurring:${template.uuid}:"))) ||
-            (title != null && normalizeTitle(template.title) == title)),
-  );
-}
+) => templates.any(
+  (template) =>
+      template.variableAmount &&
+      template.uuid != null &&
+      (key == "recurring:${template.uuid}" ||
+          key.startsWith("recurring:${template.uuid}:")),
+);
 
 /// Ties go to the most recent value.
 String? _mostCommon(Iterable<String?> values) {

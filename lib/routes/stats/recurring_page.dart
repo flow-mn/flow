@@ -339,7 +339,7 @@ class _RecurringPageState extends State<RecurringPage>
     }
   }
 
-  /// Shows the confirmed amount if [logged] has one, [estimate] otherwise.
+  /// Shows the amount [logged] has, [estimate] otherwise.
   ///
   /// Returns whether [occurrence] ended up with an estimate.
   bool _estimateOccurrence(
@@ -347,23 +347,21 @@ class _RecurringPageState extends State<RecurringPage>
     Transaction? logged,
     double estimate,
   ) {
-    if (logged != null &&
-        logged.isPending != true &&
-        logged.accountUuid == occurrence.accountUuid) {
+    if (logged != null && logged.accountUuid == occurrence.accountUuid) {
       occurrence.amount = logged.amount;
-      return false;
+      if (logged.isPending != true) return false;
+    } else {
+      occurrence.amount = estimate;
     }
 
-    occurrence
-      ..amount = estimate
-      ..extensions = ExtensionsWrapper([
-        ...occurrence.extensions.data.where((ext) => ext is! Recurring),
-        Recurring(
-          uuid: occurrence.extensions.recurring?.uuid ?? occurrence.uuid,
-          initialTransactionDate: occurrence.transactionDate,
-          variableAmount: true,
-        ),
-      ]);
+    occurrence.extensions = ExtensionsWrapper([
+      ...occurrence.extensions.data.where((ext) => ext is! Recurring),
+      Recurring(
+        uuid: occurrence.extensions.recurring?.uuid ?? occurrence.uuid,
+        initialTransactionDate: occurrence.transactionDate,
+        variableAmount: true,
+      ),
+    ]);
     return true;
   }
 

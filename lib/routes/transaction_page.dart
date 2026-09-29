@@ -535,7 +535,7 @@ class _TransactionPageState extends State<TransactionPage> {
                           duration: const Duration(milliseconds: 300),
                           child: _recurrence != null
                               ? Column(
-                                  mainAxisSize: .min,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SelectRecurrence(
                                       initialValue: _recurrence,

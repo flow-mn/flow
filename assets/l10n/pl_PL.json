@@ -884,7 +884,7 @@
   "tabs.stats.worthKnowing.rule.monthPacePast": "Wydatki w miesiącu {month} w porównaniu z medianą {months} poprzednich miesięcy.",
   "tabs.stats.worthKnowing.rule.newCategory": "Pojawia się, gdy kategoria ma wydatki pierwszy raz od {months} miesięcy.",
   "tabs.stats.worthKnowing.rule.priceChange": "Pojawia się, gdy cykliczna opłata zmienia się o {percent} lub więcej.",
-  "tabs.stats.worthKnowing.rule.recurringCharge": "Opłaty o tym samym tytule i stałej kwocie, powtarzające się regularnie.",
+  "tabs.stats.worthKnowing.rule.recurringCharge": "Opłaty o tym samym tytule, powtarzające się regularnie. Zmienne rachunki, jak media, wymagają co najmniej {count} opłat.",
   "tabs.stats.worthKnowing.seeTransactions": "Zobacz te transakcje",
   "tabs.stats.worthKnowing.times": "{count} razy dotąd",
   "tabs.stats.worthKnowing.times.few": "{count} razy dotąd",

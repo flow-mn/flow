@@ -22,12 +22,17 @@ extension RecurringTransactionHelpers on RecurringTransaction {
       // Transfers log both sides; the template is the outgoing one
       if (transaction.isTransfer && !transaction.amount.isNegative) continue;
 
+      // Confirming may move [Transaction.transactionDate] to now
       if (latest == null ||
-          transaction.transactionDate.isAfter(latest.transactionDate)) {
+          _scheduledDate(transaction).isAfter(_scheduledDate(latest))) {
         latest = transaction;
       }
     }
 
     return latest?.amount ?? template.amount;
   }
+
+  DateTime _scheduledDate(Transaction transaction) =>
+      transaction.extensions.recurring?.initialTransactionDate ??
+      transaction.transactionDate;
 }

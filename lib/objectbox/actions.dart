@@ -646,7 +646,10 @@ extension TransactionActions on Transaction {
         .findTransferRelatedTransactionSync(this);
 
     if (related != null) {
-      final double rate = extensions.transfer?.conversionRate ?? 1.0;
+      final double rate = switch (extensions.transfer?.conversionRate) {
+        double value when value != 0 => value,
+        _ => 1.0,
+      };
 
       related.amount = outgoing ? amount.abs() * rate : -amount.abs() / rate;
       TransactionsService().updateOneSync(related);
