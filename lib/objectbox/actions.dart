@@ -18,6 +18,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
+import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
@@ -945,8 +946,21 @@ extension AccountActions on Account {
           "to": targetAccount.name,
         });
 
-    final List<TransactionExtension> filteredExtensions =
-        extensions?.where((ext) => ext is! Transfer).toList() ?? [];
+    // Copy per side, a shared instance only binds to `from`. Stale
+    // [Recurring] (e.g., from an edited transfer) is dropped.
+    List<TransactionExtension> extensionsFor(String transactionUuid) =>
+        ExtensionsWrapper.parse(
+              ExtensionsWrapper(
+                extensions?.where((ext) => ext is! Transfer).toList() ?? [],
+              ).serialize(),
+            ).data
+            .where(
+              (ext) =>
+                  ext is! Recurring ||
+                  (recurrence == null && ext.relatedTransactionUuid == null),
+            )
+            .map((ext) => ext..setRelatedTransactionUuid(transactionUuid))
+            .toList();
 
     transactionDate ??= recurrence?.range.from ?? DateTime.now();
 
@@ -968,7 +982,11 @@ extension AccountActions on Account {
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [...filteredExtensions, transferData, ?recurringExtension],
+      extensions: [
+        ...extensionsFor(fromTransactionUuid),
+        transferData,
+        ?recurringExtension,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -982,7 +1000,7 @@ extension AccountActions on Account {
       title: resolvedTitle,
       description: description,
       extensions: [
-        ...filteredExtensions,
+        ...extensionsFor(toTransactionUuid),
         transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
         if (recurringExtension != null)
           recurringExtension.copyWith(

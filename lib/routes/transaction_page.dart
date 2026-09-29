@@ -1161,6 +1161,7 @@ class _TransactionPageState extends State<TransactionPage> {
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
           recurrence: _recurrence,
           tags: _selectedTags,
+          attachments: _attachments,
         );
 
         _currentlyEditing.permanentlyDelete(true);
