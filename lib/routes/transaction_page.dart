@@ -40,6 +40,7 @@ import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/recurrence.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/button.dart";
@@ -962,6 +963,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     setState(() {
       _transactionDate = result ?? _transactionDate;
+      _moveRecurrenceStart();
     });
 
     _postSelectTransactionDate();
@@ -983,6 +985,7 @@ class _TransactionPageState extends State<TransactionPage> {
         microsecond: 0,
         millisecond: 0,
       );
+      _moveRecurrenceStart();
     });
 
     _postSelectTransactionDate();
@@ -995,14 +998,23 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateRecurrence(Recurrence? recurrence) {
-    if (widget.isNewTransaction) {
-      _transactionDate = recurrence?.range.from;
+    // The series starts with this transaction
+    if (_recurringTransaction == null && recurrence != null) {
+      _transactionDate = recurrence.range.from;
     }
     _recurrence = recurrence;
 
     if (!mounted) return;
 
     setState(() {});
+  }
+
+  /// Keeps a series that isn't saved yet starting at the transaction date
+  void _moveRecurrenceStart() {
+    if (_recurringTransaction != null) return;
+    if (_recurrence?.range.from == transactionDate) return;
+
+    _recurrence = _recurrence?.startingAt(transactionDate);
   }
 
   void updateVariableAmount(bool value) {
@@ -1082,13 +1094,14 @@ class _TransactionPageState extends State<TransactionPage> {
       context: context,
       builder: (context) => SelectRecurrenceSheet(
         initialValue: _recurrence,
-        startBounds: transactionDate.rangeToMax(),
+        startBounds: TimeRange.allTime(),
+        defaultStart: transactionDate,
       ),
     );
 
-    _recurrence ??= result;
+    if (result == null || _recurrence != null) return;
 
-    setState(() {});
+    updateRecurrence(result);
   }
 
   void onTagsChanged(List<TransactionTag> newTags) {
@@ -1516,14 +1529,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   TimeRange? getStartBounds() {
-    if (widget.isNewTransaction || _currentlyEditing == null) {
-      return TimeRange.allTime();
-    }
-
-    if (!_currentlyEditing.isRecurring) {
-      return (_transactionDate ?? _currentlyEditing.transactionDate)
-          .rangeToMax();
-    }
+    if (_recurringTransaction == null) return TimeRange.allTime();
 
     return null;
   }

@@ -14,7 +14,14 @@ class SelectRecurrenceSheet extends StatefulWidget {
 
   final TimeRange? startBounds;
 
-  const SelectRecurrenceSheet({super.key, this.initialValue, this.startBounds});
+  final DateTime? defaultStart;
+
+  const SelectRecurrenceSheet({
+    super.key,
+    this.initialValue,
+    this.startBounds,
+    this.defaultStart,
+  });
 
   @override
   State<SelectRecurrenceSheet> createState() => _SelectRecurrenceSheetState();
@@ -52,6 +59,7 @@ class _SelectRecurrenceSheetState extends State<SelectRecurrenceSheet> {
         onChanged: (value) => setState(() => _recurrence = value),
         startBounds: widget.startBounds,
         initialValue: widget.initialValue,
+        defaultStart: widget.defaultStart,
       ),
     );
   }

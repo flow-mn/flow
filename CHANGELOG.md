@@ -35,6 +35,10 @@
 * Fixed "Mask numbers at startup" not working
 * Fixed recurring transactions not being set up when saved with the default
   recurrence
+* Fixed recurring transactions repeating on the wrong day after changing the
+  start date
+* Fixed recurring start date not going earlier than the transaction date. It
+  now moves the transaction date with it
 * Fixed transfers losing their location and attachments after editing
 * Fixed brand icons in tags and old backups showing the wrong brand
 
