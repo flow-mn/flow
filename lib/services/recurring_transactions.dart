@@ -41,7 +41,10 @@ class RecurringTransactionsService {
   /// constructor: `FlowState.initState`'s post-frame callback decides when
   /// to do the first sync so it doesn't race with first-frame rendering or
   /// other startup work.
-  Future<void> synchronizeAll() => _synchronizeAll();
+  ///
+  /// [anchor] stands in for now, defaults to [DateTime.now].
+  Future<void> synchronizeAll({DateTime? anchor}) =>
+      _synchronizeAll(anchor: anchor);
 
   Future<void> _synchronize(
     RecurringTransaction recurringTransaction, {
@@ -258,7 +261,7 @@ class RecurringTransactionsService {
           "$loggingPrefix Next occurrence is before anchor: $anchor, trying to create another one",
         );
 
-        await _synchronize(recurringTransaction);
+        await _synchronize(recurringTransaction, anchor: anchor);
       }
 
       _log.fine(
@@ -277,7 +280,7 @@ class RecurringTransactionsService {
   /// be called over and over again.
   ///
   /// Current rule is one transaction in the future for the recurrence.
-  Future<void> _synchronizeAll() async {
+  Future<void> _synchronizeAll({DateTime? anchor}) async {
     _log.fine("Synchronizing recurring transactions");
 
     final Query<RecurringTransaction> query = activeRecurringsQb().build();
@@ -286,7 +289,7 @@ class RecurringTransactionsService {
 
     try {
       for (var item in items) {
-        await _synchronize(item);
+        await _synchronize(item, anchor: anchor);
       }
     } finally {
       query.close();
