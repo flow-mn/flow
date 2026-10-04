@@ -27,6 +27,7 @@
   when you tap a selected slice again
 * Updated icons: Material Symbols 4.2960.0 and Simple Icons (brand icons)
   16.23.0
+* iOS 15 or later is now required
 
 ### Fixes
 
