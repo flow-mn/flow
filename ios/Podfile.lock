@@ -41,7 +41,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   file_saver: 6cdbcddd690cb02b0c1a0c225b37cd805c2bf8b6
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   flutter_dynamic_icon_plus: a7c81df360708aa1c9538f89cd96958fdda608ea
   icloud_storage: e55639f0c0d7cb2b0ba9c0b3d5968ccca9cd9aa2
   ObjectBox: 2aae8ad350012cb53c6e7848064307cf68617f73
@@ -50,4 +50,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1ac52b241a59f6195eb0dcd62320a80726757816
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0

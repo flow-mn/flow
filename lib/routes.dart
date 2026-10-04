@@ -33,6 +33,7 @@ import "package:flow/routes/integrate/integrate_eny_page.dart";
 import "package:flow/routes/integrations/eny_page.dart";
 import "package:flow/routes/preferences/button_order_preferences_page.dart";
 import "package:flow/routes/preferences/change_preferences_page.dart";
+import "package:flow/routes/preferences/date_format_preferences_page.dart";
 import "package:flow/routes/preferences/integrations/eny_preferences_page.dart";
 import "package:flow/routes/preferences/money_formatting_preferences_page.dart";
 import "package:flow/routes/preferences/numpad_preferences_page.dart";
@@ -79,6 +80,7 @@ import "package:flow/sync/import/import_v2.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:recurrence/recurrence.dart";
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -148,14 +150,23 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => MaterialPage(
         child: TransactionPage.edit(
           transactionId: int.tryParse(state.pathParameters["id"]!) ?? -1,
+          initialRecurrence: Recurrence.tryParse(
+            state.uri.queryParameters["recurrence"] ?? "",
+          ),
+          initialVariableAmount:
+              state.uri.queryParameters["variableAmount"] == "true",
         ),
         fullscreenDialog: true,
       ),
     ),
     GoRoute(
       path: "/transactions",
-      builder: (context, state) =>
-          TransactionsPage.all(title: "transactions.all".t(context)),
+      builder: (context, state) => TransactionsPage.all(
+        title: "transactions.all".t(context),
+        initialRange: TimeRange.tryParse(
+          state.uri.queryParameters["range"] ?? "",
+        ),
+      ),
     ),
     GoRoute(
       path: "/transactions/pending",
@@ -328,6 +339,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: "moneyFormatting",
           builder: (context, state) => const MoneyFormattingPreferencesPage(),
+        ),
+        GoRoute(
+          path: "dateFormat",
+          builder: (context, state) => const DateFormatPreferencesPage(),
         ),
         GoRoute(
           path: "sync",

@@ -184,7 +184,10 @@ class Money {
       final int totalDecimalPlaces = CurrencyRegistryService()
           .detectDecimalPrecision(amountToFormat, currency);
 
-      if (preferredDecimalPlaces != null) {
+      if (totalDecimalPlaces == 0 &&
+          UserPreferencesService().hideZeroDecimals) {
+        decimalDigits = 0;
+      } else if (preferredDecimalPlaces != null) {
         decimalDigits = math.max(
           2,
           math.min(totalDecimalPlaces, preferredDecimalPlaces),

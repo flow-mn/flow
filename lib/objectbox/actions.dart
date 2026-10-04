@@ -18,6 +18,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
+import "package:flow/entity/transaction/wrapper.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/l10n/extensions.dart";
@@ -633,6 +634,30 @@ extension TransactionActions on Transaction {
     }
   }
 
+  /// Confirms with the actual [amount], keeping the sign. The other side of
+  /// a transfer follows through the conversion rate.
+  bool confirmWithAmount(double amount, [bool updateTransactionDate = true]) {
+    final bool outgoing = this.amount.isNegative;
+
+    this.amount = outgoing ? -amount.abs() : amount.abs();
+    TransactionsService().updateOneSync(this);
+
+    final Transaction? related = TransactionsService()
+        .findTransferRelatedTransactionSync(this);
+
+    if (related != null) {
+      final double rate = switch (extensions.transfer?.conversionRate) {
+        double value when value != 0 => value,
+        _ => 1.0,
+      };
+
+      related.amount = outgoing ? amount.abs() * rate : -amount.abs() / rate;
+      TransactionsService().updateOneSync(related);
+    }
+
+    return confirm(true, updateTransactionDate);
+  }
+
   /// Returns the ObjectBox ID for the newly created transaction
   int duplicate() {
     if (extensions.transfer case Transfer transferDetails) {
@@ -901,6 +926,7 @@ extension AccountActions on Account {
     bool? isPending,
     double? conversionRate = 1.0,
     Recurrence? recurrence,
+    bool variableRecurringAmount = false,
     List<String>? extraTags,
   }) {
     if (conversionRate == 0) {
@@ -921,6 +947,7 @@ extension AccountActions on Account {
         isPending: isPending,
         conversionRate: 1.0 / (conversionRate ?? 1.0),
         recurrence: recurrence,
+        variableRecurringAmount: variableRecurringAmount,
         extraTags: extraTags,
         tags: tags,
         attachments: attachments,
@@ -945,8 +972,21 @@ extension AccountActions on Account {
           "to": targetAccount.name,
         });
 
-    final List<TransactionExtension> filteredExtensions =
-        extensions?.where((ext) => ext is! Transfer).toList() ?? [];
+    // Copy per side, a shared instance only binds to `from`. Stale
+    // [Recurring] (e.g., from an edited transfer) is dropped.
+    List<TransactionExtension> extensionsFor(String transactionUuid) =>
+        ExtensionsWrapper.parse(
+              ExtensionsWrapper(
+                extensions?.where((ext) => ext is! Transfer).toList() ?? [],
+              ).serialize(),
+            ).data
+            .where(
+              (ext) =>
+                  ext is! Recurring ||
+                  (recurrence == null && ext.relatedTransactionUuid == null),
+            )
+            .map((ext) => ext..setRelatedTransactionUuid(transactionUuid))
+            .toList();
 
     transactionDate ??= recurrence?.range.from ?? DateTime.now();
 
@@ -968,7 +1008,11 @@ extension AccountActions on Account {
       amount: -amount,
       title: resolvedTitle,
       description: description,
-      extensions: [...filteredExtensions, transferData, ?recurringExtension],
+      extensions: [
+        ...extensionsFor(fromTransactionUuid),
+        transferData,
+        ?recurringExtension,
+      ],
       uuidOverride: fromTransactionUuid,
       createdDate: createdDate,
       transactionDate: transactionDate,
@@ -982,7 +1026,7 @@ extension AccountActions on Account {
       title: resolvedTitle,
       description: description,
       extensions: [
-        ...filteredExtensions,
+        ...extensionsFor(toTransactionUuid),
         transferData.copyWith(relatedTransactionUuid: fromTransactionUuid),
         if (recurringExtension != null)
           recurringExtension.copyWith(
@@ -1004,6 +1048,7 @@ extension AccountActions on Account {
         recurrence: recurrence!,
         uuidOverride: recurringTransactionUuid,
         transferToAccountUuid: targetAccount.uuid,
+        variableAmount: variableRecurringAmount,
       );
     }
 
@@ -1025,6 +1070,7 @@ extension AccountActions on Account {
     bool? isPending,
     TransactionSubtype? subtype,
     Recurrence? recurrence,
+    bool variableRecurringAmount = false,
     List<String>? extraTags,
     double? latitude,
     double? longitude,
@@ -1122,6 +1168,7 @@ extension AccountActions on Account {
         identifier: uuid,
         recurrence: recurrence!,
         uuidOverride: recurringTransactionUuid,
+        variableAmount: variableRecurringAmount,
       );
     }
 

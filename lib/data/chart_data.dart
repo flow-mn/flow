@@ -6,6 +6,7 @@ class ChartData<T> implements Comparable<ChartData<T>> {
   final Money money;
   final String currency;
   final T? associatedData;
+  final int transactionCount;
 
   double get displayTotal => money.amount.abs();
 
@@ -14,6 +15,7 @@ class ChartData<T> implements Comparable<ChartData<T>> {
     required this.money,
     required this.currency,
     required this.associatedData,
+    this.transactionCount = 0,
   });
 
   @override

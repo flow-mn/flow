@@ -6,7 +6,9 @@ import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
@@ -25,6 +27,36 @@ extension TransactionHelpers on Transaction {
     return transactionDate.isPastAnchored(
       anchor ?? Moment.now().endOfNextMinute(),
     );
+  }
+
+  /// Pending estimate of a variable amount recurring transaction
+  bool get isAmountEstimate =>
+      isPending == true &&
+      isDeleted != true &&
+      extensions.recurring?.variableAmount == true;
+
+  /// Confirms, asking for the actual amount first if it's an estimate.
+  Future<bool> confirmPrompted(
+    BuildContext context, [
+    bool updateTransactionDate = true,
+  ]) async {
+    if (!isAmountEstimate) return confirm(true, updateTransactionDate);
+
+    final double? amount = await showModalBottomSheet<double>(
+      context: context,
+      builder: (context) => InputAmountSheet(
+        initialAmount: this.amount.abs(),
+        currency: currency,
+        title: title,
+        lockSign: true,
+        allowNegative: false,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (amount == null || amount == 0) return false;
+
+    return confirmWithAmount(amount, updateTransactionDate);
   }
 
   bool holdable([DateTime? anchor]) {
@@ -281,6 +313,8 @@ class BulkTransactions {
   }
 
   /// Confirms every transaction (and its transfer partner), leaving pending.
+  ///
+  /// Skips estimates, they need the actual amount.
   static int confirm(
     Iterable<Transaction> transactions, {
     bool updateTransactionDate = true,
@@ -291,8 +325,12 @@ class BulkTransactions {
     final List<Transaction> toUpdate = [];
     final Set<String> seen = {};
 
+    int count = 0;
+
     for (final Transaction t in list) {
+      if (t.isAmountEstimate) continue;
       if (!seen.add(t.uuid)) continue;
+      count++;
       t.isPending = false;
       if (updateTransactionDate &&
           !t.extraTags.contains(Transaction.importedFromSiriTag)) {
@@ -316,7 +354,7 @@ class BulkTransactions {
     } catch (e, stackTrace) {
       _log.severe("Bulk confirm failed", e, stackTrace);
     }
-    return list.length;
+    return count;
   }
 
   /// Sets [category] on every non-transfer transaction.

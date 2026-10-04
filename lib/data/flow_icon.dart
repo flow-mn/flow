@@ -3,6 +3,7 @@ import "dart:typed_data";
 import "dart:ui" as ui;
 
 import "package:cross_file/cross_file.dart";
+import "package:flow/data/legacy_simple_icons_codepoints.dart";
 import "package:flow/objectbox.dart";
 import "package:flutter/material.dart";
 import "package:path/path.dart" as path;
@@ -80,12 +81,10 @@ class IconFlowIcon extends FlowIconData {
   /// original package name, so we remap on parse to keep their glyphs
   /// resolvable. The font families and code points are unchanged.
   ///
-  /// Note: `simple_icons` brand icons are migrated to [SimpleIconFlowIcon]
-  /// (slug-based) by `migrateSimpleIconsToSlug`; the entry below is only a
-  /// best-effort fallback for any un-migrated legacy/backup data.
+  /// Brand icons stored by code point are resolved to [SimpleIconFlowIcon]
+  /// in [parse] instead.
   static const Map<String, String> _fontPackageMigration = {
     "material_symbols_icons": "material_symbols_icons_flow",
-    "simple_icons": "simple_icons_flow",
   };
 
   @override
@@ -97,11 +96,21 @@ class IconFlowIcon extends FlowIconData {
     final payload = serialized.split(":")[1];
 
     final [fontFamily, fontPackage, codePointHex] = payload.split(",");
+    final int codePoint = int.parse(codePointHex, radix: 16);
+
+    // Brand icons are stored by slug since 0.23, so a code point here is
+    // always from simple_icons 14.6.1 (e.g., tags, old backups). Brands removed
+    // upstream get an empty slug, which renders a neutral fallback.
+    if (fontFamily == "SimpleIcons") {
+      return FlowIconData.simpleIcon(
+        legacySimpleIconsCodepointToSlug[codePoint] ?? "",
+      );
+    }
 
     return FlowIconData.icon(
       IconData(
         // ignore: non_const_argument_for_const_parameter
-        int.parse(codePointHex, radix: 16),
+        codePoint,
         // ignore: non_const_argument_for_const_parameter
         fontFamily: fontFamily,
         // ignore: non_const_argument_for_const_parameter

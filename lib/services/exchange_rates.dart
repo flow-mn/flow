@@ -66,6 +66,9 @@ class ExchangeRatesService {
           "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.min.json",
         ),
       );
+      if (response.statusCode != 200) {
+        throw Exception("Unexpected status code: ${response.statusCode}");
+      }
       jsonResponse = jsonDecode(response.body);
     } catch (e, stackTrace) {
       _log.warning(
@@ -75,19 +78,24 @@ class ExchangeRatesService {
       );
     }
 
-    try {
-      final response = await http.get(
-        Uri.parse(
-          "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.min.json",
-        ),
-      );
-      jsonResponse = jsonDecode(response.body);
-    } catch (e, stackTrace) {
-      _log.warning(
-        "Failed to fetch exchange rates from side source",
-        e,
-        stackTrace,
-      );
+    if (jsonResponse == null) {
+      try {
+        final response = await http.get(
+          Uri.parse(
+            "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.min.json",
+          ),
+        );
+        if (response.statusCode != 200) {
+          throw Exception("Unexpected status code: ${response.statusCode}");
+        }
+        jsonResponse = jsonDecode(response.body);
+      } catch (e, stackTrace) {
+        _log.warning(
+          "Failed to fetch exchange rates from side source",
+          e,
+          stackTrace,
+        );
+      }
     }
 
     if (jsonResponse == null) {

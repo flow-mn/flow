@@ -99,7 +99,7 @@ class DemoDataGenerator {
     DateTime cursor = _start;
     while (cursor.isBefore(end)) {
       _runDay(cursor);
-      cursor = cursor.add(const Duration(days: 1));
+      cursor = DateTime(cursor.year, cursor.month, cursor.day + 1);
     }
 
     return _txns;
@@ -683,7 +683,7 @@ class DemoDataGenerator {
 
     final int nights = 2 + rng.nextInt(4);
     for (int i = 0; i < nights; i++) {
-      final DateTime night = day.add(Duration(days: i));
+      final DateTime night = DateTime(day.year, day.month, day.day + i);
       if (!_within(night)) break;
 
       _spend(
@@ -708,7 +708,7 @@ class DemoDataGenerator {
     }
 
     // Return flight
-    final DateTime back = day.add(Duration(days: nights));
+    final DateTime back = DateTime(day.year, day.month, day.day + nights);
     if (_within(back)) {
       _spend(
         amount: _money(160, 520),

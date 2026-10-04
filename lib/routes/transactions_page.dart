@@ -66,7 +66,12 @@ class TransactionsPage extends StatefulWidget {
     return TransactionsPage(queryFn: queryBuilder, key: key, title: title);
   }
 
-  factory TransactionsPage.all({Key? key, String? title, Widget? header}) {
+  factory TransactionsPage.all({
+    Key? key,
+    String? title,
+    Widget? header,
+    TimeRange? initialRange,
+  }) {
     QueryBuilder<Transaction> queryBuilder(TimeRange range) =>
         TransactionFilter(
           sortBy: TransactionSortField.transactionDate,
@@ -74,7 +79,12 @@ class TransactionsPage extends StatefulWidget {
           range: TransactionFilterTimeRange.fromTimeRange(range),
         ).queryBuilder();
 
-    return TransactionsPage(queryFn: queryBuilder, key: key, title: title);
+    return TransactionsPage(
+      queryFn: queryBuilder,
+      key: key,
+      title: title,
+      initialRange: initialRange,
+    );
   }
 
   factory TransactionsPage.pending({

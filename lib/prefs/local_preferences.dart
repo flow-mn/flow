@@ -6,6 +6,7 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/eny_preferences.dart";
+import "package:flow/prefs/insights_preferences.dart";
 import "package:flow/prefs/pending_transactions.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:intl/intl.dart";
@@ -55,6 +56,10 @@ class LocalPreferences {
   late final BoolSettingsEntry preferFullAmounts;
   late final BoolSettingsEntry useCurrencySymbol;
 
+  /// Whether to show foreign currency amounts converted to the primary
+  /// currency, e.g., "≈ R$25"
+  late final BoolSettingsEntry showApproximatePrimaryAmount;
+
   /// Whether the user has opened the Insights index at least once.
   ///
   /// Drives the one-time "New" badge on the Insights entry in the Profile tab:
@@ -69,6 +74,7 @@ class LocalPreferences {
   late final PendingTransactionsLocalPreferences pendingTransactions;
   late final TransitiveLocalPreferences transitive;
   late final EnyLocalPreferences eny;
+  late final InsightsLocalPreferences insights;
 
   LocalPreferences._internal(this._prefs) {
     SettingsEntry.defaultPrefix = "flow.";
@@ -146,6 +152,11 @@ class LocalPreferences {
       preferences: _prefs,
       initialValue: true,
     );
+    showApproximatePrimaryAmount = BoolSettingsEntry(
+      key: "showApproximatePrimaryAmount",
+      preferences: _prefs,
+      initialValue: true,
+    );
 
     openedInsightsIndex = BoolSettingsEntry(
       key: "openedInsightsIndex",
@@ -170,6 +181,7 @@ class LocalPreferences {
     );
     transitive = TransitiveLocalPreferences.initialize(_prefs);
     eny = EnyLocalPreferences.initialize(_prefs);
+    insights = InsightsLocalPreferences.initialize(_prefs);
   }
 
   @Deprecated("Use UserPreferencesService().primaryCurrency instead")

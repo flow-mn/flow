@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/chart_data.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/flow_analytics.dart";
@@ -10,6 +12,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/utils/time_and_range.dart";
 import "package:flow/widgets/general/spinner.dart";
 import "package:flow/widgets/home/stats/group_list_view.dart";
@@ -42,7 +45,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
   FlowAnalytics? analytics;
 
   bool busy = false;
-  bool useListView = false;
+  bool useChart = false;
 
   @override
   void initState() {
@@ -62,12 +65,31 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
           widget.byCategory ? "categories".t(context) : "accounts".t(context),
         ),
         actions: [
-          IconButton(
-            onPressed: () => setState(() => useListView = !useListView),
-            icon: Icon(
-              useListView
-                  ? Symbols.pie_chart_rounded
-                  : Symbols.list_alt_rounded,
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: 8.0),
+            child: SegmentedButton<bool>(
+              selected: {useChart},
+              onSelectionChanged: (selection) =>
+                  updateUseChart(selection.first),
+              showSelectedIcon: false,
+              style: SegmentedButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                selectedBackgroundColor: context.colorScheme.primary,
+                selectedForegroundColor: context.colorScheme.onPrimary,
+              ),
+              segments: [
+                ButtonSegment<bool>(
+                  value: false,
+                  icon: const Icon(Symbols.view_list_rounded),
+                  tooltip: "tabs.stats.byGroup.view.list".t(context),
+                ),
+                ButtonSegment<bool>(
+                  value: true,
+                  icon: const Icon(Symbols.donut_large_rounded),
+                  tooltip: "tabs.stats.byGroup.view.chart".t(context),
+                ),
+              ],
             ),
           ),
         ],
@@ -128,27 +150,31 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      useListView
-                          ? GroupListView(
+                      useChart
+                          ? PieGraphView(
                               data: expenses,
                               changeMode: changeMode,
                               range: range,
                             )
-                          : PieGraphView(
+                          : GroupListView(
                               data: expenses,
                               changeMode: changeMode,
                               range: range,
+                              type: TransactionType.expense,
+                              byCategory: widget.byCategory,
                             ),
-                      useListView
-                          ? GroupListView(
+                      useChart
+                          ? PieGraphView(
                               data: incomes,
                               changeMode: changeMode,
                               range: range,
                             )
-                          : PieGraphView(
+                          : GroupListView(
                               data: incomes,
                               changeMode: changeMode,
                               range: range,
+                              type: TransactionType.income,
+                              byCategory: widget.byCategory,
                             ),
                     ],
                   ),
@@ -159,6 +185,12 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
         },
       ),
     );
+  }
+
+  void updateUseChart(bool newValue) {
+    setState(() {
+      useChart = newValue;
+    });
   }
 
   void updateRange(TimeRange newRange) {
@@ -212,6 +244,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
     final String primaryCurrency = UserPreferencesService().primaryCurrency;
 
     final Map<String, Money> cache = {};
+    final Map<String, int> counts = {};
 
     final List<MapEntry<String, MultiCurrencyFlow<T>>> filtered = raw.entries
         .where((entry) {
@@ -219,9 +252,11 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
 
           if (type == TransactionType.expense) {
             cache[entry.key] = mergedFlow.totalExpense;
+            counts[entry.key] = entry.value.expenseCount;
             return mergedFlow.totalExpense.amount < 0.0;
           } else {
             cache[entry.key] = mergedFlow.totalIncome;
+            counts[entry.key] = entry.value.incomeCount;
             return mergedFlow.totalIncome.amount > 0.0;
           }
         })
@@ -241,6 +276,7 @@ class StatsByGroupPageState extends State<StatsByGroupPage>
             money: cache[entry.key]!,
             currency: primaryCurrency,
             associatedData: entry.value.associatedData,
+            transactionCount: counts[entry.key] ?? 0,
           ),
         ),
       ),

@@ -3,6 +3,8 @@ import "dart:io";
 import "package:flow/data/money.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/geo.dart";
+import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -231,6 +233,75 @@ void main() {
         );
       },
     );
+
+    test("Transfer keeps location on both sides, including edits", () async {
+      final Query<Account> accountQuery = ObjectBox()
+          .box<Account>()
+          .query(Account_.currency.equals("MNT"))
+          .build();
+      final List<Account> mntAccounts = await accountQuery.findAsync();
+      accountQuery.close();
+
+      final Geo geo = Geo(uuid: "geo", latitude: 47.9, longitude: 106.9);
+
+      final (fromTxnId, toTxnId) = mntAccounts[0].transferTo(
+        targetAccount: mntAccounts[1],
+        amount: 100.0,
+        extensions: [geo],
+      );
+
+      final Transaction fromTxn = (await TransactionsService().getOne(
+        fromTxnId,
+      ))!;
+      final Transaction toTxn = (await TransactionsService().getOne(toTxnId))!;
+
+      expect(fromTxn.extensions.geo?.latitude, equals(47.9));
+      expect(toTxn.extensions.geo?.latitude, equals(47.9));
+
+      // Editing a transfer re-creates it from the old transaction's extensions
+      final (editedFromId, editedToId) = mntAccounts[0].transferTo(
+        targetAccount: mntAccounts[1],
+        amount: 200.0,
+        extensions: fromTxn.extensions.data,
+      );
+      fromTxn.permanentlyDelete(true);
+
+      final Transaction editedFrom = (await TransactionsService().getOne(
+        editedFromId,
+      ))!;
+      final Transaction editedTo = (await TransactionsService().getOne(
+        editedToId,
+      ))!;
+
+      expect(editedFrom.extensions.geo?.longitude, equals(106.9));
+      expect(editedTo.extensions.geo?.longitude, equals(106.9));
+      expect(editedFrom.extensions.recurring, isNull);
+    });
+
+    test("Generated recurring transfer keeps its Recurring link", () async {
+      final Query<Account> accountQuery = ObjectBox()
+          .box<Account>()
+          .query(Account_.currency.equals("MNT"))
+          .build();
+      final List<Account> mntAccounts = await accountQuery.findAsync();
+      accountQuery.close();
+
+      final (fromTxnId, toTxnId) = mntAccounts[0].transferTo(
+        targetAccount: mntAccounts[1],
+        amount: 100.0,
+        extensions: [
+          Recurring(uuid: "series", initialTransactionDate: DateTime.now()),
+        ],
+      );
+
+      final Transaction fromTxn = (await TransactionsService().getOne(
+        fromTxnId,
+      ))!;
+      final Transaction toTxn = (await TransactionsService().getOne(toTxnId))!;
+
+      expect(fromTxn.extensions.recurring?.uuid, equals("series"));
+      expect(toTxn.extensions.recurring?.uuid, equals("series"));
+    });
 
     tearDownAll(() async {
       await testCleanupObject(

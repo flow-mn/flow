@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/legacy_simple_icons_codepoints.dart";
 import "package:flow/data/transaction_filter.dart";
@@ -15,7 +17,6 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/utils.dart";
 import "package:logging/logging.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:simple_icons_flow/simple_icons_flow.dart";
 
 final Logger _log = Logger("GracefulMigrations");
 
@@ -71,6 +72,9 @@ void migratePrivacyPreferencesToUserPreferences() async {
       final bool privacyMode = LocalPreferences().privacyMode.get();
 
       UserPreferencesService().privacyModeUponLaunch = privacyMode;
+      if (privacyMode) {
+        unawaited(TransitiveLocalPreferences().sessionPrivacyMode.set(true));
+      }
 
       await prefs.setString("flow.migration.$migrationUuid", "ok");
     } catch (e) {
@@ -321,10 +325,8 @@ void migrateHomePendingTransactionsRange() async {
 ///
 /// Simple Icons reassigns code points every release, so a stored code point is
 /// only meaningful for the version it was saved with. Flow shipped
-/// simple_icons 14.6.1; [legacySimpleIconsCodepoints] maps those code points
-/// forward to the bundled 16.20.0 build, from which we recover the stable slug.
-/// This is the *only* remaining use of that table — once this migration has
-/// propagated, the migration and the table can both be deleted.
+/// simple_icons 14.6.1; [legacySimpleIconsCodepointToSlug] maps those code
+/// points straight to their stable slug, independent of the bundled version.
 Future<void> migrateSimpleIconsToSlug() async {
   const String migrationUuid = "598a1c1d-1d53-44e0-9035-e005c5420538";
 
@@ -339,23 +341,14 @@ Future<void> migrateSimpleIconsToSlug() async {
     if (ok != null) return;
 
     try {
-      // 16.20.0 code point -> slug, built once from the bundled font.
-      final Map<int, String> codePointToSlug = {
-        for (final entry in SimpleIcons.values.entries)
-          entry.value.codePoint: entry.key,
-      };
-
+      // [IconFlowIcon.parse] resolves legacy brand code points to slugs.
+      // Slugs missing from the bundled build (removed upstream) are left as
+      // they are.
       String? slugForIconCode(String iconCode) {
+        if (!iconCode.startsWith("IconFlowIcon:")) return null;
         final FlowIconData? parsed = FlowIconData.tryParse(iconCode);
-        if (parsed is! IconFlowIcon) return null;
-        if (parsed.iconData.fontFamily != "SimpleIcons") return null;
-
-        // Stored code points are 14.6.1; map them forward before resolving.
-        // A value already at 16.20.0 isn't a table key, so it passes through.
-        final int codePoint =
-            legacySimpleIconsCodepoints[parsed.iconData.codePoint] ??
-            parsed.iconData.codePoint;
-        return codePointToSlug[codePoint];
+        if (parsed is! SimpleIconFlowIcon || parsed.slug.isEmpty) return null;
+        return parsed.slug;
       }
 
       final List<Account> changedAccounts = [];

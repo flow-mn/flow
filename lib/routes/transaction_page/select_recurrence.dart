@@ -5,6 +5,7 @@ import "package:flow/routes/transaction_page/select_recurrence/input_occurrences
 import "package:flow/routes/transaction_page/select_recurrence/select_until_mode_sheet.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/custom_popups.dart";
+import "package:flow/utils/extensions/recurrence.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -32,11 +33,15 @@ class SelectRecurrence extends StatefulWidget {
 
   final TimeRange? startBounds;
 
+  /// Where the default starts when there's no [initialValue]
+  final DateTime? defaultStart;
+
   const SelectRecurrence({
     super.key,
     required this.onChanged,
     required this.startBounds,
     this.initialValue,
+    this.defaultStart,
   });
 
   @override
@@ -53,6 +58,13 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
   void initState() {
     super.initState();
     _setRecurrence(widget.initialValue);
+
+    // Report the default, so saving it untouched still sets up recurrence
+    if (widget.initialValue == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onChanged(_recurrence);
+      });
+    }
   }
 
   @override
@@ -213,20 +225,18 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
     );
 
     if (result == null) return;
-    _recurrence = _recurrence.copyWith(
-      range: CustomTimeRange(result, _recurrence.range.to),
-    );
-
+    _setFrom(result);
     if (!mounted) return;
-    setState(() {});
-    widget.onChanged(_recurrence);
 
     final DateTime? resultWithTime = await context.pickTime(anchor: result);
     if (resultWithTime == null) return;
 
-    _recurrence = _recurrence.copyWith(
-      range: CustomTimeRange(resultWithTime, _recurrence.range.to),
-    );
+    _setFrom(resultWithTime);
+  }
+
+  void _setFrom(DateTime from) {
+    _recurrence = _recurrence.startingAt(from);
+
     if (!mounted) return;
     setState(() {});
     widget.onChanged(_recurrence);
@@ -354,7 +364,8 @@ class _SelectRecurrenceState extends State<SelectRecurrence> {
                   rules: [
                     MonthlyRecurrenceRule(day: recurrence?.range.from.day ?? 1),
                   ],
-                  start: DateTime.now().startOfSecond(),
+                  start: (widget.defaultStart ?? DateTime.now())
+                      .startOfSecond(),
                 ))
             .realign();
 

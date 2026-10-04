@@ -23,11 +23,15 @@ class Recurring extends TransactionExtension implements Jasonable {
   /// transaction is updated.
   final bool locked;
 
+  /// Amount is an estimate until confirmed.
+  final bool variableAmount;
+
   Recurring({
     required super.uuid,
     required this.initialTransactionDate,
     this.relatedTransactionUuid,
     this.locked = false,
+    this.variableAmount = false,
   }) : super();
 
   @override
@@ -44,6 +48,7 @@ class Recurring extends TransactionExtension implements Jasonable {
     String? relatedTransactionUuid,
     String? uuid,
     bool? locked,
+    bool? variableAmount,
   }) {
     return Recurring(
       initialTransactionDate:
@@ -52,6 +57,7 @@ class Recurring extends TransactionExtension implements Jasonable {
           relatedTransactionUuid ?? this.relatedTransactionUuid,
       uuid: uuid ?? this.uuid,
       locked: locked ?? this.locked,
+      variableAmount: variableAmount ?? this.variableAmount,
     );
   }
 }

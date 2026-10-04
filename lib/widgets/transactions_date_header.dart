@@ -61,6 +61,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     TransitiveLocalPreferences().sessionPrivacyMode.addListener(
       _updatePrivacyMode,
     );
+    UserPreferencesService().valueNotifier.addListener(_rerender);
 
     obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
   }
@@ -70,6 +71,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     TransitiveLocalPreferences().sessionPrivacyMode.removeListener(
       _updatePrivacyMode,
     );
+    UserPreferencesService().valueNotifier.removeListener(_rerender);
 
     super.dispose();
   }
@@ -174,6 +176,11 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     setState(() {});
   }
 
+  void _rerender() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
   void _handleRangeTextTap() {
     rangeTitleAlternative = !rangeTitleAlternative;
 
@@ -195,7 +202,11 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   }
 
   String _getRangeTitle() {
-    return switch ((widget.range, rangeTitleAlternative)) {
+    final bool absolute =
+        UserPreferencesService().transactionListAbsoluteDateHeaders !=
+        rangeTitleAlternative;
+
+    return switch ((widget.range, absolute)) {
       (DayTimeRange dayTimeRange, false) =>
         dayTimeRange.from.toMoment().calendar(omitHours: true),
       (DayTimeRange dayTimeRange, true) => dayTimeRange.from.toMoment().format(

@@ -21,6 +21,7 @@ import "dart:ui";
 
 import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
+import "package:flow/data/prefs/date_format_preset.dart";
 import "package:flow/entity/profile.dart";
 import "package:flow/graceful_migrations.dart";
 import "package:flow/l10n/flow_localizations.dart";
@@ -124,9 +125,6 @@ void main() async {
     }),
   );
 
-  startupLog.fine("Initializing exchange rates service");
-  ExchangeRatesService().init();
-
   CurrencyRegistryService();
 
   if (Platform.isIOS) {
@@ -144,6 +142,20 @@ void main() async {
   } catch (e) {
     startupLog.severe("Failed to initialize UserPreferencesService", e);
   }
+
+  // Must run after [UserPreferencesService] has loaded from ObjectBox
+  unawaited(
+    TransitiveLocalPreferences().sessionPrivacyMode
+        .set(UserPreferencesService().privacyModeUponLaunch)
+        .catchError((error) {
+          startupLog.warning("Failed to seed session privacy mode", error);
+          return false;
+        }),
+  );
+
+  // Depends on [UserPreferencesService] for the primary currency
+  startupLog.fine("Initializing exchange rates service");
+  ExchangeRatesService().init();
 
   try {
     startupLog.fine("Initializing SyncService");
@@ -187,6 +199,8 @@ class FlowState extends State<Flow> {
   late final AppLifecycleListener _appLifeCycleListener;
 
   Locale _locale = FlowLocalizations.supportedLocales.first;
+  DateFormatPreset _dateFormatPreset = .system;
+  String? _primaryCurrency;
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeFactory _themeFactory = ThemeFactory.fromThemeName(null);
@@ -220,11 +234,12 @@ class FlowState extends State<Flow> {
     UserPreferencesService().valueNotifier.addListener(_reloadTheme);
     UserPreferencesService().valueNotifier.addListener(_listenToShakes);
     UserPreferencesService().valueNotifier.addListener(_syncWidgets);
+    UserPreferencesService().valueNotifier.addListener(_reloadDateFormat);
 
     ExchangeRatesService().exchangeRatesCache.addListener(_syncWidgets);
 
     LocalPreferences().localeOverride.addListener(_reloadLocale);
-    LocalPreferences().primaryCurrency.addListener(_refreshExchangeRates);
+    UserPreferencesService().valueNotifier.addListener(_refreshExchangeRates);
 
     _tempLock = LocalPreferences().requireLocalAuth.get();
 
@@ -287,10 +302,13 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
-    LocalPreferences().primaryCurrency.removeListener(_refreshExchangeRates);
+    UserPreferencesService().valueNotifier.removeListener(
+      _refreshExchangeRates,
+    );
     UserPreferencesService().valueNotifier.removeListener(_reloadTheme);
     UserPreferencesService().valueNotifier.removeListener(_listenToShakes);
     UserPreferencesService().valueNotifier.removeListener(_syncWidgets);
+    UserPreferencesService().valueNotifier.removeListener(_reloadDateFormat);
 
     ExchangeRatesService().exchangeRatesCache.removeListener(_syncWidgets);
 
@@ -456,17 +474,42 @@ class FlowState extends State<Flow> {
       "Setting moment_dart localization to ${newMomentLocalization.locale}",
     );
 
-    Moment.setGlobalLocalization(newMomentLocalization);
+    _dateFormatPreset = UserPreferencesService().dateFormatPreset;
+
+    Moment.setGlobalLocalization(
+      _dateFormatPreset.apply(newMomentLocalization),
+    );
 
     Intl.defaultLocale = overriddenLocale.code;
 
     setState(() {});
   }
 
-  void _refreshExchangeRates() {
-    ExchangeRatesService().tryFetchRates(
-      UserPreferencesService().primaryCurrency,
+  void _reloadDateFormat() {
+    final DateFormatPreset dateFormatPreset =
+        UserPreferencesService().dateFormatPreset;
+
+    if (_dateFormatPreset == dateFormatPreset) return;
+
+    _dateFormatPreset = dateFormatPreset;
+
+    mainLogger.fine("Setting date format preset to ${dateFormatPreset.value}");
+
+    Moment.setGlobalLocalization(
+      dateFormatPreset.apply(Moment.defaultLocalization),
     );
+
+    setState(() {});
+  }
+
+  void _refreshExchangeRates() {
+    final String primaryCurrency = UserPreferencesService().primaryCurrency;
+
+    if (_primaryCurrency == primaryCurrency) return;
+
+    _primaryCurrency = primaryCurrency;
+
+    ExchangeRatesService().tryFetchRates(primaryCurrency);
   }
 
   void _syncWidgets() {

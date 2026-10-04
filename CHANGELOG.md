@@ -1,24 +1,62 @@
 # Changelog
 
+## 0.25.0
+
+### Features
+
+* Transactions in a foreign currency now show an approximate amount in your
+  primary currency (e.g., "≈ R$25"). Can be turned off in Money formatting,
+  closes [#760](https://github.com/flow-mn/flow/issues/760)
+* Added date format preference, and an option to show exact dates in list
+  headers, [#761](https://github.com/flow-mn/flow/issues/761)
+* Categories/accounts stats now open as a ranked list with share bars,
+  [#761](https://github.com/flow-mn/flow/issues/761)
+* Added "Worth knowing" to the stats tab: on-device observations like spending
+  spikes, unusual categories, and charges that look recurring, closes
+  [#761](https://github.com/flow-mn/flow/issues/761)
+* Added an option to hide zero decimals (e.g., "$3" instead of "$3.00") in
+  Money formatting
+* Recurring transactions can now have a varying amount (e.g., utility bills).
+  They're added as pending with an estimate, and ask for the actual amount
+  when you confirm. "Worth knowing" suggests these too
+
+### Changes
+
+* Reorganized preferences
+* Pie chart now uses category colors, shows the total, and opens the category
+  when you tap a selected slice again
+* Updated icons: Material Symbols 4.2960.0 and Simple Icons (brand icons)
+  16.23.0
+* iOS 15 or later is now required
+
+### Fixes
+
+* Fixed exchange rates being fetched for the wrong currency at startup, and
+  not refreshing after changing the primary currency
+* Fixed "Mask numbers at startup" not working
+* Fixed recurring transactions not being set up when saved with the default
+  recurrence
+* Fixed recurring transactions repeating on the wrong day after changing the
+  start date
+* Fixed recurring start date not going earlier than the transaction date. It
+  now moves the transaction date with it
+* Fixed transfers losing their location and attachments after editing
+* Fixed brand icons in tags and old backups showing the wrong brand
+
+## 0.24.1
+
+### Fixes
+
+* Fixed new transaction button not working when accessibility services (e.g.
+  TalkBack) are enabled
+* Fixed new transaction menu closing on small finger movements
+* Fixed Traditional Chinese (Taiwan) translations, [#758](https://github.com/flow-mn/flow/pull/758) by [@olivertzeng](https://github.com/olivertzeng)
+
 ## 0.24.0
 
 ### Features
 
-* **Budgets.** Set a spending limit for a period, over all spending or only
-  chosen categories. Budgets live under Profile → Budgets, with an overview in
-  the Stats tab.
-* Each budget gets its own page: progress for the current period, how it's
-  pacing, its recent periods, and every transaction counting towards it.
-* Budgets overview surfaces which budgets are over or nearing their limit, and
-  what to do about it.
-* Planned and pending transactions count towards a budget — money you've
-  scheduled is money the period is committed to. Progress bars draw that part
-  in a lighter shade, so you can still see what has actually cleared.
-* Home screen widgets for budgets on iOS and Android, including a variant that
-  shows progress without revealing any amounts. Tapping one opens the budget
-  it's showing.
-* Budgets are included in backups, and restore from any v2 backup.
-* An in-app alert when a budget goes over, or gets close.
+* Added budgets
 
 ### Changes
 

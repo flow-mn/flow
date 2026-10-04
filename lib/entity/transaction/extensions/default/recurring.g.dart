@@ -13,6 +13,7 @@ Recurring _$RecurringFromJson(Map<String, dynamic> json) => Recurring(
   ),
   relatedTransactionUuid: json['relatedTransactionUuid'] as String?,
   locked: json['locked'] as bool? ?? false,
+  variableAmount: json['variableAmount'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$RecurringToJson(Recurring instance) => <String, dynamic>{
@@ -20,5 +21,6 @@ Map<String, dynamic> _$RecurringToJson(Recurring instance) => <String, dynamic>{
   'relatedTransactionUuid': instance.relatedTransactionUuid,
   'initialTransactionDate': instance.initialTransactionDate.toIso8601String(),
   'locked': instance.locked,
+  'variableAmount': instance.variableAmount,
   'key': instance.key,
 };

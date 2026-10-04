@@ -15,11 +15,17 @@ class RecurringSummaryHeader extends StatelessWidget {
   final Money expense;
   final int count;
 
+  /// Whether [income] or [expense] include variable amount estimates
+  final bool approximateIncome;
+  final bool approximateExpense;
+
   const RecurringSummaryHeader({
     super.key,
     required this.income,
     required this.expense,
     required this.count,
+    this.approximateIncome = false,
+    this.approximateExpense = false,
   });
 
   @override
@@ -37,6 +43,7 @@ class RecurringSummaryHeader extends StatelessWidget {
                   flow: income,
                   type: TransactionType.income,
                   autoSizeGroup: autoSizeGroup,
+                  approximate: approximateIncome,
                 ),
               ),
               const SizedBox(width: 12.0),
@@ -45,6 +52,7 @@ class RecurringSummaryHeader extends StatelessWidget {
                   flow: expense,
                   type: TransactionType.expense,
                   autoSizeGroup: autoSizeGroup,
+                  approximate: approximateExpense,
                 ),
               ),
             ],

@@ -41,7 +41,10 @@ class RecurringTransactionsService {
   /// constructor: `FlowState.initState`'s post-frame callback decides when
   /// to do the first sync so it doesn't race with first-frame rendering or
   /// other startup work.
-  Future<void> synchronizeAll() => _synchronizeAll();
+  ///
+  /// [anchor] stands in for now, defaults to [DateTime.now].
+  Future<void> synchronizeAll({DateTime? anchor}) =>
+      _synchronizeAll(anchor: anchor);
 
   Future<void> _synchronize(
     RecurringTransaction recurringTransaction, {
@@ -188,13 +191,20 @@ class RecurringTransactionsService {
         );
       }
 
-      final bool isPending = nextOccurence.isAfter(anchor)
-          ? PendingTransactionsLocalPreferences().requireConfrimation.get()
-          : false;
+      // Variable amounts are estimates, so they wait for the actual amount
+      final bool isPending =
+          recurringTransaction.variableAmount ||
+          (nextOccurence.isAfter(anchor) &&
+              PendingTransactionsLocalPreferences().requireConfrimation.get());
+
+      final double amount = recurringTransaction.estimateAmount(
+        template,
+        relatedTransactions,
+      );
 
       if (to == null) {
         from.createAndSaveTransaction(
-          amount: template.amount,
+          amount: amount,
           category: category,
           tags: tags,
           title: template.title,
@@ -207,6 +217,7 @@ class RecurringTransactionsService {
               initialTransactionDate: nextOccurence,
               uuid: recurringTransaction.uuid,
               relatedTransactionUuid: generatedTransactionUuid,
+              variableAmount: recurringTransaction.variableAmount,
             ),
           ],
           isPending: isPending,
@@ -219,7 +230,7 @@ class RecurringTransactionsService {
         final (int fromObjectId, int toObjectId) = from.transferTo(
           targetAccount: to,
           tags: tags,
-          amount: template.amount.abs(),
+          amount: amount.abs(),
           title: template.title,
           description: template.description,
           transactionDate: nextOccurence,
@@ -227,6 +238,7 @@ class RecurringTransactionsService {
             Recurring(
               uuid: recurringTransaction.uuid,
               initialTransactionDate: nextOccurence,
+              variableAmount: recurringTransaction.variableAmount,
             ),
           ],
           isPending: isPending,
@@ -249,7 +261,7 @@ class RecurringTransactionsService {
           "$loggingPrefix Next occurrence is before anchor: $anchor, trying to create another one",
         );
 
-        await _synchronize(recurringTransaction);
+        await _synchronize(recurringTransaction, anchor: anchor);
       }
 
       _log.fine(
@@ -268,7 +280,7 @@ class RecurringTransactionsService {
   /// be called over and over again.
   ///
   /// Current rule is one transaction in the future for the recurrence.
-  Future<void> _synchronizeAll() async {
+  Future<void> _synchronizeAll({DateTime? anchor}) async {
     _log.fine("Synchronizing recurring transactions");
 
     final Query<RecurringTransaction> query = activeRecurringsQb().build();
@@ -277,7 +289,7 @@ class RecurringTransactionsService {
 
     try {
       for (var item in items) {
-        await _synchronize(item);
+        await _synchronize(item, anchor: anchor);
       }
     } finally {
       query.close();
@@ -298,6 +310,7 @@ class RecurringTransactionsService {
     required Recurrence recurrence,
     String? uuidOverride,
     String? transferToAccountUuid,
+    bool variableAmount = false,
   }) {
     if (identifier == null) {
       throw ArgumentError("identifier must be a Transaction or an identifier");
@@ -319,6 +332,7 @@ class RecurringTransactionsService {
       uuid: uuidOverride ?? const Uuid().v4(),
       jsonTransactionTemplate: jsonEncode(transaction.toJson()),
       transferToAccountUuid: transferToAccountUuid,
+      variableAmount: variableAmount,
       range: recurrence.range.encodeShort(),
       rules: recurrence.rules.map((e) => e.serialize()).toList(),
       lastGeneratedTransactionDate: transaction.transactionDate,

@@ -455,7 +455,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(10, 7829328581176695647),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(30, 5353888497210708730),
+    lastPropertyId: const obx_int.IdUid(33, 7003500790338467583),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -627,6 +627,24 @@ final _entities = <obx_int.ModelEntity>[
         type: 9,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(31, 8739212611241568931),
+        name: 'transactionListAbsoluteDateHeaders',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(32, 5426961238010158288),
+        name: 'dateFormatPreset',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(33, 7003500790338467583),
+        name: 'hideZeroDecimals',
+        type: 1,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
@@ -706,7 +724,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 800756592587838565),
     name: 'RecurringTransaction',
-    lastPropertyId: const obx_int.IdUid(11, 420551111786793892),
+    lastPropertyId: const obx_int.IdUid(12, 7730179234101270201),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -761,6 +779,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(10, 651096412135846367),
         name: 'lastGeneratedTransactionDate',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(12, 7730179234101270201),
+        name: 'variableAmount',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -1657,7 +1681,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
             : fbb.writeString(
                 object.homePendingTransactionsTimeRangeSerialized!,
               );
-        fbb.startTable(31);
+        final dateFormatPresetOffset = object.dateFormatPreset == null
+            ? null
+            : fbb.writeString(object.dateFormatPreset!);
+        fbb.startTable(34);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addBool(2, object.combineTransfers);
@@ -1686,6 +1713,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(27, object.privacyModeUponShaking);
         fbb.addBool(28, object.transactionListTileShowExternalSource);
         fbb.addOffset(29, homePendingTransactionsTimeRangeSerializedOffset);
+        fbb.addBool(30, object.transactionListAbsoluteDateHeaders);
+        fbb.addOffset(31, dateFormatPresetOffset);
+        fbb.addBool(32, object.hideZeroDecimals);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1720,6 +1750,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
             .vTableGet(buffer, rootOffset, 60, false);
         final transactionListTileRelaxedDensityParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 46, false);
+        final transactionListAbsoluteDateHeadersParam = const fb.BoolReader()
+            .vTableGet(buffer, rootOffset, 64, false);
         final createTransactionsPerItemInScansParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 52, false);
         final scansPendingThresholdInHoursParam = const fb.Int64Reader()
@@ -1758,6 +1790,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final icuCurrencyFormattingPatternParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 30);
+        final hideZeroDecimalsParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          68,
+          false,
+        );
+        final dateFormatPresetParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 66);
         final primaryCurrencyParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 34);
@@ -1796,6 +1837,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                     transactionListTileShowExternalSourceParam,
                 transactionListTileRelaxedDensity:
                     transactionListTileRelaxedDensityParam,
+                transactionListAbsoluteDateHeaders:
+                    transactionListAbsoluteDateHeadersParam,
                 createTransactionsPerItemInScans:
                     createTransactionsPerItemInScansParam,
                 scansPendingThresholdInHours: scansPendingThresholdInHoursParam,
@@ -1809,6 +1852,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 iCloudBackupsToKeep: iCloudBackupsToKeepParam,
                 autoBackupIntervalInHours: autoBackupIntervalInHoursParam,
                 icuCurrencyFormattingPattern: icuCurrencyFormattingPatternParam,
+                hideZeroDecimals: hideZeroDecimalsParam,
+                dateFormatPreset: dateFormatPresetParam,
                 primaryCurrency: primaryCurrencyParam,
                 primaryAccountUuid: primaryAccountUuidParam,
                 transactionButtonOrderJoined: transactionButtonOrderJoinedParam,
@@ -1940,7 +1985,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final transferToAccountUuidOffset = object.transferToAccountUuid == null
             ? null
             : fbb.writeString(object.transferToAccountUuid!);
-        fbb.startTable(12);
+        fbb.startTable(13);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, jsonTransactionTemplateOffset);
@@ -1953,6 +1998,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           9,
           object.lastGeneratedTransactionDate?.millisecondsSinceEpoch,
         );
+        fbb.addBool(11, object.variableAmount);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1971,6 +2017,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           buffer,
           rootOffset,
           16,
+          false,
+        );
+        final variableAmountParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          26,
           false,
         );
         final rulesParam = const fb.ListReader<String>(
@@ -2001,6 +2053,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = RecurringTransaction(
           id: idParam,
           disabled: disabledParam,
+          variableAmount: variableAmountParam,
           rules: rulesParam,
           jsonTransactionTemplate: jsonTransactionTemplateParam,
           range: rangeParam,
@@ -2694,6 +2747,20 @@ class UserPreferences_ {
   /// See [UserPreferences.homePendingTransactionsTimeRangeSerialized].
   static final homePendingTransactionsTimeRangeSerialized =
       obx.QueryStringProperty<UserPreferences>(_entities[6].properties[27]);
+
+  /// See [UserPreferences.transactionListAbsoluteDateHeaders].
+  static final transactionListAbsoluteDateHeaders =
+      obx.QueryBooleanProperty<UserPreferences>(_entities[6].properties[28]);
+
+  /// See [UserPreferences.dateFormatPreset].
+  static final dateFormatPreset = obx.QueryStringProperty<UserPreferences>(
+    _entities[6].properties[29],
+  );
+
+  /// See [UserPreferences.hideZeroDecimals].
+  static final hideZeroDecimals = obx.QueryBooleanProperty<UserPreferences>(
+    _entities[6].properties[30],
+  );
 }
 
 /// [Budget] entity fields to define ObjectBox queries.
@@ -2792,6 +2859,11 @@ class RecurringTransaction_ {
   /// See [RecurringTransaction.lastGeneratedTransactionDate].
   static final lastGeneratedTransactionDate =
       obx.QueryDateProperty<RecurringTransaction>(_entities[8].properties[8]);
+
+  /// See [RecurringTransaction.variableAmount].
+  static final variableAmount = obx.QueryBooleanProperty<RecurringTransaction>(
+    _entities[8].properties[9],
+  );
 }
 
 /// [TransactionTag] entity fields to define ObjectBox queries.

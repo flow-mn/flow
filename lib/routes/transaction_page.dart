@@ -40,7 +40,9 @@ import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/recurrence.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/directional_chevron.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -77,11 +79,24 @@ class TransactionPage extends StatefulWidget {
 
   final TransactionProgrammableObject? params;
 
+  /// Suggested recurrence for a transaction that isn't recurring yet.
+  final Recurrence? initialRecurrence;
+
+  /// Suggested [RecurringTransaction.variableAmount] for [initialRecurrence]
+  final bool initialVariableAmount;
+
   bool get isNewTransaction => transactionId == 0;
 
-  const TransactionPage.create({super.key, this.params}) : transactionId = 0;
-  const TransactionPage.edit({super.key, required this.transactionId})
-    : params = null;
+  const TransactionPage.create({super.key, this.params})
+    : transactionId = 0,
+      initialRecurrence = null,
+      initialVariableAmount = false;
+  const TransactionPage.edit({
+    super.key,
+    required this.transactionId,
+    this.initialRecurrence,
+    this.initialVariableAmount = false,
+  }) : params = null;
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -134,6 +149,8 @@ class _TransactionPageState extends State<TransactionPage> {
   RecurringTransaction? _recurringTransaction;
 
   Recurrence? _recurrence;
+
+  bool _variableAmount = false;
 
   DateTime? _transactionDate;
 
@@ -240,6 +257,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _currentlyEditing.extensions.recurring?.uuid,
           );
           _recurrence = _recurringTransaction?.recurrence;
+          _variableAmount = _recurringTransaction?.variableAmount ?? false;
+        } else {
+          _recurrence = widget.initialRecurrence;
+          _variableAmount = widget.initialVariableAmount;
         }
       }
     }
@@ -338,14 +359,29 @@ class _TransactionPageState extends State<TransactionPage> {
                       Center(
                         child: InkWell(
                           onTap: inputAmount,
-                          child: Center(
-                            child: Text(
-                              Money(
-                                _amount,
-                                _selectedAccount?.currency ?? primaryCurrency,
-                              ).formatMoney(),
-                              style: context.textTheme.displayMedium,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                Money(
+                                  _amount,
+                                  _selectedAccount?.currency ?? primaryCurrency,
+                                ).formatMoney(),
+                                style: context.textTheme.displayMedium,
+                              ),
+                              ApproximateMoneyText(
+                                Money(
+                                  _amount,
+                                  _selectedAccount?.currency ?? primaryCurrency,
+                                ),
+                                overrideObscure: false,
+                                textAlign: .center,
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: context.colorScheme.onSurface
+                                      .withAlpha(0x80),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -499,10 +535,28 @@ class _TransactionPageState extends State<TransactionPage> {
                         child: AnimatedSize(
                           duration: const Duration(milliseconds: 300),
                           child: _recurrence != null
-                              ? SelectRecurrence(
-                                  initialValue: _recurrence,
-                                  onChanged: updateRecurrence,
-                                  startBounds: startBounds,
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SelectRecurrence(
+                                      initialValue: _recurrence,
+                                      onChanged: updateRecurrence,
+                                      startBounds: startBounds,
+                                    ),
+                                    SwitchListTile(
+                                      title: Text(
+                                        "transaction.recurring.variableAmount"
+                                            .t(context),
+                                      ),
+                                      subtitle: Text(
+                                        "transaction.recurring.variableAmount.description"
+                                            .t(context),
+                                      ),
+                                      secondary: Icon(Symbols.tune_rounded),
+                                      value: _variableAmount,
+                                      onChanged: updateVariableAmount,
+                                    ),
+                                  ],
                                 )
                               : ListTile(
                                   leading: Icon(Symbols.repeat_rounded),
@@ -909,6 +963,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     setState(() {
       _transactionDate = result ?? _transactionDate;
+      _moveRecurrenceStart();
     });
 
     _postSelectTransactionDate();
@@ -930,6 +985,7 @@ class _TransactionPageState extends State<TransactionPage> {
         microsecond: 0,
         millisecond: 0,
       );
+      _moveRecurrenceStart();
     });
 
     _postSelectTransactionDate();
@@ -942,14 +998,29 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   void updateRecurrence(Recurrence? recurrence) {
-    if (widget.isNewTransaction) {
-      _transactionDate = recurrence?.range.from;
+    // The series starts with this transaction
+    if (_recurringTransaction == null && recurrence != null) {
+      _transactionDate = recurrence.range.from;
     }
     _recurrence = recurrence;
 
     if (!mounted) return;
 
     setState(() {});
+  }
+
+  /// Keeps a series that isn't saved yet starting at the transaction date
+  void _moveRecurrenceStart() {
+    if (_recurringTransaction != null) return;
+    if (_recurrence?.range.from == transactionDate) return;
+
+    _recurrence = _recurrence?.startingAt(transactionDate);
+  }
+
+  void updateVariableAmount(bool value) {
+    setState(() {
+      _variableAmount = value;
+    });
   }
 
   void _postSelectTransactionDate() async {
@@ -1023,13 +1094,14 @@ class _TransactionPageState extends State<TransactionPage> {
       context: context,
       builder: (context) => SelectRecurrenceSheet(
         initialValue: _recurrence,
-        startBounds: transactionDate.rangeToMax(),
+        startBounds: TimeRange.allTime(),
+        defaultStart: transactionDate,
       ),
     );
 
-    _recurrence ??= result;
+    if (result == null || _recurrence != null) return;
 
-    setState(() {});
+    updateRecurrence(result);
   }
 
   void onTagsChanged(List<TransactionTag> newTags) {
@@ -1093,7 +1165,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (originalTransactionWasRecurring) {
       final List<RecurringUpdateMode> availableModes = [
-        if (_recurrence == _recurringTransaction!.recurrence)
+        if (_recurrence == _recurringTransaction!.recurrence &&
+            _variableAmount == _recurringTransaction!.variableAmount)
           RecurringUpdateMode.current,
         RecurringUpdateMode.thisAndFuture,
       ];
@@ -1134,7 +1207,9 @@ class _TransactionPageState extends State<TransactionPage> {
           isPending: _isPending,
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
           recurrence: _recurrence,
+          variableRecurringAmount: _variableAmount,
           tags: _selectedTags,
+          attachments: _attachments,
         );
 
         _currentlyEditing.permanentlyDelete(true);
@@ -1189,6 +1264,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transferToAccountUuid: isTransfer
                 ? _selectedAccountTransferTo?.uuid
                 : null,
+            variableAmount: _variableAmount,
           );
     }
 
@@ -1244,6 +1320,7 @@ class _TransactionPageState extends State<TransactionPage> {
             _recurrence?.range ?? recurringTransaction.timeRange;
         recurringTransaction.recurrenceRules =
             _recurrence?.rules ?? recurringTransaction.recurrenceRules;
+        recurringTransaction.variableAmount = _variableAmount;
         recurringTransaction.transferToAccountUuid =
             _selectedAccountTransferTo?.uuid ??
             recurringTransaction.transferToAccountUuid;
@@ -1293,6 +1370,7 @@ class _TransactionPageState extends State<TransactionPage> {
         isPending: _isPending,
         conversionRate: crossCurrencyTransfer ? _conversionRate : null,
         recurrence: _recurrence,
+        variableRecurringAmount: _variableAmount,
         tags: _selectedTags,
         attachments: _attachments,
         latitude: _geo?.latitude,
@@ -1308,6 +1386,7 @@ class _TransactionPageState extends State<TransactionPage> {
         extensions: extensions,
         isPending: _isPending,
         recurrence: _recurrence,
+        variableRecurringAmount: _variableAmount,
         tags: _selectedTags,
         attachments: _attachments,
         latitude: _geo?.latitude,
@@ -1350,7 +1429,10 @@ class _TransactionPageState extends State<TransactionPage> {
             _attachments?.map((attachment) => attachment.uuid).toSet(),
             _currentlyEditing.attachments.map((file) => file.uuid).toSet(),
           ) ||
-          _currentlyEditing.transactionDate != _transactionDate;
+          _currentlyEditing.transactionDate != _transactionDate ||
+          _variableAmount !=
+              (_recurringTransaction?.variableAmount ??
+                  widget.initialVariableAmount);
     }
 
     return _amount != 0 ||
@@ -1447,14 +1529,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   TimeRange? getStartBounds() {
-    if (widget.isNewTransaction || _currentlyEditing == null) {
-      return TimeRange.allTime();
-    }
-
-    if (!_currentlyEditing.isRecurring) {
-      return (_transactionDate ?? _currentlyEditing.transactionDate)
-          .rangeToMax();
-    }
+    if (_recurringTransaction == null) return TimeRange.allTime();
 
     return null;
   }
