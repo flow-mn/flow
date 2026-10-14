@@ -365,7 +365,13 @@ class FlowState extends State<Flow> {
                     ignoring: _tempLock,
                     child: Stack(
                       children: [
-                        child ?? Container(),
+                        ExcludeFocus(
+                          excluding: _tempLock,
+                          child: ExcludeSemantics(
+                            excluding: _tempLock,
+                            child: child ?? Container(),
+                          ),
+                        ),
                         if (_tempLock)
                           Positioned.fill(
                             child: BackdropFilter(
@@ -375,9 +381,12 @@ class FlowState extends State<Flow> {
                               ),
                               child: SizedBox.expand(
                                 child: Center(
-                                  child: FlowIcon(
-                                    FlowIconData.icon(Symbols.lock_rounded),
-                                    size: 80.0,
+                                  child: Semantics(
+                                    label: "general.unlockToOpen".t(context),
+                                    child: FlowIcon(
+                                      FlowIconData.icon(Symbols.lock_rounded),
+                                      size: 80.0,
+                                    ),
                                   ),
                                 ),
                               ),
