@@ -202,6 +202,7 @@ class NotificationsService {
           importance: Importance.max,
           priority: Priority.high,
           category: AndroidNotificationCategory.reminder,
+          visibility: .private,
           styleInformation: DefaultStyleInformation(false, false),
         ),
         iOS: DarwinNotificationDetails(
@@ -236,7 +237,7 @@ class NotificationsService {
         ).serialized,
       );
       _log.info(
-        "Scheduled a reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${dateTime.toString()}",
+        "Scheduled a reminder for transaction ${transaction.uuid} at ${dateTime.toString()}",
       );
 
       if (earlyDateTime != null) {
@@ -254,7 +255,7 @@ class NotificationsService {
           ).serialized,
         );
         _log.info(
-          "Scheduled an early reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${earlyDateTime.toString()}",
+          "Scheduled an early reminder for transaction ${transaction.uuid} at ${earlyDateTime.toString()}",
         );
       }
     } catch (e) {
@@ -298,14 +299,9 @@ class NotificationsService {
       reminders.map((reminder) async {
         try {
           await pluginInstance.cancel(id: reminder.id);
-          _log.fine(
-            "Cancelled reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
-          );
+          _log.fine("Cancelled reminder ${reminder.id} $type");
         } catch (e) {
-          _log.warning(
-            "Failed to cancel reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
-            e,
-          );
+          _log.warning("Failed to cancel reminder ${reminder.id} $type", e);
         }
       }),
     );
