@@ -1258,18 +1258,12 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool _ensureAccountsSelected() {
     if (_selectedAccount == null) {
-      context.showErrorToast(
-        error: "error.transaction.missingAccount".t(context),
-      );
-      _selectAccountFocusNode.requestFocus();
+      unawaited(selectAccount());
       return false;
     }
 
     if (isTransfer && _selectedAccountTransferTo == null) {
-      context.showErrorToast(
-        error: "error.transaction.missingAccount".t(context),
-      );
-      _selectAccountTransferToFocusNode.requestFocus();
+      unawaited(selectAccountTransferTo());
       return false;
     }
 
