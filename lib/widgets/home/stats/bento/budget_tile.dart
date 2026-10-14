@@ -1,5 +1,7 @@
 import "package:flow/data/budget_progress.dart";
+import "package:flow/entity/budget.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/objectbox.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/budget_change_aware_state.dart";
@@ -18,6 +20,8 @@ import "package:material_symbols_icons_flow/symbols.dart";
 /// Deliberately not a summed spent-vs-limit bar: Flow's budgets are independent
 /// and can overlap or span different periods, so a combined total would
 /// double-count (see [BudgetsSummary]).
+///
+/// Collapses to nothing, top spacing included, when there are no budgets.
 class BudgetTile extends StatefulWidget {
   const BudgetTile({super.key});
 
@@ -34,24 +38,31 @@ class _BudgetTileState extends State<BudgetTile>
 
   BudgetsSummary? summary;
 
+  bool hasBudgets = ObjectBox().box<Budget>().count() > 0;
+
   @override
   Widget build(BuildContext context) {
     final BudgetsSummary? summary = this.summary;
 
-    return BentoTile(
-      label: "tabs.stats.analytics.budgets".t(context),
-      icon: Symbols.money_bag_rounded,
-      height: 158.0,
-      busy: busy && !loaded,
-      onTap: () => context.push("/stats/budgets"),
-      child: summary == null || summary.isEmpty
-          ? Text(
-              "tabs.stats.analytics.budgets.empty".t(context),
-              style: context.textTheme.bodySmall?.semi(context),
-            )
-          : summary.allHealthy
-          ? _buildHealthy(context, summary)
-          : _buildAttention(context, summary),
+    if (!hasBudgets) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: BentoTile(
+        label: "tabs.stats.analytics.budgets".t(context),
+        icon: Symbols.money_bag_rounded,
+        height: 158.0,
+        busy: busy && !loaded,
+        onTap: () => context.push("/stats/budgets"),
+        child: summary == null || summary.isEmpty
+            ? Text(
+                "tabs.stats.analytics.budgets.empty".t(context),
+                style: context.textTheme.bodySmall?.semi(context),
+              )
+            : summary.allHealthy
+            ? _buildHealthy(context, summary)
+            : _buildAttention(context, summary),
+      ),
     );
   }
 
@@ -145,6 +156,7 @@ class _BudgetTileState extends State<BudgetTile>
   @override
   Future<void> fetch() async {
     try {
+      hasBudgets = ObjectBox().box<Budget>().count() > 0;
       final List<BudgetProgress> progresses =
           (await BudgetService().computeAllProgressAsync(
             rates: rates,

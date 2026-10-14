@@ -86,7 +86,7 @@ class AnalyticsBento extends StatelessWidget {
                 const WrappedTile(),
                 const SizedBox(height: 12.0),
                 const NetWorthTile(),
-                const SizedBox(height: 12.0),
+                // Collapses when there are no budgets, spacing included.
                 const BudgetTile(),
                 const SizedBox(height: 12.0),
                 const Row(
@@ -96,7 +96,7 @@ class AnalyticsBento extends StatelessWidget {
                     Expanded(child: RecurringTile()),
                   ],
                 ),
-                const SizedBox(height: 12.0),
+                // Collapses when location is unused, spacing included.
                 const MapTile(),
               ],
             ),
