@@ -101,7 +101,8 @@ class _PaceTileState extends State<PaceTile>
                 initiallyAbbreviated: true,
               ),
             ),
-            if (report.previousExpenseSum != null) ...[
+            if (report.previousExpenseSum?.amount case double previous
+                when previous != 0) ...[
               const SizedBox(width: 8.0),
               Trend.fromMoney(
                 current: headline,

@@ -135,9 +135,11 @@ class _WrappedPageState extends State<WrappedPage>
 
   List<Widget> _buildInsightCards(BuildContext context) {
     return [
-      if (topCategory != null || topCategoryCurrent > 0)
+      // Without history there's no trend to compare against
+      if ((topCategory != null || topCategoryCurrent > 0) &&
+          topCategoryAverage > 0)
         _buildCategoryTrendCard(context),
-      if (trends?.sortedTitlesByFrequency.isNotEmpty == true)
+      if ((trends?.sortedTitlesByFrequency.firstOrNull?.value ?? 0) >= 2)
         _buildTopMerchantCard(context),
       if (weekdayExpense.isNotEmpty) _buildWeekdayCard(context),
       _buildSpendShapeCard(context),
@@ -237,7 +239,7 @@ class _WrappedPageState extends State<WrappedPage>
       label: "tabs.stats.analytics.wrapped.label.shape".t(context),
       title: EmphasizedText(
         template: "tabs.stats.analytics.wrapped.medianPurchase".t(context),
-        value: _format(median),
+        value: _format(median.abs()),
       ),
       subtitle: biggestLine,
     );
@@ -288,10 +290,10 @@ class _WrappedPageState extends State<WrappedPage>
         transactions: thisMonthTransactions,
       );
 
-      missing = missing || _computeTopCategory(current, previous);
-      missing = missing || _computeWeekdayAndBiggest();
+      final bool topCategoryMissing = _computeTopCategory(current, previous);
+      final bool weekdayMissing = _computeWeekdayAndBiggest();
 
-      missingRates = missing;
+      missingRates = missing || topCategoryMissing || weekdayMissing;
     } finally {
       busy = false;
       if (mounted) setState(() {});
