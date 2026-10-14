@@ -1179,11 +1179,11 @@ extension AccountActions on Account {
     try {
       unawaited(
         TransitiveLocalPreferences()
-            .updateFrecencyData("account", uuid)
+            .updateFrecencyData("account", this.uuid)
             .then((_) {})
             .catchError((e, stackTrace) {
               _log.warning(
-                "Failed to update frecency data for account ($uuid)",
+                "Failed to update frecency data for account (${this.uuid})",
                 e,
                 stackTrace,
               );
