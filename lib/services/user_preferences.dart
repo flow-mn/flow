@@ -392,6 +392,8 @@ class UserPreferencesService {
   UserPreferencesService._internal();
 
   void _updateButtonsWidgets(List<FlowButtonType> order) async {
+    if (!HomeWidgets.supported) return;
+
     try {
       final String value = EnyService().isConnected
           ? order.map((e) => e.value).join(",")

@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:io";
 
 import "package:flow/entity/budget.dart";
 import "package:flow/objectbox.dart";
@@ -15,9 +16,14 @@ import "package:flow/services/widget_summary_sync.dart";
 class HomeWidgets {
   static StreamSubscription<void>? _budgetSubscription;
 
+  /// Home-screen widgets only exist on mobile
+  static bool get supported => Platform.isIOS || Platform.isAndroid;
+
   /// Refreshes every widget. Safe to call often; each sync swallows its own
   /// failures so one broken widget can't stop the others.
   static Future<void> syncAll() async {
+    if (!supported) return;
+
     await Future.wait([WidgetSummarySync.sync(), BudgetWidgetSync.sync()]);
   }
 
