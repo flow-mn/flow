@@ -170,6 +170,8 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
   }
 
   void showICloudBackupModal() async {
+    File? file;
+
     try {
       final SyncerItem? result = await showModalBottomSheet(
         context: context,
@@ -185,7 +187,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
         busy = true;
       });
 
-      final File? file = await ICloudSyncer().download(result);
+      file = await ICloudSyncer().download(result);
 
       if (!mounted) return;
 
@@ -207,6 +209,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
 
       log("Error importing iCloud backup: $e");
     } finally {
+      unawaited(ICloudSyncer.discardDownload(file));
       busy = false;
       if (mounted) {
         setState(() {});

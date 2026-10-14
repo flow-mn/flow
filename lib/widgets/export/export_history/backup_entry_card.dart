@@ -235,6 +235,7 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
 
   Future<void> onDownload() async {
     String? fileToShare;
+    File? downloadedFile;
 
     // _busyDownloading
 
@@ -253,7 +254,7 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
           _busyDownloading = true;
         });
         try {
-          final File? downloadedFile = await ICloudSyncer().download(
+          downloadedFile = await ICloudSyncer().download(
             syncerItem,
             onProgress: (progress) {
               _downloadProgress = progress / 100.0;
@@ -282,20 +283,24 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
       fileToShare = widget.entry.filePath;
     }
 
-    if (!mounted) return;
+    try {
+      if (!mounted) return;
 
-    if (fileToShare != null) {
-      await context.showFileShareSheet(
-        subject: "sync.export.save.shareTitle".t(context, {
-          "type": widget.entry.fileExt,
-          "date": (syncerItem?.inferredBackupDate ?? widget.entry.createdDate)
-              .toMoment()
-              .lll,
-        }),
-        filePath: fileToShare,
-      );
-    } else {
-      context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+      if (fileToShare != null) {
+        await context.showFileShareSheet(
+          subject: "sync.export.save.shareTitle".t(context, {
+            "type": widget.entry.fileExt,
+            "date": (syncerItem?.inferredBackupDate ?? widget.entry.createdDate)
+                .toMoment()
+                .lll,
+          }),
+          filePath: fileToShare,
+        );
+      } else {
+        context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+      }
+    } finally {
+      unawaited(ICloudSyncer.discardDownload(downloadedFile));
     }
   }
 
