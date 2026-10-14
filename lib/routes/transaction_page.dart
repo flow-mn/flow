@@ -313,6 +313,7 @@ class _TransactionPageState extends State<TransactionPage> {
     _selectAccountTransferToFocusNode.dispose();
 
     _titleController.dispose();
+    _mapController?.dispose();
 
     super.dispose();
   }
