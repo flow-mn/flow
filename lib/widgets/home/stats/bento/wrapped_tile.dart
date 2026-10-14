@@ -3,6 +3,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
@@ -29,6 +30,23 @@ class _WrappedTileState extends State<WrappedTile>
   int entryCount = 0;
   double biggestExpense = 0.0;
 
+  late final Listenable _formatting = Listenable.merge([
+    TransitiveLocalPreferences().sessionPrivacyMode.valueNotifier,
+    LocalPreferences().useCurrencySymbol.valueNotifier,
+  ]);
+
+  @override
+  void initState() {
+    super.initState();
+    _formatting.addListener(_onFormattingChanged);
+  }
+
+  @override
+  void dispose() {
+    _formatting.removeListener(_onFormattingChanged);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String month = DateTime.now().toMoment().format("MMMM");
@@ -41,10 +59,10 @@ class _WrappedTileState extends State<WrappedTile>
                   : "tabs.stats.analytics.wrapped.tileTeaser")
               .t(context, {
                 "count": entryCount,
-                "amount": Money(
-                  biggestExpense,
-                  primaryCurrency,
-                ).formattedCompact,
+                "amount": _format(
+                  Money(biggestExpense, primaryCurrency),
+                  compact: true,
+                ),
               });
 
     return Surface(
@@ -96,6 +114,22 @@ class _WrappedTileState extends State<WrappedTile>
         ),
       ),
     );
+  }
+
+  void _onFormattingChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// Formats [money] for use inside sentences, honoring privacy mode.
+  String _format(Money money, {bool compact = false}) {
+    final String text = money.formatMoney(
+      compact: compact,
+      useCurrencySymbol: LocalPreferences().useCurrencySymbol.get(),
+    );
+
+    return TransitiveLocalPreferences().sessionPrivacyMode.get()
+        ? text.digitsObscured
+        : text;
   }
 
   @override

@@ -5,6 +5,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/reports/trends_report.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
@@ -59,6 +60,23 @@ class _WrappedPageState extends State<WrappedPage>
   Map<int, double> weekdayExpense = {};
   Transaction? biggestExpense;
   double biggestExpenseConverted = 0.0;
+
+  late final Listenable _formatting = Listenable.merge([
+    TransitiveLocalPreferences().sessionPrivacyMode.valueNotifier,
+    LocalPreferences().useCurrencySymbol.valueNotifier,
+  ]);
+
+  @override
+  void initState() {
+    super.initState();
+    _formatting.addListener(_onFormattingChanged);
+  }
+
+  @override
+  void dispose() {
+    _formatting.removeListener(_onFormattingChanged);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,8 +175,8 @@ class _WrappedPageState extends State<WrappedPage>
         valueStyle: TextStyle(color: accent, fontWeight: FontWeight.bold),
       ),
       subtitle: "tabs.stats.analytics.wrapped.categorySubtitle".t(context, {
-        "current": Money(current, primaryCurrency).formatted,
-        "typical": Money(avg, primaryCurrency).formatted,
+        "current": _format(Money(current, primaryCurrency)),
+        "typical": _format(Money(avg, primaryCurrency)),
       }),
       child: MiniBars(values: topCategoryHistory, highlightColor: accent),
     );
@@ -210,7 +228,7 @@ class _WrappedPageState extends State<WrappedPage>
             "title":
                 biggestExpense!.title ??
                 "tabs.stats.analytics.untitled".t(context),
-            "amount": Money(biggestExpenseConverted, primaryCurrency).formatted,
+            "amount": _format(Money(biggestExpenseConverted, primaryCurrency)),
             "date": biggestExpense!.transactionDate.toMoment().format("MMM D"),
           });
 
@@ -219,10 +237,25 @@ class _WrappedPageState extends State<WrappedPage>
       label: "tabs.stats.analytics.wrapped.label.shape".t(context),
       title: EmphasizedText(
         template: "tabs.stats.analytics.wrapped.medianPurchase".t(context),
-        value: median.formatted,
+        value: _format(median),
       ),
       subtitle: biggestLine,
     );
+  }
+
+  void _onFormattingChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// Formats [money] for use inside sentences, honoring privacy mode.
+  String _format(Money money) {
+    final String text = money.formatMoney(
+      useCurrencySymbol: LocalPreferences().useCurrencySymbol.get(),
+    );
+
+    return TransitiveLocalPreferences().sessionPrivacyMode.get()
+        ? text.digitsObscured
+        : text;
   }
 
   @override
