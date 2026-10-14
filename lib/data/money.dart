@@ -195,28 +195,64 @@ class Money {
       }
     }
 
+    return _formatter(
+      currency: currencyToFormat,
+      useCurrencySymbol: useCurrencySymbol,
+      compact: compact,
+      pattern: formatterPattern?.value,
+      decimalDigits: decimalDigits,
+    ).format(amountToFormat);
+  }
+
+  /// Keyed by every input of the format, including the locale and the ICU
+  /// pattern, so changing either of those simply misses the cache.
+  static final Map<(String?, String, bool, bool, String?, int?), NumberFormat>
+  _formatters = {};
+
+  static NumberFormat _formatter({
+    required String currency,
+    required bool useCurrencySymbol,
+    required bool compact,
+    required String? pattern,
+    required int? decimalDigits,
+  }) {
+    final String? locale = Intl.defaultLocale;
+    final (String?, String, bool, bool, String?, int?) key = (
+      locale,
+      currency,
+      useCurrencySymbol,
+      compact,
+      compact ? null : pattern,
+      decimalDigits,
+    );
+
+    if (_formatters[key] case NumberFormat formatter) return formatter;
+
     final String? symbol = useCurrencySymbol
         ? NumberFormat.simpleCurrency(
-            locale: Intl.defaultLocale,
-            name: currencyToFormat,
+            locale: locale,
+            name: currency,
           ).currencySymbol
         : null;
 
-    if (compact) {
-      return NumberFormat.compactCurrency(
-        locale: Intl.defaultLocale,
-        name: currencyToFormat,
-        symbol: symbol,
-        decimalDigits: decimalDigits,
-      ).format(amountToFormat);
-    }
-    return NumberFormat.currency(
-      locale: Intl.defaultLocale,
-      name: currencyToFormat,
-      symbol: symbol,
-      customPattern: formatterPattern?.value,
-      decimalDigits: decimalDigits,
-    ).format(amountToFormat);
+    final NumberFormat formatter = compact
+        ? NumberFormat.compactCurrency(
+            locale: locale,
+            name: currency,
+            symbol: symbol,
+            decimalDigits: decimalDigits,
+          )
+        : NumberFormat.currency(
+            locale: locale,
+            name: currency,
+            symbol: symbol,
+            customPattern: pattern,
+            decimalDigits: decimalDigits,
+          );
+
+    if (_formatters.length >= 256) _formatters.clear();
+
+    return _formatters[key] = formatter;
   }
 
   /// Returns money-formatted string in the primary currency
