@@ -109,7 +109,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
             hintText: "currency.searchHint".t(context),
             prefixIcon: const Icon(Symbols.search_rounded),
           ),
-          autofocus: true,
+          autofocus: widget.suggested.isEmpty,
         ),
       ),
       title: Text(
