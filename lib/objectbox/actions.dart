@@ -1267,24 +1267,25 @@ extension TransactionProgrammableObjectActions
     List<TransactionExtension>? extensions,
     bool? isPendingOverride,
   }) {
+    // The user's pick on screen wins over the account named in the payload
     final Account? resolvedFromAccount =
-        AccountsService().findOneActiveSync(fromAccountUuid) ??
-        AccountsService().findOneActiveSync(fromAccount) ??
         switch (fromAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         } ??
+        AccountsService().findOneActiveSync(fromAccountUuid) ??
+        AccountsService().findOneActiveSync(fromAccount) ??
         AccountsService().findOneActiveSync(
           UserPreferencesService().primaryAccountUuid,
         );
 
     Account? resolvedToAccount =
-        AccountsService().findOneActiveSync(toAccountUuid) ??
-        AccountsService().findOneActiveSync(toAccount) ??
         switch (toAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
-        };
+        } ??
+        AccountsService().findOneActiveSync(toAccountUuid) ??
+        AccountsService().findOneActiveSync(toAccount);
 
     if (resolvedFromAccount == null) {
       throw Exception(
