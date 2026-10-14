@@ -7,6 +7,7 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/widgets/sheets/select_account_sheet.dart";
+import "package:flow/services/accounts.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
@@ -46,11 +47,42 @@ class _TransactionBatchImportPageState
   @override
   void initState() {
     super.initState();
-    try {
-      _fromAccountUuid = UserPreferencesService().primaryAccountUuid;
-    } catch (e) {
-      //
+
+    final List<TransactionProgrammableObject> tpos = widget.params?.t ?? [];
+
+    _fromAccountUuid = _linkedAccountUuid(
+      tpos.map((tpo) => (tpo.fromAccountUuid, tpo.fromAccount)),
+    );
+    _toAccountUuid = _linkedAccountUuid(
+      tpos
+          .where((tpo) => tpo.type == .transfer)
+          .map((tpo) => (tpo.toAccountUuid, tpo.toAccount)),
+    );
+
+    if (_toAccountUuid == _fromAccountUuid) {
+      _toAccountUuid = null;
     }
+
+    if (_fromAccountUuid == null) {
+      try {
+        _fromAccountUuid = UserPreferencesService().primaryAccountUuid;
+      } catch (e) {
+        //
+      }
+    }
+  }
+
+  /// The account the link names, if every entry names the same active one.
+  String? _linkedAccountUuid(Iterable<(String?, String?)> identifiers) {
+    final Set<String?> uuids = identifiers.map((identifier) {
+      final (String? uuid, String? name) = identifier;
+
+      return (AccountsService().findOneActiveSync(uuid) ??
+              AccountsService().findOneActiveSync(name))
+          ?.uuid;
+    }).toSet();
+
+    return uuids.singleOrNull;
   }
 
   @override
@@ -69,8 +101,9 @@ class _TransactionBatchImportPageState
             (account) => account.uuid == _toAccountUuid,
           );
 
-    final bool hasAnyTransfer =
-        widget.params?.t.any((x) => x.type == .transfer) == true;
+    final List<TransactionProgrammableObject> tpos = widget.params?.t ?? [];
+
+    final bool hasAnyTransfer = tpos.any((x) => x.type == .transfer);
 
     return GestureDetector(
       child: CallbackShortcuts(
@@ -90,16 +123,20 @@ class _TransactionBatchImportPageState
               backgroundColor: context.colorScheme.surface,
             ),
             body: SafeArea(
-              child: Column(
-                children: [
-                  Frame(
-                    child: InfoText(
-                      child: Text("transactions.batch.review".t(context)),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Frame(
+                      child: InfoText(
+                        child: Text("transactions.batch.review".t(context)),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8.0),
-                  ...?widget.params?.t.map(
-                    (tpo) => TpoPreviewListItem(tpo: tpo),
+                  const SliverToBoxAdapter(child: SizedBox(height: 8.0)),
+                  SliverList.builder(
+                    itemCount: tpos.length,
+                    itemBuilder: (context, index) =>
+                        TpoPreviewListItem(tpo: tpos[index]),
                   ),
                 ],
               ),
@@ -171,10 +208,7 @@ class _TransactionBatchImportPageState
                     FlowIconData.icon(Symbols.download_rounded),
                   ),
                   child: Text(
-                    "transactions.batch.importN".t(
-                      context,
-                      widget.params?.t.length ?? 0,
-                    ),
+                    "transactions.batch.importN".t(context, tpos.length),
                   ),
                 ),
               ],
