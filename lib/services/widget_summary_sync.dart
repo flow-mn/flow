@@ -9,6 +9,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/utils/extensions.dart";
@@ -43,7 +44,9 @@ class WidgetSummarySync {
               rates,
             );
 
-      final bool obscure = UserPreferencesService().privacyModeUponLaunch;
+      final bool obscure =
+          UserPreferencesService().privacyModeUponLaunch ||
+          LocalPreferences().requireLocalAuth.get();
 
       String format(Money money) {
         final String text = money.formatMoney(compact: true);

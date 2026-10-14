@@ -6,6 +6,7 @@ import "package:flow/data/budget_progress.dart";
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
@@ -32,8 +33,8 @@ final Logger _log = Logger("BudgetWidgetSync");
 ///
 /// Note this is shoulder-surfing privacy, not security: the amounts still sit
 /// in the shared app-group container regardless of the toggle. The exception
-/// is the app's own "mask at startup" privacy mode, which publishes amounts
-/// with their digits already masked.
+/// is the app's own "mask at startup" privacy mode or app lock, either of which
+/// publishes amounts with their digits already masked.
 class BudgetWidgetSync {
   /// Single JSON blob rather than a flat key per field.
   ///
@@ -103,7 +104,9 @@ class BudgetWidgetSync {
 
       final Map<String, dynamic> payload = await buildPayload(
         rates: rates,
-        obscureAmounts: UserPreferencesService().privacyModeUponLaunch,
+        obscureAmounts:
+            UserPreferencesService().privacyModeUponLaunch ||
+            LocalPreferences().requireLocalAuth.get(),
       );
 
       if (Platform.isIOS) {

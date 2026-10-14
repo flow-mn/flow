@@ -1,5 +1,8 @@
+import "dart:async";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/preferences_page.dart";
+import "package:flow/services/home_widgets.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
@@ -37,6 +40,7 @@ class _PrivacyState extends State<Privacy> {
     if (newPrivacyMode == null) return;
 
     UserPreferencesService().privacyModeUponLaunch = newPrivacyMode;
+    unawaited(HomeWidgets.syncAll());
 
     if (!mounted) return;
 
