@@ -191,6 +191,54 @@ class TransactionListTile extends StatelessWidget {
           )
         : visualLeading;
 
+    final Widget amounts = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: .end,
+      spacing: effectiveTheme.titleSpacingOrDefault,
+      children: [
+        MoneyText(
+          transaction.money,
+          displayAbsoluteAmount: transaction.isTransfer && combineTransfers,
+          approximate: transaction.isAmountEstimate,
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: transaction.type.color(context),
+            fontWeight: FontWeight.bold,
+          ),
+          overrideObscure: overrideObscure,
+        ),
+        if (combineTransfers &&
+            AccountsProvider.of(context).ready &&
+            transaction.extensions.transfer?.conversionRate != null &&
+            transaction.extensions.transfer?.conversionRate != 1.0)
+          MoneyText(
+            Money(
+              transaction.money.amount *
+                  transaction.extensions.transfer!.conversionRate!,
+              AccountsProvider.of(
+                context,
+              ).get(transaction.extensions.transfer!.toAccountUuid)!.currency,
+            ),
+            displayAbsoluteAmount: true,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          )
+        else if (transaction.extensions.foreignCurrency
+            case ForeignCurrency foreignCurrency)
+          MoneyText(
+            foreignCurrency.money,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          )
+        else
+          ApproximateMoneyText(
+            transaction.money,
+            displayAbsoluteAmount: transaction.isTransfer && combineTransfers,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          ),
+      ],
+    );
+
     final Widget listTile = Material(
       type: MaterialType.card,
       color: selected
@@ -204,95 +252,48 @@ class TransactionListTile extends StatelessWidget {
           padding: effectiveTheme.paddingOrDefault,
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: .start,
-                spacing: effectiveTheme.spacingOrDefault,
-                children: [
-                  leading,
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: .start,
-                      spacing: effectiveTheme.titleSpacingOrDefault,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              if (titleLeadingIconSpan != null) ...[
-                                titleLeadingIconSpan,
-                                TextSpan(text: " "),
+              LayoutBuilder(
+                builder: (context, constraints) => Row(
+                  crossAxisAlignment: .start,
+                  spacing: effectiveTheme.spacingOrDefault,
+                  children: [
+                    leading,
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: .start,
+                        spacing: effectiveTheme.titleSpacingOrDefault,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                if (titleLeadingIconSpan != null) ...[
+                                  titleLeadingIconSpan,
+                                  TextSpan(text: " "),
+                                ],
+                                TextSpan(text: resolvedTitle),
                               ],
-                              TextSpan(text: resolvedTitle),
-                            ],
-                            style: context.textTheme.bodyMedium,
+                              style: context.textTheme.bodyMedium,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        TransactionSubtitle(components: subtitleComponents),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: .end,
-                    spacing: effectiveTheme.titleSpacingOrDefault,
-                    children: [
-                      MoneyText(
-                        transaction.money,
-                        displayAbsoluteAmount:
-                            transaction.isTransfer && combineTransfers,
-                        approximate: transaction.isAmountEstimate,
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: transaction.type.color(context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overrideObscure: overrideObscure,
+                          TransactionSubtitle(components: subtitleComponents),
+                        ],
                       ),
-                      if (combineTransfers &&
-                          AccountsProvider.of(context).ready &&
-                          transaction.extensions.transfer?.conversionRate !=
-                              null &&
-                          transaction.extensions.transfer?.conversionRate !=
-                              1.0)
-                        MoneyText(
-                          Money(
-                            transaction.money.amount *
-                                transaction
-                                    .extensions
-                                    .transfer!
-                                    .conversionRate!,
-                            AccountsProvider.of(context)
-                                .get(
-                                  transaction
-                                      .extensions
-                                      .transfer!
-                                      .toAccountUuid,
-                                )!
-                                .currency,
-                          ),
-                          displayAbsoluteAmount: true,
-                          style: context.textTheme.bodyMedium?.semi(context),
-                          overrideObscure: overrideObscure,
-                        )
-                      else if (transaction.extensions.foreignCurrency
-                          case ForeignCurrency foreignCurrency)
-                        MoneyText(
-                          foreignCurrency.money,
-                          style: context.textTheme.bodyMedium?.semi(context),
-                          overrideObscure: overrideObscure,
-                        )
-                      else
-                        ApproximateMoneyText(
-                          transaction.money,
-                          displayAbsoluteAmount:
-                              transaction.isTransfer && combineTransfers,
-                          style: context.textTheme.bodyMedium?.semi(context),
-                          overrideObscure: overrideObscure,
-                        ),
-                    ],
-                  ),
-                ],
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth / 2,
+                      ),
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: AlignmentDirectional.topEnd,
+                        child: amounts,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               if (showPendingConfirmation) ...[
                 SizedBox(height: effectiveTheme.spacingOrDefault),
