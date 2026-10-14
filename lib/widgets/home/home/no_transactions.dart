@@ -14,7 +14,9 @@ class NoTransactions extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyState(
       leading: Text(
-        "tabs.home.noTransactions".t(context),
+        isFilterModified
+            ? "tabs.home.noTransactions".t(context)
+            : "tabs.home.noTransactions.empty".t(context),
         textAlign: TextAlign.center,
         style: context.textTheme.headlineSmall,
       ),
