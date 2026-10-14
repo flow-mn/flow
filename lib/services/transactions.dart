@@ -49,6 +49,33 @@ class TransactionsService {
   final Condition<Transaction> nonDeletedCondition =
       Transaction_.isDeleted.equals(false) | Transaction_.isDeleted.isNull();
 
+  final Condition<Transaction> nonPendingCondition =
+      Transaction_.isPending.notEquals(true) | Transaction_.isPending.isNull();
+
+  /// Non-pending, non-deleted transactions matching [condition], dated
+  /// between [from] and [to] (inclusive)
+  List<Transaction> findSettledBetweenSync(
+    Condition<Transaction> condition,
+    DateTime from,
+    DateTime to,
+  ) {
+    final Query<Transaction> query = ObjectBox()
+        .box<Transaction>()
+        .query(
+          condition &
+              nonPendingCondition &
+              nonDeletedCondition &
+              Transaction_.transactionDate.betweenDate(from, to),
+        )
+        .build();
+
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
+  }
+
   QueryBuilder<Transaction> pendingTransactionsQb({
     DateTime? anchor,
     TimeRange? range,
