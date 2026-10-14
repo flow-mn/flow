@@ -1,6 +1,9 @@
 import "package:flutter/material.dart";
 
 class Surface extends StatelessWidget {
+  /// Derived themes by parent theme, then [iconColor].
+  static final Expando<Map<Color?, ThemeData>> _themeCache = Expando();
+
   final Color? color;
   final Color? shadowColor;
   final Color? surfaceTintColor;
@@ -34,9 +37,10 @@ class Surface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final parentTheme = Theme.of(context);
+    final Map<Color?, ThemeData> themes = _themeCache[parentTheme] ??= {};
 
     return Theme(
-      data: parentTheme.copyWith(
+      data: themes[iconColor] ??= parentTheme.copyWith(
         textTheme: parentTheme.textTheme.apply(
           bodyColor: parentTheme.colorScheme.onSecondary,
           displayColor: parentTheme.colorScheme.onSecondary,
