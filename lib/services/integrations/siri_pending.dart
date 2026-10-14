@@ -43,11 +43,7 @@ class SiriPendingService {
           );
           saved++;
         } catch (e, stackTrace) {
-          _log.severe(
-            "Failed to save transaction from Siri: $transaction",
-            e,
-            stackTrace,
-          );
+          _log.severe("Failed to save transaction from Siri", e, stackTrace);
         }
       }
       if (saved > 0) {

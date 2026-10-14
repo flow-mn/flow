@@ -6,6 +6,9 @@ import "package:logging/logging.dart";
 
 final Logger _log = Logger("NavigationService");
 
+/// Strips the query and fragment, which can carry secrets like Eny API keys.
+String _withoutQuery(String link) => link.split(RegExp(r"[?#]")).first;
+
 class NavigationService {
   static NavigationService? _instance;
 
@@ -28,7 +31,9 @@ class NavigationService {
   void add(String path) {
     if (_pendingStack.value.contains(path)) {
       _pendingStack.value = [..._pendingStack.value];
-      _log.finer("Path already in pending stack, ignoring: $path");
+      _log.finer(
+        "Path already in pending stack, ignoring: ${_withoutQuery(path)}",
+      );
       return;
     }
 
@@ -51,19 +56,23 @@ class NavigationService {
     final bool consumed = await onConsume(first).catchError((_) => false);
 
     if (!consumed) {
-      _log.warning("Failed to consume navigation path: $first");
+      _log.warning(
+        "Failed to consume navigation path: ${_withoutQuery(first)}",
+      );
     } else {
-      _log.info("Successfully consumed navigation path: $first");
+      _log.info(
+        "Successfully consumed navigation path: ${_withoutQuery(first)}",
+      );
     }
   }
 
   void _addRawUriWithDelay(Uri? uri) {
     if (uri == null) return;
 
-    _log.info("Received app link URI: $uri");
+    _log.info("Received app link URI: ${_withoutQuery("$uri")}");
 
     if (uri.scheme != "flow-mn") {
-      _log.warning("Ignoring non-flow scheme URI: $uri");
+      _log.warning("Ignoring non-flow scheme URI: ${_withoutQuery("$uri")}");
       return;
     }
 
@@ -79,7 +88,7 @@ class NavigationService {
           when candidate.startsWith("eny")) {
         NavigationService().add("/integrate/eny?${uri.query}");
       } else {
-        _log.info("Ignoring Eny link with no API key in query: $uri");
+        _log.info("Ignoring Eny link with no API key in query");
       }
       return;
     }
@@ -105,6 +114,6 @@ class NavigationService {
     // Deliberately an allowlist, not a catch-all forward: a custom URL scheme
     // is claimable by anything on the device, so an arbitrary path from one
     // would be an open redirect into any route in the app.
-    _log.warning("No route matches app link URI: $uri");
+    _log.warning("No route matches app link URI: ${_withoutQuery("$uri")}");
   }
 }
