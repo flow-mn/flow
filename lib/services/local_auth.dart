@@ -84,8 +84,8 @@ class LocalAuthService {
       final bool success = await _localAuth.authenticate(
         localizedReason: localizedReason,
         sensitiveTransaction: true,
-        // Falls back to the device passcode when biometrics aren't enrolled
-        biometricOnly: _biometricsAvailable,
+        // Device passcode stays as a fallback, e.g., after biometric lockout
+        biometricOnly: false,
         persistAcrossBackgrounding: true,
       );
 
