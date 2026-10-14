@@ -108,7 +108,7 @@ class UserPreferencesService {
   set iCloudBackupsToKeep(int? newICloudBackupsToKeep) {
     if (newICloudBackupsToKeep == null) return;
 
-    value.trashBinRetentionDays = newICloudBackupsToKeep;
+    value.iCloudBackupsToKeep = newICloudBackupsToKeep;
 
     ObjectBox().box<UserPreferences>().put(value);
   }
