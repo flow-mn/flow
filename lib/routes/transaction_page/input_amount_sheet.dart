@@ -154,6 +154,12 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                         ),
                         const SizedBox(height: 12.0),
                       ],
+                      // Always laid out in calculator mode to avoid jumps
+                      if (_calculatorMode)
+                        Text(
+                          pendingOperationText,
+                          style: context.textTheme.bodyLarge?.semi(context),
+                        ),
                       AmountText(
                         value: value,
                         currency: _currency,
@@ -491,6 +497,25 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     ).signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
 
     _inputtingDecimal = value.decimalLength > 0;
+  }
+
+  /// First operand and the operator, e.g., "120 +"
+  String get pendingOperationText {
+    if (_operationCache case InputValue operand
+        when _currentOperation != null) {
+      final String formatted =
+          Money(
+            operand.currentAmount,
+            _currency ?? UserPreferencesService().primaryCurrency,
+          ).formatMoney(
+            includeCurrency: false,
+            decimalDigits: operand.decimalLength,
+          );
+
+      return "$formatted ${_currentOperation!.symbol}";
+    }
+
+    return "";
   }
 
   void calculatorMode() {
