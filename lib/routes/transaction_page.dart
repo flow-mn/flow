@@ -503,14 +503,9 @@ class _TransactionPageState extends State<TransactionPage> {
                               context,
                             ),
                             child: ListTile(
-                              title: Text(
-                                "${Money(1.0, _selectedAccount!.currency).formatMoney()} = ${Money(_conversionRate, _selectedAccountTransferTo!.currency).formatMoney()}",
-                              ),
+                              title: Text(conversionRateText),
                               onTap: () => inputPostConversionAmount(),
-                              trailing: _selectedAccountTransferTo == null
-                                  ? LeChevron()
-                                  : null,
-                              focusNode: _selectAccountTransferToFocusNode,
+                              trailing: const LeChevron(),
                             ),
                           ),
                       ],
@@ -1736,6 +1731,17 @@ class _TransactionPageState extends State<TransactionPage> {
   void pop() {
     FileAttachmentService().performCleanupCheck();
     context.pop();
+  }
+
+  String get conversionRateText {
+    final Money from = Money(1.0, _selectedAccount!.currency);
+    final Money to = Money(
+      _conversionRate,
+      _selectedAccountTransferTo!.currency,
+    );
+
+    return ConvertedAmountButton.rateText(from, to) ??
+        "${from.formatMoney()} = ${to.formatMoney()}";
   }
 
   String get fallbackTitle {

@@ -26,44 +26,48 @@ class ConvertedAmountButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 4.0,
-              children: [
-                Text(
-                  "= ${money.formatMoney()}",
-                  style: context.textTheme.bodyLarge?.copyWith(color: color),
-                ),
-                Icon(Symbols.edit_rounded, size: 16.0, color: color),
-              ],
-            ),
-            if (rateText() case String rate)
-              Text(
-                rate,
-                style: context.textTheme.bodySmall?.copyWith(color: color),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: .center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 4.0,
+                children: [
+                  Text(
+                    "= ${money.formatMoney()}",
+                    style: context.textTheme.bodyLarge?.copyWith(color: color),
+                  ),
+                  Icon(Symbols.edit_rounded, size: 16.0, color: color),
+                ],
               ),
-          ],
+              if (rateText(foreignMoney, money) case String rate)
+                Text(
+                  rate,
+                  style: context.textTheme.bodySmall?.copyWith(color: color),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   /// Always shows the rate of the stronger currency, e.g., "1 $ = 3,450 ₮"
-  String? rateText() {
-    final double from = foreignMoney.amount.abs();
-    final double to = money.amount.abs();
+  static String? rateText(Money from, Money to) {
+    final double fromAmount = from.amount.abs();
+    final double toAmount = to.amount.abs();
 
-    if (from == 0 || to == 0) return null;
+    if (fromAmount == 0 || toAmount == 0) return null;
 
-    final double rate = to / from;
+    final double rate = toAmount / fromAmount;
 
     return rate >= 1.0
-        ? "${Money(1.0, foreignMoney.currency).formatMoney()} = ${Money(rate, money.currency).formatMoney()}"
-        : "${Money(1.0, money.currency).formatMoney()} = ${Money(1 / rate, foreignMoney.currency).formatMoney()}";
+        ? "${Money(1.0, from.currency).formatMoney()} = ${Money(rate, to.currency).formatMoney()}"
+        : "${Money(1.0, to.currency).formatMoney()} = ${Money(1 / rate, from.currency).formatMoney()}";
   }
 }
