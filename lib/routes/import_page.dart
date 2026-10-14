@@ -72,7 +72,6 @@ class _ImportPageState extends State<ImportPage> {
                       leading: Icon(SimpleIcons.googlesheets),
                       trailing: Icon(Symbols.chevron_right_rounded),
                       title: Text("sync.import.getCSVTemplate".t(context)),
-                      subtitle: Text("sync.import.replacesAllData".t(context)),
                       onTap: () => openUrl(csvImportTemplateUrl),
                     ),
                   ],

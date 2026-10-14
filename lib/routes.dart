@@ -486,12 +486,6 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-      path: "/import",
-      builder: (context, state) => ImportPage(
-        setupMode: state.uri.queryParameters["setupMode"] == "true",
-      ),
-    ),
-    GoRoute(
       path: "/setup",
       builder: (context, state) => const SetupPage(),
       routes: [
