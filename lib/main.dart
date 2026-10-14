@@ -161,8 +161,17 @@ void main() async {
   // racing with first-frame work. The first sync is now triggered from
   // FlowState.initState's post-frame callback (alongside migrations).
 
-  TransactionsService().addListener(() => HomeWidgets.syncAll());
-  HomeWidgets.watchForChanges();
+  if (Platform.isIOS || Platform.isAndroid) {
+    Timer? homeWidgetsSyncDebounce;
+    TransactionsService().addListener(() {
+      homeWidgetsSyncDebounce?.cancel();
+      homeWidgetsSyncDebounce = Timer(
+        const Duration(milliseconds: 500),
+        () => unawaited(HomeWidgets.syncAll()),
+      );
+    });
+    HomeWidgets.watchForChanges();
+  }
 
   try {
     Moment.minValue = DateTime(0);
