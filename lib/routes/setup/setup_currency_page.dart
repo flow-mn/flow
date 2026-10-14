@@ -4,6 +4,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/services/currency_registry.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/sheets/select_currency_sheet.dart";
@@ -11,6 +12,7 @@ import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:go_router/go_router.dart";
 import "package:intl/intl.dart";
+import "package:intl/number_symbols_data.dart";
 import "package:logging/logging.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 
@@ -131,12 +133,41 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
     });
   }
 
+  /// Languages spoken in many countries, whose default currency says little
+  /// about the user's (e.g., en_MN would otherwise default to USD)
+  static const Set<String> _multiRegionLanguages = {
+    "ar",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "nl",
+    "pt",
+    "ru",
+    "zh",
+  };
+
   /// The device locale's currency, if it's a supported one.
   static String? _detectCurrency() {
     try {
-      final String? code = NumberFormat.simpleCurrency(
-        locale: Platform.localeName.split(".").first,
-      ).currencyName?.toUpperCase();
+      final List<String> parts = Intl.canonicalizedLocale(
+        Platform.localeName.split(".").first,
+      ).split("_");
+      final String language = parts.first;
+      final String? region = parts.length > 1 ? parts.last : null;
+
+      final String? locale =
+          numberFormatSymbols.keys.firstWhereOrNull(
+            (key) => region != null && key.endsWith("_$region"),
+          ) ??
+          (region == null ||
+                  region.toLowerCase() == language ||
+                  !_multiRegionLanguages.contains(language)
+              ? language
+              : null);
+
+      final String? code = numberFormatSymbols[locale]?.DEF_CURRENCY_CODE
+          .toUpperCase();
 
       if (code != null && CurrencyRegistryService().isCurrencyCodeValid(code)) {
         return code;
