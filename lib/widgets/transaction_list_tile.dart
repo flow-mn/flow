@@ -8,6 +8,7 @@ import "package:flow/l10n/extensions.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/directionality.dart";
 import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
@@ -120,7 +121,7 @@ class TransactionListTile extends StatelessWidget {
     final List<InlineSpan> subtitleComponents = [
       TextSpan(
         text: (transaction.isTransfer && combineTransfers)
-            ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
+            ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} ${context.isRtl ? "←" : "→"} ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
             : (AccountsProvider.of(context).getName(transaction.accountUuid) ??
                   transaction.account.target?.name),
       ),
@@ -135,7 +136,7 @@ class TransactionListTile extends StatelessWidget {
               if (externalProviderName == "Siri")
                 WidgetSpan(
                   child: Padding(
-                    padding: .only(right: 4.0),
+                    padding: .directional(end: 4.0),
                     child: Image.asset("assets/images/siri.png", height: 12.0),
                   ),
                   alignment: .middle,
@@ -143,7 +144,7 @@ class TransactionListTile extends StatelessWidget {
               if (externalProviderName == "Eny")
                 WidgetSpan(
                   child: Padding(
-                    padding: .only(right: 4.0),
+                    padding: .directional(end: 4.0),
                     child: Image.asset("assets/images/eny.png", height: 12.0),
                   ),
                   alignment: .middle,
@@ -270,22 +271,14 @@ class TransactionListTile extends StatelessWidget {
                                 .currency,
                           ),
                           displayAbsoluteAmount: true,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
+                          style: context.textTheme.bodyMedium?.semi(context),
                           overrideObscure: overrideObscure,
                         )
                       else if (transaction.extensions.foreignCurrency
                           case ForeignCurrency foreignCurrency)
                         MoneyText(
                           foreignCurrency.money,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
+                          style: context.textTheme.bodyMedium?.semi(context),
                           overrideObscure: overrideObscure,
                         )
                       else
@@ -293,11 +286,7 @@ class TransactionListTile extends StatelessWidget {
                           transaction.money,
                           displayAbsoluteAmount:
                               transaction.isTransfer && combineTransfers,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
+                          style: context.textTheme.bodyMedium?.semi(context),
                           overrideObscure: overrideObscure,
                         ),
                     ],
@@ -415,8 +404,8 @@ class TransactionListTile extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         icon,
-        Positioned(
-          right: -1.0,
+        PositionedDirectional(
+          end: -1.0,
           bottom: -1.0,
           child: DecoratedBox(
             // A surface-colored ring separates the badge from the icon plate.
