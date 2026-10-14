@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/entity/transaction_type/payload.dart";
@@ -5,7 +7,6 @@ import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/utils/extensions/iterables.dart";
-import "package:flow/widgets/transaction_watcher.dart";
 import "package:flutter/material.dart";
 import "package:latlong2/latlong.dart";
 
@@ -23,40 +24,33 @@ class _TransactionTagsProviderScopeState
     extends State<TransactionTagsProviderScope> {
   QueryBuilder<TransactionTag> _queryBuilder() =>
       ObjectBox().box<TransactionTag>().query();
+  late final StreamSubscription _subscription;
+
+  List<TransactionTag>? _tags;
 
   @override
-  Widget build(BuildContext context) => TransactionWatcher(
-    builder: (context, _, _) {
-      return StreamBuilder<Query<TransactionTag>>(
-        stream: _queryBuilder().watch(triggerImmediately: true),
-        builder: (context, snapshot) {
-          final List<TransactionTag>? tags = snapshot.data?.find();
+  void initState() {
+    super.initState();
+    _subscription = _queryBuilder()
+        .watch(triggerImmediately: true)
+        .listen(onData);
+  }
 
-          if (tags != null) {
-            final FrecencyGroup frecencyGroup = FrecencyGroup(
-              tags
-                  .map(
-                    (tag) => TransitiveLocalPreferences().getFrecencyData(
-                      "tag",
-                      tag.uuid,
-                    ),
-                  )
-                  .nonNulls
-                  .toList(),
-            );
+  void onData(Query<TransactionTag> query) {
+    setState(() {
+      _tags = query.find();
+    });
+  }
 
-            tags.sort(
-              (a, b) => frecencyGroup
-                  .getScore(b.uuid)
-                  .compareTo(frecencyGroup.getScore(a.uuid)),
-            );
-          }
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
-          return TransactionTagsProvider(tags, child: widget.child);
-        },
-      );
-    },
-  );
+  @override
+  Widget build(BuildContext context) =>
+      TransactionTagsProvider(_tags, child: widget.child);
 }
 
 class TransactionTagsProvider extends InheritedWidget {
@@ -64,7 +58,27 @@ class TransactionTagsProvider extends InheritedWidget {
 
   bool get ready => _tags != null;
 
-  List<TransactionTag> get tags => _tags ?? [];
+  /// Tags sorted by frecency
+  List<TransactionTag> get tags {
+    final List<TransactionTag> list = _tags ?? const [];
+    if (list.isEmpty) return list;
+
+    final FrecencyGroup frecencyGroup = FrecencyGroup(
+      list
+          .map(
+            (tag) =>
+                TransitiveLocalPreferences().getFrecencyData("tag", tag.uuid),
+          )
+          .nonNulls
+          .toList(),
+    );
+
+    return [...list]..sort(
+      (a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)),
+    );
+  }
 
   String? getName(dynamic id) => get(id)?.title;
 
