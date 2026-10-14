@@ -652,30 +652,28 @@ class _AccountEditPageState extends State<AccountEditPage> {
       child: Text("account.delete.description".t(context, txnCount)),
     );
 
-    if (!mounted) return;
+    if (!mounted || confirmation != true) return;
 
-    if (confirmation == true) {
-      await export(
-        showShareDialog: false,
-        subfolder: "anti-blunder",
-        type: BackupEntryType.preAccountDeletion,
+    await export(
+      showShareDialog: false,
+      subfolder: "anti-blunder",
+      type: BackupEntryType.preAccountDeletion,
+    );
+
+    try {
+      await TransactionsService().deleteMany(filter);
+    } catch (e) {
+      log(
+        "[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
       );
+    }
 
-      try {
-        await TransactionsService().deleteMany(filter);
-      } catch (e) {
-        log(
-          "[Account Page] Failed to remove associated transactions for account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
-        );
-      }
-
-      try {
-        await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
-      } catch (e) {
-        log(
-          "[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
-        );
-      }
+    try {
+      await ObjectBox().box<Account>().removeAsync(_currentlyEditing!.id);
+    } catch (e) {
+      log(
+        "[Account Page] Failed to delete account ${_currentlyEditing!.name} (${_currentlyEditing!.uuid}) due to:\n$e",
+      );
     }
 
     try {
