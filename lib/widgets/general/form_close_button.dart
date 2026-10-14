@@ -15,14 +15,14 @@ class FormCloseButton extends StatefulWidget {
   const FormCloseButton({super.key, required this.canPop, this.center = true});
 
   @override
-  State<FormCloseButton> createState() => _FormCloseButtonState();
+  State<FormCloseButton> createState() => FormCloseButtonState();
 
   static void _pop(BuildContext context) {
     context.pop();
   }
 }
 
-class _FormCloseButtonState extends State<FormCloseButton> {
+class FormCloseButtonState extends State<FormCloseButton> {
   bool sheetShown = false;
 
   @override
@@ -36,6 +36,7 @@ class _FormCloseButtonState extends State<FormCloseButton> {
       child: IconButton(
         onPressed: () => onPressed(context),
         icon: const Icon(Symbols.close_rounded),
+        tooltip: "general.cancel".t(context),
       ),
     );
 

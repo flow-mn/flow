@@ -137,6 +137,7 @@ class _TransactionPageState extends State<TransactionPage> {
   final FocusNode _selectAccountTransferToFocusNode = FocusNode();
 
   final GlobalKey<FilesSectionState> _filesSectionKey = GlobalKey();
+  final GlobalKey<FormCloseButtonState> _closeButtonKey = GlobalKey();
 
   Geo? _geo;
   bool _geoHandpicked = false;
@@ -333,7 +334,7 @@ class _TransactionPageState extends State<TransactionPage> {
             if (!hasChanged()) {
               pop();
             } else {
-              HapticFeedback.mediumImpact();
+              _closeButtonKey.currentState?.onPressed(context);
             }
           },
           osSingleActivator(LogicalKeyboardKey.enter): () => save(),
@@ -344,7 +345,10 @@ class _TransactionPageState extends State<TransactionPage> {
           child: Scaffold(
             appBar: AppBar(
               leadingWidth: 40.0,
-              leading: FormCloseButton(canPop: () => !hasChanged()),
+              leading: FormCloseButton(
+                key: _closeButtonKey,
+                canPop: () => !hasChanged(),
+              ),
               actions: [
                 IconButton(
                   onPressed: () => save(),
