@@ -173,6 +173,12 @@ class _TransactionPageState extends State<TransactionPage> {
 
   DateTime? _initialTransactionDate;
 
+  /// Keyed by account id and anchor, so it's only queried when either changes
+  final Map<(int, DateTime), Money> _balanceCache = {};
+
+  Money _balanceAt(Account account, DateTime anchor) => _balanceCache
+      .putIfAbsent((account.id, anchor), () => account.balanceAt(anchor));
+
   bool get pastDuePending => widget.isNewTransaction
       ? false
       : (_isPending && transactionDate.isPastAnchored());
@@ -444,7 +450,10 @@ class _TransactionPageState extends State<TransactionPage> {
                               (!widget.isNewTransaction &&
                                   _selectedAccount != null)
                               ? MoneyText(
-                                  _selectedAccount!.balanceAt(transactionDate),
+                                  _balanceAt(
+                                    _selectedAccount!,
+                                    transactionDate,
+                                  ),
                                 )
                               : null,
                           onTap: () => selectAccount(),
@@ -473,7 +482,8 @@ class _TransactionPageState extends State<TransactionPage> {
                                 (!widget.isNewTransaction &&
                                     _selectedAccountTransferTo != null)
                                 ? MoneyText(
-                                    _selectedAccountTransferTo!.balanceAt(
+                                    _balanceAt(
+                                      _selectedAccountTransferTo!,
                                       transactionDate,
                                     ),
                                   )
