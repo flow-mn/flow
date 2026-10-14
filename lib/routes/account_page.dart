@@ -179,6 +179,7 @@ class _AccountPageState extends State<AccountPage> {
               child: TransactionsInfo(
                 count: transactions?.nonPending.length,
                 flow: mergedFlow.totalFlow,
+                balance: account.balance,
                 icon: account.icon,
                 colorScheme: account.colorScheme,
               ),
