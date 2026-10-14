@@ -48,6 +48,7 @@ import "package:flow/services/home_widgets.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/android/set_secure_window.dart";
 import "package:flow/widgets/flow_themes.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
@@ -220,6 +221,9 @@ class FlowState extends State<Flow> {
 
   late bool _tempLock;
 
+  /// Blurs the app switcher snapshot on iOS while app lock is on.
+  bool _obscured = false;
+
   bool get useDarkTheme => (_themeMode == ThemeMode.system
       ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
       : (_themeMode == ThemeMode.dark));
@@ -253,6 +257,9 @@ class FlowState extends State<Flow> {
     UserPreferencesService().valueNotifier.addListener(_refreshExchangeRates);
 
     _tempLock = LocalPreferences().requireLocalAuth.get();
+
+    LocalPreferences().requireLocalAuth.addListener(_syncSecureWindow);
+    _syncSecureWindow();
 
     TransactionsService().addListener(_synchronizePlannedNotifications);
 
@@ -292,10 +299,15 @@ class FlowState extends State<Flow> {
 
     _appLifeCycleListener = AppLifecycleListener(
       onInactive: () {
+        _obscure();
         _tryTempLock();
       },
       onHide: () {
+        _obscure();
         _tryTempLock();
+      },
+      onResume: () {
+        _unobscure();
       },
       onShow: () {
         if (!mounted) return;
@@ -313,6 +325,7 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
+    LocalPreferences().requireLocalAuth.removeListener(_syncSecureWindow);
     UserPreferencesService().valueNotifier.removeListener(
       _refreshExchangeRates,
     );
@@ -372,7 +385,7 @@ class FlowState extends State<Flow> {
                             child: child ?? Container(),
                           ),
                         ),
-                        if (_tempLock)
+                        if (_tempLock || _obscured)
                           Positioned.fill(
                             child: BackdropFilter(
                               filter: ImageFilter.blur(
@@ -551,6 +564,26 @@ class FlowState extends State<Flow> {
 
     setState(() {
       _tempLock = true;
+    });
+  }
+
+  void _syncSecureWindow() =>
+      unawaited(setSecureWindow(LocalPreferences().requireLocalAuth.get()));
+
+  void _obscure() {
+    if (!Platform.isIOS || _obscured) return;
+    if (!LocalPreferences().requireLocalAuth.get()) return;
+
+    setState(() {
+      _obscured = true;
+    });
+  }
+
+  void _unobscure() {
+    if (!_obscured) return;
+
+    setState(() {
+      _obscured = false;
     });
   }
 
