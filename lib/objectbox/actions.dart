@@ -1075,6 +1075,10 @@ extension AccountActions on Account {
     double? latitude,
     double? longitude,
   }) {
+    if (!amount.isFinite) {
+      throw ArgumentError.value(amount, "amount", "must be finite");
+    }
+
     FileAttachmentService().upsertManySync(attachments ?? []);
 
     final String uuid = uuidOverride ?? const Uuid().v4();
