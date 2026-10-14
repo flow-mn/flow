@@ -76,6 +76,8 @@ class _AccountPageState extends State<AccountPage> {
 
   late TimeRange range;
 
+  Stream<List<Transaction>>? transactionsStream;
+
   late final TransactionsSelectionController _selection;
 
   @override
@@ -84,6 +86,9 @@ class _AccountPageState extends State<AccountPage> {
 
     account = ObjectBox().box<Account>().get(widget.accountId);
     range = widget.initialRange ?? TimeRange.thisMonth();
+    if (account != null) {
+      transactionsStream = watch(range);
+    }
     _selection = TransactionsSelectionController();
     _selection.addListener(_onSelectionChanged);
   }
@@ -113,9 +118,7 @@ class _AccountPageState extends State<AccountPage> {
         TransitiveLocalPreferences().usesNonPrimaryCurrency.get();
 
     return StreamBuilder<List<Transaction>>(
-      stream: qb(
-        range,
-      ).watch(triggerImmediately: true).map((event) => event.find()),
+      stream: transactionsStream,
       builder: (context, snapshot) {
         final List<Transaction>? transactions = snapshot.data;
 
@@ -284,9 +287,13 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
+  Stream<List<Transaction>> watch(TimeRange range) =>
+      qb(range).watch(triggerImmediately: true).map((event) => event.find());
+
   void onRangeChange(TimeRange newRange) {
     setState(() {
       range = newRange;
+      transactionsStream = watch(newRange);
     });
   }
 
