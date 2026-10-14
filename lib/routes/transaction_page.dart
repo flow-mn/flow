@@ -1534,6 +1534,11 @@ class _TransactionPageState extends State<TransactionPage> {
   void save() {
     if (!_ensureAccountsSelected()) return;
 
+    if (widget.isNewTransaction && _amount == 0) {
+      unawaited(inputAmount());
+      return;
+    }
+
     final String trimmedTitle = _titleController.text.trim();
     final String? formattedTitle = trimmedTitle.isNotEmpty
         ? trimmedTitle
