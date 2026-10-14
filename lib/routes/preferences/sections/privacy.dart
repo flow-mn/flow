@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:io";
 
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/preferences_page.dart";
@@ -26,12 +27,13 @@ class _PrivacyState extends State<Privacy> {
           value: UserPreferencesService().privacyModeUponLaunch,
           onChanged: updatePrivacyMode,
         ),
-        SwitchListTile(
-          secondary: const Icon(Symbols.earthquake_rounded),
-          title: Text("preferences.privacy.maskAtShake".t(context)),
-          value: UserPreferencesService().privacyModeUponShaking,
-          onChanged: updatePrivacyModeUponShaking,
-        ),
+        if (Platform.isAndroid || Platform.isIOS)
+          SwitchListTile(
+            secondary: const Icon(Symbols.earthquake_rounded),
+            title: Text("preferences.privacy.maskAtShake".t(context)),
+            value: UserPreferencesService().privacyModeUponShaking,
+            onChanged: updatePrivacyModeUponShaking,
+          ),
       ],
     );
   }
