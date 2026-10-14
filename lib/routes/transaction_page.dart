@@ -720,7 +720,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                 ),
                               if (_currentlyEditing.isDeleted != true)
                                 ListTile(
-                                  leading: Icon(Symbols.delete_forever_rounded),
+                                  leading: Icon(Symbols.delete_rounded),
                                   title: Text(
                                     "transaction.moveToTrashBin".t(context),
                                   ),
