@@ -14,6 +14,7 @@ import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/transaction_list_tile/labeled_slidable_action.dart";
 import "package:flow/widgets/transaction_list_tile/transaction_subtitle.dart";
 import "package:flow/widgets/transaction_list_tile_theme.dart";
 import "package:flutter/material.dart";
@@ -315,40 +316,45 @@ class TransactionListTile extends StatelessWidget {
 
     final List<SlidableAction> startActions = [
       if (showDuplicateButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => duplicateFn!(),
           icon: Symbols.content_copy_rounded,
+          tooltip: "transaction.duplicate".t(context),
           backgroundColor: context.flowColors.semi,
         ),
     ];
 
     final List<SlidableAction> endActions = [
       if (showConfirmButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => confirmFn!(),
           icon: Symbols.check_rounded,
+          tooltip: "general.confirm".t(context),
           backgroundColor: context.colorScheme.primary,
         ),
       if (showHoldButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => confirmFn!(false),
           icon: Symbols.cancel_rounded,
+          tooltip: "transaction.pending.hold".t(context),
           backgroundColor: context.flowColors.expense,
         ),
       if (moveToTrashFn != null &&
           !showHoldButton &&
           transaction.isDeleted != true)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => moveToTrashFn!(),
-          icon: Symbols.delete_forever_rounded,
+          icon: Symbols.delete_rounded,
+          tooltip: "transaction.moveToTrashBin".t(context),
           backgroundColor: context.flowColors.expense,
         ),
       if (recoverFromTrashFn != null &&
           !showHoldButton &&
           transaction.isDeleted == true)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => recoverFromTrashFn!(),
           icon: Symbols.restore_page_rounded,
+          tooltip: "transaction.moveToTrashBin.restore".t(context),
           backgroundColor: context.flowColors.income,
         ),
     ];
