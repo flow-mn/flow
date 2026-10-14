@@ -4,7 +4,6 @@ import "dart:io";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/sync/syncer.dart";
 import "package:flow/sync/import.dart";
@@ -200,8 +199,6 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
       if (mounted) {
         importer.goToRelevantPage(context, setupMode: true);
       }
-
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
     } catch (e) {
       if (!mounted) return;
 
