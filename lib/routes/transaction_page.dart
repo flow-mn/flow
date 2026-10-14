@@ -835,7 +835,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   Future<void> inputAmount([bool fromAutomatedFlow = false]) async {
     if (_amount == 0.0) {
-      await TransitiveLocalPreferences().updateTransitiveProperties();
+      unawaited(TransitiveLocalPreferences().updateTransitiveProperties());
     }
 
     if (!mounted) return;
