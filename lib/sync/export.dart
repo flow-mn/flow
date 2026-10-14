@@ -5,6 +5,8 @@ import "dart:math";
 import "package:flow/entity/backup_entry.dart";
 import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/sync.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/user_preferences.dart";
@@ -20,6 +22,8 @@ import "package:moment_dart/moment_dart.dart";
 import "package:path/path.dart" as path;
 import "package:path_provider/path_provider.dart";
 import "package:share_plus/share_plus.dart";
+
+const int _automatedBackupsToKeep = 5;
 
 typedef ExportResult = ({
   bool shareDialogSucceeded,
@@ -82,6 +86,14 @@ Future<ExportResult> export({
         );
         return -1;
       });
+
+  if (type == BackupEntryType.automated) {
+    unawaited(
+      objectBoxId.then((_) => _pruneAutomatedBackups()).catchError((error) {
+        syncLogger.warning("Failed to prune automated backups", error);
+      }),
+    );
+  }
 
   if (ICloudSyncer.supported && type == BackupEntryType.manual) {
     syncLogger.info("Trying to save manual backup to iCloud");
@@ -179,7 +191,7 @@ Future<String> saveBackupFile(
       f.writeAsBytesSync(bytes);
       break;
     case File file:
-      file.copySync(f.path);
+      await _moveFile(file, f.path);
       break;
     default:
       throw UnimplementedError();
@@ -188,6 +200,43 @@ Future<String> saveBackupFile(
   syncLogger.fine("Write successful. See file at: ${f.path}");
 
   return f.path;
+}
+
+/// Renames when possible, otherwise copies and deletes [source].
+Future<void> _moveFile(File source, String destination) async {
+  try {
+    await source.rename(destination);
+  } on FileSystemException {
+    try {
+      await source.copy(destination);
+    } finally {
+      await source.delete().catchError((error) {
+        syncLogger.warning("Failed to delete temporary backup file", error);
+        return source;
+      });
+    }
+  }
+}
+
+/// Keeps the [_automatedBackupsToKeep] most recent automated backups and
+/// deletes the rest, so deleted data doesn't linger in old backups.
+Future<void> _pruneAutomatedBackups() async {
+  final Query<BackupEntry> query = ObjectBox()
+      .box<BackupEntry>()
+      .query(BackupEntry_.type.equals(BackupEntryType.automated.value))
+      .order(BackupEntry_.createdDate, flags: Order.descending)
+      .build();
+
+  query.offset = _automatedBackupsToKeep;
+
+  final List<BackupEntry> stale = query.find();
+  query.close();
+
+  for (final BackupEntry entry in stale) {
+    if (!await entry.delete()) {
+      syncLogger.warning("Failed to prune automated backup ${entry.filePath}");
+    }
+  }
 }
 
 /// Returns whether the file was saved/revealed successfully
