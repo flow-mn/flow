@@ -40,6 +40,7 @@ import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/file_attachment.dart";
+import "package:flow/services/notifications.dart";
 import "package:flow/services/recurring_transactions.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -1592,6 +1593,11 @@ class _TransactionPageState extends State<TransactionPage> {
         latitude: _geo?.latitude,
         longitude: _geo?.longitude,
       );
+    }
+
+    // Planned transactions are the first moment reminders make sense
+    if (transactionDate.isFuture || _recurrence != null) {
+      unawaited(NotificationsService().requestPermissionsIfNeverAsked());
     }
 
     pop();
