@@ -350,6 +350,23 @@ class TransitiveLocalPreferences {
                 FrecencyData(uuid: tag.uuid, lastUsed: neverUsed, useCount: 0),
           ),
       ]);
+
+      final Set<String> liveUuids = {
+        ...categories.map((category) => category.uuid),
+        ...accounts.map((account) => account.uuid),
+        ...tags.map((tag) => tag.uuid),
+      };
+
+      // Drop records of deleted entities
+      await Future.wait(
+        _prefs.keys
+            .where(
+              (key) =>
+                  key.startsWith("transitive.frecency.") &&
+                  !liveUuids.contains(key.split(".").last),
+            )
+            .map(_prefs.remove),
+      );
     } catch (e, stackTrace) {
       _log.warning("Failed to reevaluate frecency", e, stackTrace);
     }
