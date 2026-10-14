@@ -120,7 +120,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
                 trailing: const LeChevron(),
               ),
-            const Haptics(),
+            if (Platform.isAndroid || Platform.isIOS) const Haptics(),
             const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
             const SizedBox(height: 8.0),
