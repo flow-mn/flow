@@ -785,7 +785,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
           // Only seed the transaction's location from a less-accurate
           // last-known fix when we'd otherwise have nothing.
-          if (autoAttach && _geo == null) {
+          if (autoAttach && !_geoHandpicked && _geo == null) {
             _geo = geo;
           }
 
@@ -799,7 +799,7 @@ class _TransactionPageState extends State<TransactionPage> {
         .then((current) {
           final Geo geo = Geo.fromPosition(current);
           _deviceGeo = geo;
-          if (autoAttach) {
+          if (autoAttach && !_geoHandpicked) {
             _geo = geo;
           }
         })
