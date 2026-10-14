@@ -154,6 +154,7 @@ struct BudgetPinnedView: View {
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
+                        .privacySensitive()
                 }
             }
         }
@@ -220,6 +221,7 @@ struct BudgetPinnedView: View {
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
+                        .privacySensitive()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
