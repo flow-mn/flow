@@ -197,8 +197,12 @@ class _AmountTextState extends State<AmountText>
   void _animateAmountText() async {
     if (_amountTextAnimationController.isAnimating) return;
 
-    await _amountTextAnimationController.forward().orCancel;
-    await _amountTextAnimationController.reverse().orCancel;
+    try {
+      await _amountTextAnimationController.forward().orCancel;
+      await _amountTextAnimationController.reverse().orCancel;
+    } on TickerCanceled {
+      // Disposed mid-animation
+    }
   }
 
   void handleContextMenuAction(String? action) {
