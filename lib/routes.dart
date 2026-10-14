@@ -576,7 +576,13 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: "/stats/cash-flow",
-      builder: (context, state) => const CashFlowPage(),
+      builder: (context, state) {
+        final TimeRange? initialRange = TimeRange.tryParse(
+          state.uri.queryParameters["range"] ?? "",
+        );
+
+        return CashFlowPage(initialRange: initialRange);
+      },
     ),
     GoRoute(
       path: "/stats/map",

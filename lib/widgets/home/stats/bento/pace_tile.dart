@@ -55,7 +55,9 @@ class _PaceTileState extends State<PaceTile>
       accent: context.flowColors.expense,
       height: 160.0,
       busy: busy && !loaded,
-      onTap: () => context.push("/stats/cash-flow"),
+      onTap: () => context.push(
+        "/stats/cash-flow?range=${Uri.encodeQueryComponent(widget.range.encodeShort())}",
+      ),
       child: empty
           ? Text(
               "tabs.stats.analytics.cashFlow.noMovement".t(context),
