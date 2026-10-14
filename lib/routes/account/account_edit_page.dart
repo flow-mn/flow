@@ -377,19 +377,22 @@ class _AccountEditPageState extends State<AccountEditPage> {
   }
 
   void updateBalance() async {
-    final Optional<DateTime>? updateAtResult =
-        await showModalBottomSheet<Optional<DateTime>>(
-          context: context,
-          builder: (context) => UpdateBalanceOptionsSheet(),
-          isScrollControlled: true,
-        );
+    // A new account has no history, so there's no date to sync against
+    if (_currentlyEditing != null) {
+      final Optional<DateTime>? updateAtResult =
+          await showModalBottomSheet<Optional<DateTime>>(
+            context: context,
+            builder: (context) => UpdateBalanceOptionsSheet(),
+            isScrollControlled: true,
+          );
 
-    if (updateAtResult == null || !mounted) {
-      _updateBalanceAt = null;
-      return;
+      if (updateAtResult == null || !mounted) {
+        _updateBalanceAt = null;
+        return;
+      }
+
+      _updateBalanceAt = updateAtResult.value;
     }
-
-    _updateBalanceAt = updateAtResult.value;
 
     final result = await showModalBottomSheet<double>(
       context: context,
