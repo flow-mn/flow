@@ -21,7 +21,16 @@ import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 
-enum CalculatorOperation { add, subtract, multiply, divide }
+enum CalculatorOperation {
+  add("+"),
+  subtract("−"),
+  multiply("×"),
+  divide("÷");
+
+  final String symbol;
+
+  const CalculatorOperation(this.symbol);
+}
 
 class InputAmountSheet extends StatefulWidget {
   static const double maxValue = 10e13;
@@ -189,11 +198,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                                   onTap: () => removeDigit(),
                                   onLongPress: () => _reset(),
                                   mainAxisCellCount: widget.lockSign ? 2 : 1,
+                                  semanticLabel: "general.delete".t(context),
                                   child: const Icon(Symbols.backspace_rounded),
                                 ),
                           ..._getNumberRow(1),
                           if (!widget.lockSign && !_calculatorMode)
                             NumpadButton(
+                              semanticLabel: widget.allowNegative ? "-" : "+",
                               child: widget.allowNegative
                                   ? const Icon(Symbols.remove_rounded)
                                   : const Icon(Symbols.add_rounded),
@@ -215,6 +226,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                                       )
                                     : NumpadButton(
                                         onTap: () => calculatorMode(),
+                                        semanticLabel: "general.calculator".t(
+                                          context,
+                                        ),
                                         child: const Icon(
                                           Symbols.calculate_rounded,
                                         ),
@@ -256,11 +270,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         onTap: () => _reset(),
       ),
       NumpadButton(
+        semanticLabel: "general.delete".t(context),
         child: const Icon(Symbols.backspace_rounded),
         onTap: () => removeDigit(),
         onLongPress: () => _reset(),
       ),
       NumpadButton(
+        semanticLabel: "%",
         child: const Icon(Symbols.percent_rounded),
         onTap: () => _evaluatePercent(),
       ),
@@ -303,6 +319,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     return NumpadButton(
       backgroundColor: popOnClick ? context.flowColors.income : null,
       crossAxisCellCount: widget.hasCalculator ? 1 : 2,
+      semanticLabel: popOnClick ? "general.done".t(context) : "=",
       onTap: () {
         if (popOnClick) {
           _saveOrPop();
