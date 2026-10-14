@@ -42,6 +42,8 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
     checkForBackups();
   }
 
+  bool get hasBackups => backups?.isNotEmpty == true;
+
   @override
   Widget build(BuildContext context) {
     final String iCloudSubtitle = ICloudSyncer.supported
@@ -49,7 +51,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
               ? "setup.onboarding.recoverICloudBackup.description.loading".t(
                   context,
                 )
-              : ((backups?.length ?? 0) > 0
+              : (hasBackups
                     ? ("setup.onboarding.recoverICloudBackup.description".t(
                         context,
                         backups?.firstOrNull?.inferredBackupDate
@@ -72,14 +74,23 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                   child: Column(
                     spacing: 16.0,
                     children: [
+                      ActionCard(
+                        onTap: () => context.push("/setup/currency"),
+                        icon: FlowIconData.icon(Symbols.wand_stars_rounded),
+                        title: "setup.onboarding.freshStart".t(context),
+                        subtitle: "setup.onboarding.freshStart.description".t(
+                          context,
+                        ),
+                      ),
                       if (ICloudSyncer.supported)
                         ActionCard(
-                          onTap: () => showICloudBackupModal(),
+                          onTap: iCloudBackupsLoading || !hasBackups
+                              ? null
+                              : () => showICloudBackupModal(),
                           icon: FlowIconData.icon(SimpleIcons.icloud),
                           title: "setup.onboarding.recoverICloudBackup".t(
                             context,
                           ),
-                          // iCloudBackupsLoading
                           subtitle: iCloudSubtitle,
                         ),
                       ActionCard(
@@ -88,14 +99,6 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                         title: "setup.onboarding.importExisting".t(context),
                         subtitle: "setup.onboarding.importExisting.description"
                             .t(context),
-                      ),
-                      ActionCard(
-                        onTap: () => context.push("/setup/currency"),
-                        icon: FlowIconData.icon(Symbols.wand_stars_rounded),
-                        title: "setup.onboarding.freshStart".t(context),
-                        subtitle: "setup.onboarding.freshStart.description".t(
-                          context,
-                        ),
                       ),
                     ],
                   ),
