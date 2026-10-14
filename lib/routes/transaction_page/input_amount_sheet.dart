@@ -393,7 +393,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     Clipboard.setData(
       ClipboardData(
-        text: value.currentAmount.toStringAsFixed(value.decimalLength),
+        text: value.decimalAmount.toStringAsFixed(value.decimalLength),
       ),
     );
 
@@ -456,16 +456,28 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     switch (_currentOperation!) {
       case CalculatorOperation.add:
-        value = _operationCache!.add(value);
+        value = _operationCache!.add(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.subtract:
-        value = _operationCache!.subtract(value);
+        value = _operationCache!.subtract(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.multiply:
-        value = _operationCache!.multiply(value);
+        value = _operationCache!.multiply(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.divide:
-        value = _operationCache!.divide(value);
+        value = _operationCache!.divide(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
     }
 
@@ -485,15 +497,20 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       return;
     }
 
+    // Two extra decimals keep the percentage exact until the final rounding
+    final InputValue percentage = value.divide(
+      InputValue.fromDouble(100.0),
+      maxNumberOfDecimals: _numberOfDecimals + 2,
+    );
+
     value = switch (_currentOperation) {
-      CalculatorOperation.add || CalculatorOperation.subtract =>
-        _operationCache! *
-            InputValue.fromDouble(
-              value.currentAmount * 0.01,
-              maxNumberOfDecimals: _numberOfDecimals,
-            ),
-      _ => InputValue.fromDouble(
-        value.currentAmount * 0.01,
+      CalculatorOperation.add ||
+      CalculatorOperation.subtract => _operationCache!.multiply(
+        percentage,
+        maxNumberOfDecimals: _numberOfDecimals,
+      ),
+      _ => InputValue.fromDecimal(
+        percentage.decimalAmount,
         maxNumberOfDecimals: _numberOfDecimals,
       ),
     };
