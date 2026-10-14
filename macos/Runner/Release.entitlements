@@ -8,8 +8,6 @@
 		<true />
 		<key>com.apple.security.network.client</key>
 		<true />
-		<key>com.apple.security.network.server</key>
-		<true />
 		<key>com.apple.security.application-groups</key>
 		<array>
 			<string>NJH37247C9.flow</string>
