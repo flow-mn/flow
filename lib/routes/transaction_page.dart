@@ -1,6 +1,5 @@
 import "dart:async";
 import "dart:io";
-import "dart:math";
 
 import "package:cross_file/cross_file.dart";
 import "package:flow/constants.dart";
@@ -38,7 +37,6 @@ import "package:flow/routes/transaction_page/select_recurrence_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/accounts.dart";
-import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/file_attachment.dart";
 import "package:flow/services/recurring_transactions.dart";
@@ -939,17 +937,10 @@ class _TransactionPageState extends State<TransactionPage> {
     return await inputConvertedAmount();
   }
 
-  double _roundToAccountPrecision(double amount) {
-    final num precision = pow(
-      10,
-      CurrencyRegistryService().getPreferredDecimalPrecision(
-            _selectedAccount?.currency,
-          ) ??
-          2,
-    );
-
-    return (amount * precision).round() / precision;
-  }
+  double _roundToAccountPrecision(double amount) => Money(
+    amount,
+    _selectedAccount?.currency ?? UserPreferencesService().primaryCurrency,
+  ).roundedAmount();
 
   /// Selects [account], converting the foreign amount if there's any
   ///

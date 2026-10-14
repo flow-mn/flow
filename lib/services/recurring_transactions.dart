@@ -8,6 +8,8 @@ import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/data/money.dart";
+import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
@@ -16,7 +18,9 @@ import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/services/accounts.dart";
+import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/transactions.dart";
+import "package:flow/utils/extensions/money.dart";
 import "package:flow/utils/extensions/recurring_transaction.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -197,10 +201,27 @@ class RecurringTransactionsService {
           (nextOccurence.isAfter(anchor) &&
               PendingTransactionsLocalPreferences().requireConfrimation.get());
 
-      final double amount = recurringTransaction.estimateAmount(
+      double amount = recurringTransaction.estimateAmount(
         template,
         relatedTransactions,
       );
+
+      // Fixed foreign amounts (e.g., a USD subscription) follow the latest rates
+      final ForeignCurrency? foreignCurrency =
+          to == null && !recurringTransaction.variableAmount
+          ? template.extensions.foreignCurrency
+          : null;
+
+      if (foreignCurrency != null) {
+        final double? converted = foreignCurrency.money.tryConvertAmount(
+          from.currency,
+          ExchangeRatesService().getPrimaryCurrencyRates(),
+        );
+
+        if (converted != null) {
+          amount = Money(converted, from.currency).roundedAmount();
+        }
+      }
 
       if (to == null) {
         from.createAndSaveTransaction(
@@ -219,6 +240,13 @@ class RecurringTransactionsService {
               relatedTransactionUuid: generatedTransactionUuid,
               variableAmount: recurringTransaction.variableAmount,
             ),
+            if (foreignCurrency != null)
+              ForeignCurrency(
+                uuid: const Uuid().v4(),
+                amount: foreignCurrency.amount,
+                currency: foreignCurrency.currency,
+                relatedTransactionUuid: generatedTransactionUuid,
+              ),
           ],
           isPending: isPending,
         );
