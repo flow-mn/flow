@@ -2,9 +2,7 @@ import "dart:async";
 import "dart:convert";
 
 import "package:flow/data/prefs/frecency.dart";
-import "package:flow/data/string_multi_filter.dart";
 import "package:flow/data/transaction_filter.dart";
-import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
@@ -13,7 +11,6 @@ import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/accounts.dart";
-import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:local_settings/local_settings.dart";
 import "package:logging/logging.dart";
@@ -191,16 +188,14 @@ class TransitiveLocalPreferences {
             Moment.now(),
           )) {
         unawaited(
-          _reevaluateCategoryFrecency().then(
+          _reevaluateFrecency().then(
             (_) => categoryFrecencyTypedBuilt.set(true),
           ),
         );
-        unawaited(_reevaluateAccountFrecency());
-        unawaited(_reevaluateTransactionTagFrecency());
         unawaited(transitiveLastTimeFrecencyUpdated.set(DateTime.now()));
       } else if (!categoryFrecencyTypedBuilt.get()) {
         unawaited(
-          _reevaluateCategoryFrecency().then(
+          _reevaluateFrecency().then(
             (_) => categoryFrecencyTypedBuilt.set(true),
           ),
         );
@@ -258,9 +253,8 @@ class TransitiveLocalPreferences {
   /// usage.
   static List<String> categoryFrecencyTypesFor(TransactionType? type) {
     return switch (type) {
-      TransactionType.income || TransactionType.expense => [
-        categoryFrecencyType(type!),
-      ],
+      TransactionType.income ||
+      TransactionType.expense => [categoryFrecencyType(type!)],
       _ => const ["category:income", "category:expense"],
     };
   }
@@ -303,165 +297,133 @@ class TransitiveLocalPreferences {
     }
   }
 
-  Future<void> _reevaluateCategoryFrecency() async {
-    final List<Category> categories = await ObjectBox()
-        .box<Category>()
-        .getAllAsync();
+  /// Rebuilds category, account, and tag frecency from the last 180 days in
+  /// a single worker isolate query.
+  Future<void> _reevaluateFrecency() async {
+    try {
+      final DateTime now = DateTime.now();
 
-    if (categories.isEmpty) {
-      return;
-    }
+      final (
+        List<Category> categories,
+        List<Account> accounts,
+        List<TransactionTag> tags,
+        Map<String, Map<String, FrecencyData>> usage,
+      ) = await (
+        ObjectBox().box<Category>().getAllAsync(),
+        AccountsService().getAll(),
+        ObjectBox().box<TransactionTag>().getAllAsync(),
+        ObjectBox().store.runAsync(_tallyUsage, (
+          now.subtract(const Duration(days: 180)),
+          now,
+        )),
+      ).wait;
 
-    const List<TransactionType> typesToBuild = [
-      TransactionType.income,
-      TransactionType.expense,
-    ];
+      final DateTime neverUsed = DateTime.fromMillisecondsSinceEpoch(0);
 
-    for (final category in categories) {
-      try {
-        // TransactionFilter.types is a post-query Dart predicate — it is
-        // ignored by ObjectBox count()/findFirst(). Query once per category
-        // and partition by Transaction.type in memory so the income vs
-        // expense split is actually applied.
-        final TransactionFilter filter = TransactionFilter(
-          categories: StringMultiFilter.whitelist([category.uuid]),
-          range: TransactionFilterTimeRange.fromTimeRange(
-            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
-          ),
-          sortBy: TransactionSortField.transactionDate,
-          sortDescending: true,
-        );
-
-        final List<Transaction> recent = TransactionsService().findManySync(
-          filter,
-        );
-
-        for (final type in typesToBuild) {
-          final List<Transaction> typed = recent
-              .where((t) => t.type == type)
-              .toList();
-
-          if (typed.isEmpty) {
-            unawaited(
-              setFrecencyData(
-                categoryFrecencyType(type),
-                category.uuid,
-                null,
-              ),
-            );
-            continue;
-          }
-
-          unawaited(
-            setFrecencyData(
+      await Future.wait([
+        for (final Category category in categories)
+          for (final TransactionType type in const [
+            TransactionType.income,
+            TransactionType.expense,
+          ])
+            _setFrecencyDataIfChanged(
               categoryFrecencyType(type),
               category.uuid,
-              FrecencyData(
-                uuid: category.uuid,
-                lastUsed: typed.first.transactionDate,
-                useCount: typed.length,
-              ),
+              usage[categoryFrecencyType(type)]?[category.uuid],
             ),
-          );
-        }
-      } catch (e, stackTrace) {
-        _log.warning(
-          "Failed to build category FrecencyData for $category",
-          e,
-          stackTrace,
-        );
-      }
-    }
-  }
-
-  Future<void> _reevaluateAccountFrecency() async {
-    final List<Account> accounts = await AccountsService().getAll();
-
-    if (accounts.isEmpty) {
-      return;
-    }
-
-    for (final account in accounts) {
-      try {
-        final TransactionFilter filter = TransactionFilter(
-          accounts: StringMultiFilter.whitelist([account.uuid]),
-          range: TransactionFilterTimeRange.fromTimeRange(
-            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
-          ),
-          sortBy: TransactionSortField.transactionDate,
-          sortDescending: true,
-        );
-
-        final int useCount = TransactionsService().countMany(filter);
-        final DateTime lastUsed =
-            TransactionsService().findFirstSync(filter)?.transactionDate ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-
-        unawaited(
-          setFrecencyData(
+        for (final Account account in accounts)
+          _setFrecencyDataIfChanged(
             "account",
             account.uuid,
-            FrecencyData(
-              uuid: account.uuid,
-              lastUsed: lastUsed,
-              useCount: useCount,
-            ),
+            usage["account"]?[account.uuid] ??
+                FrecencyData(
+                  uuid: account.uuid,
+                  lastUsed: neverUsed,
+                  useCount: 0,
+                ),
           ),
-        );
-      } catch (e, stackTrace) {
-        _log.warning(
-          "Failed to build account FrecencyData for $account",
-          e,
-          stackTrace,
-        );
-      }
+        for (final TransactionTag tag in tags)
+          _setFrecencyDataIfChanged(
+            "tag",
+            tag.uuid,
+            usage["tag"]?[tag.uuid] ??
+                FrecencyData(uuid: tag.uuid, lastUsed: neverUsed, useCount: 0),
+          ),
+      ]);
+    } catch (e, stackTrace) {
+      _log.warning("Failed to reevaluate frecency", e, stackTrace);
     }
   }
 
-  Future<void> _reevaluateTransactionTagFrecency() async {
-    final List<TransactionTag> tags = await ObjectBox()
-        .box<TransactionTag>()
-        .getAllAsync();
+  Future<void> _setFrecencyDataIfChanged(
+    String type,
+    String uuid,
+    FrecencyData? value,
+  ) async {
+    final String? current = _prefs.getString("transitive.frecency.$type.$uuid");
+    final String? next = value == null ? null : jsonEncode(value.toJson());
 
-    if (tags.isEmpty) {
-      return;
+    if (current == next) return;
+
+    await setFrecencyData(type, uuid, value);
+  }
+
+  /// Runs in a worker isolate. Counts non-deleted transactions in [range] per
+  /// frecency type and uuid.
+  static Map<String, Map<String, FrecencyData>> _tallyUsage(
+    Store store,
+    (DateTime, DateTime) range,
+  ) {
+    final Query<Transaction> query = store
+        .box<Transaction>()
+        .query(
+          Transaction_.transactionDate.betweenDate(range.$1, range.$2) &
+              (Transaction_.isDeleted.isNull() |
+                  Transaction_.isDeleted.notEquals(true)),
+        )
+        .build();
+
+    final List<Transaction> transactions;
+    try {
+      transactions = query.find();
+    } finally {
+      query.close();
     }
 
-    for (final tag in tags) {
-      try {
-        final TransactionFilter filter = TransactionFilter(
-          tags: StringMultiFilter.whitelist([tag.uuid]),
-          range: TransactionFilterTimeRange.fromTimeRange(
-            (Moment.now() - const Duration(days: 180)).rangeTo(Moment.now()),
-          ),
-          sortBy: TransactionSortField.transactionDate,
-          sortDescending: true,
-        );
+    final Map<String, Map<String, FrecencyData>> usage = {};
 
-        final int useCount = TransactionsService().countMany(filter);
-        final DateTime lastUsed =
-            TransactionsService().findFirstSync(filter)?.transactionDate ??
-            DateTime.fromMillisecondsSinceEpoch(0);
+    void tally(String type, String? uuid, DateTime date) {
+      if (uuid == null) return;
 
-        unawaited(
-          setFrecencyData(
-            "tag",
-            tag.uuid,
-            FrecencyData(
-              uuid: tag.uuid,
-              lastUsed: lastUsed,
-              useCount: useCount,
-            ),
-          ),
-        );
-      } catch (e, stackTrace) {
-        _log.warning(
-          "Failed to build tag FrecencyData for $tag",
-          e,
-          stackTrace,
-        );
+      final Map<String, FrecencyData> byUuid = usage.putIfAbsent(
+        type,
+        () => {},
+      );
+      final FrecencyData? current = byUuid[uuid];
+
+      byUuid[uuid] = FrecencyData(
+        uuid: uuid,
+        useCount: (current?.useCount ?? 0) + 1,
+        lastUsed: current == null || date.isAfter(current.lastUsed)
+            ? date
+            : current.lastUsed,
+      );
+    }
+
+    for (final Transaction transaction in transactions) {
+      final DateTime date = transaction.transactionDate;
+      final TransactionType type = transaction.type;
+
+      if (type != TransactionType.transfer) {
+        tally(categoryFrecencyType(type), transaction.categoryUuid, date);
+      }
+      tally("account", transaction.accountUuid, date);
+      for (final TransactionTag tag in transaction.tags) {
+        tally("tag", tag.uuid, date);
       }
     }
+
+    return usage;
   }
 
   static TransitiveLocalPreferences initialize(
