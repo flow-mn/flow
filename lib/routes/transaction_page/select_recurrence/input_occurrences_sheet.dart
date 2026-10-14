@@ -28,6 +28,12 @@ class _InputOccurrencesSheetState extends State<InputOccurrencesSheet> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text("select.recurrence.occurrences".t(context)),

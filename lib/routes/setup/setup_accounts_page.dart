@@ -25,6 +25,10 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   QueryBuilder<Account> qb() =>
       ObjectBox().box<Account>().query().order(Account_.createdDate);
 
+  late final Stream<List<Account>> _accounts = qb()
+      .watch(triggerImmediately: true)
+      .map((event) => event.find());
+
   late List<Account> presetAccounts;
 
   bool busy = false;
@@ -38,13 +42,17 @@ class _SetupAccountsPageState extends State<SetupAccountsPage> {
   }
 
   @override
+  void dispose() {
+    UserPreferencesService().valueNotifier.removeListener(_updatePresets);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("setup.accounts.setup".t(context))),
       body: StreamBuilder<List<Account>>(
-        stream: qb()
-            .watch(triggerImmediately: true)
-            .map((event) => event.find()),
+        stream: _accounts,
         builder: (context, snapshot) {
           final List<Account> currentAccounts = snapshot.data ?? [];
           final List<Account> uniquePresets = presetAccounts

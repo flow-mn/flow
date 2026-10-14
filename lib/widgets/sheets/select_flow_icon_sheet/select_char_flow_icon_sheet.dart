@@ -41,6 +41,13 @@ class _SelectCharFlowIconSheetState extends State<SelectCharFlowIconSheet> {
   }
 
   @override
+  void dispose() {
+    _characterTextController.dispose();
+    _textFieldFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ModalSheet.scrollable(
       title: Text("flowIcon.type.character".t(context)),
