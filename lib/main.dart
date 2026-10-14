@@ -550,11 +550,15 @@ class FlowState extends State<Flow> {
 
     try {
       await LocalAuthService.initialize();
+      // Only skip the lock when the device has no passcode or biometrics
       if (!LocalAuthService.available || !LocalAuthService.platformSupported) {
         _tempLock = false;
       }
       if (!_tempLock) {
         mainLogger.fine("Ignoring local auth initialization");
+        if (mounted) {
+          setState(() {});
+        }
         return;
       }
       final authenticated = await LocalAuthService().authenticate();
