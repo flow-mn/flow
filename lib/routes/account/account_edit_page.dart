@@ -418,6 +418,8 @@ class _AccountEditPageState extends State<AccountEditPage> {
       existingTransactionId: balanceUpdateTransactionId,
     );
 
+    context.showToast(text: "account.updateBalance.success".t(context));
+
     _refetch();
   }
 
@@ -546,9 +548,7 @@ class _AccountEditPageState extends State<AccountEditPage> {
           (_currentlyEditing!.creditLimit ?? 0) != _creditLimit ||
           _currentlyEditing!.accountType != _accountType ||
           _currentlyEditing!.excludeFromTotalBalance !=
-              _excludeFromTotalBalance ||
-          _balance != _currentlyEditing!.balance.amount ||
-          _updateBalanceAt != null;
+              _excludeFromTotalBalance;
     }
 
     return _nameTextController.text.trim().isNotEmpty ||
