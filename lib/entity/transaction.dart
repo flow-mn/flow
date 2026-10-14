@@ -30,6 +30,7 @@ class Transaction implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @Index()
   @Property(type: PropertyType.date)
   DateTime transactionDate;
 

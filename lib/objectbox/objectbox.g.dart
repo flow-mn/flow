@@ -284,7 +284,8 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(4, 7728114574705964455),
         name: 'transactionDate',
         type: 10,
-        flags: 0,
+        flags: 8,
+        indexId: const obx_int.IdUid(28, 8069244920978711025),
       ),
       obx_int.ModelProperty(
         id: const obx_int.IdUid(5, 784468101854697419),
@@ -1024,7 +1025,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
     lastEntityId: const obx_int.IdUid(15, 3741443681678089583),
-    lastIndexId: const obx_int.IdUid(27, 5707692371585154920),
+    lastIndexId: const obx_int.IdUid(28, 8069244920978711025),
     lastRelationId: const obx_int.IdUid(4, 5665142201815113360),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
