@@ -3,6 +3,7 @@ import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/providers/accounts_provider.dart";
@@ -270,6 +271,17 @@ class TransactionListTile extends StatelessWidget {
                                 .currency,
                           ),
                           displayAbsoluteAmount: true,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: context.colorScheme.onSurface.withAlpha(
+                              0x80,
+                            ),
+                          ),
+                          overrideObscure: overrideObscure,
+                        )
+                      else if (transaction.extensions.foreignCurrency
+                          case ForeignCurrency foreignCurrency)
+                        MoneyText(
+                          foreignCurrency.money,
                           style: context.textTheme.bodyMedium?.copyWith(
                             color: context.colorScheme.onSurface.withAlpha(
                               0x80,

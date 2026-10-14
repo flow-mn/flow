@@ -1,4 +1,6 @@
+import "dart:async";
 import "dart:io";
+import "dart:math";
 
 import "package:cross_file/cross_file.dart";
 import "package:flow/constants.dart";
@@ -11,6 +13,7 @@ import "package:flow/entity/file_attachment.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/entity/transaction/extensions/base.dart";
+import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction/extensions/default/geo.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction/wrapper.dart";
@@ -24,6 +27,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/providers/transaction_tags_provider.dart";
+import "package:flow/routes/transaction_page/converted_amount_button.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/section.dart";
 import "package:flow/routes/transaction_page/sections/description_section.dart";
@@ -34,6 +38,7 @@ import "package:flow/routes/transaction_page/select_recurrence_sheet.dart";
 import "package:flow/routes/transaction_page/select_recurring_update_mode_sheet.dart";
 import "package:flow/routes/transaction_page/title_input.dart";
 import "package:flow/services/accounts.dart";
+import "package:flow/services/currency_registry.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/file_attachment.dart";
 import "package:flow/services/recurring_transactions.dart";
@@ -112,6 +117,18 @@ class _TransactionPageState extends State<TransactionPage> {
   late double _amount;
 
   double _conversionRate = 1.0;
+
+  /// Currency the amount was entered in, when it differs from the account's
+  String? _foreignCurrency;
+
+  /// Absolute amount in [_foreignCurrency]
+  double _foreignAmount = 0.0;
+
+  /// Whether [_amount] was entered in a foreign currency that turned out to
+  /// be the selected account's currency
+  bool _foreignCurrencyResolved = false;
+
+  bool get hasForeignCurrency => _foreignCurrency != null && !isTransfer;
 
   late final Transaction? _currentlyEditing;
 
@@ -246,6 +263,12 @@ class _TransactionPageState extends State<TransactionPage> {
               _currentlyEditing.extensions.transfer?.toAccountUuid,
         );
         _geo = _currentlyEditing.extensions.geo;
+        if (_currentlyEditing.extensions.foreignCurrency
+            case ForeignCurrency foreignCurrency
+            when !_currentlyEditing.isTransfer) {
+          _foreignCurrency = foreignCurrency.currency;
+          _foreignAmount = foreignCurrency.amount.abs();
+        }
         _isPending = _currentlyEditing.isPending ?? _isPending;
         if (_currentlyEditing.isTransfer == true) {
           _conversionRate =
@@ -363,24 +386,45 @@ class _TransactionPageState extends State<TransactionPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                Money(
-                                  _amount,
-                                  _selectedAccount?.currency ?? primaryCurrency,
-                                ).formatMoney(),
+                                hasForeignCurrency
+                                    ? Money(
+                                        _signed(_foreignAmount),
+                                        _foreignCurrency!,
+                                      ).formatMoney()
+                                    : Money(
+                                        _amount,
+                                        _selectedAccount?.currency ??
+                                            primaryCurrency,
+                                      ).formatMoney(),
                                 style: context.textTheme.displayMedium,
                               ),
-                              ApproximateMoneyText(
-                                Money(
-                                  _amount,
-                                  _selectedAccount?.currency ?? primaryCurrency,
+                              if (hasForeignCurrency &&
+                                  _selectedAccount != null)
+                                ConvertedAmountButton(
+                                  foreignMoney: Money(
+                                    _foreignAmount,
+                                    _foreignCurrency!,
+                                  ),
+                                  money: Money(
+                                    _amount.abs(),
+                                    _selectedAccount!.currency,
+                                  ),
+                                  onTap: inputConvertedAmount,
+                                )
+                              else if (!hasForeignCurrency)
+                                ApproximateMoneyText(
+                                  Money(
+                                    _amount,
+                                    _selectedAccount?.currency ??
+                                        primaryCurrency,
+                                  ),
+                                  overrideObscure: false,
+                                  textAlign: .center,
+                                  style: context.textTheme.bodyLarge?.copyWith(
+                                    color: context.colorScheme.onSurface
+                                        .withAlpha(0x80),
+                                  ),
                                 ),
-                                overrideObscure: false,
-                                textAlign: .center,
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  color: context.colorScheme.onSurface
-                                      .withAlpha(0x80),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -766,15 +810,20 @@ class _TransactionPageState extends State<TransactionPage> {
 
     _transactionType = type;
 
-    final double amountSign = switch (type) {
-      TransactionType.expense => -1.0,
-      _ => 1.0,
-    };
+    if (isTransfer) {
+      _foreignCurrency = null;
+    }
 
-    _amount = _amount.abs() * amountSign;
+    _amount = _signed(_amount);
 
     setState(() {});
   }
+
+  /// Applies the sign of the current transaction type to [amount]
+  double _signed(double amount) => switch (_transactionType) {
+    TransactionType.expense => -amount.abs(),
+    _ => amount.abs(),
+  };
 
   Future<void> inputAmount([bool fromAutomatedFlow = false]) async {
     if (_amount == 0.0) {
@@ -787,27 +836,51 @@ class _TransactionPageState extends State<TransactionPage> {
         .usesMultipleCurrencies
         .get();
 
+    String? enteredCurrency;
+
     final double? result = await showModalBottomSheet<double>(
       context: context,
       builder: (context) => InputAmountSheet(
-        initialAmount: _amount.abs(),
-        currency: _selectedAccount?.currency,
-        hideCurrencySymbol: _selectedAccount == null && hideCurrencySymbol,
+        initialAmount: hasForeignCurrency ? _foreignAmount : _amount.abs(),
+        currency: hasForeignCurrency
+            ? _foreignCurrency
+            : _selectedAccount?.currency,
+        hideCurrencySymbol:
+            !hasForeignCurrency &&
+            _selectedAccount == null &&
+            hideCurrencySymbol,
         title: _transactionType.localizedNameContext(context),
         lockSign: true,
+        onCurrencyChange: isTransfer
+            ? null
+            : (currency) => enteredCurrency = currency,
+        currencyHint: TransitiveLocalPreferences().showCurrencyPickerHint,
+        convertTo: isTransfer ? null : _selectedAccount?.currency,
       ),
       isScrollControlled: true,
     );
 
-    final double? resultAmount = result == null
-        ? null
-        : switch (_transactionType) {
-            TransactionType.expense => -result.abs(),
-            TransactionType.income => result.abs(),
-            TransactionType.transfer => result.abs(),
-          };
-
-    _amount = resultAmount ?? _amount;
+    if (result != null) {
+      if (hasForeignCurrency &&
+          enteredCurrency == _foreignCurrency &&
+          _selectedAccount != null &&
+          _foreignAmount != 0) {
+        // Keep the rate, as the user may have edited the converted amount
+        _amount = _signed(
+          _roundToAccountPrecision(
+            result.abs() * _amount.abs() / _foreignAmount,
+          ),
+        );
+        _foreignAmount = result.abs();
+      } else if (enteredCurrency != null &&
+          enteredCurrency != _selectedAccount?.currency) {
+        await _setForeignAmount(result, enteredCurrency!);
+      } else {
+        _foreignCurrency = null;
+        _foreignCurrencyResolved = false;
+        _amount = _signed(result);
+      }
+    }
 
     if (!mounted) return;
 
@@ -816,6 +889,114 @@ class _TransactionPageState extends State<TransactionPage> {
     if (_conversionRate == 1.0) {
       await inputPostConversionAmount();
     }
+  }
+
+  Future<void> _setForeignAmount(double amount, String currency) async {
+    final String? previousCurrency = _foreignCurrency;
+    final double previousAmount = _foreignAmount;
+
+    _foreignCurrency = currency;
+    _foreignAmount = amount.abs();
+
+    if (!await _convertForeignAmount()) {
+      _foreignCurrency = previousCurrency;
+      _foreignAmount = previousAmount;
+    }
+  }
+
+  /// Converts [_foreignAmount] into the selected account's currency, asking
+  /// the user when there are no exchange rates for it.
+  ///
+  /// Returns `false` if the user dismissed the prompt.
+  Future<bool> _convertForeignAmount() async {
+    if (_foreignCurrency == null) return true;
+
+    if (_selectedAccount == null) {
+      _amount = _signed(_foreignAmount);
+      return true;
+    }
+
+    final String currency = _selectedAccount!.currency;
+
+    if (_foreignCurrency == currency) {
+      _amount = _signed(_foreignAmount);
+      _foreignCurrency = null;
+      _foreignCurrencyResolved = true;
+      return true;
+    }
+
+    final double? converted = Money(_foreignAmount, _foreignCurrency!)
+        .tryConvertAmount(
+          currency,
+          ExchangeRatesService().getPrimaryCurrencyRates(),
+        );
+
+    if (converted != null) {
+      _amount = _signed(_roundToAccountPrecision(converted));
+      return true;
+    }
+
+    return await inputConvertedAmount();
+  }
+
+  double _roundToAccountPrecision(double amount) {
+    final num precision = pow(
+      10,
+      CurrencyRegistryService().getPreferredDecimalPrecision(
+            _selectedAccount?.currency,
+          ) ??
+          2,
+    );
+
+    return (amount * precision).round() / precision;
+  }
+
+  /// Selects [account], converting the foreign amount if there's any
+  ///
+  /// Keeps the current account if the user dismisses the conversion.
+  Future<void> _changeAccount(Account? account) async {
+    final Account? previousAccount = _selectedAccount;
+    final double previousAmount = _amount;
+
+    _selectedAccount = account;
+
+    if (account != null &&
+        account.id != previousAccount?.id &&
+        hasForeignCurrency &&
+        !await _convertForeignAmount()) {
+      _selectedAccount = previousAccount;
+      _amount = previousAmount;
+    }
+  }
+
+  /// Asks for the amount charged in the account's currency
+  ///
+  /// Returns `false` if the user dismissed the sheet.
+  Future<bool> inputConvertedAmount() async {
+    if (_foreignCurrency == null || _selectedAccount == null) return false;
+
+    final double? result = await showModalBottomSheet<double>(
+      context: context,
+      builder: (context) => InputAmountSheet(
+        initialAmount: _amount.abs(),
+        currency: _selectedAccount!.currency,
+        hideCurrencySymbol: false,
+        title: "${Money(_foreignAmount, _foreignCurrency!).formatMoney()} =",
+        lockSign: true,
+        allowNegative: false,
+      ),
+      isScrollControlled: true,
+    );
+
+    if (result == null) return false;
+
+    _amount = _signed(result);
+
+    if (mounted) {
+      setState(() {});
+    }
+
+    return true;
   }
 
   Future<void> inputPostConversionAmount() async {
@@ -871,7 +1052,10 @@ class _TransactionPageState extends State<TransactionPage> {
     if (result?.id == _selectedAccountTransferTo?.id) {
       _selectedAccountTransferTo = null;
     }
-    _selectedAccount = result ?? _selectedAccount;
+
+    if (result != null && mounted) {
+      await _changeAccount(result);
+    }
 
     if (mounted) {
       setState(() {});
@@ -1203,7 +1387,9 @@ class _TransactionPageState extends State<TransactionPage> {
           transactionDate: _transactionDate,
           extensions: _currentlyEditing.extensions
               .getOverriden(_geo, Geo.keyName)
-              .data,
+              .data
+              .where((extension) => extension is! ForeignCurrency)
+              .toList(),
           isPending: _isPending,
           conversionRate: crossCurrencyTransfer ? _conversionRate : null,
           recurrence: _recurrence,
@@ -1218,6 +1404,10 @@ class _TransactionPageState extends State<TransactionPage> {
       }
     } else {
       _currentlyEditing.setCategory(_selectedCategory);
+      if (hasForeignCurrency || _foreignCurrencyResolved) {
+        // Amount has been converted into the new account's currency
+        _currentlyEditing.currency = _selectedAccount!.currency;
+      }
       _currentlyEditing.setAccount(_selectedAccount);
       _currentlyEditing.title = formattedTitle;
       _currentlyEditing.description = formattedDescription;
@@ -1236,7 +1426,14 @@ class _TransactionPageState extends State<TransactionPage> {
         ..._currentlyEditing.extensions.getOverriden(_geo, Geo.keyName).data,
       ];
 
-      newExtensions.removeWhere((ext) => ext.key == Recurring.keyName);
+      newExtensions.removeWhere(
+        (ext) =>
+            ext.key == Recurring.keyName || ext.key == ForeignCurrency.keyName,
+      );
+
+      if (_foreignCurrencyExtension() case ForeignCurrency foreignCurrency) {
+        newExtensions.add(foreignCurrency);
+      }
 
       if (_recurrence != null) {
         newExtensions.add(
@@ -1357,7 +1554,10 @@ class _TransactionPageState extends State<TransactionPage> {
       );
     }
 
-    final List<TransactionExtension> extensions = [?_geo];
+    final List<TransactionExtension> extensions = [
+      ?_geo,
+      if (!isTransfer) ?_foreignCurrencyExtension(),
+    ];
 
     if (isTransfer) {
       _selectedAccount!.transferTo(
@@ -1397,6 +1597,22 @@ class _TransactionPageState extends State<TransactionPage> {
     pop();
   }
 
+  ForeignCurrency? _foreignCurrencyExtension() {
+    if (!hasForeignCurrency) return null;
+
+    unawaited(
+      TransitiveLocalPreferences().recordForeignCurrencyUse(_foreignCurrency!),
+    );
+
+    return ForeignCurrency(
+      uuid:
+          _currentlyEditing?.extensions.foreignCurrency?.uuid ??
+          const Uuid().v4(),
+      amount: _signed(_foreignAmount),
+      currency: _foreignCurrency!,
+    );
+  }
+
   bool hasChanged() {
     if (_currentlyEditing != null) {
       final bool transferToAccountDifferent =
@@ -1412,7 +1628,16 @@ class _TransactionPageState extends State<TransactionPage> {
           ? _currentlyEditing.amount.abs() != _amount
           : _currentlyEditing.amount != _amount;
 
+      final ForeignCurrency? foreignCurrency =
+          _currentlyEditing.extensions.foreignCurrency;
+
+      final bool foreignCurrencyChanged = hasForeignCurrency
+          ? foreignCurrency?.currency != _foreignCurrency ||
+                foreignCurrency?.amount.abs() != _foreignAmount
+          : foreignCurrency != null && !isTransfer;
+
       return amountChanged ||
+          foreignCurrencyChanged ||
           _geoHandpicked ||
           (_currentlyEditing.title ?? "") != _titleController.text ||
           (_currentlyEditing.description ?? "") !=
@@ -1570,11 +1795,11 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
-  void _selectPrimaryAccount() {
+  Future<void> _selectPrimaryAccount() async {
     try {
       final primaryAccountUuid = UserPreferencesService().primaryAccountUuid;
-      _selectedAccount = AccountsService().findOneActiveSync(
-        primaryAccountUuid,
+      await _changeAccount(
+        AccountsService().findOneActiveSync(primaryAccountUuid),
       );
     } catch (e) {
       //
@@ -1649,7 +1874,7 @@ class _TransactionPageState extends State<TransactionPage> {
             if (flow.skipSelectedFields && _selectedAccount != null) {
               //
             } else {
-              _selectPrimaryAccount();
+              await _selectPrimaryAccount();
               if (flow.abandonUponActionCancelled && _selectedAccount == null) {
                 return;
               }

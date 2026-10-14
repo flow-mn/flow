@@ -7,9 +7,10 @@ import "package:flow/widgets/general/money_text_builder.dart";
 import "package:flow/widgets/general/money_text_raw.dart";
 import "package:flutter/material.dart";
 
-/// Shows [money] converted to the primary currency using the latest rates,
-/// e.g., "≈ R$25". Renders nothing when conversion isn't possible or needed,
-/// or when [LocalPreferences.showApproximatePrimaryAmount] is off.
+/// Shows [money] converted to [convertTo] (primary currency by default) using
+/// the latest rates, e.g., "≈ R$25". Renders nothing when conversion isn't
+/// possible or needed, or when [LocalPreferences.showApproximatePrimaryAmount]
+/// is off and [convertTo] is null.
 class ApproximateMoneyText extends StatelessWidget {
   final Money money;
 
@@ -25,6 +26,8 @@ class ApproximateMoneyText extends StatelessWidget {
   final TextAlign? textAlign;
   final TextStyle? style;
 
+  final String? convertTo;
+
   const ApproximateMoneyText(
     this.money, {
     super.key,
@@ -32,13 +35,15 @@ class ApproximateMoneyText extends StatelessWidget {
     this.overrideObscure,
     this.textAlign,
     this.style,
+    this.convertTo,
   });
 
   @override
   Widget build(BuildContext context) {
     final String primaryCurrency = UserPreferencesService().primaryCurrency;
+    final String targetCurrency = convertTo ?? primaryCurrency;
 
-    if (money.currency == primaryCurrency || money.amount == 0) {
+    if (money.currency == targetCurrency || money.amount == 0) {
       return const SizedBox.shrink();
     }
 
@@ -46,7 +51,7 @@ class ApproximateMoneyText extends StatelessWidget {
       valueListenable:
           LocalPreferences().showApproximatePrimaryAmount.valueNotifier,
       builder: (context, showApproximatePrimaryAmount, child) {
-        if (showApproximatePrimaryAmount == false) {
+        if (convertTo == null && showApproximatePrimaryAmount == false) {
           return const SizedBox.shrink();
         }
 
@@ -54,14 +59,14 @@ class ApproximateMoneyText extends StatelessWidget {
           valueListenable: ExchangeRatesService().exchangeRatesCache,
           builder: (context, exchangeRatesCache, child) {
             final double? converted = money.tryConvertAmount(
-              primaryCurrency,
+              targetCurrency,
               exchangeRatesCache?.get(primaryCurrency),
             );
 
             if (converted == null) return const SizedBox.shrink();
 
             return MoneyTextBuilder(
-              money: Money(converted, primaryCurrency),
+              money: Money(converted, targetCurrency),
               displayAbsoluteAmount: displayAbsoluteAmount,
               overrideObscure: overrideObscure,
               builder: (context, text, money) => MoneyTextRaw(

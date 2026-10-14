@@ -8,8 +8,10 @@ import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction_tag.dart";
 import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/services/accounts.dart";
 import "package:flow/services/transactions.dart";
 import "package:flow/services/user_preferences.dart";
@@ -25,9 +27,17 @@ class TransitiveLocalPreferences {
 
   static TransitiveLocalPreferences? _instance;
 
+  static const int _recentForeignCurrenciesLimit = 5;
+
   /// Whether the user uses only one currency across accounts
   late final BoolSettingsEntry usesNonPrimaryCurrency;
   late final BoolSettingsEntry usesMultipleCurrencies;
+
+  /// Whether any transaction was made in a currency other than its account's
+  late final BoolSettingsEntry usesForeignCurrencyTransactions;
+
+  /// Up to [_recentForeignCurrenciesLimit] currency codes, most recent first
+  late final StringListSettingsEntry recentForeignCurrencies;
 
   late final DateTimeSettingsEntry transitiveLastTimeFrecencyUpdated;
 
@@ -73,6 +83,15 @@ class TransitiveLocalPreferences {
       key: "transitive.usesMultipleCurrencies",
       preferences: _prefs,
       initialValue: false,
+    );
+    usesForeignCurrencyTransactions = BoolSettingsEntry(
+      key: "transitive.usesForeignCurrencyTransactions",
+      preferences: _prefs,
+      initialValue: false,
+    );
+    recentForeignCurrencies = StringListSettingsEntry(
+      key: "transitive.recentForeignCurrencies",
+      preferences: _prefs,
     );
 
     transitiveLastTimeFrecencyUpdated = DateTimeSettingsEntry(
@@ -157,6 +176,16 @@ class TransitiveLocalPreferences {
     }
 
     try {
+      await _updateForeignCurrencyProperties();
+    } catch (e, stackTrace) {
+      _log.warning(
+        "Cannot update foreign currency transitive properties",
+        e,
+        stackTrace,
+      );
+    }
+
+    try {
       if (transitiveLastTimeFrecencyUpdated.get() == null ||
           !transitiveLastTimeFrecencyUpdated.get()!.isAtSameDayAs(
             Moment.now(),
@@ -179,6 +208,45 @@ class TransitiveLocalPreferences {
     } catch (e) {
       _log.warning("Failed to reevaluate frecency caches", e);
     }
+  }
+
+  bool get showCurrencyPickerHint =>
+      usesMultipleCurrencies.get() ||
+      usesNonPrimaryCurrency.get() ||
+      usesForeignCurrencyTransactions.get();
+
+  List<String> getRecentForeignCurrencies() =>
+      recentForeignCurrencies.get() ?? const [];
+
+  /// Call when a transaction is saved with a foreign currency
+  Future<void> recordForeignCurrencyUse(String currency) async {
+    await usesForeignCurrencyTransactions.set(true);
+    await recentForeignCurrencies.set(
+      {
+        currency,
+        ...getRecentForeignCurrencies(),
+      }.take(_recentForeignCurrenciesLimit).toList(),
+    );
+  }
+
+  Future<void> _updateForeignCurrencyProperties() async {
+    final Query<Transaction> query = const TransactionFilter(
+      extraTag: "hasExtension:${ForeignCurrency.keyName}",
+    ).queryBuilder().build()..limit = 50;
+
+    final List<Transaction> transactions = await query.findAsync();
+
+    query.close();
+
+    final List<String> currencies = transactions
+        .map((transaction) => transaction.extensions.foreignCurrency?.currency)
+        .nonNulls
+        .toSet()
+        .take(_recentForeignCurrenciesLimit)
+        .toList();
+
+    await usesForeignCurrencyTransactions.set(currencies.isNotEmpty);
+    await recentForeignCurrencies.set(currencies);
   }
 
   static String categoryFrecencyType(TransactionType type) =>

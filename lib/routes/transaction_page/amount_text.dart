@@ -8,6 +8,7 @@ import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/context_menu.dart";
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 
@@ -28,6 +29,12 @@ class AmountText extends StatefulWidget {
 
   final void Function(String text)? onPaste;
 
+  /// Makes the currency symbol tappable
+  final VoidCallback? onCurrencyTap;
+
+  /// Tints the currency symbol
+  final bool currencyHint;
+
   const AmountText({
     super.key,
     required this.focusNode,
@@ -37,6 +44,8 @@ class AmountText extends StatefulWidget {
     required this.hideCurrencySymbol,
     this.currency,
     this.onPaste,
+    this.onCurrencyTap,
+    this.currencyHint = false,
   });
 
   @override
@@ -48,6 +57,8 @@ class _AmountTextState extends State<AmountText>
   late AnimationController _amountTextAnimationController;
 
   late Animation<double> _amountTextScaleAnimation;
+
+  final TapGestureRecognizer _currencyTapRecognizer = TapGestureRecognizer();
 
   InputValue get currentValue => widget.value;
 
@@ -85,6 +96,7 @@ class _AmountTextState extends State<AmountText>
   @override
   void dispose() {
     _amountTextAnimationController.dispose();
+    _currencyTapRecognizer.dispose();
     super.dispose();
   }
 
@@ -109,8 +121,8 @@ class _AmountTextState extends State<AmountText>
           scale: _amountTextScaleAnimation.value,
           child: SizedBox(
             height: amountFieldMaxHeight,
-            child: AutoSizeText(
-              amountText(),
+            child: AutoSizeText.rich(
+              amountTextSpan(context),
               style: style,
               maxLines: 1,
               overflow: TextOverflow.visible,
@@ -121,7 +133,44 @@ class _AmountTextState extends State<AmountText>
     );
   }
 
-  String amountText() {
+  TextSpan amountTextSpan(BuildContext context) {
+    final String text = amountText();
+
+    if (widget.hideCurrencySymbol || widget.onCurrencyTap == null) {
+      return TextSpan(text: text);
+    }
+
+    final String number = amountText(includeCurrency: false);
+    final int index = text.indexOf(number);
+
+    if (index == -1) return TextSpan(text: text);
+
+    _currencyTapRecognizer.onTap = widget.onCurrencyTap;
+
+    final TextStyle? currencyStyle = widget.currencyHint
+        ? TextStyle(color: context.colorScheme.primary)
+        : null;
+
+    TextSpan currencySpan(String value) => TextSpan(
+      text: value,
+      style: currencyStyle,
+      recognizer: _currencyTapRecognizer,
+      mouseCursor: SystemMouseCursors.click,
+    );
+
+    final String prefix = text.substring(0, index);
+    final String suffix = text.substring(index + number.length);
+
+    return TextSpan(
+      children: [
+        if (prefix.isNotEmpty) currencySpan(prefix),
+        TextSpan(text: number),
+        if (suffix.isNotEmpty) currencySpan(suffix),
+      ],
+    );
+  }
+
+  String amountText({bool? includeCurrency}) {
     final String currency =
         widget.currency ?? UserPreferencesService().primaryCurrency;
 
@@ -131,7 +180,7 @@ class _AmountTextState extends State<AmountText>
             currentValue.decimalLength,
             _inputtingDecimal ? 1 : 0,
           ),
-          includeCurrency: !widget.hideCurrencySymbol,
+          includeCurrency: includeCurrency ?? !widget.hideCurrencySymbol,
         );
 
     if (currentValue.decimalLength == 0) {
