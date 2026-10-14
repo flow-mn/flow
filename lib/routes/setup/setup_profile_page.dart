@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:flow/entity/profile.dart";
-import "package:flow/form_validators.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/objectbox.g.dart";
@@ -65,7 +64,6 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     child: TextFormField(
                       controller: _textEditingController,
                       autofocus: true,
-                      validator: validateRequiredField,
                       textInputAction: TextInputAction.send,
                       onFieldSubmitted: (value) => save(),
                     ),
