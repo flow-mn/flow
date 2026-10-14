@@ -10,6 +10,7 @@ import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:timezone/data/latest.dart" as tz;
 import "package:timezone/timezone.dart";
 import "package:window_manager/window_manager.dart";
@@ -19,6 +20,8 @@ final Logger _log = Logger("NotificationsService");
 class NotificationsService {
   static NotificationsService? _instance;
   static final String _fallbackTimezone = "Etc/UTC";
+  static const String _permissionsRequestedKey =
+      "flow.notifications.permissionsRequested";
 
   static final String windowsNotificationGuid =
       "f342887a-2ea1-41b1-94cf-51d70a46ce73";
@@ -141,16 +144,6 @@ class NotificationsService {
       }
     } finally {
       _ready = true;
-    }
-
-    if (_available != true) return;
-
-    if (Platform.isIOS || Platform.isMacOS) {
-      unawaited(
-        requestPermissions().catchError((error) {
-          _log.warning("Failed to request permissions", error);
-        }),
-      );
     }
   }
 
@@ -475,7 +468,49 @@ class NotificationsService {
     }
   }
 
-  Future<void> requestPermissions() async {
+  /// Requests permissions, then returns whether scheduling is permitted
+  Future<bool> requestAndCheckPermissions({bool exactAlarms = true}) async {
+    try {
+      await requestPermissions(exactAlarms: exactAlarms);
+    } catch (e) {
+      _log.warning("Failed to request permissions", e);
+    }
+
+    try {
+      final SharedPreferencesWithCache prefs =
+          await SharedPreferencesWithCache.create(
+            cacheOptions: SharedPreferencesWithCacheOptions(),
+          );
+      await prefs.setBool(_permissionsRequestedKey, true);
+    } catch (e) {
+      _log.warning("Failed to save permission request state", e);
+    }
+
+    return await hasPermissions() == true;
+  }
+
+  /// Asks once, so the prompt shows up in context rather than at startup.
+  ///
+  /// Skips the exact alarms request on Android, as it opens system settings.
+  Future<void> requestPermissionsIfNeverAsked() async {
+    if (!schedulingSupported || !available) return;
+
+    try {
+      final SharedPreferencesWithCache prefs =
+          await SharedPreferencesWithCache.create(
+            cacheOptions: SharedPreferencesWithCacheOptions(),
+          );
+
+      if (prefs.getBool(_permissionsRequestedKey) == true) return;
+    } catch (e) {
+      _log.warning("Failed to read permission request state", e);
+      return;
+    }
+
+    await requestAndCheckPermissions(exactAlarms: false);
+  }
+
+  Future<void> requestPermissions({bool exactAlarms = true}) async {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           pluginInstance
@@ -484,6 +519,7 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
+      if (!exactAlarms) return;
       await androidImplementation?.requestExactAlarmsPermission().catchError((
         error,
       ) {
