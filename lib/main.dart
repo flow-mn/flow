@@ -71,11 +71,14 @@ import "package:window_manager/window_manager.dart";
 RotatingFileAppender? mainLogAppender;
 
 void main() async {
-  Logger.root.level = Level.ALL;
+  // File logs get shared for support, keep fine-grained details out of them
+  Logger.root.level = flowDebugMode ? Level.ALL : Level.INFO;
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+  if (flowDebugMode) {
+    PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+  }
 
   initializeFileLogger();
 
