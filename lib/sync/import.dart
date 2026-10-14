@@ -56,6 +56,35 @@ Future<Importer> importBackup({
     );
   }
 
+  try {
+    return await _importFile(file, externalFormat);
+  } finally {
+    if (backupFile == null) {
+      await _discardPickedCopy(file);
+    }
+  }
+}
+
+/// File pickers on mobile hand over a plaintext copy in the cache directory
+Future<void> _discardPickedCopy(File file) async {
+  try {
+    final List<String> tempRoots = [
+      (await getTemporaryDirectory()).path,
+      (await getApplicationCacheDirectory()).path,
+    ];
+
+    if (tempRoots.any((root) => path.isWithin(root, file.path))) {
+      await file.delete();
+    }
+  } catch (e) {
+    _log.warning("Failed to delete picked file copy", e);
+  }
+}
+
+Future<Importer> _importFile(
+  File file,
+  ImportExternalFormat? externalFormat,
+) async {
   if (externalFormat == null) {
     final String baseName = path.basename(file.path);
 
