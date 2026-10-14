@@ -156,13 +156,6 @@ void main() async {
   startupLog.fine("Initializing exchange rates service");
   ExchangeRatesService().init();
 
-  try {
-    startupLog.fine("Initializing SyncService");
-    SyncService();
-  } catch (e, stackTrace) {
-    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
-  }
-
   // RecurringTransactionsService is intentionally NOT instantiated here.
   // Eager construction used to run _synchronizeAll() in the constructor,
   // racing with first-frame work. The first sync is now triggered from
@@ -182,6 +175,16 @@ void main() async {
 
   startupLog.fine("Finally telling Flutter to run the app widget");
   runApp(const Flow());
+
+  // Auto backup may export and touch iCloud, keep it off the first frame
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    try {
+      startupLog.fine("Initializing SyncService");
+      SyncService();
+    } catch (e, stackTrace) {
+      startupLog.severe("Failed to initialize SyncService", e, stackTrace);
+    }
+  });
 }
 
 class Flow extends StatefulWidget {
