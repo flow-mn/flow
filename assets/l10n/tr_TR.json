@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Eny'yi bağla",
   "integrations.eny.connect.conflict": "Zaten bağlı bir hesap var. Değiştirmek ister misiniz?",
+  "integrations.eny.connect.emailUnverified": "Bağlantıdan, doğrulanmadı",
   "integrations.eny.connect.success": "Eny başarıyla bağlandı",
   "integrations.eny.connected#false": "Bağlı değil",
   "integrations.eny.connected#true": "Bağlı",

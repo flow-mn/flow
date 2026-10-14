@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Připojit Eny",
   "integrations.eny.connect.conflict": "Je již připojen účet. Chcete jej nahradit?",
+  "integrations.eny.connect.emailUnverified": "Z odkazu, neověřeno",
   "integrations.eny.connect.success": "Eny byl úspěšně připojen",
   "integrations.eny.connected#false": "Odpojeno",
   "integrations.eny.connected#true": "Připojeno",

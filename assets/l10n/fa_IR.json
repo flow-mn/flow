@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "اتصال Eny",
   "integrations.eny.connect.conflict": "یک حساب قبلاً متصل شده است؛ می‌خواهید جایگزین شود؟",
+  "integrations.eny.connect.emailUnverified": "از پیوند، تأییدنشده",
   "integrations.eny.connect.success": "Eny با موفقیت متصل شد",
   "integrations.eny.connected#false": "قطع اتصال",
   "integrations.eny.connected#true": "متصل",

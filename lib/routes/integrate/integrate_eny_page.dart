@@ -2,6 +2,7 @@ import "dart:math" as math;
 
 import "package:flow/l10n/extensions.dart";
 import "package:flow/services/integrations/eny.dart";
+import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
@@ -26,6 +27,9 @@ class _IntegrateEnyPageState extends State<IntegrateEnyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool replacesExisting =
+        EnyService().isConnected && EnyService().apiKey.value != widget.apiKey;
+
     return Scaffold(
       appBar: AppBar(title: Text("integrations.eny.connect".t(context))),
       body: SingleChildScrollView(
@@ -47,6 +51,18 @@ class _IntegrateEnyPageState extends State<IntegrateEnyPage> {
                 ListTile(
                   leading: const Icon(Symbols.email_rounded),
                   title: Text(widget.email!),
+                  subtitle: Text(
+                    "integrations.eny.connect.emailUnverified".t(context),
+                  ),
+                ),
+              if (replacesExisting)
+                ListTile(
+                  leading: const Icon(Symbols.warning_rounded),
+                  iconColor: context.flowColors.expense,
+                  title: Text("integrations.eny.connect.conflict".t(context)),
+                  subtitle: EnyService().email != null
+                      ? Text(EnyService().email!)
+                      : null,
                 ),
             ],
           ),

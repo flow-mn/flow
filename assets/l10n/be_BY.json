@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Падключыць Eny",
   "integrations.eny.connect.conflict": "Ужо ёсць падключаны рахунак, хочаце замяніць яго?",
+  "integrations.eny.connect.emailUnverified": "З спасылкі, не праверана",
   "integrations.eny.connect.success": "Eny паспяхова падключаны",
   "integrations.eny.connected#false": "Адключана",
   "integrations.eny.connected#true": "Падключана",

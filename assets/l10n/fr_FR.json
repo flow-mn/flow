@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Connecter Eny",
   "integrations.eny.connect.conflict": "Un compte est déjà connecté. Voulez-vous le remplacer ?",
+  "integrations.eny.connect.emailUnverified": "Provenant du lien, non vérifié",
   "integrations.eny.connect.success": "Eny connecté avec succès",
   "integrations.eny.connected#false": "Déconnecté",
   "integrations.eny.connected#true": "Connecté",

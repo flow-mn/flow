@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "連接 Eny",
   "integrations.eny.connect.conflict": "已經有一個連接的帳戶，您要替換它嗎？",
+  "integrations.eny.connect.emailUnverified": "來自連結，未經驗證",
   "integrations.eny.connect.success": "成功連接 Eny",
   "integrations.eny.connected#false": "未連接",
   "integrations.eny.connected#true": "已連接",

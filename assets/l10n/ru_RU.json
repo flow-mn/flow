@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Подключить Eny",
   "integrations.eny.connect.conflict": "Уже подключён аккаунт. Заменить его?",
+  "integrations.eny.connect.emailUnverified": "Из ссылки, не проверено",
   "integrations.eny.connect.success": "Eny успешно подключён",
   "integrations.eny.connected#false": "Отключено",
   "integrations.eny.connected#true": "Подключено",

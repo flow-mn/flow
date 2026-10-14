@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Eny холбох",
   "integrations.eny.connect.conflict": "Өмнө нь холбогдсон бүртгэл байна, үүнийг солих уу?",
+  "integrations.eny.connect.emailUnverified": "Холбоосоос ирсэн, баталгаажаагүй",
   "integrations.eny.connect.success": "Eny амжилттай холбогдлоо",
   "integrations.eny.connected#false": "Холбогдоогүй",
   "integrations.eny.connected#true": "Холбогдсон",

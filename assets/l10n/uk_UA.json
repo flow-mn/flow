@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Підключити Eny",
   "integrations.eny.connect.conflict": "Вже підключено обліковий запис. Бажаєте замінити його?",
+  "integrations.eny.connect.emailUnverified": "З посилання, не перевірено",
   "integrations.eny.connect.success": "Eny успішно підключено",
   "integrations.eny.connected#false": "Відключено",
   "integrations.eny.connected#true": "Підключено",

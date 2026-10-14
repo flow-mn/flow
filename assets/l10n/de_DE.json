@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "Eny verbinden",
   "integrations.eny.connect.conflict": "Es ist bereits ein Konto verbunden. Möchten Sie es ersetzen?",
+  "integrations.eny.connect.emailUnverified": "Aus dem Link, nicht verifiziert",
   "integrations.eny.connect.success": "Eny erfolgreich verbunden",
   "integrations.eny.connected#false": "Getrennt",
   "integrations.eny.connected#true": "Verbunden",

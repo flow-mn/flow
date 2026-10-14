@@ -320,6 +320,7 @@
   "integrations.eny": "Eny",
   "integrations.eny.connect": "ربط Eny",
   "integrations.eny.connect.conflict": "هناك حساب متصل بالفعل، هل تريد استبداله؟",
+  "integrations.eny.connect.emailUnverified": "من الرابط، لم يتم التحقق منه",
   "integrations.eny.connect.success": "تم ربط Eny بنجاح",
   "integrations.eny.connected#false": "غير متصل",
   "integrations.eny.connected#true": "متصل",
