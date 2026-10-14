@@ -21,7 +21,7 @@ class ConvertedAmountButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = context.colorScheme.onSurface.withAlpha(0x80);
+    final Color color = context.flowColors.semi;
 
     return InkWell(
       onTap: onTap,

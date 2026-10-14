@@ -170,11 +170,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                           convertTo: convertTo,
                           overrideObscure: false,
                           textAlign: .center,
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
+                          style: context.textTheme.bodyLarge?.semi(context),
                         ),
                       const SizedBox(height: 16.0),
                       // Numpad
