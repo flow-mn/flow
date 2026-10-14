@@ -99,6 +99,8 @@ Future<Importer> importBackup({
   }
 }
 
+const int _maxUncompressedZipSize = 4 * 1024 * 1024 * 1024;
+
 Future<Importer> _importZip({required File file}) async {
   final Uint8List bytes = await file.readAsBytes();
   final Archive zip = ZipDecoder().decodeBytes(bytes);
@@ -122,6 +124,27 @@ Future<Importer> _importZip({required File file}) async {
     );
   }
 
+  // Flow never exports symlinks, and they can be chained to write outside
+  // of the extraction directory
+  if (zip.files.any((archiveFile) => archiveFile.isSymbolicLink)) {
+    throw ImportException(
+      "ZIP archive contains symbolic links",
+      l10nKey: "error.input.invalidZip",
+    );
+  }
+
+  final int uncompressedSize = zip.files.fold(
+    0,
+    (sum, archiveFile) => sum + archiveFile.size,
+  );
+
+  if (uncompressedSize > _maxUncompressedZipSize) {
+    throw ImportException(
+      "ZIP archive is too large when uncompressed ($uncompressedSize bytes)",
+      l10nKey: "error.input.invalidZip",
+    );
+  }
+
   final Directory tempDir = await getApplicationCacheDirectory();
 
   final String dir = path.join(
@@ -131,24 +154,33 @@ Future<Importer> _importZip({required File file}) async {
 
   await Directory(dir).create();
 
-  await extractArchiveToDisk(zip, dir);
+  try {
+    await extractArchiveToDisk(zip, dir);
 
-  final File jsonFile = File(path.join(dir, jsonRelativePath));
+    final File jsonFile = File(path.join(dir, jsonRelativePath));
 
-  final String assetsRoot = path.join(dir, "assets");
-  final String cleanupPath = dir;
+    final String assetsRoot = path.join(dir, "assets");
+    final String cleanupPath = dir;
 
-  final parsed = await jsonFile.readAsString().then((raw) => jsonDecode(raw));
+    final parsed = await jsonFile.readAsString().then((raw) => jsonDecode(raw));
 
-  return switch (parsed["versionCode"]) {
-    1 => ImportV1(SyncModelV1.fromJson(parsed)),
-    2 => ImportV2(
-      SyncModelV2.fromJson(parsed),
-      cleanupFolder: cleanupPath,
-      assetsRoot: assetsRoot,
-    ),
-    _ => throw UnimplementedError(),
-  };
+    return switch (parsed["versionCode"]) {
+      1 => ImportV1(SyncModelV1.fromJson(parsed)),
+      2 => ImportV2(
+        SyncModelV2.fromJson(parsed),
+        cleanupFolder: cleanupPath,
+        assetsRoot: assetsRoot,
+      ),
+      _ => throw UnimplementedError(),
+    };
+  } catch (e) {
+    try {
+      await Directory(dir).delete(recursive: true);
+    } catch (_) {
+      //
+    }
+    rethrow;
+  }
 }
 
 Future<Importer> _importJson({required File file}) async {
