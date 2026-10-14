@@ -118,7 +118,7 @@ class FileAttachmentService {
       await ObjectBox().box<FileAttachment>().removeAsync(fileAttachment.id);
 
       try {
-        await File(fileAttachment.filePath).delete();
+        await fileAttachment.file.delete();
       } catch (e, stackTrace) {
         _log.warning(
           "Failed to delete file at ${fileAttachment.filePath}",
