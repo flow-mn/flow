@@ -680,6 +680,7 @@
   "tabs.home": "首頁",
   "tabs.home.flow": "總收支",
   "tabs.home.greetings": "嗨，{name}！",
+  "tabs.home.greetings.anonymous": "嗨！",
   "tabs.home.last7days": "過去 7 天",
   "tabs.home.noTransactions": "沒有符合條件的交易",
   "tabs.home.noTransactions.addSome": "點擊下方的 (+) 按鈕新增一筆交易",

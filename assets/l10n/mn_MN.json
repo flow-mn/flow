@@ -680,6 +680,7 @@
   "tabs.home": "Нүүр",
   "tabs.home.flow": "Урсгал",
   "tabs.home.greetings": "Сайн уу, {name}?",
+  "tabs.home.greetings.anonymous": "Сайн уу?",
   "tabs.home.last7days": "Сүүлийн 7 хоног",
   "tabs.home.noTransactions": "Шүүлтүүрт тохирох гүйлгээ олдсонгүй",
   "tabs.home.noTransactions.addSome": "Доор байрлах (+) товч дээр дарж гүйлгээ нэмээрэй",

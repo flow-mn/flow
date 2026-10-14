@@ -680,6 +680,7 @@
   "tabs.home": "Domů",
   "tabs.home.flow": "Tok",
   "tabs.home.greetings": "Ahoj, {name}!",
+  "tabs.home.greetings.anonymous": "Ahoj!",
   "tabs.home.last7days": "Posledních 7 dní",
   "tabs.home.noTransactions": "Nebyly nalezeny žádné transakce.",
   "tabs.home.noTransactions.addSome": "Klepněte na tlačítko (+) pro přidání nové transakce.",

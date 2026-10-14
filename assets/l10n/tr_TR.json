@@ -680,6 +680,7 @@
   "tabs.home": "Ev",
   "tabs.home.flow": "Flow",
   "tabs.home.greetings": "Merhaba, {name}!",
+  "tabs.home.greetings.anonymous": "Merhaba!",
   "tabs.home.last7days": "Son 7 gün",
   "tabs.home.noTransactions": "Kriterlere uyan işlem yok",
   "tabs.home.noTransactions.addSome": "Yeni bir işlem eklemek için aşağıdaki (+) düğmesine dokunun",

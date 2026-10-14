@@ -680,6 +680,7 @@
   "tabs.home": "Головна",
   "tabs.home.flow": "Потік",
   "tabs.home.greetings": "Привіт, {name}!",
+  "tabs.home.greetings.anonymous": "Привіт!",
   "tabs.home.last7days": "Останні 7 днів",
   "tabs.home.noTransactions": "Немає транзакцій, що відповідають критеріям",
   "tabs.home.noTransactions.addSome": "Натисніть кнопку (+) нижче, щоб додати нову транзакцію",

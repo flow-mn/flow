@@ -680,6 +680,7 @@
   "tabs.home": "Start",
   "tabs.home.flow": "Flow",
   "tabs.home.greetings": "Hallo {name}!",
+  "tabs.home.greetings.anonymous": "Hallo!",
   "tabs.home.last7days": "Letzte 7 Tage",
   "tabs.home.noTransactions": "Keine Buchungen gefunden, die passen.",
   "tabs.home.noTransactions.addSome": "Tippe unten auf den (+)-Button, um eine neue Buchung hinzuzufügen.",

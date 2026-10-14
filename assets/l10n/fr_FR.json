@@ -680,6 +680,7 @@
   "tabs.home": "Accueil",
   "tabs.home.flow": "Flux",
   "tabs.home.greetings": "Salut, {name}!",
+  "tabs.home.greetings.anonymous": "Salut !",
   "tabs.home.last7days": "Les 7 derniers jours",
   "tabs.home.noTransactions": "Aucune transaction ne correspond aux critères",
   "tabs.home.noTransactions.addSome": "Appuyez sur le bouton (+) ci-dessous pour ajouter une nouvelle transaction",

@@ -680,6 +680,7 @@
   "tabs.home": "خانه",
   "tabs.home.flow": "Flow",
   "tabs.home.greetings": "سلام، {name}!",
+  "tabs.home.greetings.anonymous": "سلام!",
   "tabs.home.last7days": "۷ روز اخیر",
   "tabs.home.noTransactions": "هیچ تراکنشی مطابق معیارها نیست",
   "tabs.home.noTransactions.addSome": "برای افزودن تراکنش جدید، روی دکمه (+) پایین ضربه بزنید",

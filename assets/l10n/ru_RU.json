@@ -680,6 +680,7 @@
   "tabs.home": "Главная",
   "tabs.home.flow": "Flow",
   "tabs.home.greetings": "Привет, {name}!",
+  "tabs.home.greetings.anonymous": "Привет!",
   "tabs.home.last7days": "Последние 7 дней",
   "tabs.home.noTransactions": "Нет транзакций, соответствующих критериям",
   "tabs.home.noTransactions.addSome": "Нажмите кнопку (+) ниже, чтобы добавить новую транзакцию",

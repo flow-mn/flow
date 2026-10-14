@@ -680,6 +680,7 @@
   "tabs.home": "Główna",
   "tabs.home.flow": "Przepływy",
   "tabs.home.greetings": "Cześć, {name}!",
+  "tabs.home.greetings.anonymous": "Cześć!",
   "tabs.home.last7days": "Ostatnie 7 dni",
   "tabs.home.noTransactions": "Brak transakcji pasujących do kryteriów",
   "tabs.home.noTransactions.addSome": "Naciśnij przycisk (+) poniżej, aby dodać nową transakcję",

@@ -680,6 +680,7 @@
   "tabs.home": "首页",
   "tabs.home.flow": "总收支",
   "tabs.home.greetings": "嗨，{name}！",
+  "tabs.home.greetings.anonymous": "嗨！",
   "tabs.home.last7days": "过去 7 天",
   "tabs.home.noTransactions": "没有符合条件的交易",
   "tabs.home.noTransactions.addSome": "点击下方的 (+) 按钮新增一笔交易",
