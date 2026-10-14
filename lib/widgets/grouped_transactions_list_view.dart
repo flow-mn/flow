@@ -148,20 +148,28 @@ class _GroupedTransactionsListViewState
         widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
 
+    // Headers are paired with stable keys so their state survives rebuilds
     final List<Object> flattened = [
-      ?header,
+      if (header != null) (const ValueKey("main-header"), header!),
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
-          widget.headerBuilder(true, entry.key, entry.value),
+          (
+            ValueKey(("header", true, entry.key)),
+            widget.headerBuilder(true, entry.key, entry.value),
+          ),
           ...entry.value,
         ],
-      if (widget.pendingTrailing != null) widget.pendingTrailing!,
+      if (widget.pendingTrailing != null)
+        (const ValueKey("pending-trailing"), widget.pendingTrailing!),
       if (widget.pendingDivider != null &&
           widget.pendingTransactions?.isNotEmpty == true &&
           widget.transactions.isNotEmpty)
-        widget.pendingDivider!,
+        (const ValueKey("pending-divider"), widget.pendingDivider!),
       for (final entry in widget.transactions.entries) ...[
-        widget.headerBuilder(false, entry.key, entry.value),
+        (
+          ValueKey(("header", false, entry.key)),
+          widget.headerBuilder(false, entry.key, entry.value),
+        ),
         ...entry.value,
       ],
       Padding(padding: EdgeInsets.only(bottom: 16.0), child: SizedBox.shrink()),
@@ -174,11 +182,11 @@ class _GroupedTransactionsListViewState
     Widget itemBuilder(BuildContext context, int index) =>
         switch (flattened[index]) {
           (Padding widgetWithPadding) => Container(
-            key: ValueKey("padding-$index-${widgetWithPadding.hashCode}"),
+            key: const ValueKey("footer"),
             child: widgetWithPadding,
           ),
-          (Widget header) => Padding(
-            key: ValueKey("header-$index-${header.hashCode}"),
+          (Key key, Widget header) => Padding(
+            key: key,
             padding: index == 0
                 ? (widget.mainHeaderPadding ?? headerPadding)
                 : headerPadding,
