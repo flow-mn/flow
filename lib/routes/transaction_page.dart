@@ -26,6 +26,7 @@ import "package:flow/prefs/local_preferences.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/providers/transaction_tags_provider.dart";
+import "package:flow/routes/error_page.dart";
 import "package:flow/routes/transaction_page/converted_amount_button.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet.dart";
 import "package:flow/routes/transaction_page/section.dart";
@@ -110,7 +111,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   bool get isTransfer => _transactionType == TransactionType.transfer;
 
-  late final TextEditingController _titleController;
+  final TextEditingController _titleController = TextEditingController();
   String? _descriptionMarkdown;
   late double _amount;
 
@@ -205,9 +206,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
     if (widget.isNewTransaction) {
       _currentlyEditing = null;
-      _titleController = TextEditingController(
-        text: widget.params?.title ?? "",
-      );
+      _titleController.text = widget.params?.title ?? "";
       _descriptionMarkdown = widget.params?.notes;
       _selectedAccount = widget.params?.fromAccountUuid == null
           ? null
@@ -247,9 +246,7 @@ class _TransactionPageState extends State<TransactionPage> {
       if (_currentlyEditing == null) {
         error = "Transaction with id ${widget.transactionId} was not found";
       } else {
-        _titleController = TextEditingController(
-          text: _currentlyEditing.title ?? "",
-        );
+        _titleController.text = _currentlyEditing.title ?? "";
         _descriptionMarkdown = _currentlyEditing.description;
         _selectedAccount = _currentlyEditing.account.target;
         _selectedCategory = _currentlyEditing.category.target;
@@ -320,6 +317,10 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isNewTransaction && _currentlyEditing == null) {
+      return const ErrorPage();
+    }
+
     final String primaryCurrency = UserPreferencesService().primaryCurrency;
 
     final TimeRange? startBounds = getStartBounds();
