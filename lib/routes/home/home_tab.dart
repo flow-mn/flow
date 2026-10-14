@@ -19,6 +19,7 @@ import "package:flow/theme/helpers.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/default_transaction_filter_head.dart";
 import "package:flow/widgets/general/frame.dart";
+import "package:flow/widgets/general/money_text_builder.dart";
 import "package:flow/widgets/general/pending_transactions_header.dart";
 import "package:flow/widgets/general/wavy_divider.dart";
 import "package:flow/widgets/grouped_transactions_list_view.dart";
@@ -83,6 +84,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   List<Transaction>? _currentTransactions;
   List<Transaction>? _pendingTransactions;
   bool _readyToSubscribe = false;
+
+  DateTime _now = Moment.now().startOfNextMinute();
+  List<Transaction> _transactions = const [];
+  Map<TimeRange, List<Transaction>> _grouped = const {};
+  Map<TimeRange, List<Transaction>> _pendingGrouped = const {};
+  int _actionNeededCount = 0;
+  SingleCurrencyFlow? _combinedFlow;
+  ExchangeRates? _combinedFlowRates;
 
   @override
   void initState() {
@@ -156,6 +165,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           if (!mounted) return;
           setState(() {
             _currentTransactions = txns;
+            _recomputeTransactions();
           });
         });
 
@@ -168,43 +178,40 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
           if (!mounted) return;
           setState(() {
             _pendingTransactions = txns;
+            _recomputeTransactions();
           });
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-
-    final bool isFilterModified = currentFilter != defaultFilter;
-    final List<Transaction>? currentTxns = _currentTransactions;
-    final List<Transaction>? pendingTxns = _pendingTransactions;
-    final bool hasCurrent = currentTxns != null;
-
+  /// Filters, partitions and groups the loaded transactions, so [build]
+  /// (which also runs on every selection tap) doesn't redo it.
+  void _recomputeTransactions() {
     final DateTime now = Moment.now().startOfNextMinute();
-    final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
-      homeTimeRange: currentFilter.range?.range,
-    );
+    _now = now;
+    final TransactionFilter normalizedFilter = normalizedCurrentFilter;
+    final TimeRange? currentRange = normalizedFilter.range?.range;
+    final List<TransactionPredicate> pendingPredicates =
+        pendingTransactionsFilter.postPredicates;
+    final List<TransactionPredicate> currentPredicates =
+        normalizedFilter.postPredicates;
 
     final List<Transaction> transactions = [
-      ...?pendingTxns?.where(
+      ...?_pendingTransactions?.where(
         (transaction) =>
-            pendingTransactionsFilter.postPredicates.every(
-              (predicate) => predicate(transaction),
-            ) &&
-            normalizedCurrentFilter.range?.range?.contains(
-                  transaction.transactionDate,
-                ) !=
-                true,
+            pendingPredicates.every((predicate) => predicate(transaction)) &&
+            currentRange?.contains(transaction.transactionDate) != true,
       ),
-      ...?currentTxns?.where(
-        (transaction) => normalizedCurrentFilter.postPredicates.every(
-          (predicate) => predicate(transaction),
-        ),
+      ...?_currentTransactions?.where(
+        (transaction) =>
+            currentPredicates.every((predicate) => predicate(transaction)),
       ),
     ];
 
-    if (currentFilter.range?.range?.contains(now) == true) {
+    if (currentRange?.contains(now) == true) {
+      final TimeRange cutoffPlanned = _plannedTransactionsTimeRange.range(
+        homeTimeRange: currentRange,
+      );
+
       transactions.removeWhere((transaction) {
         if (transaction.transactionDate <= now) return false;
 
@@ -212,12 +219,69 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
       });
     }
 
+    final List<Transaction> pendingTransactions = transactions
+        .where(
+          (transaction) =>
+              transaction.isPending == true ||
+              transaction.transactionDate.isAfter(now),
+        )
+        .toList();
+
+    _transactions = transactions;
+    _grouped = transactions
+        .where(
+          (transaction) =>
+              !transaction.transactionDate.isAfter(now) &&
+              transaction.isPending != true,
+        )
+        .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
+    _pendingGrouped = pendingTransactions.groupByRange(
+      rangeFn: (transaction) =>
+          CustomTimeRange(Moment.minValue, Moment.maxValue),
+    );
+    _actionNeededCount = pendingTransactions
+        .where((transaction) => transaction.confirmable())
+        .length;
+    _combinedFlow = null;
+  }
+
+  SingleCurrencyFlow _getCombinedFlow(ExchangeRates? rates) {
+    if (_combinedFlow case final SingleCurrencyFlow flow
+        when identical(rates, _combinedFlowRates)) {
+      return flow;
+    }
+
+    _combinedFlowRates = rates;
+    return _combinedFlow =
+        SingleCurrencyFlow(currency: UserPreferencesService().primaryCurrency)
+          ..addAll(
+            _transactions
+                .where((transaction) {
+                  if (transaction.isTransfer) return false;
+                  if (transaction.transactionDate.isAfter(_now)) return false;
+                  if (transaction.isPending == true) return false;
+                  return true;
+                })
+                .map((t) => t.money),
+            rates,
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    final bool isFilterModified = currentFilter != defaultFilter;
+    final List<Transaction> transactions = _transactions;
+    final bool hasCurrent = _currentTransactions != null;
+
     final Widget header = DefaultTransactionsFilterHead(
       defaultFilter: defaultFilter,
       current: currentFilter,
       onChanged: (value) {
         setState(() {
           currentFilter = value;
+          _recomputeTransactions();
         });
         _subscribeToTransactions();
       },
@@ -250,7 +314,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             (0, true) => SliverFillRemaining(
               child: NoTransactions(isFilterModified: isFilterModified),
             ),
-            (_, true) => buildGroupedList(context, now, transactions),
+            (_, true) => buildGroupedList(context, transactions),
             (_, false) => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             ),
@@ -265,7 +329,6 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   Widget buildGroupedList(
     BuildContext context,
-    DateTime now,
     List<Transaction> transactions,
   ) {
     return ValueListenableBuilder(
@@ -279,49 +342,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
             rates == null &&
             TransitiveLocalPreferences().usesNonPrimaryCurrency.get();
 
-        final Map<TimeRange, List<Transaction>> grouped = transactions
-            .where(
-              (transaction) =>
-                  !transaction.transactionDate.isAfter(now) &&
-                  transaction.isPending != true,
-            )
-            .groupByRange(rangeFn: currentFilter.groupBy.fromTransaction);
-
-        final List<Transaction> pendingTransactions = transactions
-            .where(
-              (transaction) =>
-                  transaction.isPending == true ||
-                  transaction.transactionDate.isAfter(now),
-            )
-            .toList();
-
-        final int actionNeededCount = pendingTransactions
-            .where((transaction) => transaction.confirmable())
-            .length;
-
-        final Map<TimeRange, List<Transaction>> pendingTransactionsGrouped =
-            pendingTransactions.groupByRange(
-              rangeFn: (transaction) =>
-                  CustomTimeRange(Moment.minValue, Moment.maxValue),
-            );
-
         final bool shouldCombineTransferIfNeeded =
             currentFilter.accounts == null;
 
-        final String primaryCurrency = UserPreferencesService().primaryCurrency;
-
-        final SingleCurrencyFlow combinedFlow =
-            SingleCurrencyFlow(currency: primaryCurrency)..addAll(
-              transactions
-                  .where((transaction) {
-                    if (transaction.isTransfer) return false;
-                    if (transaction.transactionDate.isAfter(now)) return false;
-                    if (transaction.isPending == true) return false;
-                    return true;
-                  })
-                  .map((t) => t.money),
-              rates,
-            );
+        final SingleCurrencyFlow combinedFlow = _getCombinedFlow(rates);
 
         return GroupedTransactionsListView(
           listType: GroupedTransactionsListViewType.sliverReorderable,
@@ -359,24 +383,28 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               SizedBox(height: 8.0),
               Align(
                 alignment: AlignmentDirectional.topStart,
-                child: Text(
-                  [
-                    combinedFlow.totalFlow.formatMoney(compact: true),
-                    "transactions.count".t(
-                      context,
-                      transactions.renderableCount,
-                    ),
-                  ].join(" • "),
-                  style: context.textTheme.bodyMedium?.semi(context),
+                child: MoneyTextBuilder(
+                  money: combinedFlow.totalFlow,
+                  abbreviate: true,
+                  builder: (context, flowText, _) => Text(
+                    [
+                      flowText,
+                      "transactions.count".t(
+                        context,
+                        transactions.renderableCount,
+                      ),
+                    ].join(" • "),
+                    style: context.textTheme.bodyMedium?.semi(context),
+                  ),
                 ),
               ),
               SizedBox(height: 4.0),
             ],
           ),
           controller: widget.scrollController,
-          transactions: grouped,
+          transactions: _grouped,
           groupBy: currentFilter.groupBy,
-          pendingTransactions: pendingTransactionsGrouped,
+          pendingTransactions: _pendingGrouped,
           shouldCombineTransferIfNeeded: shouldCombineTransferIfNeeded,
           pendingDivider: const WavyDivider(),
           headerBuilder: (pendingGroup, range, transactions) {
@@ -384,7 +412,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
               return PendingTransactionsHeader(
                 transactions: transactions,
                 range: range,
-                badgeCount: actionNeededCount,
+                badgeCount: _actionNeededCount,
               );
             }
 
@@ -401,26 +429,49 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
   void _updatePlannedTransactionDays() {
     _plannedTransactionsTimeRange =
         UserPreferencesService().homePendingTransactionsTimeRange;
-    setState(() {});
+    setState(() {
+      if (_readyToSubscribe) _recomputeTransactions();
+    });
     _subscribeToTransactions();
   }
 
   void refreshDateKeyAndDefaultFilter() {
     if (!mounted) return;
+    final TransactionFilter oldDefaultFilter = defaultFilter;
     _rawUpdateDefaultFilter();
     final DateTime newDateKey = Moment.startOfToday();
-    // Always rebuild so `now` (used in build() to partition pending vs.
-    // current transactions and to compute the planned-window cutoff) and
-    // the `isFilterModified` indicator stay fresh. Only re-open the
-    // ObjectBox query streams when the day actually rolled over — they
-    // don't depend on `now`.
+    final DateTime newNow = Moment.now().startOfNextMinute();
     final bool dayChanged = newDateKey != dateKey;
+
+    // Rebuild only when something time-dependent changed; query streams
+    // are re-opened only on day rollover since they don't depend on `now`.
+    if (!dayChanged &&
+        oldDefaultFilter == defaultFilter &&
+        !_anyTransactionBetween(_now, newNow)) {
+      _now = newNow;
+      return;
+    }
+
     setState(() {
       dateKey = newDateKey;
+      _recomputeTransactions();
     });
     if (dayChanged) {
       _subscribeToTransactions();
     }
+  }
+
+  /// Whether a loaded transaction falls in (`from`, `to`], i.e. it moved
+  /// from upcoming to past.
+  bool _anyTransactionBetween(DateTime from, DateTime to) {
+    if (!to.isAfter(from)) return false;
+
+    bool crossed(Transaction transaction) =>
+        transaction.transactionDate.isAfter(from) &&
+        !transaction.transactionDate.isAfter(to);
+
+    return (_currentTransactions?.any(crossed) ?? false) ||
+        (_pendingTransactions?.any(crossed) ?? false);
   }
 
   void _rawUpdateDefaultFilter() {
