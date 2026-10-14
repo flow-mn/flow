@@ -8,6 +8,7 @@ import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/lock_app.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
 import "package:flow/services/file_attachment.dart";
+import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/user_preferences.dart";
@@ -78,6 +79,8 @@ class PreferencesPageState extends State<PreferencesPage> {
 
     final String currentPrimaryCurrency =
         UserPreferencesService().primaryCurrency;
+
+    final bool enyConnected = EnyService().isConnected;
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences".t(context))),
@@ -238,6 +241,14 @@ class PreferencesPageState extends State<PreferencesPage> {
             ),
             ListTile(
               title: Text("Eny"),
+              subtitle: Text(
+                [
+                  "preferences.scan".t(context),
+                  "integrations.eny.connected#$enyConnected".t(context),
+                ].join(" · "),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               leading: const SizedBox(
                 width: 24.0,
                 height: 24.0,
