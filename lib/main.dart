@@ -113,9 +113,8 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
   startupLog.fine("Updating account order list");
 
-  // Await so the plugin is ready before TransactionsService listeners can
-  // fire (FlowState.initState wires _synchronizePlannedNotifications), which
-  // otherwise hits NotificationsService.pluginInstance before it's set.
+  // Awaited so launch details are ready for HomePage. Never waits on the
+  // permission prompt, and times out as a safety net.
   await initializeNotifications();
 
   startupLog.fine("Clearing stale transactions from trash bin");
@@ -600,7 +599,14 @@ void initializePackageVersion() async {
 Future<void> initializeNotifications() async {
   assert(LocalPreferences().runtimeType == LocalPreferences);
 
-  await NotificationsService().initialize();
+  try {
+    await NotificationsService().initialize().timeout(
+      const Duration(seconds: 5),
+    );
+  } catch (error) {
+    startupLog.severe("Failed to initialize notifications", error);
+    return;
+  }
 
   unawaited(
     TransactionsService().synchronizeNotifications().catchError((error) {

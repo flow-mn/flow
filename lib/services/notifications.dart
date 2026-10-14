@@ -36,7 +36,8 @@ class NotificationsService {
 
   final List<Function(NotificationResponse)> _registeredCallbacks = [];
 
-  late final FlutterLocalNotificationsPlugin pluginInstance;
+  final FlutterLocalNotificationsPlugin pluginInstance =
+      FlutterLocalNotificationsPlugin();
 
   late final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
@@ -76,13 +77,17 @@ class NotificationsService {
     }
 
     try {
-      pluginInstance = FlutterLocalNotificationsPlugin();
       // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings("@mipmap/ic_launcher");
 
+      // Requesting here blocks `initialize` until the prompt is answered,
+      // forever on macOS if ignored. Requested separately below instead.
       final DarwinInitializationSettings initializationSettingsDarwin =
           DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestSoundPermission: false,
+            requestBadgePermission: false,
             notificationCategories: [
               DarwinNotificationCategory("planned-transaction-reminder"),
             ],
@@ -112,6 +117,12 @@ class NotificationsService {
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
+      // Darwin resolves `initialize` with the permission result, which is
+      // false when nothing is requested.
+      if (Platform.isIOS || Platform.isMacOS) {
+        _available = true;
+      }
+
       try {
         if (Platform.isLinux) {
           throw Exception("Linux doesn't support notification app launch");
@@ -134,20 +145,12 @@ class NotificationsService {
 
     if (_available != true) return;
 
-    if (PendingTransactionsLocalPreferences().notify.get()) {
-      try {
-        final bool? permissionGranted = await hasPermissions();
-
-        if (permissionGranted == null) return;
-
-        if (permissionGranted) {
-          _log.fine("Permission has been granted");
-        } else {
-          _log.warning("Permission has not been granted");
-        }
-      } catch (e) {
-        _log.warning("Failed to check or request permissions", e);
-      }
+    if (Platform.isIOS || Platform.isMacOS) {
+      unawaited(
+        requestPermissions().catchError((error) {
+          _log.warning("Failed to request permissions", error);
+        }),
+      );
     }
   }
 
@@ -472,7 +475,7 @@ class NotificationsService {
     }
   }
 
-  void requestPermissions() async {
+  Future<void> requestPermissions() async {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           pluginInstance
