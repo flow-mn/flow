@@ -268,7 +268,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("fileAttachment.cleanupHangingFiles".t(context)),
               leading: const Icon(Symbols.folder_delete_rounded),
               onTap: () => _deleteHangingFiles(),
-              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.feedback".t(context)),
@@ -395,7 +394,12 @@ class PreferencesPageState extends State<PreferencesPage> {
       final int deleted = await FileAttachmentService().deleteAllOrphans();
 
       if (mounted) {
-        context.showToast(text: "fileAttachment.delete.success".t(context));
+        context.showToast(
+          text: "fileAttachment.cleanupHangingFiles.success".t(
+            context,
+            deleted,
+          ),
+        );
       }
 
       _log.info("Deleted $deleted hanging files");
