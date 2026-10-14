@@ -70,7 +70,7 @@ class DateParser implements CSVCellParser<DateTime> {
 
       return DateTime(y, m, d);
     } catch (e) {
-      _log.severe("Cannot parse regular date on row $row - $cell");
+      _log.severe("Cannot parse regular date on row $row");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -110,7 +110,7 @@ class TimeParser implements CSVCellParser<(int, int, int?)> {
 
       return (h, m, s);
     } catch (e) {
-      _log.severe("Cannot parse regular time on row $row - $cell");
+      _log.severe("Cannot parse regular time on row $row");
       throw CSVCellParserError.invalidDate;
     }
   }
@@ -128,7 +128,7 @@ class AmountParser implements CSVCellParser<double> {
       final String normalized = cell.trim().replaceAll(r"[^\d.e+-]", "");
       return double.parse(normalized);
     } catch (e) {
-      _log.severe("Cannot parse amount on row $row - $cell");
+      _log.severe("Cannot parse amount on row $row");
       throw CSVCellParserError.invalidAmount;
     }
   }
@@ -145,7 +145,7 @@ class ISO8601DateParser implements CSVCellParser<DateTime> {
     try {
       return DateTime.parse(cell);
     } catch (e) {
-      _log.severe("Cannot parse iso8601 date on row $row - $cell");
+      _log.severe("Cannot parse iso8601 date on row $row");
       throw CSVCellParserError.invalidDate;
     }
   }
