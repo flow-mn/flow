@@ -1,8 +1,10 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/preferences_page.dart";
+import "package:flow/services/home_widgets.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/frame.dart";
@@ -85,6 +87,7 @@ class _LockAppState extends State<LockApp> {
     }
 
     await LocalPreferences().requireLocalAuth.set(newRequireLocalAuth);
+    unawaited(HomeWidgets.syncAll());
 
     if (!mounted) return;
 

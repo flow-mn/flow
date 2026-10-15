@@ -4,9 +4,13 @@ import "dart:io";
 import "package:flow/constants.dart";
 import "package:flow/data/budget_progress.dart";
 import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/budget.dart";
 import "package:flow/services/exchange_rates.dart";
+import "package:flow/services/user_preferences.dart";
+import "package:flow/utils/extensions.dart";
 import "package:home_widget/home_widget.dart";
 import "package:intl/intl.dart";
 import "package:logging/logging.dart";
@@ -28,7 +32,9 @@ final Logger _log = Logger("BudgetWidgetSync");
 /// the state — belongs there, not here.
 ///
 /// Note this is shoulder-surfing privacy, not security: the amounts still sit
-/// in the shared app-group container regardless of the toggle.
+/// in the shared app-group container regardless of the toggle. The exception
+/// is the app's own "mask at startup" privacy mode or app lock, either of which
+/// publishes amounts with their digits already masked.
 class BudgetWidgetSync {
   /// Single JSON blob rather than a flat key per field.
   ///
@@ -64,6 +70,7 @@ class BudgetWidgetSync {
   static Future<Map<String, dynamic>> buildPayload({
     ExchangeRates? rates,
     DateTime? asOf,
+    bool obscureAmounts = false,
   }) async {
     final List<BudgetProgress> progresses =
         (await BudgetService().computeAllProgressAsync(
@@ -83,7 +90,9 @@ class BudgetWidgetSync {
         "hasMissingData": summary.hasMissingData,
         "worstId": summary.worst?.budget.id,
       },
-      "budgets": progresses.map(_budgetJson).toList(),
+      "budgets": progresses
+          .map((progress) => _budgetJson(progress, obscureAmounts))
+          .toList(),
       "labels": _labels(summary),
     };
   }
@@ -93,7 +102,12 @@ class BudgetWidgetSync {
       final ExchangeRates? rates = ExchangeRatesService()
           .getPrimaryCurrencyRates();
 
-      final Map<String, dynamic> payload = await buildPayload(rates: rates);
+      final Map<String, dynamic> payload = await buildPayload(
+        rates: rates,
+        obscureAmounts:
+            UserPreferencesService().privacyModeUponLaunch ||
+            LocalPreferences().requireLocalAuth.get(),
+      );
 
       if (Platform.isIOS) {
         await HomeWidget.setAppGroupId(iOSAppGroupId);
@@ -125,7 +139,10 @@ class BudgetWidgetSync {
     }
   }
 
-  static Map<String, dynamic> _budgetJson(BudgetProgress progress) => {
+  static Map<String, dynamic> _budgetJson(
+    BudgetProgress progress,
+    bool obscureAmounts,
+  ) => {
     // The only durable handle on a budget. `Budget.toJson` doesn't write `id`,
     // so a restore reinserts every budget with `id = 0` and ObjectBox hands out
     // fresh ids — "Eating out" can come back as a different number, and that
@@ -138,10 +155,10 @@ class BudgetWidgetSync {
     "name": progress.budget.name,
     // Pre-formatted and compacted: the extension has no access to the user's
     // currency formatting, and "₮420K" is what fits a 155pt-wide widget.
-    "spent": progress.spent.formatMoney(compact: true),
-    "limit": progress.limit.formatMoney(compact: true),
-    "remaining": progress.remaining.formatMoney(compact: true),
-    "overBy": progress.overBy.formatMoney(compact: true),
+    "spent": _formatAmount(progress.spent, obscureAmounts),
+    "limit": _formatAmount(progress.limit, obscureAmounts),
+    "remaining": _formatAmount(progress.remaining, obscureAmounts),
+    "overBy": _formatAmount(progress.overBy, obscureAmounts),
     // The amount-free rendering runs entirely off these.
     "percent": progress.percent,
     // Formatted here, in the *app's* locale, for the same reason the money
@@ -173,6 +190,11 @@ class BudgetWidgetSync {
     "periodLabel": _periodLabel(progress.range),
     "hasMissingData": progress.hasMissingData,
   };
+
+  static String _formatAmount(Money money, bool obscure) {
+    final String text = money.formatMoney(compact: true);
+    return obscure ? text.digitsObscured : text;
+  }
 
   /// A sync can fire before `FlowLocalizations` has loaded — the transaction
   /// listener is wired in `main` ahead of `runApp` — and an unloaded lookup

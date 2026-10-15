@@ -154,6 +154,7 @@ struct BudgetRollupView: View {
                         .font(.system(.caption2, design: .rounded, weight: .medium))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                        .privacySensitive()
                 }
             }
         }

@@ -26,6 +26,7 @@ struct RecordTransactionIntent: AppIntent {
     var transactionDate: Date?
 
     static var openAppWhenRun = false
+    static var authenticationPolicy: IntentAuthenticationPolicy = .requiresAuthentication
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let formatter = NumberFormatter()

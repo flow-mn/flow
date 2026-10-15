@@ -1,22 +1,36 @@
 import "dart:math";
 
+import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/routes/transaction_page/amount_text.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet/calculator_button.dart";
 import "package:flow/routes/transaction_page/input_amount_sheet/input_value.dart";
 import "package:flow/services/currency_registry.dart";
+import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/money_parsing.dart";
+import "package:flow/utils/suggested_currencies.dart";
 import "package:flow/utils/utils.dart";
+import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/modal_sheet.dart";
 import "package:flow/widgets/numpad.dart";
+import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:go_router/go_router.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 
-enum CalculatorOperation { add, subtract, multiply, divide }
+enum CalculatorOperation {
+  add("+"),
+  subtract("−"),
+  multiply("×"),
+  divide("÷");
+
+  final String symbol;
+
+  const CalculatorOperation(this.symbol);
+}
 
 class InputAmountSheet extends StatefulWidget {
   static const double maxValue = 10e13;
@@ -46,6 +60,15 @@ class InputAmountSheet extends StatefulWidget {
 
   final int? overrideDecimalPrecision;
 
+  /// Makes the currency tappable. Called with the final currency on submit.
+  final ValueChanged<String>? onCurrencyChange;
+
+  /// Tints the currency to hint that it can be changed
+  final bool currencyHint;
+
+  /// Shows the approximate amount in this currency when it differs
+  final String? convertTo;
+
   const InputAmountSheet({
     super.key,
     this.title,
@@ -57,6 +80,9 @@ class InputAmountSheet extends StatefulWidget {
     this.allowNegative = true,
     this.lockSign = false,
     this.overrideDecimalPrecision,
+    this.onCurrencyChange,
+    this.currencyHint = false,
+    this.convertTo,
   });
 
   @override
@@ -68,6 +94,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   final FocusNode _amountSelectionAreaFocusNode = FocusNode();
 
   late InputValue value;
+
+  late String? _currency;
 
   /// Number of decimals used for a currency
   late int _numberOfDecimals;
@@ -84,18 +112,8 @@ class _InputAmountSheetState extends State<InputAmountSheet>
   void initState() {
     super.initState();
 
-    _numberOfDecimals =
-        CurrencyRegistryService().getPreferredDecimalPrecision(
-          widget.currency,
-        ) ??
-        widget.overrideDecimalPrecision ??
-        2;
-    if (_numberOfDecimals <= 0) {
-      // Apparently, even in Japan, there are
-      // stuff priced with decimal prices. i.e.,
-      // electricity bill
-      _numberOfDecimals = 2;
-    }
+    _currency = widget.currency;
+    _updateNumberOfDecimals();
 
     final initialAmount = (widget.initialAmount ?? 0).abs();
     _resetOnNextInput = initialAmount != 0;
@@ -136,15 +154,39 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                         ),
                         const SizedBox(height: 12.0),
                       ],
+                      // Always laid out in calculator mode to avoid jumps
+                      if (_calculatorMode)
+                        Text(
+                          pendingOperationText,
+                          style: context.textTheme.bodyLarge?.semi(context),
+                        ),
                       AmountText(
                         value: value,
-                        currency: widget.currency,
+                        currency: _currency,
                         focusNode: _amountSelectionAreaFocusNode,
                         inputtingDecimal: _inputtingDecimal,
                         numberOfDecimals: _numberOfDecimals,
-                        hideCurrencySymbol: widget.hideCurrencySymbol,
+                        hideCurrencySymbol:
+                            widget.hideCurrencySymbol &&
+                            _currency == widget.currency,
                         onPaste: (text) => handlePaste(text, true),
+                        onCurrencyTap: widget.onCurrencyChange == null
+                            ? null
+                            : _selectCurrency,
+                        currencyHint:
+                            widget.currencyHint ||
+                            (widget.convertTo != null &&
+                                _currency != widget.convertTo),
                       ),
+                      if (widget.convertTo case String convertTo
+                          when _currency != null && _currency != convertTo)
+                        ApproximateMoneyText(
+                          Money(value.currentAmount, _currency!),
+                          convertTo: convertTo,
+                          overrideObscure: false,
+                          textAlign: .center,
+                          style: context.textTheme.bodyLarge?.semi(context),
+                        ),
                       const SizedBox(height: 16.0),
                       // Numpad
                       Numpad(
@@ -162,11 +204,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                                   onTap: () => removeDigit(),
                                   onLongPress: () => _reset(),
                                   mainAxisCellCount: widget.lockSign ? 2 : 1,
+                                  semanticLabel: "general.delete".t(context),
                                   child: const Icon(Symbols.backspace_rounded),
                                 ),
                           ..._getNumberRow(1),
                           if (!widget.lockSign && !_calculatorMode)
                             NumpadButton(
+                              semanticLabel: widget.allowNegative ? "-" : "+",
                               child: widget.allowNegative
                                   ? const Icon(Symbols.remove_rounded)
                                   : const Icon(Symbols.add_rounded),
@@ -188,6 +232,9 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                                       )
                                     : NumpadButton(
                                         onTap: () => calculatorMode(),
+                                        semanticLabel: "general.calculator".t(
+                                          context,
+                                        ),
                                         child: const Icon(
                                           Symbols.calculate_rounded,
                                         ),
@@ -200,7 +247,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
                           ),
                           NumpadButton(
                             child: Text(
-                              getDecimalSeparatorForCurrency(widget.currency),
+                              getDecimalSeparatorForCurrency(_currency),
                             ),
                             onTap: () => decimalMode(),
                           ),
@@ -229,11 +276,13 @@ class _InputAmountSheetState extends State<InputAmountSheet>
         onTap: () => _reset(),
       ),
       NumpadButton(
+        semanticLabel: "general.delete".t(context),
         child: const Icon(Symbols.backspace_rounded),
         onTap: () => removeDigit(),
         onLongPress: () => _reset(),
       ),
       NumpadButton(
+        semanticLabel: "%",
         child: const Icon(Symbols.percent_rounded),
         onTap: () => _evaluatePercent(),
       ),
@@ -276,6 +325,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     return NumpadButton(
       backgroundColor: popOnClick ? context.flowColors.income : null,
       crossAxisCellCount: widget.hasCalculator ? 1 : 2,
+      semanticLabel: popOnClick ? "general.done".t(context) : "=",
       onTap: () {
         if (popOnClick) {
           _saveOrPop();
@@ -365,7 +415,47 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       return;
     }
 
+    if (_currency case String currency) {
+      widget.onCurrencyChange?.call(currency);
+    }
+
     context.pop(value.currentAmount);
+  }
+
+  void _updateNumberOfDecimals() {
+    _numberOfDecimals =
+        CurrencyRegistryService().getPreferredDecimalPrecision(_currency) ??
+        widget.overrideDecimalPrecision ??
+        2;
+    if (_numberOfDecimals <= 0) {
+      // Apparently, even in Japan, there are
+      // stuff priced with decimal prices. i.e.,
+      // electricity bill
+      _numberOfDecimals = 2;
+    }
+  }
+
+  void _selectCurrency() async {
+    final String current =
+        _currency ?? UserPreferencesService().primaryCurrency;
+
+    final String? result = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SelectCurrencySheet(
+        currentlySelected: current,
+        suggested: suggestedCurrencies(
+          accountCurrency: widget.convertTo ?? widget.currency,
+        ),
+      ),
+      isScrollControlled: true,
+    );
+
+    if (result == null || result == current || !mounted) return;
+
+    _currency = result;
+    _updateNumberOfDecimals();
+    _updateAmountFromNumber(value.currentAmount);
+    setState(() {});
   }
 
   void _reset() {
@@ -393,7 +483,7 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     Clipboard.setData(
       ClipboardData(
-        text: value.currentAmount.toStringAsFixed(value.decimalLength),
+        text: value.decimalAmount.toStringAsFixed(value.decimalLength),
       ),
     );
 
@@ -407,6 +497,25 @@ class _InputAmountSheetState extends State<InputAmountSheet>
     ).signed(widget.allowNegative ? (widget.initialAmount ?? 1.0) : 1.0);
 
     _inputtingDecimal = value.decimalLength > 0;
+  }
+
+  /// First operand and the operator, e.g., "120 +"
+  String get pendingOperationText {
+    if (_operationCache case InputValue operand
+        when _currentOperation != null) {
+      final String formatted =
+          Money(
+            operand.currentAmount,
+            _currency ?? UserPreferencesService().primaryCurrency,
+          ).formatMoney(
+            includeCurrency: false,
+            decimalDigits: operand.decimalLength,
+          );
+
+      return "$formatted ${_currentOperation!.symbol}";
+    }
+
+    return "";
   }
 
   void calculatorMode() {
@@ -456,16 +565,28 @@ class _InputAmountSheetState extends State<InputAmountSheet>
 
     switch (_currentOperation!) {
       case CalculatorOperation.add:
-        value = _operationCache!.add(value);
+        value = _operationCache!.add(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.subtract:
-        value = _operationCache!.subtract(value);
+        value = _operationCache!.subtract(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.multiply:
-        value = _operationCache!.multiply(value);
+        value = _operationCache!.multiply(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
       case CalculatorOperation.divide:
-        value = _operationCache!.divide(value);
+        value = _operationCache!.divide(
+          value,
+          maxNumberOfDecimals: _numberOfDecimals,
+        );
         break;
     }
 
@@ -485,15 +606,20 @@ class _InputAmountSheetState extends State<InputAmountSheet>
       return;
     }
 
+    // Two extra decimals keep the percentage exact until the final rounding
+    final InputValue percentage = value.divide(
+      InputValue.fromDouble(100.0),
+      maxNumberOfDecimals: _numberOfDecimals + 2,
+    );
+
     value = switch (_currentOperation) {
-      CalculatorOperation.add || CalculatorOperation.subtract =>
-        _operationCache! *
-            InputValue.fromDouble(
-              value.currentAmount * 0.01,
-              maxNumberOfDecimals: _numberOfDecimals,
-            ),
-      _ => InputValue.fromDouble(
-        value.currentAmount * 0.01,
+      CalculatorOperation.add ||
+      CalculatorOperation.subtract => _operationCache!.multiply(
+        percentage,
+        maxNumberOfDecimals: _numberOfDecimals,
+      ),
+      _ => InputValue.fromDecimal(
+        percentage.decimalAmount,
         maxNumberOfDecimals: _numberOfDecimals,
       ),
     };

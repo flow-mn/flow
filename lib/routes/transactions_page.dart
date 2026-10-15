@@ -123,6 +123,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   late TimeRange _timeRange;
 
+  late Stream<List<Transaction>> _transactions;
+
   late final bool showExchangeRatesMissingWarning;
 
   late final TransactionsSelectionController _selection;
@@ -131,6 +133,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   void initState() {
     super.initState();
     _timeRange = widget.initialRange ?? defaultTimeRange;
+    _transactions = _watch(_timeRange);
     showExchangeRatesMissingWarning =
         TransitiveLocalPreferences().usesNonPrimaryCurrency.get() &&
         ExchangeRatesService().getPrimaryCurrencyRates() == null;
@@ -150,15 +153,17 @@ class _TransactionsPageState extends State<TransactionsPage> {
     setState(() {});
   }
 
+  Stream<List<Transaction>> _watch(TimeRange range) => widget
+      .queryFn(range)
+      .watch(triggerImmediately: true)
+      .map((event) => event.find());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: widget.title == null ? null : Text(widget.title!)),
       body: StreamBuilder<List<Transaction>>(
-        stream: widget
-            .queryFn(_timeRange)
-            .watch(triggerImmediately: true)
-            .map((event) => event.find()),
+        stream: _transactions,
         builder: (context, snapshot) {
           final List<Transaction> visible = snapshot.data ?? const [];
 
@@ -182,6 +187,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                               onChanged: (newRange) {
                                 setState(() {
                                   _timeRange = newRange;
+                                  _transactions = _watch(newRange);
                                 });
                               },
                             ),

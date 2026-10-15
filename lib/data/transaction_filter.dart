@@ -149,9 +149,15 @@ class TransactionFilter implements Jasonable {
     final List<String>? categoryUuids = categories?.filter(
       CategoriesService().getAllUuidsSync(),
     );
-    final List<String>? tagUuids = tags?.filter(
-      TransactionTagService().getAllUuidsSync(),
-    );
+    final List<String>? tagUuids = switch (tags) {
+      null => null,
+      // Unknown uuids can't match a linked tag, so no need to resolve them
+      StringMultiFilter(whitelist: true, :final items) when !tagsAndRule =>
+        items,
+      StringMultiFilter tagsFilter => tagsFilter.filter(
+        TransactionTagService().getAllUuidsSync(),
+      ),
+    };
 
     if (uuids?.isNotEmpty == true) {
       conditions.add(Transaction_.uuid.oneOf(uuids!));

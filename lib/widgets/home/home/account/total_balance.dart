@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/money.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
@@ -21,6 +23,9 @@ class _TotalBalanceState extends State<TotalBalance> {
   bool initiallyAbbreviated = true;
 
   late Future<Money?> _getGrandTotalFuture;
+  late Money _primaryCurrencyTotalBalance;
+
+  Timer? _transactionDebounce;
 
   @override
   void initState() {
@@ -29,9 +34,10 @@ class _TotalBalanceState extends State<TotalBalance> {
     UserPreferencesService().valueNotifier.addListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.addListener(_refresh);
 
-    TransactionsService().addListener(_refresh);
+    TransactionsService().addListener(_onTransactionsChanged);
 
     _getGrandTotalFuture = ObjectBox().getGrandTotal();
+    _primaryCurrencyTotalBalance = ObjectBox().getPrimaryCurrencyGrandTotal();
 
     initiallyAbbreviated = !LocalPreferences().preferFullAmounts.get();
   }
@@ -42,22 +48,20 @@ class _TotalBalanceState extends State<TotalBalance> {
     UserPreferencesService().valueNotifier.removeListener(_refresh);
     ExchangeRatesService().exchangeRatesCache.removeListener(_refresh);
 
-    TransactionsService().removeListener(_refresh);
+    TransactionsService().removeListener(_onTransactionsChanged);
+    _transactionDebounce?.cancel();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Money primaryCurrencyTotalBalance = ObjectBox()
-        .getPrimaryCurrencyGrandTotal();
-
     return FutureBuilder<Money?>(
       future: _getGrandTotalFuture,
       builder: (context, snapshot) {
         final Money value = snapshot.hasData
             ? snapshot.data!
-            : primaryCurrencyTotalBalance;
+            : _primaryCurrencyTotalBalance;
 
         return Padding(
           padding: EdgeInsets.only(left: 12.0),
@@ -86,9 +90,18 @@ class _TotalBalanceState extends State<TotalBalance> {
     );
   }
 
+  void _onTransactionsChanged() {
+    _transactionDebounce?.cancel();
+    _transactionDebounce = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      _refresh();
+    });
+  }
+
   void _refresh() {
     setState(() {
       _getGrandTotalFuture = ObjectBox().getGrandTotal();
+      _primaryCurrencyTotalBalance = ObjectBox().getPrimaryCurrencyGrandTotal();
     });
   }
 }

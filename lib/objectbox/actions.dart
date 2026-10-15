@@ -1075,6 +1075,10 @@ extension AccountActions on Account {
     double? latitude,
     double? longitude,
   }) {
+    if (!amount.isFinite) {
+      throw ArgumentError.value(amount, "amount", "must be finite");
+    }
+
     FileAttachmentService().upsertManySync(attachments ?? []);
 
     final String uuid = uuidOverride ?? const Uuid().v4();
@@ -1175,11 +1179,11 @@ extension AccountActions on Account {
     try {
       unawaited(
         TransitiveLocalPreferences()
-            .updateFrecencyData("account", uuid)
+            .updateFrecencyData("account", this.uuid)
             .then((_) {})
             .catchError((e, stackTrace) {
               _log.warning(
-                "Failed to update frecency data for account ($uuid)",
+                "Failed to update frecency data for account (${this.uuid})",
                 e,
                 stackTrace,
               );
@@ -1263,24 +1267,25 @@ extension TransactionProgrammableObjectActions
     List<TransactionExtension>? extensions,
     bool? isPendingOverride,
   }) {
+    // The user's pick on screen wins over the account named in the payload
     final Account? resolvedFromAccount =
-        AccountsService().findOneActiveSync(fromAccountUuid) ??
-        AccountsService().findOneActiveSync(fromAccount) ??
         switch (fromAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
         } ??
+        AccountsService().findOneActiveSync(fromAccountUuid) ??
+        AccountsService().findOneActiveSync(fromAccount) ??
         AccountsService().findOneActiveSync(
           UserPreferencesService().primaryAccountUuid,
         );
 
     Account? resolvedToAccount =
-        AccountsService().findOneActiveSync(toAccountUuid) ??
-        AccountsService().findOneActiveSync(toAccount) ??
         switch (toAccountOverride) {
           Account a => a,
           dynamic any => AccountsService().findOneActiveSync(any),
-        };
+        } ??
+        AccountsService().findOneActiveSync(toAccountUuid) ??
+        AccountsService().findOneActiveSync(toAccount);
 
     if (resolvedFromAccount == null) {
       throw Exception(

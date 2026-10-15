@@ -108,7 +108,7 @@ class UserPreferencesService {
   set iCloudBackupsToKeep(int? newICloudBackupsToKeep) {
     if (newICloudBackupsToKeep == null) return;
 
-    value.trashBinRetentionDays = newICloudBackupsToKeep;
+    value.iCloudBackupsToKeep = newICloudBackupsToKeep;
 
     ObjectBox().box<UserPreferences>().put(value);
   }
@@ -392,6 +392,8 @@ class UserPreferencesService {
   UserPreferencesService._internal();
 
   void _updateButtonsWidgets(List<FlowButtonType> order) async {
+    if (!HomeWidgets.supported) return;
+
     try {
       final String value = EnyService().isConnected
           ? order.map((e) => e.value).join(",")

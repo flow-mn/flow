@@ -7,15 +7,22 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/sync/syncer.dart";
+import "package:flow/sync/import.dart";
+import "package:flow/sync/import/base.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions/backup_entry.dart";
+import "package:flow/utils/extensions/importer.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
+import "package:icloud_storage/icloud_storage.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
+
+final Logger _log = Logger("BackupEntryCard");
 
 class BackupEntryCard extends StatefulWidget {
   final BackupEntry entry;
@@ -45,6 +52,7 @@ class BackupEntryCard extends StatefulWidget {
 
 class _BackupEntryCardState extends State<BackupEntryCard> {
   bool _busyDownloading = false;
+  bool _busyRestoring = false;
 
   double _downloadProgress = 0.0;
 
@@ -53,8 +61,14 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
     final int? fileSize = getFileSize();
     final bool existsOnCloud = widget.entry.correspondingICloudFile != null;
 
+    final bool restorable = const [
+      "json",
+      "zip",
+    ].contains(widget.entry.fileExt.toLowerCase());
+
     final Widget listTile = InkWell(
       borderRadius: widget.borderRadius,
+      onTap: restorable && (existsOnCloud || fileSize != null) ? restore : null,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -121,14 +135,14 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
                 const SizedBox(width: 8.0),
                 Builder(
                   builder: (context) {
-                    if (_busyDownloading) {
+                    if (_busyDownloading || _busyRestoring) {
                       return CircularProgressIndicator(
-                        value: _downloadProgress,
+                        value: _busyDownloading ? _downloadProgress : null,
                       );
                     }
 
                     return IconButton(
-                      onPressed: _busyDownloading ? null : onDownload,
+                      onPressed: onDownload,
                       icon: (existsOnCloud || fileSize != null)
                           ? const Icon(Symbols.save_alt_rounded)
                           : Icon(
@@ -233,69 +247,120 @@ class _BackupEntryCardState extends State<BackupEntryCard> {
     }
   }
 
+  Future<void> restore() async {
+    if (_busyDownloading || _busyRestoring) return;
+
+    File? downloadedFile;
+
+    try {
+      final File? backupFile = widget.entry.existsSync()
+          ? File(widget.entry.filePath)
+          : (downloadedFile = await _downloadFromICloud());
+
+      if (backupFile == null || !mounted) return;
+
+      setState(() {
+        _busyRestoring = true;
+      });
+
+      final Importer importer = await importBackup(backupFile: backupFile);
+
+      if (mounted) {
+        importer.goToRelevantPage(context);
+      }
+    } catch (e, stackTrace) {
+      _log.severe("Failed to restore backup", e, stackTrace);
+      if (mounted) {
+        context.showErrorToast(error: e);
+      }
+    } finally {
+      _busyRestoring = false;
+      unawaited(ICloudSyncer.discardDownload(downloadedFile));
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   Future<void> onDownload() async {
     String? fileToShare;
+    File? downloadedFile;
 
-    // _busyDownloading
-
-    final SyncerItem? syncerItem = widget.entry.correspondingICloudFile == null
+    final DateTime? inferredBackupDate =
+        widget.entry.correspondingICloudFile == null
         ? null
         : SyncerItem(
             path: widget.entry.correspondingICloudFile!.relativePath,
             updatedAt: widget.entry.createdDate,
-          );
+          ).inferredBackupDate;
 
-    if (syncerItem != null) {
-      if (_busyDownloading) {
-        return;
+    if (widget.entry.correspondingICloudFile != null) {
+      if (_busyDownloading) return;
+
+      downloadedFile = await _downloadFromICloud();
+      fileToShare = downloadedFile?.path;
+    } else if (widget.entry.existsSync()) {
+      fileToShare = widget.entry.filePath;
+    }
+
+    try {
+      if (!mounted) return;
+
+      if (fileToShare != null) {
+        await context.showFileShareSheet(
+          subject: "sync.export.save.shareTitle".t(context, {
+            "type": widget.entry.fileExt,
+            "date": (inferredBackupDate ?? widget.entry.createdDate)
+                .toMoment()
+                .lll,
+          }),
+          filePath: fileToShare,
+        );
       } else {
-        setState(() {
-          _busyDownloading = true;
-        });
-        try {
-          final File? downloadedFile = await ICloudSyncer().download(
-            syncerItem,
-            onProgress: (progress) {
-              _downloadProgress = progress / 100.0;
+        context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+      }
+    } finally {
+      unawaited(ICloudSyncer.discardDownload(downloadedFile));
+    }
+  }
 
-              if (mounted) {
-                setState(() {});
-              }
-            },
-          );
+  /// Shows an error toast and returns null upon failure
+  Future<File?> _downloadFromICloud() async {
+    final ICloudFile? iCloudFile = widget.entry.correspondingICloudFile;
 
-          fileToShare = downloadedFile?.path;
-        } catch (error) {
-          if (mounted) {
-            context.showErrorToast(error: error);
-          }
-        } finally {
-          _busyDownloading = false;
-          _downloadProgress = 0.0;
+    if (iCloudFile == null || !ICloudSyncer.supported) return null;
+
+    setState(() {
+      _busyDownloading = true;
+    });
+
+    try {
+      return await ICloudSyncer().download(
+        SyncerItem(
+          path: iCloudFile.relativePath,
+          updatedAt: widget.entry.createdDate,
+        ),
+        onProgress: (progress) {
+          _downloadProgress = progress / 100.0;
 
           if (mounted) {
             setState(() {});
           }
-        }
-      }
-    } else if (getFileSize() == null) {
-      fileToShare = widget.entry.filePath;
-    }
-
-    if (!mounted) return;
-
-    if (fileToShare != null) {
-      await context.showFileShareSheet(
-        subject: "sync.export.save.shareTitle".t(context, {
-          "type": widget.entry.fileExt,
-          "date": (syncerItem?.inferredBackupDate ?? widget.entry.createdDate)
-              .toMoment()
-              .lll,
-        }),
-        filePath: fileToShare,
+        },
       );
-    } else {
-      context.showErrorToast(error: "error.sync.fileNotFound".t(context));
+    } catch (error) {
+      if (mounted) {
+        context.showErrorToast(error: error);
+      }
+      return null;
+    } finally {
+      _busyDownloading = false;
+      _downloadProgress = 0.0;
+
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

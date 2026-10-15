@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/transactions.dart";
@@ -148,20 +149,28 @@ class _GroupedTransactionsListViewState
         widget.shouldCombineTransferIfNeeded &&
         UserPreferencesService().combineTransfers;
 
+    // Headers are paired with stable keys so their state survives rebuilds
     final List<Object> flattened = [
-      ?header,
+      if (header != null) (const ValueKey("main-header"), header!),
       if (widget.pendingTransactions != null)
         for (final entry in widget.pendingTransactions!.entries) ...[
-          widget.headerBuilder(true, entry.key, entry.value),
+          (
+            ValueKey(("header", true, entry.key)),
+            widget.headerBuilder(true, entry.key, entry.value),
+          ),
           ...entry.value,
         ],
-      if (widget.pendingTrailing != null) widget.pendingTrailing!,
+      if (widget.pendingTrailing != null)
+        (const ValueKey("pending-trailing"), widget.pendingTrailing!),
       if (widget.pendingDivider != null &&
           widget.pendingTransactions?.isNotEmpty == true &&
           widget.transactions.isNotEmpty)
-        widget.pendingDivider!,
+        (const ValueKey("pending-divider"), widget.pendingDivider!),
       for (final entry in widget.transactions.entries) ...[
-        widget.headerBuilder(false, entry.key, entry.value),
+        (
+          ValueKey(("header", false, entry.key)),
+          widget.headerBuilder(false, entry.key, entry.value),
+        ),
         ...entry.value,
       ],
       Padding(padding: EdgeInsets.only(bottom: 16.0), child: SizedBox.shrink()),
@@ -174,11 +183,11 @@ class _GroupedTransactionsListViewState
     Widget itemBuilder(BuildContext context, int index) =>
         switch (flattened[index]) {
           (Padding widgetWithPadding) => Container(
-            key: ValueKey("padding-$index-${widgetWithPadding.hashCode}"),
+            key: const ValueKey("footer"),
             child: widgetWithPadding,
           ),
-          (Widget header) => Padding(
-            key: ValueKey("header-$index-${header.hashCode}"),
+          (Key key, Widget header) => Padding(
+            key: key,
             padding: index == 0
                 ? (widget.mainHeaderPadding ?? headerPadding)
                 : headerPadding,
@@ -193,7 +202,7 @@ class _GroupedTransactionsListViewState
               combineTransfers: combineTransfers,
               transaction: transaction,
               dismissibleKey: ValueKey(transaction.id),
-              moveToTrashFn: () => transaction.moveToTrashBin(context),
+              moveToTrashFn: () => _moveToTrash(transaction),
               recoverFromTrashFn: () => transaction.recoverFromTrashBin(),
               confirmFn: ([bool confirm = true]) {
                 final bool updateTransactionDate = LocalPreferences()
@@ -286,10 +295,47 @@ class _GroupedTransactionsListViewState
 
     for (var p in priorities) {
       if (p is Transaction) {
-        TransactionsService().updateTransactionDateSync(a, p.transactionDate);
+        _updateDate(a, p.transactionDate);
         return;
       }
     }
+  }
+
+  void _updateDate(Transaction transaction, DateTime date) {
+    final DateTime previousDate = transaction.transactionDate;
+    if (previousDate == date) return;
+
+    TransactionsService().updateTransactionDateSync(transaction, date);
+
+    context.showToast(
+      text: "transaction.dateChanged".t(context, date.toMoment().calendar()),
+      action: (
+        label: "general.undo".t(context),
+        onPressed: () {
+          final Transaction? latest = TransactionsService().getOneSync(
+            transaction.id,
+          );
+          if (latest == null) return;
+          TransactionsService().updateTransactionDateSync(latest, previousDate);
+        },
+      ),
+    );
+  }
+
+  Future<void> _moveToTrash(Transaction transaction) async {
+    final bool moved = await transaction.moveToTrashBin(context);
+    if (!moved || !mounted) return;
+
+    context.showToast(
+      text: "transaction.moveToTrashBin.success".t(context),
+      // Recurring deletions may affect many transactions, so no undo there
+      action: transaction.isRecurring
+          ? null
+          : (
+              label: "general.undo".t(context),
+              onPressed: () => transaction.recoverFromTrashBin(),
+            ),
+    );
   }
 
   void _rerender() {

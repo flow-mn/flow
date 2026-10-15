@@ -3,14 +3,13 @@ import "package:flow/data/money.dart";
 import "package:flow/entity/_base.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/named_enum.dart";
-import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox.dart";
+import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/utils/json/utc_datetime_converter.dart";
 import "package:json_annotation/json_annotation.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
-import "package:moment_dart/moment_dart.dart";
-import "package:objectbox/objectbox.dart";
 import "package:uuid/uuid.dart";
 
 part "account.g.dart";
@@ -85,17 +84,28 @@ class Account implements EntityBase {
   @JsonKey(includeFromJson: false, includeToJson: false)
   Money get balance => balanceAt(DateTime.now());
 
-  Money balanceAt(DateTime anchor) => Money(
-    transactions
-        .where((element) => !element.transactionDate.isFutureAnchored(anchor))
-        .nonPending
-        .nonDeleted
-        .fold<double>(
-          0,
-          (previousValue, element) => previousValue + element.amount,
-        ),
-    currency,
-  );
+  /// Sum of non-pending, non-deleted transactions dated at or before [anchor]
+  Money balanceAt(DateTime anchor) {
+    if (id <= 0) return Money(0, currency);
+
+    final Query<Transaction> query = ObjectBox()
+        .box<Transaction>()
+        .query(
+          Transaction_.account.equals(id) &
+              Transaction_.transactionDate.lessOrEqualDate(anchor) &
+              (Transaction_.isPending.isNull() |
+                  Transaction_.isPending.notEquals(true)) &
+              (Transaction_.isDeleted.isNull() |
+                  Transaction_.isDeleted.notEquals(true)),
+        )
+        .build();
+
+    try {
+      return Money(query.property(Transaction_.amount).sum(), currency);
+    } finally {
+      query.close();
+    }
+  }
 
   Account({
     this.id = 0,

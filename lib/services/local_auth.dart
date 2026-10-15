@@ -9,7 +9,11 @@ final Logger _log = Logger("LocalAuthService");
 class LocalAuthService {
   static late final LocalAuthentication _localAuth;
   static bool _available = false;
+
+  /// Whether the device has a passcode or biometrics set up.
   static bool get available => _available;
+
+  static bool _biometricsAvailable = false;
 
   static LocalAuthService? _instance;
 
@@ -40,6 +44,12 @@ class LocalAuthService {
     _instance = LocalAuthService._internal();
     _available =
         platformSupported &&
+        await _localAuth.isDeviceSupported().catchError((error, stackTrace) {
+          _log.severe("Error while checking device support", error, stackTrace);
+          return false;
+        });
+    _biometricsAvailable =
+        _available &&
         await _localAuth
             .getAvailableBiometrics()
             .then((biometrics) {
@@ -56,11 +66,13 @@ class LocalAuthService {
               return false;
             });
 
-    _log.fine("Local auth service initialized, available: $_available");
+    _log.fine(
+      "Local auth service initialized, available: $_available, biometrics: $_biometricsAvailable",
+    );
   }
 
   Future<bool> authenticate() async {
-    _log.fine("Initiating authentication with biometrics");
+    _log.fine("Initiating authentication");
 
     String localizedReason = "general.unlockToOpen".tr();
 
@@ -72,7 +84,8 @@ class LocalAuthService {
       final bool success = await _localAuth.authenticate(
         localizedReason: localizedReason,
         sensitiveTransaction: true,
-        biometricOnly: true,
+        // Device passcode stays as a fallback, e.g., after biometric lockout
+        biometricOnly: false,
         persistAcrossBackgrounding: true,
       );
 

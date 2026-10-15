@@ -117,9 +117,11 @@ class ICloudSyncer implements Syncer {
 
     final Completer<File?> completer = Completer<File?>();
 
+    String? tempFile;
+
     try {
       final Directory tempDir = await getTemporaryDirectory();
-      final String tempFile = path.join(
+      tempFile = path.join(
         tempDir.path,
         path.basename("${Uuid().v4()}.tmp${path.extension(item.path)}"),
       );
@@ -141,7 +143,7 @@ class ICloudSyncer implements Syncer {
               _log.fine("ICloud download progress: $value");
             },
             onDone: () {
-              completer.complete(File(tempFile));
+              completer.complete(File(tempFile!));
             },
             cancelOnError: true,
             onError: (error) {
@@ -169,6 +171,9 @@ class ICloudSyncer implements Syncer {
       return await completer.future;
     } catch (e) {
       _log.severe("Failed to download iCloud file", e);
+      if (tempFile != null) {
+        await discardDownload(File(tempFile));
+      }
       rethrow;
     } finally {
       unawaited(
@@ -179,6 +184,17 @@ class ICloudSyncer implements Syncer {
           );
         }),
       );
+    }
+  }
+
+  /// Deletes a file returned by [download] once it's no longer needed.
+  static Future<void> discardDownload(File? file) async {
+    if (file == null || !await file.exists()) return;
+
+    try {
+      await file.delete();
+    } catch (e) {
+      _log.warning("Failed to delete downloaded iCloud file", e);
     }
   }
 

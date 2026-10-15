@@ -23,9 +23,12 @@ import "package:moment_dart/moment_dart.dart";
 /// Cash-flow Sankey.
 ///
 /// Income categories flow through a single total hub into spending categories
-/// (plus a balancing "Saved" / "From reserves" node) for the current month.
+/// (plus a balancing "Saved" / "From reserves" node) for the selected range,
+/// this month by default.
 class CashFlowPage extends StatefulWidget {
-  const CashFlowPage({super.key});
+  final TimeRange? initialRange;
+
+  const CashFlowPage({super.key, this.initialRange});
 
   @override
   State<CashFlowPage> createState() => _CashFlowPageState();
@@ -36,7 +39,7 @@ class _CashFlowPageState extends State<CashFlowPage>
   static const int _maxIncomeNodes = 4;
   static const int _maxExpenseNodes = 6;
 
-  TimeRange range = TimeRange.thisMonth();
+  late TimeRange range = widget.initialRange ?? TimeRange.thisMonth();
 
   bool busy = false;
   bool missingRates = false;

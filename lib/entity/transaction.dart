@@ -30,6 +30,7 @@ class Transaction implements EntityBase {
   @Property(type: PropertyType.date)
   DateTime createdDate;
 
+  @Index()
   @Property(type: PropertyType.date)
   DateTime transactionDate;
 
@@ -98,7 +99,7 @@ class Transaction implements EntityBase {
       return "Siri";
     }
 
-    if (extensions.eny != null) {
+    if (_cachedExtensions.eny != null) {
       return "Eny";
     }
 
@@ -106,8 +107,26 @@ class Transaction implements EntityBase {
   }
 
   @Transient()
+  String? _parsedExtra;
+
+  @Transient()
+  ExtensionsWrapper? _parsedExtensions;
+
+  /// Parsed [extra], reparsed only when [extra] changes. Don't mutate.
+  ExtensionsWrapper get _cachedExtensions {
+    if (_parsedExtensions == null || !identical(extra, _parsedExtra)) {
+      _parsedExtensions = ExtensionsWrapper.parse(extra);
+      _parsedExtra = extra;
+    }
+
+    return _parsedExtensions!;
+  }
+
+  /// Returns a copy, assign it back to apply changes
+  @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  ExtensionsWrapper get extensions => ExtensionsWrapper.parse(extra);
+  ExtensionsWrapper get extensions =>
+      ExtensionsWrapper([..._cachedExtensions.data]);
 
   @Transient()
   set extensions(ExtensionsWrapper newValue) {
@@ -130,11 +149,11 @@ class Transaction implements EntityBase {
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  bool get isTransfer => extensions.transfer != null;
+  bool get isTransfer => _cachedExtensions.transfer != null;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
-  bool get isRecurring => extensions.recurring != null;
+  bool get isRecurring => _cachedExtensions.recurring != null;
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)

@@ -50,6 +50,14 @@ class _MarkdownViewState extends State<MarkdownView> {
   }
 
   @override
+  void dispose() {
+    quillController.dispose();
+    focusNode.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return IgnorePointer(
       child: Frame(

@@ -4,7 +4,6 @@ import "dart:io";
 
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/sync/syncer.dart";
 import "package:flow/sync/import.dart";
@@ -43,6 +42,8 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
     checkForBackups();
   }
 
+  bool get hasBackups => backups?.isNotEmpty == true;
+
   @override
   Widget build(BuildContext context) {
     final String iCloudSubtitle = ICloudSyncer.supported
@@ -50,7 +51,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
               ? "setup.onboarding.recoverICloudBackup.description.loading".t(
                   context,
                 )
-              : ((backups?.length ?? 0) > 0
+              : (hasBackups
                     ? ("setup.onboarding.recoverICloudBackup.description".t(
                         context,
                         backups?.firstOrNull?.inferredBackupDate
@@ -73,14 +74,23 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                   child: Column(
                     spacing: 16.0,
                     children: [
+                      ActionCard(
+                        onTap: () => context.push("/setup/currency"),
+                        icon: FlowIconData.icon(Symbols.wand_stars_rounded),
+                        title: "setup.onboarding.freshStart".t(context),
+                        subtitle: "setup.onboarding.freshStart.description".t(
+                          context,
+                        ),
+                      ),
                       if (ICloudSyncer.supported)
                         ActionCard(
-                          onTap: () => showICloudBackupModal(),
+                          onTap: iCloudBackupsLoading || !hasBackups
+                              ? null
+                              : () => showICloudBackupModal(),
                           icon: FlowIconData.icon(SimpleIcons.icloud),
                           title: "setup.onboarding.recoverICloudBackup".t(
                             context,
                           ),
-                          // iCloudBackupsLoading
                           subtitle: iCloudSubtitle,
                         ),
                       ActionCard(
@@ -89,14 +99,6 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
                         title: "setup.onboarding.importExisting".t(context),
                         subtitle: "setup.onboarding.importExisting.description"
                             .t(context),
-                      ),
-                      ActionCard(
-                        onTap: () => context.push("/setup/currency"),
-                        icon: FlowIconData.icon(Symbols.wand_stars_rounded),
-                        title: "setup.onboarding.freshStart".t(context),
-                        subtitle: "setup.onboarding.freshStart.description".t(
-                          context,
-                        ),
                       ),
                     ],
                   ),
@@ -170,6 +172,8 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
   }
 
   void showICloudBackupModal() async {
+    File? file;
+
     try {
       final SyncerItem? result = await showModalBottomSheet(
         context: context,
@@ -185,7 +189,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
         busy = true;
       });
 
-      final File? file = await ICloudSyncer().download(result);
+      file = await ICloudSyncer().download(result);
 
       if (!mounted) return;
 
@@ -198,8 +202,6 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
       if (mounted) {
         importer.goToRelevantPage(context, setupMode: true);
       }
-
-      unawaited(LocalPreferences().completedInitialSetup.set(true));
     } catch (e) {
       if (!mounted) return;
 
@@ -207,6 +209,7 @@ class _SetupOnboardingPageState extends State<SetupOnboardingPage> {
 
       log("Error importing iCloud backup: $e");
     } finally {
+      unawaited(ICloudSyncer.discardDownload(file));
       busy = false;
       if (mounted) {
         setState(() {});

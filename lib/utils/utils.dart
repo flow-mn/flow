@@ -34,9 +34,9 @@ Future<bool> openUrl(
   LaunchMode mode = LaunchMode.externalApplication,
 ]) async {
   try {
-    return await launchUrl(uri);
+    return await launchUrl(uri, mode: mode);
   } catch (e) {
-    _log.warning("Failed to launch uri ($uri)", e);
+    _log.warning("Failed to launch ${uri.scheme} uri", e);
     return false;
   }
 }

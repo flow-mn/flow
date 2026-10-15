@@ -5,6 +5,7 @@ import "package:flow/l10n/named_enum.dart";
 import "package:flow/sync/import/import_csv.dart";
 import "package:flow/utils/utils.dart";
 import "package:flow/widgets/import_wizard/backup_info.dart";
+import "package:flow/widgets/import_wizard/erase_warning.dart";
 import "package:flow/widgets/import_wizard/import_error.dart";
 import "package:flow/widgets/import_wizard/import_progress.dart";
 import "package:flow/widgets/import_wizard/import_success.dart";
@@ -51,6 +52,7 @@ class _CSVImportWizardPageState extends State<CSVImportWizardPage> {
         title: "sync.import.eraseWarning".t(context),
         isDeletionConfirmation: true,
         mainActionLabelOverride: "general.confirm".t(context),
+        child: const EraseWarning(),
       );
 
       if (confirm != true) return;

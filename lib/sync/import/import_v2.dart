@@ -328,8 +328,8 @@ class ImportV2 extends Importer {
 
     final String accountUuid = transaction.accountUuid!;
 
-    // If the `id` is 0, we've already encountered it
-    if (memoizedAccounts[accountUuid] != 0) {
+    // Look up each uuid once; 0 marks a missing one
+    if (memoizedAccounts[accountUuid] == null) {
       final Query<Account> accountQuery = ObjectBox()
           .box<Account>()
           .query(Account_.uuid.equals(accountUuid))
@@ -358,8 +358,8 @@ class ImportV2 extends Importer {
 
     final String categoryUuid = transaction.categoryUuid!;
 
-    // If the `id` is 0, we've already encountered it
-    if (memoizedCategories[categoryUuid] != 0) {
+    // Look up each uuid once; 0 marks a missing one
+    if (memoizedCategories[categoryUuid] == null) {
       final Query<Category> categoryQuery = ObjectBox()
           .box<Category>()
           .query(Category_.uuid.equals(categoryUuid))

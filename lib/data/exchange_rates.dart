@@ -20,7 +20,8 @@ class ExchangeRates {
     return ExchangeRates(
       date: DateTime.parse(json["date"]),
       baseCurrency: baseCurrency,
-      rates: Map<String, num>.from(json[baseCurrency.toLowerCase()]),
+      rates: Map<String, num>.from(json[baseCurrency.toLowerCase()])
+        ..removeWhere((_, rate) => !rate.isFinite || rate <= 0),
     );
   }
 

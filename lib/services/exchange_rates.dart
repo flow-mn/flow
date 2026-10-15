@@ -13,8 +13,14 @@ import "package:moment_dart/moment_dart.dart";
 final Logger _log = Logger("ExchangeRatesService");
 
 class ExchangeRatesService {
+  static const Duration freshnessWindow = Duration(hours: 6);
+  static const Duration requestTimeout = Duration(seconds: 10);
+
   final ValueNotifier<ExchangeRatesSet?> exchangeRatesCache =
       ValueNotifier<ExchangeRatesSet?>(null);
+
+  final Map<String, DateTime> _fetchedAt = {};
+  final Map<String, Future<ExchangeRates?>> _pendingFetches = {};
 
   static ExchangeRatesService? _instance;
 
@@ -61,11 +67,13 @@ class ExchangeRatesService {
     Map<String, dynamic>? jsonResponse;
 
     try {
-      final response = await http.get(
-        Uri.parse(
-          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.min.json",
-        ),
-      );
+      final response = await http
+          .get(
+            Uri.parse(
+              "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@$dateParam/v1/currencies/$normalizedCurrency.min.json",
+            ),
+          )
+          .timeout(requestTimeout);
       if (response.statusCode != 200) {
         throw Exception("Unexpected status code: ${response.statusCode}");
       }
@@ -80,11 +88,13 @@ class ExchangeRatesService {
 
     if (jsonResponse == null) {
       try {
-        final response = await http.get(
-          Uri.parse(
-            "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.min.json",
-          ),
-        );
+        final response = await http
+            .get(
+              Uri.parse(
+                "https://$dateParam.currency-api.pages.dev/v1/currencies/$normalizedCurrency.min.json",
+              ),
+            )
+            .timeout(requestTimeout);
         if (response.statusCode != 200) {
           throw Exception("Unexpected status code: ${response.statusCode}");
         }
@@ -105,11 +115,42 @@ class ExchangeRatesService {
     final ExchangeRates exchangeRates = ExchangeRates.fromJson(jsonResponse);
 
     updateCache(baseCurrency, exchangeRates);
+    if (dateTime == null) {
+      _fetchedAt[baseCurrency] = DateTime.now();
+    }
 
     return exchangeRates;
   }
 
+  /// Uses cached latest rates while fresh, and dedupes concurrent requests
   Future<ExchangeRates?> tryFetchRates(
+    String baseCurrency, [
+    DateTime? dateTime,
+  ]) {
+    if (dateTime != null) return _tryFetchRates(baseCurrency, dateTime);
+
+    if (_isFresh(baseCurrency)) {
+      return Future.value(exchangeRatesCache.value?.rates[baseCurrency]);
+    }
+
+    return _pendingFetches[baseCurrency] ??= _tryFetchRates(
+      baseCurrency,
+    ).whenComplete(() => _pendingFetches.remove(baseCurrency));
+  }
+
+  bool _isFresh(String baseCurrency) {
+    final DateTime? fetchedAt = _fetchedAt[baseCurrency];
+    if (fetchedAt != null &&
+        DateTime.now().difference(fetchedAt) < freshnessWindow) {
+      return true;
+    }
+
+    // Rates are published daily, so nothing newer than today's exists
+    final ExchangeRates? cached = exchangeRatesCache.value?.rates[baseCurrency];
+    return cached != null && !cached.date.isBefore(Moment.startOfToday());
+  }
+
+  Future<ExchangeRates?> _tryFetchRates(
     String baseCurrency, [
     DateTime? dateTime,
   ]) async {
@@ -134,13 +175,10 @@ class ExchangeRatesService {
   }
 
   void updateCache(String baseCurrency, ExchangeRates exchangeRates) {
-    ExchangeRatesSet? current = exchangeRatesCache.value;
-
-    if (current == null) {
-      current = ExchangeRatesSet({baseCurrency: exchangeRates});
-    } else {
-      current.set(baseCurrency, exchangeRates);
-    }
+    // A new instance, so [exchangeRatesCache] listeners get notified
+    final ExchangeRatesSet current = ExchangeRatesSet({
+      ...?exchangeRatesCache.value?.rates,
+    })..set(baseCurrency, exchangeRates);
 
     exchangeRatesCache.value = current;
 
@@ -152,6 +190,7 @@ class ExchangeRatesService {
   }
 
   void debugClearCache() {
+    _fetchedAt.clear();
     LocalPreferences().exchangeRatesCache.remove();
     exchangeRatesCache.value = null;
   }

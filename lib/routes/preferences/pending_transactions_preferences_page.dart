@@ -11,9 +11,12 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flow/widgets/schdeuled_notification_permission_builder.dart";
-import "package:flow/widgets/schdeuled_notification_permission_missing_reminder.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:permission_handler/permission_handler.dart";
+
+final Logger _log = Logger("PendingTransactionPreferencesPage");
 
 class PendingTransactionPreferencesPage extends StatefulWidget {
   const PendingTransactionPreferencesPage({super.key});
@@ -25,6 +28,9 @@ class PendingTransactionPreferencesPage extends StatefulWidget {
 
 class _PendingTransactionPreferencesPageState
     extends State<PendingTransactionPreferencesPage> {
+  /// [SchdeuledNotificationPermissionBuilder] only re-checks upon resume
+  bool _permissionsGranted = false;
+
   @override
   void dispose() {
     unawaited(TransactionsService().synchronizeNotifications());
@@ -50,6 +56,9 @@ class _PendingTransactionPreferencesPageState
 
     return SchdeuledNotificationPermissionBuilder(
       builder: (context, permissions, _) {
+        final bool hasPermissions =
+            permissions.hasAllPermissions || _permissionsGranted;
+
         return Scaffold(
           appBar: AppBar(
             title: Text("preferences.transactions.pending".t(context)),
@@ -125,22 +134,16 @@ class _PendingTransactionPreferencesPageState
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: .start,
                       children: [
-                        permissions.hasAllPermissions
-                            ? CheckboxListTile(
-                                title: Text(
-                                  "preferences.transactions.pending.notify".t(
-                                    context,
-                                  ),
-                                ),
-                                enabled: permissions.hasNotificationPermission,
-                                value:
-                                    permissions.hasNotificationPermission &&
-                                    notify,
-                                onChanged: updateNotify,
-                              )
-                            : SchdeuledNotificationPermissionMissingReminder(
-                                permissions: permissions,
-                              ),
+                        CheckboxListTile(
+                          title: Text(
+                            "preferences.transactions.pending.notify".t(
+                              context,
+                            ),
+                          ),
+                          enabled: NotificationsService.schedulingSupported,
+                          value: hasPermissions && notify,
+                          onChanged: updateNotify,
+                        ),
                         if (!NotificationsService.schedulingSupported) ...[
                           const SizedBox(height: 8.0),
                           Frame(
@@ -155,7 +158,7 @@ class _PendingTransactionPreferencesPageState
                         const SizedBox(height: 16.0),
                         if (NotificationsService.schedulingSupported &&
                             notify &&
-                            permissions.hasNotificationPermission) ...[
+                            hasPermissions) ...[
                           ListHeader(
                             "preferences.transactions.pending.notify.earlyReminder"
                                 .t(context),
@@ -266,6 +269,19 @@ class _PendingTransactionPreferencesPageState
 
   void updateNotify(bool? newValue) async {
     if (newValue == null) return;
+
+    if (newValue) {
+      _permissionsGranted = await NotificationsService()
+          .requestAndCheckPermissions();
+
+      if (!_permissionsGranted) {
+        await openAppSettings().catchError((error) {
+          _log.warning("Failed to open app settings", error);
+          return false;
+        });
+        return;
+      }
+    }
 
     await LocalPreferences().pendingTransactions.notify.set(newValue);
 

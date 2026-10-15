@@ -43,7 +43,8 @@ class SyncService {
 
   SyncService._internal() {
     triggerAutoBackup().then((_) {
-      if (ICloudSyncer.supported) {
+      if (ICloudSyncer.supported &&
+          UserPreferencesService().enableICloudSync) {
         Future.delayed(const Duration(seconds: 2)).then((_) {
           ICloudSyncer().purge(
             keepCount: UserPreferencesService().iCloudBackupsToKeep ?? 5,
@@ -126,6 +127,8 @@ class SyncService {
     BackupEntry entry, {
     Function(double)? onProgress,
   }) async {
+    if (!UserPreferencesService().enableICloudSync) return false;
+
     if (ICloudSyncer.supported) {
       final bool result = await ICloudSyncer().put(
         entry,

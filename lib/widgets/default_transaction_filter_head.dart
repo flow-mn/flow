@@ -61,6 +61,11 @@ class _DefaultTransactionsFilterHeadState
 
   late bool showCurrencyFilterChip;
 
+  late final Stream<List<TransactionFilterPreset>> _presets =
+      transactionFilterPresetsQb()
+          .watch(triggerImmediately: true)
+          .map((event) => event.find());
+
   TransactionFilter get filter => _filter;
   set filter(TransactionFilter value) {
     _filter = value;
@@ -89,7 +94,7 @@ class _DefaultTransactionsFilterHeadState
 
   @override
   void dispose() {
-    TransitiveLocalPreferences().usesNonPrimaryCurrency.removeListener(
+    TransitiveLocalPreferences().usesMultipleCurrencies.removeListener(
       _updateShowCurrencyFilterChip,
     );
     super.dispose();
@@ -101,9 +106,7 @@ class _DefaultTransactionsFilterHeadState
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<TransactionFilterPreset>>(
-      stream: transactionFilterPresetsQb()
-          .watch(triggerImmediately: true)
-          .map((event) => event.find()),
+      stream: _presets,
       builder: (context, transactionPresetsSnapshot) {
         {
           final int differentFieldCount = widget.defaultFilter

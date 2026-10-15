@@ -20,6 +20,9 @@ class NumpadButton extends StatelessWidget {
   /// Ideally an [Icon] or [Text] widget with single character text
   final Widget child;
 
+  /// Read by screen readers, needed when [child] is an [Icon]
+  final String? semanticLabel;
+
   const NumpadButton({
     super.key,
     required this.child,
@@ -30,6 +33,7 @@ class NumpadButton extends StatelessWidget {
     this.borderRadiusSize = 16.0,
     this.crossAxisCellCount = 1,
     this.mainAxisCellCount = 1,
+    this.semanticLabel,
   });
 
   @override
@@ -49,7 +53,10 @@ class NumpadButton extends StatelessWidget {
           onTap: onTap == null ? null : onTapHandler,
           onDoubleTap: onDoubleTap,
           onLongPress: onLongPress,
-          child: Center(child: child),
+          child: Semantics(
+            label: semanticLabel,
+            child: Center(child: child),
+          ),
         ),
       ),
     );

@@ -101,6 +101,7 @@ class FlowIcon extends StatelessWidget {
           File(join(ObjectBox.appDataDirectory, image.imagePath)),
           width: size,
           height: size,
+          cacheWidth: (size * MediaQuery.devicePixelRatioOf(context)).ceil(),
           errorBuilder: (context, error, stackTrace) => Icon(
             Symbols.error_rounded,
             color: context.flowColors.expense,

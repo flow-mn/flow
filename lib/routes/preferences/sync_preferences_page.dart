@@ -1,6 +1,8 @@
 // import "package:flow/constants.dart";
 import "package:flow/constants.dart";
+import "package:flow/entity/user_preferences.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/prefs/transitive.dart";
 import "package:flow/routes/preferences/sections/icloud.dart";
 import "package:flow/services/sync/icloud_syncer.dart";
 import "package:flow/services/user_preferences.dart";
@@ -8,6 +10,8 @@ import "package:flow/widgets/general/frame.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/general/list_header.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
 class SyncPreferencesPage extends StatefulWidget {
@@ -29,6 +33,10 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
         !options.contains(autobackupIntervalInHours)) {
       options.add(autobackupIntervalInHours);
     }
+
+    final DateTime? lastAutoBackupRanAt = TransitiveLocalPreferences()
+        .lastAutoBackupRanAt
+        .get();
 
     return Scaffold(
       appBar: AppBar(title: Text("preferences.sync".t(context))),
@@ -80,6 +88,40 @@ class _SyncPreferencesPageState extends State<SyncPreferencesPage> {
                     ),
                   ),
                 ),
+              ),
+              if (autobackupIntervalInHours != null)
+                ValueListenableBuilder<UserPreferences>(
+                  valueListenable: UserPreferencesService().valueNotifier,
+                  builder: (context, userPreferences, _) =>
+                      (ICloudSyncer.supported &&
+                          userPreferences.enableICloudSync)
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Frame(
+                            child: InfoText(
+                              icon: Symbols.warning_rounded,
+                              child: Text(
+                                "sync.export.onDeviceWarning".t(context),
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+              const SizedBox(height: 8.0),
+              ListTile(
+                leading: const Icon(Symbols.history_rounded),
+                title: Text("sync.export.history".t(context)),
+                subtitle: lastAutoBackupRanAt == null
+                    ? null
+                    : Text(
+                        "preferences.sync.autoBackup.lastBackup".t(
+                          context,
+                          lastAutoBackupRanAt.toMoment().lll,
+                        ),
+                      ),
+                trailing: const Icon(Symbols.chevron_right_rounded),
+                onTap: () => context.push("/export/history"),
               ),
               if (ICloudSyncer.supported || flowDebugMode) ...[
                 const SizedBox(height: 16.0),

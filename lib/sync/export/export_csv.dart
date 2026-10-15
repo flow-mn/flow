@@ -38,16 +38,16 @@ Future<String> generateCSVContent() async {
           .map(
             (e) => [
               e.uuid,
-              e.title ?? "",
-              e.description ?? "",
+              _escapeFormula(e.title ?? ""),
+              _escapeFormula(e.description ?? ""),
               e.amount.toStringAsFixed(
                 numberOfDecimalsToKeep[e.currency] ??=
                     NumberFormat.currency(name: e.currency).decimalDigits ?? 2,
               ),
               e.currency,
-              e.account.target?.name,
+              _escapeFormula(e.account.target?.name),
               e.account.target?.uuid,
-              e.category.target?.name,
+              _escapeFormula(e.category.target?.name),
               e.category.target?.uuid,
               e.type.localizedName,
               e.transactionSubtype?.localizedName,
@@ -67,4 +67,13 @@ Future<String> generateCSVContent() async {
     convertNullTo: "",
     eol: "\n",
   );
+}
+
+/// Keeps spreadsheet apps from evaluating text cells as formulas
+String? _escapeFormula(String? value) {
+  if (value == null || value.isEmpty) return value;
+
+  return const ["=", "+", "-", "@", "\t", "\r"].contains(value[0])
+      ? "'$value"
+      : value;
 }

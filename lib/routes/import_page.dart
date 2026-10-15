@@ -3,6 +3,7 @@ import "dart:io";
 import "package:cross_file/cross_file.dart";
 import "package:flow/constants.dart";
 import "package:flow/l10n/extensions.dart";
+import "package:flow/sync/exception.dart";
 import "package:flow/sync/import.dart";
 import "package:flow/sync/import/base.dart";
 import "package:flow/utils/extensions/importer.dart";
@@ -62,6 +63,7 @@ class _ImportPageState extends State<ImportPage> {
                       ),
                       trailing: Icon(Symbols.chevron_right_rounded),
                       title: Text("Ivy Wallet (CSV)"),
+                      subtitle: Text("sync.import.replacesAllData".t(context)),
                       onTap: () => initiateImport(
                         externalFormat: ImportExternalFormat.ivyWallet,
                       ),
@@ -104,6 +106,13 @@ class _ImportPageState extends State<ImportPage> {
             setupMode: widget.setupMode ?? false,
           );
         }
+      }
+    } on ImportException catch (e) {
+      if (e.l10nKey == "error.input.noFilePicked") return;
+
+      _log.severe("Importer error", e);
+      if (mounted) {
+        context.showErrorToast(error: e);
       }
     } catch (e, stackTrace) {
       _log.severe("Importer error", e, stackTrace);

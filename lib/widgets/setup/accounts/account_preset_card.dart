@@ -1,4 +1,5 @@
 import "package:flow/entity/account.dart";
+import "package:flow/l10n/extensions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/surface.dart";
@@ -62,6 +63,13 @@ class AccountPresetCard extends StatelessWidget {
                     ],
                   ],
                 ),
+                if (account.excludeFromTotalBalance) ...[
+                  const SizedBox(height: 8.0),
+                  Text(
+                    "setup.accounts.excludedFromTotalBalance".t(context),
+                    style: context.textTheme.bodySmall?.semi(context),
+                  ),
+                ],
               ],
             ),
           ),

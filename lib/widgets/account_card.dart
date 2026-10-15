@@ -1,9 +1,14 @@
+import "dart:async";
+
+import "package:flow/data/money.dart";
 import "package:flow/data/multi_currency_flow.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/objectbox/objectbox.g.dart";
+import "package:flow/services/transactions.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/optional.dart";
 import "package:flow/widgets/general/flow_icon.dart";
@@ -16,7 +21,7 @@ import "package:go_router/go_router.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
 import "package:moment_dart/moment_dart.dart";
 
-class AccountCard extends StatelessWidget {
+class AccountCard extends StatefulWidget {
   final Account account;
 
   final Optional<VoidCallback>? onTapOverride;
@@ -40,27 +45,91 @@ class AccountCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<AccountCard> createState() => _AccountCardState();
+}
+
+class _AccountCardState extends State<AccountCard> {
+  static const Duration _transactionRefreshDebounce = Duration(
+    milliseconds: 300,
+  );
+
+  Account get account => widget.account;
+
+  late Money _balance;
+  MultiCurrencyFlow _flow = MultiCurrencyFlow();
+
+  Timer? _transactionDebounce;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _computeStats();
+    TransactionsService().addListener(_onTransactionsChanged);
+  }
+
+  @override
+  void didUpdateWidget(AccountCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!identical(oldWidget.account, widget.account) ||
+        oldWidget.excludeTransfersInTotal != widget.excludeTransfersInTotal) {
+      _computeStats();
+    }
+  }
+
+  @override
+  void dispose() {
+    _transactionDebounce?.cancel();
+    TransactionsService().removeListener(_onTransactionsChanged);
+    super.dispose();
+  }
+
+  void _onTransactionsChanged() {
+    _transactionDebounce?.cancel();
+    _transactionDebounce = Timer(_transactionRefreshDebounce, () {
+      if (!mounted) return;
+      setState(_computeStats);
+    });
+  }
+
+  void _computeStats() {
+    _balance = account.balance;
+
+    if (account.archived || account.id <= 0) {
+      _flow = MultiCurrencyFlow();
+      return;
+    }
+
     final DateTime now = DateTime.now();
 
-    final Iterable<Transaction> transactions = account
-        .transactions
-        .nonPending
-        .nonDeleted
-        .where((x) => x.transactionDate.isAtSameMonthAs(now));
+    final List<Transaction> transactions = TransactionsService()
+        .findSettledBetweenSync(
+          Transaction_.account.equals(account.id),
+          now.startOfMonth(),
+          now.endOfMonth(),
+        );
 
-    final MultiCurrencyFlow flow = MultiCurrencyFlow()
+    _flow = MultiCurrencyFlow()
       ..addAll(
-        (excludeTransfersInTotal ? transactions.nonTransfers : transactions)
+        (widget.excludeTransfersInTotal
+                ? transactions.nonTransfers
+                : transactions)
             .map((transaction) => transaction.money),
       );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Optional<VoidCallback>? onTapOverride = widget.onTapOverride;
+    final BorderRadius borderRadius = widget.borderRadius;
 
     final child = Surface(
       shape: RoundedRectangleBorder(borderRadius: borderRadius),
       builder: (context) => InkWell(
         onTap: onTapOverride == null
             ? () => context.push("/account/${account.id}")
-            : onTapOverride!.value,
+            : onTapOverride.value,
         borderRadius: borderRadius,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -83,7 +152,7 @@ class AccountCard extends StatelessWidget {
                       RichText(
                         text: TextSpan(
                           children: [
-                            if (primary)
+                            if (widget.primary)
                               WidgetSpan(
                                 alignment: .middle,
                                 child: Padding(
@@ -109,7 +178,7 @@ class AccountCard extends StatelessWidget {
                       ),
 
                       MoneyText(
-                        account.balance,
+                        _balance,
                         style: context.textTheme.displaySmall,
                       ),
                     ],
@@ -142,13 +211,13 @@ class AccountCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: MoneyText(
-                        flow.getIncomeByCurrency(account.currency),
+                        _flow.getIncomeByCurrency(account.currency),
                         style: context.textTheme.bodyLarge,
                       ),
                     ),
                     Expanded(
                       child: MoneyText(
-                        flow.getExpenseByCurrency(account.currency),
+                        _flow.getExpenseByCurrency(account.currency),
                         style: context.textTheme.bodyLarge,
                       ),
                     ),
@@ -161,7 +230,7 @@ class AccountCard extends StatelessWidget {
       ),
     );
 
-    if (!useCupertinoContextMenu) return child;
+    if (!widget.useCupertinoContextMenu) return child;
 
     return CupertinoContextMenu.builder(
       builder: (context, animation) {

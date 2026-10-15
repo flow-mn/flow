@@ -49,6 +49,33 @@ class TransactionsService {
   final Condition<Transaction> nonDeletedCondition =
       Transaction_.isDeleted.equals(false) | Transaction_.isDeleted.isNull();
 
+  final Condition<Transaction> nonPendingCondition =
+      Transaction_.isPending.notEquals(true) | Transaction_.isPending.isNull();
+
+  /// Non-pending, non-deleted transactions matching [condition], dated
+  /// between [from] and [to] (inclusive)
+  List<Transaction> findSettledBetweenSync(
+    Condition<Transaction> condition,
+    DateTime from,
+    DateTime to,
+  ) {
+    final Query<Transaction> query = ObjectBox()
+        .box<Transaction>()
+        .query(
+          condition &
+              nonPendingCondition &
+              nonDeletedCondition &
+              Transaction_.transactionDate.betweenDate(from, to),
+        )
+        .build();
+
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
+  }
+
   QueryBuilder<Transaction> pendingTransactionsQb({
     DateTime? anchor,
     TimeRange? range,
@@ -222,9 +249,11 @@ class TransactionsService {
   int countMany(TransactionFilter filter) {
     final Query<Transaction> condition = filter.queryBuilder().build();
 
-    final int count = condition.count();
-
-    return count;
+    try {
+      return condition.count();
+    } finally {
+      condition.close();
+    }
   }
 
   Future<int> upsertOne(Transaction updateTransaction) async {
@@ -436,13 +465,21 @@ class TransactionsService {
   }
 
   Future<void> synchronizeNotifications() async {
-    final Query<Transaction> qb = pendingTransactionsQb().build();
-    final List<Transaction> pendingTransactions = qb.find();
-    qb.close();
-
     await NotificationsService().clearByType(
       FlowNotificationPayloadItemType.transaction,
     );
+
+    if (!PendingTransactionsLocalPreferences().notify.get()) return;
+
+    if (!NotificationsService().available ||
+        await NotificationsService().hasPermissions() != true) {
+      _log.fine("Skipping planned transaction reminders, no permission");
+      return;
+    }
+
+    final Query<Transaction> qb = pendingTransactionsQb().build();
+    final List<Transaction> pendingTransactions = qb.find();
+    qb.close();
 
     final Duration earlyReminder = Duration(
       seconds:
