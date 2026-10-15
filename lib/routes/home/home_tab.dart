@@ -246,7 +246,8 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
 
   SingleCurrencyFlow _getCombinedFlow(ExchangeRates? rates) {
     if (_combinedFlow case final SingleCurrencyFlow flow
-        when identical(rates, _combinedFlowRates)) {
+        when identical(rates, _combinedFlowRates) &&
+            flow.currency == UserPreferencesService().primaryCurrency) {
       return flow;
     }
 
