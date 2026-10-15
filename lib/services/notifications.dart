@@ -84,8 +84,7 @@ class NotificationsService {
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings("@mipmap/ic_launcher");
 
-      // Requesting here blocks `initialize` until the prompt is answered,
-      // forever on macOS if ignored. Requested separately below instead.
+      // Requesting here blocks `initialize` until the prompt is answered
       final DarwinInitializationSettings initializationSettingsDarwin =
           DarwinInitializationSettings(
             requestAlertPermission: false,
@@ -120,8 +119,7 @@ class NotificationsService {
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
-      // Darwin resolves `initialize` with the permission result, which is
-      // false when nothing is requested.
+      // Darwin's `initialize` returns the permission result, false here
       if (Platform.isIOS || Platform.isMacOS) {
         _available = true;
       }
@@ -489,9 +487,7 @@ class NotificationsService {
     return await hasPermissions() == true;
   }
 
-  /// Asks once, so the prompt shows up in context rather than at startup.
-  ///
-  /// Skips the exact alarms request on Android, as it opens system settings.
+  /// Asks only once, skipping exact alarms as those open system settings
   Future<void> requestPermissionsIfNeverAsked() async {
     if (!schedulingSupported || !available) return;
 

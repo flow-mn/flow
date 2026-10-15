@@ -122,8 +122,7 @@ class ExchangeRatesService {
     return exchangeRates;
   }
 
-  /// Skips the network when the cached latest rates are still fresh, and
-  /// shares one request between concurrent callers.
+  /// Uses cached latest rates while fresh, and dedupes concurrent requests
   Future<ExchangeRates?> tryFetchRates(
     String baseCurrency, [
     DateTime? dateTime,

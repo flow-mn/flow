@@ -124,8 +124,7 @@ class _TransactionPageState extends State<TransactionPage> {
   /// Absolute amount in [_foreignCurrency]
   double _foreignAmount = 0.0;
 
-  /// Whether [_amount] was entered in a foreign currency that turned out to
-  /// be the selected account's currency
+  /// Foreign currency turned out to be the selected account's currency
   bool _foreignCurrencyResolved = false;
 
   bool get hasForeignCurrency => _foreignCurrency != null && !isTransfer;
@@ -176,7 +175,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   DateTime? _initialTransactionDate;
 
-  /// Keyed by account id and anchor, so it's only queried when either changes
   final Map<(int, DateTime), Money> _balanceCache = {};
 
   Money _balanceAt(Account account, DateTime anchor) => _balanceCache
@@ -913,10 +911,7 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
-  /// Converts [_foreignAmount] into the selected account's currency, asking
-  /// the user when there are no exchange rates for it.
-  ///
-  /// Returns `false` if the user dismissed the prompt.
+  /// Returns `false` if the user dismissed the manual conversion
   Future<bool> _convertForeignAmount() async {
     if (_foreignCurrency == null) return true;
 

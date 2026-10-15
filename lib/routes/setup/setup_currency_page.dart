@@ -133,8 +133,7 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
     });
   }
 
-  /// Languages spoken in many countries, whose default currency says little
-  /// about the user's (e.g., en_MN would otherwise default to USD)
+  /// Spoken in many regions, so e.g., en_MN shouldn't default to USD
   static const Set<String> _multiRegionLanguages = {
     "ar",
     "de",

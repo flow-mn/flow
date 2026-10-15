@@ -2,13 +2,13 @@ import "dart:async";
 import "dart:convert";
 import "dart:math";
 
+import "package:flow/data/money.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/data/transactions_filter/time_range.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/entity/category.dart";
 import "package:flow/entity/recurring_transaction.dart";
 import "package:flow/entity/transaction.dart";
-import "package:flow/data/money.dart";
 import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction/extensions/default/recurring.dart";
 import "package:flow/entity/transaction_tag.dart";

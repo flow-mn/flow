@@ -51,9 +51,7 @@ Future<List<XFile>?> pickFiles() async {
   return result.files.map((platformFile) => platformFile.xFile).toList();
 }
 
-/// Removes copies left by earlier picks, which callers consume right away.
-///
-/// Android only; on iOS the plugin wipes the whole temporary directory.
+/// Android only, on iOS the plugin clears the whole temp directory itself
 Future<void> _clearPickerCache() async {
   if (!Platform.isAndroid) return;
 

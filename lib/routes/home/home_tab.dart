@@ -183,8 +183,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
         });
   }
 
-  /// Filters, partitions and groups the loaded transactions, so [build]
-  /// (which also runs on every selection tap) doesn't redo it.
+  /// Kept out of [build], which also runs on every selection tap
   void _recomputeTransactions() {
     final DateTime now = Moment.now().startOfNextMinute();
     _now = now;
@@ -443,8 +442,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     final DateTime newNow = Moment.now().startOfNextMinute();
     final bool dayChanged = newDateKey != dateKey;
 
-    // Rebuild only when something time-dependent changed; query streams
-    // are re-opened only on day rollover since they don't depend on `now`.
+    // Query streams don't depend on `now`, only re-open them on day rollover
     if (!dayChanged &&
         oldDefaultFilter == defaultFilter &&
         !_anyTransactionBetween(_now, newNow)) {
@@ -461,8 +459,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  /// Whether a loaded transaction falls in (`from`, `to`], i.e. it moved
-  /// from upcoming to past.
+  /// Whether a loaded transaction moved from upcoming to past
   bool _anyTransactionBetween(DateTime from, DateTime to) {
     if (!to.isAfter(from)) return false;
 

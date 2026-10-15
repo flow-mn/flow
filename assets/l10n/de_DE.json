@@ -533,7 +533,7 @@
   "select.timeRange.thisYear": "Dieses Jahr",
   "setup.accounts.addAccount": "Neues Konto hinzufügen",
   "setup.accounts.description": "Erstelle neue Konten oder füge sie aus den Vorlagen hinzu. Du kannst das später im Reiter „Konten“ ändern.",
-  "setup.accounts.excludedFromTotalBalance": "Nicht im Gesamtsaldo enthalten",
+  "setup.accounts.excludedFromTotalBalance": "Nicht im Gesamt-Kontostand enthalten",
   "setup.accounts.preset.cash": "Bargeld",
   "setup.accounts.preset.main": "Hauptkonto",
   "setup.accounts.preset.savings": "Sparkonto",

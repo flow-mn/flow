@@ -122,8 +122,7 @@ class Transaction implements EntityBase {
     return _parsedExtensions!;
   }
 
-  /// Returns a copy, so mutating it won't affect this transaction until it's
-  /// assigned back.
+  /// Returns a copy, assign it back to apply changes
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)
   ExtensionsWrapper get extensions =>

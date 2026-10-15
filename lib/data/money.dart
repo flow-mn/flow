@@ -204,8 +204,7 @@ class Money {
     ).format(amountToFormat);
   }
 
-  /// Keyed by every input of the format, including the locale and the ICU
-  /// pattern, so changing either of those simply misses the cache.
+  /// Keyed by locale too, so locale changes miss the cache
   static final Map<(String?, String, bool, bool, String?, int?), NumberFormat>
   _formatters = {};
 

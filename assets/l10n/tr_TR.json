@@ -267,7 +267,7 @@
   "fileAttachment.add": "Dosya ekle",
   "fileAttachment.cleanupHangingFiles": "Kullanılmayan dosyaları sil",
   "fileAttachment.cleanupHangingFiles.description": "Bu işlem, herhangi bir işlem kaydıyla ilişkilendirilmemiş tüm dosya eklerini silecektir. İlişkili işlem kaydı çöp kutusundaysa dosyalar silinmez. Bu işlem geri alınamaz.",
-  "fileAttachment.cleanupHangingFiles.success": "Silinen kullanılmayan dosya: {count}",
+  "fileAttachment.cleanupHangingFiles.success": "Kullanılmayan dosyalar silindi: {count}",
   "fileAttachment.delete": "Dosyayı sil",
   "fileAttachment.delete.description": "Bu işlem Flow'da saklanan kopyayı siler; orijinal dosya etkilenmez. Orijinal dosyayı daha sonra yeniden ekleyebilirsiniz, ancak bu işlemi geri alamazsınız.",
   "fileAttachment.delete.success": "Dosya başarıyla silindi",

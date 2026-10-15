@@ -297,8 +297,7 @@ class TransitiveLocalPreferences {
     }
   }
 
-  /// Rebuilds category, account, and tag frecency from the last 180 days in
-  /// a single worker isolate query.
+  /// Rebuilds category, account, and tag frecency from the last 180 days
   Future<void> _reevaluateFrecency() async {
     try {
       final DateTime now = DateTime.now();
@@ -385,8 +384,7 @@ class TransitiveLocalPreferences {
     await setFrecencyData(type, uuid, value);
   }
 
-  /// Runs in a worker isolate. Counts non-deleted transactions in [range] per
-  /// frecency type and uuid.
+  /// Runs in a worker isolate
   static Map<String, Map<String, FrecencyData>> _tallyUsage(
     Store store,
     (DateTime, DateTime) range,

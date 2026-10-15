@@ -533,7 +533,7 @@
   "select.timeRange.thisYear": "Cette année",
   "setup.accounts.addAccount": "Ajouter un nouveau compte",
   "setup.accounts.description": "Créez de nouveaux comptes et/ou ajoutez-les à partir des préréglages. Vous pouvez changer cela plus tard dans l'onglet \"Comptes\".",
-  "setup.accounts.excludedFromTotalBalance": "Non compté dans le solde total",
+  "setup.accounts.excludedFromTotalBalance": "Non inclus dans le solde total",
   "setup.accounts.preset.cash": "Espèces",
   "setup.accounts.preset.main": "Principal",
   "setup.accounts.preset.savings": "Épargne",

@@ -125,8 +125,7 @@ class _IntegrateEnyPageState extends State<IntegrateEnyPage> {
     }
   }
 
-  /// [EnyService.connect] hides the cause, so probe again to tell a network
-  /// failure apart from bad credentials.
+  /// [EnyService.connect] hides the failure cause, so probe again
   Future<bool> _isNetworkFailure() async {
     try {
       await EnyService.fetchRemainingCredits(widget.apiKey);

@@ -117,8 +117,7 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
   startupLog.fine("Updating account order list");
 
-  // Awaited so launch details are ready for HomePage. Never waits on the
-  // permission prompt, and times out as a safety net.
+  // Awaited so launch details are ready for HomePage
   await initializeNotifications();
 
   startupLog.fine("Clearing stale transactions from trash bin");
