@@ -1,5 +1,50 @@
 # Changelog
 
+## 0.26.0
+
+### Features
+
+* Transactions can now be in any currency, regardless of the account's
+  currency. Tap the currency symbol when entering an amount. Flow converts it
+  using the latest rates, or asks you for the charged amount, closes [#501](https://github.com/flow-mn/flow/issues/501)
+* Backups can now be restored right from Backup history
+* Moving a transaction to the trash bin, or dragging it to another date, now
+  shows an undo button
+* Setup now suggests a primary currency based on your region
+
+### Changes
+
+* Calculator now uses exact decimal math, and rounds results to the
+  currency's decimals, closes [#768](https://github.com/flow-mn/flow/issues/768)
+* Notification permission is now asked when you turn on a reminder, or save
+  your first planned transaction, instead of at startup
+* App lock now always accepts your device passcode as a fallback
+* App lock now hides Flow in the app switcher
+* Notifications no longer show their content on the lock screen
+* Home screen widgets now hide amounts in privacy mode, or when app lock is on
+* Automatic backups now keep the last 5 backups
+* Backup preferences now show when the last backup was made, and that
+  automatic backups stay on your device
+* Import now shows the backup's date, and what will be replaced before
+  continuing
+* Account page now shows the balance as its headline
+* Stats now warn you when exchange rates are missing, and hide Map and Budget
+  until you use them
+* Name is now optional in setup
+* Faster startup, and faster saving with many transactions
+* Improved screen reader labels, contrast, and right-to-left layouts
+
+### Fixes
+
+* Fixed automatic backups being uploaded to iCloud while iCloud sync is off
+* Fixed backup files being able to write outside Flow's folder when imported
+* Fixed cancelling account deletion closing the edit page
+* Fixed opening a deleted transaction crashing the page
+* Fixed cross-currency transfers showing rates like "1 ₮ = $0.00"
+* Fixed transactions with 0 amount being saved without asking
+* Fixed Wrapped showing amounts in privacy mode
+* Fixed a late GPS fix overwriting the location you picked
+
 ## 0.25.0
 
 ### Features
