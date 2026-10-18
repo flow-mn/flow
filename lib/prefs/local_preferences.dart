@@ -237,8 +237,15 @@ class LocalPreferences {
   static LocalPreferences? _instance;
 
   static Future<void> initialize() async {
+    final withCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
+    );
+
     try {
-      await _migrateFromLegacy("migrate-d6bf17de-7a59-493c-aa79-30bcd848021e");
+      await _migrateFromLegacy(
+        withCache,
+        "migrate-d6bf17de-7a59-493c-aa79-30bcd848021e",
+      );
     } catch (e) {
       startupLog.severe(
         "Failed to migrate from legacy shared preferences, this results in data loss of user preferences set for the device",
@@ -246,24 +253,18 @@ class LocalPreferences {
       );
     }
 
-    final withCache = await SharedPreferencesWithCache.create(
-      cacheOptions: SharedPreferencesWithCacheOptions(),
-    );
-
     _instance ??= LocalPreferences._internal(withCache);
   }
 
-  static Future<void> _migrateFromLegacy(String migrationCompletedKey) async {
-    final SharedPreferences legacy = await SharedPreferences.getInstance();
-
-    final SharedPreferencesWithCache neuePrefs =
-        await SharedPreferencesWithCache.create(
-          cacheOptions: SharedPreferencesWithCacheOptions(),
-        );
-
+  static Future<void> _migrateFromLegacy(
+    SharedPreferencesWithCache neuePrefs,
+    String migrationCompletedKey,
+  ) async {
     if (neuePrefs.get(migrationCompletedKey) == true) {
       return;
     }
+
+    final SharedPreferences legacy = await SharedPreferences.getInstance();
 
     await legacy.reload();
     final Set<String> keys = legacy.getKeys();

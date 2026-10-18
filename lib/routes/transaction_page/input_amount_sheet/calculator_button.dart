@@ -26,6 +26,7 @@ class CalculatorButton extends StatelessWidget {
     return NumpadButton(
       backgroundColor: selected ? context.colorScheme.primary : null,
       onTap: () => onTap(operation),
+      semanticLabel: operation.symbol,
       child: Transform.scale(
         scale: operation == CalculatorOperation.divide ? 0.8 : 1.0,
         child: Transform.rotate(

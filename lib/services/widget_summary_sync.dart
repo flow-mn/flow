@@ -2,14 +2,17 @@ import "dart:io";
 
 import "package:flow/constants.dart";
 import "package:flow/data/exchange_rates.dart";
+import "package:flow/data/money.dart";
 import "package:flow/data/single_currency_flow.dart";
 import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/l10n/named_enum.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/services/exchange_rates.dart";
 import "package:flow/services/user_preferences.dart";
+import "package:flow/utils/extensions.dart";
 import "package:home_widget/home_widget.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
@@ -41,10 +44,17 @@ class WidgetSummarySync {
               rates,
             );
 
-      final String formattedIncome =
-          flow.totalIncome.formatMoney(compact: true);
-      final String formattedExpense =
-          flow.totalExpense.abs().formatMoney(compact: true);
+      final bool obscure =
+          UserPreferencesService().privacyModeUponLaunch ||
+          LocalPreferences().requireLocalAuth.get();
+
+      String format(Money money) {
+        final String text = money.formatMoney(compact: true);
+        return obscure ? text.digitsObscured : text;
+      }
+
+      final String formattedIncome = format(flow.totalIncome);
+      final String formattedExpense = format(flow.totalExpense.abs());
 
       final String incomeLabel = TransactionType.income.localizedName;
       final String expenseLabel = TransactionType.expense.localizedName;
@@ -67,9 +77,7 @@ class WidgetSummarySync {
         qualifiedAndroidName: "mn.flow.flow.glance.SummaryReceiver",
       );
 
-      _log.finest(
-        "Synced summary widget: income=$formattedIncome, expense=$formattedExpense",
-      );
+      _log.finest("Synced summary widget");
     } catch (e) {
       _log.warning("Failed to sync summary widget: $e");
     }

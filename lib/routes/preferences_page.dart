@@ -8,6 +8,7 @@ import "package:flow/routes/preferences/sections/haptics.dart";
 import "package:flow/routes/preferences/sections/lock_app.dart";
 import "package:flow/routes/preferences/sections/privacy.dart";
 import "package:flow/services/file_attachment.dart";
+import "package:flow/services/integrations/eny.dart";
 import "package:flow/services/local_auth.dart";
 import "package:flow/services/notifications.dart";
 import "package:flow/services/user_preferences.dart";
@@ -79,6 +80,8 @@ class PreferencesPageState extends State<PreferencesPage> {
     final String currentPrimaryCurrency =
         UserPreferencesService().primaryCurrency;
 
+    final bool enyConnected = EnyService().isConnected;
+
     return Scaffold(
       appBar: AppBar(title: Text("preferences".t(context))),
       body: SafeArea(
@@ -120,7 +123,7 @@ class PreferencesPageState extends State<PreferencesPage> {
                 onTap: () => _pushAndRefreshAfter("/preferences/reminders"),
                 trailing: const LeChevron(),
               ),
-            const Haptics(),
+            if (Platform.isAndroid || Platform.isIOS) const Haptics(),
             const SizedBox(height: 24.0),
             ListHeader("preferences.transactions".t(context)),
             const SizedBox(height: 8.0),
@@ -238,6 +241,14 @@ class PreferencesPageState extends State<PreferencesPage> {
             ),
             ListTile(
               title: Text("Eny"),
+              subtitle: Text(
+                [
+                  "preferences.scan".t(context),
+                  "integrations.eny.connected#$enyConnected".t(context),
+                ].join(" · "),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               leading: const SizedBox(
                 width: 24.0,
                 height: 24.0,
@@ -257,7 +268,6 @@ class PreferencesPageState extends State<PreferencesPage> {
               title: Text("fileAttachment.cleanupHangingFiles".t(context)),
               leading: const Icon(Symbols.folder_delete_rounded),
               onTap: () => _deleteHangingFiles(),
-              trailing: const LeChevron(),
             ),
             const SizedBox(height: 24.0),
             ListHeader("preferences.feedback".t(context)),
@@ -384,7 +394,12 @@ class PreferencesPageState extends State<PreferencesPage> {
       final int deleted = await FileAttachmentService().deleteAllOrphans();
 
       if (mounted) {
-        context.showToast(text: "fileAttachment.delete.success".t(context));
+        context.showToast(
+          text: "fileAttachment.cleanupHangingFiles.success".t(
+            context,
+            deleted,
+          ),
+        );
       }
 
       _log.info("Deleted $deleted hanging files");

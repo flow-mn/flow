@@ -7,21 +7,16 @@ class TransactionSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextDirection textDirection = Directionality.of(context);
     const TextSpan divider = TextSpan(text: " • ");
-
-    final List<InlineSpan> orderedComponents = [
-      for (int i = 0; i < components.length; i++) ...[
-        if (i != 0) divider,
-        components[i],
-      ],
-    ];
 
     return RichText(
       text: TextSpan(
-        children: textDirection == TextDirection.ltr
-            ? orderedComponents
-            : orderedComponents.reversed.toList(),
+        children: [
+          for (int i = 0; i < components.length; i++) ...[
+            if (i != 0) divider,
+            components[i],
+          ],
+        ],
         style: Theme.of(context).textTheme.labelSmall,
       ),
     );

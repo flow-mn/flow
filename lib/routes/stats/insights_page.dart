@@ -39,7 +39,6 @@ class InsightsPage extends StatelessWidget {
                   const WrappedTile(),
                   const SizedBox(height: 12.0),
                   const NetWorthTile(),
-                  const SizedBox(height: 12.0),
                   const BudgetTile(),
                   const SizedBox(height: 12.0),
                   const Row(
@@ -49,7 +48,6 @@ class InsightsPage extends StatelessWidget {
                       Expanded(child: RecurringTile()),
                     ],
                   ),
-                  const SizedBox(height: 12.0),
                   const MapTile(),
                   const SizedBox(height: 24.0),
                 ],

@@ -10,6 +10,7 @@ import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:flutter_timezone/flutter_timezone.dart";
 import "package:logging/logging.dart";
 import "package:moment_dart/moment_dart.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:timezone/data/latest.dart" as tz;
 import "package:timezone/timezone.dart";
 import "package:window_manager/window_manager.dart";
@@ -19,6 +20,8 @@ final Logger _log = Logger("NotificationsService");
 class NotificationsService {
   static NotificationsService? _instance;
   static final String _fallbackTimezone = "Etc/UTC";
+  static const String _permissionsRequestedKey =
+      "flow.notifications.permissionsRequested";
 
   static final String windowsNotificationGuid =
       "f342887a-2ea1-41b1-94cf-51d70a46ce73";
@@ -36,7 +39,8 @@ class NotificationsService {
 
   final List<Function(NotificationResponse)> _registeredCallbacks = [];
 
-  late final FlutterLocalNotificationsPlugin pluginInstance;
+  final FlutterLocalNotificationsPlugin pluginInstance =
+      FlutterLocalNotificationsPlugin();
 
   late final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
@@ -76,13 +80,16 @@ class NotificationsService {
     }
 
     try {
-      pluginInstance = FlutterLocalNotificationsPlugin();
       // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings("@mipmap/ic_launcher");
 
+      // Requesting here blocks `initialize` until the prompt is answered
       final DarwinInitializationSettings initializationSettingsDarwin =
           DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestSoundPermission: false,
+            requestBadgePermission: false,
             notificationCategories: [
               DarwinNotificationCategory("planned-transaction-reminder"),
             ],
@@ -112,6 +119,11 @@ class NotificationsService {
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
+      // Darwin's `initialize` returns the permission result, false here
+      if (Platform.isIOS || Platform.isMacOS) {
+        _available = true;
+      }
+
       try {
         if (Platform.isLinux) {
           throw Exception("Linux doesn't support notification app launch");
@@ -130,24 +142,6 @@ class NotificationsService {
       }
     } finally {
       _ready = true;
-    }
-
-    if (_available != true) return;
-
-    if (PendingTransactionsLocalPreferences().notify.get()) {
-      try {
-        final bool? permissionGranted = await hasPermissions();
-
-        if (permissionGranted == null) return;
-
-        if (permissionGranted) {
-          _log.fine("Permission has been granted");
-        } else {
-          _log.warning("Permission has not been granted");
-        }
-      } catch (e) {
-        _log.warning("Failed to check or request permissions", e);
-      }
     }
   }
 
@@ -202,6 +196,7 @@ class NotificationsService {
           importance: Importance.max,
           priority: Priority.high,
           category: AndroidNotificationCategory.reminder,
+          visibility: .private,
           styleInformation: DefaultStyleInformation(false, false),
         ),
         iOS: DarwinNotificationDetails(
@@ -236,7 +231,7 @@ class NotificationsService {
         ).serialized,
       );
       _log.info(
-        "Scheduled a reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${dateTime.toString()}",
+        "Scheduled a reminder for transaction ${transaction.uuid} at ${dateTime.toString()}",
       );
 
       if (earlyDateTime != null) {
@@ -254,7 +249,7 @@ class NotificationsService {
           ).serialized,
         );
         _log.info(
-          "Scheduled an early reminder for transaction '${transaction.title ?? 'untitled'}' ${transaction.uuid} at ${earlyDateTime.toString()}",
+          "Scheduled an early reminder for transaction ${transaction.uuid} at ${earlyDateTime.toString()}",
         );
       }
     } catch (e) {
@@ -298,14 +293,9 @@ class NotificationsService {
       reminders.map((reminder) async {
         try {
           await pluginInstance.cancel(id: reminder.id);
-          _log.fine(
-            "Cancelled reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
-          );
+          _log.fine("Cancelled reminder ${reminder.id} $type");
         } catch (e) {
-          _log.warning(
-            "Failed to cancel reminder ${reminder.id} $type ${reminder.title} ${reminder.body}",
-            e,
-          );
+          _log.warning("Failed to cancel reminder ${reminder.id} $type", e);
         }
       }),
     );
@@ -476,7 +466,47 @@ class NotificationsService {
     }
   }
 
-  void requestPermissions() async {
+  /// Requests permissions, then returns whether scheduling is permitted
+  Future<bool> requestAndCheckPermissions({bool exactAlarms = true}) async {
+    try {
+      await requestPermissions(exactAlarms: exactAlarms);
+    } catch (e) {
+      _log.warning("Failed to request permissions", e);
+    }
+
+    try {
+      final SharedPreferencesWithCache prefs =
+          await SharedPreferencesWithCache.create(
+            cacheOptions: SharedPreferencesWithCacheOptions(),
+          );
+      await prefs.setBool(_permissionsRequestedKey, true);
+    } catch (e) {
+      _log.warning("Failed to save permission request state", e);
+    }
+
+    return await hasPermissions() == true;
+  }
+
+  /// Asks only once, skipping exact alarms as those open system settings
+  Future<void> requestPermissionsIfNeverAsked() async {
+    if (!schedulingSupported || !available) return;
+
+    try {
+      final SharedPreferencesWithCache prefs =
+          await SharedPreferencesWithCache.create(
+            cacheOptions: SharedPreferencesWithCacheOptions(),
+          );
+
+      if (prefs.getBool(_permissionsRequestedKey) == true) return;
+    } catch (e) {
+      _log.warning("Failed to read permission request state", e);
+      return;
+    }
+
+    await requestAndCheckPermissions(exactAlarms: false);
+  }
+
+  Future<void> requestPermissions({bool exactAlarms = true}) async {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           pluginInstance
@@ -485,6 +515,7 @@ class NotificationsService {
               >();
 
       await androidImplementation?.requestNotificationsPermission();
+      if (!exactAlarms) return;
       await androidImplementation?.requestExactAlarmsPermission().catchError((
         error,
       ) {

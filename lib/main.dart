@@ -48,6 +48,7 @@ import "package:flow/services/home_widgets.dart";
 import "package:flow/theme/color_themes/registry.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/android/set_secure_window.dart";
 import "package:flow/widgets/flow_themes.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flutter/material.dart";
@@ -70,11 +71,14 @@ import "package:window_manager/window_manager.dart";
 RotatingFileAppender? mainLogAppender;
 
 void main() async {
-  Logger.root.level = Level.ALL;
+  // File logs get shared for support, keep fine-grained details out of them
+  Logger.root.level = flowDebugMode ? Level.ALL : Level.INFO;
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+  if (flowDebugMode) {
+    PrintAppender(formatter: ColorFormatter()).attachToLogger(Logger.root);
+  }
 
   initializeFileLogger();
 
@@ -113,9 +117,7 @@ void main() async {
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
   startupLog.fine("Updating account order list");
 
-  // Await so the plugin is ready before TransactionsService listeners can
-  // fire (FlowState.initState wires _synchronizePlannedNotifications), which
-  // otherwise hits NotificationsService.pluginInstance before it's set.
+  // Awaited so launch details are ready for HomePage
   await initializeNotifications();
 
   startupLog.fine("Clearing stale transactions from trash bin");
@@ -157,20 +159,22 @@ void main() async {
   startupLog.fine("Initializing exchange rates service");
   ExchangeRatesService().init();
 
-  try {
-    startupLog.fine("Initializing SyncService");
-    SyncService();
-  } catch (e, stackTrace) {
-    startupLog.severe("Failed to initialize SyncService", e, stackTrace);
-  }
-
   // RecurringTransactionsService is intentionally NOT instantiated here.
   // Eager construction used to run _synchronizeAll() in the constructor,
   // racing with first-frame work. The first sync is now triggered from
   // FlowState.initState's post-frame callback (alongside migrations).
 
-  TransactionsService().addListener(() => HomeWidgets.syncAll());
-  HomeWidgets.watchForChanges();
+  if (Platform.isIOS || Platform.isAndroid) {
+    Timer? homeWidgetsSyncDebounce;
+    TransactionsService().addListener(() {
+      homeWidgetsSyncDebounce?.cancel();
+      homeWidgetsSyncDebounce = Timer(
+        const Duration(milliseconds: 500),
+        () => unawaited(HomeWidgets.syncAll()),
+      );
+    });
+    HomeWidgets.watchForChanges();
+  }
 
   try {
     Moment.minValue = DateTime(0);
@@ -183,6 +187,16 @@ void main() async {
 
   startupLog.fine("Finally telling Flutter to run the app widget");
   runApp(const Flow());
+
+  // Auto backup may export and touch iCloud, keep it off the first frame
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    try {
+      startupLog.fine("Initializing SyncService");
+      SyncService();
+    } catch (e, stackTrace) {
+      startupLog.severe("Failed to initialize SyncService", e, stackTrace);
+    }
+  });
 }
 
 class Flow extends StatefulWidget {
@@ -208,6 +222,9 @@ class FlowState extends State<Flow> {
   ThemeMode get themeMode => _themeMode;
 
   late bool _tempLock;
+
+  /// Blurs the app switcher snapshot on iOS while app lock is on.
+  bool _obscured = false;
 
   bool get useDarkTheme => (_themeMode == ThemeMode.system
       ? (PlatformDispatcher.instance.platformBrightness == Brightness.dark)
@@ -242,6 +259,9 @@ class FlowState extends State<Flow> {
     UserPreferencesService().valueNotifier.addListener(_refreshExchangeRates);
 
     _tempLock = LocalPreferences().requireLocalAuth.get();
+
+    LocalPreferences().requireLocalAuth.addListener(_syncSecureWindow);
+    _syncSecureWindow();
 
     TransactionsService().addListener(_synchronizePlannedNotifications);
 
@@ -281,10 +301,15 @@ class FlowState extends State<Flow> {
 
     _appLifeCycleListener = AppLifecycleListener(
       onInactive: () {
+        _obscure();
         _tryTempLock();
       },
       onHide: () {
+        _obscure();
         _tryTempLock();
+      },
+      onResume: () {
+        _unobscure();
       },
       onShow: () {
         if (!mounted) return;
@@ -302,6 +327,7 @@ class FlowState extends State<Flow> {
   @override
   void dispose() {
     LocalPreferences().localeOverride.removeListener(_reloadLocale);
+    LocalPreferences().requireLocalAuth.removeListener(_syncSecureWindow);
     UserPreferencesService().valueNotifier.removeListener(
       _refreshExchangeRates,
     );
@@ -354,8 +380,14 @@ class FlowState extends State<Flow> {
                     ignoring: _tempLock,
                     child: Stack(
                       children: [
-                        child ?? Container(),
-                        if (_tempLock)
+                        ExcludeFocus(
+                          excluding: _tempLock,
+                          child: ExcludeSemantics(
+                            excluding: _tempLock,
+                            child: child ?? Container(),
+                          ),
+                        ),
+                        if (_tempLock || _obscured)
                           Positioned.fill(
                             child: BackdropFilter(
                               filter: ImageFilter.blur(
@@ -364,9 +396,12 @@ class FlowState extends State<Flow> {
                               ),
                               child: SizedBox.expand(
                                 child: Center(
-                                  child: FlowIcon(
-                                    FlowIconData.icon(Symbols.lock_rounded),
-                                    size: 80.0,
+                                  child: Semantics(
+                                    label: "general.unlockToOpen".t(context),
+                                    child: FlowIcon(
+                                      FlowIconData.icon(Symbols.lock_rounded),
+                                      size: 80.0,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -534,16 +569,40 @@ class FlowState extends State<Flow> {
     });
   }
 
+  void _syncSecureWindow() =>
+      unawaited(setSecureWindow(LocalPreferences().requireLocalAuth.get()));
+
+  void _obscure() {
+    if (!Platform.isIOS || _obscured) return;
+    if (!LocalPreferences().requireLocalAuth.get()) return;
+
+    setState(() {
+      _obscured = true;
+    });
+  }
+
+  void _unobscure() {
+    if (!_obscured) return;
+
+    setState(() {
+      _obscured = false;
+    });
+  }
+
   void _tryUnlockTempLock() async {
     if (!_tempLock) return;
 
     try {
       await LocalAuthService.initialize();
+      // Only skip the lock when the device has no passcode or biometrics
       if (!LocalAuthService.available || !LocalAuthService.platformSupported) {
         _tempLock = false;
       }
       if (!_tempLock) {
         mainLogger.fine("Ignoring local auth initialization");
+        if (mounted) {
+          setState(() {});
+        }
         return;
       }
       final authenticated = await LocalAuthService().authenticate();
@@ -600,7 +659,14 @@ void initializePackageVersion() async {
 Future<void> initializeNotifications() async {
   assert(LocalPreferences().runtimeType == LocalPreferences);
 
-  await NotificationsService().initialize();
+  try {
+    await NotificationsService().initialize().timeout(
+      const Duration(seconds: 5),
+    );
+  } catch (error) {
+    startupLog.severe("Failed to initialize notifications", error);
+    return;
+  }
 
   unawaited(
     TransactionsService().synchronizeNotifications().catchError((error) {

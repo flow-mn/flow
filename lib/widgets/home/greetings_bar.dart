@@ -34,7 +34,11 @@ class GreetingsBar extends StatelessWidget {
             const SizedBox(width: 12.0),
             Expanded(
               child: AutoSizeText(
-                "tabs.home.greetings".t(context, profile?.name ?? "..."),
+                switch (profile?.name.trim()) {
+                  "" => "tabs.home.greetings.anonymous".t(context),
+                  String name => "tabs.home.greetings".t(context, name),
+                  null => "tabs.home.greetings".t(context, "..."),
+                },
                 style: Theme.of(context).textTheme.titleMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

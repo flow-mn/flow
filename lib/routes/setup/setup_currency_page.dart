@@ -1,13 +1,22 @@
+import "dart:io";
+
 import "package:flow/l10n/extensions.dart";
+import "package:flow/services/currency_registry.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/utils.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/info_text.dart";
 import "package:flow/widgets/sheets/select_currency_sheet.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart";
 import "package:go_router/go_router.dart";
+import "package:intl/intl.dart";
+import "package:intl/number_symbols_data.dart";
+import "package:logging/logging.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
+
+final Logger _log = Logger("SetupCurrencyPage");
 
 class SetupCurrencyPage extends StatefulWidget {
   const SetupCurrencyPage({super.key});
@@ -17,17 +26,21 @@ class SetupCurrencyPage extends StatefulWidget {
 }
 
 class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
-  final TextEditingController _textController = TextEditingController(
-    text: "~~~",
+  final String? _detectedCurrency = _detectCurrency();
+
+  late final TextEditingController _textController = TextEditingController(
+    text: _detectedCurrency ?? "~~~",
   );
 
-  String? _currency;
+  late String? _currency = _detectedCurrency;
 
   dynamic error;
 
   @override
   void initState() {
     super.initState();
+
+    if (_detectedCurrency != null) return;
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       selectCurrency();
@@ -106,7 +119,10 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
   void selectCurrency() async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      builder: (context) => const SelectCurrencySheet(),
+      builder: (context) => SelectCurrencySheet(
+        currentlySelected: _currency,
+        suggested: [?_detectedCurrency],
+      ),
       isScrollControlled: true,
     );
 
@@ -115,6 +131,51 @@ class _SetupCurrencyPageState extends State<SetupCurrencyPage> {
     setState(() {
       _currency = result ?? _currency;
     });
+  }
+
+  /// Spoken in many regions, so e.g., en_MN shouldn't default to USD
+  static const Set<String> _multiRegionLanguages = {
+    "ar",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "nl",
+    "pt",
+    "ru",
+    "zh",
+  };
+
+  /// The device locale's currency, if it's a supported one.
+  static String? _detectCurrency() {
+    try {
+      final List<String> parts = Intl.canonicalizedLocale(
+        Platform.localeName.split(".").first,
+      ).split("_");
+      final String language = parts.first;
+      final String? region = parts.length > 1 ? parts.last : null;
+
+      final String? locale =
+          numberFormatSymbols.keys.firstWhereOrNull(
+            (key) => region != null && key.endsWith("_$region"),
+          ) ??
+          (region == null ||
+                  region.toLowerCase() == language ||
+                  !_multiRegionLanguages.contains(language)
+              ? language
+              : null);
+
+      final String? code = numberFormatSymbols[locale]?.DEF_CURRENCY_CODE
+          .toUpperCase();
+
+      if (code != null && CurrencyRegistryService().isCurrencyCodeValid(code)) {
+        return code;
+      }
+    } catch (e) {
+      _log.fine("Couldn't detect currency for ${Platform.localeName}", e);
+    }
+
+    return null;
   }
 
   void save() async {

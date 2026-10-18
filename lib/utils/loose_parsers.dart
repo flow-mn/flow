@@ -14,16 +14,14 @@ String? looseString(dynamic value) {
   return null;
 }
 
+/// Returns `null` for non-finite values (NaN, Infinity)
 double? looseDouble(dynamic value) {
-  if (value is num) {
-    return value.toDouble();
-  }
+  final double? parsed = switch (value) {
+    num number => number.toDouble(),
+    _ => double.tryParse(looseString(value) ?? ""),
+  };
 
-  final stringValue = looseString(value);
-  if (stringValue != null) {
-    return double.tryParse(stringValue);
-  }
-  return null;
+  return parsed?.isFinite == true ? parsed : null;
 }
 
 List<String>? looseStringList(dynamic value) {

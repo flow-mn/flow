@@ -55,7 +55,9 @@ class _PaceTileState extends State<PaceTile>
       accent: context.flowColors.expense,
       height: 160.0,
       busy: busy && !loaded,
-      onTap: () => context.push("/stats/cash-flow"),
+      onTap: () => context.push(
+        "/stats/cash-flow?range=${Uri.encodeQueryComponent(widget.range.encodeShort())}",
+      ),
       child: empty
           ? Text(
               "tabs.stats.analytics.cashFlow.noMovement".t(context),
@@ -99,7 +101,8 @@ class _PaceTileState extends State<PaceTile>
                 initiallyAbbreviated: true,
               ),
             ),
-            if (report.previousExpenseSum != null) ...[
+            if (report.previousExpenseSum?.amount case double previous
+                when previous != 0) ...[
               const SizedBox(width: 8.0),
               Trend.fromMoney(
                 current: headline,

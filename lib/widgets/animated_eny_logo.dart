@@ -35,6 +35,6 @@ class _AnimatedEnyLogoState extends State<AnimatedEnyLogo> {
   }
 
   Widget _enyLogoBuilder(BuildContext context) {
-    return Image.network(enyLogoUrl, width: 192.0, height: 192.0);
+    return Image.asset("assets/images/eny.png", width: 192.0, height: 192.0);
   }
 }

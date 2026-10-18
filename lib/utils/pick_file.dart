@@ -8,9 +8,14 @@ import "package:flow/utils/extensions/toast.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
+import "package:logging/logging.dart";
 import "package:path_provider/path_provider.dart";
 
+final Logger _log = Logger("PickFile");
+
 Future<File?> pickImportFile({String? dialogTitle}) async {
+  await _clearPickerCache();
+
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     dialogTitle: dialogTitle ?? "sync.import.pickFile".tr(),
     initialDirectory: await getApplicationDocumentsDirectory()
@@ -28,6 +33,8 @@ Future<File?> pickImportFile({String? dialogTitle}) async {
 }
 
 Future<List<XFile>?> pickFiles() async {
+  await _clearPickerCache();
+
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     dialogTitle: "fileAttachment.pick".tr(),
     initialDirectory: await getApplicationDocumentsDirectory()
@@ -42,6 +49,17 @@ Future<List<XFile>?> pickFiles() async {
   }
 
   return result.files.map((platformFile) => platformFile.xFile).toList();
+}
+
+/// Android only, on iOS the plugin clears the whole temp directory itself
+Future<void> _clearPickerCache() async {
+  if (!Platform.isAndroid) return;
+
+  try {
+    await FilePicker.platform.clearTemporaryFiles();
+  } catch (e) {
+    _log.warning("Failed to clear file picker cache", e);
+  }
 }
 
 Future<XFile?> pickImage({

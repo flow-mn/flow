@@ -171,12 +171,25 @@ Future<File> generateBackupZipV2({Function(double)? onProgress}) async {
 
   final File result = File(path.join(Directory.systemTemp.path, zipFileName));
 
-  final ZipFileEncoder encoder = ZipFileEncoder();
-  await encoder.zipDirectory(
-    tempDir,
-    filename: result.path,
-    onProgress: onProgress,
-  );
+  try {
+    final ZipFileEncoder encoder = ZipFileEncoder();
+    await encoder.zipDirectory(
+      tempDir,
+      filename: result.path,
+      onProgress: onProgress,
+    );
+  } catch (e) {
+    if (await result.exists()) {
+      await result.delete();
+    }
+    rethrow;
+  } finally {
+    try {
+      await tempDir.delete(recursive: true);
+    } catch (e) {
+      syncLogger.warning("Failed to delete export temp directory", e);
+    }
+  }
 
   return result;
 }

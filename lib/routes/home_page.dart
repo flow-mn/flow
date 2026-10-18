@@ -222,8 +222,12 @@ class HomePageState extends State<HomePage>
     // TransactionPage without a resolved account list would land the user
     // in a broken form. Original code did a synchronous count() so it was
     // never ambiguous.
-    final accountsProvider = AccountsProvider.of(context);
-    if (!accountsProvider.ready || accountsProvider.allAccounts.isEmpty) {
+    // Non-listening, so HomePage doesn't rebuild on accounts changes.
+    final AccountsProvider? accountsProvider = context
+        .getInheritedWidgetOfExactType<AccountsProvider>();
+    if (accountsProvider == null ||
+        !accountsProvider.ready ||
+        accountsProvider.allAccounts.isEmpty) {
       context.push("/account/new");
       return;
     }

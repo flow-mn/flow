@@ -13,7 +13,17 @@ import "package:material_symbols_icons_flow/symbols.dart";
 class SelectCurrencySheet extends StatefulWidget {
   final String? currentlySelected;
 
-  const SelectCurrencySheet({super.key, this.currentlySelected});
+  /// Shown above the rest while the search query is empty
+  final List<String> suggested;
+
+  final String? titleOverride;
+
+  const SelectCurrencySheet({
+    super.key,
+    this.currentlySelected,
+    this.suggested = const [],
+    this.titleOverride,
+  });
 
   @override
   State<SelectCurrencySheet> createState() => _SelectCurrencySheetState();
@@ -62,6 +72,30 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
       queryResults.insert(0, selectedItem);
     }
 
+    final Map<String, CurrencyData> groupedCurrencies =
+        CurrencyRegistryService().groupedCurrencies;
+
+    final List<CurrencyData> suggestions = normalizedQuery.isEmpty
+        ? {
+            if (widget.currentlySelected != null && widget.suggested.isNotEmpty)
+              widget.currentlySelected!,
+            ...widget.suggested,
+          }.map((code) => groupedCurrencies[code]).nonNulls.toList()
+        : const [];
+
+    final Set<String> suggestedCodes = suggestions
+        .map((currencyData) => currencyData.code)
+        .toSet();
+
+    // `null` marks the divider between suggestions and the rest
+    final List<CurrencyData?> items = [
+      ...suggestions,
+      if (suggestions.isNotEmpty) null,
+      ...queryResults
+          .where((currencyData) => !suggestedCodes.contains(currencyData.code))
+          .map((currencyData) => groupedCurrencies[currencyData.code]!),
+    ];
+
     return ModalSheet.scrollable(
       leading: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -75,18 +109,23 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
             hintText: "currency.searchHint".t(context),
             prefixIcon: const Icon(Symbols.search_rounded),
           ),
-          autofocus: true,
+          autofocus: widget.suggested.isEmpty,
         ),
       ),
-      title: Text("account.edit.selectCurrency".t(context)),
+      title: Text(
+        widget.titleOverride ?? "account.edit.selectCurrency".t(context),
+      ),
       scrollableContentMaxHeight:
           MediaQuery.of(context).size.height * 0.4 -
           MediaQuery.of(context).viewInsets.vertical,
       child: ListView.builder(
         controller: _scrollController,
         itemBuilder: (context, i) {
-          final CurrencyData transformedCurrencyData = CurrencyRegistryService()
-              .groupedCurrencies[queryResults[i].code]!;
+          final CurrencyData? transformedCurrencyData = items[i];
+
+          if (transformedCurrencyData == null) {
+            return const Divider();
+          }
 
           return ListTile(
             selected: widget.currentlySelected == transformedCurrencyData.code,
@@ -107,7 +146,7 @@ class _SelectCurrencySheetState extends State<SelectCurrencySheet> {
             onTap: () => select(transformedCurrencyData.code),
           );
         },
-        itemCount: queryResults.length,
+        itemCount: items.length,
       ),
     );
   }

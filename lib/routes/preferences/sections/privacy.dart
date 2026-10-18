@@ -1,5 +1,9 @@
+import "dart:async";
+import "dart:io";
+
 import "package:flow/l10n/extensions.dart";
 import "package:flow/routes/preferences_page.dart";
+import "package:flow/services/home_widgets.dart";
 import "package:flow/services/user_preferences.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
@@ -23,12 +27,13 @@ class _PrivacyState extends State<Privacy> {
           value: UserPreferencesService().privacyModeUponLaunch,
           onChanged: updatePrivacyMode,
         ),
-        SwitchListTile(
-          secondary: const Icon(Symbols.earthquake_rounded),
-          title: Text("preferences.privacy.maskAtShake".t(context)),
-          value: UserPreferencesService().privacyModeUponShaking,
-          onChanged: updatePrivacyModeUponShaking,
-        ),
+        if (Platform.isAndroid || Platform.isIOS)
+          SwitchListTile(
+            secondary: const Icon(Symbols.earthquake_rounded),
+            title: Text("preferences.privacy.maskAtShake".t(context)),
+            value: UserPreferencesService().privacyModeUponShaking,
+            onChanged: updatePrivacyModeUponShaking,
+          ),
       ],
     );
   }
@@ -37,6 +42,7 @@ class _PrivacyState extends State<Privacy> {
     if (newPrivacyMode == null) return;
 
     UserPreferencesService().privacyModeUponLaunch = newPrivacyMode;
+    unawaited(HomeWidgets.syncAll());
 
     if (!mounted) return;
 

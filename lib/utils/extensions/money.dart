@@ -1,5 +1,8 @@
+import "dart:math";
+
 import "package:flow/data/exchange_rates.dart";
 import "package:flow/data/money.dart";
+import "package:flow/services/currency_registry.dart";
 
 extension MoneyConversion on Money {
   /// Converts this amount into [targetCurrency], returning `null` when the
@@ -18,5 +21,15 @@ extension MoneyConversion on Money {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Rounds [amount] to the decimal precision commonly used by [currency]
+  double roundedAmount() {
+    final num precision = pow(
+      10,
+      CurrencyRegistryService().getPreferredDecimalPrecision(currency) ?? 2,
+    );
+
+    return (amount * precision).round() / precision;
   }
 }

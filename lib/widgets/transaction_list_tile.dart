@@ -1,18 +1,20 @@
-import "package:flow/constants.dart";
 import "package:flow/data/flow_icon.dart";
 import "package:flow/data/money.dart";
 import "package:flow/data/transaction_filter.dart";
 import "package:flow/entity/transaction.dart";
+import "package:flow/entity/transaction/extensions/default/foreign_currency.dart";
 import "package:flow/entity/transaction/extensions/default/transfer.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/theme/flow_color_scheme.dart";
 import "package:flow/theme/theme.dart";
+import "package:flow/utils/extensions/directionality.dart";
 import "package:flow/utils/extensions/transaction.dart";
 import "package:flow/widgets/general/approximate_money_text.dart";
 import "package:flow/widgets/general/directional_slidable.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/money_text.dart";
+import "package:flow/widgets/transaction_list_tile/labeled_slidable_action.dart";
 import "package:flow/widgets/transaction_list_tile/transaction_subtitle.dart";
 import "package:flow/widgets/transaction_list_tile_theme.dart";
 import "package:flutter/material.dart";
@@ -120,7 +122,7 @@ class TransactionListTile extends StatelessWidget {
     final List<InlineSpan> subtitleComponents = [
       TextSpan(
         text: (transaction.isTransfer && combineTransfers)
-            ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} → ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
+            ? "${AccountsProvider.of(context).getName(transfer!.fromAccountUuid)} ${context.isRtl ? "←" : "→"} ${AccountsProvider.of(context).getName(transfer.toAccountUuid)}"
             : (AccountsProvider.of(context).getName(transaction.accountUuid) ??
                   transaction.account.target?.name),
       ),
@@ -135,7 +137,7 @@ class TransactionListTile extends StatelessWidget {
               if (externalProviderName == "Siri")
                 WidgetSpan(
                   child: Padding(
-                    padding: .only(right: 4.0),
+                    padding: .directional(end: 4.0),
                     child: Image.asset("assets/images/siri.png", height: 12.0),
                   ),
                   alignment: .middle,
@@ -143,8 +145,8 @@ class TransactionListTile extends StatelessWidget {
               if (externalProviderName == "Eny")
                 WidgetSpan(
                   child: Padding(
-                    padding: .only(right: 4.0),
-                    child: Image.network(enyLogoUrl, height: 12.0),
+                    padding: .directional(end: 4.0),
+                    child: Image.asset("assets/images/eny.png", height: 12.0),
                   ),
                   alignment: .middle,
                 ),
@@ -189,6 +191,54 @@ class TransactionListTile extends StatelessWidget {
           )
         : visualLeading;
 
+    final Widget amounts = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: .end,
+      spacing: effectiveTheme.titleSpacingOrDefault,
+      children: [
+        MoneyText(
+          transaction.money,
+          displayAbsoluteAmount: transaction.isTransfer && combineTransfers,
+          approximate: transaction.isAmountEstimate,
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: transaction.type.color(context),
+            fontWeight: FontWeight.bold,
+          ),
+          overrideObscure: overrideObscure,
+        ),
+        if (combineTransfers &&
+            AccountsProvider.of(context).ready &&
+            transaction.extensions.transfer?.conversionRate != null &&
+            transaction.extensions.transfer?.conversionRate != 1.0)
+          MoneyText(
+            Money(
+              transaction.money.amount *
+                  transaction.extensions.transfer!.conversionRate!,
+              AccountsProvider.of(
+                context,
+              ).get(transaction.extensions.transfer!.toAccountUuid)!.currency,
+            ),
+            displayAbsoluteAmount: true,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          )
+        else if (transaction.extensions.foreignCurrency
+            case ForeignCurrency foreignCurrency)
+          MoneyText(
+            foreignCurrency.money,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          )
+        else
+          ApproximateMoneyText(
+            transaction.money,
+            displayAbsoluteAmount: transaction.isTransfer && combineTransfers,
+            style: context.textTheme.bodyMedium?.semi(context),
+            overrideObscure: overrideObscure,
+          ),
+      ],
+    );
+
     final Widget listTile = Material(
       type: MaterialType.card,
       color: selected
@@ -202,96 +252,48 @@ class TransactionListTile extends StatelessWidget {
           padding: effectiveTheme.paddingOrDefault,
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: .start,
-                spacing: effectiveTheme.spacingOrDefault,
-                children: [
-                  leading,
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: .start,
-                      spacing: effectiveTheme.titleSpacingOrDefault,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              if (titleLeadingIconSpan != null) ...[
-                                titleLeadingIconSpan,
-                                TextSpan(text: " "),
+              LayoutBuilder(
+                builder: (context, constraints) => Row(
+                  crossAxisAlignment: .start,
+                  spacing: effectiveTheme.spacingOrDefault,
+                  children: [
+                    leading,
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: .start,
+                        spacing: effectiveTheme.titleSpacingOrDefault,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                if (titleLeadingIconSpan != null) ...[
+                                  titleLeadingIconSpan,
+                                  TextSpan(text: " "),
+                                ],
+                                TextSpan(text: resolvedTitle),
                               ],
-                              TextSpan(text: resolvedTitle),
-                            ],
-                            style: context.textTheme.bodyMedium,
+                              style: context.textTheme.bodyMedium,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        TransactionSubtitle(components: subtitleComponents),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: .end,
-                    spacing: effectiveTheme.titleSpacingOrDefault,
-                    children: [
-                      MoneyText(
-                        transaction.money,
-                        displayAbsoluteAmount:
-                            transaction.isTransfer && combineTransfers,
-                        approximate: transaction.isAmountEstimate,
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: transaction.type.color(context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overrideObscure: overrideObscure,
+                          TransactionSubtitle(components: subtitleComponents),
+                        ],
                       ),
-                      if (combineTransfers &&
-                          AccountsProvider.of(context).ready &&
-                          transaction.extensions.transfer?.conversionRate !=
-                              null &&
-                          transaction.extensions.transfer?.conversionRate !=
-                              1.0)
-                        MoneyText(
-                          Money(
-                            transaction.money.amount *
-                                transaction
-                                    .extensions
-                                    .transfer!
-                                    .conversionRate!,
-                            AccountsProvider.of(context)
-                                .get(
-                                  transaction
-                                      .extensions
-                                      .transfer!
-                                      .toAccountUuid,
-                                )!
-                                .currency,
-                          ),
-                          displayAbsoluteAmount: true,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
-                          overrideObscure: overrideObscure,
-                        )
-                      else
-                        ApproximateMoneyText(
-                          transaction.money,
-                          displayAbsoluteAmount:
-                              transaction.isTransfer && combineTransfers,
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(
-                              0x80,
-                            ),
-                          ),
-                          overrideObscure: overrideObscure,
-                        ),
-                    ],
-                  ),
-                ],
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth / 2,
+                      ),
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: AlignmentDirectional.topEnd,
+                        child: amounts,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               if (showPendingConfirmation) ...[
                 SizedBox(height: effectiveTheme.spacingOrDefault),
@@ -315,40 +317,45 @@ class TransactionListTile extends StatelessWidget {
 
     final List<SlidableAction> startActions = [
       if (showDuplicateButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => duplicateFn!(),
           icon: Symbols.content_copy_rounded,
+          tooltip: "transaction.duplicate".t(context),
           backgroundColor: context.flowColors.semi,
         ),
     ];
 
     final List<SlidableAction> endActions = [
       if (showConfirmButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => confirmFn!(),
           icon: Symbols.check_rounded,
+          tooltip: "general.confirm".t(context),
           backgroundColor: context.colorScheme.primary,
         ),
       if (showHoldButton)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => confirmFn!(false),
           icon: Symbols.cancel_rounded,
+          tooltip: "transaction.pending.hold".t(context),
           backgroundColor: context.flowColors.expense,
         ),
       if (moveToTrashFn != null &&
           !showHoldButton &&
           transaction.isDeleted != true)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => moveToTrashFn!(),
-          icon: Symbols.delete_forever_rounded,
+          icon: Symbols.delete_rounded,
+          tooltip: "transaction.moveToTrashBin".t(context),
           backgroundColor: context.flowColors.expense,
         ),
       if (recoverFromTrashFn != null &&
           !showHoldButton &&
           transaction.isDeleted == true)
-        SlidableAction(
+        LabeledSlidableAction(
           onPressed: (context) => recoverFromTrashFn!(),
           icon: Symbols.restore_page_rounded,
+          tooltip: "transaction.moveToTrashBin.restore".t(context),
           backgroundColor: context.flowColors.income,
         ),
     ];
@@ -404,8 +411,8 @@ class TransactionListTile extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         icon,
-        Positioned(
-          right: -1.0,
+        PositionedDirectional(
+          end: -1.0,
           bottom: -1.0,
           child: DecoratedBox(
             // A surface-colored ring separates the badge from the icon plate.

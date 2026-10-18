@@ -54,9 +54,13 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
   bool obscure = false;
   bool rangeTitleAlternative = false;
 
+  late MultiCurrencyFlow _flow;
+
   @override
   void initState() {
     super.initState();
+
+    _flow = _computeFlow();
 
     TransitiveLocalPreferences().sessionPrivacyMode.addListener(
       _updatePrivacyMode,
@@ -64,6 +68,14 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
     UserPreferencesService().valueNotifier.addListener(_rerender);
 
     obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionListDateHeader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.transactions, widget.transactions)) {
+      _flow = _computeFlow();
+    }
   }
 
   @override
@@ -88,12 +100,7 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
 
     final String primaryCurrency = UserPreferencesService().primaryCurrency;
 
-    final MultiCurrencyFlow flow = MultiCurrencyFlow()
-      ..addAll(
-        widget.transactions
-            .where((transaction) => !transaction.isTransfer)
-            .map((transaction) => transaction.money),
-      );
+    final MultiCurrencyFlow flow = _flow;
 
     final bool containsNonPrimaryCurrency = widget.transactions.any(
       (transaction) => transaction.currency != primaryCurrency,
@@ -168,6 +175,13 @@ class _TransactionListDateHeaderState extends State<TransactionListDateHeader> {
       },
     );
   }
+
+  MultiCurrencyFlow _computeFlow() => MultiCurrencyFlow()
+    ..addAll(
+      widget.transactions
+          .where((transaction) => !transaction.isTransfer)
+          .map((transaction) => transaction.money),
+    );
 
   void _updatePrivacyMode() {
     obscure = TransitiveLocalPreferences().sessionPrivacyMode.get();

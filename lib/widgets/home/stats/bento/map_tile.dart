@@ -3,6 +3,7 @@ import "package:flow/entity/transaction.dart";
 import "package:flow/l10n/extensions.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
+import "package:flow/prefs/local_preferences.dart";
 import "package:flow/theme/theme.dart";
 import "package:flow/utils/extensions.dart";
 import "package:flow/utils/primary_currency_dependent_state.dart";
@@ -16,6 +17,9 @@ import "package:moment_dart/moment_dart.dart";
 
 /// Bento preview of located spending over the trailing [_days] days: how much
 /// spend carries a location. Range-independent.
+///
+/// Collapses to nothing, top spacing included, when location is disabled and
+/// nothing is located.
 class MapTile extends StatefulWidget {
   const MapTile({super.key});
 
@@ -37,36 +41,43 @@ class _MapTileState extends State<MapTile>
   Widget build(BuildContext context) {
     final bool hasData = locatedCount > 0;
 
-    return BentoTile(
-      label: "tabs.stats.analytics.spendingMap".t(context),
-      icon: Symbols.map_rounded,
-      height: 158.0,
-      busy: busy && !loaded,
-      onTap: () => context.push("/stats/map"),
-      child: hasData
-          ? Column(
-              crossAxisAlignment: .start,
-              mainAxisAlignment: .center,
-              children: [
-                Text(
-                  "tabs.stats.analytics.map.mappedShort".t(context, {
-                    "days": _days,
-                  }),
-                  style: context.textTheme.bodySmall?.semi(context),
-                ),
-                const SizedBox(height: 4.0),
-                MoneyText(
-                  Money(mappedTotal, primaryCurrency),
-                  style: context.textTheme.headlineSmall,
-                  autoSize: true,
-                  initiallyAbbreviated: true,
-                ),
-              ],
-            )
-          : Text(
-              "tabs.stats.analytics.map.noneYet".t(context),
-              style: context.textTheme.bodySmall?.semi(context),
-            ),
+    if (!hasData && !LocalPreferences().enableGeo.get()) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: BentoTile(
+        label: "tabs.stats.analytics.spendingMap".t(context),
+        icon: Symbols.map_rounded,
+        height: 158.0,
+        busy: busy && !loaded,
+        onTap: () => context.push("/stats/map"),
+        child: hasData
+            ? Column(
+                crossAxisAlignment: .start,
+                mainAxisAlignment: .center,
+                children: [
+                  Text(
+                    "tabs.stats.analytics.map.mappedShort".t(context, {
+                      "days": _days,
+                    }),
+                    style: context.textTheme.bodySmall?.semi(context),
+                  ),
+                  const SizedBox(height: 4.0),
+                  MoneyText(
+                    Money(mappedTotal, primaryCurrency),
+                    style: context.textTheme.headlineSmall,
+                    autoSize: true,
+                    initiallyAbbreviated: true,
+                  ),
+                ],
+              )
+            : Text(
+                "tabs.stats.analytics.map.noneYet".t(context),
+                style: context.textTheme.bodySmall?.semi(context),
+              ),
+      ),
     );
   }
 

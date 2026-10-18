@@ -53,6 +53,9 @@ class _NetWorthPageState extends State<NetWorthPage>
   List<NetWorthSample> samples = [];
   List<AccountBalanceShare> shares = [];
 
+  /// Accounts left out of net worth via [Account.excludeFromTotalBalance].
+  List<Account> excludedAccounts = [];
+
   /// Unit the samples are spaced by, used to format axis labels and tooltips.
   DurationUnit sampleUnit = DurationUnit.month;
 
@@ -151,6 +154,19 @@ class _NetWorthPageState extends State<NetWorthPage>
                     ),
                     const SizedBox(height: 8.0),
                     ..._buildShareRows(context),
+                    if (excludedAccounts.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      Frame(
+                        child: Text(
+                          "tabs.stats.analytics.netWorth.excluded".t(context, {
+                            "accounts": excludedAccounts
+                                .map((account) => account.name)
+                                .join(", "),
+                          }),
+                          style: context.textTheme.bodySmall?.semi(context),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 96.0),
                   ],
                 ),
@@ -201,9 +217,12 @@ class _NetWorthPageState extends State<NetWorthPage>
     });
 
     try {
-      accounts = ObjectBox()
-          .getAccounts(false)
+      final List<Account> allAccounts = ObjectBox().getAccounts(false);
+      accounts = allAccounts
           .where((account) => account.excludeFromTotalBalance != true)
+          .toList();
+      excludedAccounts = allAccounts
+          .where((account) => account.excludeFromTotalBalance == true)
           .toList();
 
       final DurationUnit unit = RangeData.getOptimalUnit(range);

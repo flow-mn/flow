@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flow/data/prefs/frecency_group.dart";
 import "package:flow/entity/account.dart";
 import "package:flow/objectbox.dart";
@@ -5,7 +7,6 @@ import "package:flow/objectbox/actions.dart";
 import "package:flow/objectbox/objectbox.g.dart";
 import "package:flow/prefs/transitive.dart";
 import "package:flow/utils/extensions/iterables.dart";
-import "package:flow/widgets/transaction_watcher.dart";
 import "package:flutter/material.dart";
 
 class AccountsProviderScope extends StatefulWidget {
@@ -20,40 +21,33 @@ class AccountsProviderScope extends StatefulWidget {
 class _AccountsProviderScopeState extends State<AccountsProviderScope> {
   QueryBuilder<Account> _queryBuilder() =>
       ObjectBox().box<Account>().query().order(Account_.sortOrder);
+  late final StreamSubscription _subscription;
+
+  List<Account>? _accounts;
 
   @override
-  Widget build(BuildContext context) => TransactionWatcher(
-    builder: (context, _, _) {
-      return StreamBuilder<Query<Account>>(
-        stream: _queryBuilder().watch(triggerImmediately: true),
-        builder: (context, snapshot) {
-          final List<Account>? accounts = snapshot.data?.find();
+  void initState() {
+    super.initState();
+    _subscription = _queryBuilder()
+        .watch(triggerImmediately: true)
+        .listen(onData);
+  }
 
-          if (accounts != null) {
-            final FrecencyGroup frecencyGroup = FrecencyGroup(
-              accounts
-                  .map(
-                    (account) => TransitiveLocalPreferences().getFrecencyData(
-                      "account",
-                      account.uuid,
-                    ),
-                  )
-                  .nonNulls
-                  .toList(),
-            );
+  void onData(Query<Account> query) {
+    setState(() {
+      _accounts = query.find();
+    });
+  }
 
-            accounts.sort(
-              (a, b) => frecencyGroup
-                  .getScore(b.uuid)
-                  .compareTo(frecencyGroup.getScore(a.uuid)),
-            );
-          }
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
-          return AccountsProvider(accounts, child: widget.child);
-        },
-      );
-    },
-  );
+  @override
+  Widget build(BuildContext context) =>
+      AccountsProvider(_accounts, child: widget.child);
 }
 
 class AccountsProvider extends InheritedWidget {
@@ -61,7 +55,30 @@ class AccountsProvider extends InheritedWidget {
 
   bool get ready => _accounts != null;
 
-  List<Account> get allAccounts => _accounts ?? [];
+  /// Accounts sorted by frecency
+  List<Account> get allAccounts {
+    final List<Account> list = _accounts ?? const [];
+    if (list.isEmpty) return list;
+
+    final FrecencyGroup frecencyGroup = FrecencyGroup(
+      list
+          .map(
+            (account) => TransitiveLocalPreferences().getFrecencyData(
+              "account",
+              account.uuid,
+            ),
+          )
+          .nonNulls
+          .toList(),
+    );
+
+    return [...list]..sort(
+      (a, b) => frecencyGroup
+          .getScore(b.uuid)
+          .compareTo(frecencyGroup.getScore(a.uuid)),
+    );
+  }
+
   List<Account> get activeAccounts =>
       allAccounts.actives.toList()
         ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));

@@ -894,20 +894,27 @@ class CurrencyRegistryService {
         );
       });
 
-  Map<String, CurrencyData> get groupedCurrencies => {
-    ..._iso4217CurrenciesGrouped,
-    ...Map.fromEntries(
-      _cryptoCurrencies.map(
-        (crypto) => MapEntry<String, CurrencyData>(crypto.code, crypto),
-      ),
-    ),
-    ...Map.fromEntries(
-      _customCurrencies.map(
-        (customCurrency) =>
-            MapEntry<String, CurrencyData>(customCurrency.code, customCurrency),
-      ),
-    ),
-  };
+  /// Reset in [registerCustomCurrency]
+  Map<String, CurrencyData>? _groupedCurrencies;
+  final Map<String, int?> _preferredDecimalPrecisions = {};
+
+  Map<String, CurrencyData> get groupedCurrencies =>
+      _groupedCurrencies ??= Map.unmodifiable({
+        ..._iso4217CurrenciesGrouped,
+        ...Map.fromEntries(
+          _cryptoCurrencies.map(
+            (crypto) => MapEntry<String, CurrencyData>(crypto.code, crypto),
+          ),
+        ),
+        ...Map.fromEntries(
+          _customCurrencies.map(
+            (customCurrency) => MapEntry<String, CurrencyData>(
+              customCurrency.code,
+              customCurrency,
+            ),
+          ),
+        ),
+      });
 
   List<CurrencyData> get allIso4217Currencies => _iso4217Currencies;
 
@@ -922,10 +929,12 @@ class CurrencyRegistryService {
 
     assert(currencyCode.toUpperCase() == currencyCode);
 
-    final CurrencyData? currencyData = groupedCurrencies[currencyCode];
-
-    return currencyData?.decimalDigits ??
-        NumberFormat.simpleCurrency(name: currencyCode).decimalDigits;
+    return _preferredDecimalPrecisions.putIfAbsent(
+      currencyCode,
+      () =>
+          groupedCurrencies[currencyCode]?.decimalDigits ??
+          NumberFormat.simpleCurrency(name: currencyCode).decimalDigits,
+    );
   }
 
   static final RegExp _trailingZerosRegex = RegExp(r"0+$");
@@ -979,5 +988,7 @@ class CurrencyRegistryService {
     }
 
     _customCurrencies.add(currency);
+    _groupedCurrencies = null;
+    _preferredDecimalPrecisions.clear();
   }
 }

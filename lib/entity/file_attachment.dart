@@ -29,7 +29,18 @@ class FileAttachment extends EntityBase {
   /// Relative path from objectbox root directory.
   String filePath;
 
-  File get file => File(path.join(ObjectBox.appDataDirectory, filePath));
+  File get file {
+    final String resolved = path.normalize(
+      path.join(ObjectBox.appDataDirectory, filePath),
+    );
+
+    // Imported backups may carry arbitrary paths
+    if (!path.isWithin(ObjectBox.filesDirectory, resolved)) {
+      return File(path.join(ObjectBox.filesDirectory, path.basename(filePath)));
+    }
+
+    return File(resolved);
+  }
 
   @Transient()
   @JsonKey(includeFromJson: false, includeToJson: false)

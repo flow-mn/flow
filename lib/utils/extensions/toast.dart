@@ -23,6 +23,7 @@ extension ToastHelper on BuildContext {
     required String text,
     ToastificationType type = ToastificationType.success,
     Widget? icon,
+    ({String label, VoidCallback onPressed})? action,
   }) {
     if (icon == null) {
       if (type == ToastificationType.success) {
@@ -38,9 +39,24 @@ extension ToastHelper on BuildContext {
       }
     }
 
-    return toastification.show(
+    late final ToastificationItem item;
+
+    item = toastification.show(
       context: this,
-      title: Text(text),
+      title: action == null
+          ? Text(text)
+          : Row(
+              children: [
+                Expanded(child: Text(text)),
+                TextButton(
+                  onPressed: () {
+                    toastification.dismiss(item);
+                    action.onPressed();
+                  },
+                  child: Text(action.label),
+                ),
+              ],
+            ),
       type: type,
       icon: icon,
       autoCloseDuration: const Duration(seconds: 5),
@@ -59,5 +75,7 @@ extension ToastHelper on BuildContext {
         ),
       ],
     );
+
+    return item;
   }
 }

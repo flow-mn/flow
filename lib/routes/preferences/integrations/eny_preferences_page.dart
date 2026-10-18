@@ -143,73 +143,75 @@ class _EnyPreferencesPageState extends State<EnyPreferencesPage> {
                             );
                           },
                         ),
-                      const SizedBox(height: 24.0),
-                      ListHeader("preferences.scan".t(context)),
-                      const SizedBox(height: 8.0),
-                      ValueListenableBuilder(
-                        valueListenable: UserPreferencesService().valueNotifier,
-                        builder: (context, userPreferences, child) {
-                          final bool createTransactionsPerItemInScans =
-                              userPreferences.createTransactionsPerItemInScans;
-                          final int? scansPendingThresholdInHours =
-                              userPreferences.scansPendingThresholdInHours;
+                      if (connected) ...[
+                        const SizedBox(height: 24.0),
+                        ListHeader("preferences.scan".t(context)),
+                        const SizedBox(height: 8.0),
+                        ValueListenableBuilder(
+                          valueListenable:
+                              UserPreferencesService().valueNotifier,
+                          builder: (context, userPreferences, child) {
+                            final bool createTransactionsPerItemInScans =
+                                userPreferences
+                                    .createTransactionsPerItemInScans;
+                            final int? scansPendingThresholdInHours =
+                                userPreferences.scansPendingThresholdInHours;
 
-                          return Column(
-                            mainAxisSize: .min,
-                            crossAxisAlignment: .start,
-                            children: [
-                              SwitchListTile(
-                                secondary: Icon(
-                                  createTransactionsPerItemInScans
-                                      ? Symbols.list_rounded
-                                      : Symbols.list_alt_rounded,
-                                ),
-                                title: Text(
-                                  "preferences.scan.createTransactionsPerItemInScans"
-                                      .t(context),
-                                ),
-                                subtitle: Text(
-                                  "preferences.scan.createTransactionsPerItemInScans.description"
-                                      .t(context),
-                                ),
-                                value: createTransactionsPerItemInScans,
-                                onChanged: (bool newValue) {
-                                  UserPreferencesService()
-                                          .createTransactionsPerItemInScans =
-                                      newValue;
-                                },
-                              ),
-                              SwitchListTile(
-                                secondary: const Icon(
-                                  Symbols.search_activity_rounded,
-                                ),
-                                title: Text(
-                                  "preferences.scan.markPendingThreshold".t(
-                                    context,
+                            return Column(
+                              mainAxisSize: .min,
+                              crossAxisAlignment: .start,
+                              children: [
+                                SwitchListTile(
+                                  secondary: Icon(
+                                    createTransactionsPerItemInScans
+                                        ? Symbols.list_rounded
+                                        : Symbols.list_alt_rounded,
                                   ),
-                                ),
-                                value: scansPendingThresholdInHours == 0,
-                                onChanged: (bool newValue) {
-                                  UserPreferencesService()
-                                      .scansPendingThresholdInHours = newValue
-                                      ? 0
-                                      : 6;
-                                },
-                              ),
-                              const SizedBox(height: 8.0),
-                              Frame(
-                                child: InfoText(
-                                  child: Text(
-                                    "preferences.scan.markPendingThreshold.description"
+                                  title: Text(
+                                    "preferences.scan.createTransactionsPerItemInScans"
                                         .t(context),
                                   ),
+                                  subtitle: Text(
+                                    "preferences.scan.createTransactionsPerItemInScans.description"
+                                        .t(context),
+                                  ),
+                                  value: createTransactionsPerItemInScans,
+                                  onChanged: (bool newValue) {
+                                    UserPreferencesService()
+                                            .createTransactionsPerItemInScans =
+                                        newValue;
+                                  },
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      if (connected) ...[
+                                SwitchListTile(
+                                  secondary: const Icon(
+                                    Symbols.search_activity_rounded,
+                                  ),
+                                  title: Text(
+                                    "preferences.scan.markPendingThreshold".t(
+                                      context,
+                                    ),
+                                  ),
+                                  value: scansPendingThresholdInHours == 0,
+                                  onChanged: (bool newValue) {
+                                    UserPreferencesService()
+                                        .scansPendingThresholdInHours = newValue
+                                        ? 0
+                                        : 6;
+                                  },
+                                ),
+                                const SizedBox(height: 8.0),
+                                Frame(
+                                  child: InfoText(
+                                    child: Text(
+                                      "preferences.scan.markPendingThreshold.description"
+                                          .t(context),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                         const SizedBox(height: 24.0),
                         const WavyDivider(),
                         const SizedBox(height: 24.0),

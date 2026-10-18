@@ -1,6 +1,6 @@
 import "package:flow/data/flow_icon.dart";
 import "package:flow/l10n/extensions.dart";
-import "package:flow/sync/import/import_v1.dart";
+import "package:flow/sync/sync.dart";
 import "package:flow/widgets/general/button.dart";
 import "package:flow/widgets/general/flow_icon.dart";
 import "package:flow/widgets/general/info_text.dart";
@@ -9,6 +9,7 @@ import "package:flow/widgets/import_wizard/import_item_list_tile.dart";
 import "package:flow/widgets/scaffold_actions.dart";
 import "package:flutter/material.dart";
 import "package:material_symbols_icons_flow/symbols.dart";
+import "package:moment_dart/moment_dart.dart";
 
 class BackupInfoV1 extends StatelessWidget {
   final VoidCallback onClickStart;
@@ -36,6 +37,13 @@ class BackupInfoV1 extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
+            ImportItemListTile(
+              icon: FlowIconData.icon(Symbols.calendar_month_rounded),
+              label: Text(
+                "${"sync.import.syncData.createdDate".t(context)}: ${importer.data.exportDate.toMoment().lll}",
+              ),
+            ),
+            const SizedBox(height: 8.0),
             ImportItemListTile(
               icon: FlowIconData.icon(Symbols.wallet_rounded),
               label: Text(
@@ -65,6 +73,15 @@ class BackupInfoV1 extends StatelessWidget {
                 ),
               ),
             ),
+            if (importer.data.versionCode < latestSyncModelVersion) ...[
+              const SizedBox(height: 16.0),
+              InfoText(
+                icon: Symbols.warning_rounded,
+                child: Text(
+                  "sync.import.syncData.olderBackupWarning".t(context),
+                ),
+              ),
+            ],
             const SizedBox(height: 16.0),
             InfoText(child: Text("sync.import.emergencyBackup".t(context))),
             const SizedBox(height: 16.0),

@@ -56,7 +56,9 @@ class _CashFlowTileState extends State<CashFlowTile>
       icon: Symbols.swap_vert_rounded,
       height: 160.0,
       busy: busy && !loaded,
-      onTap: () => context.push("/stats/cash-flow"),
+      onTap: () => context.push(
+        "/stats/cash-flow?range=${Uri.encodeQueryComponent(widget.range.encodeShort())}",
+      ),
       child: empty
           ? Text(
               "tabs.stats.analytics.cashFlow.noMovement".t(context),
