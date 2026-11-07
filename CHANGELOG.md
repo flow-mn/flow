@@ -938,3 +938,10 @@ fork's additional features have are in the new release
 ## Beta 0.3.0
 
 * Initial beta release
+
+## next
+
+### Features
+
+* Added dynamic month-cycle transaction filters so users can save rolling billing windows like "Current cycle" without recreating stale date ranges.
+* Added custom recurring cycles with a dedicated selector flow for adding, editing, and reusing saved billing windows.

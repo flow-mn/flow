@@ -22,6 +22,8 @@ export "./transitive.dart";
 class LocalPreferences {
   final SharedPreferencesWithCache _prefs;
 
+  SharedPreferencesWithCache get prefs => _prefs;
+
   /// Main currency used in the app
   late final PrimitiveSettingsEntry<String> primaryCurrency;
 
