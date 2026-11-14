@@ -78,6 +78,7 @@
       android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
     <receiver
       android:name=".glance.TwoEntryReceiver"
+      android:label="@string/two_entry_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -88,6 +89,7 @@
     </receiver>
     <receiver
       android:name=".glance.TwoEntryLastReceiver"
+      android:label="@string/two_entry_last_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -98,6 +100,7 @@
     </receiver>
     <receiver
       android:name=".glance.FourEntryReceiver"
+      android:label="@string/four_entry_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -108,6 +111,7 @@
     </receiver>
     <receiver
       android:name=".glance.SummaryReceiver"
+      android:label="@string/summary_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -121,6 +125,7 @@
          silently stops that widget from ever updating. -->
     <receiver
       android:name=".glance.BudgetRollupReceiver"
+      android:label="@string/budget_rollup_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -131,6 +136,7 @@
     </receiver>
     <receiver
       android:name=".glance.BudgetPinnedReceiver"
+      android:label="@string/budget_pinned_widget_label"
       android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

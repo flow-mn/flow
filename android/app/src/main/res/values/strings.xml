@@ -45,4 +45,16 @@
     between two already-formatted amounts, so it is layout, not formatting.
   -->
   <string name="budget_widget_amounts">%1$s / %2$s</string>
+
+  <!-- Widget names in the launcher's widget picker. -->
+  <string name="two_entry_widget_label">Two Buttons</string>
+  <string name="two_entry_last_widget_label">Two Actions (Last)</string>
+  <string name="four_entry_widget_label">Four Actions</string>
+  <string name="summary_widget_label">Flow Summary</string>
+
+  <!-- Widget-picker descriptions (shown under the preview on Android 12+). -->
+  <string name="two_entry_widget_description">Two quick buttons for new transactions.</string>
+  <string name="two_entry_last_widget_description">The last two of your quick-add buttons.</string>
+  <string name="four_entry_widget_description">All four quick-add buttons: scan, transfer, income, expense.</string>
+  <string name="summary_widget_description">This month\'s income and expenses at a glance.</string>
 </resources>

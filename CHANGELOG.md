@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+### Changes
+
+* Home screen widgets now have names and descriptions in the Android widget picker, and default to their intended size on Android 12+
+
 ## 0.26.0
 
 ### Features
