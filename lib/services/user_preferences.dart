@@ -411,9 +411,9 @@ class UserPreferencesService {
           qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryReceiver",
         ),
         HomeWidget.updateWidget(
-          name: "FlowTwoEntryLateWidget",
-          androidName: "TwoEntryLateReceiver",
-          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryLateReceiver",
+          name: "FlowTwoEntryLastWidget",
+          androidName: "TwoEntryLastReceiver",
+          qualifiedAndroidName: "mn.flow.flow.glance.TwoEntryLastReceiver",
         ),
         HomeWidget.updateWidget(
           name: "FlowFourEntryWidget",

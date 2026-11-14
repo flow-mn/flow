@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+### Fixes
+
+* Reordering quick-add buttons now updates the "Two Actions (Last)" home screen widget right away
+
 ## 0.26.0
 
 ### Features
