@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview (android:previewLayout), used on Android 12-14
+  and until the generated preview (TwoEntry.providePreview) is published.
+  Buttons scale like the widget's: diameter = min(width / 2 - 24dp,
+  height - 16dp), 8dp apart, centred. Each ImageView is half the row wide and
+  at most as tall as the box, and draws its square button against the middle.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/preview_widget_bg" android:gravity="center_vertical"
+  android:orientation="horizontal"
+  android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:layout_marginEnd="8dp" android:adjustViewBounds="true" android:scaleType="fitEnd" android:src="@drawable/preview_button_camera" android:importantForAccessibility="no" />
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:adjustViewBounds="true" android:scaleType="fitStart" android:src="@drawable/preview_button_transfer" android:importantForAccessibility="no" />
+</LinearLayout>

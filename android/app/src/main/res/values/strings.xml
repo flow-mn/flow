@@ -57,4 +57,19 @@
   <string name="two_entry_last_widget_description">The last two of your quick-add buttons.</string>
   <string name="four_entry_widget_description">All four quick-add buttons: scan, transfer, income, expense.</string>
   <string name="summary_widget_description">This month\'s income and expenses at a glance.</string>
+
+  <!-- Sample data shown only in the widget picker's previews. -->
+  <string name="widget_preview_income">Income</string>
+  <string name="widget_preview_expense">Expense</string>
+  <string name="widget_preview_budgets">Budgets</string>
+  <string name="widget_preview_budget_eating_out">Eating out</string>
+  <string name="widget_preview_budget_groceries">Groceries</string>
+  <string name="widget_preview_budget_transport">Transport</string>
+  <string name="widget_preview_days_left">12 days left</string>
+  <string name="widget_preview_rollup_headline">1 over limit</string>
+  <string name="widget_preview_rollup_subline">1 nearing limit · 3 budgets</string>
+  <string name="widget_preview_amount_income" translatable="false">4 250,00</string>
+  <string name="widget_preview_amount_expense" translatable="false">2 870,40</string>
+  <string name="widget_preview_budget_amounts" translatable="false">410 / 400</string>
+  <string name="widget_preview_budget_percent" translatable="false">102%</string>
 </resources>

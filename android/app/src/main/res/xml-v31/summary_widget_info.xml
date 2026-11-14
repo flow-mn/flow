@@ -6,5 +6,6 @@
   android:targetCellWidth="3"
   android:targetCellHeight="1"
   android:resizeMode="horizontal"
+  android:previewLayout="@layout/widget_preview_summary"
   android:initialLayout="@layout/glance_default_loading_layout">
 </appwidget-provider>
