@@ -63,6 +63,17 @@ object WidgetPreviews {
   val sizes3x1 = ladder(
     180 to 60, 200 to 70, 220 to 75, 250 to 80, 280 to 90, 320 to 100, 360 to 110,
   )
+  /**
+   * The net worth chart is a bitmap drawn for one of these sizes, so the
+   * ladder covers both box shapes pickers use for a 3x2 widget: wide (Pixel)
+   * and close to square (One UI). Without the squarer rungs One UI picks a
+   * short size and the chart ends up as a thin strip under a large gap.
+   */
+  val sizesNetWorth = ladder(
+    180 to 110, 215 to 130, 250 to 150, 280 to 170, 320 to 190, 360 to 215,
+    150 to 110, 175 to 130, 200 to 150, 230 to 170, 260 to 190, 290 to 215,
+    320 to 240,
+  )
   val sizes4x2 = ladder(
     250 to 110, 280 to 130, 300 to 140, 320 to 160, 360 to 180, 400 to 200,
   )
@@ -72,6 +83,7 @@ object WidgetPreviews {
     TwoEntryLastReceiver::class,
     FourEntryReceiver::class,
     SummaryReceiver::class,
+    NetWorthReceiver::class,
     BudgetPinnedReceiver::class,
     BudgetRollupReceiver::class,
   )
@@ -139,7 +151,8 @@ object WidgetPreviews {
   private fun contentSignature(context: Context): Long {
     val r = real(context)
     val keys = listOf(
-      "summaryIncomeLabel", "summaryExpenseLabel", "buttonOrder",
+      "summaryIncomeLabel", "summaryExpenseLabel", "netWorthLabel",
+      "netWorthRangeLabel", "buttonOrder",
     )
     val parts = keys.map { r?.getString(it, null) ?: "" }.toMutableList()
     // Only words that don't change with the data: the budget "over"/"nearing"
@@ -184,6 +197,30 @@ object WidgetPreviews {
           ?: context.getString(R.string.widget_preview_income)),
         "summaryExpenseLabel" to (r?.getString("summaryExpenseLabel", null)
           ?: context.getString(R.string.widget_preview_expense)),
+      )
+    )
+  }
+
+  fun netWorthState(context: Context): HomeWidgetGlanceState {
+    val r = real(context)
+    val template = r?.getString("netWorthAmount", null)
+    // A plausible month: small dips, overall +6 120.
+    val samples = listOf(
+      37467.0, 37520.0, 37610.0, 37580.0, 37720.0, 37890.0, 38020.0, 37950.0,
+      38310.0, 38640.0, 38590.0, 38900.0, 39250.0, 39180.0, 39420.0, 39860.0,
+      40110.0, 39980.0, 40400.0, 40920.0, 41150.0, 41060.0, 41520.0, 41880.0,
+      42210.0, 42530.0, 42460.0, 42950.0, 43300.0, 43587.01,
+    )
+    return state(
+      mapOf(
+        "netWorthLabel" to (r?.getString("netWorthLabel", null)
+          ?: context.getString(R.string.widget_preview_net_worth)),
+        "netWorthAmount" to SampleMoney.like(template, 43587.01),
+        "netWorthDelta" to "+" + SampleMoney.like(template, 6120.00),
+        "netWorthDeltaPositive" to true,
+        "netWorthRangeLabel" to (r?.getString("netWorthRangeLabel", null)
+          ?: context.getString(R.string.widget_preview_last_30_days)),
+        "netWorthSamples" to samples.joinToString(","),
       )
     )
   }

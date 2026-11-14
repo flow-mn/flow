@@ -5,6 +5,7 @@
 ### Features
 
 * Android widget picker now shows a preview of every home screen widget
+* New Net worth home screen widget: your total balance, its change over the last 30 days, and a trend line (Android and iOS)
 
 ### Changes
 

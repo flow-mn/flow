@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample trend for the net worth widget's static picker preview: the same
+     30 samples the generated preview draws (WidgetPreviews.netWorthState).
+     Drawn for a ~110dp tall chart and stretched to the space it gets; the line
+     ends exactly on the top-right corner, where the layout puts the dot. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="270dp" android:height="110dp" android:viewportWidth="270" android:viewportHeight="110">
+  <path android:fillColor="@color/preview_chart" android:fillAlpha="0.18"
+      android:pathData="M0.0,96.8 L9.3,96.0 L18.6,94.5 L27.9,95.0 L37.2,92.8 L46.6,90.1 L55.9,88.1 L65.2,89.2 L74.5,83.5 L83.8,78.2 L93.1,79.0 L102.4,74.1 L111.7,68.6 L121.0,69.7 L130.3,65.9 L139.7,58.9 L149.0,55.0 L158.3,57.1 L167.6,50.4 L176.9,42.2 L186.2,38.5 L195.5,40.0 L204.8,32.7 L214.1,27.0 L223.4,21.8 L232.8,16.7 L242.1,17.8 L251.4,10.1 L260.7,4.5 L270.0,-0.0 L270,110 L0,110 Z"/>
+  <path android:strokeColor="@color/preview_chart" android:strokeWidth="2.5" android:strokeLineCap="round" android:strokeLineJoin="round"
+      android:pathData="M0.0,96.8 L9.3,96.0 L18.6,94.5 L27.9,95.0 L37.2,92.8 L46.6,90.1 L55.9,88.1 L65.2,89.2 L74.5,83.5 L83.8,78.2 L93.1,79.0 L102.4,74.1 L111.7,68.6 L121.0,69.7 L130.3,65.9 L139.7,58.9 L149.0,55.0 L158.3,57.1 L167.6,50.4 L176.9,42.2 L186.2,38.5 L195.5,40.0 L204.8,32.7 L214.1,27.0 L223.4,21.8 L232.8,16.7 L242.1,17.8 L251.4,10.1 L260.7,4.5 L270.0,-0.0"/>
+</vector>

@@ -120,6 +120,17 @@
         android:name="android.appwidget.provider"
         android:resource="@xml/summary_widget_info" />
     </receiver>
+    <receiver
+      android:name=".glance.NetWorthReceiver"
+      android:label="@string/net_worth_widget_label"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/net_worth_widget_info" />
+    </receiver>
     <!-- Budget widgets. The receiver class names are part of the Dart contract
          (see lib/services/budget_widget_sync.dart) — renaming either one
          silently stops that widget from ever updating. -->

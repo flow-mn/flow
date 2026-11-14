@@ -13,6 +13,7 @@ struct LeBundle: WidgetBundle {
     var body: some Widget {
         FlowTwoEntryWidget()
         FlowSummaryWidget()
+        FlowNetWorthWidget()
         FlowBudgetRollupWidget()
         FlowBudgetPinnedWidget()
     }
