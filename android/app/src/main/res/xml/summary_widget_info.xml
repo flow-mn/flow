@@ -1,6 +1,6 @@
 <appwidget-provider
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:label="Flow Summary"
+  android:label="@string/summary_widget_label"
   android:minWidth="180dp"
   android:minHeight="55dp"
   android:targetCellWidth="3"

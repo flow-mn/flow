@@ -11,7 +11,7 @@
 
   <string name="two_entry_widget_description">Dwa szybkie przyciski do nowych transakcji.</string>
   <string name="two_entry_last_widget_description">Dwa ostatnie z Twoich przycisków szybkiego dodawania.</string>
-  <string name="four_entry_widget_description">Wszystkie przyciski szybkiego dodawania: skan, przelew, przychód, wydatek.</string>
+  <string name="four_entry_widget_description">Twoje przyciski szybkiego dodawania, w ustawionej kolejności.</string>
   <string name="summary_widget_description">Przychody i wydatki z tego miesiąca w skrócie.</string>
   <string name="net_worth_widget_description">Twoje saldo łączne i jego trend z 30 dni.</string>
   <string name="budget_rollup_widget_description">Które budżety wymagają uwagi i ten najbliżej limitu.</string>

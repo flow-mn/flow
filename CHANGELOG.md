@@ -4,17 +4,23 @@
 
 ### Features
 
-* Android widget picker now shows a preview of every home screen widget
-* New Net worth home screen widget: your total balance, its change over the last 30 days, and a trend line (Android and iOS)
+* New Net worth home screen widget: your total balance, its change over the
+  last 30 days, and a trend line (Android and iOS), [#785](https://github.com/flow-mn/flow/pull/785) by [@PawiX25](https://github.com/PawiX25)
+* Android widget picker now shows a preview of every home screen widget,
+  [#783](https://github.com/flow-mn/flow/pull/783) by [@PawiX25](https://github.com/PawiX25)
 
 ### Changes
 
-* Home screen widgets now have names and descriptions in the Android widget picker, and default to their intended size on Android 12+
+* Home screen widgets now have names and descriptions in the Android widget
+  picker, and default to their intended size on Android 12+, [#779](https://github.com/flow-mn/flow/pull/779) by [@PawiX25](https://github.com/PawiX25)
+* Android widget names and descriptions are now in Mongolian and Polish
 
 ### Fixes
 
-* Summary home screen widget no longer cuts off long amounts, and fits narrow cells and larger system font sizes
-* Reordering quick-add buttons now updates the "Two Actions (Last)" home screen widget right away
+* Fixed the Summary home screen widget cutting off long amounts, [#781](https://github.com/flow-mn/flow/pull/781)
+  by [@PawiX25](https://github.com/PawiX25)
+* Fixed the "Two Actions (Last)" home screen widget not updating after
+  reordering quick-add buttons, [#777](https://github.com/flow-mn/flow/pull/777) by [@PawiX25](https://github.com/PawiX25)
 
 ## 0.26.0
 
