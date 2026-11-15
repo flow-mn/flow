@@ -29,6 +29,7 @@ import "package:flow/logging.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/objectbox/actions.dart";
 import "package:flow/prefs/local_preferences.dart";
+import "package:flow/prefs/custom_cycles.dart";
 import "package:flow/providers/accounts_provider.dart";
 import "package:flow/providers/categories_provider.dart";
 import "package:flow/providers/transaction_tags_provider.dart";
@@ -112,6 +113,7 @@ void main() async {
   await ObjectBox.initialize();
   startupLog.fine("Initializing local preferences (shared prefs)");
   await LocalPreferences.initialize();
+  CustomCyclePreferences.initialize(LocalPreferences().prefs);
 
   /// Set `sortOrder` values if there are any unset (-1) values
   await ObjectBox().updateAccountOrderList(ignoreIfNoUnsetValue: true);
