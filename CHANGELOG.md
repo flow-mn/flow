@@ -2,8 +2,18 @@
 
 ## next
 
+### Features
+
+* Android widget picker now shows a preview of every home screen widget
+* New Net worth home screen widget: your total balance, its change over the last 30 days, and a trend line (Android and iOS)
+
+### Changes
+
+* Home screen widgets now have names and descriptions in the Android widget picker, and default to their intended size on Android 12+
+
 ### Fixes
 
+* Summary home screen widget no longer cuts off long amounts, and fits narrow cells and larger system font sizes
 * Reordering quick-add buttons now updates the "Two Actions (Last)" home screen widget right away
 
 ## 0.26.0

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview (android:previewLayout), used on Android 12-14
+  and until the generated preview (FourEntry.providePreview) is published.
+  Buttons scale like the widget's (diameter = width / 2 - 24dp), in two rows
+  8dp apart, centred in the box.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/preview_widget_bg" android:gravity="center"
+  android:orientation="vertical"
+  android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:layout_marginEnd="8dp" android:adjustViewBounds="true" android:scaleType="fitEnd" android:src="@drawable/preview_button_camera" android:importantForAccessibility="no" />
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:adjustViewBounds="true" android:scaleType="fitStart" android:src="@drawable/preview_button_transfer" android:importantForAccessibility="no" />
+  </LinearLayout>
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:layout_marginEnd="8dp" android:adjustViewBounds="true" android:scaleType="fitEnd" android:src="@drawable/preview_button_income" android:importantForAccessibility="no" />
+    <ImageView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_gravity="center_vertical" android:adjustViewBounds="true" android:scaleType="fitStart" android:src="@drawable/preview_button_expense" android:importantForAccessibility="no" />
+  </LinearLayout>
+</LinearLayout>

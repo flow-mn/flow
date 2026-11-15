@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Colours for the static widget-picker previews (previewLayout, API 31+).
+     The same system palette entries GlanceTheme's dynamic colours resolve to
+     (glance_color* in androidx.glance), so the static preview and the placed
+     widget are the same colour. -->
+<resources>
+  <color name="preview_background">@android:color/system_accent2_50</color>
+  <color name="preview_surface_variant">@android:color/system_neutral2_100</color>
+  <color name="preview_on_surface">@android:color/system_neutral1_900</color>
+  <color name="preview_on_surface_variant">@android:color/system_neutral2_700</color>
+  <color name="preview_primary">@android:color/system_accent1_600</color>
+  <color name="preview_primary_container">@android:color/system_accent1_100</color>
+  <!-- Net worth line: NetWorth.sparkline draws in accent1_300 in both themes. -->
+  <color name="preview_chart">@android:color/system_accent1_300</color>
+</resources>

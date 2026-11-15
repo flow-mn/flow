@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="budget_widget_over_count">
+    <item quantity="one">%1$d ponad limit</item>
+    <item quantity="few">%1$d ponad limit</item>
+    <item quantity="many">%1$d ponad limit</item>
+    <item quantity="other">%1$d ponad limit</item>
+  </plurals>
+  <plurals name="budget_widget_nearing_count">
+    <item quantity="one">%1$d blisko limitu</item>
+    <item quantity="few">%1$d blisko limitu</item>
+    <item quantity="many">%1$d blisko limitu</item>
+    <item quantity="other">%1$d blisko limitu</item>
+  </plurals>
+  <plurals name="budget_widget_tracked_count">
+    <item quantity="one">%1$d budżet</item>
+    <item quantity="few">%1$d budżety</item>
+    <item quantity="many">%1$d budżetów</item>
+    <item quantity="other">%1$d budżetu</item>
+  </plurals>
+  <plurals name="budget_widget_days_left">
+    <item quantity="one">Został %1$d dzień</item>
+    <item quantity="few">Zostały %1$d dni</item>
+    <item quantity="many">Zostało %1$d dni</item>
+    <item quantity="other">Zostało %1$d dnia</item>
+  </plurals>
+</resources>

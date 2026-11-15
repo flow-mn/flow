@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview (android:previewLayout), used on Android 12-14
+  and until the generated preview (NetWorth.providePreview) is published.
+  Mirrors the placed widget: text inset 16dp, chart edge to edge on the bottom
+  (clipped by the card's corners), fill running past the "today" dot to the
+  right edge. The chart takes all the height under the text.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/preview_widget_bg" android:clipToOutline="true"
+  android:orientation="vertical">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+    android:paddingStart="16dp" android:paddingEnd="16dp" android:paddingTop="16dp" android:paddingBottom="4dp">
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/widget_preview_net_worth" android:textSize="13sp" android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/widget_preview_amount_net_worth" android:textSize="22sp" android:textColor="@color/preview_on_surface" android:maxLines="1" />
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+      <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_trending_up" android:tint="@color/income_green" tools:ignore="UseAppTint" android:importantForAccessibility="no" />
+      <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:text="@string/widget_preview_net_worth_delta" android:textSize="12sp" android:textColor="@color/income_green" android:maxLines="1" />
+    </LinearLayout>
+  </LinearLayout>
+  <!-- Everything under the text, like the widget (height - 90dp). 8dp of
+       headroom, then the line: its end is the image's top-right corner, 3.5dp
+       down so the 7dp dot is centred on it however the image is stretched. -->
+  <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="8dp">
+    <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="3.5dp" android:layout_marginEnd="6dp" android:src="@drawable/preview_sparkline" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    <!-- The fill carries on to the right edge. -->
+    <ImageView android:layout_width="6dp" android:layout_height="match_parent" android:layout_gravity="end" android:layout_marginTop="3.5dp" android:src="@color/preview_chart" android:alpha="0.18" android:scaleType="fitXY" android:importantForAccessibility="no" />
+    <ImageView android:layout_width="7dp" android:layout_height="7dp" android:layout_gravity="top|end" android:layout_marginEnd="2.5dp" android:src="@drawable/preview_dot" android:importantForAccessibility="no" />
+  </FrameLayout>
+</LinearLayout>

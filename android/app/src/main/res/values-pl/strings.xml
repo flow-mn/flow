@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Polish: widget-picker labels, sample data and widget-side fallbacks. See values/strings.xml. -->
+<resources>
+  <string name="two_entry_widget_label">Dwa przyciski</string>
+  <string name="two_entry_last_widget_label">Dwa przyciski (ostatnie)</string>
+  <string name="four_entry_widget_label">Cztery przyciski</string>
+  <string name="summary_widget_label">Podsumowanie Flow</string>
+  <string name="net_worth_widget_label">Majątek netto Flow</string>
+  <string name="budget_rollup_widget_label">Budżety Flow</string>
+  <string name="budget_pinned_widget_label">Budżet Flow</string>
+
+  <string name="two_entry_widget_description">Dwa szybkie przyciski do nowych transakcji.</string>
+  <string name="two_entry_last_widget_description">Dwa ostatnie z Twoich przycisków szybkiego dodawania.</string>
+  <string name="four_entry_widget_description">Wszystkie przyciski szybkiego dodawania: skan, przelew, przychód, wydatek.</string>
+  <string name="summary_widget_description">Przychody i wydatki z tego miesiąca w skrócie.</string>
+  <string name="net_worth_widget_description">Twoje saldo łączne i jego trend z 30 dni.</string>
+  <string name="budget_rollup_widget_description">Które budżety wymagają uwagi i ten najbliżej limitu.</string>
+  <string name="budget_pinned_widget_description">Postęp jednego budżetu albo tego, który wymaga uwagi.</string>
+
+  <string name="budget_widget_config_budget">Budżet</string>
+  <string name="budget_widget_config_auto">Dowolny budżet, który wymaga uwagi</string>
+  <string name="budget_widget_config_no_budgets">Nie masz jeszcze budżetów. Widget pokaże ten, który będzie wymagał uwagi.</string>
+  <string name="budget_widget_config_privacy">Prywatność</string>
+  <string name="budget_widget_config_hide_amounts">Ukryj kwoty</string>
+  <string name="budget_widget_config_hide_amounts_summary">Tylko postęp i status, bez kwot na ekranie głównym.</string>
+  <string name="budget_widget_config_save">Zapisz</string>
+  <string name="budget_widget_config_cancel">Anuluj</string>
+
+  <string name="budget_widget_title">Budżety</string>
+  <string name="budget_widget_empty">Ustaw budżet wydatków</string>
+  <string name="budget_widget_missing_budget">Nie masz jeszcze budżetów</string>
+  <string name="budget_widget_on_track">Wszystko w normie</string>
+  <string name="budget_widget_period_ended">Okres zakończony</string>
+  <string name="budget_widget_status_healthy">W normie</string>
+  <string name="budget_widget_status_warning">Blisko limitu</string>
+  <string name="budget_widget_status_over">Ponad budżet</string>
+
+  <string name="widget_preview_income">Przychód</string>
+  <string name="widget_preview_expense">Wydatek</string>
+  <string name="widget_preview_net_worth">Majątek netto</string>
+  <string name="widget_preview_last_30_days">Ostatnie 30 dni</string>
+  <string name="widget_preview_net_worth_delta">+6 120,00 · Ostatnie 30 dni</string>
+  <string name="widget_preview_budgets">Budżety</string>
+  <string name="widget_preview_budget_eating_out">Jedzenie na mieście</string>
+  <string name="widget_preview_budget_groceries">Zakupy spożywcze</string>
+  <string name="widget_preview_budget_transport">Transport</string>
+  <string name="widget_preview_days_left">Zostało 12 dni</string>
+  <string name="widget_preview_rollup_headline">1 ponad limit</string>
+  <string name="widget_preview_rollup_subline">1 blisko limitu · 3 budżety</string>
+  <!-- Układ, nie tekst: separator między dwiema sformatowanymi kwotami. -->
+  <string name="budget_widget_amounts">%1$s / %2$s</string>
+</resources>

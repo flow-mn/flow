@@ -1,0 +1,12 @@
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:label="@string/net_worth_widget_label"
+  android:description="@string/net_worth_widget_description"
+  android:minWidth="180dp"
+  android:minHeight="110dp"
+  android:targetCellWidth="3"
+  android:targetCellHeight="2"
+  android:resizeMode="horizontal|vertical"
+  android:previewLayout="@layout/widget_preview_net_worth"
+  android:initialLayout="@layout/glance_default_loading_layout">
+</appwidget-provider>

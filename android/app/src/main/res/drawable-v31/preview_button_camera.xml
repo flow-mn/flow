@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Entry button for the static picker previews: FlowWidgetUtils.EntryButton
+     as one square drawable (icon at 2/3 of the circle) so an ImageView can
+     scale it with the preview box. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <shape android:shape="oval">
+      <solid android:color="@color/preview_primary" />
+      <size android:width="48dp" android:height="48dp" />
+    </shape>
+  </item>
+  <item android:drawable="@drawable/preview_ic_camera" android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp" />
+</layer-list>

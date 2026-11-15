@@ -28,6 +28,17 @@ import mn.flow.flow.FlowWidgetUtils
 class TwoEntryLast : GlanceAppWidget() {
   override val sizeMode = SizeMode.Exact
 
+  // Picker preview (Android 15+): the real content on sample data.
+  override val previewSizeMode = SizeMode.Responsive(WidgetPreviews.sizes2x1)
+
+  override suspend fun providePreview(context: Context, widgetCategory: Int) {
+    provideContent {
+      GlanceTheme {
+        Content(context, WidgetPreviews.buttonsState(context))
+      }
+    }
+  }
+
   override val stateDefinition: GlanceStateDefinition<*>
     get() = HomeWidgetGlanceStateDefinition()
 
