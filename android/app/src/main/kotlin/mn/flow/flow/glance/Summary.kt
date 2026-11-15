@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
@@ -24,7 +25,7 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
@@ -65,6 +66,24 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState) {
   val incomeLabel = currentState.preferences.getString("summaryIncomeLabel", null) ?: "Income"
   val expenseLabel = currentState.preferences.getString("summaryExpenseLabel", null) ?: "Expense"
 
+  // Narrow (2-column) cells: less side padding so labels and amounts fit.
+  val width = LocalSize.current.width.value
+  val narrow = width < 250f
+  // Tighter side padding below ~4 columns: a default 3x1 on Pixel is ~300dp,
+  // where 16dp insets left "6,86 tys. zł" cut to "6,86 tys. …".
+  val sidePad = if (width < 330f) 10 else 16
+  // Glance can't measure or auto-size text, so the amount's size is estimated.
+  // Measured on device: "6,86 tys. zł" bold averages 0.44em per character;
+  // 0.5 leaves margin for wider digits. Shrinks from the design's 20sp until
+  // the longer of the two amounts fits its card; both cards use the same size.
+  val cardInner = (width - 8 * 3) / 2f - sidePad * 2
+  val longest = maxOf(income.length, expense.length, 1)
+  // sp grows with the system font size while the card stays the same dp, so
+  // the estimate is divided by the font scale; at large scales the floor
+  // drops to 11sp rather than cutting the amount off.
+  val fontScale = context.resources.configuration.fontScale.coerceAtLeast(0.5f)
+  val amountSp = (cardInner / (0.5f * longest * fontScale)).coerceIn(11f, 20f)
+
   Box(
     modifier = GlanceModifier
       .background(GlanceTheme.colors.widgetBackground)
@@ -79,24 +98,33 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState) {
     contentAlignment = Alignment.Center
   ) {
     Row(
+      // Cards take the full height, so the panel shows the same 8dp margin on
+      // every side whatever cell height the launcher gives (Pixel's 1-row cell
+      // is taller than the cards; One UI's is about the same).
       modifier = GlanceModifier.padding(8.dp).fillMaxSize(),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Box(modifier = GlanceModifier.defaultWeight()) {
+      Box(modifier = GlanceModifier.defaultWeight().fillMaxHeight()) {
         SummaryCard(
           label = incomeLabel,
           iconRes = R.drawable.ic_arrow_down_forward,
           amount = income,
           accentColor = ColorProvider(R.color.income_green),
+          narrow = narrow,
+          sidePad = sidePad,
+          amountSp = amountSp,
         )
       }
       Spacer(modifier = GlanceModifier.width(8.dp))
-      Box(modifier = GlanceModifier.defaultWeight()) {
+      Box(modifier = GlanceModifier.defaultWeight().fillMaxHeight()) {
         SummaryCard(
           label = expenseLabel,
           iconRes = R.drawable.ic_arrow_up_forward,
           amount = expense,
           accentColor = ColorProvider(R.color.expense_red),
+          narrow = narrow,
+          sidePad = sidePad,
+          amountSp = amountSp,
         )
       }
     }
@@ -104,13 +132,22 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState) {
 }
 
 @Composable
-private fun SummaryCard(label: String, iconRes: Int, amount: String, accentColor: ColorProvider) {
+private fun SummaryCard(
+  label: String,
+  iconRes: Int,
+  amount: String,
+  accentColor: ColorProvider,
+  narrow: Boolean = false,
+  sidePad: Int = 16,
+  amountSp: Float = 20f,
+) {
   Box(
     modifier = GlanceModifier
-      .fillMaxWidth()
+      .fillMaxSize()
       .background(GlanceTheme.colors.surfaceVariant)
       .cornerRadius(16.dp)
-      .padding(horizontal = 16.dp, vertical = 12.dp),
+      .padding(horizontal = sidePad.dp, vertical = 12.dp),
+    contentAlignment = Alignment.CenterStart,
   ) {
     Column {
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -120,21 +157,27 @@ private fun SummaryCard(label: String, iconRes: Int, amount: String, accentColor
             color = GlanceTheme.colors.onSurfaceVariant,
             fontSize = 13.sp,
           ),
+          // One line: a wrapped label ("Przychó/d") made the two cards
+          // different heights in narrow cells.
+          maxLines = 1,
         )
-        Spacer(modifier = GlanceModifier.width(4.dp))
-        Image(
-          provider = ImageProvider(iconRes),
-          contentDescription = null,
-          modifier = GlanceModifier.width(20.dp).height(20.dp),
-          colorFilter = ColorFilter.tint(accentColor),
-        )
+        // In a 2-column cell the icon gets squeezed to a sliver; drop it.
+        if (!narrow) {
+          Spacer(modifier = GlanceModifier.width(4.dp))
+          Image(
+            provider = ImageProvider(iconRes),
+            contentDescription = null,
+            modifier = GlanceModifier.width(20.dp).height(20.dp),
+            colorFilter = ColorFilter.tint(accentColor),
+          )
+        }
       }
       Spacer(modifier = GlanceModifier.height(4.dp))
       Text(
         text = amount,
         style = TextStyle(
           color = GlanceTheme.colors.onSurface,
-          fontSize = 20.sp,
+          fontSize = amountSp.sp,
           fontWeight = FontWeight.Bold,
         ),
         maxLines = 1,
