@@ -14,6 +14,7 @@
 ### Fixes
 
 * Summary home screen widget no longer cuts off long amounts, and fits narrow cells and larger system font sizes
+* Reordering quick-add buttons now updates the "Two Actions (Last)" home screen widget right away
 
 ## 0.26.0
 
