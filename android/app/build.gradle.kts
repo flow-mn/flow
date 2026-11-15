@@ -67,11 +67,11 @@ dependencies {
   implementation("androidx.window:window:1.5.0")
   implementation("androidx.window:window-java:1.5.0")
 
-  implementation("androidx.glance:glance-appwidget:1.1.1")
-  implementation("androidx.glance:glance-material3:1.1.1")
-  implementation("androidx.glance:glance-preview:1.1.1")
+  implementation("androidx.glance:glance-appwidget:1.2.0")
+  implementation("androidx.glance:glance-material3:1.2.0")
+  implementation("androidx.glance:glance-preview:1.2.0")
   implementation("androidx.compose.foundation:foundation-layout:1.9.4")
 
   coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-  debugImplementation("androidx.glance:glance-appwidget-preview:1.1.1")
+  debugImplementation("androidx.glance:glance-appwidget-preview:1.2.0")
 }

@@ -2,6 +2,10 @@
 
 ## next
 
+### Features
+
+* Android widget picker now shows a preview of every home screen widget
+
 ### Changes
 
 * Home screen widgets now have names and descriptions in the Android widget picker, and default to their intended size on Android 12+

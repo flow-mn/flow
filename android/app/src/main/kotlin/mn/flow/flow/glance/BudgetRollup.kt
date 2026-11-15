@@ -39,6 +39,17 @@ import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 class BudgetRollup : GlanceAppWidget() {
   override val sizeMode = SizeMode.Exact
 
+  // Picker preview (Android 15+): the real content on sample data.
+  override val previewSizeMode = SizeMode.Responsive(WidgetPreviews.sizes4x2)
+
+  override suspend fun providePreview(context: Context, widgetCategory: Int) {
+    provideContent {
+      GlanceTheme {
+        Content(context, WidgetPreviews.budgetsState(context), BudgetWidgetConfigStore.default)
+      }
+    }
+  }
+
   override val stateDefinition: GlanceStateDefinition<*>
     get() = HomeWidgetGlanceStateDefinition()
 

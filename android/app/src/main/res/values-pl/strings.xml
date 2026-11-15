@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Polish: widget-picker labels and widget-side fallbacks. See values/strings.xml. -->
+<!-- Polish: widget-picker labels, sample data and widget-side fallbacks. See values/strings.xml. -->
 <resources>
   <string name="two_entry_widget_label">Dwa przyciski</string>
   <string name="two_entry_last_widget_label">Dwa przyciski (ostatnie)</string>
@@ -33,6 +33,15 @@
   <string name="budget_widget_status_warning">Blisko limitu</string>
   <string name="budget_widget_status_over">Ponad budżet</string>
 
+  <string name="widget_preview_income">Przychód</string>
+  <string name="widget_preview_expense">Wydatek</string>
+  <string name="widget_preview_budgets">Budżety</string>
+  <string name="widget_preview_budget_eating_out">Jedzenie na mieście</string>
+  <string name="widget_preview_budget_groceries">Zakupy spożywcze</string>
+  <string name="widget_preview_budget_transport">Transport</string>
+  <string name="widget_preview_days_left">Zostało 12 dni</string>
+  <string name="widget_preview_rollup_headline">1 ponad limit</string>
+  <string name="widget_preview_rollup_subline">1 blisko limitu · 3 budżety</string>
   <!-- Układ, nie tekst: separator między dwiema sformatowanymi kwotami. -->
   <string name="budget_widget_amounts">%1$s / %2$s</string>
 </resources>

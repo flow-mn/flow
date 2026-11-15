@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview (android:previewLayout), used on Android 12-14
+  and until the generated preview (BudgetPinned.providePreview) is published.
+  Same structure as the widget: name, big percentage, status, bar, days left,
+  amounts. Sample data matches WidgetPreviews.budgetsState (the worst budget).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/preview_widget_bg"
+  android:orientation="vertical" android:padding="16dp">
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Medium" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:text="@string/widget_preview_budget_eating_out" android:textSize="12.5sp"
+    android:textColor="@color/preview_on_surface" android:maxLines="1" android:ellipsize="end" />
+  <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Bold" android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:text="@string/widget_preview_budget_percent" android:textSize="26sp"
+    android:textColor="@color/expense_red" android:maxLines="1" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Medium" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:text="@string/budget_widget_status_over" android:textSize="11sp"
+    android:textColor="@color/expense_red" android:maxLines="1" />
+  <!-- 4dp short of the inset, like the widget's bar. -->
+  <FrameLayout android:layout_width="match_parent" android:layout_height="8dp"
+    android:layout_marginTop="6dp" android:layout_marginEnd="4dp" android:background="@drawable/preview_bar_expense" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="6dp" android:text="@string/widget_preview_days_left" android:textSize="11sp"
+    android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:text="@string/widget_preview_budget_amounts" android:textSize="11sp"
+    android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+</LinearLayout>

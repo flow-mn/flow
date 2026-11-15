@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static widget-picker preview (android:previewLayout), used on Android 12-14
+  and until the generated preview (BudgetRollup.providePreview) is published.
+  Same structure, text sizes and gaps as the widget: title, headline count,
+  summary line, then the budget that needs attention most. Sample data matches
+  WidgetPreviews.budgetsState.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:background="@drawable/preview_widget_bg"
+  android:orientation="vertical" android:padding="16dp">
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:text="@string/widget_preview_budgets" android:textSize="12sp"
+    android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Bold" android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:text="@string/widget_preview_rollup_headline" android:textSize="19sp"
+    android:textColor="@color/expense_red" android:maxLines="1" />
+  <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:text="@string/widget_preview_rollup_subline" android:textSize="12sp"
+    android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+  <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal" android:gravity="center_vertical">
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+      android:text="@string/widget_preview_budget_eating_out" android:textSize="12sp"
+      android:textColor="@color/preview_on_surface" android:maxLines="1" android:ellipsize="end" />
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginStart="8dp" android:layout_marginEnd="6dp"
+      android:text="@string/budget_widget_status_over" android:textSize="11sp"
+      android:textColor="@color/expense_red" android:maxLines="1" />
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Bold" android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:text="@string/widget_preview_budget_percent" android:textSize="12sp"
+      android:textColor="@color/expense_red" android:maxLines="1" />
+  </LinearLayout>
+  <!-- 4dp short of the inset, like the widget's bar. -->
+  <FrameLayout android:layout_width="match_parent" android:layout_height="6dp"
+    android:layout_marginTop="5dp" android:layout_marginEnd="4dp" android:background="@drawable/preview_bar_expense_thin" />
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="5dp" android:orientation="horizontal">
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+      android:text="@string/widget_preview_days_left" android:textSize="11sp"
+      android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+    <TextView android:textAppearance="@style/Glance.AppWidget.TextAppearance.Normal" android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:text="@string/widget_preview_budget_amounts" android:textSize="11sp"
+      android:textColor="@color/preview_on_surface_variant" android:maxLines="1" />
+  </LinearLayout>
+</LinearLayout>
