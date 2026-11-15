@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 0.27.0
 
 ### Features
 
