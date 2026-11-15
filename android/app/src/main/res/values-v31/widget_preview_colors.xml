@@ -10,4 +10,6 @@
   <color name="preview_on_surface_variant">@android:color/system_neutral2_700</color>
   <color name="preview_primary">@android:color/system_accent1_600</color>
   <color name="preview_primary_container">@android:color/system_accent1_100</color>
+  <!-- Net worth line: NetWorth.sparkline draws in accent1_300 in both themes. -->
+  <color name="preview_chart">@android:color/system_accent1_300</color>
 </resources>

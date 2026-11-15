@@ -1,9 +1,11 @@
 import "dart:async";
 import "dart:io";
 
+import "package:flow/entity/account.dart";
 import "package:flow/entity/budget.dart";
 import "package:flow/objectbox.dart";
 import "package:flow/services/budget_widget_sync.dart";
+import "package:flow/services/net_worth_widget_sync.dart";
 import "package:flow/services/widget_summary_sync.dart";
 
 /// One entry point for refreshing every home-screen widget.
@@ -15,6 +17,7 @@ import "package:flow/services/widget_summary_sync.dart";
 /// trigger, or a sixth widget, and misses a wiring.
 class HomeWidgets {
   static StreamSubscription<void>? _budgetSubscription;
+  static StreamSubscription<void>? _accountSubscription;
 
   /// Home-screen widgets only exist on mobile
   static bool get supported => Platform.isIOS || Platform.isAndroid;
@@ -24,7 +27,11 @@ class HomeWidgets {
   static Future<void> syncAll() async {
     if (!supported) return;
 
-    await Future.wait([WidgetSummarySync.sync(), BudgetWidgetSync.sync()]);
+    await Future.wait([
+      WidgetSummarySync.sync(),
+      BudgetWidgetSync.sync(),
+      NetWorthWidgetSync.sync(),
+    ]);
   }
 
   /// Starts watching the data that only widgets care about.
@@ -36,10 +43,20 @@ class HomeWidgets {
     _budgetSubscription ??= ObjectBox().box<Budget>().query().watch().listen(
       (_) => unawaited(BudgetWidgetSync.sync()),
     );
+    // Same for accounts: excluding one from the total balance, or adding or
+    // archiving one, changes net worth without touching any transaction.
+    // (New exchange rates already trigger a full sync from `main`.)
+    _accountSubscription ??= ObjectBox()
+        .box<Account>()
+        .query()
+        .watch()
+        .listen((_) => unawaited(NetWorthWidgetSync.sync()));
   }
 
   static void dispose() {
     _budgetSubscription?.cancel();
     _budgetSubscription = null;
+    _accountSubscription?.cancel();
+    _accountSubscription = null;
   }
 }

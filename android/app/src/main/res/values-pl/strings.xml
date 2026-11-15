@@ -5,6 +5,7 @@
   <string name="two_entry_last_widget_label">Dwa przyciski (ostatnie)</string>
   <string name="four_entry_widget_label">Cztery przyciski</string>
   <string name="summary_widget_label">Podsumowanie Flow</string>
+  <string name="net_worth_widget_label">Majątek netto Flow</string>
   <string name="budget_rollup_widget_label">Budżety Flow</string>
   <string name="budget_pinned_widget_label">Budżet Flow</string>
 
@@ -12,6 +13,7 @@
   <string name="two_entry_last_widget_description">Dwa ostatnie z Twoich przycisków szybkiego dodawania.</string>
   <string name="four_entry_widget_description">Wszystkie przyciski szybkiego dodawania: skan, przelew, przychód, wydatek.</string>
   <string name="summary_widget_description">Przychody i wydatki z tego miesiąca w skrócie.</string>
+  <string name="net_worth_widget_description">Twoje saldo łączne i jego trend z 30 dni.</string>
   <string name="budget_rollup_widget_description">Które budżety wymagają uwagi i ten najbliżej limitu.</string>
   <string name="budget_pinned_widget_description">Postęp jednego budżetu albo tego, który wymaga uwagi.</string>
 
@@ -35,6 +37,9 @@
 
   <string name="widget_preview_income">Przychód</string>
   <string name="widget_preview_expense">Wydatek</string>
+  <string name="widget_preview_net_worth">Majątek netto</string>
+  <string name="widget_preview_last_30_days">Ostatnie 30 dni</string>
+  <string name="widget_preview_net_worth_delta">+6 120,00 · Ostatnie 30 dni</string>
   <string name="widget_preview_budgets">Budżety</string>
   <string name="widget_preview_budget_eating_out">Jedzenie na mieście</string>
   <string name="widget_preview_budget_groceries">Zakupy spożywcze</string>

@@ -51,23 +51,29 @@
   <string name="two_entry_last_widget_label">Two Actions (Last)</string>
   <string name="four_entry_widget_label">Four Actions</string>
   <string name="summary_widget_label">Flow Summary</string>
+  <string name="net_worth_widget_label">Flow Net Worth</string>
 
   <!-- Widget-picker descriptions (shown under the preview on Android 12+). -->
   <string name="two_entry_widget_description">Two quick buttons for new transactions.</string>
   <string name="two_entry_last_widget_description">The last two of your quick-add buttons.</string>
   <string name="four_entry_widget_description">All four quick-add buttons: scan, transfer, income, expense.</string>
   <string name="summary_widget_description">This month\'s income and expenses at a glance.</string>
+  <string name="net_worth_widget_description">Your total balance and its 30-day trend.</string>
 
   <!-- Sample data shown only in the widget picker's previews. -->
   <string name="widget_preview_income">Income</string>
   <string name="widget_preview_expense">Expense</string>
+  <string name="widget_preview_net_worth">Net worth</string>
+  <string name="widget_preview_last_30_days">Last 30 days</string>
   <string name="widget_preview_budgets">Budgets</string>
   <string name="widget_preview_budget_eating_out">Eating out</string>
   <string name="widget_preview_budget_groceries">Groceries</string>
   <string name="widget_preview_budget_transport">Transport</string>
+  <string name="widget_preview_net_worth_delta">+6 120,00 · Last 30 days</string>
   <string name="widget_preview_days_left">12 days left</string>
   <string name="widget_preview_rollup_headline">1 over limit</string>
   <string name="widget_preview_rollup_subline">1 nearing limit · 3 budgets</string>
+  <string name="widget_preview_amount_net_worth" translatable="false">43 587,01</string>
   <string name="widget_preview_amount_income" translatable="false">4 250,00</string>
   <string name="widget_preview_amount_expense" translatable="false">2 870,40</string>
   <string name="widget_preview_budget_amounts" translatable="false">410 / 400</string>
