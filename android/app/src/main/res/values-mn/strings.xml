@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mongolian: widget-picker labels, sample data and widget-side fallbacks. See values/strings.xml. -->
+<resources>
+  <string name="two_entry_widget_label">Хоёр товч</string>
+  <string name="two_entry_last_widget_label">Хоёр товч (сүүлийн)</string>
+  <string name="four_entry_widget_label">Дөрвөн товч</string>
+  <string name="summary_widget_label">Flow тойм</string>
+  <string name="net_worth_widget_label">Flow нийт хөрөнгө</string>
+  <string name="budget_rollup_widget_label">Flow төсвүүд</string>
+  <string name="budget_pinned_widget_label">Flow төсөв</string>
+
+  <string name="two_entry_widget_description">Гүйлгээ хурдан нэмэх хоёр товч.</string>
+  <string name="two_entry_last_widget_description">Гүйлгээ нэмэх товчнуудын сүүлийн хоёр нь.</string>
+  <string name="four_entry_widget_description">Гүйлгээ нэмэх товчнууд, тохируулсан дарааллаараа.</string>
+  <string name="summary_widget_description">Энэ сарын орлого, зарлага.</string>
+  <string name="net_worth_widget_description">Нийт хөрөнгө, сүүлийн 30 хоногийн өөрчлөлт.</string>
+  <string name="budget_rollup_widget_description">Анхаарал хэрэгтэй төсвүүд, хязгаартаа хамгийн ойртсон нь.</string>
+  <string name="budget_pinned_widget_description">Нэг төсвийн явц, эсвэл анхаарал хэрэгтэй төсөв.</string>
+
+  <string name="budget_widget_config_budget">Төсөв</string>
+  <string name="budget_widget_config_auto">Анхаарал хэрэгтэй аль ч төсөв</string>
+  <string name="budget_widget_config_no_budgets">Төсөв алга. Виджет анхаарал хэрэгтэй төсвийг харуулна.</string>
+  <string name="budget_widget_config_privacy">Нууцлал</string>
+  <string name="budget_widget_config_hide_amounts">Дүнг нуух</string>
+  <string name="budget_widget_config_hide_amounts_summary">Зөвхөн явц, төлөв харагдана. Нүүр дэлгэцэнд мөнгөн дүн гарахгүй.</string>
+  <string name="budget_widget_config_save">Хадгалах</string>
+  <string name="budget_widget_config_cancel">Цуцлах</string>
+
+  <string name="budget_widget_title">Төсвүүд</string>
+  <string name="budget_widget_empty">Зарцуулалтын төсөв тогтоох</string>
+  <string name="budget_widget_missing_budget">Одоогоор төсөв байхгүй</string>
+  <string name="budget_widget_on_track">Бүгд хэвийн байна</string>
+  <string name="budget_widget_period_ended">Хугацаа дууссан</string>
+  <string name="budget_widget_status_healthy">Хэвийн</string>
+  <string name="budget_widget_status_warning">Хязгаарт дөхсөн</string>
+  <string name="budget_widget_status_over">Хэтэрсэн</string>
+
+  <string name="widget_preview_income">Орлого</string>
+  <string name="widget_preview_expense">Зарлага</string>
+  <string name="widget_preview_net_worth">Нийт хөрөнгө</string>
+  <string name="widget_preview_last_30_days">Сүүлийн 30 хоног</string>
+  <string name="widget_preview_net_worth_delta">+6,120.00 · Сүүлийн 30 хоног</string>
+  <string name="widget_preview_budgets">Төсвүүд</string>
+  <string name="widget_preview_budget_eating_out">Гадуур хооллолт</string>
+  <string name="widget_preview_budget_groceries">Хүнс</string>
+  <string name="widget_preview_budget_transport">Унаа</string>
+  <string name="widget_preview_days_left">12 хоног үлдлээ</string>
+  <string name="widget_preview_rollup_headline">1 нь хязгаараас давсан</string>
+  <string name="widget_preview_rollup_subline">1 нь хязгаарт дөхөж байна · 3 төсөв</string>
+</resources>

@@ -56,7 +56,7 @@
   <!-- Widget-picker descriptions (shown under the preview on Android 12+). -->
   <string name="two_entry_widget_description">Two quick buttons for new transactions.</string>
   <string name="two_entry_last_widget_description">The last two of your quick-add buttons.</string>
-  <string name="four_entry_widget_description">All four quick-add buttons: scan, transfer, income, expense.</string>
+  <string name="four_entry_widget_description">Your quick-add buttons, in the order you set.</string>
   <string name="summary_widget_description">This month\'s income and expenses at a glance.</string>
   <string name="net_worth_widget_description">Your total balance and its 30-day trend.</string>
 

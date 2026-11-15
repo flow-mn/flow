@@ -7,6 +7,9 @@ import "package:flow/objectbox.dart";
 import "package:flow/services/budget_widget_sync.dart";
 import "package:flow/services/net_worth_widget_sync.dart";
 import "package:flow/services/widget_summary_sync.dart";
+import "package:home_widget/home_widget.dart";
+import "package:intl/intl.dart";
+import "package:intl/number_symbols.dart";
 
 /// One entry point for refreshing every home-screen widget.
 ///
@@ -31,7 +34,22 @@ class HomeWidgets {
       WidgetSummarySync.sync(),
       BudgetWidgetSync.sync(),
       NetWorthWidgetSync.sync(),
+      if (Platform.isAndroid) _syncNumberSymbols(),
     ]);
+  }
+
+  /// Widget-picker previews format sample amounts like the real ones, and
+  /// need the app's separators when a synced amount has none ("685 мян").
+  static Future<void> _syncNumberSymbols() async {
+    final NumberSymbols symbols = NumberFormat.decimalPattern(
+      Intl.defaultLocale,
+    ).symbols;
+
+    await HomeWidget.saveWidgetData(
+      "numberDecimalSeparator",
+      symbols.DECIMAL_SEP,
+    );
+    await HomeWidget.saveWidgetData("numberGroupSeparator", symbols.GROUP_SEP);
   }
 
   /// Starts watching the data that only widgets care about.
@@ -46,11 +64,9 @@ class HomeWidgets {
     // Same for accounts: excluding one from the total balance, or adding or
     // archiving one, changes net worth without touching any transaction.
     // (New exchange rates already trigger a full sync from `main`.)
-    _accountSubscription ??= ObjectBox()
-        .box<Account>()
-        .query()
-        .watch()
-        .listen((_) => unawaited(NetWorthWidgetSync.sync()));
+    _accountSubscription ??= ObjectBox().box<Account>().query().watch().listen(
+      (_) => unawaited(NetWorthWidgetSync.sync()),
+    );
   }
 
   static void dispose() {

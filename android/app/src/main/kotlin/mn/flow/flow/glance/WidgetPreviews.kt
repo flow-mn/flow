@@ -96,18 +96,28 @@ object WidgetPreviews {
    */
   fun publishIfNeeded(context: Context) {
     if (Build.VERSION.SDK_INT < 35) return
+    if (!inFlight.compareAndSet(false, true)) return
 
     val app = context.applicationContext
-    val installed = try {
-      // lastUpdateTime, not versionCode: a reinstall of the same version
-      // (debug builds, sideloads) also wipes the published previews.
-      app.packageManager.getPackageInfo(app.packageName, 0).lastUpdateTime
-    } catch (e: Exception) {
-      return
+    // Runs on every launch, so the package lookup and the prefs/JSON reads stay
+    // off the main thread. Any failure only means no generated previews.
+    CoroutineScope(Dispatchers.IO).launch {
+      try {
+        publish(app)
+      } catch (e: Exception) {
+        Log.w(TAG, "publishing widget previews failed", e)
+      } finally {
+        inFlight.set(false)
+      }
     }
-    // Previews bake in the app's language and button order,
-    // so a change to any of them (synced by Dart after launch) republishes on
-    // the next launch. Rare, so it stays well inside the rate limit.
+  }
+
+  private suspend fun publish(app: Context) {
+    // lastUpdateTime, not versionCode: a reinstall of the same version
+    // (debug builds, sideloads) also wipes the published previews.
+    val installed = app.packageManager.getPackageInfo(app.packageName, 0).lastUpdateTime
+    // Previews bake in the app's language and button order, so a change to
+    // either (synced by Dart after launch) republishes on the next launch.
     val version = installed * 31 + contentSignature(app)
     val store = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     val done = if (store.getLong(KEY_PUBLISHED_VERSION, -1L) == version) {
@@ -117,35 +127,28 @@ object WidgetPreviews {
     }
     val pending = receivers.filter { it.qualifiedName !in done }
     if (pending.isEmpty()) return
-    if (!inFlight.compareAndSet(false, true)) return
 
-    CoroutineScope(Dispatchers.Default).launch {
-      try {
-        val manager = GlanceAppWidgetManager(app)
-        val published = done.toMutableSet()
-        for (receiver in pending) {
-          val result = try {
-            manager.setWidgetPreviews(receiver)
-          } catch (e: Exception) {
-            Log.w(TAG, "setWidgetPreviews(${receiver.simpleName}) failed", e)
-            continue
-          }
-          if (result == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS) {
-            receiver.qualifiedName?.let { published += it }
-          } else {
-            // Rate limited: the rest would fail too; try again next launch.
-            Log.w(TAG, "setWidgetPreviews(${receiver.simpleName}) -> $result")
-            break
-          }
-        }
-        store.edit()
-          .putLong(KEY_PUBLISHED_VERSION, version)
-          .putStringSet(KEY_PUBLISHED_RECEIVERS, published)
-          .apply()
-      } finally {
-        inFlight.set(false)
+    val manager = GlanceAppWidgetManager(app)
+    val published = done.toMutableSet()
+    for (receiver in pending) {
+      val result = try {
+        manager.setWidgetPreviews(receiver)
+      } catch (e: Exception) {
+        Log.w(TAG, "setWidgetPreviews(${receiver.simpleName}) failed", e)
+        continue
+      }
+      if (result == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS) {
+        receiver.qualifiedName?.let { published += it }
+      } else {
+        // Rate limited: the rest would fail too; try again next launch.
+        Log.w(TAG, "setWidgetPreviews(${receiver.simpleName}) -> $result")
+        break
       }
     }
+    store.edit()
+      .putLong(KEY_PUBLISHED_VERSION, version)
+      .putStringSet(KEY_PUBLISHED_RECEIVERS, published)
+      .apply()
   }
 
   private fun contentSignature(context: Context): Long {
@@ -184,6 +187,12 @@ object WidgetPreviews {
     null
   }
 
+  private fun separators(r: SharedPreferences?): Pair<String, Char>? {
+    val decimal = r?.getString("numberDecimalSeparator", null) ?: return null
+    val group = r.getString("numberGroupSeparator", null)?.firstOrNull() ?: return null
+    return decimal to group
+  }
+
   fun buttonsState(context: Context): HomeWidgetGlanceState =
     state(mapOf("buttonOrder" to real(context)?.getString("buttonOrder", null)))
 
@@ -191,8 +200,12 @@ object WidgetPreviews {
     val r = real(context)
     return state(
       mapOf(
-        "summaryIncome" to SampleMoney.like(r?.getString("summaryIncome", null), 4250.00),
-        "summaryExpense" to SampleMoney.like(r?.getString("summaryExpense", null), 2870.40),
+        "summaryIncome" to SampleMoney.like(
+          r?.getString("summaryIncome", null), 4250.00, separators = separators(r),
+        ),
+        "summaryExpense" to SampleMoney.like(
+          r?.getString("summaryExpense", null), 2870.40, separators = separators(r),
+        ),
         "summaryIncomeLabel" to (r?.getString("summaryIncomeLabel", null)
           ?: context.getString(R.string.widget_preview_income)),
         "summaryExpenseLabel" to (r?.getString("summaryExpenseLabel", null)
@@ -215,8 +228,8 @@ object WidgetPreviews {
       mapOf(
         "netWorthLabel" to (r?.getString("netWorthLabel", null)
           ?: context.getString(R.string.widget_preview_net_worth)),
-        "netWorthAmount" to SampleMoney.like(template, 43587.01),
-        "netWorthDelta" to "+" + SampleMoney.like(template, 6120.00),
+        "netWorthAmount" to SampleMoney.like(template, 43587.01, separators = separators(r)),
+        "netWorthDelta" to "+" + SampleMoney.like(template, 6120.00, separators = separators(r)),
         "netWorthDeltaPositive" to true,
         "netWorthRangeLabel" to (r?.getString("netWorthRangeLabel", null)
           ?: context.getString(R.string.widget_preview_last_30_days)),
@@ -238,7 +251,8 @@ object WidgetPreviews {
     val template = realPayload?.optJSONArray("budgets")?.optJSONObject(0)?.optString("limit", null)
       ?: real(context)?.getString("summaryIncome", null)
 
-    fun amount(v: Double) = SampleMoney.like(template, v, decimals = 0)
+    val separators = separators(real(context))
+    fun amount(v: Double) = SampleMoney.like(template, v, decimals = 0, separators = separators)
 
     fun budget(
       id: Long, name: String, spent: Double, limit: Double, status: String, daysLeft: Int,
@@ -305,14 +319,34 @@ object WidgetPreviews {
 internal object SampleMoney {
   private val number = Regex("""\d[\d\s\u00A0\u202F.,']*\d|\d""")
 
-  /** Abbreviations the app uses for compact amounts, and their scale. */
-  private val scales = listOf(
-    Regex("""^\s*(tys\.|(k|K)(?!\p{L}))""") to 1e3,
-    Regex("""^\s*(mln|M)(?!\p{L})""") to 1e6,
-    Regex("""^\s*(mld|B|bn)(?!\p{L})""") to 1e9,
+  /** The words the app uses for compact amounts, per language: 1e3, 1e6, 1e9. */
+  private val scaleWords = listOf(
+    listOf("tys.", "mln", "mld"),
+    listOf("мян", "сая", "тэрбум"),
+    listOf("K", "M", "B"),
   )
+  private val scaleWordFamily = mapOf(
+    "tys." to 0, "mln" to 0, "mld" to 0,
+    "мянга" to 1, "мян" to 1, "мян." to 1, "сая" to 1, "тэрбум" to 1,
+    "k" to 2, "K" to 2, "M" to 2, "B" to 2, "bn" to 2,
+  )
+  private val scaleWord =
+    Regex("""^[\s\u00A0\u202F]*(tys\.|mln|mld|мянга|мян\.?|сая|тэрбум|k|K|M|B|bn)(?!\p{L})""")
 
-  fun like(template: String?, value: Double, decimals: Int? = null): String {
+  // Samples are sized for euro/dollar-like currencies; a ₮400 eating-out
+  // budget reads as a bug, so low-value currencies get scaled-up samples.
+  private val denominations = mapOf('₮' to 1000.0, '₩' to 1000.0, '₫' to 10000.0)
+
+  /**
+   * [separators] are the app locale's decimal and grouping separators, used
+   * when [template] has none to copy ("$12", "685 tys. zł").
+   */
+  fun like(
+    template: String?,
+    value: Double,
+    decimals: Int? = null,
+    separators: Pair<String, Char>? = null,
+  ): String {
     val m = template?.let { number.find(it) }
     // Keep the currency, drop any sign: samples are positive (the caller adds
     // "+" itself), and a negative template must not turn into "+-6 120".
@@ -322,25 +356,41 @@ internal object SampleMoney {
     val digits = m?.value ?: "0,00"
 
     val decMatch = Regex("""([.,])(\d{1,2})$""").find(digits)
-    val decSep = decMatch?.groupValues?.get(1) ?: ","
+    val bare = digits.all { it.isDigit() }
+    val decSep = decMatch?.groupValues?.get(1)
+      ?: separators?.first?.takeIf { bare }
+      ?: ","
     var decCount = decimals ?: decMatch?.groupValues?.get(2)?.length ?: 0
     val group = digits.firstOrNull { !it.isDigit() && (decMatch == null || it.toString() != decSep) }
-      ?: if (decSep == ",") ' ' else ','
+      ?: when {
+        bare && separators != null -> separators.second
+        decSep == "," -> ' '
+        else -> ','
+      }
+    val denomination = (prefix + suffix).firstNotNullOfOrNull { denominations[it] } ?: 1.0
 
     // "25,2 tys. zł": abbreviate the sample the same way, or it is longer than
-    // anything the real widget shows and gets ellipsized. Below the scale the
-    // app writes the plain amount ("685 zł"), so drop the word and decimals.
-    var shown = value
-    for ((re, scale) in scales) {
-      val word = re.find(suffix) ?: continue
-      if (value >= scale) {
-        shown = value / scale
+    // anything the real widget shows and gets ellipsized. The scale follows the
+    // sample, not the template ("₮ 685 мян" with a 4.25M sample is "₮ 4,3 сая").
+    // Below 1e3 the app writes the plain amount, so drop the word and decimals.
+    var shown = value * denomination
+    scaleWord.find(suffix)?.let { match ->
+      val word = match.groups[1] ?: return@let
+      val family = scaleWordFamily[word.value] ?: return@let
+      val level = when {
+        shown >= 1e9 -> 2
+        shown >= 1e6 -> 1
+        shown >= 1e3 -> 0
+        else -> -1
+      }
+      if (level >= 0) {
+        shown /= Math.pow(1e3, level + 1.0)
         decCount = 1
+        suffix = suffix.replaceRange(word.range, scaleWords[family][level])
       } else {
-        suffix = suffix.substring(word.range.last + 1)
+        suffix = suffix.substring(match.range.last + 1)
         decCount = 0
       }
-      break
     }
 
     val fixed = String.format(java.util.Locale.ROOT, "%.${decCount}f", shown)

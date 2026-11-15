@@ -4,6 +4,6 @@
   android:minHeight="110dp"
   android:targetCellWidth="2"
   android:targetCellHeight="2"
-  android:label="Four Actions"
+  android:label="@string/four_entry_widget_label"
   android:initialLayout="@layout/glance_default_loading_layout">
 </appwidget-provider>

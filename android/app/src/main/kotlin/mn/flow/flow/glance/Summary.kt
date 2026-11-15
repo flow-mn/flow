@@ -78,42 +78,32 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState, previ
   val incomeLabel = currentState.preferences.getString("summaryIncomeLabel", null) ?: "Income"
   val expenseLabel = currentState.preferences.getString("summaryExpenseLabel", null) ?: "Expense"
 
-  // In the picker the box is whatever the launcher chooses: One UI's is
-  // shorter than the ~92dp this layout needs, Pixel's taller than a real cell.
-  // So the preview draws a proportionally scaled copy whose panel hugs the
-  // cards, which is how the placed widget (cards filling the cell) looks.
-  val s = if (preview) minOf(1f, LocalSize.current.height.value / 92f) else 1f
+  // Launchers pick the picker's box size (One UI's is shorter than the ~92dp
+  // this layout needs), so the preview draws a scaled copy.
+  val scale = if (preview) minOf(1f, LocalSize.current.height.value / 92f) else 1f
   val panel = if (preview) {
     GlanceModifier
       .fillMaxWidth()
       .background(GlanceTheme.colors.widgetBackground)
-      // Concentric with the cards: card radius + panel inset.
-      .cornerRadius(((16 + 8) * s).dp)
-      .padding((8 * s).dp)
+      .cornerRadius(((16 + 8) * scale).dp)
+      .padding((8 * scale).dp)
   } else {
     GlanceModifier.padding(8.dp).fillMaxSize()
   }
-  // Placed widget: cards take the full height, so the panel shows the same 8dp
-  // margin on every side whatever cell height the launcher gives (Pixel's
-  // 1-row cell is taller than the cards; One UI's is about the same).
+  // Cards fill the cell so the 8dp margin is even on every side.
   val fill = !preview
-  // Narrow (2-column) cells: less side padding so labels and amounts fit.
-  // Judge "narrow" at the widget's real scale: the scaled-down preview is not a
-  // 2-column widget and must keep its icons.
-  val width = LocalSize.current.width.value / s
+  // Judged at real scale: the scaled-down preview isn't a 2-column widget.
+  val width = LocalSize.current.width.value / scale
+  // 2-column cells drop the icon to leave room for the label.
   val narrow = width < 250f
-  // Tighter side padding below ~4 columns: a default 3x1 on Pixel is ~300dp,
-  // where 16dp insets left "6,86 tys. zł" cut to "6,86 tys. …".
+  // A default 3x1 on Pixel (~300dp) cut "6,86 tys. zł" with 16dp insets.
   val sidePad = if (width < 330f) 10 else 16
-  // Glance can't measure or auto-size text, so the amount's size is estimated.
-  // Measured on device: "6,86 tys. zł" bold averages 0.44em per character;
-  // 0.5 leaves margin for wider digits. Shrinks from the design's 20sp until
-  // the longer of the two amounts fits its card; both cards use the same size.
+  // Glance can't measure text, so the amount's size is estimated: bold digits
+  // average ~0.44em on device, 0.5 leaves margin. Divided by the font scale
+  // because sp grows with it while the card doesn't. Below the 11sp floor
+  // (2 columns at large font sizes) the amount still ellipsizes.
   val cardInner = (width - 8 * 3) / 2f - sidePad * 2
   val longest = maxOf(income.length, expense.length, 1)
-  // sp grows with the system font size while the card stays the same dp, so
-  // the estimate is divided by the font scale; at large scales the floor
-  // drops to 11sp rather than cutting the amount off.
   val fontScale = context.resources.configuration.fontScale.coerceAtLeast(0.5f)
   val amountSp = (cardInner / (0.5f * longest * fontScale)).coerceIn(11f, 20f)
 
@@ -139,21 +129,21 @@ private fun Content(context: Context, currentState: HomeWidgetGlanceState, previ
           iconRes = R.drawable.ic_arrow_down_forward,
           amount = income,
           accentColor = ColorProvider(R.color.income_green),
-          s = s,
+          scale = scale,
           narrow = narrow,
           fill = fill,
           sidePad = sidePad,
           amountSp = amountSp,
         )
       }
-      Spacer(modifier = GlanceModifier.width((8 * s).dp))
+      Spacer(modifier = GlanceModifier.width((8 * scale).dp))
       Box(modifier = if (fill) GlanceModifier.defaultWeight().fillMaxHeight() else GlanceModifier.defaultWeight()) {
         SummaryCard(
           label = expenseLabel,
           iconRes = R.drawable.ic_arrow_up_forward,
           amount = expense,
           accentColor = ColorProvider(R.color.expense_red),
-          s = s,
+          scale = scale,
           narrow = narrow,
           fill = fill,
           sidePad = sidePad,
@@ -170,18 +160,18 @@ private fun SummaryCard(
   iconRes: Int,
   amount: String,
   accentColor: ColorProvider,
-  s: Float = 1f,
-  narrow: Boolean = false,
-  fill: Boolean = false,
-  sidePad: Int = 16,
-  amountSp: Float = 20f,
+  scale: Float,
+  narrow: Boolean,
+  fill: Boolean,
+  sidePad: Int,
+  amountSp: Float,
 ) {
   Box(
     modifier = GlanceModifier
       .then(if (fill) GlanceModifier.fillMaxSize() else GlanceModifier.fillMaxWidth())
       .background(GlanceTheme.colors.surfaceVariant)
-      .cornerRadius((16 * s).dp)
-      .padding(horizontal = (sidePad * s).dp, vertical = (12 * s).dp),
+      .cornerRadius((16 * scale).dp)
+      .padding(horizontal = (sidePad * scale).dp, vertical = (12 * scale).dp),
     contentAlignment = Alignment.CenterStart,
   ) {
     Column {
@@ -190,29 +180,27 @@ private fun SummaryCard(
           text = label,
           style = TextStyle(
             color = GlanceTheme.colors.onSurfaceVariant,
-            fontSize = (13 * s).sp,
+            fontSize = (13 * scale).sp,
           ),
-          // One line: a wrapped label ("Przychó/d") made the two cards
-          // different heights in narrow cells.
+          // A wrapped label made the two cards different heights.
           maxLines = 1,
         )
-        // In a 2-column cell the icon gets squeezed to a sliver; drop it.
         if (!narrow) {
-          Spacer(modifier = GlanceModifier.width((4 * s).dp))
+          Spacer(modifier = GlanceModifier.width((4 * scale).dp))
           Image(
             provider = ImageProvider(iconRes),
             contentDescription = null,
-            modifier = GlanceModifier.width((20 * s).dp).height((20 * s).dp),
+            modifier = GlanceModifier.width((20 * scale).dp).height((20 * scale).dp),
             colorFilter = ColorFilter.tint(accentColor),
           )
         }
       }
-      Spacer(modifier = GlanceModifier.height((4 * s).dp))
+      Spacer(modifier = GlanceModifier.height((4 * scale).dp))
       Text(
         text = amount,
         style = TextStyle(
           color = GlanceTheme.colors.onSurface,
-          fontSize = (amountSp * s).sp,
+          fontSize = (amountSp * scale).sp,
           fontWeight = FontWeight.Bold,
         ),
         maxLines = 1,

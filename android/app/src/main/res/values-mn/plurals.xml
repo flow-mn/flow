@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="budget_widget_over_count">
+    <item quantity="one">%1$d нь хязгаараас давсан</item>
+    <item quantity="other">%1$d нь хязгаараас давсан</item>
+  </plurals>
+  <plurals name="budget_widget_nearing_count">
+    <item quantity="one">%1$d нь хязгаарт дөхөж байна</item>
+    <item quantity="other">%1$d нь хязгаарт дөхөж байна</item>
+  </plurals>
+  <plurals name="budget_widget_tracked_count">
+    <item quantity="one">%1$d төсөв</item>
+    <item quantity="other">%1$d төсөв</item>
+  </plurals>
+  <plurals name="budget_widget_days_left">
+    <item quantity="one">%1$d хоног үлдлээ</item>
+    <item quantity="other">%1$d хоног үлдлээ</item>
+  </plurals>
+</resources>
